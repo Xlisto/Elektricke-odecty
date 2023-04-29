@@ -1,0 +1,35 @@
+[
+  {
+    "rok": 2021,
+    "ostatni": {
+      "dan": 28.3,
+      "system_sluzby": 93.3,
+      "cinnost": 3.91,
+      "POZE1": 15.07,
+      "POZE2": 495,
+      "dph": 21
+    }
+  },
+  {
+    "rok": 2022,
+    "ostatni": {
+      "dan": 28.3,
+      "system_sluzby": 113.53,
+      "cinnost": 4.2,
+      "POZE1": 11.84,
+      "POZE2": 495,
+      "dph": 21
+    }
+  },
+  {
+    "rok": 2023,
+    "ostatni": {
+      "dan": 28.3,
+      "system_sluzby": 113.53,
+      "cinnost": 3.43,
+      "POZE1": 11.84,
+      "POZE2": 495,
+      "dph": 21
+    }
+  }
+]

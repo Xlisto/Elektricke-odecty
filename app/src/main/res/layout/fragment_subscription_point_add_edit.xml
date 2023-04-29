@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context=".modules.subscriptionpoint.SubscriptionPointAddFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/buttons">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/rlFaze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/letDescription"
+                android:layout_marginBottom="5dp">
+
+                <EditText
+                    android:id="@+id/etCountPhaze"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvFazeZadani"
+                    android:autofillHints="@string/_3"
+                    android:ems="4"
+                    android:hint="@string/_3"
+                    android:inputType="numberSigned"
+                    android:minHeight="48dp"
+                    android:textColorHint="#757575" />
+
+                <EditText
+                    android:id="@+id/etPhaze"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvFazeZadani"
+                    android:layout_toEndOf="@id/tvX"
+                    android:autofillHints="@string/_25"
+                    android:ems="4"
+                    android:hint="@string/_25"
+                    android:inputType="numberSigned"
+                    android:minHeight="48dp"
+                    android:textColorHint="#757575" />
+
+                <TextView
+                    android:id="@+id/tvX"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/etCountPhaze"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/etCountPhaze"
+                    android:text="@string/x" />
+
+                <TextView
+                    android:id="@+id/tvFazeZadani"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pocet_fazi" />
+
+                <TextView
+                    android:id="@+id/tvFazeZadaní2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/etPhaze"
+                    android:text="@string/max_prikon" />
+            </RelativeLayout>
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/letName"
+                android:layout_marginBottom="5dp"
+                android:inputType="text"
+                app:defaultText="@string/nic"
+                app:direction="vertical"
+                app:label="@string/popis">
+
+            </cz.xlisto.cenik.ownview.LabelEditText>
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:inputType="text"
+                app:defaultText="@string/nic"
+                app:direction="vertical"
+                app:label="@string/jmeno_odberneho_mista">
+
+            </cz.xlisto.cenik.ownview.LabelEditText>
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letElektrometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rlFaze"
+                android:layout_marginBottom="5dp"
+                android:inputType="text"
+                app:defaultText="@string/nic"
+                app:direction="vertical"
+                app:label="@string/cislo_elektromeru" />
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letSebdescriptionPoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/letElektrometer"
+                android:inputType="number"
+                app:defaultText="@string/nic"
+                app:direction="vertical"
+                app:label="@string/cislo_odberneho_místa" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnZpet"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/zpet"
+            android:textColor="#D81B60" />
+
+        <Button
+            android:id="@+id/btnUloz"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ulozit"
+            android:textColor="#D81B60" />
+    </LinearLayout>
+</RelativeLayout>

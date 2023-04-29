@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relative_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="false"
+        android:layout_toEndOf="@+id/tvLabel"
+        android:autofillHints=""
+        android:gravity="end"
+        android:inputType="text"
+        android:labelFor="@id/tvPrice"
+        android:minHeight="48dp"
+        android:minWidth="48dp" />
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="@string/label_for" />
+
+</RelativeLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvTitleComparePriceList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical" />
+
+    <LinearLayout
+        android:id="@+id/lnCompareComparePriceList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitleComparePriceList"
+        android:minHeight="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvLeftComparePriceList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvRightComparePriceList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/tvLeftDifferentComparePriceList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lnCompareComparePriceList"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvRightDifferentComparePriceList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/lnCompareComparePriceList"
+        android:layout_toEndOf="@id/tvLeftDifferentComparePriceList"
+        android:gravity="end"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/separatorComparePriceList"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@id/tvRightDifferentComparePriceList"
+        android:background="@android:color/darker_gray" />
+
+</RelativeLayout>

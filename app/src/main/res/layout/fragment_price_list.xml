@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    tools:context="cz.xlisto.cenik.MainActivity">
+
+    <!--<ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tvPocetCeniku"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp">
+
+    </ListView>-->
+
+    <TextView
+        android:id="@+id/tvPocetMist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/darker_gray"
+        android:elevation="6dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textAlignment="center" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvPocetMist"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:contentDescription="@string/pridat"
+        android:src="@drawable/ic_content_add" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvPocetMist"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/zpet" />
+
+    <cz.xlisto.cenik.ownview.ContextMenuRecyclerView
+        android:id="@+id/rv_price_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnBack"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:focusableInTouchMode="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:scrollbars="vertical" />
+
+
+</RelativeLayout>

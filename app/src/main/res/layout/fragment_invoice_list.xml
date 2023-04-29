@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
+    tools:context=".modules.invoice.InvoiceListFragment">
+
+    <Button
+        android:id="@+id/btnAddPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:text="Přidat Fakturu" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleViewInvoiceList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btnAddPayment"
+        android:layout_alignParentTop="true"
+        android:animateLayoutChanges="false"
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:paddingTop="5dp" />
+</RelativeLayout>
+

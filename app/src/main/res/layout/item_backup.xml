@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlBackupItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
+    android:animateLayoutChanges="false"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/imgIconFile"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignBottom="@+id/tvTypeBackup"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:clickable="false"
+        android:contentDescription="@string/ikona"
+        android:src="@mipmap/ic_cenik" />
+
+    <LinearLayout
+        android:id="@+id/lnButtonsBackup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTypeBackup"
+        android:clickable="false"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnRestoreBackup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:text="Obnov data" />
+
+        <Button
+            android:id="@+id/btnDeleteBackup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:text="Smazat tuto zálohu" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTypeBackup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvNameBackup"
+        android:layout_below="@+id/tvNameBackup"
+        android:clickable="false" />
+
+    <TextView
+        android:id="@+id/tvNameBackup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgIconFile"
+        android:clickable="false"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+</RelativeLayout>

@@ -1,0 +1,162 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <cz.xlisto.cenik.ownview.LabelEditText
+            android:id="@+id/letVT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:inputType="numberDecimal"
+            app:direction="vertical"
+            app:hintText="@string/_1"
+            app:label="@string/spotreba_vysokeho_tarifu">
+
+        </cz.xlisto.cenik.ownview.LabelEditText>
+
+        <cz.xlisto.cenik.ownview.LabelEditText
+            android:id="@+id/letMonth"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/letNT"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="1dp"
+            android:inputType="numberDecimal"
+            app:direction="vertical"
+            app:hintText="@string/_1"
+            app:label="@string/pocet_mesicu" />
+
+        <cz.xlisto.cenik.ownview.LabelEditText
+            android:id="@+id/letNT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/letVT"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="-1dp"
+            android:inputType="numberDecimal"
+            app:direction="vertical"
+            app:hintText="@string/_1"
+            app:label="@string/spotreba_nizskeho_tarifu" />
+
+        <TextView
+            android:id="@+id/tvFazePrikon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/letMonth"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:text="@string/faze_x_prikon" />
+
+        <LinearLayout
+            android:id="@+id/lnPhaze"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/tvFazePrikon"
+            android:orientation="horizontal">
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letPhaze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                app:direction="vertical"
+                app:hintText="@string/_3"
+                app:label=" " />
+
+            <TextView
+                android:id="@+id/tvX"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="clip_vertical|center_horizontal|center_vertical"
+                android:gravity="center_horizontal|fill_vertical"
+                android:text="@string/x" />
+
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letPower"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                app:direction="vertical"
+                app:hintText="@string/_25"
+                app:label=" " />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lnPhaze"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:text="@string/dalsi_sluzby_neuvedene" />
+
+        <LinearLayout
+            android:id="@+id/lnServices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/tvServices"
+            android:orientation="horizontal">
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letServicesL"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                app:direction="vertical"
+                app:hintText="@string/_0"
+                app:label=" "
+                android:layout_marginEnd="10dp" />
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letServicesR"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                app:direction="vertical"
+                app:hintText="@string/_0"
+                app:label=" " />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lnServices"
+            android:layout_centerInParent="true"
+            android:text="@string/nastavení_vychozich_hodnot" />
+
+
+    </RelativeLayout>
+
+
+</ScrollView>

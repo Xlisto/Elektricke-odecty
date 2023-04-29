@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="distribucni_uzemi">
+        <item>Vyber dist. území</item>
+        <item>ČEZ</item>
+        <item>E.ON</item>
+        <item>EG.D</item>
+        <item>PRE</item>
+    </string-array>
+
+    <string-array name="sazby">
+        <item>Vyber sazbu</item>
+        <item>D 01d</item>
+        <item>D 02d</item>
+        <item>D 25d</item>
+        <item>D 26d</item>
+        <item>D 27d</item>
+        <item>D 35d</item>
+        <item>D 45d</item>
+        <item>D 56d</item>
+        <item>D 57d</item>
+        <item>D 61d</item>
+    </string-array>
+</resources>

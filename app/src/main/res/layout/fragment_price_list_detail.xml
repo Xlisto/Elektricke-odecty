@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnPlatnost"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:item="@string/nic"
+                    app:label_price_item="@string/sp_datum_platnosti" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnSazba"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/nic"
+                    app:label_price_item="@string/sazba_distribuce" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnDodavatel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/nic"
+                    app:label_price_item="@string/dodavatel" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnProdukt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/nic"
+                    app:label_price_item="@string/produkt" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnUzemi"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/nic"
+                    app:label_price_item="@string/distribucni_uzemi" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldnRada"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item='@string/nic'
+                    app:label_price_item="@string/produktova_rada" >
+
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <TextView
+                android:id="@+id/tvPoznamkaDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/shape_background_red" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="@string/cena_za_dodavku"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_VT_dodavka"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/vt">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <TextView
+                    android:id="@+id/tvPoznamkaVT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_NT_dodavka"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/nt" />
+
+                <TextView
+                    android:id="@+id/tvPoznamkaNT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_staly_plat"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/mesicni_plat" />
+
+                <TextView
+                    android:id="@+id/tvPoznamkaPlat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="@string/cena_za_distribuci"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_VT_distribuce"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/vt2" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_NT_distribuce"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/nt2" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_do_10" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_10">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_16">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_20">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_25">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_32">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_40">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_50">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_63">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J11"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_80">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J12"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_100">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J13"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_mesic"
+                    app:label_price_item="@string/jistic_nad_125" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J14"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_1A"
+                    app:label_price_item="@string/jistic_nad_160" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_1A"
+                    app:label_price_item="@string/jistic_nad_63_za_A">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_J9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_1A"
+                    app:label_price_item="@string/jistic_nad_25_za_A">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="@string/cena_za_ostatni_regulovane_sluzby"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_systemove_sluzby"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/systemove_sluzby" >
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_OTE"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_om"
+                    app:label_price_item="@string/cinnost_operatora_trhu" >
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_POZE1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_1A"
+                    app:label_price_item="@string/poze_dle_jistice" />
+
+                <TextView
+                    android:id="@+id/tvPoznamkaPOZE1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_POZE2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/poze_dle_spotreby">
+
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <TextView
+                    android:id="@+id/tvPoznamkaPOZE2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/shape_monthly_reading_gray"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/dane"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_dan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/kc_MWh"
+                    app:label_price_item="@string/dan_z_elektriny">
+
+                </cz.xlisto.cenik.ownview.LabelPriceDetail>
+
+                <cz.xlisto.cenik.ownview.LabelPriceDetail
+                    android:id="@+id/ldn_DPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    app:item="@string/procent"
+                    app:label_price_item="@string/dph" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+
+

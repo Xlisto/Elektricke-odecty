@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LabelEditText">
+        <attr name="label" format="string" />
+        <attr name="defaultText" format="string" />
+        <attr name="hintText" format="string" />
+        <attr name="android:inputType"/>
+        <attr name="android:imeOptions"/>
+        <attr name="android:layout_width"/>
+        <attr name="android:enabled"/>
+        <attr name="direction" format="enum">
+            <enum name="horizontal" value="1"/>
+            <enum name="vertical" value="0"/>
+        </attr>
+        <attr name="android:maxEms"/>
+        <attr name="android:ems"/>
+        <attr name="android:gravity"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="LabelPriceDetail">
+        <attr name="label_price_item" format="string" />
+        <attr name="price" format="string" />
+        <attr name="item" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="OwnPriceListCompare">
+        <attr name="title" format="string"/>
+        <attr name="separator" format="boolean"/>
+        <attr name="visibleDifferent" format="boolean"/>
+    </declare-styleable>
+</resources>

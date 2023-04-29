@@ -1,0 +1,171 @@
+<resources>
+    <string name="app_name">Ceník</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="datum_cislem">01.01.2022</string>
+    <string name="pomlka">-</string>
+    <string name="platnost_cenik">Platnost OD - DO</string>
+    <string name="dodavatel">Dodavatel</string>
+    <string name="produkt">Produkt</string>
+    <string name="distribucni_uzemi">Distribuční území</string>
+    <string name="produktova_rada">Produktová řada</string>
+    <string name="nuly">000.0</string>
+    <string name="nt">NT</string>
+    <string name="nt2">NT:</string>
+    <string name="vt">VT</string>
+    <string name="vt2">VT:</string>
+    <string name="mesicni_plat">Plat:</string>
+    <string name="cena_za_dodavku">Cena za dodávku elektřiny (neregulovaná)</string>
+    <string name="cena_za_distribuci">Cena za zajištění distribuce elektřiny (regulovaná)</string>
+    <string name="sazba_distribuce">Sazba dist.</string>
+    <string name="d01">D01</string>
+    <string name="mesicni_plat_za_prikon">Měsíční plat v Kč za příkon dle hodnoty hlavního jističe</string>
+    <string name="jistic_do_10">Jistič do 3x10A a do 1x25A včetně</string>
+    <string name="jistic_nad_10">Jistič nad 3x10A a do 3x16A včetně</string>
+    <string name="jistic_nad_16">Jistič nad 3x16A a do 3x20A včetně</string>
+    <string name="jistic_nad_20">Jistič nad 3x20A a do 3x25A včetně</string>
+    <string name="jistic_nad_25">Jistič nad 3x25A a do 3x32A včetně</string>
+    <string name="jistic_nad_32">Jistič nad 3x32A a do 3x40A včetně</string>
+    <string name="jistic_nad_40">Jistič nad 3x40A a do 3x50A včetně</string>
+    <string name="jistic_nad_50">Jistič nad 3x50A a do 3x63A včetně</string>
+    <string name="jistic_nad_63">Jistič nad 3x63A a do 3x80A včetně</string>
+    <string name="jistic_nad_80">Jistič nad 3x80A a do 3x100A včetně</string>
+    <string name="jistic_nad_100">Jistič nad 3x100A a do 3x125A včetně</string>
+    <string name="jistic_nad_125">Jistič nad 3x125A a do 3x160A včetně</string>
+    <string name="jistic_nad_160">Jistič nad 3x160A za A</string>
+    <string name="jistic_nad_63_za_A">Jistič nad 3x63A za A</string>
+    <string name="jistic_nad_25_za_A">Jistič nad 1x25A za A</string>
+    <string name="cena_za_ostatni_regulovane_sluzby">Cena za ostatní regulované služby</string>
+    <string name="systemove_sluzby">Systémové služby</string>
+    <string name="podpora_vykupu_el_z_oze_kvet_a_dz">Podpora výkupu el. z OZE, KVET a DZ</string>
+    <string name="poze_dle_spotreby">POZE dle spotřeby</string>
+    <string name="poze_dle_jistice">POZE dle jističe</string>
+    <string name="cinnost_ote">Činnost OTE</string>
+    <string name="cinnost_operatora_trhu">Čin. oper. trhu</string>
+    <string name="dph">DPH</string>
+    <string name="dan_z_elektriny">Daň z elektřiny</string>
+    <string name="znak_procento">%</string>
+    <string name="zobrazeno_mene">Zobrazeno méně hodnot jističů</string>
+    <string name="zobrazeno_vice">Zobrazeno více hodnot jističů</string>
+    <string name="dane">Daně</string>
+
+    <string name="ulozit">Uložit</string>
+    <string name="zpet">Zpět</string>
+    <string name="pridat">Přidat</string>
+    <string name="vybrat">Vybrat</string>
+
+    <string name="label_for">Label for:</string>
+    <string name="label_edittext">Label EditText</string>
+    <string name="label_price_detail">Detail</string>
+    <string name="label_price_item">ItemPrice</string>
+
+    <string name="description_date_from">Platnost od</string>
+    <string name="description_date_until">Platnost do</string>
+
+    <string name="sp_produktova_rada">Produktová řada</string>
+    <string name="sp_datum_platnosti">Datum platnosti</string>
+    <string name="sp_distribucni_uzemí">Distribuční území</string>
+    <string name="sp_dodavatele">Dodavatele</string>
+    <string name="sp_produkt">Produkt</string>
+
+    <string name="filtr_ceniku">Filtr ceníků</string>
+    <string name="filtr_nastav">Nastav filtr</string>
+    <string name="zrusit">Zrušit</string>
+    <string name="filtr_reset">Resetovat všechny filtry</string>
+
+    <string name="nic"></string>
+    <string name="kc_mesic">Kč/měsíc</string>
+    <string name="kc_MWh">Kč/MWh</string>
+    <string name="kc_1A">Kč za 1A/měsíc</string>
+    <string name="kc_om">Kč za OM/měsíc</string>
+    <string name="procent">%</string>
+
+    <string name="jednotkova_cena">Jednotková cena</string>
+
+    <string name="smazat_cenik">Smazat ceník?</string>
+    <string name="ano">ANO</string>
+    <string name="ne">NE</string>
+
+    <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: </string>
+
+
+    <string name="poznamka_2022">Od října do konce roku je zrušen POZE</string>
+    <string name="poznamka_2023">Na ceník se vztahuje cenový strop VT, NT a zrušení POZE</string>
+    <string name="poznamka_info">Ceník obsahuje poznámku</string>
+
+    <string name="x">X</string>
+    <string name="faze_x_prikon">Fáze x příkon:</string>
+    <string name="jmeno_odberneho_mista">Jméno odběrného místa:</string>
+    <string name="popis">Popis (poznámka) odběrného místa:</string>
+    <string name="pocet_fazi">Počet fází:</string>
+    <string name="max_prikon">Max. příkon:</string>
+    <string name="cislo_elektromeru">Číslo elektroměru:</string>
+    <string name="cislo_odberneho_místa">Číslo odběrného místa:</string>
+    <string name="_3">3</string>
+    <string name="_1">1</string>
+    <string name="_25">25</string>
+    <string name="_0">0</string>
+    <string name="upravit_odberne_misto">Upravit odběrné místo</string>
+    <string name="smazat_odberne_misto">Smazat odběrné místo</string>
+    <string name="smazat_odberne_misto2">Smazat odběrné místo?</string>
+    <string name="vytvorte_odberne_misto">Vytvořte nové odběrné místo</string>
+
+    <string name="kc">Kč</string>
+    <string name="ok">OK</string>
+    <string name="datum">Datum:</string>
+    <string name="tarif">Tarif:</string>
+    <string name="pomlcky">========</string>
+    <string name="zalohy">Záloha</string>
+    <string name="pridejte_mesicni_odecty">Přidejte měsíční odečty</string>
+    <string name="regul_alert">Období obsahuje regulované i neregulované ceny</string>
+    <string name="alert">Varování nekonzistence dat</string>
+
+    <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
+    <string name="prvniOdecet">Prvni odečet</string>
+    <string name="datumOdectu">Datum odečtu: </string>
+    <string name="stavNt">Stav počitadla nízského tarifu: </string>
+    <string name="stavVt">Stav počitadla vysokého tarifu: </string>
+    <string name="pravidelnaZaloha">Pravidelná měsíční platba (záloha): </string>
+    <string name="poznamka">Poznámka:</string>
+    <string name="dalsi_sluzby">Další doplňkové služby nebo slevy:</string>
+    <string name="vyberCenik">Vybrat ceník</string>
+
+    <string name="vyberteCenik">Vyberte ceník</string>
+    <string name="smazat_mesicni_odecet">Smazat měsíční odečet?</string>
+    <string name="dalsi_sluzby2">Další doplňkové služby nebo slevy</string>
+    <string name="podpora_obnovitelnych_zdroju">Podpora obnovitelných zdrojů</string>
+
+    <string name="zjednodusene_zobrazeni">Zjednodušené zobrazení</string>
+    <string name="regulovane_ceny">Regulované ceny</string>
+
+    <string name="logo">LOGO</string>
+    <string name="elektrodroid">ElektroDroid</string>
+
+    <string name="spotreba_vysokeho_tarifu">Spotřeba VYSOKÉHO tarifu [MWh]:</string>
+    <string name="spotreba_nizskeho_tarifu">Spotřeba NÍZSKÉHO tarifu [MWh]:</string>
+    <string name="pocet_mesicu">Počet měsíců:</string>
+    <string name="dalsi_sluzby_neuvedene">Další služby/slevy v ceníku neuvedené:</string>
+    <string name="nastaveni_parametru">Nastavení parametrů pro porovnání</string>
+    <string name="nastavení_vychozich_hodnot">Nastavení výchozích hodnot</string>
+    <string name="souhrn">Souhrn</string>
+    <string name="zobrazit_regulovan_ceny">Zobrazit regulované ceny</string>
+    <string name="cislo">Číslo:</string>
+    <string name="invoice_list">Seznam faktur</string>
+
+    <string name="ikona">ikona</string>
+    <string name="select">Vyber</string>
+    <string name="dash">-</string>
+    <string name="add_permissions">Vyber složku a povol zápis</string>
+
+    <string name="edit">Uprav</string>
+    <string name="cut">Rozděl</string>
+    <string name="cut_record">Rozděl období bez faktury</string>
+    <string name="delete">Smaž</string>
+    <string name="join">Spoj s předchozím</string>
+    <string name="please_wait">Chilku strpení...</string>
+    <string name="backup">Zálohuj</string>
+    <string name="select_folder">Vyber složku</string>
+
+
+</resources>

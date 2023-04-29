@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnSelectPriceList"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/lnButtonsInvoice"
+        android:text="@string/vyberCenik" />
+
+    <LinearLayout
+        android:id="@+id/lnButtonsInvoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnBackInvoice"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/zpet"
+            android:textColor="#D81B60" />
+
+        <Button
+            android:id="@+id/btnSaveInvoice"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ulozit"
+            android:textColor="#D81B60" />
+    </LinearLayout>
+
+    <ScrollView
+
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnSelectPriceList"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/lnButtonsInvoiceDateAddEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnDateStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="Datum" />
+
+                <Button
+                    android:id="@+id/btnDateEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:text="Datum" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lnInvoiceStart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/lnButtonsInvoiceDateAddEdit"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+                <cz.xlisto.cenik.ownview.LabelEditText
+                    android:id="@+id/letVTStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="5"
+                    android:inputType="number|numberDecimal"
+                    android:maxEms="10"
+                    app:hintText="@string/_0"
+                    app:label="Počitadlo VT - začátek" />
+
+                <cz.xlisto.cenik.ownview.LabelEditText
+                    android:id="@+id/letVTEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="5"
+                    android:inputType="number|numberDecimal"
+                    app:hintText="@string/_0"
+                    app:label="Počitadlo VT - konec" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lnInvoiceEnd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/lnInvoiceStart"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical">
+
+
+                <cz.xlisto.cenik.ownview.LabelEditText
+                    android:id="@+id/letNTStart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="5"
+                    android:inputType="number|numberDecimal"
+                    android:maxEms="10"
+                    app:hintText="@string/_0"
+                    app:label="Počitadlo NT - začátek" />
+
+                <cz.xlisto.cenik.ownview.LabelEditText
+                    android:id="@+id/letNTEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="5"
+                    android:inputType="number|numberDecimal"
+                    android:maxEms="10"
+                    app:hintText="@string/_0"
+                    app:label="Počitadlo NT - konec" />
+            </LinearLayout>
+
+
+            <cz.xlisto.cenik.ownview.LabelEditText
+                android:id="@+id/letOtherServices"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/lnInvoiceEnd"
+                android:background="@drawable/shape_item"
+                android:ems="5"
+                android:inputType="number|numberDecimal"
+                android:maxEms="10"
+                app:hintText="@string/_0"
+                app:label="Ostatní služby" />
+
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
+
+

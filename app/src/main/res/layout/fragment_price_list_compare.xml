@@ -1,0 +1,567 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <LinearLayout
+        android:id="@+id/llButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnLeft"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/vyberteCenik"
+            android:textColor="#D81B60" />
+
+        <Button
+            android:id="@+id/btnRight"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/vyberteCenik"
+            android:textColor="#D81B60" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llButtons">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlProduktOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlProduktIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/produktova_rada" />
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcProdukt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTitle"
+                        app:title="@string/produkt" />
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcSazba"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcProdukt"
+                        app:title="@string/sazba_distribuce" />
+
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcDodavatel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcSazba"
+                        app:title="@string/dodavatel" />
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcUzemi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcDodavatel"
+                        app:title="@string/distribucni_uzemi"/>
+
+                    <TextView
+                        android:id="@+id/tvShowRegulPriceTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcUzemi"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/zobrazit_regulovan_ceny" />
+
+                    <LinearLayout
+                        android:id="@+id/lnShowRegulPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvShowRegulPriceTitle"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/viewLeft"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal|center_vertical">
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/swLeft"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginStart="20dp"
+                                android:minHeight="48dp"
+                                android:minWidth="48dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/viewRight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal|center_vertical">
+
+                            <androidx.appcompat.widget.SwitchCompat
+                                android:id="@+id/swRight"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginStart="20dp"
+                                android:minHeight="48dp"
+                                android:minWidth="48dp"
+                                android:visibility="visible" />
+                        </LinearLayout>
+
+
+
+
+                    </LinearLayout>
+
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlNeregulOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlNeregulIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvNeregulDescription"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcVT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/vt" />
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcNT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcVT"
+                        app:title="@string/nt" />
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcNT"
+                        app:title="@string/mesicni_plat"
+                        app:separator="false"/>
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvNeregulDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/cena_za_dodavku" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlRegulOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlRegulIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvRegulDescription"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcVTRegul"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/vt"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcNTRegul"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcVTRegul"
+                        app:title="@string/nt"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcNTRegul"
+                        app:title="@string/jistic_do_10"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ0"
+                        app:title="@string/jistic_nad_10"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ1"
+                        app:title="@string/jistic_nad_16"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ2"
+                        app:title="@string/jistic_nad_20"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ3"
+                        app:title="@string/jistic_nad_25"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ4"
+                        app:title="@string/jistic_nad_32"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ5"
+                        app:title="@string/jistic_nad_40"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ6"
+                        app:title="@string/jistic_nad_50"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ7"
+                        app:title="@string/jistic_nad_63"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ11"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ10"
+                        app:title="@string/jistic_nad_80"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ12"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ11"
+                        app:title="@string/jistic_nad_100"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ13"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ12"
+                        app:title="@string/jistic_nad_125"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ8"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ13"
+                        app:title="@string/jistic_nad_63_za_A"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ8"
+                        app:title="@string/jistic_nad_160"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcJ9"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcJ14"
+                        app:title="@string/jistic_nad_25_za_A"
+                        app:separator="false"/>
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvRegulDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/cena_za_distribuci" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlOtherlOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlOtherIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvOtherDescription"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcSystem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/systemove_sluzby"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcOTE"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcSystem"
+                        app:title="@string/cinnost_ote"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcPOZE1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcOTE"
+                        app:title="@string/poze_dle_jistice"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcPOZE2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcPOZE1"
+                        app:separator="false"
+                        app:title="@string/poze_dle_spotreby"/>
+
+
+
+
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvOtherDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/cena_za_ostatni_regulovane_sluzby" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlTaxationlOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlTaxationIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvTaxationDescription"
+                    android:background="@drawable/shape_item">
+
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTaxation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/dan_z_elektriny"/>
+
+                    <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTaxation"
+                        app:separator="false"
+                        app:title="@string/dph"/>
+
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvTaxationDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/dane" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlResultsOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+            <RelativeLayout
+                android:id="@+id/rlResultsIn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/tvResultsDescription"
+                android:background="@drawable/shape_item">
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalVT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="Celkem VT"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalNT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalVT"
+                    app:title="Celkem NT"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalPayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalNT"
+                    app:title="Celkem stálý plat"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalPoze"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalPayment"
+                    app:title="Celkem POZE"/>
+
+
+
+            </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvResultsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/souhrn" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlResultsDPHOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+            <RelativeLayout
+                android:id="@+id/rlResultsDPHIn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/tvResultsDPHDescription"
+                android:background="@drawable/shape_item">
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalVTDPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="Celkem VT s DPH"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalNTDPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalVTDPH"
+                    app:title="Celkem NT s DPH"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalPaymentDPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalNTDPH"
+                    app:title="Celkem stálý plat s DPH"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalPozeDPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalPaymentDPH"
+                    app:title="Celkem POZE s DPH"/>
+
+                <cz.xlisto.cenik.ownview.OwnPriceListCompare
+                    android:id="@+id/ownprcTotalDPH"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ownprcTotalPozeDPH"
+                    app:separator="false"
+                    app:title="Celkem s DPH"/>
+
+            </RelativeLayout>
+                <TextView
+                    android:id="@+id/tvResultsDPHDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:text="Celkem s DPH" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>
