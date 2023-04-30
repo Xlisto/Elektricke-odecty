@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:imeOptions="flagNoExtractUi"
-    tools:context="cz.xlisto.cenik.MainActivity">
+    tools:context="cz.xlisto.odecty.MainActivity">
 
     <LinearLayout
         android:id="@+id/lnButtonsMonthlyReading"
@@ -51,7 +51,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/shape_item">
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/labDescription"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -60,7 +60,7 @@
 
                     app:label="@string/poznamka" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/labOtherServices"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -133,7 +133,7 @@
                     android:layout_marginStart="5dp"
                     android:text="@string/datumOdectu" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/labVT"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -145,7 +145,7 @@
                     app:hintText="@string/_0"
                     app:label="@string/stavVt" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/labNT"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -156,7 +156,7 @@
                     app:label="@string/stavNt" />
 
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/labPayment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

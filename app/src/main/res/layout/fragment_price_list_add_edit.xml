@@ -146,7 +146,7 @@
 
                 </RelativeLayout>
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivProdukt"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -156,7 +156,7 @@
                     app:hintText="Produkt"
                     app:label="@string/produkt" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivDodavatel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -166,7 +166,7 @@
                     app:direction="vertical"
                     app:label="@string/dodavatel" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivRada"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -200,7 +200,7 @@
                     android:textStyle="bold" />
 
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivNT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/nt2" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivPlat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/mesicni_plat" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivVT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivNT1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -274,7 +274,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/nt2" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivVT1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -323,7 +323,7 @@
                     android:layout_below="@id/swJistic"
                     android:orientation="vertical">
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ0"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -336,7 +336,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_do_10" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -348,7 +348,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_10" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -360,7 +360,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_16" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ3"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -372,7 +372,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_20" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ4"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -384,7 +384,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ5"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -396,7 +396,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_32" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ6"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -408,7 +408,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_40" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -420,7 +420,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_50" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ10"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -432,7 +432,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ11"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -444,7 +444,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_80" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ12"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -456,7 +456,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_100" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ13"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -468,7 +468,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_125" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ14"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -480,7 +480,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_160" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ8"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -492,7 +492,7 @@
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63_za_A" />
 
-                    <cz.xlisto.cenik.ownview.LabelEditText
+                    <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/ivJ9"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -529,7 +529,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivOTE"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -542,7 +542,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/cinnost_ote" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivCinnostOperaatoraTrhu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -556,7 +556,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/cinnost_operatora_trhu" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivOZE"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -569,7 +569,7 @@
                     app:hintText="@string/nuly"
                     app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz" />
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivPOZE1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -581,9 +581,9 @@
                     app:hintText="@string/nuly"
                     app:label="@string/poze_dle_jistice">
 
-                </cz.xlisto.cenik.ownview.LabelEditText>
+                </cz.xlisto.odecty.ownview.LabelEditText>
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivPOZE2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -611,7 +611,7 @@
                     android:text="POZE dle jističe" />-->
 
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivSystemoveSluzby"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -632,7 +632,7 @@
                 android:layout_marginTop="2dp"
                 android:background="@drawable/shape_item">
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivDan"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -643,9 +643,9 @@
                     app:hintText="@string/nuly"
                     app:label="@string/dan_z_elektriny">
 
-                </cz.xlisto.cenik.ownview.LabelEditText>
+                </cz.xlisto.odecty.ownview.LabelEditText>
 
-                <cz.xlisto.cenik.ownview.LabelEditText
+                <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivDPH"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

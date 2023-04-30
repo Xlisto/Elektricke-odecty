@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <cz.xlisto.cenik.ownview.LabelEditText
+    <cz.xlisto.odecty.ownview.LabelEditText
         android:id="@+id/letNumberInvoice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

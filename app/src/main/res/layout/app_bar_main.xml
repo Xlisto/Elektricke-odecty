@@ -8,7 +8,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="cz.xlisto.cenik.modules.subscriptionpoint.SubscriptionPointFragment"
+        android:name="cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottomNavigation"
@@ -19,14 +19,14 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Cenik.AppBarOverlay">
+        android:theme="@style/Theme.Odecty.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/color_bar"
-            app:popupTheme="@style/Theme.Cenik.PopupOverlay" />
+            app:popupTheme="@style/Theme.Odecty.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

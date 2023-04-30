@@ -72,7 +72,7 @@
                     android:text="@string/max_prikon" />
             </RelativeLayout>
 
-            <cz.xlisto.cenik.ownview.LabelEditText
+            <cz.xlisto.odecty.ownview.LabelEditText
                 android:id="@+id/letDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,9 +82,9 @@
                 app:direction="vertical"
                 app:label="@string/popis">
 
-            </cz.xlisto.cenik.ownview.LabelEditText>
+            </cz.xlisto.odecty.ownview.LabelEditText>
 
-            <cz.xlisto.cenik.ownview.LabelEditText
+            <cz.xlisto.odecty.ownview.LabelEditText
                 android:id="@+id/letName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,9 +96,9 @@
                 app:direction="vertical"
                 app:label="@string/jmeno_odberneho_mista">
 
-            </cz.xlisto.cenik.ownview.LabelEditText>
+            </cz.xlisto.odecty.ownview.LabelEditText>
 
-            <cz.xlisto.cenik.ownview.LabelEditText
+            <cz.xlisto.odecty.ownview.LabelEditText
                 android:id="@+id/letElektrometer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
                 app:direction="vertical"
                 app:label="@string/cislo_elektromeru" />
 
-            <cz.xlisto.cenik.ownview.LabelEditText
+            <cz.xlisto.odecty.ownview.LabelEditText
                 android:id="@+id/letSebdescriptionPoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
