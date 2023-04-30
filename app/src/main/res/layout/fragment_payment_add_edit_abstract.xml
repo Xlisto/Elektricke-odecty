@@ -43,14 +43,14 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/shape_item"
             android:orientation="vertical">
+
             <cz.xlisto.cenik.ownview.LabelEditText
                 android:id="@+id/labPayment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="numberDecimal"
                 app:direction="vertical"
-                app:hintText="@string/_0"
-                app:label="@string/nic" />
+                app:hintText="@string/_0" />
         </LinearLayout>
 
 

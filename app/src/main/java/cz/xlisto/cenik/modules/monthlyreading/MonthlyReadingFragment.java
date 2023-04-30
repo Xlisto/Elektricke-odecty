@@ -1,7 +1,18 @@
 package cz.xlisto.cenik.modules.monthlyreading;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.transition.TransitionManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,33 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.cenik.R;
 import cz.xlisto.cenik.databaze.DataSubscriptionPointSource;
-import cz.xlisto.cenik.dialogs.YesNoDialogFragment;
 import cz.xlisto.cenik.models.MonthlyReadingModel;
 import cz.xlisto.cenik.models.SubscriptionPointModel;
-import cz.xlisto.cenik.modules.invoice.WithOutInvoiceService;
-import cz.xlisto.cenik.ownview.ContextMenuRecyclerView;
 import cz.xlisto.cenik.shp.ShPMonthlyReading;
 import cz.xlisto.cenik.utils.FragmentChange;
 import cz.xlisto.cenik.utils.SubscriptionPoint;
-
-import android.os.Parcelable;
-import android.transition.TransitionManager;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
-import android.widget.TextView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import java.util.ArrayList;
 
 import static cz.xlisto.cenik.shp.ShPMonthlyReading.REGUL_PRICE;
 import static cz.xlisto.cenik.shp.ShPMonthlyReading.SHORT_LIST;
@@ -123,7 +112,7 @@ public class MonthlyReadingFragment extends Fragment {
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
 
-        subscriptionPointName.setText(R.string.nic);
+        subscriptionPointName.setText("");
 
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));

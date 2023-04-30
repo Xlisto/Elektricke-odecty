@@ -30,7 +30,6 @@
                     android:id="@+id/ldnPlatnost"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:item="@string/nic"
                     app:label_price_item="@string/sp_datum_platnosti" />
             </LinearLayout>
         </LinearLayout>
@@ -55,7 +54,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    app:item="@string/nic"
                     app:label_price_item="@string/sazba_distribuce" />
 
                 <cz.xlisto.cenik.ownview.LabelPriceDetail
@@ -64,7 +62,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    app:item="@string/nic"
                     app:label_price_item="@string/dodavatel" />
 
                 <cz.xlisto.cenik.ownview.LabelPriceDetail
@@ -73,7 +70,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    app:item="@string/nic"
                     app:label_price_item="@string/produkt" />
 
                 <cz.xlisto.cenik.ownview.LabelPriceDetail
@@ -82,7 +78,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    app:item="@string/nic"
                     app:label_price_item="@string/distribucni_uzemi" />
 
                 <cz.xlisto.cenik.ownview.LabelPriceDetail
@@ -91,8 +86,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    app:item='@string/nic'
-                    app:label_price_item="@string/produktova_rada" >
+                    app:label_price_item="@string/produktova_rada">
 
 
                 </cz.xlisto.cenik.ownview.LabelPriceDetail>

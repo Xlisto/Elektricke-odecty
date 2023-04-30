@@ -79,7 +79,6 @@
                 android:layout_below="@id/letName"
                 android:layout_marginBottom="5dp"
                 android:inputType="text"
-                app:defaultText="@string/nic"
                 app:direction="vertical"
                 app:label="@string/popis">
 
@@ -94,7 +93,6 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:inputType="text"
-                app:defaultText="@string/nic"
                 app:direction="vertical"
                 app:label="@string/jmeno_odberneho_mista">
 
@@ -107,7 +105,6 @@
                 android:layout_below="@id/rlFaze"
                 android:layout_marginBottom="5dp"
                 android:inputType="text"
-                app:defaultText="@string/nic"
                 app:direction="vertical"
                 app:label="@string/cislo_elektromeru" />
 
@@ -117,7 +114,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/letElektrometer"
                 android:inputType="number"
-                app:defaultText="@string/nic"
                 app:direction="vertical"
                 app:label="@string/cislo_odberneho_místa" />
         </RelativeLayout>
