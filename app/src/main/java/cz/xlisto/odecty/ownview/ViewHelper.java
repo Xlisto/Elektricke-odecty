@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.ownview;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -107,7 +108,7 @@ public class ViewHelper {
      * @param l datum v milisekundách
      * @return long - offset v milisekundách pro dané datum
      */
-    private static long getOffsetTimezones(long l) {
+    public static long getOffsetTimezones(long l) {
         long offsetDef = TimeZone.getDefault().getOffset(l)*(-1);
         long offsetPra = TimeZone.getTimeZone("Europe/Prague").getOffset(l);
 

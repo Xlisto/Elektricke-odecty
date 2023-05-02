@@ -93,6 +93,10 @@ public class InvoiceModel {
         this.id = id;
     }
 
+    public void setIdPriceList(long idPriceList) {
+        this.idPriceList = idPriceList;
+    }
+
     /**
      * Spotřeba vysokého tarifu
      * @return

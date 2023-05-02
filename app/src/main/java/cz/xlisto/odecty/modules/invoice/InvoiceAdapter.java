@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -255,7 +256,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      *
      * @param id ID položky, kterou chceme smazat z databáze
      */
-    private void deleteItem(long id,int position) {
+    private void deleteItem(long id, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteInvoice(id, table);
@@ -263,7 +264,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         showButtons = -1;
         items.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position-1, getItemCount());
+        notifyItemRangeChanged(position - 1, getItemCount());
         WithOutInvoiceService.editFirstItemInInvoice(context);
     }
 
@@ -297,19 +298,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             nextDate = ViewHelper.convertLongToTime(nextInvoice.getDateFrom() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
             nextVt = nextInvoice.getVtStart();
             nextNt = nextInvoice.getNtStart();
-            //Log.w(TAG, "Invoice date 2: " + ViewHelper.convertLongToTime(invoice.getDateTo()) + " " + ViewHelper.convertLongToTime(nextInvoice.getDateOf() - (24 * 60 * 60 * 1000)));
         } else {
             nextDate = dateTo;
             nextVt = vtEnd;
             nextNt = ntEnd;
-            //Log.w(TAG, "Invoice date  :" + prevDate + " " + nextDate);
         }
         if (position < items.size() - 1) {
             prevInvoice = items.get(position + 1);
             prevDate = ViewHelper.convertLongToTime(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimného času
             prevVt = prevInvoice.getVtEnd();
             prevNt = prevInvoice.getNtEnd();
-            //Log.w(TAG, "Invoice date 1: " + ViewHelper.convertLongToTime(invoice.getDateOf()) + " " + ViewHelper.convertLongToTime(prevInvoice.getDateTo() + (24 * 60 * 60 * 1000)));
         } else {
             prevDate = dateOf;
             prevVt = vtStart;
@@ -322,29 +320,30 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         setTextAlertColor(holder.vtEnd, vtEnd == nextVt);
         setTextAlertColor(holder.ntStart, ntStart == prevNt);
         setTextAlertColor(holder.ntEnd, ntEnd == nextNt);
-        //Log.w(TAG, "Invoice vt: " + vtStart + "=" + prevVt + " ; " + vtEnd + "=" + nextVt);
 
-        //zobrezení ikony alertu
+        //zobrazení ikony alertu
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && vtStart == prevVt && vtEnd == nextVt && ntStart == prevNt && ntEnd == nextNt && !isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
             holder.imgAlert.setVisibility(View.GONE);
         } else {
+            //zobrazení varovného vykřičníku
             holder.imgAlert.setVisibility(View.VISIBLE);
-            Toast.makeText(context, "Zvýrazněné záznamy na sebe nenavazují", Toast.LENGTH_LONG).show();
-        }
-        //zobrezení varovného textu
-        if (!isOverDateRegulPrice(priceListRegulBuilder, invoice))
-            holder.tvAlert.setVisibility(View.GONE);
-        else {
-            holder.tvAlert.setVisibility(View.VISIBLE);
-            holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_no));
+
+            //zobrazení varovného textu na období státních regulací
+            if (!isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
+                holder.tvAlert.setVisibility(View.GONE);
+            } else {
+                holder.tvAlert.setVisibility(View.VISIBLE);
+                holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_no));
+            }
         }
     }
+
 
     /**
      * Zkontroluje období odečtu s obdobím termínů úlev. Pokud se překrývají vrátí true
      *
      * @param priceListRegulBuilder Ceník s regulovanými cenami
-     * @param invoice              Faktura
+     * @param invoice               Faktura
      * @return true pokud se období překrývají
      */
     private boolean isOverDateRegulPrice(PriceListRegulBuilder
@@ -353,6 +352,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         long endRegulPrice = priceListRegulBuilder.getDateEnd();
         long dateStartMonthlyReading = invoice.getDateFrom();
         long dateEndMonthlyReading = invoice.getDateTo();
+        long offsetStart = ViewHelper.getOffsetTimezones(startRegulPrice);
+        long offsetEnd = ViewHelper.getOffsetTimezones(endRegulPrice);
+        startRegulPrice -= offsetStart;
+        endRegulPrice -= offsetEnd;
+
         //Začátek regulace musí být větší  než začátek odečtu a zároveň začátek regulace menší nebo roven než konec odečtu
         //nebo
         //Konec regulace musí být větší či rovno než začátek měsíčního odečtu a zároveň konec regulace musí být menší než konce měsíčního odečtu

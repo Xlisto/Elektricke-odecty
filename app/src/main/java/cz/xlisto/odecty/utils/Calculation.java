@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,6 +17,7 @@ import static cz.xlisto.odecty.models.PozeModel.TypePoze.POZE1;
 import static cz.xlisto.odecty.models.PriceListModel.NEW_POZE_YEAR;
 
 public class Calculation {
+    public static final String TAG = "Calculation";
     private static int faze = 3;
     private static int prikon = 25;
 
@@ -178,6 +180,7 @@ public class Calculation {
 
     /**
      * Výpočet POZE dle jeho typu (podle spotřeby nebo podle jističe)
+     *
      * @param priceList
      * @param countPhaze
      * @param power
@@ -201,14 +204,17 @@ public class Calculation {
      * @return objekt PozeModel
      */
     public static PozeModel getPoze(PriceListModel priceList, double countPhaze, double power, double consuption, double month) {
-        double poze2 = priceList.getPoze2() * consuption;
+        double poze2 = 0;
+        double poze1 = 0;
         double phaze = countPhaze * power;
-        double poze1 = phaze * priceList.getPoze1() * month;
+        poze2 = priceList.getPoze2() * consuption;
+        poze1 = phaze * priceList.getPoze1() * month;
         if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
             poze2 = priceList.getOze() * consuption;
             poze1 = poze2;
         }
-        //return new double[]{poze1, poze2};
+
+
         return new PozeModel(poze1, poze2);
     }
 
