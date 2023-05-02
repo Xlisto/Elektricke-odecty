@@ -87,7 +87,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
 
                 DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
                 dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.updateInvoice(id, table, createInvoice(id));
+                dataSubscriptionPointSource.updateInvoice(id, table, createInvoice(id,selectedIdPrice));
                 dataSubscriptionPointSource.close();
                 Keyboard.hide(getActivity());
                 WithOutInvoiceService.editFirstItemInInvoice(getActivity());

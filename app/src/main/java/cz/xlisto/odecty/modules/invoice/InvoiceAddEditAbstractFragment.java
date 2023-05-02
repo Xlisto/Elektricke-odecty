@@ -187,9 +187,10 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         );
     }
 
-    InvoiceModel createInvoice(long id) {
+    InvoiceModel createInvoice(long id, long idPriceList) {
         InvoiceModel invoice = createInvoice();
         invoice.setId(id);
+        invoice.setIdPriceList(idPriceList);
         return invoice;
     }
 
