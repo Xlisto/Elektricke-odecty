@@ -6,13 +6,13 @@ import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,14 +38,11 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  */
 public class MonthlyReadingFragment extends Fragment {
     private final String TAG = getClass().getName() + " ";
-    private FloatingActionButton fab;
     private SubscriptionPointModel subscriptionPoint;
-    private TextView subscriptionPointName, tvAlert;
+    private TextView tvAlert;
     private RecyclerView rv;
     private SwitchMaterial swSimplyView, swRegulPrice;
     private ShPMonthlyReading shPMonthlyReading;
-    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
-    private Bundle saved;
     private MonthlyReadingAdapter monthlyReadingAdapter;
 
 
@@ -53,10 +50,6 @@ public class MonthlyReadingFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public MonthlyReadingFragment() {
         // Required empty public constructor
@@ -83,10 +76,7 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
         setHasOptionsMenu(true);
     }
 
@@ -103,10 +93,9 @@ public class MonthlyReadingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         shPMonthlyReading = new ShPMonthlyReading(getActivity());
-        saved = savedInstanceState;
 
-        fab = view.findViewById(R.id.fab);
-        subscriptionPointName = view.findViewById(R.id.tvSubscriptionPointName);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        TextView subscriptionPointName = view.findViewById(R.id.tvSubscriptionPointName);
         swSimplyView = view.findViewById(R.id.swSimplyView);
         swRegulPrice = view.findViewById(R.id.swRegulPrice);
         rv = view.findViewById(R.id.rvMonthlyReading);
@@ -116,27 +105,21 @@ public class MonthlyReadingFragment extends Fragment {
 
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
-        swSimplyView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                TransitionManager.beginDelayedTransition(rv);
-                Parcelable out = rv.getLayoutManager().onSaveInstanceState();
-                shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
-                monthlyReadingAdapter.showSimpleView(isChecked);
-                //onResume();
-                rv.getLayoutManager().onRestoreInstanceState(out);
-            }
+        swSimplyView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            TransitionManager.beginDelayedTransition(rv);
+            Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+            shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
+            monthlyReadingAdapter.showSimpleView(isChecked);
+
+            rv.getLayoutManager().onRestoreInstanceState(out);
         });
-        swRegulPrice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rv != null) {
-                    Parcelable out = rv.getLayoutManager().onSaveInstanceState();
-                    shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
-                    //onResume();
-                    monthlyReadingAdapter.setShowRegulPrice(isChecked);
-                    rv.getLayoutManager().onRestoreInstanceState(out);
-                }
+        swRegulPrice.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (rv != null) {
+                Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+                shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
+
+                monthlyReadingAdapter.setShowRegulPrice(isChecked);
+                rv.getLayoutManager().onRestoreInstanceState(out);
             }
         });
 
@@ -147,20 +130,17 @@ public class MonthlyReadingFragment extends Fragment {
             fab.setVisibility(View.GONE);
         }
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MonthlyReadingAddFragment monthlyReadingAddFragment = MonthlyReadingAddFragment
-                        .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
-                FragmentChange.replace(getActivity(), monthlyReadingAddFragment, MOVE, true);
-            }
+        fab.setOnClickListener(v -> {
+            MonthlyReadingAddFragment monthlyReadingAddFragment = MonthlyReadingAddFragment
+                    .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
+            FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
         });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ArrayList<MonthlyReadingModel> monthlyReadings = null;
+        ArrayList<MonthlyReadingModel> monthlyReadings;
         tvAlert.setVisibility(View.VISIBLE);
 
         if (subscriptionPoint != null) {
@@ -171,7 +151,7 @@ public class MonthlyReadingFragment extends Fragment {
 
             monthlyReadingAdapter = new MonthlyReadingAdapter(getActivity(), monthlyReadings,
                     subscriptionPoint,
-                    swSimplyView.isChecked(), swRegulPrice.isChecked(), rv, null, null);
+                    swSimplyView.isChecked(), swRegulPrice.isChecked(), rv);
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             rv.setAdapter(monthlyReadingAdapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -186,13 +166,6 @@ public class MonthlyReadingFragment extends Fragment {
             }
         } else {
             tvAlert.setText(getResources().getString(R.string.vytvorte_odberne_misto));
-        }
-    }
-
-    private void restor() {
-        if (saved != null) {
-            Parcelable savedRecyclerLayoutState = saved.getParcelable(BUNDLE_RECYCLER_LAYOUT);
-            rv.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
         }
     }
 

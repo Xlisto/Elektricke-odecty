@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,20 +37,18 @@ import cz.xlisto.odecty.utils.FragmentChange;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
-    private final String TAG = getClass().getName() + " ";
-    private OnClickItemListener onClickItemListener;
-    private OnLongClickItemListener onLongClickItemListener;
-    private Context context;
-    private ArrayList<MonthlyReadingModel> items;
+    private static final String TAG = Class.class.getSimpleName();
+    private final Context context;
+    private final ArrayList<MonthlyReadingModel> items;
     private boolean simplyView, showRegulPrice;
-    private SubscriptionPointModel subscriptionPoint;
-    private RecyclerView recyclerView;
+    private final SubscriptionPointModel subscriptionPoint;
+    private final RecyclerView recyclerView;
     private int showButtons = -1;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout rootRelativeLayout, rl3;
         LinearLayout lnButtons;
-        TextView tvDate, tvVt, tvNt, tvPayment, tvDescription, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth,
+        TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth,
                 tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNtDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice;
         ImageView ivIconResult, ivWarning;
         Button btnEdit, btnDelete;
@@ -62,9 +59,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
     //konstruktor
-    public MonthlyReadingAdapter(Context context, ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView, OnClickItemListener onClickItemListener, OnLongClickItemListener onLongClickItemListener) {
-        this.onClickItemListener = onClickItemListener;
-        this.onLongClickItemListener = onLongClickItemListener;
+    public MonthlyReadingAdapter(Context context, ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
         this.context = context;
         this.items = items;
         this.simplyView = simplyView;
@@ -106,13 +101,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         vh.tvAlertRegulPrice = v.findViewById(R.id.tvAlertRegulPrice);
         vh.btnEdit = v.findViewById(R.id.btnEditMonthlyItem);
         vh.btnDelete = v.findViewById(R.id.btnDeleteMonthlyItem);
-        //vh.tvDescription = v.findViewById(R.id.tvPo);
         return vh;
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final MonthlyReadingModel monthlyReading = items.get(position);
         MonthlyReadingModel monthlyReadingPrevious;
 
@@ -136,11 +130,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
         //výpočet
         if ((position + 1) < items.size()) {
-            String discoutDescription = " Kč s DPH";
-            double vtDif = monthlyReading.getVt() - items.get(position + 1).getVt();
-            double ntDif = monthlyReading.getNt() - items.get(position + 1).getNt();
+            String differenceDescription = " Kč s DPH";
+            double vtDiff = monthlyReading.getVt() - items.get(position + 1).getVt();
+            double ntDiff = monthlyReading.getNt() - items.get(position + 1).getNt();
             double[] prices = new double[]{0, 0, 0, 0};
-            double month = 0;
+            double month;
             double monthPrice = 0;
             double total = 0;
             double different = 0;
@@ -169,20 +163,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                         holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
                     }
 
-
-                    /*if (!priceListRegulBuilder.isRegulPrice()) {
-                        holder.ivWarning.setVisibility(View.GONE);
-                        holder.tvAlertRegulPrice.setVisibility(View.GONE);
-                    }*/
-
                 }
                 prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);
                 monthPrice = month * prices[2];
-                total = monthPrice + (prices[0] * vtDif) + (prices[1] * ntDif) + prices[3] * (vtDif + ntDif) + items.get(position).getOtherServices();
-                double discout = monthlyReading.getDiscountDPH();
-                if (discout > 0)
-                    discoutDescription = " Kč se slevou DPH";
-                total = total + (total * priceList.getDph() / 100) - discout;
+                total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();
+                double difference = monthlyReading.getDifferenceDPH();
+                if (difference > 0)
+                    differenceDescription = " Kč se slevou DPH";
+                total = total + (total * priceList.getDph() / 100) - difference;
                 different = monthlyReading.getPayment() - total;
             }
             String color = "red";
@@ -195,72 +183,57 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
 
             holder.ivIconResult.setImageResource(imageResource);
-            holder.tvVtDif.setText(DecimalFormatHelper.df2.format(vtDif) + " kWh");
-            holder.tvNtDif.setText(DecimalFormatHelper.df2.format(ntDif) + " kWh");
-            holder.tvVtPrice.setText(DecimalFormatHelper.df2.format(prices[0] * vtDif) + " Kč");
-            holder.tvNtPrice.setText(DecimalFormatHelper.df2.format(prices[1] * ntDif) + " Kč");
-            holder.tvPozePrice.setText(DecimalFormatHelper.df2.format(prices[3] * (vtDif + ntDif)) + " Kč");
+            holder.tvVtDif.setText(DecimalFormatHelper.df2.format(vtDiff) + " kWh");
+            holder.tvNtDif.setText(DecimalFormatHelper.df2.format(ntDiff) + " kWh");
+            holder.tvVtPrice.setText(DecimalFormatHelper.df2.format(prices[0] * vtDiff) + " Kč");
+            holder.tvNtPrice.setText(DecimalFormatHelper.df2.format(prices[1] * ntDiff) + " Kč");
+            holder.tvPozePrice.setText(DecimalFormatHelper.df2.format(prices[3] * (vtDiff + ntDiff)) + " Kč");
             holder.tvNextServicesPrice.setText(DecimalFormatHelper.df2.format(items.get(position).getOtherServices()) + " Kč");
             holder.tvMonth.setText(Html.fromHtml("Počet měsíců: <b>" + (DecimalFormatHelper.df3.format(month))));
             holder.tvMonthPrice.setText(DecimalFormatHelper.df2.format(monthPrice) + " Kč");
-            holder.tvTotalPrice.setText(Html.fromHtml("Celkem: <b>" + DecimalFormatHelper.df2.format(total) + "</b>" + discoutDescription));
+            holder.tvTotalPrice.setText(Html.fromHtml("Celkem: <b>" + DecimalFormatHelper.df2.format(total) + "</b>" + differenceDescription));
             holder.tvDifferentPrice.setText(Html.fromHtml("Rozdíl: <b><font color=\"" + color + "\">" + DecimalFormatHelper.df2.format(different) + "</b> Kč"));
         }
 
-        holder.rootRelativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                v.showContextMenu();
-                return true;
-            }
+        holder.rootRelativeLayout.setOnLongClickListener(v -> {
+            v.showContextMenu();
+            return true;
         });
 
-        holder.rootRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (showButtons >= 0) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                    if (viewHolder != null)
-                        viewHolder.itemView.findViewById(R.id.lnButtonsMonthlyItem).setVisibility(View.GONE);
-                }
-
-                TransitionManager.beginDelayedTransition(recyclerView);
-                if (showButtons >= 0 && showButtons == position) {
-                    showButtons = -1;
-                } else {
-                    showButtons = position;
-                }
-                showButtons(holder, position);
+        holder.rootRelativeLayout.setOnClickListener(v -> {
+            if (showButtons >= 0) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                if (viewHolder != null)
+                    viewHolder.itemView.findViewById(R.id.lnButtonsMonthlyItem).setVisibility(View.GONE);
             }
+
+            TransitionManager.beginDelayedTransition(recyclerView);
+            if (showButtons >= 0 && showButtons == position) {
+                showButtons = -1;
+            } else {
+                showButtons = position;
+            }
+            showButtons(holder, position);
         });
 
         showButtons(holder, position);
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MonthlyReadingEditFragment monthlyReadingEditFragment = MonthlyReadingEditFragment.newInstance(
-                        subscriptionPoint.getTableO(),
-                        subscriptionPoint.getTablePLATBY(),
-                        monthlyReading.getId());
-                FragmentChange.replace((FragmentActivity) context, monthlyReadingEditFragment, MOVE, true);
-            }
+        holder.btnEdit.setOnClickListener(v -> {
+            MonthlyReadingEditFragment monthlyReadingEditFragment = MonthlyReadingEditFragment.newInstance(
+                    subscriptionPoint.getTableO(),
+                    subscriptionPoint.getTablePLATBY(),
+                    monthlyReading.getId());
+            FragmentChange.replace((FragmentActivity) context, monthlyReadingEditFragment, MOVE, true);
         });
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                        new YesNoDialogFragment.OnDialogResult() {
-                            @Override
-                            public void onResult(boolean b) {
-                                if (b) {
-                                    deleteMonthlyReading(monthlyReading.getId(),position);
-                                }
-                            }
-                        }, context.getResources().getString(R.string.smazat_mesicni_odecet));
-                yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
-            }
+        holder.btnDelete.setOnClickListener(v -> {
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                    b -> {
+                        if (b) {
+                            deleteMonthlyReading(monthlyReading.getId(), position);
+                        }
+                    }, context.getResources().getString(R.string.smazat_mesicni_odecet));
+            yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
         if (monthlyReading.isFirst()) {
@@ -363,7 +336,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     /**
      * Zkontroluje období, zdali neobsahuje současně regulovanou a neregulovanou cenu
      *
-     * @return
+     * @return boolean true - obsahuje, false - neobsahuje
      */
     private boolean isOverDateRegulPrice(PriceListRegulBuilder priceListRegulBuilder, MonthlyReadingModel monthlyReading, MonthlyReadingModel monthlyReadingPrevious) {
         long startRegulPrice = priceListRegulBuilder.getDateStart();
@@ -373,14 +346,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         //Začátek regulace musí být větší  než začátek odečtu a zároveň začátek regulace menší nebo roven než konec odečtu
         //nebo
         //Konec regulace musí být větší či rovno než začátek měsíčního odečtu a zároveň konec regulace musí být menší než konce měsíčního odečtu
-        if (
-                ((startRegulPrice > dateStartMonthlyReading) && (startRegulPrice <= dateEndMonthlyReading))
-                        || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return ((startRegulPrice > dateStartMonthlyReading) && (startRegulPrice <= dateEndMonthlyReading))
+                || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading));
     }
 
     private void showButtons(MyViewHolder holder, int position) {
@@ -394,12 +361,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
     /**
-     * Nastaví boolena pro zobtazení/skrytí rozšířených dat
-     *
-     * @param b
+     * Nastaví boolean pro zobtazení/skrytí rozšířených dat
      */
     public void showSimpleView(boolean b) {
-        Log.w("TAG", "Simply view " + b);
         this.simplyView = b;
         notifyDataSetChanged();
     }
@@ -407,7 +371,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     /**
      * Nastaví boolean pro zobrazení/skrytí regulovaných cen
      *
-     * @param b
      */
     public void setShowRegulPrice(boolean b) {
         this.showRegulPrice = b;
@@ -424,24 +387,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         showButtons = -1;
         items.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position-1, getItemCount());
+        notifyItemRangeChanged(position - 1, getItemCount());
         WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
     }
-
-    public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
-        this.onClickItemListener = onClickItemListener;
-    }
-
-    public interface OnClickItemListener {
-        void setClickItemListener(long id);
-
-        //void setClickMonthlyReadingListener(MonthlyReadingModel monthlyReading);
-    }
-
-    public interface OnLongClickItemListener {
-        void setLongClickItemListener(long id);
-    }
-
-
-
 }

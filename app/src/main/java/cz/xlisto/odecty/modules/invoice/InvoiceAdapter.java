@@ -44,7 +44,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private final Context context;
     private final ArrayList<InvoiceModel> items;
     private final String table;
-    private final long id_fak;
     private InvoiceAdapterListener reloadData;
     private final SubscriptionPointModel subScriptionPoint;
     private final RecyclerView recyclerView;
@@ -71,12 +70,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
     }
 
-    public InvoiceAdapter(Context context, ArrayList<InvoiceModel> items, String table, long id_fak, SubscriptionPointModel subscriptionPoint, PozeModel.TypePoze typePoze, RecyclerView recyclerView) {
+    public InvoiceAdapter(Context context, ArrayList<InvoiceModel> items, String table, SubscriptionPointModel subscriptionPoint, PozeModel.TypePoze typePoze, RecyclerView recyclerView) {
         this.context = context;
         this.items = items;
         this.table = table;
-        this.id_fak = id_fak;
-        this.reloadData = reloadData;
         this.subScriptionPoint = subscriptionPoint;
         this.recyclerView = recyclerView;
         this.typePoze = typePoze;
@@ -128,7 +125,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         priceList = dataPriceListSource.readPrice(invoice.getIdPriceList());
         dataPriceListSource.close();
 
-        hideNt(holder, priceList.getSazba().equals("D 01d") || priceList.getSazba().equals("D 02d"));
+        hideNt(holder, priceList.getSazba().equals(InvoiceAbstract.D01) || priceList.getSazba().equals(InvoiceAbstract.D02));
 
         //nastavení datumu odečtu
         Calendar calendar = Calendar.getInstance();
@@ -176,62 +173,44 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.tvPriceTotalDPH.setText(DecimalFormatHelper.df2.format(totalDPH) + " kč s DPH");
 
 
-        holder.itemInvoice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (showButtons >= 0) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                    if (viewHolder != null) {
-                        viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem).setVisibility(View.GONE);
-                        viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem2).setVisibility(View.GONE);
-                    }
+        holder.itemInvoice.setOnClickListener(v -> {
+            if (showButtons >= 0) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                if (viewHolder != null) {
+                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem).setVisibility(View.GONE);
+                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem2).setVisibility(View.GONE);
                 }
-                if (showButtons == position)
-                    showButtons = -1;
-                else
-                    showButtons = position;
-
-                showButtons(holder, invoice, position);
             }
+            if (showButtons == position)
+                showButtons = -1;
+            else
+                showButtons = position;
+
+            showButtons(holder, invoice, position);
         });
 
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InvoiceEditFragment invoiceEditFragment = InvoiceEditFragment.newInstance(table, invoice.getId());
-                FragmentChange.replace((FragmentActivity) context, invoiceEditFragment, FragmentChange.Transaction.MOVE, true);
-            }
+        holder.btnEdit.setOnClickListener(v -> {
+            InvoiceEditFragment invoiceEditFragment = InvoiceEditFragment.newInstance(table, invoice.getId());
+            FragmentChange.replace((FragmentActivity) context, invoiceEditFragment, FragmentChange.Transaction.MOVE, true);
         });
 
-        holder.btnCut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getVtStart(), invoice.getVtEnd(), invoice.getNtStart(), invoice.getNtEnd(), showNT, priceList.getId(), invoice.getId(), invoice.getOtherServices(), table);
-                invoiceCutDialogFragment.setOnCutListener(b -> {
-                    if (b) {
-                        notifyDataSetChanged();
-                        reloadData.onUpdateData();
-                    }
+        holder.btnCut.setOnClickListener(v -> {
+            InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),
+                    invoice.getVtStart(), invoice.getVtEnd(), invoice.getNtStart(), invoice.getNtEnd(), showNT, priceList.getId(), invoice.getId(), invoice.getOtherServices(), table);
+            invoiceCutDialogFragment.setOnCutListener(b -> {
+                if (b) {
+                    notifyDataSetChanged();
+                    reloadData.onUpdateData();
+                }
 
-                });
-                invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
-            }
+            });
+            invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                YesNoDialogFragment.newInstance(new YesNoDialogFragment.OnDialogResult() {
-                    @Override
-                    public void onResult(boolean b) {
-                        if (b)
-                            deleteItem(invoice.getId(), position);
-                    }
-                }, "Smazat záznam z faktury").show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
-
-            }
-        });
+        holder.btnDelete.setOnClickListener(v -> YesNoDialogFragment.newInstance(b -> {
+            if (b)
+                deleteItem(invoice.getId(), position);
+        }, "Smazat záznam z faktury").show(((FragmentActivity) context).getSupportFragmentManager(), TAG));
 
         holder.lnButtons.setVisibility(View.GONE);
         holder.lnButtons2.setVisibility(View.GONE);
@@ -261,7 +240,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         TransitionManager.beginDelayedTransition(recyclerView);
         if (showButtons == position) {
             holder.lnButtons.setVisibility(View.VISIBLE);
-            //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktity
+            //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktury
             if (invoice.getIdInvoice() == -1L) {
                 holder.lnButtons2.setVisibility(View.VISIBLE);
             }
@@ -299,13 +278,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      *
      * @param position aktuální pozice záznamu
      * @param holder   aktuální záznam
-     * @return
      */
     private void checkDate(int position, MyViewHolder holder, PriceListRegulBuilder
             priceListRegulBuilder) {
         InvoiceModel invoice, prevInvoice, nextInvoice;
-        String dateOf, dateTo, prevDate = "", nextDate = "";
-        double vtStart, ntStart, vtEnd, ntEnd, prevVt = 0, prevNt = 0, nextVt = 0, nextNt = 0;
+        String dateOf, dateTo, prevDate, nextDate;
+        double vtStart, ntStart, vtEnd, ntEnd, prevVt, prevNt, nextVt, nextNt;
         invoice = items.get(position);
 
         dateTo = ViewHelper.convertLongToTime(invoice.getDateTo());
@@ -363,11 +341,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
     /**
-     * Zkontroluje obdébí odečtu s obdobím termínů úlev. Pokud se překrývají vrátí true
+     * Zkontroluje období odečtu s obdobím termínů úlev. Pokud se překrývají vrátí true
      *
-     * @param priceListRegulBuilder
-     * @param invoice
-     * @return
+     * @param priceListRegulBuilder Ceník s regulovanými cenami
+     * @param invoice              Faktura
+     * @return true pokud se období překrývají
      */
     private boolean isOverDateRegulPrice(PriceListRegulBuilder
                                                  priceListRegulBuilder, InvoiceModel invoice) {
@@ -378,14 +356,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         //Začátek regulace musí být větší  než začátek odečtu a zároveň začátek regulace menší nebo roven než konec odečtu
         //nebo
         //Konec regulace musí být větší či rovno než začátek měsíčního odečtu a zároveň konec regulace musí být menší než konce měsíčního odečtu
-        if (
-                ((startRegulPrice > dateStartMonthlyReading) && (startRegulPrice <= dateEndMonthlyReading))
-                        || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return ((startRegulPrice > dateStartMonthlyReading) && (startRegulPrice <= dateEndMonthlyReading))
+                || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading));
     }
 
     /**

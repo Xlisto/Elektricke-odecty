@@ -1,13 +1,15 @@
 package cz.xlisto.odecty.modules.backup;
 
+import java.util.Objects;
+
 import androidx.documentfile.provider.DocumentFile;
 
 /**
  * Xlisto 24.04.2023 21:22
  */
 public class FilterNameFile {
-    private static final String TAG = "FilterNameFile";
-    private String[] mExtensions;
+    private static final String TAG = Class.class.getSimpleName();
+    private final String[] mExtensions;
 
     public FilterNameFile(String[] mExtensions) {
         this.mExtensions = mExtensions;
@@ -19,9 +21,9 @@ public class FilterNameFile {
             return false;
         }
         if (mExtensions != null && mExtensions.length > 0) {
-            for (int i = 0; i < mExtensions.length; i++) {
+            for (String mExtension : mExtensions) {
                 try {
-                    if (file.getName().endsWith(mExtensions[i])) {
+                    if (Objects.requireNonNull(file.getName()).endsWith(mExtension)) {
                         // The filename ends with the extension
                         return true;
                     }

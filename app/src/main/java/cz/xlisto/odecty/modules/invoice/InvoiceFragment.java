@@ -204,7 +204,7 @@ public class InvoiceFragment extends Fragment {
 
     private void setRecyclerView() {
         Log.w(TAG, "Invoices "+invoices.size());
-        InvoiceAdapter invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, idFak, subscriptionPoint, poze.getTypePoze(), rv);
+        InvoiceAdapter invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
         invoiceAdapter.setUpdateListener(() -> onResume());
 
 

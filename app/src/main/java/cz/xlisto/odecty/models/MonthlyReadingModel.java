@@ -109,7 +109,7 @@ public class MonthlyReadingModel {
      * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
      */
     //TODO: sleva na DPH za měsíce listopad a prosinec v roce 2021 v měsíčních odečtech
-    public double getDiscountDPH() {
+    public double getDifferenceDPH() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         int month = calendar.get(Calendar.MONTH);

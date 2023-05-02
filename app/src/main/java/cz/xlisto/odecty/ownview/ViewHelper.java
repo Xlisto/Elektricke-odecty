@@ -5,13 +5,16 @@ import android.content.Context;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class ViewHelper {
+    public static final String TAG = "ViewHelper";
     /**
      * Přepočítá pixely v dp na skutečné pixely podle hustoty obrazovky
-     * @param dp
-     * @param context
-     * @return
+     * @param dp - počet dp
+     * @param context - kontext aplikace
+     * @return int - počet pixelů
      */
     public static int convertDpToPx(int dp, Context context) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -20,7 +23,7 @@ public class ViewHelper {
 
     /**
      * Vrátí instanci SimpleDateFormat s výchozím petternem dd.MM.yyyy
-     * @return
+     * @return SimpleDateFormat s patternem dd.MM.yyyy
      */
     public static SimpleDateFormat getSimpleDateFormat() {
         return new SimpleDateFormat("dd.MM.yyyy");
@@ -29,8 +32,8 @@ public class ViewHelper {
     /**
      * Vrátí instanci SimpleDateFormat s možností definovat svůj vlastní pattern
      * příklad: dd.MM.yyyy (25.12.2020)
-     * @param pattern
-     * @return
+     * @param pattern  např.: dd.MM.yyyy
+     * @return SimpleDateFormat s patternem např.: dd.MM.yyyy
      */
     public static SimpleDateFormat getSimpleDateFormat(String pattern) {
         return new SimpleDateFormat(pattern);
@@ -39,13 +42,13 @@ public class ViewHelper {
     /**
      * Převede textový datum ve formátu dd.MM.yyyy do objektu Calendar.
      * Pokud se vyskytne chyba, vrací null.
-     * @param string
-     * @return
+     * @param string datum ve formátu dd.MM.yyyy
+     * @return Calendar
      */
     public static Calendar parseCalendarFromString(String string) {
         Calendar calendar = Calendar.getInstance();
         try {
-            calendar.setTime(getSimpleDateFormat().parse(string));
+            calendar.setTime(Objects.requireNonNull(getSimpleDateFormat().parse(string)));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -54,25 +57,25 @@ public class ViewHelper {
 
     /**
      * Převede objekt Calendar na textové datum formátu dd.MM.yyyy
-     * @param calendar
-     * @return
+     * @param calendar objekt Calendar
+     * @return String datum ve formátu dd.MM.yyyy
      */
     public static String parseStringFromCalendar(Calendar calendar) {
         return getSimpleDateFormat().format(calendar.getTime());
     }
 
     /**
-     * Vrátí obejkt Calendar jako pole int v tomto pořadí {dd,MM,YYYY}
-     * @param calendar
-     * @return
+     * Vrátí objekt Calendar jako pole int v tomto pořadí {dd,MM,YYYY}
+     * @param calendar objekt Calendar
+     * @return int[] pole int v tomto pořadí {dd,MM,YYYY}
      */
     public static int[] parseIntsFromCalendar(Calendar calendar) {
         return new int[]{calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONDAY),calendar.get(Calendar.YEAR)};
     }
 
     /**
-     * vrátí dnešní datum jako string ve formátu dd.MM.yyyy
-     * @return
+     * Vrátí dnešní datum jako string ve formátu dd.MM.yyyy
+     * @return String datum ve formátu dd.MM.yyyy
      */
     public static String getTodayDate(){
         Calendar calendar = Calendar.getInstance();
@@ -81,19 +84,34 @@ public class ViewHelper {
 
     /**
      * Převede číslo long na textové datum ve formátu dd.MM.yyyy
-     * @param l
-     * @return
+     * @param l datum v milisekundách
+     * @return String datum ve formátu dd.MM.yyyy
      */
     public static String convertLongToTime(long l) {
-        return getSimpleDateFormat().format(l);
+        long offset = getOffsetTimezones(l);
+        return getSimpleDateFormat().format(l+offset);
     }
 
     public static String yearOfLong(long l) {
-        return getSimpleDateFormat("yyyy").format(l);
+        long offset = getOffsetTimezones(l);
+        return getSimpleDateFormat("yyyy").format(l+offset);
     }
 
     public static int yearIntOfLong(long l) {
-        return Integer.parseInt(getSimpleDateFormat("yyyy").format(l));
+        long offset = getOffsetTimezones(l);
+        return Integer.parseInt(getSimpleDateFormat("yyyy").format(l+offset));
+    }
+
+    /**
+     * Vypočítá Offset časových pásem k našemu českému (hlavní využití při nastavení telefonu na jiná časová než je české)
+     * @param l datum v milisekundách
+     * @return long - offset v milisekundách pro dané datum
+     */
+    private static long getOffsetTimezones(long l) {
+        long offsetDef = TimeZone.getDefault().getOffset(l)*(-1);
+        long offsetPra = TimeZone.getTimeZone("Europe/Prague").getOffset(l);
+
+        return offsetDef+offsetPra;
     }
 
 
