@@ -324,6 +324,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         //zobrazení ikony alertu
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && vtStart == prevVt && vtEnd == nextVt && ntStart == prevNt && ntEnd == nextNt && !isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
             holder.imgAlert.setVisibility(View.GONE);
+            holder.tvAlert.setVisibility(View.GONE);
+
         } else {
             //zobrazení varovného vykřičníku
             holder.imgAlert.setVisibility(View.VISIBLE);
@@ -333,7 +335,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 holder.tvAlert.setVisibility(View.GONE);
             } else {
                 holder.tvAlert.setVisibility(View.VISIBLE);
-                holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_no));
+                holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
             }
         }
     }
@@ -374,7 +376,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         if (b1) {
             tv.setTextColor(originalTextViewColors);
         } else {
-            tv.setTextColor(context.getResources().getColor(R.color.color_no));
+            tv.setTextColor(context.getResources().getColor(R.color.color_red_alert));
         }
     }
 

@@ -255,7 +255,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         if (b1) {
             tv.setTextColor(originalTextViewColors);
         } else {
-            tv.setTextColor(context.getResources().getColor(R.color.color_no));
+            tv.setTextColor(context.getResources().getColor(R.color.color_red_alert));
         }
     }
 

@@ -15,6 +15,7 @@
     <color name="color_primary">#374FD8</color>
 
     <color name="color_no">#960101</color>
+    <color name="color_red_alert">#960101</color>
     <color name="color_yes">#008000</color>
     <color name="color_bar">#012587</color>
     <color name="color_bar_dark">#295EEE</color>
