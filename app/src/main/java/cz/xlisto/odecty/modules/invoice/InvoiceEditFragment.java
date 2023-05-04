@@ -47,7 +47,10 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         dataPriceListSource.open();
         String priceListName = dataPriceListSource.readPrice(selectedIdPrice).getName();
         String priceListSazba = dataPriceListSource.readPrice(selectedIdPrice).getSazba();
+        boolean priceListIsEmpty = dataPriceListSource.readPrice(selectedIdPrice).isEmpty();
         dataPriceListSource.close();
+
+        btnSave.setEnabled(!priceListIsEmpty);
 
         if (loadFromDatabase) {
             btnDateStart.setText(ViewHelper.convertLongToTime(invoice.getDateFrom()));
@@ -79,21 +82,18 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             btnDateEnd.setEnabled(false);
         }
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkData())
-                    return;
+        btnSave.setOnClickListener(v -> {
+            if (checkData())
+                return;
 
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-                dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.updateInvoice(id, table, createInvoice(id,selectedIdPrice));
-                dataSubscriptionPointSource.close();
-                Keyboard.hide(getActivity());
-                WithOutInvoiceService.editFirstItemInInvoice(getActivity());
-                loadFromDatabase = true;
-                getParentFragmentManager().popBackStack();
-            }
+            DataSubscriptionPointSource dataSubscriptionPointSource1 = new DataSubscriptionPointSource(getActivity());
+            dataSubscriptionPointSource1.open();
+            dataSubscriptionPointSource1.updateInvoice(id, table, createInvoice(id,selectedIdPrice));
+            dataSubscriptionPointSource1.close();
+            Keyboard.hide(requireActivity());
+            WithOutInvoiceService.editFirstItemInInvoice(getActivity());
+            loadFromDatabase = true;
+            getParentFragmentManager().popBackStack();
         });
         oldDateStart = btnDateStart.getText().toString();
         oldDateEnd = btnDateEnd.getText().toString();

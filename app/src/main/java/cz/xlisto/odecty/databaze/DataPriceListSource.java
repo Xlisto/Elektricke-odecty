@@ -54,7 +54,7 @@ import static cz.xlisto.odecty.databaze.DBHelperPriceList.TABLE_NAME_PRICE;
 public class DataPriceListSource {
     private final String TAG = getClass().getName() + " ";
     public static final String VSE = "[VŠE]";
-    private Context context;
+    private final Context context;
     private DBHelperPriceList dbHelperPriceList;
     private SQLiteDatabase database;
 
@@ -116,15 +116,14 @@ public class DataPriceListSource {
      * @return
      */
     public long updatePriceList(PriceListModel priceListModel, long itemId) {
-        long updateId = database.update(TABLE_NAME_PRICE, createContenValue(priceListModel),
+        return database.update(TABLE_NAME_PRICE, createContenValue(priceListModel),
                 "_id=?", new String[]{String.valueOf(itemId)});
-        return updateId;
     }
 
     /**
      * Smaže ceník podle ID
      * @param itemId
-     * @return
+     * @return long deleteId smazané položky
      */
     public long deletePriceList(long itemId) {
         long deleteId = database.delete(TABLE_NAME_PRICE, "_id=?",
@@ -214,7 +213,7 @@ public class DataPriceListSource {
         if (priceListModels.size() > 0)
             return priceListModels.get(0);
         else
-            return null;
+            return new PriceListModel();
     }
 
     /**

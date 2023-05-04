@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -31,8 +32,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     static final String TABLE = "table";
     static final String ID_FAK = "id_fak";
     static final String ID = "id";
-    static final String BTNDATE_OF = "btnDate1";
-    static final String BTNDATE_TO = "btnDate2";
+    static final String BTN_DATE_OF = "btnDate1";
+    static final String BTN_DATE_TO = "btnDate2";
     static final String VT_START = "vt_start";
     static final String NT_START = "nt_start";
     static final String VT_END = "vt_end";
@@ -81,63 +82,38 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         letNTEnd = view.findViewById(R.id.letNTEnd);
         letOtherServices = view.findViewById(R.id.letOtherServices);
 
-        btnDateStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OwnDatePicker.showDialog(getActivity(), new OwnDatePicker.OnDateListener() {
-                    @Override
-                    public void getDate(String date) {
-                        btnDateStart.setText(date);
-                    }
-                }, oldDateStart);
-            }
+        btnDateStart.setOnClickListener(v -> OwnDatePicker.showDialog(getActivity(), date -> btnDateStart.setText(date), oldDateStart));
+
+        btnDateEnd.setOnClickListener(v -> OwnDatePicker.showDialog(getActivity(), date -> btnDateEnd.setText(date), oldDateEnd));
+
+        btnSelectPriceList.setOnClickListener(v -> {
+            saveSharedPreferences();
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPrice);
+            priceListFragment.setOnSelectedPriceListListener(priceList -> {
+                if(priceList == null) {
+                    Toast.makeText(getActivity(), "Cena nebyla vybrána", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                selectedPrice = priceList;
+                selectedIdPrice = selectedPrice.getId();
+                deactivateNT(selectedPrice.getSazba().equals("D 01d") || selectedPrice.getSazba().equals("D 02d"));
+
+            });
+            Keyboard.hide(requireActivity());
+            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        btnDateEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OwnDatePicker.showDialog(getActivity(), new OwnDatePicker.OnDateListener() {
-                    @Override
-                    public void getDate(String date) {
-                        btnDateEnd.setText(date);
-                    }
-                }, oldDateEnd);
-            }
-        });
-
-        btnSelectPriceList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveSharedPreferences();
-                PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPrice);
-                priceListFragment.setOnSelectedPriceListListener(new PriceListFragment.OnSelectedPriceList() {
-                    @Override
-                    public void getOnSelectedItemPriceList(PriceListModel priceList) {
-                        selectedPrice = priceList;
-                        selectedIdPrice = selectedPrice.getId();
-                        deactivateNT(selectedPrice.getSazba().equals("D 01d") || selectedPrice.getSazba().equals("D 02d"));
-
-                    }
-                });
-                Keyboard.hide(getActivity());
-                FragmentChange.replace(getActivity(), priceListFragment, MOVE, true);
-            }
-        });
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Keyboard.hide(getActivity());
-                loadFromDatabase = true;
-                getParentFragmentManager().popBackStack();
-            }
+        btnBack.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            loadFromDatabase = true;
+            getParentFragmentManager().popBackStack();
         });
 
         loadSharedPreferences();
 
         if (savedInstanceState != null) {
-            btnDateStart.setText(savedInstanceState.getString(BTNDATE_OF));
-            btnDateEnd.setText(savedInstanceState.getString(BTNDATE_TO));
+            btnDateStart.setText(savedInstanceState.getString(BTN_DATE_OF));
+            btnDateEnd.setText(savedInstanceState.getString(BTN_DATE_TO));
             letVTStart.setDefaultText(savedInstanceState.getString(VT_START));
             letNTStart.setDefaultText(savedInstanceState.getString(NT_START));
             letVTEnd.setDefaultText(savedInstanceState.getString(VT_END));
@@ -163,8 +139,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BTNDATE_OF, btnDateStart.getText().toString());
-        outState.putString(BTNDATE_TO, btnDateEnd.getText().toString());
+        outState.putString(BTN_DATE_OF, btnDateStart.getText().toString());
+        outState.putString(BTN_DATE_TO, btnDateEnd.getText().toString());
         outState.putString(VT_START, letVTStart.getText());
         outState.putString(NT_START, letNTStart.getText());
         outState.putString(VT_END, letVTEnd.getText());

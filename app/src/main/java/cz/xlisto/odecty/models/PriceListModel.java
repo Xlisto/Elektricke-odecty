@@ -2,6 +2,8 @@ package cz.xlisto.odecty.models;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+
 import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToTime;
 
 /**
@@ -9,6 +11,7 @@ import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToTime;
  */
 public class PriceListModel {
     public final static int NEW_POZE_YEAR = 2016;
+    private final static String NO_PRICELIST = "Ceník nenalezen!!!";
     private long id;
     private String rada;
     private String produkt;
@@ -52,6 +55,11 @@ public class PriceListModel {
     private String mes = " Kč/měsíc";
     private String jis = " Kč za 1A/měsíc";
 
+    //nulový konstruktor s názvem Ceník nenalezen
+    public PriceListModel() {
+    this(NO_PRICELIST);
+    }
+
     //nulový konstruktor
     public PriceListModel(String produkt) {
         this.id = 0L;
@@ -92,50 +100,6 @@ public class PriceListModel {
         this.autor = "";
         this.datumVytvoreni = 0L;
         this.email = "";
-    }
-
-    //konstruktor
-
-    public PriceListModel() {
-        this.id = id;
-        this.rada = rada;
-        this.produkt = produkt;
-        this.firma = firma;
-        this.cenaVT = cenaVT;
-        this.cenaNT = cenaNT;
-        this.mesicniPlat = mesicniPlat;
-        this.dan = dan;
-        this.sazba = sazba;
-        this.distVT = distVT;
-        this.distNT = distNT;
-        this.j0 = j0;
-        this.j1 = j1;
-        this.j2 = j2;
-        this.j3 = j3;
-        this.j4 = j4;
-        this.j5 = j5;
-        this.j6 = j6;
-        this.j7 = j7;
-        this.j8 = j8;
-        this.j9 = j9;
-        this.j10 = j10;
-        this.j11 = j11;
-        this.j12 = j12;
-        this.j13 = j13;
-        this.j14 = j14;
-        this.systemSluzby = systemSluzby;
-        this.cinnost = cinnost;
-        this.poze1 = poze1;
-        this.poze2 = poze2;
-        this.oze = oze;
-        this.ote = ote;
-        this.platnostOD = platnostOD;
-        this.platnostDO = platnostDO;
-        this.dph = dph;
-        this.distribuce = distribuce;
-        this.autor = autor;
-        this.datumVytvoreni = datumVytvoreni;
-        this.email = email;
     }
 
     public PriceListModel(long id, String rada, String produkt, String firma, double cenaVT,
@@ -192,11 +156,23 @@ public class PriceListModel {
      * @return
      */
     public String getName(){
+        if(this.produkt.equals(NO_PRICELIST))
+            return NO_PRICELIST;
+
         return getProdukt() + ", " +getSazba() + ",\nPlatný od: " + convertLongToTime(getPlatnostOD());
     }
 
+    /**
+     * Zjistí, zdali je ceník prázdný. Kontroluje se podle názvu ceníku.
+     * @return boolean true - prázdný, false - není prázdný
+     */
+    public boolean isEmpty(){
+        return this.produkt.equals(NO_PRICELIST);
+    }
+
+    @NonNull
     public String toString() {
-        String s = "Ceník:\n" +
+        return "Ceník:\n" +
                 "id: " + getId() + " Řada: " + getRada() +
                 "\nProdukt: " + getProdukt() + " Distribuční firma: " + getFirma() +
                 "\nCenaVT:" + getCenaVT() + " CenaNT:" + getCenaNT() + " Měsíční plat: " + getMesicniPlat() + " Daň: " + getDan() +
@@ -212,7 +188,6 @@ public class PriceListModel {
                 "\nPlatnost OD:" + getPlatnostOD() + " DO:" + getPlatnostDO() +
                 "\nDistribuce: " + getDistribuce() +
                 "\nDph:" + getDph() +  " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor()+" email :"+getEmail();
-        return s;
     }
 
     public Long getId() {

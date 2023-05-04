@@ -9,19 +9,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují.">
-      <change afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules/app/Ceník.app.androidTest.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules/app/Ceník.app.unitTest.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules/myapplication/ElOdecet.myapplication.androidTest.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules/myapplication/ElOdecet.myapplication.unitTest.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/render.experimental.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataPriceListSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataPriceListSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/Calculation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/Calculation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +106,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/odecty_a_mista.db",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -302,7 +297,28 @@
       <option name="project" value="LOCAL" />
       <updated>1683076834051</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Přidaná složka .idea">
+      <created>1683079157334</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1683079157334</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Přidaná složka .idea">
+      <created>1683079213244</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1683079213244</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Přidaná složka .idea">
+      <created>1683079294538</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1683079294538</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -385,6 +401,8 @@
     <MESSAGE value="Opravena chyba při editaci záznamu faktury - neukládal se id ceníku." />
     <MESSAGE value="Upraven převod long čísla na data podle časového pásma.&#10;Pro správný výpočet se používá offset časových pásem.&#10;Pro tento účel je vytvořena metoda getOffsetTimezones ve ViewHelper.&#10;Nejprve vypočítá rozdíl času oproti času GMT, potom přičte rozdíl k středoevropskému času." />
     <MESSAGE value="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují." />
+    <MESSAGE value="Přidaná složka .idea" />
+    <MESSAGE value="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
   </component>
 </project>

@@ -2,7 +2,6 @@ package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,19 +122,13 @@ public class InvoiceFragment extends Fragment {
         tvDiscount = view.findViewById(R.id.tvDiscountInvoice);
         spinner = view.findViewById(R.id.spInvoice);
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InvoiceAddFragment invoiceAddFragment = InvoiceAddFragment.newInstance(table, idFak);
-                FragmentChange.replace(getActivity(), invoiceAddFragment, FragmentChange.Transaction.MOVE, true);
-            }
+        btnAdd.setOnClickListener(v -> {
+            InvoiceAddFragment invoiceAddFragment = InvoiceAddFragment.newInstance(table, idFak);
+            FragmentChange.replace(requireActivity(), invoiceAddFragment, FragmentChange.Transaction.MOVE, true);
         });
-        tvTotal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addOneShowTypeTotalPrice();
-                setTotalTextView();
-            }
+        tvTotal.setOnClickListener(v -> {
+            addOneShowTypeTotalPrice();
+            setTotalTextView();
         });
         //skrytí tlačítka pro přidání nového záznamu faktury v režimu bezfaktury
         if(idFak == -1L) {
@@ -258,10 +251,13 @@ public class InvoiceFragment extends Fragment {
         double[] priceTotal = new double[4];
         double total = 0, totalDPH = 0;
         double totalVt = 0, totalNT = 0;
-        double totalPriceVt = 0, totalPriceNt = 0, totalPayment = 0, totalPoze = 0, totalOtherServices = 0;
+        double totalPriceVt , totalPriceNt , totalPayment , totalPoze , totalOtherServices = 0;
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
             PriceListModel priceList = getPriceList(invoice);
+            if(priceList == null) {
+                priceList = new PriceListModel();
+            }
             //nastavení datumu odečtu
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(invoice.getDateFrom());
@@ -308,8 +304,8 @@ public class InvoiceFragment extends Fragment {
     /**
      * Načte ceník podle id uložený ve faktuře
      *
-     * @param invoice
-     * @return
+     * @param invoice Objekt faktury
+     * @return Objekt ceníku
      */
     private PriceListModel getPriceList(InvoiceModel invoice) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
@@ -321,7 +317,7 @@ public class InvoiceFragment extends Fragment {
 
     private void setTotalTextView() {
 
-        String s = "", sEnd = "";
+        String s = "", sEnd;
         DecimalFormat df;
         if (totalPrice[7] == 0 && showTypeTotalPrice == 7)
             showTypeTotalPrice++;//pokud jsou ostatní služby rovny 0, posune se zobrazení o další
