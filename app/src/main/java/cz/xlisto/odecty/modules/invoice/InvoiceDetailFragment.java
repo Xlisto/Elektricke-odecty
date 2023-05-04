@@ -1,6 +1,5 @@
 package cz.xlisto.odecty.modules.invoice;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -22,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +28,6 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
-import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PozeModel;
 import cz.xlisto.odecty.models.PriceListModel;
@@ -45,59 +43,45 @@ import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D01;
 import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D02;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link InvoiceDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro zobrazení detailu (jednotlivých složek ceny) faktury.
  */
 public class InvoiceDetailFragment extends Fragment {
     private static final String TAG = "InvoiceDetailFragment";
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ID_FAK = "id_fak";
-    private static final String TABLE_FAK = "table_fak";
-    private static final String TABLE_NOW = "table_now";
-    private static final String TABLE_PAY = "table_pay";
+    private static final String ID_FAK = "idFak";
+    private static final String TABLE_FAK = "tableFak";
+    private static final String TABLE_NOW = "tableNow";
+    private static final String TABLE_PAY = "tablePay";
     private static final String POSITION = "position";
-
     private static final String SHOW_TYPE_DETAIL_INDEX = "showTypeDetailIndex";
     private InvoiceDetailAdapter invoiceDetailAdapter;
-
-    private String tableFAK,tablePAY, tableNOW,table;
-
+    private String tableFAK, tableNOW, table;
     private long idFak;
     private int position;
     private RecyclerView rv;
     private Spinner spinner;
     private int showTypeDetailIndex;
     private TextView tvTotal;
-    private Button btn;
     private ShPInvoiceDetail shPInvoiceDetail;
-    private SubscriptionPointModel subscriptionPoint;
     private ArrayList<InvoiceModel> invoices;
-    private ArrayList<InvoiceListModel> invoicesList;
-    private ArrayList<SummaryInvoiceModel> summaryInvoices = new ArrayList<>();
-    private ArrayList<SummaryInvoiceModel> mergedSummaryInvoices = new ArrayList<>();
+    private final ArrayList<SummaryInvoiceModel> summaryInvoices = new ArrayList<>();
+    private final ArrayList<SummaryInvoiceModel> mergedSummaryInvoices = new ArrayList<>();
     private MySpinnerInvoiceDetailAdapter invoiceListAdapter;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public InvoiceDetailFragment() {
         // Required empty public constructor
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Vytvoří instanci InvoiceDetailFragment.
      *
-     * @param tableFak tabulak faktur
+     * @param tableFak tabulka faktur
+     * @param tableNow tabulka bez faktury (dříve TED)
      * @param tablePay tabulka plateb
-     * @return A new instance of fragment InvoiceDetailFragment.
+     * @param idFak    long id faktury
+     * @param position int pozice faktury
+     * @return InvoiceDetailFragment - Instance InvoiceDetailFragment
      */
-    // TODO: Rename and change types and number of parameters
-    public static InvoiceDetailFragment newInstance(String tableFak, String tableNow,String tablePay, long idFak, int position) {
+    public static InvoiceDetailFragment newInstance(String tableFak, String tableNow, String tablePay, long idFak, int position) {
         InvoiceDetailFragment invoiceDetailFragment = new InvoiceDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putLong(ID_FAK, idFak);
@@ -109,13 +93,14 @@ public class InvoiceDetailFragment extends Fragment {
         return invoiceDetailFragment;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             tableFAK = getArguments().getString(TABLE_FAK);
             tableNOW = getArguments().getString(TABLE_NOW);
-            tablePAY = getArguments().getString(TABLE_PAY);
             idFak = getArguments().getLong(ID_FAK);
             position = getArguments().getInt(POSITION);
         }
@@ -125,7 +110,7 @@ public class InvoiceDetailFragment extends Fragment {
             showTypeDetailIndex = savedInstanceState.getInt(SHOW_TYPE_DETAIL_INDEX);
         }
         table = tableFAK;
-        if(idFak == -1L) {
+        if (idFak == -1L) {
             table = tableNOW;
         }
     }
@@ -137,31 +122,23 @@ public class InvoiceDetailFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_invoice_detail, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btn = view.findViewById(R.id.btn);
+        Button btn = view.findViewById(R.id.btn);
         rv = view.findViewById(R.id.recycleViewInvoice);
         tvTotal = view.findViewById(R.id.tvTotal);
         spinner = view.findViewById(R.id.spInvoice);
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                }, 3000);*/
-                summaryInvoices.remove(0);
-                int count = invoiceDetailAdapter.getItemCount();
-                invoiceDetailAdapter.notifyItemRemoved(0);
-                invoiceDetailAdapter.notifyItemRangeRemoved(0, count - 1);
-            }
-
+        btn.setOnClickListener(v -> {
+            summaryInvoices.remove(0);
+            int count = invoiceDetailAdapter.getItemCount();
+            invoiceDetailAdapter.notifyItemRemoved(0);
+            invoiceDetailAdapter.notifyItemRangeRemoved(0, count - 1);
         });
     }
+
 
     @Override
     public void onResume() {
@@ -170,16 +147,18 @@ public class InvoiceDetailFragment extends Fragment {
         shPInvoiceDetail = new ShPInvoiceDetail(getActivity());
         showTypeDetailIndex = shPInvoiceDetail.get(ShPInvoiceDetail.SHOW_TYPE_DETAIL_INDEX, 0);
         loadInvoice();
-        setSpinner(false);
+        setSpinner();
         calculationDetailsInvoice(invoices);
         setRecyclerView();
     }
+
 
     @Override
     public void onPause() {
         super.onPause();
         rv.setAdapter(null);
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -189,8 +168,9 @@ public class InvoiceDetailFragment extends Fragment {
         outState.putInt(SHOW_TYPE_DETAIL_INDEX, showTypeDetailIndex);
     }
 
-    private void setSpinner(boolean hideNt) {
-        invoiceListAdapter = new MySpinnerInvoiceDetailAdapter(getActivity(), R.layout.item_own_simple_list, SummaryInvoiceModel.Title.values(), hideNt);
+
+    private void setSpinner() {
+        invoiceListAdapter = new MySpinnerInvoiceDetailAdapter(requireActivity(), R.layout.item_own_simple_list, SummaryInvoiceModel.Title.values());
         spinner.setAdapter(invoiceListAdapter);
         spinner.setSelection(shPInvoiceDetail.get(SHOW_TYPE_DETAIL_INDEX, 0));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -208,24 +188,18 @@ public class InvoiceDetailFragment extends Fragment {
         });
     }
 
+
     private void loadInvoice() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
-        subscriptionPoint = SubscriptionPoint.load(getActivity());
         invoices = dataSubscriptionPointSource.loadInvoices(idFak, table);
-        invoicesList = dataSubscriptionPointSource.loadInvoiceLists(subscriptionPoint);
         dataSubscriptionPointSource.close();
-
     }
+
 
     private void setRecyclerView() {
         invoiceDetailAdapter = new InvoiceDetailAdapter(summaryInvoices);
-        invoiceDetailAdapter.setListener(new InvoiceDetailAdapter.Listener() {
-            @Override
-            public void getTotalPrice(double totalPrice) {
-                tvTotal.setText("Celkem " + DecimalFormatHelper.df2.format(totalPrice) + " kč bez DPH");
-            }
-        });
+        invoiceDetailAdapter.setListener(totalPrice -> tvTotal.setText("Celkem " + DecimalFormatHelper.df2.format(totalPrice) + " kč bez DPH"));
         rv.setAdapter(invoiceDetailAdapter);
 
 
@@ -234,26 +208,14 @@ public class InvoiceDetailFragment extends Fragment {
             @Override
             public boolean onPreDraw() {
                 rv.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                final WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                int height = wm.getDefaultDisplay().getHeight();
                 rv.getMeasuredHeight();
 
                 for (int i = 0; i < rv.getChildCount(); i++) {
-
                     View v = rv.getChildAt(i);
-                    //Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_animation_fall_down);
-                    //v.startAnimation(animation);
                     v.setAlpha(1.0f);
-                    //v.setTranslationY(((-1*v.getHeight()*20/100)*(i+1)));
-                    //v.setScaleY(1.05f);
-                    //v.setScaleX(1.05f);
-                    //v.setPivotX(0.5f);
-                    //v.setPivotY(0.5f);
                     v.animate().alpha(0.0f).translationY(0)
-                            //.scaleX(1).scaleY(1)
                             .setDuration(500)
-                            .setStartDelay(i * 15 * 500 / 100)
+                            .setStartDelay((long) i * 15 * 500 / 100)
                             .start();
                 }
                 return true;
@@ -263,27 +225,12 @@ public class InvoiceDetailFragment extends Fragment {
             @Override
             public boolean onPreDraw() {
                 rv.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                final WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                int height = wm.getDefaultDisplay().getHeight();
                 rv.getMeasuredHeight();
 
                 for (int i = 0; i < rv.getChildCount(); i++) {
-
                     View v = rv.getChildAt(i);
                     Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_animation_fall_down);
                     v.startAnimation(animation);
-                    /*v.setAlpha(0.0f);
-                    v.setTranslationY(((-1*v.getHeight()*20/100)*(i+1)));
-                    v.setScaleY(1.05f);
-                    v.setScaleX(1.05f);
-                    v.setPivotX(0.5f);
-                    v.setPivotY(0.5f);
-                    v.animate().alpha(1.0f).translationY(0)
-                            .scaleX(1).scaleY(1)
-                            .setDuration(500)
-                            .setStartDelay(i * 15*500/100)
-                            .start();*/
                 }
                 return true;
             }
@@ -291,13 +238,14 @@ public class InvoiceDetailFragment extends Fragment {
 
     }
 
+
     private void calculationDetailsInvoice(ArrayList<InvoiceModel> invoices) {
         boolean hiddenNT = false;
         summaryInvoices.clear();
-        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getActivity());
-        int phaze = subscriptionPoint.getPhaze();
+        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
+        int phaze = Objects.requireNonNull(subscriptionPoint).getPhaze();
         int countPhaze = subscriptionPoint.getCountPhaze();
-        PozeModel poze = Calculation.getPoze(invoices, countPhaze, phaze, getActivity());
+        PozeModel poze = Calculation.getPoze(invoices, countPhaze, phaze, requireActivity());
 
 
         for (int i = 0; i < invoices.size(); i++) {
@@ -315,6 +263,8 @@ public class InvoiceDetailFragment extends Fragment {
                         spinner.setSelection(0);
                     if (spinner.getSelectedItemPosition() == 5)
                         spinner.setSelection(4);
+                } else {
+                    hiddenNT = false;
                 }
             }
 
@@ -343,7 +293,7 @@ public class InvoiceDetailFragment extends Fragment {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                         invoice.getNt() / 1000, priceList.getDistNT(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.NT_DIST));
-            } else if (s.equals(SummaryInvoiceModel.Title.CIRCUT_BREAKER.toString())) {//jističe
+            } else if (s.equals(SummaryInvoiceModel.Title.CIRCUIT_BREAKER.toString())) {//jističe
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                         invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceBreaker,
                         SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.TAX));
@@ -386,12 +336,6 @@ public class InvoiceDetailFragment extends Fragment {
             }
         }
 
-
-        /*Collections.sort(summaryInvoices,(a, b) -> {
-            return a.getTitle().compareTo(b.getTitle());
-        });*/
-
-
         for (int i = 0; i < summaryInvoices.size(); i++) {
             SummaryInvoiceModel sm = summaryInvoices.get(i);
             Log.w(TAG, "Fak " + i + " " + sm.getTitle() + " " + sm.getAmount() + " " + sm.getUnit() + " " + sm.getUnitPrice() + " " + sm.getTotalPrice());
@@ -410,11 +354,12 @@ public class InvoiceDetailFragment extends Fragment {
 
     }
 
+
     /**
      * Načte ceník podle id uložený ve faktuře
      *
-     * @param invoice
-     * @return
+     * @param invoice InvoiceModel - faktura
+     * @return Objekt ceníku
      */
     private PriceListModel getPriceList(InvoiceModel invoice) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());

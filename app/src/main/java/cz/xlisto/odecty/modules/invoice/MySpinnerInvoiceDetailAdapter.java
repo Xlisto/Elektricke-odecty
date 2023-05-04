@@ -17,37 +17,37 @@ import cz.xlisto.odecty.models.SummaryInvoiceModel;
  */
 public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceModel.Title> {
     private static final String TAG = "MySpinnerInvoiceDetailAdapter";
-    private SummaryInvoiceModel.Title[] titles;
-    private boolean hideNt;
+    private final SummaryInvoiceModel.Title[] titles;
+    private Boolean hideNt;
 
-    public MySpinnerInvoiceDetailAdapter(@NonNull Context context, int resource, SummaryInvoiceModel.Title[] objects,boolean hideNt) {
+    public MySpinnerInvoiceDetailAdapter(@NonNull Context context, int resource, SummaryInvoiceModel.Title[] objects) {
         super(context, resource, objects);
         this.titles = objects;
-        this.hideNt = hideNt;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+        return getCustomView(position, parent);
     }
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+        return getCustomView(position, parent);
     }
 
-    private View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    private View getCustomView(int position, @NonNull ViewGroup parent) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_invoice_detail, parent, false);
         TextView tvNumberInvoice = view.findViewById(R.id.tvInvoiceDetailName);
         tvNumberInvoice.setText(titles[position].toString());
-        if(hideNt) {
-        if (position == 1 || position == 5) {
-            TextView tv = new TextView(getContext());
-            tv.setVisibility(View.GONE);
-            tv.setHeight(0);
-            view = tv;
-        }}
+        if (hideNt) {
+            if (position == 1 || position == 5) {
+                TextView tv = new TextView(getContext());
+                tv.setVisibility(View.GONE);
+                tv.setHeight(0);
+                view = tv;
+            }
+        }
         return view;
     }
 

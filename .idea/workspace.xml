@@ -9,10 +9,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment.">
-      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -343,7 +343,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683232778307</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami.">
+      <created>1683233380054</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1683233380054</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -431,6 +438,7 @@
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume()." />
     <MESSAGE value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
+    <MESSAGE value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
+    <option name="LAST_COMMIT_MESSAGE" value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
   </component>
 </project>
