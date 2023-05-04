@@ -23,7 +23,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     private static final String ARG_TABLE_O = "table_O";
     private static final String ARG_TABLE_PLATBY = "table_PLATBY";
     private static final String ARG_ITEM_ID = "item_id";
-    private static String IS_FIRST_LOAD = "isFirstLoad";
+    private static final String IS_FIRST_LOAD = "isFirstLoad";
     private MonthlyReadingModel monthlyReading;
     private PriceListModel priceList;
     private boolean isFirstLoad = true;
@@ -88,6 +88,8 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
                 btnSelectPriceList.setText(priceList.getName());
         }
 
+
+
         btnSave.setOnClickListener(v -> {
             if (priceList != null || cbFirstReading.isChecked()) {
                 updateMonthlyReading(itemId);
@@ -103,6 +105,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     public void onResume() {
         super.onResume();
         loadPriceList();
+        btnSave.setEnabled(!priceList.isEmpty());
     }
 
     @Override
