@@ -135,7 +135,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         super.onResume();
         if (selectedPrice != null) {
             selectedIdPrice = selectedPrice.getId();
-            deactivateNT(selectedPrice.getSazba().equals("D 01d") || selectedPrice.getSazba().equals("D 02d"));
+            deactivateNT(selectedPrice.getSazba().equals(InvoiceAbstract.D01) || selectedPrice.getSazba().equals(InvoiceAbstract.D02));
             btnSelectPriceList.setText(selectedPrice.getName());
         }
     }

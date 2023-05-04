@@ -9,22 +9,17 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume().">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment.">
+      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -108,7 +103,7 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Users/Xlisto/Disk Google/ElektroDroid-záloha/01.05.2023  20.22.15 ElektroDroid.zip",
+    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -341,7 +336,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683194818132</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment.">
+      <created>1683232778307</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1683232778307</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -428,6 +430,7 @@
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume()." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume()." />
+    <MESSAGE value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
   </component>
 </project>
