@@ -36,14 +36,18 @@ import cz.xlisto.odecty.utils.FragmentChange;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+/**
+ * Adapter pro zobrazení měsíčních odečtů, pro RecyclerView..
+ */
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
-    private static final String TAG = Class.class.getSimpleName();
+    private static final String TAG = "MonthlyReadingAdapter";
     private final Context context;
     private final ArrayList<MonthlyReadingModel> items;
     private boolean simplyView, showRegulPrice;
     private final SubscriptionPointModel subscriptionPoint;
     private final RecyclerView recyclerView;
     private int showButtons = -1;
+
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout rootRelativeLayout, rl3;
@@ -58,6 +62,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         }
     }
 
+
     //konstruktor
     public MonthlyReadingAdapter(Context context, ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
         this.context = context;
@@ -67,6 +72,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         this.showRegulPrice = showRegulPrice;
         this.recyclerView = recyclerView;
     }
+
 
     // Vytvoření a inicializace objektu View z XML návrhu vzoru položky.
     // Příprava kontejneru, ve kterém budou zobrazena data jednotlivé položky
@@ -104,25 +110,24 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         return vh;
     }
 
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final MonthlyReadingModel monthlyReading = items.get(position);
         MonthlyReadingModel monthlyReadingPrevious;
 
-
         DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
         dataPriceListSource.open();
         PriceListModel priceList = dataPriceListSource.readPrice(items.get(position).getPriceListId());
         dataPriceListSource.close();
 
-
-        holder.tvDate.setText(ViewHelper.convertLongToTime(monthlyReading.getDate()));
-
         if (priceList != null) {
             holder.tvPriceList.setText(priceList.getName());
         } else
             holder.tvPriceList.setText(context.getResources().getString(R.string.vyberteCenik));
+
+        holder.tvDate.setText(ViewHelper.convertLongToTime(monthlyReading.getDate()));
         holder.tvVt.setText(DecimalFormatHelper.df2.format(monthlyReading.getVt()));
         holder.tvNt.setText(DecimalFormatHelper.df2.format(monthlyReading.getNt()));
         holder.tvPayment.setText(DecimalFormatHelper.df2.format(monthlyReading.getPayment()) + " Kč");
@@ -195,11 +200,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvDifferentPrice.setText(Html.fromHtml("Rozdíl: <b><font color=\"" + color + "\">" + DecimalFormatHelper.df2.format(different) + "</b> Kč"));
         }
 
-        holder.rootRelativeLayout.setOnLongClickListener(v -> {
-            v.showContextMenu();
-            return true;
-        });
-
         holder.rootRelativeLayout.setOnClickListener(v -> {
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
@@ -215,8 +215,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
             showButtons(holder, position);
         });
-
-        showButtons(holder, position);
 
         holder.btnEdit.setOnClickListener(v -> {
             MonthlyReadingEditFragment monthlyReadingEditFragment = MonthlyReadingEditFragment.newInstance(
@@ -311,8 +309,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
         }
 
-
+        showButtons(holder, position);
     }
+
 
     @Override
     public int getItemCount() {
@@ -333,6 +332,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         return itemId;
     }
 
+
     /**
      * Zkontroluje období, zdali neobsahuje současně regulovanou a neregulovanou cenu
      *
@@ -350,6 +350,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading));
     }
 
+    /**
+     * Skryje/zobrazí tlačítka pro smazání a editaci
+     * @param holder MyViewHolder
+     * @param position pozice
+     */
     private void showButtons(MyViewHolder holder, int position) {
 
         if (showButtons == position) {
@@ -360,6 +365,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         }
     }
 
+
     /**
      * Nastaví boolean pro zobtazení/skrytí rozšířených dat
      */
@@ -368,26 +374,33 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         notifyDataSetChanged();
     }
 
+
     /**
      * Nastaví boolean pro zobrazení/skrytí regulovaných cen
-     *
      */
     public void setShowRegulPrice(boolean b) {
         this.showRegulPrice = b;
         notifyDataSetChanged();
     }
 
+
+    /**
+     * Smaže zázman měsíčního odečtu
+     * @param itemId long id záznamu
+     * @param position int pozice v RecyclerAdapteru
+     */
     private void deleteMonthlyReading(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
         MonthlyReadingModel lastMonthlyReading = dataSubscriptionPointSource.lastMonthlyReadingByDate(subscriptionPoint.getTableO());
         dataSubscriptionPointSource.close();
-        //upraví poslední záznam bez faktury podle posledního měsíčního záznamu
+        //odebere položku z adapter a přepočítá pozice, vynuluje showButtons jež ukazuje na rozbalenou položku
         showButtons = -1;
         items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position - 1, getItemCount());
+        //upraví poslední záznam bez faktury podle posledního měsíčního záznamu
         WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
     }
 }

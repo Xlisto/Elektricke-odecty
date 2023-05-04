@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.ownview;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,17 +88,17 @@ public class ViewHelper {
      * @return String datum ve formátu dd.MM.yyyy
      */
     public static String convertLongToTime(long l) {
-        long offset = getOffsetTimezones(l);
+        long offset = getOffsetTimeZones(l);
         return getSimpleDateFormat().format(l+offset);
     }
 
     public static String yearOfLong(long l) {
-        long offset = getOffsetTimezones(l);
+        long offset = getOffsetTimeZones(l);
         return getSimpleDateFormat("yyyy").format(l+offset);
     }
 
     public static int yearIntOfLong(long l) {
-        long offset = getOffsetTimezones(l);
+        long offset = getOffsetTimeZones(l);
         return Integer.parseInt(getSimpleDateFormat("yyyy").format(l+offset));
     }
 
@@ -108,7 +107,7 @@ public class ViewHelper {
      * @param l datum v milisekundách
      * @return long - offset v milisekundách pro dané datum
      */
-    public static long getOffsetTimezones(long l) {
+    public static long getOffsetTimeZones(long l) {
         long offsetDef = TimeZone.getDefault().getOffset(l)*(-1);
         long offsetPra = TimeZone.getTimeZone("Europe/Prague").getOffset(l);
 

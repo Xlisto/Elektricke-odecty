@@ -36,11 +36,13 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //načte odběrné místo
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         InvoiceModel invoice = dataSubscriptionPointSource.loadInvoice(id, table);
         dataSubscriptionPointSource.close();
 
+        //načte informace o ceníku použité pro tlačítko výběru ceníku
         selectedIdPrice = invoice.getIdPriceList();
         selectedIdInvoice = invoice.getIdInvoice();
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
@@ -63,19 +65,24 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             loadFromDatabase = false;
 
         }
+
         btnSelectPriceList.setText(priceListName);
+
+        //Skrytí NT údajů
         deactivateNT(priceListSazba.equals(D01) || priceListSazba.equals(D02));
 
         //zneaktivní tlačítka pokud je první nebo poslední záznam
         boolean first = WithOutInvoiceService.firstRecordInvoice(getActivity(), -1L, id);
         boolean last = WithOutInvoiceService.lastRecordInvoice(getActivity(), -1L, id);
 
+        //zobrazení první záznamu - zneaktivnění vstupních polí
         if (first) {
             letNTStart.setEnabled(false);
             letVTStart.setEnabled(false);
             btnDateStart.setEnabled(false);
         }
 
+        //zobrazení posledního záznamu - zneaktivnění vstupních polí
         if (last) {
             letNTEnd.setEnabled(false);
             letVTEnd.setEnabled(false);
@@ -95,8 +102,8 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             loadFromDatabase = true;
             getParentFragmentManager().popBackStack();
         });
+
         oldDateStart = btnDateStart.getText().toString();
         oldDateEnd = btnDateEnd.getText().toString();
     }
-
 }

@@ -15,27 +15,26 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 
 import static cz.xlisto.odecty.format.DecimalFormatHelper.*;
 
+/**
+ * Fragment pro editaci měsíčního odečtu.
+ */
 public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbstract {
-    private final String TAG = getClass().getName() + " ";
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private final String TAG = "MonthlyReadingEditFragment";
     private static final String ARG_TABLE_O = "table_O";
     private static final String ARG_TABLE_PLATBY = "table_PLATBY";
     private static final String ARG_ITEM_ID = "item_id";
     private static final String IS_FIRST_LOAD = "isFirstLoad";
     private MonthlyReadingModel monthlyReading;
     private PriceListModel priceList;
-    private boolean isFirstLoad = true;
-
-    // TODO: Rename and change types of parameters
     private String tableO;
     private String tablePlatby;
     private long itemId;
 
+
     public MonthlyReadingEditFragment() {
         // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -46,7 +45,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
      * @param itemId      Id odečtu v databázi.
      * @return A new instance of fragment MonthlyReadingEditFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MonthlyReadingEditFragment newInstance(String tableO, String tablePlatby, long itemId) {
         MonthlyReadingEditFragment fragment = new MonthlyReadingEditFragment();
         Bundle args = new Bundle();
@@ -57,6 +55,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +65,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
             itemId = getArguments().getLong(ARG_ITEM_ID, -1L);
         }
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -101,6 +101,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -108,12 +109,17 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         btnSave.setEnabled(!priceList.isEmpty());
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_FIRST_LOAD, true);
     }
 
+
+    /**
+     * Načte z databáze objekt měsíčního odečtu.
+     */
     private void loadMonthlyReading() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
@@ -121,6 +127,10 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         dataSubscriptionPointSource.close();
     }
 
+
+    /**
+     * Načte s databáze objekt ceníku.
+     */
     private void loadPriceList() {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
@@ -128,15 +138,16 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         dataPriceListSource.close();
     }
 
+
+    /**
+     * Uloží úpravený měsíční odečet do databáze.
+     * @param itemId long id měsíčního odečtu v databázi.
+     */
     private void updateMonthlyReading(long itemId) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.updateMonthlyReading(createMonthlyReading(), itemId, tableO);
         dataSubscriptionPointSource.close();
         updateLastItemInvoice();
-    }
-
-    private void deleteMonthlyReading(long itemId) {
-
     }
 }

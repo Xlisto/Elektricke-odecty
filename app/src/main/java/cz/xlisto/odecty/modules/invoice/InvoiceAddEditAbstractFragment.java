@@ -25,32 +25,34 @@ import cz.xlisto.odecty.utils.Keyboard;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 /**
+ * Abstraktní třída pro třídy přidání/úpravy položek faktury.
  * Xlisto 04.02.2023 11:58
  */
 public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     private static final String TAG = "InvoiceAddEditAbstractFragment";
     static final String TABLE = "table";
-    static final String ID_FAK = "id_fak";
+    static final String ID_FAK = "idFak";
     static final String ID = "id";
     static final String BTN_DATE_OF = "btnDate1";
     static final String BTN_DATE_TO = "btnDate2";
-    static final String VT_START = "vt_start";
-    static final String NT_START = "nt_start";
-    static final String VT_END = "vt_end";
-    static final String NT_END = "nt_end";
+    static final String VT_START = "vtStart";
+    static final String NT_START = "ntStart";
+    static final String VT_END = "vtEnd";
+    static final String NT_END = "ntEnd";
     static final String OTHER_SERVICES = "other";
     static final String SELECTED_ID_PRICE = "selectedIdPrice";
     static final String SELECTED_ID_INVOICE = "selectedIdInvoice";
-    Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
+    static boolean loadFromDatabase = true;
     private PriceListModel selectedPrice;
-    LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     long selectedIdPrice = -1L;
     long selectedIdInvoice = -1L;
     long id = -1L;
+    Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
+    LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     String numberInvoice, table;
     String oldDateStart = "1.1.2023";
     String oldDateEnd = "31.12.2023";
-    static boolean loadFromDatabase = true;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,11 +64,13 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_invoice_add_edit, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -96,7 +100,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
                 }
                 selectedPrice = priceList;
                 selectedIdPrice = selectedPrice.getId();
-                deactivateNT(selectedPrice.getSazba().equals("D 01d") || selectedPrice.getSazba().equals("D 02d"));
+                deactivateNT(selectedPrice.getSazba().equals(InvoiceAbstract.D01) || selectedPrice.getSazba().equals(InvoiceAbstract.D02));
 
             });
             Keyboard.hide(requireActivity());
@@ -125,6 +129,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -133,8 +138,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             deactivateNT(selectedPrice.getSazba().equals("D 01d") || selectedPrice.getSazba().equals("D 02d"));
             btnSelectPriceList.setText(selectedPrice.getName());
         }
-
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -150,11 +155,18 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
     }
 
+
+    /**
+     * Vytvoří objekt InvoiceModel - záznam faktury
+     * @return InvoiceModel - jeden záznam faktury
+     */
     InvoiceModel createInvoice() {
-        ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
+        ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(requireContext());
         selectedIdPrice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_ID_PRICE, -1L);
         long start = ViewHelper.parseCalendarFromString(btnDateStart.getText().toString()).getTimeInMillis();
         long end = ViewHelper.parseCalendarFromString(btnDateEnd.getText().toString()).getTimeInMillis();
+        start -=  ViewHelper.getOffsetTimeZones(start);
+        end -= ViewHelper.getOffsetTimeZones(end);
         return new InvoiceModel(start, end,
                 letVTStart.getDouble(), letVTEnd.getDouble(),
                 letNTStart.getDouble(), letNTEnd.getDouble(),
@@ -163,12 +175,20 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         );
     }
 
+
+    /**
+     * Vytvoří objekt InvoiceModel - záznam faktury. Nastaví id a idPriceList - používá se při editaci
+     * @param id long id faktury
+     * @param idPriceList long id ceníku
+     * @return InvoiceModel - jeden záznam faktury
+     */
     InvoiceModel createInvoice(long id, long idPriceList) {
         InvoiceModel invoice = createInvoice();
         invoice.setId(id);
         invoice.setIdPriceList(idPriceList);
         return invoice;
     }
+
 
     void saveSharedPreferences() {
         ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
@@ -185,6 +205,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         shPAddEditInvoice.set(ShPAddEditInvoice.TABLE, table);
         shPAddEditInvoice.set(ShPAddEditInvoice.ID, id);
     }
+
 
     /**
      * Načte uložené hodnoty z SharedPreferences a nastaví je do odpovídajících polí.
@@ -208,6 +229,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             shPAddEditInvoice.set(ShPAddEditInvoice.LOAD_PREFERENCES, false);
         }
     }
+
 
     /**
      * Kontroluje, zda jsou všechny potřebné údaje vyplněny pro vytvoření nového záznamu o tarifu.
@@ -236,6 +258,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         }
         return false;
     }
+
 
     /**
      * Deaktivuje nebo aktivuje prvky v adapterovém zobrazení položky, které slouží k zadání informací o nočním tarifu.

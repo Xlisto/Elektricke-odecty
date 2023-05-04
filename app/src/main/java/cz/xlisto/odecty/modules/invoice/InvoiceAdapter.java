@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -354,8 +352,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         long endRegulPrice = priceListRegulBuilder.getDateEnd();
         long dateStartMonthlyReading = invoice.getDateFrom();
         long dateEndMonthlyReading = invoice.getDateTo();
-        long offsetStart = ViewHelper.getOffsetTimezones(startRegulPrice);
-        long offsetEnd = ViewHelper.getOffsetTimezones(endRegulPrice);
+        long offsetStart = ViewHelper.getOffsetTimeZones(startRegulPrice);
+        long offsetEnd = ViewHelper.getOffsetTimeZones(endRegulPrice);
         startRegulPrice -= offsetStart;
         endRegulPrice -= offsetEnd;
 
