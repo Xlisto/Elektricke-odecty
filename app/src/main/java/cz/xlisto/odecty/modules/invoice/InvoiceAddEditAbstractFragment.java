@@ -193,8 +193,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     void saveSharedPreferences() {
         ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
         shPAddEditInvoice.set(ShPAddEditInvoice.LOAD_PREFERENCES, true);
-        shPAddEditInvoice.set(ShPAddEditInvoice.BTNDATE_OF, btnDateStart.getText().toString());
-        shPAddEditInvoice.set(ShPAddEditInvoice.BTNDATE_TO, btnDateEnd.getText().toString());
+        shPAddEditInvoice.set(ShPAddEditInvoice.BTN_DATE_OF, btnDateStart.getText().toString());
+        shPAddEditInvoice.set(ShPAddEditInvoice.BTN_DATE_TO, btnDateEnd.getText().toString());
         shPAddEditInvoice.set(ShPAddEditInvoice.VT_START, letVTStart.getText());
         shPAddEditInvoice.set(ShPAddEditInvoice.NT_START, letNTStart.getText());
         shPAddEditInvoice.set(ShPAddEditInvoice.VT_END, letVTEnd.getText());
@@ -215,8 +215,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
         boolean loadPreferences = shPAddEditInvoice.get(ShPAddEditInvoice.LOAD_PREFERENCES, false);
         if (loadPreferences) {
-            btnDateStart.setText(shPAddEditInvoice.get(ShPAddEditInvoice.BTNDATE_OF, "Datum"));
-            btnDateEnd.setText(shPAddEditInvoice.get(ShPAddEditInvoice.BTNDATE_TO, "Datum"));
+            btnDateStart.setText(shPAddEditInvoice.get(ShPAddEditInvoice.BTN_DATE_OF, "Datum"));
+            btnDateEnd.setText(shPAddEditInvoice.get(ShPAddEditInvoice.BTN_DATE_TO, "Datum"));
             letVTStart.setDefaultText(shPAddEditInvoice.get(ShPAddEditInvoice.VT_START, "0"));
             letNTStart.setDefaultText(shPAddEditInvoice.get(ShPAddEditInvoice.NT_START, "0"));
             letVTEnd.setDefaultText(shPAddEditInvoice.get(ShPAddEditInvoice.VT_END, "0"));

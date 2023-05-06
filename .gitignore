@@ -1,2 +1,6 @@
 /local.properties
 /.idea/workspace.xml
+
+app/build/
+
+.gradle/

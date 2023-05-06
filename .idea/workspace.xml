@@ -9,17 +9,19 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu.">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceDetail.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -96,20 +98,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app" />
@@ -350,7 +353,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683233380054</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu.">
+      <created>1683238432380</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1683238432380</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -439,6 +449,7 @@
     <MESSAGE value="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume()." />
     <MESSAGE value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
     <MESSAGE value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
-    <option name="LAST_COMMIT_MESSAGE" value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
+    <MESSAGE value="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu." />
   </component>
 </project>
