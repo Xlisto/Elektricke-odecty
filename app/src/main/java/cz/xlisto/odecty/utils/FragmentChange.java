@@ -46,7 +46,7 @@ public class FragmentChange {
 
         if (fragment != null)
             fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
-        
+
         if (add)
             fragmentTransaction.addToBackStack(null);
 
