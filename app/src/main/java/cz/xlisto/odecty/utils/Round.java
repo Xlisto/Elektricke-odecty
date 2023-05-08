@@ -1,31 +1,35 @@
 package cz.xlisto.odecty.utils;
 
 /**
- * Zaokrouhlování double čísel
+ * Zaokrouhlení double čísel
  */
 public class Round {
+
+
     /**
      * Zaokrouhlí na dvě desetinná místa
      *
-     * @param d
-     * @return
+     * @param number double zaokrouhlované číslo
+     * @return double zaokrouhlené číslo
      */
-    public static double round(double d) {//zaokrouhlování na 2 desetinná místa
-        return Math.round(d * 100.0) / 100.0;
+    public static double round(double number) {//zaokrouhlování na 2 desetinná místa
+        return (Math.round(number * 100.0)) / 100.0;
     }
 
+
     /**
-     * Zaokrouhlí na zadadný počet míst
+     * Zaokrouhlí na zadaný počet míst
      *
-     * @param d
-     * @param x
-     * @return
+     * @param number double  zaokrouhlované číslo
+     * @param round  int počet desetinných míst
+     * @return double zaokrouhlené číslo
      */
-    public static double round(double d, int x) {//zaokrouhlování na 2 nebo 3 desetinných míst
-        String s = "1";
-        for (int i = 0; i < x; i++) {
-            s = s + "0";
+    public static double round(double number, int round) {
+
+        StringBuilder s = new StringBuilder("1");
+        for (int i = 0; i < round; i++) {
+            s.append("0");
         }
-        return Math.round(d * Double.parseDouble(s)) / Double.parseDouble(s);
+        return Math.round(number * Double.parseDouble(s.toString())) / Double.parseDouble(s.toString());
     }
 }

@@ -8,53 +8,69 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.PriceListModel;
 
+/**
+ * Čtení JSON souborů (regulované ceny) z res/raw
+ */
 public class ReadRawJSON {
-    private static String TAG = "ReadRawJSON";
-    private Context context;
+    private final static String TAG = "ReadRawJSON";
+    private final Context context;
     private int year;
     private String distUzemi, sazba;
-    private PriceListModel priceListModel;
-    private static String ROK = "rok";
-    private static String DIST_UZEMI = "dist_uzemi";
-    private static String DISTRIBUCE = "distribuce";
-    private static String JISTICE = "jistice";
-    private static String SAZBA = "sazba";
-    private static String OSTATNI = "ostatni";
-    private static String VT = "vt";
-    private static String NT = "nt";
-    private static String J0 = "J0";
-    private static String J1 = "J1";
-    private static String J2 = "J2";
-    private static String J3 = "J3";
-    private static String J4 = "J4";
-    private static String J5 = "J5";
-    private static String J6 = "J6";
-    private static String J7 = "J7";
-    private static String J8 = "J8";
-    private static String J9 = "J9";
-    private static String J10 = "J10";
-    private static String J11 = "J11";
-    private static String J12 = "J12";
-    private static String J13 = "J13";
-    private static String J14 = "J14";
-    private static String ST_PLAT = "st_plat";
-    private static String DPH = "dph";
-    private static String DAN = "dan";
-    private static String CINNOST = "cinnost";
-    private static String SYSTEM_SLUZBY = "system_sluzby";
-    private static String POZE1 = "POZE1";
-    private static String POZE2 = "POZE2";
+    private final PriceListModel priceListModel;
+    private static final String ROK = "rok";
+    private final static String DIST_UZEMI = "dist_uzemi";
+    private static final String DISTRIBUCE = "distribuce";
+    private static final String JISTICE = "jistice";
+    private static final String SAZBA = "sazba";
+    private static final String OSTATNI = "ostatni";
+    private static final String VT = "vt";
+    private final static String NT = "nt";
+    private final static String J0 = "J0";
+    private static final String J1 = "J1";
+    private final static String J2 = "J2";
+    private final static String J3 = "J3";
+    private final static String J4 = "J4";
+    private final static String J5 = "J5";
+    private final static String J6 = "J6";
+    private final static String J7 = "J7";
+    private final static String J8 = "J8";
+    private final static String J9 = "J9";
+    private final static String J10 = "J10";
+    private final static String J11 = "J11";
+    private final static String J12 = "J12";
+    private final static String J13 = "J13";
+    private final static String J14 = "J14";
+    private final static String DPH = "dph";
+    private final static String DAN = "dan";
+    private final static String CINNOST = "cinnost";
+    private final static String SYSTEM_SLUZBY = "system_sluzby";
+    private final static String POZE1 = "POZE1";
+    private final static String POZE2 = "POZE2";
 
+
+    /**
+     * Konstruktor
+     *
+     * @param context kontext aplikace
+     */
     public ReadRawJSON(Context context) {
         this.context = context;
-
         priceListModel = new PriceListModel();
     }
 
+
+    /**
+     * Prohledá objekt JSON s regulovanými cenami a podle typu (distribuční sazba, hodnota jistice) naplní model ceníku
+     *
+     * @param year      rok ceníku pro který jsou platný regulované ceny
+     * @param distUzemi oblast distribučního území
+     * @param sazba     distribuční sazba
+     */
     public PriceListModel read(int year, String distUzemi, String sazba) {
         this.year = year;
         this.distUzemi = distUzemi;
@@ -62,40 +78,46 @@ public class ReadRawJSON {
         String distribuce = readRaw(R.raw.distribuce);
         String ostatni = readRaw(R.raw.ostatni);
         String jistice = readRaw(R.raw.jistice);
-        parse(distribuce,Typ.DISTRIBUCE);
+        parse(distribuce, Typ.DISTRIBUCE);
         parseOther(ostatni);
-        parse(jistice,Typ.JISTIC);
+        parse(jistice, Typ.JISTIC);
         return priceListModel;
     }
+
 
     /**
      * Načte zdrojový soubor podle resource
      *
-     * @param resource
-     * @return
+     * @param resource int
+     * @return String načteného ceníku
      */
     private String readRaw(int resource) {
         String json = "";
         InputStream is = context.getResources().openRawResource(resource);
-        int size = 0;
+        int size;
         try {
             size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
+            int i = is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
+            if (i == -1) {
+                throw new IOException("EOF reached while trying to read the whole file");
+            }
             return json;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return json;
     }
+    
 
     /**
-     * Prohledá objekt JSON a podle typu (distribuční vt a nt nebo ceny jističl) zavolá
+     * Prohledá objekt JSON a podle typu (distribuční oblast, vt, nt nebo ceny jističe) zavolá
      * parseDistribuce nebo parseJistic
-     * @param s
-     * @param typ
+     *
+     * @param s   String obsahující JSON s regulovanými cenami
+     * @param typ Typ (distribuce, jistice)
      */
     private void parse(String s, Typ typ) {
         try {
@@ -110,7 +132,7 @@ public class ReadRawJSON {
                         JSONObject distUzemiObject = distUzemiArray.getJSONObject(j);
                         if (typ.equals(Typ.DISTRIBUCE))
                             parseDistribuce(distUzemiObject);
-                        if(typ.equals(Typ.JISTIC))
+                        if (typ.equals(Typ.JISTIC))
                             parseJistice(distUzemiObject);
                     }
                     break;
@@ -122,10 +144,12 @@ public class ReadRawJSON {
         }
     }
 
+
     /**
-     * Přečte JSON a přiřadí distřibucni cenu vt a nt do objektu ceníku
-     * @param jsonObject
-     * @throws JSONException
+     * Přečte JSON a přiřadí distribuční cenu vt a nt do objektu ceníku
+     *
+     * @param jsonObject JSONObject
+     * @throws JSONException vyjímka JSON
      */
     private void parseDistribuce(JSONObject jsonObject) throws JSONException {
 
@@ -143,10 +167,12 @@ public class ReadRawJSON {
         }
     }
 
+
     /**
      * Přečte JSON a přiřadí distribuční ceny jističů do objektu ceníku
-     * @param jsonObject
-     * @throws JSONException
+     *
+     * @param jsonObject JSONObject
+     * @throws JSONException vyjímka JSON
      */
     private void parseJistice(JSONObject jsonObject) throws JSONException {
         if (jsonObject.getString(DIST_UZEMI).equals(distUzemi)) {
@@ -176,11 +202,12 @@ public class ReadRawJSON {
         }
     }
 
+
     /**
-     * Sestaví JSON ze stringu. Vyfiltruje podle roku platnosti a přiřadí hodnoty systémové služby, cinnost operátora,
+     * Sestaví JSON ze stringu. Vyfiltruje podle roku platnosti a přiřadí hodnoty systémové služby, činnost operátora,
      * poze podle jističe a poze podle spotřeby, dph a dan
      *
-     * @param s
+     * @param s String obsahující JSON s ostatními cenami
      */
     private void parseOther(String s) {
         try {
@@ -198,12 +225,12 @@ public class ReadRawJSON {
                     priceListModel.setDan(otherPrice.getDouble(DAN));
                     break;
                 }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 
     enum Typ {
         JISTIC,

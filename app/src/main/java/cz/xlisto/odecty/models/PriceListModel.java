@@ -62,7 +62,7 @@ public class PriceListModel {
 
     //nulový konstruktor s názvem Ceník nenalezen
     public PriceListModel() {
-    this(NO_PRICE_LIST);
+        this(NO_PRICE_LIST);
     }
 
 
@@ -161,21 +161,23 @@ public class PriceListModel {
 
     /**
      * Zobrazí název, sazbu a platnost ceníku
+     *
      * @return String název, sazba a platnost ceníku
      */
-    public String getName(){
-        if(this.produkt.equals(NO_PRICE_LIST))
+    public String getName() {
+        if (this.produkt.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
 
-        return getProdukt() + ", " +getSazba() + ",\nPlatný od: " + convertLongToTime(getPlatnostOD());
+        return getProdukt() + ", " + getSazba() + ",\nPlatný od: " + convertLongToTime(getPlatnostOD());
     }
 
 
     /**
      * Zjistí, zdali je ceník prázdný. Kontroluje se podle názvu ceníku.
+     *
      * @return boolean true - prázdný, false - není prázdný
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return this.produkt.equals(NO_PRICE_LIST);
     }
 
@@ -191,13 +193,13 @@ public class PriceListModel {
                 "\nJ1:" + getJ1() + " J2:" + getJ2() + " J3:" + getJ3() +
                 "\nJ4:" + getJ4() + " J5:" + getJ5() + " J6:" + getJ6() +
                 "\nJ7:" + getJ7() + " J8:" + getJ8() + " J9:" + getJ9() +
-                "\nJ10:" + getJ10() + " J11:" + getJ11() +" J12:" + getJ12() +
+                "\nJ10:" + getJ10() + " J11:" + getJ11() + " J12:" + getJ12() +
                 "\nJ13:" + getJ13() + " J14:" + getJ14() +
-                "\nSystem.služby: " + getSystemSluzby() + " Činnost OTE:" + getCinnost() +" POZE1: " + getPoze1() +
+                "\nSystem.služby: " + getSystemSluzby() + " Činnost OTE:" + getCinnost() + " POZE1: " + getPoze1() +
                 "\nPOZE2:" + getPoze2() + " OZE:" + getOze() + " OTE:" + getOte() +
                 "\nPlatnost OD:" + getPlatnostOD() + " DO:" + getPlatnostDO() +
                 "\nDistribuce: " + getDistribuce() +
-                "\nDph:" + getDph() +  " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor()+" email :"+getEmail();
+                "\nDph:" + getDph() + " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor() + " email :" + getEmail();
     }
 
 
@@ -380,14 +382,15 @@ public class PriceListModel {
      * Vrací oblast distribuce. (ČEZ, E.ON, EG.D, PRE)
      * DO ROKU 2020: ČEZ, E.ON, PRE
      * OD ROKU 2021: ČEZ, EG.D, PRE
+     *
      * @return string oblasti distribuce
      */
     public String getDistribuce() {
-        if (getRokPlatnost()>=2021){
-            if(distribuce.equals(EON))
+        if (getRokPlatnost() >= 2021) {
+            if (distribuce.equals(EON))
                 return EGD;
         } else {
-            if(distribuce.equals(EGD))
+            if (distribuce.equals(EGD))
                 return EON;
         }
         return distribuce;
@@ -404,7 +407,7 @@ public class PriceListModel {
     }
 
 
-    public int getRokPlatnost(){
+    public int getRokPlatnost() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(getPlatnostOD());
         return calendar.get(Calendar.YEAR);
@@ -416,24 +419,9 @@ public class PriceListModel {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void setId(Long id) {
         this.id = id;
     }
-
 
 
     public void setProdukt(String produkt) {
@@ -445,118 +433,133 @@ public class PriceListModel {
         this.cenaVT = cenaVT;
     }
 
+
     public void setCenaNT(Double cenaNT) {
         this.cenaNT = cenaNT;
     }
+
 
     public void setMesicniPlat(Double mesicniPlat) {
         this.mesicniPlat = mesicniPlat;
     }
 
+
     public void setDan(Double dan) {
         this.dan = dan;
     }
+
 
     public void setSazba(String sazba) {
         this.sazba = sazba;
     }
 
+
     public void setDistVT(Double distVT) {
         this.distVT = distVT;
     }
+
 
     public void setDistNT(Double distNT) {
         this.distNT = distNT;
     }
 
+
     public void setJ0(Double j0) {
         this.j0 = j0;
     }
+
 
     public void setJ1(Double j1) {
         this.j1 = j1;
     }
 
+
     public void setJ2(Double j2) {
         this.j2 = j2;
     }
+
 
     public void setJ3(Double j3) {
         this.j3 = j3;
     }
 
+
     public void setJ4(Double j4) {
         this.j4 = j4;
     }
+
 
     public void setJ5(Double j5) {
         this.j5 = j5;
     }
 
+
     public void setJ6(Double j6) {
         this.j6 = j6;
     }
+
 
     public void setJ7(Double j7) {
         this.j7 = j7;
     }
 
+
     public void setJ8(Double j8) {
         this.j8 = j8;
     }
+
 
     public void setJ9(Double j9) {
         this.j9 = j9;
     }
 
+
     public void setJ10(Double j10) {
         this.j10 = j10;
     }
+
 
     public void setJ11(Double j11) {
         this.j11 = j11;
     }
 
+
     public void setJ12(Double j12) {
         this.j12 = j12;
     }
+
 
     public void setJ13(Double j13) {
         this.j13 = j13;
     }
 
+
     public void setJ14(Double j14) {
         this.j14 = j14;
     }
+
 
     public void setSystemSluzby(Double systemSluzby) {
         this.systemSluzby = systemSluzby;
     }
 
+
     public void setCinnost(Double cinnost) {
         this.cinnost = cinnost;
     }
 
+
     public void setPoze1(Double poze1) {
         this.poze1 = poze1;
     }
+
 
     public void setPoze2(Double poze2) {
         this.poze2 = poze2;
     }
 
 
-
-
-
     public void setDph(Double dph) {
         this.dph = dph;
     }
-
-
-
-
-
-
-
 }
