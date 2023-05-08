@@ -6,13 +6,13 @@
     android:layout_margin="5dp">
 
     <TextView
-        android:id="@+id/tvPrice"
+        android:id="@+id/tvlPriceDetailPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="false"
-        android:layout_below="@id/tvLabel"
+        android:layout_below="@id/tvPriceDetailLabel"
         android:layout_marginBottom="5dp"
         android:autofillHints=""
         android:gravity="end"
@@ -24,21 +24,21 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvLabel"
+        android:id="@+id/tvPriceDetailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
 
-        android:layout_toStartOf="@id/tvItem"
+        android:layout_toStartOf="@id/tvPricedetailUnit"
         android:text="@string/label_for"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
-        android:id="@+id/tvItem"
+        android:id="@+id/tvPricedetailUnit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_above="@id/tvPrice"
+        android:layout_above="@id/tvlPriceDetailPrice"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false"
         android:text="@string/label_for" />

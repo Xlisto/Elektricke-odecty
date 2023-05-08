@@ -26,50 +26,65 @@ import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
 import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
 /**
- * Sloučený TextView s EditTextem
- * Seznam atributů je v xml souboru attrs.xml s name ItemView
+ * Sloučený View TextView s EditTextem.
+ * Zjednodušuje vytvoření EditTextu s TextView.
+ * Seznam atributů je v xml souboru attrs.xml s name LabelEditText
  */
 public class LabelEditText extends RelativeLayout {
-    private RelativeLayout relativeLayout;
     private TextView textView;
     private EditText editText;
+
 
     public LabelEditText(Context context) {
         super(context);
     }
+
 
     public LabelEditText(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         init(context, attributeSet);
     }
 
+
+    public LabelEditText(Context context, AttributeSet attributeSet, int defStyleAttr) {
+        super(context, attributeSet, defStyleAttr);
+        init(context, attributeSet);
+    }
+
+
+    public LabelEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
+    }
+
+
     /**
-     * Inicializace z paramterů xml
+     * Inicializace z parametrů xml
      *
-     * @param context
-     * @param attributeSet
+     * @param context      kontext aplikace
+     * @param attributeSet parametry z xml
      */
     @SuppressLint("ResourceType")
     private void init(Context context, AttributeSet attributeSet) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.label_edittext_view, this);
+        RelativeLayout relativeLayout = findViewById(R.id.relative_layout);
 
-        /*int orientation = getResources().getConfiguration().orientation;
-        int keyb = getResources().getConfiguration().keyboardHidden;
-        Log.w("TAG","orient "+orientation+" "+keyb);*/
-        relativeLayout = findViewById(R.id.relative_layout);
-        textView = findViewById(R.id.tvLabel);
-        editText = findViewById(R.id.tvPrice);
+        textView = findViewById(R.id.tvLabelEdit);
+        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        relativeLayoutParams.addRule(RelativeLayout.END_OF,textView.getId());
+
+        //vytvoření EditTextu a přidání do layoutu
+        editText = new EditText(context);
+        editText.setLayoutParams(relativeLayoutParams);
+        editText.setGravity(View.TEXT_ALIGNMENT_VIEW_END);
+        editText.setHint("");
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setMinHeight(48);
+        editText.setMinWidth(48);
         editText.setId(View.generateViewId());
-        //TODO: Zobrazení klávesnice v land režimu neumí řešit desetinnou tečku/čátrku, proto je zákána
-        /*editText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.w("TAG","orient "+orientation+" keyb "+keyb);
-                editText.setText(editText.getText().toString().replace(",","."));
-            }
-        });*/
-
+        relativeLayout.addView(editText);
 
         setTexts(attributeSet);
         setMaxEms(attributeSet);
@@ -78,56 +93,54 @@ public class LabelEditText extends RelativeLayout {
         setImeOptions(attributeSet);
         setInputType(attributeSet);
         setGravity(attributeSet);
-        //numberFormatText();
         numberFormatHint();
-        //numberFormat();
         setEnabled(attributeSet);
     }
+
 
     /**
      * Nastaví vzájemné rozvržení mezi TextView a EditText. Vedle sebe nebo pod sebou.
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setDirection(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int layoutWidth = ta.getInt(R.styleable.LabelEditText_android_layout_width, -1);
         int direction = ta.getInt(R.styleable.LabelEditText_direction, 1);
 
+        LayoutParams paramsTextView;
+        LayoutParams paramsEditText;
         if (direction == 1) {
             //rozložení vedle sebe, minimální rozměry nebo přes celou obrazovku - podle rodiče
-            RelativeLayout.LayoutParams paramsTextView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            RelativeLayout.LayoutParams paramsEditText = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            paramsTextView = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            paramsEditText = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             paramsTextView.addRule(RelativeLayout.ALIGN_BASELINE, editText.getId());
             paramsTextView.addRule(RelativeLayout.ALIGN_PARENT_START);
 
             if (layoutWidth == -2) {
                 paramsEditText.addRule(RelativeLayout.END_OF, textView.getId());
-
-                //paramsEditText.addRule(RelativeLayout.ALIGN_START, textView.getId());
-                //paramsTextView.addRule(RelativeLayout.START_OF,editText.getId());
             } else {
                 paramsTextView.addRule(RelativeLayout.START_OF, editText.getId());
                 paramsEditText.addRule(RelativeLayout.ALIGN_PARENT_END, textView.getId());
             }
             paramsEditText.setMarginStart(ViewHelper.convertDpToPx(4, getContext()));
-            textView.setLayoutParams(paramsTextView);
-            editText.setLayoutParams(paramsEditText);
         } else {
             //rozložení pod sebou, přes celou šířku
-            RelativeLayout.LayoutParams paramsTextView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            RelativeLayout.LayoutParams paramsEditText = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            paramsTextView = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            paramsEditText = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             textView.setPadding(ViewHelper.convertDpToPx(4, getContext()), 0, 0, 0);
             paramsEditText.addRule(RelativeLayout.BELOW, textView.getId());
-            textView.setLayoutParams(paramsTextView);
-            editText.setLayoutParams(paramsEditText);
         }
+        textView.setLayoutParams(paramsTextView);
+        editText.setLayoutParams(paramsEditText);
+        ta.recycle();
     }
+
 
     /**
      * Nastaví textové atributy v TextView a EditTextu z XML rozvržení
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setTexts(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
@@ -153,66 +166,84 @@ public class LabelEditText extends RelativeLayout {
         }
     }
 
+
     /**
      * Nastaví typ vstupu do EditTextu zadaný v XML
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setInputType(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int inputTypeValue = ta.getInt(R.styleable.LabelEditText_android_inputType, 0);
         editText.setInputType(inputTypeValue);
+        ta.recycle();
     }
+
 
     private void setImeOptions(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int inputTypeValue = ta.getInt(R.styleable.LabelEditText_android_imeOptions, IME_FLAG_NO_EXTRACT_UI);
         editText.setImeOptions(inputTypeValue);
+        ta.recycle();
     }
+
 
     /**
      * Nastaví maximální šířku EditTextu v M
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setMaxEms(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int maxEms = ta.getInt(R.styleable.LabelEditText_android_maxEms, 10);
-
         editText.setMaxEms(maxEms);
+        ta.recycle();
     }
+
 
     /**
      * Nastaví šířku EditTextu v M
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setEms(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int ems = ta.getInt(R.styleable.LabelEditText_android_ems, 3);
-
         editText.setEms(ems);
+        ta.recycle();
     }
 
+
     /**
-     * Nastaví zarovnání textu levo/pravo
+     * Nastaví zarovnání textu vlevo/pravo
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setGravity(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         int gravity = ta.getInt(R.styleable.LabelEditText_android_gravity, 8388659);
         editText.setGravity(gravity);
+        ta.recycle();
     }
 
+
+    /**
+     * Povolí/zakáže widget podle parametru v XML
+     * @param attributeSet parametry z xml
+     */
     public void setEnabled(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         boolean enable = ta.getBoolean(R.styleable.LabelEditText_android_enabled, true);
         setEnabled(enable);
+        ta.recycle();
     }
 
+
+    /**
+     * Povolí/zakáže widget programově
+     * @param b true = povolit, false = zakázat
+     */
     public void setEnabled(boolean b) {
-        ;
         editText.setEnabled(b);
     }
 
@@ -259,15 +290,14 @@ public class LabelEditText extends RelativeLayout {
         });
     }
 
-    private void numberFormatText() {
-        if (editText.getText() != null)
-            editText.setText(numberFormat(editText.getText().toString()));
-    }
 
+    /**
+     * Nastaví hint na nulu, pokud je v EditTextu nastavený inputType number|numberDecimal|numberSigned
+     */
     private void numberFormatHint() {
         String hint = "";
         //nastavení hint na 0, jinak se nemění desetinná čárka
-        if (editText.getInputType() == TYPE_CLASS_NUMBER || editText.getInputType() == TYPE_CLASS_NUMBER+TYPE_NUMBER_FLAG_DECIMAL || editText.getInputType() == TYPE_CLASS_NUMBER+TYPE_NUMBER_FLAG_SIGNED) {
+        if (editText.getInputType() == TYPE_CLASS_NUMBER || editText.getInputType() == TYPE_CLASS_NUMBER + TYPE_NUMBER_FLAG_DECIMAL || editText.getInputType() == TYPE_CLASS_NUMBER + TYPE_NUMBER_FLAG_SIGNED) {
             hint = "0";
             editText.setHint("0");
         }
@@ -275,6 +305,7 @@ public class LabelEditText extends RelativeLayout {
             hint = editText.getHint().toString();
         editText.setHint(numberFormat(hint));
     }
+
 
     /**
      * Převede všechny číselné hodnoty do lokálního formátu
@@ -291,19 +322,6 @@ public class LabelEditText extends RelativeLayout {
                 (InputType.TYPE_NUMBER_FLAG_DECIMAL + InputType.TYPE_CLASS_NUMBER) == inputTypeValue ||
                 (InputType.TYPE_NUMBER_FLAG_SIGNED + InputType.TYPE_CLASS_NUMBER) == inputTypeValue) {
 
-            //odstraní prázdný text a nastaví na 0
-            /*if (editText.getHint() != null) {
-                if (editText.getHint().toString().isEmpty()) {
-                    editText.setHint("0");
-                }
-            }*/
-
-            /*if (editText.getText() != null) {
-                if (editText.getText().toString().isEmpty()) {
-                    editText.setText("0");
-                }
-            }*/
-
             double value = 0.0;
             try {
                 value = Double.parseDouble(s);
@@ -311,8 +329,6 @@ public class LabelEditText extends RelativeLayout {
                 e.printStackTrace();
                 //return;
             }
-            //editText.setText();
-            //editText.setHint(NumberFormat.getInstance().format(value));
 
             changeChar();
             return NumberFormat.getInstance().format(value);
@@ -320,20 +336,22 @@ public class LabelEditText extends RelativeLayout {
         return s;
     }
 
+
     /**
      * Nastaví textový atribut u TextView
      *
-     * @param label
+     * @param label text popisku
      */
     public void setLabel(String label) {
         textView.setText(label);
 
     }
 
+
     /**
      * Nastaví přednastavený text u TextEditu
      *
-     * @param defaultText
+     * @param defaultText přednastavený text
      */
     public void setDefaultText(String defaultText) {
         int position = editText.getSelectionStart();
@@ -341,28 +359,27 @@ public class LabelEditText extends RelativeLayout {
         editText.setSelection(position);
     }
 
+
     public void setHintText(String hintText) {
         editText.setHint(hintText);
     }
 
-    public String getHintText() {
-        return editText.getHint().toString();
-    }
 
     /**
      * Vrátí obsah EditTextu
      *
-     * @return
+     * @return vrátí obsah EditTextu jako String
      */
     public String getText() {
         return editText.getText().toString();
     }
 
+
     /**
      * Vrátí obsah EditTextu jako číslo double
      * Převede čárku co by desetinný oddělovač na desetinnou tečku
      *
-     * @return
+     * @return vrátí obsah EditTextu jako double, pokud nelze převést, vrátí 0
      */
     public double getDouble() {
         int inputTypeValue = editText.getInputType();
@@ -391,21 +408,8 @@ public class LabelEditText extends RelativeLayout {
 
     }
 
-    public int getInputType() {
-        return editText.getInputType();
-    }
 
-    public void addTextChangedListener(TextWatcher textWatcher){
+    public void addTextChangedListener(TextWatcher textWatcher) {
         editText.addTextChangedListener(textWatcher);
     }
-
-    public void setSelection(int i) {
-        editText.setSelection(i);
-    }
-
-    public int getSelectionStart() {
-        return editText.getSelectionStart();
-    }
-
-
 }

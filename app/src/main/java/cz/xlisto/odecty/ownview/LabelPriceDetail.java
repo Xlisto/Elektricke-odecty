@@ -10,46 +10,56 @@ import android.widget.TextView;
 
 import cz.xlisto.odecty.R;
 
+/**
+ * Sloučený View TextView (2x) s EditTextem.
+ * Zjednodušuje zobrazení detailu položky ceníku.
+ * Seznam atributů je v xml souboru attrs.xml s name LabelPriceDetail
+ */
 public class LabelPriceDetail extends RelativeLayout {
-    private RelativeLayout relativeLayout;
-    private TextView tvLabel,tvPrice,tvItem;
+    private TextView tvLabel,tvPrice, tvLabelItemUnit;
 
 
     public LabelPriceDetail(Context context) {
         super(context);
     }
 
+
     public LabelPriceDetail(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context,attrs);
     }
 
+
+    public LabelPriceDetail(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context,attrs);
+    }
+
+
     /**
-     * Inicializace z paramterů xml
+     * Inicializace z parametrů xml
      *
-     * @param context
-     * @param attributeSet
+     * @param context kontext aplikace
+     * @param attributeSet  parametry z xml
      */
     @SuppressLint("ResourceType")
     private void init(Context context, AttributeSet attributeSet) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.label_price_detail, this);
 
-        relativeLayout = findViewById(R.id.relative_layout);
-        tvLabel = findViewById(R.id.tvLabel);
-        tvPrice = findViewById(R.id.tvPrice);
-        tvItem = findViewById(R.id.tvItem);
+        tvLabel = findViewById(R.id.tvPriceDetailLabel);
+        tvPrice = findViewById(R.id.tvlPriceDetailPrice);
+        tvLabelItemUnit = findViewById(R.id.tvPricedetailUnit);
 
         setTexts(attributeSet);
-        //setGravity(attributeSet);
-        //numberFormat();
 
     }
+
 
     /**
      * Nastaví textové atributy v TextView a EditTextu z XML rozvržení
      *
-     * @param attributeSet
+     * @param attributeSet parametry z xml
      */
     private void setTexts(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelPriceDetail);
@@ -72,56 +82,53 @@ public class LabelPriceDetail extends RelativeLayout {
         }
     }
 
+
     /**
      * Nastaví textový atribut u TextView
      *
-     * @param label
+     * @param label text popisku
      */
     public void setLabel(String label) {
         tvLabel.setText(label);
     }
 
+
     /**
      * Nastaví textový atribut u TextView
      *
-     * @param label
+     * @param label text popisku
      */
     public void setPrice(String label) {
         tvPrice.setText(label);
     }
 
+
     /**
      * Nastaví textový atribut u TextView
      *
-     * @param label
+     * @param label text popisku
      */
     public void setItem(String label) {
-        tvItem.setText(label);
+        tvLabelItemUnit.setText(label);
     }
+
 
     /**
      * Vrátí obsah TextView
      *
-     * @return
+     * @return obsah popisku
      */
     public String getLabel() {
         return tvLabel.getText().toString();
     }
+
+
     /**
      * Vrátí obsah TextView
      *
-     * @return
+     * @return cena
      */
     public String getPrice() {
         return tvPrice.getText().toString();
     }
-    /**
-     * Vrátí obsah TextView
-     *
-     * @return
-     */
-    public String getItem() {
-        return tvItem.getText().toString();
-    }
-
 }
