@@ -12,6 +12,7 @@ public class ShPAddEditMonthlyReading extends ShP {
     public static final String FIRS_READING_MONTHLY_READING = "first_readingMonthlyReading";
     public static final String DATE_MONTHLY_READING = "dateMonthlyReading";
 
+
     public ShPAddEditMonthlyReading(Context context) {
         this.context = context;
     }

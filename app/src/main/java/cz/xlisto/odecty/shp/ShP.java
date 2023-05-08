@@ -11,8 +11,13 @@ public abstract class ShP {
     SharedPreferences.Editor editor;
 
 
-    public void setShp() {
+    public void getShp() {
         shp = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+
+    public void setShp() {
+        getShp();
         editor = shp.edit();
     }
 
@@ -46,19 +51,19 @@ public abstract class ShP {
 
 
     public String get(String key, String defaultValue) {
-        setShp();
+        getShp();
         return shp.getString(key,defaultValue);
     }
 
 
     public long get(String key, long defaultValue) {
-        setShp();
+        getShp();
         return shp.getLong(key,defaultValue);
     }
 
 
     public int get(String key, int defaultValue) {
-        setShp();
+        getShp();
         return shp.getInt(key,defaultValue);
     }
 
