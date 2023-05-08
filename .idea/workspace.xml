@@ -11,15 +11,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území.">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PaymentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PaymentModel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,22 +100,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty",
+    "project.structure.last.edited": "Dependencies",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.spelling"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app" />
@@ -411,7 +406,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683571400488</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry.">
+      <created>1683572910592</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1683572910592</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -507,6 +509,7 @@
     <MESSAGE value="Oprava upozornění v MainActivity.java" />
     <MESSAGE value="Úprava tříd (úprava konstant) přistupující SharedPreference. Přidán další konstruktor do abstraktní třídy ShP." />
     <MESSAGE value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území." />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území." />
+    <MESSAGE value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry." />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry." />
   </component>
 </project>
