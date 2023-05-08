@@ -18,34 +18,30 @@ import cz.xlisto.odecty.utils.FragmentChange;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
 public class MainActivity extends AppCompatActivity {
-    private static String TAG = "MainActivity";
-    static final String ACTUAL_FRAGMENT = "actualFragment";
-    Fragment actualFragment;
-    BottomNavigationView bottomNavigationView;
-    NavigationView navigationView;
+    private final static String TAG = "MainActivity";
+    private static final String ACTUAL_FRAGMENT = "actualFragment";
+    private Fragment actualFragment;
     private ShPMainActivity shPMainActivity;
     private boolean secondClick = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
-        navigationView = findViewById(R.id.nav_view);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
         shPMainActivity = new ShPMainActivity(getApplicationContext());
 
@@ -64,81 +60,72 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
 
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            long itemId = item.getItemId();
 
-                    case R.id.meni_prices:
-                        shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
-                        actualFragment = PriceListFragment.newInstance(false, -1l);
-                        FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
-                        return true;
-
-                    case R.id.meni_monthly_readings:
-                        shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
-                        actualFragment = MonthlyReadingFragment.newInstance("ar1", "ar2");
-                        FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
-                        return true;
-
-                    case R.id.meni_subscription_points:
-                        shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
-                        actualFragment = SubscriptionPointFragment.newInstance("ar1", "ar2");
-                        FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
-                        return true;
-                    case R.id.meni_invoice:
-                        shPMainActivity.set(ACTUAL_FRAGMENT,R.id.meni_invoice);
-                        actualFragment = InvoiceListFragment.newInstance("x","x");
-                        FragmentChange.replace(MainActivity.this,actualFragment,ALPHA);
-                        return true;
-                }
-                return false;
+            if (itemId == R.id.meni_prices) {
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
+                actualFragment = PriceListFragment.newInstance(false, -1L);
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                return true;
             }
+
+            if (itemId == R.id.meni_monthly_readings) {
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
+                actualFragment = MonthlyReadingFragment.newInstance("ar1", "ar2");
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                return true;
+            }
+
+            if (itemId == R.id.meni_subscription_points) {
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
+                actualFragment = SubscriptionPointFragment.newInstance("ar1", "ar2");
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                return true;
+            }
+
+            if (itemId == R.id.meni_invoice) {
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_invoice);
+                actualFragment = InvoiceListFragment.newInstance("x", "x");
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                return true;
+            }
+            return false;
         });
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                boolean b = false;
-                switch (item.getItemId()) {
-
-                    case R.id.menu_compare_price_list:
-                        //shPMainActivity.set(ACTUAL_FRAGMENT, R.id.menu_compare_price_list);
-                        actualFragment = PriceListCompareFragment.newInstance();
-                        b = true;
-                        break;
-
-                    case R.id.menu_backup:
-                        actualFragment = new BackupFragment();
-                        b = true;
-                        break;
-
-                    case R.id.menu_test:
-                        actualFragment = TestFragment.newInstance();
-                        b = true;
-                        break;
-
-                }
-                if (actualFragment != null)
-                    FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
-                drawer.closeDrawer(GravityCompat.START, true);
-                //bottomNavigationView.setSelectedItemId(false);
-                return b;
+        navigationView.setNavigationItemSelectedListener(item -> {
+            boolean b = false;
+            long itemId = item.getItemId();
+            if (itemId == R.id.menu_compare_price_list) {
+                actualFragment = PriceListCompareFragment.newInstance();
+                b = true;
             }
+
+            if (itemId ==  R.id.menu_backup) {
+                actualFragment = new BackupFragment();
+                b = true;
+            }
+
+            if (itemId ==  R.id.menu_test) {
+                actualFragment = TestFragment.newInstance();
+                b = true;
+            }
+
+            if (actualFragment != null)
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+            drawer.closeDrawer(GravityCompat.START, true);
+            return b;
         });
 
         if (savedInstanceState != null) {
-            //Restore the fragment's instance
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
         } else {
-            //actualFragment = PriceListFragment.newInstance(false, -1L);
-            //actualFragment = SubscriptionPointFragment.newInstance("ar1","ar2");
             actualFragment = MonthlyReadingFragment.newInstance("ar1", "ar2");
             bottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
-
     }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -151,25 +138,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_nav_view, menu);
-        return true;
-    }*/
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Log.w(TAG, "Navigace 2 " + item.getItemId());
-        //Log.w(TAG, "Navigace "+item.get);
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
-     * kliknutí na tlačítko zpět
+     * Akce kliknutí na tlačítko zpět
+     * Pokud je otevřený drawer, zavře ho
+     * Pokud je otevřený fragment, vrátí se o fragment zpět
+     * Pokud je otevřený fragment a je poslední, ukončí aplikaci
      */
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -179,12 +162,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (!secondClick) {
                 secondClick = true;
                 Toast.makeText(getApplication(), "Následující kliknutí aplikaci ukončí", Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        secondClick = false;
-                    }
-                }, 2000);
+                new Handler().postDelayed(() -> secondClick = false, 2000);
             } else {
                 super.onBackPressed();
             }
