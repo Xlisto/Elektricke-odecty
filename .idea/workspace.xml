@@ -2,26 +2,31 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <device id="_device_class_phone" />
+      </config>
     </shared>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu.">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoiceList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListEditFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -93,6 +98,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2PA5xVoLS07we1HBi9BC0kPEkrS" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -103,7 +111,8 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty&quot;,
@@ -360,7 +369,49 @@
       <option name="project" value="LOCAL" />
       <updated>1683238432380</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů">
+      <created>1683534163049</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1683534163049</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů">
+      <created>1683539584967</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1683539584967</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů">
+      <created>1683539914047</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1683539914047</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů">
+      <created>1683539950534</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1683539950534</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Oprava upozornění v MainActivity.java">
+      <created>1683569126421</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1683569126421</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Úprava tříd (úprava konstant) přistupující SharedPreference. Přidán další konstruktor do abstraktní třídy ShP.">
+      <created>1683571400488</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1683571400488</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -401,7 +452,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="origin/main" />
                       </list>
                     </value>
                   </entry>
@@ -450,6 +501,12 @@
     <MESSAGE value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
     <MESSAGE value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
     <MESSAGE value="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu." />
+    <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedineční identifikátory použitých widgetů" />
+    <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
+    <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
+    <MESSAGE value="Oprava upozornění v MainActivity.java" />
+    <MESSAGE value="Úprava tříd (úprava konstant) přistupující SharedPreference. Přidán další konstruktor do abstraktní třídy ShP." />
+    <MESSAGE value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území." />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území." />
   </component>
 </project>

@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import java.util.Calendar;
@@ -19,9 +19,12 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.Keyboard;
+import cz.xlisto.odecty.utils.ReadRawJSON;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 import static cz.xlisto.odecty.ownview.OwnDatePicker.showDialog;
 
 public abstract class PriceListAddEditAbstract extends Fragment {
@@ -32,12 +35,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String PRODUKT = "ivProdukt";
     static final String DODAVATEL = "ivDodavatel";
     static final String DISTRIBUCNI_UZEMI = "spDistribucniUzemi";
+    static final String SAZBA_DISTRIBUCE = "spSazbaDistribuce";
     static final String VT_NEREGUL = "ivVT";
     static final String NT_NEREGUL = "ivNT";
     static final String MESICNI_PLAT = "ivMesicniPlat";
     static final String VT_REGUL = "ivVT1";
     static final String NT_REGUL = "ivNT1";
-    static final String SAZBA_DISTRIBUCE = "spSazbaDistribuce";
+
     static final String JISTIC0 = "ivJistic0";
     static final String JISTIC1 = "ivJistic1";
     static final String JISTIC2 = "ivJistic2";
@@ -64,18 +68,17 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String JISTIC = "swJistic";
     static final String LAST_YEAR = "lastYear";
 
+
     String[] arrayDistUzemi;
     String[] arraySazba;
-    int year, lastYear;
+    int year, lastYear, selectionDistUzemi, selectionSazba;
     boolean isFirstLoad = true;
     boolean closedDialog = false;
 
-    View view;
     Button btnFrom, btnUntil, btnBack, btnSave;
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
     LabelEditText ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14;
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
-    RelativeLayout rlJistic, rlAll;
     SwitchCompat switchJistic;
     Spinner spSazba, spDistribucniUzemi;
 
@@ -84,10 +87,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
     }
 
     @Override
@@ -121,7 +121,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         ivJ13 = view.findViewById(R.id.ivJ13);
         ivJ14 = view.findViewById(R.id.ivJ14);
         ivOTE = view.findViewById(R.id.ivOTE);
-        ivCinnostOperatora = view.findViewById(R.id.ivCinnostOperaatoraTrhu);
+        ivCinnostOperatora = view.findViewById(R.id.ivCinnostOperatoraTrhu);
         ivOZE = view.findViewById(R.id.ivOZE);
         ivPOZE1 = view.findViewById(R.id.ivPOZE1);
         ivPOZE2 = view.findViewById(R.id.ivPOZE2);
@@ -132,29 +132,50 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         spDistribucniUzemi = view.findViewById(R.id.spDistribucniUzemiSeznam);
         spSazba = view.findViewById(R.id.spSazbaSeznam);
 
-        btnFrom.setOnClickListener(v -> {
-            showDialog(getActivity(), day -> {
-                closedDialog = true;
-                btnFrom.setText(day);
-                hideItemView();
-                lastYear = year;
-                getYear();
-                onResume();
-            }, btnFrom.getText().toString());
-
-        });
-        btnUntil.setOnClickListener(v -> {
-            showDialog(getActivity(), day -> btnUntil.setText(day), btnUntil.getText().toString());
-        });
+        btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
+            closedDialog = true;
+            btnFrom.setText(day);
+            hideItemView();
+            lastYear = year;
+            getYearBtnStart();
+            onResume();
+        }, btnFrom.getText().toString()));
+        btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> btnUntil.setText(day), btnUntil.getText().toString()));
 
         switchJistic.setOnClickListener(v -> hideItemView());
 
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());//vrácení o fragment zpět
+        btnBack.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            //vrácení o fragment zpět
+            getParentFragmentManager().popBackStack();
+        });
 
+        selectionSazba = 0;
+        selectionDistUzemi = 0;
 
-        arrayDistUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
-        arraySazba = getResources().getStringArray(R.array.sazby);
+        spSazba.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setRegulPrice();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spDistribucniUzemi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setRegulPrice();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         if (savedInstanceState != null) {
             //Restore the fragment's state here
@@ -163,14 +184,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             ivRada.setDefaultText(savedInstanceState.getString(RADA));
             ivProdukt.setDefaultText(savedInstanceState.getString(PRODUKT));
             ivDodavatel.setDefaultText(savedInstanceState.getString(DODAVATEL));
-            spDistribucniUzemi.setSelection(savedInstanceState.getInt(DISTRIBUCNI_UZEMI, arrayDistUzemi.length - 1));
+            selectionDistUzemi = savedInstanceState.getInt(DISTRIBUCNI_UZEMI, 0);
+            selectionSazba = savedInstanceState.getInt(SAZBA_DISTRIBUCE, 0);
             ivVT.setDefaultText(savedInstanceState.getString(VT_NEREGUL));
             ivNT.setDefaultText(savedInstanceState.getString(NT_NEREGUL));
             ivPlat.setDefaultText(savedInstanceState.getString(MESICNI_PLAT));
             ivVT1.setDefaultText(savedInstanceState.getString(VT_REGUL));
             ivNT1.setDefaultText(savedInstanceState.getString(NT_REGUL));
-            //spSazba.setSelection(savedInstanceState.getInt(SAZBA_DISTRIBUCE, arrayDistUzemi.length - 1));
-            //spSazba.setSelection(5);
             ivJ0.setDefaultText(savedInstanceState.getString(JISTIC0));
             ivJ1.setDefaultText(savedInstanceState.getString(JISTIC1));
             ivJ2.setDefaultText(savedInstanceState.getString(JISTIC2));
@@ -199,45 +219,30 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             isFirstLoad = false;
 
         }
-        getYear();
+        getYearBtnStart();
         hideItemView();
 
         //nastavení adaptéru, výběr první položky, která reprezentuje nápovědu
         setSazbaAdapter();
         setDistribucniUzemiAdapter();
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //podmínka při změně roku 2021, kdy se nahradil E.ON distributorem EG.D
-        //rekace při změně data na prvním tlačítku
-        if ((year < 2021 && lastYear >= 2021) || (year >= 2021 && lastYear < 2021)) {
-            if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE")
-                    || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ")
-            ) return;
-            setDistribucniUzemiAdapter();
-        }
     }
 
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Save the fragment's state here
         outState.putString(BTN_FROM, btnFrom.getText().toString());
         outState.putString(BTN_UNTIL, btnUntil.getText().toString());
         outState.putString(RADA, ivRada.getText());
         outState.putString(PRODUKT, ivProdukt.getText());
         outState.putString(DODAVATEL, ivDodavatel.getText());
+        outState.putInt(SAZBA_DISTRIBUCE, spSazba.getSelectedItemPosition());
         outState.putInt(DISTRIBUCNI_UZEMI, spDistribucniUzemi.getSelectedItemPosition());
         outState.putString(VT_NEREGUL, ivVT.getText());
         outState.putString(NT_NEREGUL, ivNT.getText());
         outState.putString(MESICNI_PLAT, ivPlat.getText());
         outState.putString(VT_REGUL, ivVT1.getText());
         outState.putString(NT_REGUL, ivNT1.getText());
-        outState.putInt(SAZBA_DISTRIBUCE, spSazba.getSelectedItemPosition());
         outState.putString(JISTIC0, ivJ0.getText());
         outState.putString(JISTIC1, ivJ1.getText());
         outState.putString(JISTIC2, ivJ2.getText());
@@ -268,54 +273,55 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
     void setSazbaAdapter() {
         Handler handler = new Handler();
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                adapterSazba = new MySpinnerDistributorsAdapter(getContext(), R.layout.spinner_view, arraySazba, year);
-                spSazba.setAdapter(adapterSazba);
-                spSazba.setSelection(0, true);
-            }
+        final Runnable r = () -> {
+            arraySazba = getResources().getStringArray(R.array.sazby);
+            adapterSazba = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arraySazba, year);
+            spSazba.setAdapter(adapterSazba);
+            spSazba.setSelection(selectionSazba, true);
         };
-        handler.postDelayed(r,1050);
+        handler.postDelayed(r, 1050);
 
     }
 
     void setDistribucniUzemiAdapter() {
         Handler handler = new Handler();
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                adapterDistUzemi = new MySpinnerDistributorsAdapter(getContext(), R.layout.spinner_view, arrayDistUzemi, year);
-                spDistribucniUzemi.setAdapter(adapterDistUzemi);
-                spDistribucniUzemi.setSelection(0, true);
-            }
+        final Runnable r = () -> {
+            arrayDistUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
+            adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
+            spDistribucniUzemi.setAdapter(adapterDistUzemi);
+            spDistribucniUzemi.setSelection(selectionDistUzemi, true);
         };
-        handler.postDelayed(r,1140);
+        handler.postDelayed(r, 1140);
     }
 
     /**
-     * Změni spiner podle datumu na E.ON nebo EG.D. Položek ČEZ a PRE se netýká
+     * Změni spinner podle data na E.ON nebo EG.D. Položek ČEZ a PRE se netýká
      */
-    private void setSpinner() {
+    void changeDistributionSpinner() {
+        //nic neměnit, pokud je vybraný index 0, PRE nebo ČEZ
         if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE")
                 || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ")
+                || spDistribucniUzemi.getSelectedItemPosition()==0
         ) return;
 
+        //po předchozí  podmínce se zde dostanou jen E.ON a EG.D
+        //pokud je rok 2021 a vyšší. Vybraný string položky neodpovídá EG.D, tak se vybere položka s indexem 3. To je EG.D
+        //pokud je rok 2020 a nižší. Vybraný string položky neodpovídá E.ON, tak se vybere položka s indexem 2. To je E.ON
         if (year >= 2021) {
             if (!spDistribucniUzemi.getSelectedItem().toString().equals("EG.D")) {
                 setDistribucniUzemiAdapter();
-                spDistribucniUzemi.setSelection(0);
+                selectionDistUzemi = 3;
 
             }
         } else {
             if (!spDistribucniUzemi.getSelectedItem().toString().equals("E.ON")) {
                 setDistribucniUzemiAdapter();
-                spDistribucniUzemi.setSelection(0);
+                selectionDistUzemi = 2;
             }
         }
     }
 
-    int getYear() {
+    int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         year = calendar.get(Calendar.YEAR);
         return year;
@@ -363,7 +369,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     /**
      * Sestaví objekt ceníku z udajů widgetů
      *
-     * @return
+     * @return PriceListModel objekt ceníku
      */
     PriceListModel createPriceList() {
         Calendar calendar = Calendar.getInstance();
@@ -373,13 +379,57 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         long validityFrom = ViewHelper.parseCalendarFromString(btnFrom.getText().toString()).getTimeInMillis();
         long validityUntil = ViewHelper.parseCalendarFromString(btnUntil.getText().toString()).getTimeInMillis();
 
-        PriceListModel priceListModel = new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(),
+        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(),
                 ivVT.getDouble(), ivNT.getDouble(), ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(),
                 ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(),
                 ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(),
                 ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(),
                 ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(),
                 validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
-        return priceListModel;
+    }
+
+    /**
+     * Načte regulované ceny
+     */
+    void setRegulPrice() {
+        ReadRawJSON readRawJSON = new ReadRawJSON(getActivity());
+        Handler handler = new Handler();
+        final Runnable r = () -> {
+
+            PriceListModel priceListModel = readRawJSON.read(year, spDistribucniUzemi.getSelectedItem().toString(),
+                    spSazba.getSelectedItem().toString());
+
+            ivVT1.setDefaultText(df2.format(priceListModel.getDistVT()));
+            ivNT1.setDefaultText(df2.format(priceListModel.getDistNT()));
+
+            ivJ0.setDefaultText(df2.format(priceListModel.getJ0()));
+            ivJ1.setDefaultText(df2.format(priceListModel.getJ1()));
+            ivJ2.setDefaultText(df2.format(priceListModel.getJ2()));
+            ivJ3.setDefaultText(df2.format(priceListModel.getJ3()));
+            ivJ4.setDefaultText(df2.format(priceListModel.getJ4()));
+            ivJ5.setDefaultText(df2.format(priceListModel.getJ5()));
+            ivJ6.setDefaultText(df2.format(priceListModel.getJ6()));
+            ivJ7.setDefaultText(df2.format(priceListModel.getJ7()));
+            ivJ8.setDefaultText(df2.format(priceListModel.getJ8()));
+            ivJ9.setDefaultText(df2.format(priceListModel.getJ9()));
+            ivJ10.setDefaultText(df2.format(priceListModel.getJ10()));
+            ivJ11.setDefaultText(df2.format(priceListModel.getJ11()));
+            ivJ12.setDefaultText(df2.format(priceListModel.getJ12()));
+            ivJ13.setDefaultText(df2.format(priceListModel.getJ13()));
+            ivJ14.setDefaultText(df2.format(priceListModel.getJ14()));
+
+            ivSystemSluzby.setDefaultText(df2.format(priceListModel.getSystemSluzby()));
+            ivCinnostOperatora.setDefaultText(df2.format(priceListModel.getCinnost()));
+            ivPOZE1.setDefaultText(df2.format(priceListModel.getPoze1()));
+            ivPOZE2.setDefaultText(df2.format(priceListModel.getPoze2()));
+            ivDan.setDefaultText(df2.format(priceListModel.getDan()));
+            ivDPH.setDefaultText(df2.format(priceListModel.getDph()));
+
+            switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) ||
+                    (priceListModel.getJ12() != 0) || (priceListModel.getJ12() != 0));
+
+            hideItemView();
+        };
+        handler.postDelayed(r,1000);
     }
 }

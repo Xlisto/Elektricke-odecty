@@ -114,6 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvUzemiSeznam"
                         android:entries="@array/distribucni_uzemi"
+
                         android:minHeight="48dp"
                         android:minWidth="160dp" />
 
@@ -132,6 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
+                        android:labelFor="@+id/spDistribucniUzemiSeznam"
                         android:text="@string/distribucni_uzemi" />
 
                     <TextView
@@ -141,6 +143,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginBottom="5dp"
                         android:layout_toEndOf="@id/tvUzemiSeznam"
+                        android:labelFor="@+id/spSazbaSeznam"
                         android:gravity="end"
                         android:text="@string/sazba_distribuce" />
 
@@ -310,11 +313,12 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/swJistic"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tvMesicniPlatDleJistice"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginStart="5dp" />
+                    android:layout_marginStart="5dp"
+                    android:maxWidth="300dp" />
 
                 <LinearLayout
                     android:id="@+id/ln"
@@ -543,7 +547,7 @@
                     app:label="@string/cinnost_ote" />
 
                 <cz.xlisto.odecty.ownview.LabelEditText
-                    android:id="@+id/ivCinnostOperaatoraTrhu"
+                    android:id="@+id/ivCinnostOperatoraTrhu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"

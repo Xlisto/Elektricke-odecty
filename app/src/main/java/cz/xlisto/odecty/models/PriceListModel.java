@@ -11,11 +11,15 @@ import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToTime;
  */
 public class PriceListModel {
     public final static int NEW_POZE_YEAR = 2016;
-    private final static String NO_PRICELIST = "Ceník nenalezen!!!";
+    public final static String PRE = "PRE";
+    public final static String CEZ = "ČEZ";
+    public final static String EON = "E.ON";
+    public final static String EGD = "EG.D";
+    private final static String NO_PRICE_LIST = "Ceník nenalezen!!!";
     private long id;
     private String rada;
     private String produkt;
-    private String firma;
+    private final String firma;
     private double cenaVT;
     private double cenaNT;
     private double mesicniPlat;
@@ -42,23 +46,25 @@ public class PriceListModel {
     private double cinnost;
     private double poze1;
     private double poze2;
-    private double oze;
-    private double ote;
-    private long platnostOD;
-    private long platnostDO;
+    private final double oze;
+    private final double ote;
+    private final long platnostOD;
+    private final long platnostDO;
     private double dph;
-    private String distribuce;
-    private String autor;
-    private long datumVytvoreni;
-    private String email;
-    private String mwh = " Kč/MWh";
-    private String mes = " Kč/měsíc";
-    private String jis = " Kč za 1A/měsíc";
+    private final String distribuce;
+    private final String autor;
+    private final long datumVytvoreni;
+    private final String email;
+    private final String mwh = " Kč/MWh";
+    private final String mes = " Kč/měsíc";
+    private final String jis = " Kč za 1A/měsíc";
+
 
     //nulový konstruktor s názvem Ceník nenalezen
     public PriceListModel() {
-    this(NO_PRICELIST);
+    this(NO_PRICE_LIST);
     }
+
 
     //nulový konstruktor
     public PriceListModel(String produkt) {
@@ -101,6 +107,7 @@ public class PriceListModel {
         this.datumVytvoreni = 0L;
         this.email = "";
     }
+
 
     public PriceListModel(long id, String rada, String produkt, String firma, double cenaVT,
                           double cenaNT, double mesicniPlat, double dan, String sazba, double distVT,
@@ -151,24 +158,27 @@ public class PriceListModel {
         this.email = email;
     }
 
+
     /**
      * Zobrazí název, sazbu a platnost ceníku
-     * @return
+     * @return String název, sazba a platnost ceníku
      */
     public String getName(){
-        if(this.produkt.equals(NO_PRICELIST))
-            return NO_PRICELIST;
+        if(this.produkt.equals(NO_PRICE_LIST))
+            return NO_PRICE_LIST;
 
         return getProdukt() + ", " +getSazba() + ",\nPlatný od: " + convertLongToTime(getPlatnostOD());
     }
+
 
     /**
      * Zjistí, zdali je ceník prázdný. Kontroluje se podle názvu ceníku.
      * @return boolean true - prázdný, false - není prázdný
      */
     public boolean isEmpty(){
-        return this.produkt.equals(NO_PRICELIST);
+        return this.produkt.equals(NO_PRICE_LIST);
     }
+
 
     @NonNull
     public String toString() {
@@ -190,165 +200,209 @@ public class PriceListModel {
                 "\nDph:" + getDph() +  " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor()+" email :"+getEmail();
     }
 
+
     public Long getId() {
         return id;
     }
+
 
     public String getRada() {
         return rada;
     }
 
+
     public String getProdukt() {
         return produkt;
     }
+
 
     public String getFirma() {
         return firma;
     }
 
+
     public Double getCenaVT() {
         return cenaVT;
     }
+
 
     public Double getCenaNT() {
         return cenaNT;
     }
 
+
     public Double getMesicniPlat() {
         return mesicniPlat;
     }
+
 
     public Double getDan() {
         return dan;
     }
 
+
     public String getSazba() {
         return sazba;
     }
+
 
     public Double getDistVT() {
         return distVT;
     }
 
+
     public Double getDistNT() {
         return distNT;
     }
+
 
     public Double getJ0() {
         return j0;
     }
 
+
     public Double getJ1() {
         return j1;
     }
+
 
     public Double getJ2() {
         return j2;
     }
 
+
     public Double getJ3() {
         return j3;
     }
+
 
     public Double getJ4() {
         return j4;
     }
 
+
     public Double getJ5() {
         return j5;
     }
+
 
     public Double getJ6() {
         return j6;
     }
 
+
     public Double getJ7() {
         return j7;
     }
+
 
     public Double getJ8() {
         return j8;
     }
 
+
     public Double getJ9() {
         return j9;
     }
+
 
     public Double getJ10() {
         return j10;
     }
 
+
     public Double getJ11() {
         return j11;
     }
+
 
     public Double getJ12() {
         return j12;
     }
 
+
     public Double getJ13() {
         return j13;
     }
+
 
     public Double getJ14() {
         return j14;
     }
 
+
     public Double getSystemSluzby() {
         return systemSluzby;
     }
+
 
     public Double getCinnost() {
         return cinnost;
     }
 
+
     public Double getPoze1() {
         return poze1;
     }
+
 
     public Double getPoze2() {
         return poze2;
     }
 
+
     public Double getOze() {
         return oze;
     }
+
 
     public Double getOte() {
         return ote;
     }
 
+
     public Long getPlatnostOD() {
         return platnostOD;
     }
 
-    /*public String getPlatnostODAsString() {
-        return HlavniActivity.formatDatumu.format(getPlatnostOD());
-    }*/
 
     public Long getPlatnostDO() {
         return platnostDO;
     }
 
-    /*public String getPlatnostDOAsString() {
-        return HlavniActivity.formatDatumu.format(getPlatnostDO());
-    }*/
 
     public Double getDph() {
         return dph;
     }
 
+
+    /**
+     * Vrací oblast distribuce. (ČEZ, E.ON, EG.D, PRE)
+     * DO ROKU 2020: ČEZ, E.ON, PRE
+     * OD ROKU 2021: ČEZ, EG.D, PRE
+     * @return string oblasti distribuce
+     */
     public String getDistribuce() {
+        if (getRokPlatnost()>=2021){
+            if(distribuce.equals(EON))
+                return EGD;
+        } else {
+            if(distribuce.equals(EGD))
+                return EON;
+        }
         return distribuce;
     }
+
 
     public String getAutor() {
         return autor;
     }
 
+
     public Long getDatumVytvoreni() {
         return datumVytvoreni;
     }
+
 
     public int getRokPlatnost(){
         Calendar calendar = Calendar.getInstance();
@@ -356,170 +410,36 @@ public class PriceListModel {
         return calendar.get(Calendar.YEAR);
     }
 
+
     public String getEmail() {
         return email;
     }
 
-    public String getRadaName() {
-        return "Produktová řada";
-    }
 
-    public String getProduktName() {
-        return "Produkt";
-    }
 
-    public String getFirmaName() {
-        return "Distribuční firma";
-    }
 
-    public String getCenaVTName() {
-        return "Cena ve VT";
-    }
 
-    public String getCenaNTName() {
-        return "Cena ve NT";
-    }
 
-    public String getMesicniPlatName() {
-        return "Stálý měsíční plat";
-    }
 
-    public String getDanName() {
-        return "Daň z elektřiny";
-    }
 
-    public String getSazbaName() {
-        return "Sazba distribuce";
-    }
 
-    public String getDistVTName() {
-        return "Distribuce ve VT";
-    }
 
-    public String getDistNTName() {
-        return "Distribuce ve NT";
-    }
 
-    public String getJ0Name() {
-        return "Jistič do 3x10A a do 1x25A vč.";
-    }
 
-    public String getJ1Name() {
-        return "Jistič nad 3x10A a do 3x16A vč.";
-    }
 
-    public String getJ2Name() {
-        return "Jistič nad 3x16A a do 3x20A vč.";
-    }
 
-    public String getJ3Name() {
-        return "Jistič nad 3x20A a do 3x25A vč.";
-    }
-
-    public String getJ4Name() {
-        return "Jistič nad 3x25A a do 3x32A vč.";
-    }
-
-    public String getJ5Name() {
-        return "Jistič nad 3x32A a do 3x40A vč.";
-    }
-
-    public String getJ6Name() {
-        return "Jistič nad 3x40A a do 3x50A vč.";
-    }
-
-    public String getJ7Name() {
-        return "Jistič nad 3x50A a do 3x63A vč.";
-    }
-
-    public String getJ8Name() {
-        return "Nad 3x63A a za A";
-    }
-
-    public String getJ9Name() {
-        return "Nad 1x25A a za A";
-    }
-
-    public String getJ10Name() {
-        return "Jistič nad 3x63A a do 3x80A vč.";
-    }
-
-    public String getJ11Name() {
-        return "Jistič nad 3x80A a do 3x100A vč.";
-    }
-
-    public String getJ12Name() {
-        return "Jistič nad 3x100A a do 3x125A vč.";
-    }
-
-    public String getJ13Name() {
-        return "Jistič nad 3x125A a do 3x160A vč.";
-    }
-
-    public String getJ14Name() {
-        return "Nad 3x160A a za A";
-    }
-
-    public String getSystemSluzbyName() {
-        return "Systémové služby";
-    }
-
-    public String getCinnostName() {
-        return "Činnost operátora trhu";
-    }
-
-    public String getPoze1Name() {
-        return "POZE dle jističe";
-    }
-
-    public String getPoze2Name() {
-        return "POZE dle spotřeby";
-    }
-
-    public String getOzeName() {
-        return "Podpora výkupu el. z OZE, KVET a DZ";
-    }
-
-    public String getOteName() {
-        return "Činnost OTE";
-    }
-
-    public String getPlatnostODName() {
-        return "Platnost OD";
-    }
-
-    public String getPlatnost() {
-        return "Platnost";
-    }
-
-    public String getPlatnostDOName() {
-        return "Platnost DO";
-    }
-
-    public String getDphName() {
-        return "DPH";
-    }
-
-    public String getDistribuceName() {
-        return "Distribuční území";
-    }
 
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setRada(String rada) {
-        this.rada = rada;
-    }
+
 
     public void setProdukt(String produkt) {
         this.produkt = produkt;
     }
 
-    public void setFirma(String firma) {
-        this.firma = firma;
-    }
 
     public void setCenaVT(Double cenaVT) {
         this.cenaVT = cenaVT;
@@ -625,39 +545,18 @@ public class PriceListModel {
         this.poze2 = poze2;
     }
 
-    public void setOze(Double oze) {
-        this.oze = oze;
-    }
 
-    public void setOte(Double ote) {
-        this.ote = ote;
-    }
 
-    public void setPlatnostOD(Long platnostOD) {
-        this.platnostOD = platnostOD;
-    }
 
-    public void setPlatnostDO(Long platnostDO) {
-        this.platnostDO = platnostDO;
-    }
 
     public void setDph(Double dph) {
         this.dph = dph;
     }
 
-    public void setDistribuce(String distribuce) {
-        this.distribuce = distribuce;
-    }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
-    }
 
-    public void setDatumVytvoreni(Long datumVytvoreni) {
-        this.datumVytvoreni = datumVytvoreni;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+
+
+
 }

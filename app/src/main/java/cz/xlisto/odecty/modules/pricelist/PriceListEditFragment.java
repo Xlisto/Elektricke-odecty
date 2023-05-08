@@ -9,6 +9,7 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.Keyboard;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -25,8 +26,8 @@ import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
  * create an instance of this fragment.
  */
 public class PriceListEditFragment extends PriceListAddEditAbstract {
-    private static String TAG = PriceListAddFragment.class.getSimpleName();
-    private static String IS_FIRST_LOAD = "isFirstLoad";
+    private final static String TAG = "PriceListEditFragment";
+    private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
     private boolean isFirstLoad = true;
 
@@ -81,23 +82,40 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadItemPrice(itemId);
         if (savedInstanceState == null) {
+            loadItemPrice(itemId);
             setItemPrice();
         }
-        btnSave.setOnClickListener(v -> updatePriceList(itemId));
+        btnSave.setOnClickListener(v -> {
+            if (updatePriceList(itemId) > 0) {
+                Keyboard.hide(requireActivity());
+                getParentFragmentManager().popBackStack();
+            }
+        });
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onResume() {
+        super.onResume();
+        if (isFirstLoad) {
+            isFirstLoad = false;
+            getYearBtnStart();
+            setDistribucniUzemiAdapter();
+            setSpinners(priceListModel);
+        }
+        changeDistributionSpinner();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_FIRST_LOAD, isFirstLoad);
     }
 
     /**
-     * Načte stávající úaje ceníku a přiřadí do příslušných widgetů
+     * Načte stávající údaje ceníku a přiřadí do příslušných widgetů
      *
-     * @param id
+     * @param id long id ceníku
      */
     private void loadItemPrice(long id) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
@@ -149,70 +167,33 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             switchJistic.setChecked(true);
             hideItemView();
         }
-        setSpinner(priceListModel);
+        setSpinners(priceListModel);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (isFirstLoad) {
-            isFirstLoad = false;
-            getYear();
-            setDistribucniUzemiAdapter();
-            setSpinner(priceListModel);
-            setSpinner();
-        }
-    }
 
     /**
-     * Nastaví spinnery distribuční uzemí a sazba podle nalezeného udaje v ceníku
+     * Nastaví spinnery distribuční uzemí a sazba podle nalezeného údaje v ceníku
      *
-     * @param priceListModel
+     * @param priceListModel PriceListModel ceníku
      */
-    private void setSpinner(PriceListModel priceListModel) {
+    private void setSpinners(PriceListModel priceListModel) {
         Handler handler = new Handler();
-        final Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                String[] distribucniUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
-                String[] sazby = getResources().getStringArray(R.array.sazby);
+        final Runnable r = () -> {
+            String[] distribucniUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
+            String[] sazby = getResources().getStringArray(R.array.sazby);
 
-                compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribuce());
-                compare(sazby, spSazba, priceListModel.getSazba());
-            }
+            compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribuce());
+            compare(sazby, spSazba, priceListModel.getSazba());
         };
-        handler.postDelayed(r,1300);
+        handler.postDelayed(r, 1300);
     }
 
     /**
-     * Změni spiner podle datumu na E.ON nebo EG.D. Položek ČEZ a PRE se netýká
-     */
-    private void setSpinner() {
-        if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE")
-                || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ")
-        ) return;
-
-        if (year >= 2021) {
-            if (!spDistribucniUzemi.getSelectedItem().toString().equals("EG.D")) {
-                setDistribucniUzemiAdapter();
-                spDistribucniUzemi.setSelection(0);
-
-            }
-        } else {
-            if (!spDistribucniUzemi.getSelectedItem().toString().equals("E.ON")) {
-                setDistribucniUzemiAdapter();
-                spDistribucniUzemi.setSelection(0);
-            }
-        }
-    }
-
-    /**
-     * Porovná pole stringu načtený ze spineru s hledaným stringem. Při shodě nastaví položku na spinru
+     * Porovná pole stringu načtený ze spinneru s hledaným stringem. Při shodě nastaví položku na spinneru
      *
-     * @param strings
-     * @param sp
-     * @param searchString
+     * @param strings       pole stringů
+     * @param sp            spinner, pro který se nastaví nalezená položka
+     * @param searchString  hledaný string
      */
     private void compare(String[] strings, Spinner sp, String searchString) {
 
@@ -225,20 +206,19 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
     /**
-     * Upravý ceník vybraný podle itemId
+     * Upraví ceník vybraný podle itemId
      *
-     * @param itemId
+     * @param itemId long id ceníku
      */
-    private void updatePriceList(long itemId) {
+    private long updatePriceList(long itemId) {
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
-            //pokud není vybráno distrbuční uzemí nebo sazba k uložení nedojde
-            return;
+            //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde
+            return 0L;
         }
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
         long id = dataPriceListSource.updatePriceList(createPriceList(), itemId);
         dataPriceListSource.close();
-        if (id > 0)
-            getParentFragmentManager().popBackStack();
+        return id;
     }
 }
