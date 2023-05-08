@@ -7,9 +7,11 @@ import androidx.fragment.app.FragmentTransaction;
 import cz.xlisto.odecty.R;
 
 /**
- * Vymění fragment
+ * Vymění fragmenty
  */
 public class FragmentChange {
+
+
     /**
      * Vymění fragment, výměnu animuje
      * Do BackStacku se nepřidá
@@ -21,6 +23,7 @@ public class FragmentChange {
         replace(fa, fragment, transaction, false);
     }
 
+
     /**
      * Vymění fragment, výměnu animuje
      *
@@ -31,10 +34,11 @@ public class FragmentChange {
     public static void replace(FragmentActivity fa, Fragment fragment, Transaction transaction, boolean add) {
         FragmentManager fragmentManager = fa.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         if (transaction == Transaction.MOVE) {
             fragmentTransaction.setCustomAnimations(R.anim.from_right, R.anim.to_left, R.anim.from_left, R.anim.to_right);
-
         }
+
         if (transaction == Transaction.ALPHA) {
             fragmentTransaction.setCustomAnimations(R.anim.show, R.anim.hide, R.anim.show, R.anim.hide);
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);//přesun na začátek
@@ -42,6 +46,7 @@ public class FragmentChange {
 
         if (fragment != null)
             fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
+        
         if (add)
             fragmentTransaction.addToBackStack(null);
 
