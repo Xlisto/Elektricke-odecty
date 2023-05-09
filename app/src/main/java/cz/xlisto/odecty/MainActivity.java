@@ -16,6 +16,7 @@ import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.utils.FragmentChange;
 
+import android.app.backup.BackupAgent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         shPMainActivity = new ShPMainActivity(getApplicationContext());
-
 
         //Horní toolbar + zobrazení tlačítka
         Toolbar toolbar = findViewById(R.id.toolbar);
