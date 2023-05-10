@@ -157,12 +157,17 @@
 
     <string name="edit">Uprav</string>
     <string name="cut">Rozděl</string>
-    <string name="cut_record">Rozděl období bez faktury</string>
+    <string name="join">Spoj</string>
+    <string name="cut_record">Rozděl období</string>
+    <string name="join_record">Sluč tato období</string>
     <string name="delete">Smaž</string>
-    <string name="join">Spoj s předchozím</string>
+    <string name="join_previous">Spoj s předchozím</string>
     <string name="please_wait">Chvilku strpení…</string>
     <string name="backup">Zálohuj</string>
     <string name="select_folder">Vyber složku</string>
+
+    <string name="plus">+</string>
+    <string name="equals">=</string>
 
 
 </resources>

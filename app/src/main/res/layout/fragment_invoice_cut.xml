@@ -24,7 +24,8 @@
                     android:id="@+id/btnDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp" />
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="Datum rozdělení" />
 
                 <TextView
                     android:id="@+id/tvDateInvoices"
@@ -45,6 +46,7 @@
                     android:layout_below="@id/btnDate"
                     android:layout_marginEnd="30dp"
                     android:layout_marginStart="30dp"
+                    android:contentDescription="Rozdělení podle data"
                     android:paddingEnd="30dp"
                     android:paddingStart="30dp" />
 
@@ -70,6 +72,7 @@
                     android:layout_below="@id/labVT"
                     android:layout_marginEnd="30dp"
                     android:layout_marginStart="30dp"
+                    android:contentDescription="Rozdělení měřiče VT"
                     android:paddingEnd="15dp"
                     android:paddingStart="15dp" />
 
@@ -108,6 +111,7 @@
                     android:layout_below="@id/labNT"
                     android:layout_marginEnd="30dp"
                     android:layout_marginStart="30dp"
+                    android:contentDescription="Rozdělení měřiče NT "
                     android:paddingEnd="15dp"
                     android:paddingStart="15dp" />
 
@@ -128,8 +132,9 @@
 
             <LinearLayout
                 android:id="@+id/rlButtons"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:minWidth="640dp"
                 android:orientation="horizontal">
 
                 <Button
@@ -139,6 +144,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginStart="15dp"
                     android:layout_weight="1"
+                    android:maxWidth="320dp"
                     android:text="@string/cut" />
 
                 <Button
@@ -148,6 +154,7 @@
                     android:layout_marginEnd="15dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
+                    android:maxWidth="320dp"
                     android:text="@string/zrusit" />
             </LinearLayout>
 

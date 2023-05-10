@@ -27,34 +27,31 @@ import cz.xlisto.odecty.ownview.ViewHelper;
  * Xlisto 10.04.2023 17:47
  */
 public class InvoiceCutDialogFragment extends DialogFragment {
-    private static final String TAG = "InvoiceCutDialogFragment";
-    private static String MIN_DATE = "min_date";
-    private static String MAX_DATE = "max_date";
-    private static String MAX_VT = "max_vt";
-    private static String MIN_VT = "min_vt";
-    private static String MAX_NT = "max_nt";
-    private static String MIN_NT = "min_nt";
-    private static String SHOW_NT = "show_nt";
-    private static String ID_PRICE_LIST = "id_price_list";
-    private static String ID = "id";
-    private static String OTHER_SERVICES = "other_services";
-    private static String TABLE = "table";
-    private double maxVT, minVT, maxNT, minNT;
+    public  static final String TAG = "InvoiceCutDialogFragment";
+    private final static String MIN_DATE = "minDate";
+    private final static String MAX_DATE = "maxDate";
+    private final static String MAX_VT = "maxVt";
+    private final static String MIN_VT = "minVt";
+    private final static String MAX_NT = "maxNt";
+    private final static String MIN_NT = "minNt";
+    private final static String SHOW_NT = "showNt";
+    private final static String ID_PRICE_LIST = "idPriceList";
+    private final static String ID = "id";
+    private final static String OTHER_SERVICES = "otherServices";
+    private final static String TABLE = "table";
+    private double maxVT, minVT, maxNT, minNT, otherServices;
     private long minDate, maxDate, idPriceList, id;
-    private double otherServices;
+    private boolean showNT;
+    private final int million = 1000000;
     private LabelEditText labVT, labNT;
     private Slider sliderVT, sliderNT, sliderDate;
-    private Button btnDate, btnCut, btnCancel;
-    private boolean showNT;
-    private RelativeLayout rlNT;
-    private int million = 1000000;
-    private String table;
+    private Button btnDate;
     private OnCutListener onCutListener;
-
     private TextView tvDate;
 
+
     public static InvoiceCutDialogFragment newInstance(long minDate, long maxDate, double minVT, double maxVT, double minNT, double maxNT,
-                                                       boolean showNT, long idPriceList, long id,double otherServices, String table) {
+                                                       boolean showNT, long idPriceList, long id, double otherServices, String table) {
         InvoiceCutDialogFragment frag = new InvoiceCutDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putLong(MIN_DATE, minDate);
@@ -73,6 +70,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         return frag;
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,9 +85,9 @@ public class InvoiceCutDialogFragment extends DialogFragment {
             idPriceList = getArguments().getLong(ID_PRICE_LIST);
             id = getArguments().getLong(ID);
             otherServices = getArguments().getDouble(OTHER_SERVICES);
-            table = getArguments().getString(TABLE);
         }
     }
+
 
     @NonNull
     @Override
@@ -104,16 +102,15 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         sliderDate = dialogView.findViewById(R.id.sliderDate);
         sliderVT = dialogView.findViewById(R.id.sliderVT);
         sliderNT = dialogView.findViewById(R.id.sliderNT);
-        rlNT = dialogView.findViewById(R.id.rlNT);
-        btnCut = dialogView.findViewById(R.id.btnCut);
-        btnCancel = dialogView.findViewById(R.id.btnCancel);
+        RelativeLayout rlNT = dialogView.findViewById(R.id.rlNT);
+        Button btnCut = dialogView.findViewById(R.id.btnCut);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
 
         if (showNT) {
             rlNT.setVisibility(View.VISIBLE);
         } else {
             rlNT.setVisibility(View.GONE);
         }
-
 
         labVT.addTextChangedListener(new TextWatcher() {
             @Override
@@ -149,48 +146,30 @@ public class InvoiceCutDialogFragment extends DialogFragment {
             }
         });
 
-        sliderDate.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                btnDate.setText(ViewHelper.convertLongToTime(((long) value) * million));
-                setTextView();
-            }
+        sliderDate.addOnChangeListener((slider, value, fromUser) -> {
+            btnDate.setText(ViewHelper.convertLongToTime(((long) value) * million));
+            setTextView();
         });
 
-        sliderVT.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                labVT.setDefaultText(DecimalFormatHelper.df2.format(value));
-                setTextView();
-            }
+        sliderVT.addOnChangeListener((slider, value, fromUser) -> {
+            labVT.setDefaultText(DecimalFormatHelper.df2.format(value));
+            setTextView();
         });
 
-        sliderNT.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                labNT.setDefaultText(DecimalFormatHelper.df2.format(value));
-                setTextView();
-            }
+        sliderNT.addOnChangeListener((slider, value, fromUser) -> {
+            labNT.setDefaultText(DecimalFormatHelper.df2.format(value));
+            setTextView();
         });
 
-        btnCut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if (getActivity() instanceof InvoiceCutDialogListener) {
-                    ((InvoiceCutDialogListener) getActivity()).onCutInvoice(sliderDate.getValue(), sliderVT.getValue(), sliderNT.getValue());
-                }*/
-                cut(idPriceList, id,otherServices);
-                onCutListener.onCut(true);
-                dismiss();
-            }
+        btnCut.setOnClickListener(v -> {
+            cut(idPriceList, id, otherServices);
+            onCutListener.onCut(true);
+            dismiss();
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCutListener.onCut(false);
-                dismiss();
-            }
+        btnCancel.setOnClickListener(v -> {
+            onCutListener.onCut(false);
+            dismiss();
         });
 
         builder.setView(dialogView);
@@ -210,21 +189,14 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private void settingSlidersLabs() {
         long differenceDate = maxDate - minDate;
         //převádím rozpůlený long na datum ve stringu a potom zpět na long, abych získal celou hodnotu dne v 00:00 hodin
-        //long halfDate = ViewHelper.parseCalendarFromString(ViewHelper.convertLongToTime(minDate + (differenceDate / 2))).getTimeInMillis();
         long halfDate = minDate + (differenceDate / 2);
-        //Long longDate = new Long(halfDate);
-        //longDate.floatValue(halfDate);
-        /*float halfDateFloat = (float) halfDate/1000000;
-        Log.w(TAG, "halfDate: " + halfDate);
-        Log.w(TAG, "halfDate: " + halfDateFloat);
-        Log.w(TAG, "halfDate: " + ((long)halfDateFloat)*1000000);*/
         double differenceVT = maxVT - minVT;
         double halfVT = minVT + (differenceVT / 2);
         double differenceNT = maxNT - minNT;
         double halfNT = minNT + (differenceNT / 2);
 
         sliderDate.setValueFrom((minDate + (25 * 60 * 60 * 1000)) / million);
-        sliderDate.setValueTo((maxDate ) / million);
+        sliderDate.setValueTo((maxDate) / million);
         sliderDate.setValue(halfDate / million);
 
         sliderVT.setValueFrom((float) minVT);
@@ -248,15 +220,16 @@ public class InvoiceCutDialogFragment extends DialogFragment {
             @NonNull
             @Override
             public String getFormattedValue(float value) {
-                return ViewHelper.convertLongToTime(((long) value)*million);
+                return ViewHelper.convertLongToTime(((long) value) * million);
             }
         });
     }
 
+
     private void setSlider(Slider sl, CharSequence s, double min, double max) {
 
         try {
-            double number = Double.valueOf(String.valueOf(s).replace(',', '.'));
+            double number = Double.parseDouble(String.valueOf(s).replace(',', '.'));
             if (number < min) {
                 return;
             }
@@ -270,6 +243,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         }
     }
 
+
     private void setTextView() {
         tvDate.setText(ViewHelper.convertLongToTime(minDate) + " - " + ViewHelper.convertLongToTime((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)) + "\n"
                 + ViewHelper.convertLongToTime(((long) sliderDate.getValue()) * million) + " - " + ViewHelper.convertLongToTime(maxDate));
@@ -281,26 +255,23 @@ public class InvoiceCutDialogFragment extends DialogFragment {
                 + DecimalFormatHelper.df2.format(sliderNT.getValue()) + " - " + DecimalFormatHelper.df2.format(maxNT));
     }
 
+
     public void setOnCutListener(OnCutListener onCutListener) {
         this.onCutListener = onCutListener;
     }
 
-    private void cut(long idPriceList, long id,double otherServices) {
-        InvoiceModel firstInvoice = new InvoiceModel(id,minDate, ((long) (sliderDate.getValue())*million)-(23*60*60*1000),
+
+    private void cut(long idPriceList, long id, double otherServices) {
+        InvoiceModel firstInvoice = new InvoiceModel(id, minDate, ((long) (sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000),
                 minVT, sliderVT.getValue(), minNT, sliderNT.getValue(), -1L,
                 idPriceList, otherServices, "");
-        InvoiceModel secondInvoice = new InvoiceModel(((long) sliderDate.getValue())*million, maxDate,
+        InvoiceModel secondInvoice = new InvoiceModel(((long) sliderDate.getValue()) * million, maxDate,
                 sliderVT.getValue(), maxVT, sliderNT.getValue(), maxNT, -1L,
                 idPriceList, otherServices, "");
 
-        /*Log.w(TAG, "cut first: " + ViewHelper.convertLongToTime(firstInvoice.getDateOf()) + " " + ViewHelper.convertLongToTime(firstInvoice.getDateTo()));
-        Log.w(TAG, "cut secon: " + ViewHelper.convertLongToTime(secondInvoice.getDateOf()) + " " + ViewHelper.convertLongToTime(secondInvoice.getDateTo()));
-        Log.w(TAG, "cut first: " + firstInvoice.getVtStart() + " " + firstInvoice.getVtEnd());
-        Log.w(TAG, "cut secon: " + secondInvoice.getVtStart()  + " " + secondInvoice.getVtEnd());
-        Log.w(TAG, "cut id: " + firstInvoice.getId());*/
-
         WithOutInvoiceService.cutInvoice(getActivity(), firstInvoice, secondInvoice);
     }
+
 
     public interface OnCutListener {
         void onCut(boolean b);

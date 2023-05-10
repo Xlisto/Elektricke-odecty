@@ -1,16 +1,13 @@
 package cz.xlisto.odecty.modules.invoice;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -26,14 +23,12 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
-import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.PozeModel;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.models.PriceListRegulBuilder;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
-import cz.xlisto.odecty.models.SummaryInvoicesListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPInvoice;
 import cz.xlisto.odecty.utils.Calculation;
@@ -48,17 +43,15 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
  */
 public class InvoiceFragment extends Fragment {
     private static final String TAG = "InvoiceFragment";
-    private static final String ID_FAK = "id_fak";
-    private static final String TABLE_FAK = "table_fak";
-    private static final String TABLE_NOW = "table_now";
-    private static final String TABLE_PAY = "table_pay";
+    private static final String ID_FAK = "idFak";
+    private static final String TABLE_FAK = "tableFak";
+    private static final String TABLE_NOW = "tableMow";
+    private static final String TABLE_PAY = "tablePay";
     private static final String POSITION = "position";
-    private String tableFAK,tableNOW,tablePAY, table;
+    private String tableFAK, tableNOW, tablePAY, table;
     private long idFak;
-    private Button btnAdd;
     private RecyclerView rv;
     private TextView tvTotal, tvDiscount;
-    private Spinner spinner;
     public int showTypeTotalPrice = 0;
     private int position;
     private double[] totalPrice;
@@ -66,15 +59,10 @@ public class InvoiceFragment extends Fragment {
     private ShPInvoice shPInvoice;
     private SubscriptionPointModel subscriptionPoint;
     private ArrayList<InvoiceModel> invoices;
-    private ArrayList<InvoiceListModel> invoicesList;
-    private ArrayList<SummaryInvoicesListModel> summaryInvocesList = new ArrayList<>();
-
-    private boolean showDetail = true;
-
     private PozeModel poze;
 
 
-    public static InvoiceFragment newInstance(String tableFak,String tableNow, String tablePay, long idFak, int position) {
+    public static InvoiceFragment newInstance(String tableFak, String tableNow, String tablePay, long idFak, int position) {
         InvoiceFragment invoiceFragment = new InvoiceFragment();
         Bundle bundle = new Bundle();
         bundle.putLong(ID_FAK, idFak);
@@ -85,6 +73,7 @@ public class InvoiceFragment extends Fragment {
         invoiceFragment.setArguments(bundle);
         return invoiceFragment;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,10 +90,11 @@ public class InvoiceFragment extends Fragment {
             position = savedInstanceState.getInt(POSITION);
         }
         table = tableFAK;
-        if(idFak == -1L) {
+        if (idFak == -1L) {
             table = tableNOW;
         }
     }
+
 
     @Nullable
     @Override
@@ -112,15 +102,15 @@ public class InvoiceFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_invoice, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         rv = view.findViewById(R.id.recycleViewInvoice);
-        btnAdd = view.findViewById(R.id.btnAddPayment);
+        Button btnAdd = view.findViewById(R.id.btnAddPayment);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountInvoice);
-        spinner = view.findViewById(R.id.spInvoice);
 
         btnAdd.setOnClickListener(v -> {
             InvoiceAddFragment invoiceAddFragment = InvoiceAddFragment.newInstance(table, idFak);
@@ -130,11 +120,13 @@ public class InvoiceFragment extends Fragment {
             addOneShowTypeTotalPrice();
             setTotalTextView();
         });
+
         //skrytí tlačítka pro přidání nového záznamu faktury v režimu bezfaktury
-        if(idFak == -1L) {
+        if (idFak == -1L) {
             btnAdd.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public void onResume() {
@@ -143,34 +135,18 @@ public class InvoiceFragment extends Fragment {
         shPInvoice = new ShPInvoice(getActivity());
         showTypeTotalPrice = shPInvoice.get(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, 0);
 
-        /*MySpinnerInvoiceListAdapter invoiceListAdapter = new MySpinnerInvoiceListAdapter(getActivity(), R.layout.item_own_simple_list, invoicesList);
-        spinner.setAdapter(invoiceListAdapter);
-        spinner.setSelection(position);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                InvoiceFragment.this.position = position;
-                idFak = invoicesList.get(position).getIdFak();
-                loadInvoice();
-                setTotalTextView();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
-
         loadInvoice();
         setRecyclerView();
         setTotalTextView();
     }
+
 
     @Override
     public void onPause() {
         super.onPause();
         rv.setAdapter(null);
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -179,12 +155,12 @@ public class InvoiceFragment extends Fragment {
         outState.putInt(POSITION, position);
     }
 
+
     private void loadInvoice() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         subscriptionPoint = SubscriptionPoint.load(getActivity());
         invoices = dataSubscriptionPointSource.loadInvoices(idFak, table);
-        invoicesList = dataSubscriptionPointSource.loadInvoiceLists(subscriptionPoint);
         discount = dataSubscriptionPointSource.sumDiscount(idFak, tablePAY);
         dataSubscriptionPointSource.close();
 
@@ -194,9 +170,10 @@ public class InvoiceFragment extends Fragment {
 
     }
 
+
     private void setRecyclerView() {
         InvoiceAdapter invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
-        invoiceAdapter.setUpdateListener(() -> onResume());
+        invoiceAdapter.setUpdateListener(this::onResume);
 
 
         rv.setAdapter(invoiceAdapter);
@@ -205,9 +182,6 @@ public class InvoiceFragment extends Fragment {
             @Override
             public boolean onPreDraw() {
                 rv.getViewTreeObserver().removeOnPreDrawListener(this);
-
-                final WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                int height = wm.getDefaultDisplay().getHeight();
                 rv.getMeasuredHeight();
 
                 for (int i = 0; i < rv.getChildCount(); i++) {
@@ -215,17 +189,6 @@ public class InvoiceFragment extends Fragment {
                     View v = rv.getChildAt(i);
                     Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_animation_fall_down);
                     v.startAnimation(animation);
-                    /*v.setAlpha(0.0f);
-                    v.setTranslationY(((-1*v.getHeight()*20/100)*(i+1)));
-                    v.setScaleY(1.05f);
-                    v.setScaleX(1.05f);
-                    v.setPivotX(0.5f);
-                    v.setPivotY(0.5f);
-                    v.animate().alpha(1.0f).translationY(0)
-                            .scaleX(1).scaleY(1)
-                            .setDuration(500)
-                            .setStartDelay(i * 15*500/100)
-                            .start();*/
                 }
                 return true;
             }
@@ -234,13 +197,11 @@ public class InvoiceFragment extends Fragment {
     }
 
 
-
-
     /**
      * Provede výpočet cen všech položek ve faktuře
      *
-     * @param invoices
-     * @param subscriptionPoint
+     * @param invoices          seznam položek ve faktuře
+     * @param subscriptionPoint nastavení odběrného místa
      */
     private double[] calculationTotalInvoice(ArrayList<InvoiceModel> invoices, SubscriptionPointModel subscriptionPoint, PozeModel poze) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
@@ -251,11 +212,11 @@ public class InvoiceFragment extends Fragment {
         double[] priceTotal = new double[4];
         double total = 0, totalDPH = 0;
         double totalVt = 0, totalNT = 0;
-        double totalPriceVt , totalPriceNt , totalPayment , totalPoze , totalOtherServices = 0;
+        double totalPriceVt, totalPriceNt, totalPayment, totalPoze, totalOtherServices = 0;
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
             PriceListModel priceList = getPriceList(invoice);
-            if(priceList == null) {
+            if (priceList == null) {
                 priceList = new PriceListModel();
             }
             //nastavení datumu odečtu
@@ -315,6 +276,10 @@ public class InvoiceFragment extends Fragment {
         return priceList;
     }
 
+
+    /**
+     * Nastaví textview s celkovou cenou
+     */
     private void setTotalTextView() {
 
         String s = "", sEnd;
@@ -374,8 +339,9 @@ public class InvoiceFragment extends Fragment {
         tvTotal.setText(s + df.format(totalPrice[showTypeTotalPrice]) + sEnd);
     }
 
+
     /**
-     * Připočítává typ zobrezní celkového součtu
+     * Připočítává typ zobrazení celkového součtu
      */
     private void addOneShowTypeTotalPrice() {
         shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
@@ -384,5 +350,4 @@ public class InvoiceFragment extends Fragment {
             showTypeTotalPrice = 0;
         }
     }
-
 }

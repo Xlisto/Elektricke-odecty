@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
@@ -48,10 +52,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private final RecyclerView recyclerView;
     private final PozeModel.TypePoze typePoze;
     private ColorStateList originalTextViewColors;
-    private boolean showNT = true;
+    private final boolean showNT = true;
     private PriceListModel priceList;
-
     private int showButtons = -1;
+    private InvoiceJoinDialogFragment invoiceJoinDialogFragment;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -60,7 +64,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         Button btnEdit, btnDelete, btnCut, btnJoin;
         RelativeLayout itemInvoice;
         LinearLayout lnButtons, lnButtons2;
-
         ImageView imgAlert;
 
 
@@ -68,6 +71,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             super(itemView);
         }
     }
+
 
     public InvoiceAdapter(Context context, ArrayList<InvoiceModel> items, String table, SubscriptionPointModel subscriptionPoint, PozeModel.TypePoze typePoze, RecyclerView recyclerView) {
         this.context = context;
@@ -77,6 +81,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         this.recyclerView = recyclerView;
         this.typePoze = typePoze;
     }
+
 
     @NonNull
     @Override
@@ -115,9 +120,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         return vh;
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        InvoiceModel invoicePrevious = null;
         InvoiceModel invoice = items.get(position);
+        if (position < items.size() - 1) {
+            invoicePrevious = items.get(position + 1);
+        }
 
         DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
         dataPriceListSource.open();
@@ -203,13 +213,28 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 }
 
             });
-            invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
+            invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
         });
+
+        InvoiceModel finalInvoicePrevious = invoicePrevious;
+        holder.btnJoin.setOnClickListener(v -> {
+            if (finalInvoicePrevious != null) {
+                invoiceJoinDialogFragment = InvoiceJoinDialogFragment.newInstance(invoice.getId(), finalInvoicePrevious.getId(), table);
+                invoiceJoinDialogFragment.setOnJoinListener(b -> {
+                    if (b) {
+                        notifyDataSetChanged();
+                        reloadData.onUpdateData();
+                    }
+                });
+                invoiceJoinDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
+            }
+        });
+        Log.w(TAG, "InvoiceAdapter: " + invoiceJoinDialogFragment);
 
         holder.btnDelete.setOnClickListener(v -> YesNoDialogFragment.newInstance(b -> {
             if (b)
                 deleteItem(invoice.getId(), position);
-        }, "Smazat záznam z faktury").show(((FragmentActivity) context).getSupportFragmentManager(), TAG));
+        }, "Smazat záznam z faktury").show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG));
 
         holder.lnButtons.setVisibility(View.GONE);
         holder.lnButtons2.setVisibility(View.GONE);
@@ -228,12 +253,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         showButtons(holder, invoice, position);
     }
 
+
     @Override
     public int getItemCount() {
         if (items == null)
             return 0;
         return items.size();
     }
+
 
     private void showButtons(MyViewHolder holder, InvoiceModel invoice, int position) {
         TransitionManager.beginDelayedTransition(recyclerView);
@@ -248,6 +275,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.lnButtons2.setVisibility(View.GONE);
         }
     }
+
 
     /**
      * Smaže položku s daným ID z databáze a aktualizuje adaptér a posluchače dat.
@@ -266,13 +294,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         WithOutInvoiceService.editFirstItemInInvoice(context);
     }
 
+
     /**
      * Kontroluje data a nastavuje zvýraznění a ikonu alertu v každé položce seznamu faktur.
      * Funkce nejdříve načte údaje o faktuře, datumy, začáteční a koncové hodnoty pro VT a NT.
      * Poté zkontroluje, zda je aktuální položka první nebo poslední v seznamu faktur, a načte údaje
      * o předchozí a následující položce. Pokud předchozí nebo následující faktura neexistuje,
      * funkce nastaví datum a hodnoty VT a NT na aktuální fakturu. Funkce pak zvýrazní datum
-     * a hodnoty VT a NT, pokud nejsou stejné jako předchozí nebo následující faktura, a zviditělní
+     * a hodnoty VT a NT, pokud nejsou stejné jako předchozí nebo následující faktura, a zviditelní
      * ikonu alertu..
      *
      * @param position aktuální pozice záznamu
@@ -303,7 +332,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
         if (position < items.size() - 1) {
             prevInvoice = items.get(position + 1);
-            prevDate = ViewHelper.convertLongToTime(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimného času
+            prevDate = ViewHelper.convertLongToTime(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
             prevVt = prevInvoice.getVtEnd();
             prevNt = prevInvoice.getNtEnd();
         } else {
@@ -378,6 +407,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
     }
 
+
     /**
      * Nastaví posluchače pro aktualizaci dat v adaptéru pro faktury.
      *
@@ -412,8 +442,13 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
     }
 
+
     public interface InvoiceAdapterListener {
         void onUpdateData();
+    }
+
+    public interface SetJointInvoiceListener {
+        void onSetJointInvoice();
     }
 
 }
