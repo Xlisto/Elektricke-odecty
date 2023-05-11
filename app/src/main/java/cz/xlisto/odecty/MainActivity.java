@@ -16,7 +16,6 @@ import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.utils.FragmentChange;
 
-import android.app.backup.BackupAgent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -28,7 +27,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
@@ -168,6 +167,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

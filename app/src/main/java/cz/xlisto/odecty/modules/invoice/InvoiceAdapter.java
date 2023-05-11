@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +12,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
@@ -45,7 +41,7 @@ import cz.xlisto.odecty.utils.FragmentChange;
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHolder> {
     private static final String TAG = "InvoiceAdapter";
     private final Context context;
-    private final ArrayList<InvoiceModel> items;
+    private ArrayList<InvoiceModel> items;
     private final String table;
     private InvoiceAdapterListener reloadData;
     private final SubscriptionPointModel subScriptionPoint;
@@ -216,20 +212,15 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
         });
 
+        if (position == items.size() - 1)
+            holder.btnJoin.setEnabled(false);
         InvoiceModel finalInvoicePrevious = invoicePrevious;
         holder.btnJoin.setOnClickListener(v -> {
             if (finalInvoicePrevious != null) {
-                invoiceJoinDialogFragment = InvoiceJoinDialogFragment.newInstance(invoice.getId(), finalInvoicePrevious.getId(), table);
-                invoiceJoinDialogFragment.setOnJoinListener(b -> {
-                    if (b) {
-                        notifyDataSetChanged();
-                        reloadData.onUpdateData();
-                    }
-                });
+                invoiceJoinDialogFragment = InvoiceJoinDialogFragment.newInstance(invoice.getId(), finalInvoicePrevious.getId(), table, position);
                 invoiceJoinDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
             }
         });
-        Log.w(TAG, "InvoiceAdapter: " + invoiceJoinDialogFragment);
 
         holder.btnDelete.setOnClickListener(v -> YesNoDialogFragment.newInstance(b -> {
             if (b)
@@ -262,6 +253,13 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
 
+    /**
+     * Zobrazí tlačítka pro danou položku.
+     *
+     * @param holder   view holder
+     * @param invoice  faktura
+     * @param position pozice položky
+     */
     private void showButtons(MyViewHolder holder, InvoiceModel invoice, int position) {
         TransitionManager.beginDelayedTransition(recyclerView);
         if (showButtons == position) {
@@ -274,6 +272,20 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.lnButtons.setVisibility(View.GONE);
             holder.lnButtons2.setVisibility(View.GONE);
         }
+    }
+
+
+    /**
+     * Aktualizuje data v adaptéru při změně dat
+     *
+     * @param items    ArrayList položek
+     * @param position int pozice položky
+     */
+    public void setUpdateJoin(ArrayList<InvoiceModel> items, int position) {
+        this.items = items;
+        showButtons = -1;
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
     }
 
 
@@ -446,9 +458,4 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     public interface InvoiceAdapterListener {
         void onUpdateData();
     }
-
-    public interface SetJointInvoiceListener {
-        void onSetJointInvoice();
-    }
-
 }

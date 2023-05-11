@@ -1,11 +1,8 @@
 package cz.xlisto.odecty.modules.invoice;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,24 +26,26 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     public static final String TAG = "InvoiceJoinDialogFragment";
     private static final String ID_INVOICE_FIRST = "idInvoiceFirst";
     private static final String ID_INVOICE_SECOND = "idInvoiceSecond";
+    private static final String POSITION = "position";
     private static final String TABLE = "table";
-    private long idInvoiceFirst, idInvoiceSecond;
+    public static final String RESULT = "result";
+    public static final String RESULT_JOIN_DIALOG_FRAGMENT = "resultJoinDialogFragment";
     private String table;
+    private int position;
     private InvoiceModel invoiceFirst, invoiceSecond, invoiceJoined;
     private TextView tvDateFirst, tvDateSecond, tvDateTotal;
     private TextView tvVtStartFirst, tvVtStartSecond, tvVtStartTotal;
     private TextView tvVtEndFirst, tvVtEndSecond, tvVtEndTotal;
     private TextView tvNtStartFirst, tvNtStartSecond, tvNtStartTotal;
     private TextView tvNtEndFirst, tvNtEndSecond, tvNtEndTotal;
-    private Button btnJoin, btnCancel;
-    private OnJoinListener onJoinListener;
 
 
-    public static InvoiceJoinDialogFragment newInstance(long idInvoiceFirst, long idInvoiceSecond, String table) {
+    public static InvoiceJoinDialogFragment newInstance(long idInvoiceFirst, long idInvoiceSecond, String table, int position) {
         Bundle bundle = new Bundle();
         bundle.putLong(ID_INVOICE_FIRST, idInvoiceFirst);
         bundle.putLong(ID_INVOICE_SECOND, idInvoiceSecond);
         bundle.putString(TABLE, table);
+        bundle.putInt(POSITION, position);
         InvoiceJoinDialogFragment invoiceJoinDialogFragment = new InvoiceJoinDialogFragment();
         invoiceJoinDialogFragment.setArguments(bundle);
         return invoiceJoinDialogFragment;
@@ -57,9 +56,11 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        idInvoiceFirst = getArguments().getLong(ID_INVOICE_FIRST);
-        idInvoiceSecond = getArguments().getLong(ID_INVOICE_SECOND);
+        assert getArguments() != null;
+        long idInvoiceFirst = getArguments().getLong(ID_INVOICE_FIRST);
+        long idInvoiceSecond = getArguments().getLong(ID_INVOICE_SECOND);
         table = getArguments().getString(TABLE);
+        position = getArguments().getInt(POSITION);
 
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
         dataSubscriptionPointSource.open();
@@ -74,8 +75,6 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        InvoiceJoinDialogFragment invoiceJoinDialogFragment = (InvoiceJoinDialogFragment) getParentFragmentManager().findFragmentByTag(TAG);
-        Log.w(TAG, "onCreateDialog: " + invoiceJoinDialogFragment);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_join, null);
 
@@ -99,8 +98,8 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         tvNtEndSecond = dialogView.findViewById(R.id.tvJoinNTEnd2);
         tvNtEndTotal = dialogView.findViewById(R.id.tvJoinNTEnd3);
 
-        btnJoin = dialogView.findViewById(R.id.btnJoin);
-        btnCancel = dialogView.findViewById(R.id.btnJoinCancel);
+        Button btnJoin = dialogView.findViewById(R.id.btnJoin);
+        Button btnCancel = dialogView.findViewById(R.id.btnJoinCancel);
 
         btnCancel.setOnClickListener(v -> dismiss());
         btnJoin.setOnClickListener(v -> {
@@ -109,7 +108,12 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
             dataSubscriptionPointSource.updateInvoice(invoiceJoined.getId(), table, invoiceJoined);
             dataSubscriptionPointSource.deleteInvoice(invoiceSecond.getId(), table);
             dataSubscriptionPointSource.close();
-            //onJoinListener.onJoin(true);
+
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(RESULT, true);
+            bundle.putInt(POSITION, position);
+            getParentFragmentManager().setFragmentResult(RESULT_JOIN_DIALOG_FRAGMENT, bundle);
+
             dismiss();
         });
 
@@ -117,11 +121,6 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         builder.setTitle(getResources().getString(R.string.join_record));
         setViews();
         return builder.create();
-    }
-
-
-    public void setOnJoinListener(OnJoinListener onJoinListener) {
-        this.onJoinListener = onJoinListener;
     }
 
 
@@ -154,9 +153,10 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
 
     /**
      * Vytvoří nový InvoiceModel a nastaví mu hodnoty z obou faktur
-     * @param invoiceFirst
-     * @param invoiceSecond
-     * @return
+     *
+     * @param invoiceFirst První záznam v seznamu - zůstane zachován, přebere data z druhého záznamu
+     * @param invoiceSecond Druhý záznam v seznamu - předá data a bude odstraněn
+     * @return Vrací nový InvoiceModel, jehož hodnoty jsou spojením obou záznamů
      */
     private InvoiceModel joinInvoices(InvoiceModel invoiceFirst, InvoiceModel invoiceSecond) {
         invoiceFirst.setDateFrom(invoiceSecond.getDateFrom());
@@ -166,8 +166,4 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         return invoiceFirst;
     }
 
-
-    public interface OnJoinListener {
-        void onJoin(boolean b);
-    }
 }

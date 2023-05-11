@@ -60,6 +60,7 @@ public class InvoiceFragment extends Fragment {
     private SubscriptionPointModel subscriptionPoint;
     private ArrayList<InvoiceModel> invoices;
     private PozeModel poze;
+    private InvoiceAdapter invoiceAdapter;
 
 
     public static InvoiceFragment newInstance(String tableFak, String tableNow, String tablePay, long idFak, int position) {
@@ -125,6 +126,16 @@ public class InvoiceFragment extends Fragment {
         if (idFak == -1L) {
             btnAdd.setVisibility(View.GONE);
         }
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                InvoiceJoinDialogFragment.RESULT_JOIN_DIALOG_FRAGMENT,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(InvoiceJoinDialogFragment.RESULT)) {
+                        loadInvoice();
+                        invoiceAdapter.setUpdateJoin(invoices,position);
+                    }
+                });
     }
 
 
@@ -167,14 +178,15 @@ public class InvoiceFragment extends Fragment {
         poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), getActivity());
         totalPrice = calculationTotalInvoice(invoices, subscriptionPoint, poze);
         PaymentModel.getDiscountDPHText(discount, tvDiscount);
-
     }
 
 
-    private void setRecyclerView() {
-        InvoiceAdapter invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
+    /**
+     * Nastaví na RecyclerView adaptér, zajistí animaci při vytváření
+     */
+    public void setRecyclerView() {
+        invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
         invoiceAdapter.setUpdateListener(this::onResume);
-
 
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -193,7 +205,6 @@ public class InvoiceFragment extends Fragment {
                 return true;
             }
         });
-
     }
 
 
