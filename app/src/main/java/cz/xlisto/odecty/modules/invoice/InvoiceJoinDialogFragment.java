@@ -159,11 +159,10 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
      * @return Vrací nový InvoiceModel, jehož hodnoty jsou spojením obou záznamů
      */
     private InvoiceModel joinInvoices(InvoiceModel invoiceFirst, InvoiceModel invoiceSecond) {
-        invoiceFirst.setDateFrom(invoiceSecond.getDateFrom());
-        invoiceFirst.setVtStart(invoiceSecond.getVtStart());
-        invoiceFirst.setNtStart(invoiceSecond.getNtStart());
 
-        return invoiceFirst;
+        return new InvoiceModel(invoiceFirst.getId(),
+                invoiceSecond.getDateFrom(), invoiceFirst.getDateTo(), invoiceSecond.getVtStart(), invoiceFirst.getVtEnd(), invoiceSecond.getNtStart(), invoiceFirst.getNtEnd(),
+                invoiceFirst.getIdInvoice(),invoiceFirst.getIdPriceList(),invoiceFirst.getOtherServices(),invoiceFirst.getNumberInvoice());
     }
 
 }

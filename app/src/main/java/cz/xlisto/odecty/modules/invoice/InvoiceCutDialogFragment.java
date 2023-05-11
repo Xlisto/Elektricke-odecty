@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.Slider;
 
 import androidx.annotation.NonNull;
@@ -39,6 +38,8 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private final static String ID = "id";
     private final static String OTHER_SERVICES = "otherServices";
     private final static String TABLE = "table";
+    public static final String RESULT = "result";
+    public static final String RESULT_CUT_DIALOG_FRAGMENT = "resultCutDialogFragment";
     private double maxVT, minVT, maxNT, minNT, otherServices;
     private long minDate, maxDate, idPriceList, id;
     private boolean showNT;
@@ -46,7 +47,6 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private LabelEditText labVT, labNT;
     private Slider sliderVT, sliderNT, sliderDate;
     private Button btnDate;
-    private OnCutListener onCutListener;
     private TextView tvDate;
 
 
@@ -163,14 +163,14 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
         btnCut.setOnClickListener(v -> {
             cut(idPriceList, id, otherServices);
-            onCutListener.onCut(true);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(RESULT, true);
+            getParentFragmentManager().setFragmentResult(RESULT_CUT_DIALOG_FRAGMENT, bundle);
+
             dismiss();
         });
 
-        btnCancel.setOnClickListener(v -> {
-            onCutListener.onCut(false);
-            dismiss();
-        });
+        btnCancel.setOnClickListener(v -> dismiss());
 
         builder.setView(dialogView);
         builder.setTitle(getResources().getString(R.string.cut_record));
@@ -216,13 +216,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         tvDate.setText(ViewHelper.convertLongToTime(minDate) + " - " + ViewHelper.convertLongToTime(maxDate));
 
         // Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
-        sliderDate.setLabelFormatter(new LabelFormatter() {
-            @NonNull
-            @Override
-            public String getFormattedValue(float value) {
-                return ViewHelper.convertLongToTime(((long) value) * million);
-            }
-        });
+        sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToTime(((long) value) * million));
     }
 
 
@@ -256,11 +250,6 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     }
 
 
-    public void setOnCutListener(OnCutListener onCutListener) {
-        this.onCutListener = onCutListener;
-    }
-
-
     private void cut(long idPriceList, long id, double otherServices) {
         InvoiceModel firstInvoice = new InvoiceModel(id, minDate, ((long) (sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000),
                 minVT, sliderVT.getValue(), minNT, sliderNT.getValue(), -1L,
@@ -270,10 +259,5 @@ public class InvoiceCutDialogFragment extends DialogFragment {
                 idPriceList, otherServices, "");
 
         WithOutInvoiceService.cutInvoice(getActivity(), firstInvoice, secondInvoice);
-    }
-
-
-    public interface OnCutListener {
-        void onCut(boolean b);
     }
 }

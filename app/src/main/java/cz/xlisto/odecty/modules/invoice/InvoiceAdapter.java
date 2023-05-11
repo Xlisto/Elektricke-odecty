@@ -202,18 +202,13 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.btnCut.setOnClickListener(v -> {
             InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),
                     invoice.getVtStart(), invoice.getVtEnd(), invoice.getNtStart(), invoice.getNtEnd(), showNT, priceList.getId(), invoice.getId(), invoice.getOtherServices(), table);
-            invoiceCutDialogFragment.setOnCutListener(b -> {
-                if (b) {
-                    notifyDataSetChanged();
-                    reloadData.onUpdateData();
-                }
-
-            });
             invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
         });
 
         if (position == items.size() - 1)
             holder.btnJoin.setEnabled(false);
+        else
+            holder.btnJoin.setEnabled(true);
         InvoiceModel finalInvoicePrevious = invoicePrevious;
         holder.btnJoin.setOnClickListener(v -> {
             if (finalInvoicePrevious != null) {
@@ -276,7 +271,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
     /**
-     * Aktualizuje data v adaptéru při změně dat
+     * Aktualizuje data v adaptéru při změně dat - odebrání položky
      *
      * @param items    ArrayList položek
      * @param position int pozice položky
@@ -285,6 +280,19 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         this.items = items;
         showButtons = -1;
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+    }
+
+
+    /**
+     * Aktualizuje data v adaptéru při změně dat - přidání položky
+     * @param items
+     * @param position
+     */
+    public void setUpdateCut(ArrayList<InvoiceModel> items, int position) {
+        this.items = items;
+        showButtons = -1;
+        notifyItemInserted(position);
         notifyItemRangeChanged(position, getItemCount());
     }
 

@@ -127,6 +127,7 @@ public class InvoiceFragment extends Fragment {
             btnAdd.setVisibility(View.GONE);
         }
 
+        //posluchač na změnu počtu záznamů ve faktuře - sloučení záznamů
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceJoinDialogFragment.RESULT_JOIN_DIALOG_FRAGMENT,
                 this,
@@ -134,6 +135,16 @@ public class InvoiceFragment extends Fragment {
                     if (result.getBoolean(InvoiceJoinDialogFragment.RESULT)) {
                         loadInvoice();
                         invoiceAdapter.setUpdateJoin(invoices,position);
+                    }
+                });
+        //posluchač na změnu počtu záznamů ve faktuře - rozdělení záznamů
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                InvoiceCutDialogFragment.RESULT_CUT_DIALOG_FRAGMENT,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(InvoiceCutDialogFragment.RESULT)) {
+                        loadInvoice();
+                        invoiceAdapter.setUpdateCut(invoices,position);
                     }
                 });
     }
