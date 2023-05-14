@@ -22,13 +22,10 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
 /**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
+ * Abstraktí třída pro přidání a editaci platby.
  */
 public abstract class PaymentAddEditFragmentAbstract extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     static final String ID_FAK = "id_fak";
     static final String ID_PAYMENT = "id_payment";
     static final String TABLE = "table";
@@ -39,8 +36,6 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     static final String DP_DAY = "dp_day";
     static final String DP_MONTH = "dp_month";
     static final String DP_YEAR = "dp_year";
-
-    // TODO: Rename and change types of parameters
     long idFak, idPayment;
     String table;
     Button btnSave, btnBack;
@@ -61,12 +56,14 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_payment_add_edit_abstract, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -78,6 +75,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         btnSave = view.findViewById(R.id.btnSavePayment);
         btnBack = view.findViewById(R.id.btnBackPayment);
         dp = view.findViewById(R.id.dpPayment);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +83,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
                 closeFragment();
             }
         });
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +91,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
                 save();
             }
         });
+
         chPayment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -101,6 +101,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
                 }
             }
         });
+
         chSupplement.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -110,6 +111,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
                 }
             }
         });
+
         chDiscount.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -132,6 +134,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         }
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -144,19 +147,21 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         outState.putInt(DP_YEAR, dp.getYear());
     }
 
+
     private void unchceck() {
         chPayment.setChecked(false);
         chSupplement.setChecked(false);
         chDiscount.setChecked(false);
     }
 
+
     void save() {
         long date = ViewHelper.parseCalendarFromString(""+dp.getDayOfMonth()+"."+(dp.getMonth()+1)+"."+dp.getYear()).getTimeInMillis();
         int typePayment = getTypePayment();
         //TODO: doplnit typ platby
         payment = new PaymentModel(idPayment,idFak,date, labPayment.getDouble(), typePayment);
-        Log.w("TAG","payment abs "+payment.getPayment());
     }
+
 
     void closeFragment() {
         getParentFragmentManager().popBackStack();

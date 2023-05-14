@@ -20,9 +20,7 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -31,11 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -47,6 +41,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.shp.ShPBackup;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 
@@ -73,6 +68,7 @@ public class BackupFragment extends Fragment {
     private ShPBackup shPBackup;
     private ShPSubscriptionPoint shPSubscriptionPoint;
     private LinearLayout lnProgressBar;
+    private BackupAdapter backupAdapter;
 
 
     @Override
@@ -103,6 +99,22 @@ public class BackupFragment extends Fragment {
         //btnBackup.setOnClickListener(v -> save());
         btnSelectDir.setOnClickListener((v) -> openTree(false));
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_BACKUP,this, (requestKey, result) -> {
+
+
+                if(result.getBoolean(YesNoDialogFragment.RESULT)){
+                    backupAdapter.recoverDatabaseFromZip();
+                }
+
+        });
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_DELETE,this, (requestKey, result) -> {
+
+                if(result.getBoolean(YesNoDialogFragment.RESULT)){
+                    backupAdapter.deleteFile();
+                }
+
+        });
     }
 
     @Override
@@ -141,8 +153,8 @@ public class BackupFragment extends Fragment {
 
                     if (documentFiles != null) {
                         SortFile.quickSortDate(documentFiles);
-                        BackupAdapter backupAdapter = new BackupAdapter(getActivity(), documentFiles, recyclerView);
-                        backupAdapter.setOnListenerFile(file -> restore(file));
+                        backupAdapter = new BackupAdapter(getActivity(), documentFiles, recyclerView);
+                        //backupAdapter.setOnListenerFile(file -> restore(file));
                         handler.postDelayed(() -> {
                             recyclerView.setAdapter(backupAdapter);
                             backupAdapter.notifyDataSetChanged();
@@ -155,12 +167,7 @@ public class BackupFragment extends Fragment {
             });
         } else {
             Snackbar.make(view, getActivity().getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
-                    .setAction(getActivity().getResources().getString(R.string.select), new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openTree(true);
-                        }
-                    })
+                    .setAction(getActivity().getResources().getString(R.string.select), v -> openTree(true))
                     .show();
         }
 
@@ -172,7 +179,6 @@ public class BackupFragment extends Fragment {
      * @return
      */
     private boolean permissions() {
-        //return Permissions.getInstance().permissions(getActivity(), this, view, uri, 42);
         return Permissions.getInstance().isPermissionStorage(getActivity(), uri);
     }
 
@@ -330,12 +336,9 @@ public class BackupFragment extends Fragment {
      */
     private ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        activityResult(result.getData());
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    activityResult(result.getData());
                 }
             }
     );
@@ -398,7 +401,7 @@ public class BackupFragment extends Fragment {
     /*private String readDataFromDatabase() {
         return new Database(getActivity(), 1).getPosledniOdectyAsText();
     }*/
-    private void restore(DocumentFile f) {
+    /*private void restore(DocumentFile f) {
         if (f.getName().contains(".zip")) {
             //zip archiv, který se rozbalí do povolený složky
             ArrayList<DocumentFile> files = unzip(f);
@@ -416,7 +419,7 @@ public class BackupFragment extends Fragment {
             //původní záložní soubory
             obnovDatabazi(f);
         }
-    }
+    }*/
 
     /**
      * Rozbalení ZIP archivu a uložení do stávající složky
@@ -424,7 +427,7 @@ public class BackupFragment extends Fragment {
      * @param documentFile
      * @return
      */
-    private ArrayList<DocumentFile> unzip(DocumentFile documentFile) {
+   /* private ArrayList<DocumentFile> unzip(DocumentFile documentFile) {
         //documentFile - předaný soubor k rozbalení
         Uri treeUri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, DEF_URI));
         DocumentFile pickedDir = DocumentFile.fromTreeUri(getActivity(), treeUri);
@@ -440,7 +443,7 @@ public class BackupFragment extends Fragment {
         //Log.w(E, J + "Documentfile: " + documentFile.getName());
         //File f = new File(folder + File.separator + documentFile.getName());
         //DocumentFile documentFile = pickedDir.createFile("plain/text", documentFile.getName());
-        /*try {
+        *//*try {
             InputStream in = getActivity().getContentResolver().openInputStream(documentFile.getUri());//načítaný záložní soubor
             OutputStream out = null;//výstupní soubor
             //out = new FileOutputStream(folder + File.separator + documentFile.getUri());
@@ -458,16 +461,16 @@ public class BackupFragment extends Fragment {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }*//*
 
 
         ArrayList<DocumentFile> files = new ArrayList<>();
         byte[] buffer = new byte[1024];
         try {
             //vytvoření dočasné složky
-            /*folder = new File(Environment.getExternalStorageDirectory().getPath() + "/Zalohy");
+            *//*folder = new File(Environment.getExternalStorageDirectory().getPath() + "/Zalohy");
             if (!folder.exists())
-                folder.mkdir();*/
+                folder.mkdir();*//*
 
             //vložení zip souboru
             ZipInputStream zis = new ZipInputStream(getActivity().getContentResolver().openInputStream(documentFile.getUri()));
@@ -506,9 +509,9 @@ public class BackupFragment extends Fragment {
             e.printStackTrace();
         }
         return files;
-    }
+    }*/
 
-    private void obnovDatabaziZip(DocumentFile f) {
+    /*private void obnovDatabaziZip(DocumentFile f) {
         if (f == null) {
             return;
         }
@@ -578,20 +581,20 @@ public class BackupFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), "Bohužel se něco nepovedlo při obnově: " + e.toString(), Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     /**
      * Smazání dočasných souborů z rozbaleného ZIPu
      *
      * @return
      */
-    public static void deleteDirectory(ArrayList<DocumentFile> documentFiles) {
+    /*public static void deleteDirectory(ArrayList<DocumentFile> documentFiles) {
         for (int i = 0; i < documentFiles.size(); i++) {
             documentFiles.get(i).delete();
         }
-    }
+    }*/
 
-    private void obnovDatabazi(DocumentFile f) {
+    /*private void obnovDatabazi(DocumentFile f) {
         if (f == null) {
             return;
         }
@@ -632,11 +635,11 @@ public class BackupFragment extends Fragment {
             Log.w(TAG, "currentDB: " + currentDB.toString());//cesta k vnitřní databázi
             Log.w(TAG, " backupDB: " + backupDB.toString());
 
-            /*FileChannel src = new FileOutputStream(currentDB).getChannel();
+            *//*FileChannel src = new FileOutputStream(currentDB).getChannel();
             FileChannel dst = new FileInputStream(backupDB).getChannel();
             src.transferFrom(dst, 0, dst.size());
             src.close();
-            dst.close();*/
+            dst.close();*//*
 
             InputStream in = getActivity().getContentResolver().openInputStream(f.getUri());//načítaný záložní soubor
             //File currentDB_ = new File(currentDBPath);//soubor aplikace s databází
@@ -654,7 +657,7 @@ public class BackupFragment extends Fragment {
             //dbOdberneMisto.close();
             //dbCeniky.close();
             //nastavení barev VT a NT
-            //TODO doplnit nastavení
+            //TODO: doplnit nastavení aplikace
             //new Databaze(getActivity()).getColorApp();//načtení barev z databáze a nastavení do sharedPreferences, otevírá si a zavírá databázy
             shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
             //new ShP(getActivity()).setIDMista(-1L);
@@ -664,7 +667,7 @@ public class BackupFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), "Bohužel se něco nepovedlo při obnově: " + e.toString(), Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     /**
      * Zobrazí nebo skryje LinearLayout s ProgressBar

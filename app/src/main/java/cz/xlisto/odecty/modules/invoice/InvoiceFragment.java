@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PaymentModel;
@@ -145,6 +146,15 @@ public class InvoiceFragment extends Fragment {
                     if (result.getBoolean(InvoiceCutDialogFragment.RESULT)) {
                         loadInvoice();
                         invoiceAdapter.setUpdateCut(invoices,position);
+                    }
+                });
+        //posluchač na odstranění záznamu ve faktuře
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                InvoiceAdapter.INVOICE_ADAPTER_DELETE_INVOICE,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        invoiceAdapter.deleteItem();
                     }
                 });
     }

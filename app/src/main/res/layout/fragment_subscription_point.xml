@@ -148,7 +148,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lnButtonsBackup"
+                android:id="@+id/lnButtonsPayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lnNumberSubscriptionPoint"

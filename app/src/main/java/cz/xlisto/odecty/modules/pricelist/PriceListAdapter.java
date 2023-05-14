@@ -3,6 +3,7 @@ package cz.xlisto.odecty.modules.pricelist;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,8 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
-    private static final String TAG = "PriceListAdapter";
+    public static final String TAG = "PriceListAdapter";
+    public final static String FLAG_DIALOG_FRAGMENT = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
     private final OnLongClickItemListener onLongClickItemListener;
     private final boolean showSelectItem;
@@ -48,6 +50,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     private int showButtons = -1;
     private RecyclerView recyclerView;
     private ShPPriceList shPPriceList;
+    private long selectedItemId;
+    private int selectedPosition;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout relativeLayout;
@@ -173,7 +177,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                     else
                         showButtons = position;
 
-                    shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position);
+                    setShowPositionItem(position);
                     showButtons(holder, position);
                 }
             });
@@ -197,15 +201,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             holder.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    selectedItemId = priceList.getId();
+                    selectedPosition = position;
                     YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                            new YesNoDialogFragment.OnDialogResult() {
-                                @Override
-                                public void onResult(boolean b) {
-                                    if (b) {
-                                        deleteItemPrice(priceList.getId(), position);
-                                    }
-                                }
-                            }, "Opravdu chcete smazat ceník ?", priceList.getRada() + " "
+                            "Opravdu chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT,
+                            priceList.getRada() + " "
                                     + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
                                     + ViewHelper.convertLongToTime(priceList.getPlatnostOD()) + " - "
                                     + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
@@ -264,7 +264,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                 showButtons = position;
             }
         });
-
     }
 
     @Override
@@ -286,13 +285,33 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
     private void showButtons(MyViewHolder holder, int position) {
-        shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, showButtons);
+        setShowPositionItem(showButtons);
         if (position == showButtons) {
             holder.lnButtons.setVisibility(View.VISIBLE);
         } else {
             holder.lnButtons.setVisibility(View.GONE);
         }
     }
+
+
+    /**
+     * Smaže vybraný ceník
+     */
+    public void delteItemPrice() {
+        deleteItemPrice(selectedItemId, selectedPosition);
+        setShowPositionItem(-1);
+    }
+
+
+    /**
+     * Uloží pozici položky ceníku, kde jsou zobrazeny rlačítka
+     * Hodnota -1 skryje všechny tlačítka
+     * @param position int pozice položky ceníku, kde se mají zobrazit tlačítka
+     */
+    private void setShowPositionItem(int position) {
+        shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position);
+    }
+
 
     /**
      * Smaže vybraný ceník podle id
@@ -302,11 +321,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     private void deleteItemPrice(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
-        int pricesTED = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableTED(),itemId);
-        int pricesFAK = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableFAK(),itemId);
-        int pricesMON = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableO(),itemId);
+        int pricesTED = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableTED(), itemId);
+        int pricesFAK = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableFAK(), itemId);
+        int pricesMON = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableO(), itemId);
         dataSubscriptionPointSource.close();
-        if(pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
+        if (pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
             showWarningDialog(pricesTED, pricesFAK, pricesMON);
             return;
         }

@@ -13,7 +13,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/lnButtonsBackup">
+        android:layout_above="@id/lnButtonsPayment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,7 +96,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/lnButtonsBackup"
+        android:id="@+id/lnButtonsPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">

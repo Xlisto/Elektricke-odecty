@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
@@ -28,17 +29,19 @@ import cz.xlisto.odecty.ownview.ViewHelper;
  * Adaptér zobrazení souboru záloh
  * Xlisto 24.04.2023 20:06
  */
-public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHolder>{
+public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHolder> {
     private static final String TAG = "BackupAdapter";
-    private List<DocumentFile> documentFiles;
-    private Context context;
-    private RecyclerView recyclerView;
-    private int showButtons = -1;
-    private OnListenerFile onListenerFile;
-    private DocumentFile selectedFile;
+    public static final String FLAG_DIALOG_FRAGMENT_BACKUP = "backupDialogFragmentBackup";
+    public static final String FLAG_DIALOG_FRAGMENT_DELETE = "backupDialogFragmentDelete";
+    private final List<DocumentFile> documentFiles;
+    private final Context context;
+    private final RecyclerView recyclerView;
+    private static int showButtons = -1;
+    private int selectedPosition;
+    private static DocumentFile selectedFile;
+
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        DocumentFile object;
         TextView tvName;
         TextView tvTyp;
         ImageView iconFile;
@@ -52,11 +55,13 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         }
     }
 
-    public BackupAdapter(Context context,List<DocumentFile> documentFiles, RecyclerView recyclerView) {
+
+    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView) {
         this.documentFiles = documentFiles;
         this.context = context;
         this.recyclerView = recyclerView;
     }
+
 
     @NonNull
     @Override
@@ -73,18 +78,16 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         return vh;
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentFile object = documentFiles.get(position);
-        String text = "";
-        text = "Text "+object;
+        String text = object.toString();
         holder.tvName.setText(text);
 
-
-
-        boolean cenik = object.getName().contains(".cenik");
-        boolean odecet = object.getName().contains(".odecet");
-        boolean zip = object.getName().contains("ElektroDroid.zip");
+        boolean cenik = Objects.requireNonNull(object.getName()).contains(".cenik");
+        boolean odecet = Objects.requireNonNull(object.getName()).contains(".odecet");
+        boolean zip = Objects.requireNonNull(object.getName()).contains("ElektroDroid.zip");
         if (cenik) text = object.getName().replace(".cenik", "");
         if (odecet) text = object.getName().replace(".odecet", "");
         if (zip) text = object.getName().replace("ElektroDroid.zip", "");
@@ -116,63 +119,37 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.tvTyp.setText("Záloha komprimovaná");
         }
 
-        showButtons( holder, position);
+        showButtons(holder, position);
 
-        holder.rl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TransitionManager.beginDelayedTransition(recyclerView);
-                if (showButtons >= 0) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                    if (viewHolder != null)
-                        viewHolder.itemView.findViewById(R.id.lnButtonsBackup).setVisibility(View.GONE);
-                }
-
-                if (showButtons == position)
-                    showButtons = -1;
-                else
-                    showButtons = position;
-                showButtons( holder, position);
+        holder.rl.setOnClickListener(v -> {
+            TransitionManager.beginDelayedTransition(recyclerView);
+            if (showButtons >= 0) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                if (viewHolder != null)
+                    viewHolder.itemView.findViewById(R.id.lnButtonsBackup).setVisibility(View.GONE);
             }
+
+            if (showButtons == position)
+                showButtons = -1;
+            else
+                showButtons = position;
+            showButtons(holder, position);
         });
 
-        holder.btnRestore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedFile = object;
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(new YesNoDialogFragment.OnDialogResult() {
-                    @Override
-                    public void onResult(boolean b) {
-                        if (b) {
-                            onListenerFile.onListenerFile(selectedFile);
-                            selectedFile = null;
-                        }
-                    }
-                }, "Obnovit zálohu");
-                yesNoDialogFragment.show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
-            }
+        holder.btnRestore.setOnClickListener(v -> {
+            selectedFile = object;
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance("Obnovit zálohu", FLAG_DIALOG_FRAGMENT_BACKUP);
+            yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedFile = object;
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(new YesNoDialogFragment.OnDialogResult() {
-                    @Override
-                    public void onResult(boolean b) {
-                       if (b) {
-                            object.delete();
-                            documentFiles.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, documentFiles.size());
-                            selectedFile = null;
-                            showButtons = -1;
-                        }
-                    }
-                }, "Smazat zálohu");
-                yesNoDialogFragment.show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
-            }
+
+        holder.btnDelete.setOnClickListener(v -> {
+            selectedFile = object;
+            selectedPosition = position;
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance("Smazat zálohu", FLAG_DIALOG_FRAGMENT_DELETE);
+            yesNoDialogFragment.show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -181,19 +158,30 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         return documentFiles.size();
     }
 
-    private void showButtons( MyViewHolder holder, int position) {
+
+    /**
+     * Smaže vybraný záložní soubor
+     */
+    public void deleteFile() {
+        selectedFile.delete();
+        documentFiles.remove(selectedPosition);
+        notifyItemRemoved(selectedPosition);
+        notifyItemRangeChanged(selectedPosition, documentFiles.size());
+        selectedFile = null;
+        showButtons = -1;
+    }
+
+
+    public void recoverDatabaseFromZip() {
+        RecoverDataFromBackupFile.recoverDatabaseFromZip(context,selectedFile);
+        selectedFile = null;
+    }
+
+
+    private void showButtons(MyViewHolder holder, int position) {
         if (showButtons == position)
             holder.ln.setVisibility(View.VISIBLE);
         else
             holder.ln.setVisibility(View.GONE);
     }
-
-    public void setOnListenerFile(OnListenerFile onListenerFile) {
-        this.onListenerFile = onListenerFile;
-    }
-
-    public interface OnListenerFile {
-        void onListenerFile(DocumentFile file);
-    }
-
 }

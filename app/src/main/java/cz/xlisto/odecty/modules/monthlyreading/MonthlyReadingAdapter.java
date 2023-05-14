@@ -41,12 +41,15 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  */
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
     private static final String TAG = "MonthlyReadingAdapter";
+    public static final String FLAG_DELETE_MONTHLY_READING = "flagDeleteMonthlyReading";
+    private static int showButtons = -1;
     private final Context context;
     private final ArrayList<MonthlyReadingModel> items;
     private boolean simplyView, showRegulPrice;
     private final SubscriptionPointModel subscriptionPoint;
     private final RecyclerView recyclerView;
-    private int showButtons = -1;
+    private long selectedMonthlyReadingId;
+    private int selectedPosition;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -224,13 +227,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             FragmentChange.replace((FragmentActivity) context, monthlyReadingEditFragment, MOVE, true);
         });
 
+
         holder.btnDelete.setOnClickListener(v -> {
-            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                    b -> {
-                        if (b) {
-                            deleteMonthlyReading(monthlyReading.getId(), position);
-                        }
-                    }, context.getResources().getString(R.string.smazat_mesicni_odecet));
+            selectedMonthlyReadingId = monthlyReading.getId();
+            selectedPosition = position;
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.smazat_mesicni_odecet), FLAG_DELETE_MONTHLY_READING);
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
@@ -350,24 +351,24 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading));
     }
 
+
     /**
      * Skryje/zobrazí tlačítka pro smazání a editaci
-     * @param holder MyViewHolder
+     *
+     * @param holder   MyViewHolder
      * @param position pozice
      */
     private void showButtons(MyViewHolder holder, int position) {
 
-        if (showButtons == position) {
+        if (showButtons == position)
             holder.lnButtons.setVisibility(View.VISIBLE);
-        } else {
+        else
             holder.lnButtons.setVisibility(View.GONE);
-
-        }
     }
 
 
     /**
-     * Nastaví boolean pro zobtazení/skrytí rozšířených dat
+     * Nastaví boolean pro zobrazení/skrytí rozšířených dat
      */
     public void showSimpleView(boolean b) {
         this.simplyView = b;
@@ -385,8 +386,17 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Smaže zázman měsíčního odečtu
-     * @param itemId long id záznamu
+     * smaže záznam měsíčního odečtu
+     */
+    public void deleteMonthlyReading() {
+        deleteMonthlyReading(selectedMonthlyReadingId, selectedPosition);
+    }
+
+
+    /**
+     * Smaže záznam měsíčního odečtu
+     *
+     * @param itemId   long id záznamu
      * @param position int pozice v RecyclerAdapteru
      */
     private void deleteMonthlyReading(long itemId, int position) {

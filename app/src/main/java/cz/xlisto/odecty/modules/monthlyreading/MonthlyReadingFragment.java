@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPMonthlyReading;
@@ -74,7 +75,6 @@ public class MonthlyReadingFragment extends Fragment {
                              Bundle savedInstanceState) {
         subscriptionPoint = SubscriptionPoint.load(getActivity());
 
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_monthly_reading, container, false);
     }
 
@@ -124,6 +124,13 @@ public class MonthlyReadingFragment extends Fragment {
                     .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
             FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
         });
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT))
+                        monthlyReadingAdapter.deleteMonthlyReading();
+                });
+
     }
 
 

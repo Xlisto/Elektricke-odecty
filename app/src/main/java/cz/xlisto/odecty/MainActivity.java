@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity  {
 
             if (itemId == R.id.meni_subscription_points) {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
-                actualFragment = SubscriptionPointFragment.newInstance("ar1", "ar2");
+                actualFragment = SubscriptionPointFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 return true;
             }

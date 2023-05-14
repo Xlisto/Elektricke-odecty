@@ -40,6 +40,10 @@ import cz.xlisto.odecty.utils.FragmentChange;
  */
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHolder> {
     private static final String TAG = "InvoiceAdapter";
+    private static long selectedId;
+    private static int selectedPosition;
+    private static int showButtons = -1;
+    public static final String INVOICE_ADAPTER_DELETE_INVOICE = "invoiceAdapterDeleteInvoice";
     private final Context context;
     private ArrayList<InvoiceModel> items;
     private final String table;
@@ -50,7 +54,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private ColorStateList originalTextViewColors;
     private final boolean showNT = true;
     private PriceListModel priceList;
-    private int showButtons = -1;
     private InvoiceJoinDialogFragment invoiceJoinDialogFragment;
 
 
@@ -217,10 +220,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             }
         });
 
-        holder.btnDelete.setOnClickListener(v -> YesNoDialogFragment.newInstance(b -> {
-            if (b)
-                deleteItem(invoice.getId(), position);
-        }, "Smazat záznam z faktury").show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG));
+        holder.btnDelete.setOnClickListener(v -> {
+            selectedId = invoice.getId();
+            selectedPosition = position;
+            YesNoDialogFragment.newInstance("Smazat záznam z faktury", INVOICE_ADAPTER_DELETE_INVOICE).show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
+        });
+
 
         holder.lnButtons.setVisibility(View.GONE);
         holder.lnButtons2.setVisibility(View.GONE);
@@ -239,6 +244,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         showButtons(holder, invoice, position);
     }
 
+    public void deleteItem(){
+        deleteItem(selectedId,selectedPosition);
+    }
 
     @Override
     public int getItemCount() {
@@ -286,6 +294,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
     /**
      * Aktualizuje data v adaptéru při změně dat - přidání položky
+     *
      * @param items
      * @param position
      */

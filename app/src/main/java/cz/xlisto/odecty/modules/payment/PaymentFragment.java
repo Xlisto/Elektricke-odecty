@@ -1,11 +1,6 @@
 package cz.xlisto.odecty.modules.payment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +14,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.PaymentModel;
@@ -32,43 +31,23 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PaymentFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment zobrazující zálohové platby
  */
 public class PaymentFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ID_FAK = "id_fak";
+    private static final String ID_FAK = "idFak";
     private static final String POSITION = "position";
-
-    // TODO: Rename and change types of parameters
     private String table;
     private long idFak;
     private int position;
-    private Button btnAddPayment;
     private RecyclerView rv;
     private TextView tvTotal, tvDiscount;
     private Spinner spinner;
     private long idSubscriptionPoint;
-    private SubscriptionPointModel subscriptionPoint;
-    private double discountPayment;
     private ArrayList<PaymentModel> payments;
     private ArrayList<InvoiceListModel> invoicesList;
+    private PaymentAdapter paymentAdapter;
 
-    public PaymentFragment() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param idFak Parameter 1.
-     * @return A new instance of fragment PaymentFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static PaymentFragment newInstance(long idFak, int position) {
         PaymentFragment fragment = new PaymentFragment();
         Bundle args = new Bundle();
@@ -77,6 +56,7 @@ public class PaymentFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,12 +78,14 @@ public class PaymentFragment extends Fragment {
         loadPayments();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_payment, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -112,21 +94,22 @@ public class PaymentFragment extends Fragment {
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountFragment);
         spinner = view.findViewById(R.id.spPayment);
-        btnAddPayment = view.findViewById(R.id.btnAddPayment);
-        btnAddPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentChange.replace(getActivity(), PaymentAddFragment.newInstance(idFak, table), FragmentChange.Transaction.MOVE, true);
-            }
-        });
+        Button btnAddPayment = view.findViewById(R.id.btnAddPayment);
+        btnAddPayment.setOnClickListener(v -> FragmentChange.replace(requireActivity(), PaymentAddFragment.newInstance(idFak, table), FragmentChange.Transaction.MOVE, true));
 
+        // Posluchač dialogového okna na smazání platby
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentAdapter.FLAG_PAYMENT_ADAPTER_DELETE, this, (requestKey, result) -> {
+            if (result.getBoolean(YesNoDialogFragment.RESULT))
+                paymentAdapter.deleteItem();
+        });
     }
+
 
     @Override
     public void onResume() {
         super.onResume();
 
-        MySpinnerInvoiceListAdapter invoiceListAdapter = new MySpinnerInvoiceListAdapter(getActivity(), R.layout.item_own_simple_list, invoicesList);
+        MySpinnerInvoiceListAdapter invoiceListAdapter = new MySpinnerInvoiceListAdapter(requireActivity(), R.layout.item_own_simple_list, invoicesList);
         spinner.setAdapter(invoiceListAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -140,13 +123,13 @@ public class PaymentFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
         spinner.setSelection(position);
         setTotal();
         setRecyclerView();
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -155,11 +138,13 @@ public class PaymentFragment extends Fragment {
         outState.putInt(POSITION, position);
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
         rv.setAdapter(null);
     }
+
 
     /**
      * Načte seznam plateb a seznam faktur
@@ -168,7 +153,7 @@ public class PaymentFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
         dataSubscriptionPointSource.open();
         payments = dataSubscriptionPointSource.loadPayments(idFak, table);
-        subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
         if (subscriptionPoint == null)
             return;
         invoicesList = dataSubscriptionPointSource.loadInvoiceLists(subscriptionPoint);
@@ -180,13 +165,7 @@ public class PaymentFragment extends Fragment {
      * Nastaví recyclerview se seznamem plateb
      */
     private void setRecyclerView() {
-        PaymentAdapter paymentAdapter = new PaymentAdapter(payments, rv, table);
-        paymentAdapter.setUpdateListener(new PaymentAdapter.InvoiceAdapterListener() {
-            @Override
-            public void onUpdateData() {
-                onResume();
-            }
-        });
+        paymentAdapter = new PaymentAdapter(payments, rv, table);
         rv.setAdapter(paymentAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -198,22 +177,12 @@ public class PaymentFragment extends Fragment {
                     View v = rv.getChildAt(i);
                     Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_animation_fall_down);
                     v.startAnimation(animation);
-                    /*v.setAlpha(0.0f);
-                    v.setTranslationY(((-1*v.getHeight()*20/100)*(i+1)));
-                    v.setScaleY(1.05f);
-                    v.setScaleX(1.05f);
-                    v.setPivotX(0.5f);
-                    v.setPivotY(0.5f);
-                    v.animate().alpha(1.0f).translationY(0)
-                            .scaleX(1).scaleY(1)
-                            .setDuration(500)
-                            .setStartDelay(i * 15*500/100)
-                            .start();*/
                 }
                 return true;
             }
         });
     }
+
 
     /**
      * Nastaví formátovaný celkový součet na TextView
@@ -221,7 +190,7 @@ public class PaymentFragment extends Fragment {
     private void setTotal() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
         dataSubscriptionPointSource.open();
-        discountPayment = dataSubscriptionPointSource.sumDiscount(idFak, table);
+        double discountPayment = dataSubscriptionPointSource.sumDiscount(idFak, table);
         double total = dataSubscriptionPointSource.sumPayment(idFak, table);
         dataSubscriptionPointSource.close();
 
