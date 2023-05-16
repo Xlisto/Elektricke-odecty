@@ -169,6 +169,11 @@
     <string name="plus">+</string>
     <string name="equals">=</string>
     <string name="add_payment">Přidat platbu</string>
+    <string name="discount">Sleva</string>
+    <string name="supplement">Doplatek</string>
+    <string name="payment">Záloha</string>
+    <string name="support">Jednorázová podpora státu (2000 nebo 3500)</string>
+    <string name="payment2">Platba:</string>
 
 
 </resources>

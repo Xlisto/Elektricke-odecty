@@ -39,7 +39,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     String table;
     Button btnSave, btnBack;
     LabelEditText labPayment;
-    CheckBox chPayment, chSupplement, chDiscount;
+    CheckBox chPayment, chSupplement, chDiscount, chSupport;
     DatePicker dp;
     PaymentModel payment;
 
@@ -71,6 +71,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chPayment = view.findViewById(R.id.cbPayment);
         chSupplement = view.findViewById(R.id.cbSupplement);
         chDiscount = view.findViewById(R.id.cbDiscount);
+        chSupport = view.findViewById(R.id.cbSupport);
         btnSave = view.findViewById(R.id.btnSavePayment);
         btnBack = view.findViewById(R.id.btnBackPayment);
         dp = view.findViewById(R.id.dpPayment);
@@ -106,6 +107,13 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             }
         });
 
+        chSupport.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chSupport.setChecked(true);
+            }
+        });
+
         if (savedInstanceState != null) {
             labPayment.setDefaultText(savedInstanceState.getString(LAB_PAYMENT));
             chPayment.setChecked(savedInstanceState.getBoolean(CH_PAYMENT));
@@ -136,6 +144,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chPayment.setChecked(false);
         chSupplement.setChecked(false);
         chDiscount.setChecked(false);
+        chSupport.setChecked(false);
     }
 
 
@@ -156,13 +165,15 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     /**
      * Druh platby
      *
-     * @return 0 - platba, 1 - doplatek, 3 - sleva
+     * @return 0 - platba, 1 - doplatek, 3 - sleva, 4 - podpora státu
      */
     int getTypePayment() {
         if (chSupplement.isChecked())
             return 1;
         if (chDiscount.isChecked())
             return 3;
+        if (chSupport.isChecked())
+            return 4;
         return 0;
     }
 }

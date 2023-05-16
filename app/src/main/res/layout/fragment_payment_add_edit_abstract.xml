@@ -50,7 +50,8 @@
                 android:layout_height="match_parent"
                 android:inputType="numberDecimal"
                 app:direction="vertical"
-                app:hintText="@string/_0" />
+                app:hintText="@string/_0"
+                app:label="@string/payment2" />
         </LinearLayout>
 
 
@@ -66,7 +67,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="Záloha"
+                    android:maxWidth="300dp"
+                    android:text="@string/payment"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <CheckBox
@@ -74,7 +76,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Doplatek"
+                    android:text="@string/supplement"
+                    android:maxWidth="300dp"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <CheckBox
@@ -82,16 +85,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Sleva"
+                    android:text="@string/discount"
+                    android:maxWidth="300dp"
                     tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_item"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cbSupport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:maxWidth="300dp"
+                    android:text="@string/support"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+
             </LinearLayout>
 
 
             <TextView
                 android:id="@+id/textView56"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Platba:" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 
@@ -107,7 +128,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Zpět"
+            android:text="@string/zpet"
+            android:maxWidth="300dp"
             android:textColor="#D81B60" />
 
         <Button
@@ -116,7 +138,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Uložit"
+            android:text="@string/ulozit"
             android:textColor="#D81B60" />
 
     </LinearLayout>

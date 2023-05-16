@@ -58,6 +58,7 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
             if (typePayment == 0) chPayment.setChecked(true);
             if (typePayment == 1) chSupplement.setChecked(true);
             if (typePayment == 3) chDiscount.setChecked(true);
+            if (typePayment == 4) chSupport.setChecked(true);
             loadDatabase = false;
         }
     }

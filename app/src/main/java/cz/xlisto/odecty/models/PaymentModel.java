@@ -60,6 +60,7 @@ public class PaymentModel {
         if (typePayment == 1) return "Doplatek";
         if (typePayment == 2) return "Automatická";
         if (typePayment == 3) return "Sleva";
+        if (typePayment == 4) return "Podpora státu (2000 nebo 3500)";
         return "Měsíční záloha";
     }
 
@@ -68,7 +69,7 @@ public class PaymentModel {
      * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
      * @return double sleva na DPH
      */
-    //TODO: sleva na DPH za měsíce listopad a prosinec v roce 2021 ve fakturách
+    //TODO: sleva na DPH za měsíce listopad a prosinec v roce 2021 ve fakturách. Vypočet z plateb
     public double getDiscountDPH() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
