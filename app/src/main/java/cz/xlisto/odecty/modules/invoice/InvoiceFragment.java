@@ -73,6 +73,7 @@ public class InvoiceFragment extends Fragment {
         bundle.putString(TABLE_PAY, tablePay);
         bundle.putInt(POSITION, position);
         invoiceFragment.setArguments(bundle);
+
         return invoiceFragment;
     }
 
@@ -212,7 +213,6 @@ public class InvoiceFragment extends Fragment {
      */
     public void setRecyclerView() {
         invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
-        invoiceAdapter.setUpdateListener(this::onResume);
 
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));

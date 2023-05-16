@@ -160,4 +160,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         else
             holder.lnButtons.setVisibility(View.GONE);
     }
+
+    public static void resetShowButtons() {
+        showButtons = -1;
+    }
 }

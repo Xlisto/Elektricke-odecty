@@ -12,26 +12,21 @@ import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Objects;
+
 import androidx.viewpager2.widget.ViewPager2;
 import cz.xlisto.odecty.R;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link InvoiceTabFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment zahrnující záložky a fragmenty záznamů faktury, detaily faktury a plateb faktury.
  */
 public class InvoiceTabFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String TABLE_FAK = "table_fak";
-    private static final String TABLE_NOW = "table_now";
-    private static final String TABLE_PAY = "table_pay";
-    private static final String ID_FAK = "id_fak";
-    private static final String POSITION_ITEM = "position_item";
-    private static final String TYPE_TAB = "type_tab";
-
-    // TODO: Rename and change types of parameters
+    private static final String TABLE_FAK = "tableFak";
+    private static final String TABLE_NOW = "tableNow";
+    private static final String TABLE_PAY = "tablePay";
+    private static final String ID_FAK = "idFak";
+    private static final String POSITION_ITEM = "positionItem";
+    private static final String TYPE_TAB = "typeTab";
     private String tableFak;
     private String tableNow;
     private String tablePay;
@@ -40,21 +35,12 @@ public class InvoiceTabFragment extends Fragment {
     private MyViewPagerAdapter.TypeTabs typeTabs;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    private MyViewPagerAdapter myViewPagerAdapter;
 
     public InvoiceTabFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param tableFak Parameter 1.
-     * @param tablePay Parameter 2.
-     * @return A new instance of fragment InvoiceTabFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static InvoiceTabFragment newInstance(String tableFak, String tableNow,String tablePay, long idFak, int positionItem, MyViewPagerAdapter.TypeTabs typeTabs) {
         InvoiceTabFragment fragment = new InvoiceTabFragment();
         Bundle args = new Bundle();
@@ -67,6 +53,7 @@ public class InvoiceTabFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,37 +68,26 @@ public class InvoiceTabFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_invoice_tab, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager2 = view.findViewById(R.id.viewPager);
-        myViewPagerAdapter = new MyViewPagerAdapter(this, tableFak, tableNow,tablePay, idFak, positionItem, typeTabs);
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(this, tableFak, tableNow, tablePay, idFak, positionItem);
         viewPager2.setAdapter(myViewPagerAdapter);
 
-        /*if(typeTabs== MyViewPagerAdapter.TypeTabs.PAYMENT) {
-            TabLayout.Tab tab = tabLayout.getTabAt(1);
-            tab.select();
-            new Handler().postDelayed(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              viewPager2.setCurrentItem(1, false);
-                                          }
-                                      }
-
-                    , 0);
-        }*/
 
         if(typeTabs== MyViewPagerAdapter.TypeTabs.PAYMENT) {
         viewPager2.setCurrentItem(2,false);
-        tabLayout.getTabAt(2).select();}
+        Objects.requireNonNull(tabLayout.getTabAt(2)).select();}
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -134,7 +110,7 @@ public class InvoiceTabFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                tabLayout.getTabAt(position).select();
+                Objects.requireNonNull(tabLayout.getTabAt(position)).select();
             }
         });
     }

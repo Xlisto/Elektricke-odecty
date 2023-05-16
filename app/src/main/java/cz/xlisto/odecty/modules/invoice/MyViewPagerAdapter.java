@@ -10,28 +10,18 @@ import cz.xlisto.odecty.modules.payment.PaymentFragment;
  */
 public class MyViewPagerAdapter extends FragmentStateAdapter {
     private static final String TAG = "MyViewPagerAdapter";
-    private String tableFak,tableNow, tablePay;
-    private long idFak;
-    private int positionList;
-    private TypeTabs typeTabs;
-    private InvoiceFragment invoiceFragment;
-    private InvoiceDetailFragment invoiceDetailFragment;
-    private PaymentFragment paymentFragment;
+    private final InvoiceFragment invoiceFragment;
+    private final InvoiceDetailFragment invoiceDetailFragment;
+    private final PaymentFragment paymentFragment;
 
 
-    public MyViewPagerAdapter(@NonNull Fragment fragment, String tableFak, String tableNow,String tablePay, long idFak, int positionList, TypeTabs typeTabs) {
+    public MyViewPagerAdapter(@NonNull Fragment fragment, String tableFak, String tableNow,String tablePay, long idFak, int positionList) {
         super(fragment);
-        this.tableFak = tableFak;
-        this.tableNow = tableNow;
-        this.tablePay = tablePay;
-        this.idFak = idFak;
-        this.positionList = positionList;
-        this.typeTabs = typeTabs;
         invoiceFragment = InvoiceFragment.newInstance(tableFak, tableNow,tablePay, idFak, positionList);
         invoiceDetailFragment = InvoiceDetailFragment.newInstance(tableFak, tableNow,tablePay, idFak, positionList);
         paymentFragment = PaymentFragment.newInstance(idFak, positionList);
-
     }
+
 
     @NonNull
     @Override
@@ -48,9 +38,9 @@ public class MyViewPagerAdapter extends FragmentStateAdapter {
                     return InvoiceFragment.newInstance(tableFak, tablePay, idFak, positionList);
                 else*/
                     return paymentFragment;
-
         }
     }
+
 
     @Override
     public int getItemCount() {

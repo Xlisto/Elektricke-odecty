@@ -47,7 +47,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private final Context context;
     private ArrayList<InvoiceModel> items;
     private final String table;
-    private InvoiceAdapterListener reloadData;
     private final SubscriptionPointModel subScriptionPoint;
     private final RecyclerView recyclerView;
     private final PozeModel.TypePoze typePoze;
@@ -208,10 +207,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
         });
 
-        if (position == items.size() - 1)
-            holder.btnJoin.setEnabled(false);
-        else
-            holder.btnJoin.setEnabled(true);
+        holder.btnJoin.setEnabled(position != items.size() - 1);
         InvoiceModel finalInvoicePrevious = invoicePrevious;
         holder.btnJoin.setOnClickListener(v -> {
             if (finalInvoicePrevious != null) {
@@ -295,8 +291,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     /**
      * Aktualizuje data v adaptéru při změně dat - přidání položky
      *
-     * @param items
-     * @param position
+     * @param items   ArrayList položek
+     * @param position int pozice položky
      */
     public void setUpdateCut(ArrayList<InvoiceModel> items, int position) {
         this.items = items;
@@ -438,16 +434,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
     /**
-     * Nastaví posluchače pro aktualizaci dat v adaptéru pro faktury.
-     *
-     * @param listener Instance třídy InvoiceAdapterListener, která bude sloužit jako posluchač pro aktualizaci dat
-     */
-    public void setUpdateListener(InvoiceAdapterListener listener) {
-        this.reloadData = listener;
-    }
-
-
-    /**
      * Skryje nebo zobrazí prvky v adapterovém zobrazení položky, které obsahují informace o noční tarifů.
      *
      * @param holder Instance třídy MyViewHolder, která obsahuje odkazy na jednotlivé prvky v adapterovém zobrazení položky
@@ -471,8 +457,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
     }
 
-
-    public interface InvoiceAdapterListener {
-        void onUpdateData();
+    public static void resetShowButtons() {
+        showButtons = -1;
     }
 }

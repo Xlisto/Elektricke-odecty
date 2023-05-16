@@ -24,6 +24,7 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.modules.payment.PaymentAdapter;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPInvoiceList;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
@@ -144,6 +145,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         holder.btnPayments.setOnClickListener(v -> {
             loadTableName();
+            InvoiceAdapter.resetShowButtons();
+            PaymentAdapter.resetShowButtons();
 
             InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
@@ -152,6 +155,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         holder.btnShowInvoice.setOnClickListener(v -> {
             loadTableName();
+            InvoiceAdapter.resetShowButtons();
+            PaymentAdapter.resetShowButtons();
 
             InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
