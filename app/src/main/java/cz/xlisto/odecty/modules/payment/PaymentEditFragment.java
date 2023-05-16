@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.payment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Calendar;
@@ -12,14 +11,15 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 
 /**
+ * Fragment pro editaci záznamu plateb
  * Xlisto 17.02.2023 23:03
  */
 public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
     private static final String TAG = "PaymentEditFragment";
-    private final String LOAD_DATABASE = "load_database";
+    private final String LOAD_DATABASE = "loadDatabase";
     private boolean loadDatabase;
 
-    // TODO: Rename and change types and number of parameters
+
     public static PaymentEditFragment newInstance(long idFak,long idPayment, String table) {
         PaymentEditFragment fragment = new PaymentEditFragment();
         Bundle args = new Bundle();
@@ -29,6 +29,7 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,11 +41,14 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
         dataSubscriptionPointSource.close();
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             loadDatabase = savedInstanceState.getBoolean(LOAD_DATABASE);
+        }
+
         if (loadDatabase) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(payment.getDate());
@@ -58,16 +62,17 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
         }
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(LOAD_DATABASE, loadDatabase);
     }
 
+
     @Override
     void save() {
         super.save();
-        Log.w(TAG,"payment edit "+payment.getPayment());
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.updatePayment(idPayment,table,payment);

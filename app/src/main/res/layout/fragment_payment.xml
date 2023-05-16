@@ -12,37 +12,7 @@
         android:layout_above="@id/tvDiscountFragment"
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
-        android:text="Přidat platbu" />
-
-    <LinearLayout
-        android:id="@+id/lnOutSp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/shape_monthly_reading_gray"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:id="@+id/lnInSp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_item"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/spPayment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:contentDescription="@string/invoice_list"
-                android:minHeight="48dp" />
-        </LinearLayout>
-    </LinearLayout>
+        android:text="@string/add_payment" />
 
     <TextView
         android:id="@+id/tvDiscountFragment"
@@ -71,7 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/btnAddPayment"
-        android:layout_below="@id/lnOutSp"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="5dp"
         android:paddingEnd="10dp"

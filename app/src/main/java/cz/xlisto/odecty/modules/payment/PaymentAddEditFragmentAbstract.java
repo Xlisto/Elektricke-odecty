@@ -6,13 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 
 import cz.xlisto.odecty.R;
@@ -22,10 +20,11 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
 /**
- * Abstraktí třída pro přidání a editaci platby.
+ * Abstraktní třída pro přidání a editaci platby.
  */
 public abstract class PaymentAddEditFragmentAbstract extends Fragment {
-
+    private static final String TAG = "PaymentAddEditFragmentAbstract";
+    public static final String FLAG_RESULT_PAYMENT_FRAGMENT = "flagResultPaymentFragment";
     static final String ID_FAK = "id_fak";
     static final String ID_PAYMENT = "id_payment";
     static final String TABLE = "table";
@@ -76,49 +75,34 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         btnBack = view.findViewById(R.id.btnBackPayment);
         dp = view.findViewById(R.id.dpPayment);
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Keyboard.hide(getActivity());
-                closeFragment();
+        btnBack.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            closeFragment();
+        });
+
+        btnSave.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            save();
+        });
+
+        chPayment.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chPayment.setChecked(true);
             }
         });
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Keyboard.hide(getActivity());
-                save();
+        chSupplement.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chSupplement.setChecked(true);
             }
         });
 
-        chPayment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    unchceck();
-                    chPayment.setChecked(true);
-                }
-            }
-        });
-
-        chSupplement.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    unchceck();
-                    chSupplement.setChecked(true);
-                }
-            }
-        });
-
-        chDiscount.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    unchceck();
-                    chDiscount.setChecked(true);
-                }
+        chDiscount.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chDiscount.setChecked(true);
             }
         });
 
@@ -148,7 +132,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     }
 
 
-    private void unchceck() {
+    private void unCheck() {
         chPayment.setChecked(false);
         chSupplement.setChecked(false);
         chDiscount.setChecked(false);
@@ -160,6 +144,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         int typePayment = getTypePayment();
         //TODO: doplnit typ platby
         payment = new PaymentModel(idPayment,idFak,date, labPayment.getDouble(), typePayment);
+
+        getParentFragmentManager().setFragmentResult(FLAG_RESULT_PAYMENT_FRAGMENT, new Bundle());
     }
 
 
@@ -170,7 +156,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     /**
      * Druh platby
      *
-     * @return
+     * @return 0 - platba, 1 - doplatek, 3 - sleva
      */
     int getTypePayment() {
         if (chSupplement.isChecked())

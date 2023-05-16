@@ -4,16 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
+import cz.xlisto.odecty.utils.Keyboard;
 
 import android.view.View;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link SubscriptionPointAddFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment vytvoření nového odběrného místa
  */
 public class SubscriptionPointAddFragment extends SubscriptionPointAddEditAbstract {
     private final String TAG = getClass().getName() + " ";
@@ -22,34 +21,38 @@ public class SubscriptionPointAddFragment extends SubscriptionPointAddEditAbstra
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment SubscriptionPointAddFragment.
-     */
 
     public static SubscriptionPointAddFragment newInstance() {
-        SubscriptionPointAddFragment fragment = new SubscriptionPointAddFragment();
-        return fragment;
+        return new SubscriptionPointAddFragment();
     }
-
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btnSave.setOnClickListener(v -> {
-            save(createSubscriptionPoint());
+            long id = save(createSubscriptionPoint());
+
+            //uložení id do shared preferences pro nastavení právě zvoleného odběrného místa
+            ShPSubscriptionPoint shpSubscriptionPoint = new ShPSubscriptionPoint(requireActivity());
+            shpSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, id);
+
+            Keyboard.hide(requireActivity());
             getParentFragmentManager().popBackStack();
         });
-
     }
 
-    private void save(SubscriptionPointModel subscriptionPoint) {
+
+    /**
+     * Vytvoří objekt SubscriptionPointModel z dat z formuláře a uloží ho do databáze
+     * @param subscriptionPoint objekt SubscriptionPointModel
+     * @return long id nově vytvořeného záznamu
+     */
+    private long save(SubscriptionPointModel subscriptionPoint) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.insertSubscriptionPoint(subscriptionPoint);
+        long id = dataSubscriptionPointSource.insertSubscriptionPoint(subscriptionPoint);
         dataSubscriptionPointSource.close();
+        return id;
     }
 }

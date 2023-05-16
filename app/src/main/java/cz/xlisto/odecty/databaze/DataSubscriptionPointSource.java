@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -45,15 +46,17 @@ import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ZAPLACENO;
  * Created by xlisto on 11.11.16.
  */
 public class DataSubscriptionPointSource {
-    private final String TAG = getClass().getName() + " ";
+    private static final String TAG = "DataSubscriptionPointSource";
     private Context context;
     private DbHelperSubscriptionPoint dbHelperSubscriptionPoint;
     private SQLiteDatabase database;
+
 
     public DataSubscriptionPointSource(Context context) {
         this.context = context;
         dbHelperSubscriptionPoint = new DbHelperSubscriptionPoint(context);
     }
+
 
     /**
      * Otevře spojení s databází odečtů, odběrných míst atd.
@@ -79,6 +82,7 @@ public class DataSubscriptionPointSource {
         }
     }
 
+
     /**
      * Zavře spojení s databází ceníku
      */
@@ -88,14 +92,17 @@ public class DataSubscriptionPointSource {
         }
     }
 
+
     public long insertSubscriptionPoint(SubscriptionPointModel subScriptionPointModel) {
         dbHelperSubscriptionPoint.createSubscriptionPoint(database, subScriptionPointModel.getMilins());
         return database.insert(TABLE_NAME_SUBSCRIPTION_POINT, null, createContenValue(subScriptionPointModel));
     }
 
+
     public long insertMonthlyReading(MonthlyReadingModel monthlyReading, String tableName) {
         return database.insert(tableName, null, createContentValue(monthlyReading));
     }
+
 
     /**
      * Vloží novou fakturu - číslo faktury, id odběného místa
@@ -107,6 +114,7 @@ public class DataSubscriptionPointSource {
     public long insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
         return database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
     }
+
 
     /**
      * Vloží jeden záznam do faktury
@@ -124,10 +132,12 @@ public class DataSubscriptionPointSource {
         return database.insert(table, null, createContentValue(payment));
     }
 
+
     public long updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
         return database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContenValue(subscriptionPointModel),
                 "_id=?", new String[]{String.valueOf(itemId)});
     }
+
 
     public long updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
         return database.update(tableName, createContentValue(monthlyReading),
@@ -135,25 +145,25 @@ public class DataSubscriptionPointSource {
 
     }
 
+
     public long updateInvoiceList(String number, long id) {
         return database.update(TABLE_NAME_INVOICES, createContentValue(number),
                 "_id=?", new String[]{String.valueOf(id)});
 
     }
 
+
     public long updateInvoice(long id, String table, InvoiceModel invoice) {
-        //Log.w(TAG, "invoice " + id + " " + table);
-        //Log.w(TAG, "invoice id " + invoice.getIdInvoice());
-        //Log.w(TAG, "invoice fa " + invoice.getIdPriceList());
         return database.update(table, createContentValue(invoice),
                 "_id=?", new String[]{String.valueOf(id)});
-        //return -1l;
     }
+
 
     public long updatePayment(long id, String table, PaymentModel payment) {
         return database.update(table, createContentValue(payment),
                 "_id=?", new String[]{String.valueOf(id)});
     }
+
 
     /**
      * Provede součet zálohových plateb ve faktuře
@@ -172,6 +182,7 @@ public class DataSubscriptionPointSource {
         return result;
     }
 
+
     /**
      * Provede součet slevy DPH zálohových plateb v listopadu a prosinci 2021
      *
@@ -188,6 +199,7 @@ public class DataSubscriptionPointSource {
         cursor.close();
         return result;
     }
+
 
     /**
      * Smaže odběrné místo podle ID
@@ -206,6 +218,7 @@ public class DataSubscriptionPointSource {
         return deleteId;
     }
 
+
     /**
      * Smaže měsíční odečet podle ID
      *
@@ -218,6 +231,7 @@ public class DataSubscriptionPointSource {
                 new String[]{String.valueOf(itemId)});
         return deleteId;
     }
+
 
     /**
      * Smaže jeden záznam ve faktuře
@@ -232,6 +246,7 @@ public class DataSubscriptionPointSource {
         return deleteId;
     }
 
+
     /**
      * Smaže jeden záznam platby
      *
@@ -244,6 +259,7 @@ public class DataSubscriptionPointSource {
                 new String[]{String.valueOf(paymentId)});
         return deleteId;
     }
+
 
     public ArrayList<String> loadSubscriptionPointName() {
         ArrayList<String> stringArrayList = new ArrayList<>();
@@ -269,6 +285,7 @@ public class DataSubscriptionPointSource {
         return stringArrayList;
     }
 
+
     /**
      * Načte arraylist odběrných míst
      *
@@ -277,6 +294,7 @@ public class DataSubscriptionPointSource {
     public ArrayList<SubscriptionPointModel> loadSubscriptionPoints() {
         return readSubscriptionPoints(null, null);
     }
+
 
     /**
      * Načte arraylist měsíčních odečtů
@@ -287,6 +305,7 @@ public class DataSubscriptionPointSource {
     public ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table) {
         return loadMonthlyReadings(table, null, DATUM + " DESC, " + PRVNI_ODECET + " ASC, " + VT + " DESC, " + NT + " DESC");
     }
+
 
     /**
      * Načte seznam faktur, jako první záznam bude období bez faktury
@@ -321,13 +340,6 @@ public class DataSubscriptionPointSource {
 
 
         Cursor cursor = database.rawQuery(sql, args);
-        /*Cursor cursor = database.query(TABLE_NAME_INVOICES,
-                null,
-                selection,
-                args,
-                null,
-                null,
-                null);*/
 
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
@@ -369,6 +381,7 @@ public class DataSubscriptionPointSource {
         return invoices;
     }
 
+
     /**
      * Načte jeden záznam faktury podle id z databáze
      *
@@ -391,6 +404,7 @@ public class DataSubscriptionPointSource {
 
     }
 
+
     /**
      * Sestaví objekt jednoho záznamu faktury z cursor
      *
@@ -405,6 +419,7 @@ public class DataSubscriptionPointSource {
                 cursor.getLong(7), cursor.getLong(8),
                 cursor.getDouble(9), "");
     }
+
 
     /**
      * Načte seznam zálohových plateb
@@ -427,6 +442,34 @@ public class DataSubscriptionPointSource {
         return payments;
     }
 
+
+    /**
+     * Kontrola alespoň existence jednoho záznamu faktury (pro období bez faktury)
+     *
+     * @param table název tabulky
+     * @return true - existuje, false - neexistuje
+     */
+    public boolean checkInvoiceExists(String table) {
+        String sql = "SELECT count(*) FROM " + table;
+        Cursor cursor = database.rawQuery(sql, null);
+        cursor.moveToFirst();
+        boolean exists = cursor.getInt(0) > 0;
+        cursor.close();
+        return exists;
+    }
+
+
+    /**
+     * Vytvoří nulový záznam a vloží jej do faktury (pro období bez faktury)
+     *
+     * @param table
+     */
+    public void insertFirstRecordWithoutInvoice(String table) {
+        InvoiceModel invoice = new InvoiceModel(0, 0, 0, 0, 0, 0, -1L, 0, 0, "");
+        insertInvoice(table, invoice);
+    }
+
+
     /**
      * Načte jeden záznam zálohové platby podle id
      *
@@ -447,6 +490,7 @@ public class DataSubscriptionPointSource {
         return payment;
     }
 
+
     /**
      * Sestaví objekt zálohové platby
      *
@@ -457,6 +501,7 @@ public class DataSubscriptionPointSource {
         return new PaymentModel(cursor.getLong(0), cursor.getLong(1),
                 cursor.getLong(2), cursor.getDouble(3), cursor.getInt(4));
     }
+
 
     /**
      * Načte jedno odběrné místo podle id
@@ -474,6 +519,7 @@ public class DataSubscriptionPointSource {
             return null;
     }
 
+
     /**
      * Načte jeden měsíční odečet
      *
@@ -488,6 +534,7 @@ public class DataSubscriptionPointSource {
         }
         return null;
     }
+
 
     /**
      * Najde nejvzdálenější datum záznamu faktury
@@ -504,6 +551,7 @@ public class DataSubscriptionPointSource {
         return dateInvoice(sql, args);
     }
 
+
     /**
      * Najde nejbližší datum záznamu faktury
      *
@@ -519,6 +567,7 @@ public class DataSubscriptionPointSource {
         return dateInvoice(sql, args);
     }
 
+
     public long countItems(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT COUNT(*)" +
@@ -526,6 +575,7 @@ public class DataSubscriptionPointSource {
                 " WHERE id_fak=?";
         return dateInvoice(sql, args);
     }
+
 
     public double minVTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
@@ -539,6 +589,7 @@ public class DataSubscriptionPointSource {
         return readersStatsInvoice(sql, args);
     }
 
+
     public double maxVTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
         /*String sql = "SELECT MAX(vt_kon)" +
@@ -551,6 +602,7 @@ public class DataSubscriptionPointSource {
         return readersStatsInvoice(sql, args);
     }
 
+
     public double minNTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT datumOd,nt " +
@@ -560,6 +612,7 @@ public class DataSubscriptionPointSource {
         return readersStatsInvoice(sql, args);
     }
 
+
     public double maxNTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT datumDo,nt_kon " +
@@ -568,6 +621,7 @@ public class DataSubscriptionPointSource {
                 "ORDER BY datumDo DESC";
         return readersStatsInvoice(sql, args);
     }
+
 
     /**
      * Provede sql příkaz s argumentem a  vrátí první výsledek
@@ -595,6 +649,7 @@ public class DataSubscriptionPointSource {
         return date;
     }
 
+
     /**
      * Načte první fakturu podle id
      *
@@ -609,6 +664,7 @@ public class DataSubscriptionPointSource {
                 "ORDER BY datumOd ASC";
         return oneInvoice(args, sql);
     }
+
 
     /**
      * Načte poslední fakturu podle id
@@ -625,8 +681,10 @@ public class DataSubscriptionPointSource {
         return oneInvoice(args, sql);
     }
 
+
     /**
      * Nasčte poslední fakturu z tabulky, bez ohledu na id faktury
+     *
      * @param table
      * @return
      */
@@ -637,6 +695,7 @@ public class DataSubscriptionPointSource {
                 " LIMIT 1";
         return oneInvoice(null, sql);
     }
+
 
     public MonthlyReadingModel lastMonthlyReadingByDate(String table) {
         //String[] args = new String[]{String.valueOf(idFak)};
@@ -656,8 +715,10 @@ public class DataSubscriptionPointSource {
         return monthlyReading;
     }
 
+
     /**
      * Vytvoří objekt měsíčního odečtu z kurzoru
+     *
      * @param cursor
      * @return
      */
@@ -683,6 +744,7 @@ public class DataSubscriptionPointSource {
         return monthlyReading;
     }
 
+
     /**
      * Načte první fakturu podel argumentu
      *
@@ -701,6 +763,7 @@ public class DataSubscriptionPointSource {
         cursor.close();
         return invoice;
     }
+
 
     /**
      * Privátní metoda pro načtení měsíčních odečtů podle parametrů
@@ -733,6 +796,7 @@ public class DataSubscriptionPointSource {
         cursor.close();
         return monthlyReadings;
     }
+
 
     /**
      * Načte arraylist odběrných míst podle argumentů a setřídí podle názvu odběrného místa
@@ -767,11 +831,13 @@ public class DataSubscriptionPointSource {
         return stringArrayList;
     }
 
-    /** Celkový počet ceníků podle id ceníku
+
+    /**
+     * Celkový počet ceníků podle id ceníku
+     *
      * @param priceId
      * @return
      */
-
     public int countPriceItems(String table, long priceId) {
         Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM " + table + " WHERE cenik_id=" + priceId, null);
         cursor.moveToFirst();
@@ -799,6 +865,7 @@ public class DataSubscriptionPointSource {
         return values;
     }
 
+
     /**
      * Sestaví data měsíčního odečtu pro zápis do databáze
      *
@@ -818,6 +885,7 @@ public class DataSubscriptionPointSource {
         return values;
     }
 
+
     /**
      * Sestaví data čísla faktury pro seznam faktur pro zápis do databáze
      *
@@ -832,6 +900,7 @@ public class DataSubscriptionPointSource {
         return values;
     }
 
+
     /**
      * Sestaví číslo faktury pro úpravu dat do databáze
      *
@@ -843,6 +912,7 @@ public class DataSubscriptionPointSource {
         values.put(CISLO_FAK, numberInvoice);
         return values;
     }
+
 
     /**
      * Sestaví jeden zápis faktury
@@ -864,6 +934,13 @@ public class DataSubscriptionPointSource {
         return values;
     }
 
+
+    /**
+     * Sestaví jeden zápis platby
+     *
+     * @param payment
+     * @return
+     */
     private ContentValues createContentValue(PaymentModel payment) {
         ContentValues values = new ContentValues();
         values.put(CASTKA, payment.getPayment());

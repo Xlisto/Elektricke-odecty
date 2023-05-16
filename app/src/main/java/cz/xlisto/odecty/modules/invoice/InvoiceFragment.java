@@ -192,6 +192,11 @@ public class InvoiceFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         subscriptionPoint = SubscriptionPoint.load(getActivity());
+        //zkontroluje zda existuje záznam v tabulce NOW, pokud ne, vytvoří prázdný záznam
+        boolean exists = dataSubscriptionPointSource.checkInvoiceExists(tableNOW);
+        if (!exists) {
+            dataSubscriptionPointSource.insertFirstRecordWithoutInvoice(tableNOW);
+        }
         invoices = dataSubscriptionPointSource.loadInvoices(idFak, table);
         discount = dataSubscriptionPointSource.sumDiscount(idFak, tablePAY);
         dataSubscriptionPointSource.close();

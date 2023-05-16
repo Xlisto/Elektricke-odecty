@@ -15,23 +15,26 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.utils.Keyboard;
 
 public abstract class SubscriptionPointAddEditAbstract extends Fragment {
-    private final String TAG = getClass().getName() + " ";
+    private final String TAG = "SubscriptionPointAddEditAbstract";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
-    private static final String ELECTROMETER = "electrometer";
-    private static final String SUBSCRIPTION_POINT = "subcsription_point";
+    private static final String ELECTROMETER = "electroMeter";
+    private static final String SUBSCRIPTION_POINT = "subcsriptionPoint";
     private static final String COUNT_PHAZE = "count_phaze";
     private static final String PHAZE = "phaze";
     Button btnBack, btnSave;
     LabelEditText letName, letDescription, letNumberEletrometer, letNumberSubscriptionPoint;
     EditText etCountPhaze, etPhaze;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +42,7 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_subscription_point_add_edit, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -53,17 +57,21 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
         etCountPhaze = view.findViewById(R.id.etCountPhaze);
         etPhaze = view.findViewById(R.id.etPhaze);
 
-        if (savedInstanceState != null){
-            letName.setDefaultText(savedInstanceState.getString(NAME,""));
-            letDescription.setDefaultText(savedInstanceState.getString(DESCRIPTION,""));
-            letNumberEletrometer.setDefaultText(savedInstanceState.getString(ELECTROMETER,""));
-            letNumberSubscriptionPoint.setDefaultText(savedInstanceState.getString(SUBSCRIPTION_POINT,""));
-            etCountPhaze.setText(savedInstanceState.getString(COUNT_PHAZE,"3"));
-            etPhaze.setText(savedInstanceState.getString(PHAZE,"25"));
+        if (savedInstanceState != null) {
+            letName.setDefaultText(savedInstanceState.getString(NAME, ""));
+            letDescription.setDefaultText(savedInstanceState.getString(DESCRIPTION, ""));
+            letNumberEletrometer.setDefaultText(savedInstanceState.getString(ELECTROMETER, ""));
+            letNumberSubscriptionPoint.setDefaultText(savedInstanceState.getString(SUBSCRIPTION_POINT, ""));
+            etCountPhaze.setText(savedInstanceState.getString(COUNT_PHAZE, "3"));
+            etPhaze.setText(savedInstanceState.getString(PHAZE, "25"));
         }
 
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        btnBack.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            getParentFragmentManager().popBackStack();
+        });
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -76,19 +84,23 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
         outState.putString(PHAZE, etPhaze.getText().toString());
     }
 
+
     /**
-     * Vytvoří objekt odběrné místo a nastaví long čas na aktuální
+     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije aktuální čas (long)
      *
-     * @return
+     * @return SubscriptionPointModel - odběrné místo
      */
-    protected SubscriptionPointModel createSubscriptionPoint(){
+    protected SubscriptionPointModel createSubscriptionPoint() {
         Calendar calendar = Calendar.getInstance();
         return createSubscriptionPoint(calendar.getTimeInMillis());
     }
+
+
     /**
-     * Vytvoří objekt odběrné místo
-     * @param milins čas
-     * @return
+     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije zadaný čas (long)
+     *
+     * @param milins long čas
+     * @return SubscriptionPointModel - odběrné místo
      */
     protected SubscriptionPointModel createSubscriptionPoint(long milins) {
         int countPhaze = 3, phaze = 25;
@@ -102,9 +114,8 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        SubscriptionPointModel subscriptionPoint = new SubscriptionPointModel(letName.getText(),
+        return new SubscriptionPointModel(letName.getText(),
                 letDescription.getText(), milins, countPhaze, phaze,
                 letNumberEletrometer.getText(), letNumberSubscriptionPoint.getText());
-        return subscriptionPoint;
     }
 }

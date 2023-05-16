@@ -3,6 +3,8 @@ package cz.xlisto.odecty.modules.invoice;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.Objects;
+
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -18,13 +20,13 @@ public class WithOutInvoiceService {
     /**
      * Rozdělí záznam ve faktuře (jen období bez faktury)
      *
-     * @param context
-     * @param invoiceOriginal
-     * @param invoiceNew
+     * @param context         kontext aplikace
+     * @param invoiceOriginal původní záznam
+     * @param invoiceNew      nový záznam
      */
     public static void cutInvoice(Context context, InvoiceModel invoiceOriginal, InvoiceModel invoiceNew) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        String tableTed = SubscriptionPoint.load(context).getTableTED();
+        String tableTed = Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED();
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.insertInvoice(tableTed, invoiceNew);
         dataSubscriptionPointSource.updateInvoice(invoiceOriginal.getId(), tableTed, invoiceOriginal);
@@ -35,9 +37,9 @@ public class WithOutInvoiceService {
     /**
      * Detekce prvního (nejstaršího) záznamu v období bezfaktury a následná kontrola se zvoleným id faktury
      *
-     * @param context
-     * @param idFak
-     * @param id
+     * @param context kontext aplikace
+     * @param idFak long id faktury
+     * @param id long id záznamu
      */
     public static boolean firstRecordInvoice(Context context, long idFak, long id) {
         String table = getTable(context, idFak);
@@ -47,21 +49,18 @@ public class WithOutInvoiceService {
         InvoiceModel firstInvoice = dataSubscriptionPointSource.firstInvoiceByDate(idFak, table);
         dataSubscriptionPointSource.close();
 
-        if (firstInvoice.getId() == id) {
-            return true;
-        } else {
-            return false;
-        }
+        return firstInvoice.getId() == id;
     }
 
     /**
      * Detekce posledního (nejnovějšího) záznamu v období bezfaktury a následná kontrola se zvoleným id faktury
-     * @param context
-     * @param idFak
-     * @param id
-     * @return
+     *
+     * @param context kontext aplikace
+     * @param idFak     long id faktury
+     * @param id    long id záznamu
+     * @return boolean true - poslední záznam, false - není poslední záznam
      */
-    public static boolean lastRecordInvoice(Context context,long idFak, long id){
+    public static boolean lastRecordInvoice(Context context, long idFak, long id) {
         String table = getTable(context, idFak);
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
@@ -69,25 +68,21 @@ public class WithOutInvoiceService {
         InvoiceModel lastInvoice = dataSubscriptionPointSource.lastInvoiceByDate(idFak, table);
         dataSubscriptionPointSource.close();
 
-        if (lastInvoice.getId() == id) {
-            return true;
-        } else {
-            return false;
-        }
+        return lastInvoice.getId() == id;
     }
 
     /**
      * Podle idFak detekuje a načte tabulku databáze
      *
-     * @param context
-     * @param idFak
-     * @return
+     * @param context   kontext aplikace
+     * @param idFak     long id faktury
+     * @return String název tabulky
      */
     private static String getTable(Context context, long idFak) {
         if (idFak == -1L) {
-            return SubscriptionPoint.load(context).getTableTED();
+            return Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED();
         } else {
-            return SubscriptionPoint.load(context).getTableFAK();
+            return Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK();
         }
     }
 
@@ -111,14 +106,14 @@ public class WithOutInvoiceService {
     public static void editFirstItemInInvoice(Context context) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
-        InvoiceModel invoiceLast = dataSubscriptionPointSource.lastInvoiceByDateFromAll(SubscriptionPoint.load(context).getTableFAK());
-        Log.w(TAG, "poslední faktura: " + invoiceLast.getId() + " " + invoiceLast.getDateFrom() + " " + ViewHelper.convertLongToTime(invoiceLast.getDateTo()) + " " + invoiceLast.getVtStart() + " " + invoiceLast.getVtEnd() + " " + invoiceLast.getNtStart() + " " + invoiceLast.getNtEnd());
-        InvoiceModel invoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, SubscriptionPoint.load(context).getTableTED());
-        Log.w(TAG, "TED faktura: " + invoice.getId() + " " + ViewHelper.convertLongToTime(invoice.getDateFrom()) + " " + ViewHelper.convertLongToTime(invoice.getDateTo()) + " " + invoice.getVtStart() + " " + invoice.getVtEnd() + " " + invoice.getNtStart() + " " + invoice.getNtEnd());
-        invoice.setDateFrom(invoiceLast.getDateTo() + (25 * 60 * 60 * 1000));
-        invoice.setVtStart(invoiceLast.getVtEnd());
-        invoice.setNtStart(invoiceLast.getNtEnd());
-        dataSubscriptionPointSource.updateInvoice(invoice.getId(), SubscriptionPoint.load(context).getTableTED(), invoice);
+        InvoiceModel invoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        InvoiceModel invoiceLast = dataSubscriptionPointSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
+        if (invoiceLast != null) {
+            invoice.setDateFrom(invoiceLast.getDateTo() + (25 * 60 * 60 * 1000));
+            invoice.setVtStart(invoiceLast.getVtEnd());
+            invoice.setNtStart(invoiceLast.getNtEnd());
+        }
+        dataSubscriptionPointSource.updateInvoice(invoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), invoice);
         dataSubscriptionPointSource.close();
     }
 }

@@ -125,7 +125,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             letOtherServices.setDefaultText(savedInstanceState.getString(OTHER_SERVICES));
             selectedIdPrice = savedInstanceState.getLong(SELECTED_ID_PRICE, -1L);
             selectedIdInvoice = savedInstanceState.getLong(SELECTED_ID_INVOICE, -1L);
-
         }
     }
 

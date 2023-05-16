@@ -42,9 +42,22 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         InvoiceModel invoice = dataSubscriptionPointSource.loadInvoice(id, table);
         dataSubscriptionPointSource.close();
 
+        if (loadFromDatabase) {
+            btnDateStart.setText(ViewHelper.convertLongToTime(invoice.getDateFrom()));
+            btnDateEnd.setText(ViewHelper.convertLongToTime(invoice.getDateTo()));
+            letVTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
+            letNTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
+            letVTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtEnd()));
+            letNTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtEnd()));
+            letOtherServices.setDefaultText(DecimalFormatHelper.df2.format(invoice.getOtherServices()));
+
+            selectedIdPrice = invoice.getIdPriceList();
+            selectedIdInvoice = invoice.getIdInvoice();
+            loadFromDatabase = false;
+        }
+
         //načte informace o ceníku použité pro tlačítko výběru ceníku
-        selectedIdPrice = invoice.getIdPriceList();
-        selectedIdInvoice = invoice.getIdInvoice();
+
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
         String priceListName = dataPriceListSource.readPrice(selectedIdPrice).getName();
@@ -54,36 +67,23 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
 
         btnSave.setEnabled(!priceListIsEmpty);
 
-        if (loadFromDatabase) {
-            btnDateStart.setText(ViewHelper.convertLongToTime(invoice.getDateFrom()));
-            btnDateEnd.setText(ViewHelper.convertLongToTime(invoice.getDateTo()));
-            letVTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
-            letNTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
-            letVTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtEnd()));
-            letNTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtEnd()));
-            letOtherServices.setDefaultText(DecimalFormatHelper.df2.format(invoice.getOtherServices()));
-            loadFromDatabase = false;
-
-        }
-
         btnSelectPriceList.setText(priceListName);
 
         //Skrytí NT údajů
         deactivateNT(priceListSazba.equals(D01) || priceListSazba.equals(D02));
 
-        //zneaktivní tlačítka pokud je první nebo poslední záznam
-        boolean first = WithOutInvoiceService.firstRecordInvoice(getActivity(), -1L, id);
-        boolean last = WithOutInvoiceService.lastRecordInvoice(getActivity(), -1L, id);
-
-        //zobrazení první záznamu - zneaktivnění vstupních polí
-        if (first) {
+        //zneaktivní tlačítka pokud je první nebo poslední záznam u záznamů bez faktury
+        boolean first = WithOutInvoiceService.firstRecordInvoice(requireActivity(), -1L, id);
+        boolean last = WithOutInvoiceService.lastRecordInvoice(requireActivity(), -1L, id);
+        //zobrazení první záznamu - zneaktivnění vstupních polí pouze u
+        if (first && invoice.getIdInvoice()==-1L) {
             letNTStart.setEnabled(false);
             letVTStart.setEnabled(false);
             btnDateStart.setEnabled(false);
         }
 
         //zobrazení posledního záznamu - zneaktivnění vstupních polí
-        if (last) {
+        if (last && invoice.getIdInvoice()==-1L) {
             letNTEnd.setEnabled(false);
             letVTEnd.setEnabled(false);
             btnDateEnd.setEnabled(false);
@@ -98,7 +98,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             dataSubscriptionPointSource1.updateInvoice(id, table, createInvoice(id,selectedIdPrice));
             dataSubscriptionPointSource1.close();
             Keyboard.hide(requireActivity());
-            WithOutInvoiceService.editFirstItemInInvoice(getActivity());
+            WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
             loadFromDatabase = true;
             getParentFragmentManager().popBackStack();
         });

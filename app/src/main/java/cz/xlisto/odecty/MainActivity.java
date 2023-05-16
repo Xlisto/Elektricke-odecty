@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity  {
 
             if (itemId == R.id.meni_monthly_readings) {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
-                actualFragment = MonthlyReadingFragment.newInstance("ar1", "ar2");
+                actualFragment = MonthlyReadingFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 return true;
             }
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity  {
         if (savedInstanceState != null) {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
         } else {
-            actualFragment = MonthlyReadingFragment.newInstance("ar1", "ar2");
+            actualFragment = MonthlyReadingFragment.newInstance();
             bottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
             FragmentChange.replace(this, actualFragment, ALPHA);
         }

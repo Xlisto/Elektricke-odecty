@@ -9,18 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.utils.Keyboard;
 
 public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstract {
     private final String TAG = getClass().getName() + " ";
     private static final String ARG_ID = "id";
     private long itemId;
     private SubscriptionPointModel subscriptionPoint;
-    private static String IS_FIRST_LOAD = "isFirstLoad";
+    private static final String IS_FIRST_LOAD = "isFirstLoad";
     private boolean isFirstLoad = true;
 
 
     public SubscriptionPointEditFragment() {
     }
+
 
     public static SubscriptionPointEditFragment newInstance(long param1) {
         SubscriptionPointEditFragment fragment = new SubscriptionPointEditFragment();
@@ -29,6 +31,7 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null)
@@ -48,16 +52,18 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Log.w(TAG,"sub "+subscriptionPoint.getName());
 
         btnSave.setOnClickListener(v -> {
             update(itemId);
+            Keyboard.hide(requireActivity());
             getParentFragmentManager().popBackStack();
         });
     }
+
 
     @Override
     public void onResume() {
@@ -69,11 +75,13 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         }
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_FIRST_LOAD, isFirstLoad);
     }
+
 
     private void loadSubscriptionPoint(long itemId) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
@@ -82,12 +90,14 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         dataSubscriptionPointSource.close();
     }
 
+
     private void update(long itemId) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.updateSubscriptionPoint(createSubscriptionPoint(subscriptionPoint.getMilins()), itemId);
         dataSubscriptionPointSource.close();
     }
+
 
     private void setItems(){
         letName.setDefaultText(subscriptionPoint.getName());
