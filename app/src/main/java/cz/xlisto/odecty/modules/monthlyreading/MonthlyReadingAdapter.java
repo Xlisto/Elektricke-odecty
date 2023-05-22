@@ -235,7 +235,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-        if (monthlyReading.isFirst()) {
+        if (monthlyReading.isFirst() || position==items.size()-1) {
             holder.tvPriceList.setVisibility(View.GONE);
             holder.tvPayment.setVisibility(View.GONE);
             holder.rl3.setVisibility(View.GONE);
@@ -257,6 +257,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
 
         } else {
+            //poslední položka v seznamu
             holder.tvPriceList.setVisibility(View.VISIBLE);
             holder.tvPayment.setVisibility(View.VISIBLE);
             holder.rl3.setVisibility(View.VISIBLE);

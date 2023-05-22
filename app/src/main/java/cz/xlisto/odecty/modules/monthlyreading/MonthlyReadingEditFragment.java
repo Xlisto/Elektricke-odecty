@@ -89,7 +89,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         }
 
 
-
         btnSave.setOnClickListener(v -> {
             if (priceList != null || cbFirstReading.isChecked()) {
                 updateMonthlyReading(itemId);
@@ -98,7 +97,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
                 Toast.makeText(getActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
 
@@ -123,7 +121,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     private void loadMonthlyReading() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
-        monthlyReading = dataSubscriptionPointSource.loadMonthlyReading(tableO, itemId);
+        monthlyReading = dataSubscriptionPointSource.loadMonthlyReading(tableO, itemId,0,Long.MAX_VALUE);
         dataSubscriptionPointSource.close();
     }
 

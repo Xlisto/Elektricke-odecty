@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -42,12 +41,12 @@ import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.VT_KON;
 import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ZAPLACENO;
 
 /**
- * Přístuo k databázi odběrných míst, faktur, měsíčních odečtů atd.
+ * Přístup k databázi odběrných míst, faktur, měsíčních odečtů atd.
  * Created by xlisto on 11.11.16.
  */
 public class DataSubscriptionPointSource {
     private static final String TAG = "DataSubscriptionPointSource";
-    private Context context;
+    private final Context context;
     private DbHelperSubscriptionPoint dbHelperSubscriptionPoint;
     private SQLiteDatabase database;
 
@@ -61,8 +60,7 @@ public class DataSubscriptionPointSource {
     /**
      * Otevře spojení s databází odečtů, odběrných míst atd.
      *
-     * @return
-     * @throws SQLException
+     * @throws SQLException vyjímka při chybě při otevírání databáze
      */
     public void open() throws SQLException {
         if (database != null) {
@@ -75,8 +73,6 @@ public class DataSubscriptionPointSource {
             e.printStackTrace();
             dbHelperSubscriptionPoint = new DbHelperSubscriptionPoint(context);
             database = dbHelperSubscriptionPoint.getWritableDatabase();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,72 +91,70 @@ public class DataSubscriptionPointSource {
 
     public long insertSubscriptionPoint(SubscriptionPointModel subScriptionPointModel) {
         dbHelperSubscriptionPoint.createSubscriptionPoint(database, subScriptionPointModel.getMilins());
-        return database.insert(TABLE_NAME_SUBSCRIPTION_POINT, null, createContenValue(subScriptionPointModel));
+        return database.insert(TABLE_NAME_SUBSCRIPTION_POINT, null, createContentValue(subScriptionPointModel));
     }
 
 
-    public long insertMonthlyReading(MonthlyReadingModel monthlyReading, String tableName) {
-        return database.insert(tableName, null, createContentValue(monthlyReading));
+    public void insertMonthlyReading(MonthlyReadingModel monthlyReading, String tableName) {
+        database.insert(tableName, null, createContentValue(monthlyReading));
     }
 
 
     /**
      * Vloží novou fakturu - číslo faktury, id odběného místa
      *
-     * @param numberInvoiceList
-     * @param idSubscriptionPoint
-     * @return
+     * @param numberInvoiceList   číslo faktury
+     * @param idSubscriptionPoint id odběrného místa
      */
-    public long insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
-        return database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
+    public void insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
+        database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
     }
 
 
     /**
      * Vloží jeden záznam do faktury
      *
-     * @param table
-     * @param invoice
-     * @return
+     * @param table   název tabulky
+     * @param invoice záznam faktury
      */
-    public long insertInvoice(String table, InvoiceModel invoice) {
-        return database.insert(table, null, createContentValue(invoice));
+    public void insertInvoice(String table, InvoiceModel invoice) {
+        database.insert(table, null, createContentValue(invoice));
     }
 
 
-    public long insertPayment(String table, PaymentModel payment) {
-        return database.insert(table, null, createContentValue(payment));
+    public void insertPayment(String table, PaymentModel payment) {
+        database.insert(table, null, createContentValue(payment));
     }
 
 
-    public long updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
-        return database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContenValue(subscriptionPointModel),
+    public void updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
+        database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContentValue(subscriptionPointModel),
                 "_id=?", new String[]{String.valueOf(itemId)});
     }
 
 
-    public long updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
-        return database.update(tableName, createContentValue(monthlyReading),
+    public void updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
+        database.update(tableName, createContentValue(monthlyReading),
                 "_id=?", new String[]{String.valueOf(itemId)});
 
     }
 
 
-    public long updateInvoiceList(String number, long id) {
-        return database.update(TABLE_NAME_INVOICES, createContentValue(number),
+    public void updateInvoiceList(String number, long id) {
+        database.update(TABLE_NAME_INVOICES, createContentValue(number),
                 "_id=?", new String[]{String.valueOf(id)});
 
     }
 
 
-    public long updateInvoice(long id, String table, InvoiceModel invoice) {
-        return database.update(table, createContentValue(invoice),
+    public void updateInvoice(long id, String table, InvoiceModel invoice) {
+        database.update(table, createContentValue(invoice),
                 "_id=?", new String[]{String.valueOf(id)});
     }
 
 
-    public long updatePayment(long id, String table, PaymentModel payment) {
-        return database.update(table, createContentValue(payment),
+    public void updatePayment(long id, String table, PaymentModel payment) {
+        database.update(table, createContentValue(payment),
                 "_id=?", new String[]{String.valueOf(id)});
     }
 
@@ -168,8 +162,8 @@ public class DataSubscriptionPointSource {
     /**
      * Provede součet zálohových plateb ve faktuře
      *
-     * @param idFak
-     * @param table
+     * @param idFak id faktury
+     * @param table název tabulky
      */
     public double sumPayment(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
@@ -186,9 +180,9 @@ public class DataSubscriptionPointSource {
     /**
      * Provede součet slevy DPH zálohových plateb v listopadu a prosinci 2021
      *
-     * @param idFak
-     * @param table
-     * @return
+     * @param idFak id faktury
+     * @param table název tabulky
+     * @return součet slevy DPH
      */
     public double sumDiscount(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
@@ -204,60 +198,52 @@ public class DataSubscriptionPointSource {
     /**
      * Smaže odběrné místo podle ID
      *
-     * @param itemId
-     * @return
+     * @param itemId id odběrného místa
      */
-    public long deleteSubscriptionPoint(long itemId, long milins) {
+    public void deleteSubscriptionPoint(long itemId, long milins) {
         database.execSQL("DROP TABLE IF EXISTS " + "O" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "HDO" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "FAK" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "TED" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "PLATBY" + milins);
-        long deleteId = database.delete(TABLE_NAME_SUBSCRIPTION_POINT, "_id=?",
+        database.delete(TABLE_NAME_SUBSCRIPTION_POINT, "_id=?",
                 new String[]{String.valueOf(itemId)});
-        return deleteId;
     }
 
 
     /**
      * Smaže měsíční odečet podle ID
      *
-     * @param itemId
-     * @param table
-     * @return
+     * @param itemId id měsíčního odečtu
+     * @param table  název tabulky
      */
-    public long deleteMonthlyReading(long itemId, String table) {
-        long deleteId = database.delete(table, "_id=?",
+    public void deleteMonthlyReading(long itemId, String table) {
+        database.delete(table, "_id=?",
                 new String[]{String.valueOf(itemId)});
-        return deleteId;
     }
 
 
     /**
      * Smaže jeden záznam ve faktuře
      *
-     * @param itemId
-     * @param table
-     * @return
+     * @param itemId id záznamu
+     * @param table  název tabulky
      */
-    public long deleteInvoice(long itemId, String table) {
-        long deleteId = database.delete(table, "_id=?",
+    public void deleteInvoice(long itemId, String table) {
+        database.delete(table, "_id=?",
                 new String[]{String.valueOf(itemId)});
-        return deleteId;
     }
 
 
     /**
      * Smaže jeden záznam platby
      *
-     * @param paymentId
-     * @param table
-     * @return
+     * @param paymentId id platby
+     * @param table     název tabulky
      */
-    public long deletePayment(long paymentId, String table) {
-        long deleteId = database.delete(table, "_id=?",
+    public void deletePayment(long paymentId, String table) {
+        database.delete(table, "_id=?",
                 new String[]{String.valueOf(paymentId)});
-        return deleteId;
     }
 
 
@@ -273,12 +259,7 @@ public class DataSubscriptionPointSource {
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
             String name = cursor.getString(0);
-            //String description = cursor.getString(2);
-            //int countPhaze = cursor.getInt(4);
-            //int phaze = cursor.getInt(5);
-            //String numerElectrometer = cursor.getString(6);
-            //String numberSubscriptionPoint = cursor.getString(7);
-            //SubscriptionPointModel subscriptionPointModel = new SubscriptionPointModel(name,description,,countPhaze,phaze,numerElectrometer,numberSubscriptionPoint);
+
             stringArrayList.add(name);
         }
         cursor.close();
@@ -289,7 +270,7 @@ public class DataSubscriptionPointSource {
     /**
      * Načte arraylist odběrných míst
      *
-     * @return
+     * @return arraylist odběrných míst
      */
     public ArrayList<SubscriptionPointModel> loadSubscriptionPoints() {
         return readSubscriptionPoints(null, null);
@@ -300,10 +281,10 @@ public class DataSubscriptionPointSource {
      * Načte arraylist měsíčních odečtů
      *
      * @param table Jméno tabulky s odečty. Začíná na O.
-     * @return
+     * @return arraylist měsíčních odečtů
      */
-    public ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table) {
-        return loadMonthlyReadings(table, null, DATUM + " DESC, " + PRVNI_ODECET + " ASC, " + VT + " DESC, " + NT + " DESC");
+    public ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table, long from, long to) {
+        return loadMonthlyReadings(table, null, from, to, DATUM + " DESC, " + PRVNI_ODECET + " ASC, " + VT + " DESC, " + NT + " DESC");
     }
 
 
@@ -311,13 +292,10 @@ public class DataSubscriptionPointSource {
      * Načte seznam faktur, jako první záznam bude období bez faktury
      *
      * @param subscriptionPoint - odběrné místo
-     * @return
+     * @return seznam faktur
      */
     public ArrayList<InvoiceListModel> loadInvoiceLists(SubscriptionPointModel subscriptionPoint) {
         ArrayList<InvoiceListModel> invoices = new ArrayList<>();
-
-        String sql0 = "select * WHERE " + subscriptionPoint.getTableTED() +
-                " WHERE ";
 
         //načtení údajů o období bez faktury
         long minDateNow = minDateInvoice(-1L, subscriptionPoint.getTableTED());
@@ -331,13 +309,10 @@ public class DataSubscriptionPointSource {
 
         invoices.add(new InvoiceListModel(-1L, "Období bez faktury", minDateNow, maxDateNow, countPaymentsNow, countReadsNow, minVtNow, maxVtNow, minNtNow, maxNtNow));
 
-
-        String selection = "odber_id=?";
         String sql = "select *,(SELECT min(datumOd) from " + subscriptionPoint.getTableFAK() + " WHERE id_fak=faktury._id) as minDate from faktury " +
                 " WHERE odber_id=?" +
                 " ORDER BY minDate DESC";
         String[] args = new String[]{String.valueOf(subscriptionPoint.get_id())};
-
 
         Cursor cursor = database.rawQuery(sql, args);
 
@@ -364,8 +339,8 @@ public class DataSubscriptionPointSource {
     /**
      * Načte seznam záznamů faktury podle id faktury
      *
-     * @param idInvoice
-     * @return
+     * @param idInvoice id faktury
+     * @return seznam záznamů faktury
      */
     public ArrayList<InvoiceModel> loadInvoices(long idInvoice, String table) {
         String selection = "id_fak=?";
@@ -385,9 +360,9 @@ public class DataSubscriptionPointSource {
     /**
      * Načte jeden záznam faktury podle id z databáze
      *
-     * @param id
-     * @param table
-     * @return
+     * @param id    id záznamu
+     * @param table jméno tabulky
+     * @return záznam faktury
      */
     public InvoiceModel loadInvoice(long id, String table) {
         InvoiceModel invoice = null;
@@ -408,8 +383,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví objekt jednoho záznamu faktury z cursor
      *
-     * @param cursor
-     * @return
+     * @param cursor kurzor
+     * @return záznam faktury
      */
     private InvoiceModel createInvoice(Cursor cursor) {
         return new InvoiceModel(cursor.getLong(0),
@@ -424,9 +399,9 @@ public class DataSubscriptionPointSource {
     /**
      * Načte seznam zálohových plateb
      *
-     * @param idFak
-     * @param table
-     * @return
+     * @param idFak id faktury
+     * @param table jméno tabulky
+     * @return seznam plateb
      */
     public ArrayList<PaymentModel> loadPayments(long idFak, String table) {
         String selection = "id_fak=?";
@@ -462,7 +437,7 @@ public class DataSubscriptionPointSource {
     /**
      * Vytvoří nulový záznam a vloží jej do faktury (pro období bez faktury)
      *
-     * @param table
+     * @param table název tabulky
      */
     public void insertFirstRecordWithoutInvoice(String table) {
         InvoiceModel invoice = new InvoiceModel(0, 0, 0, 0, 0, 0, -1L, 0, 0, "");
@@ -473,9 +448,9 @@ public class DataSubscriptionPointSource {
     /**
      * Načte jeden záznam zálohové platby podle id
      *
-     * @param id
-     * @param table
-     * @return
+     * @param id    id záznamu
+     * @param table jméno tabulky
+     * @return záznam zálohové platby
      */
     public PaymentModel loadPayment(long id, String table) {
         PaymentModel payment = null;
@@ -494,8 +469,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví objekt zálohové platby
      *
-     * @param cursor
-     * @return
+     * @param cursor kurzor
+     * @return zálohová platba
      */
     private PaymentModel createPayment(Cursor cursor) {
         return new PaymentModel(cursor.getLong(0), cursor.getLong(1),
@@ -506,8 +481,8 @@ public class DataSubscriptionPointSource {
     /**
      * Načte jedno odběrné místo podle id
      *
-     * @param id
-     * @return
+     * @param id id odběrného místa
+     * @return odběrné místo
      */
     public SubscriptionPointModel loadSubscriptionPoint(long id) {
         String selection = "_id=?";
@@ -523,12 +498,12 @@ public class DataSubscriptionPointSource {
     /**
      * Načte jeden měsíční odečet
      *
-     * @param table
-     * @param itemId
-     * @return
+     * @param table  jméno tabulky
+     * @param itemId id odběrného místa
+     * @return měsíční odečet
      */
-    public MonthlyReadingModel loadMonthlyReading(String table, long itemId) {
-        ArrayList<MonthlyReadingModel> monthlyReadings = loadMonthlyReadings(table, itemId, null);
+    public MonthlyReadingModel loadMonthlyReading(String table, long itemId, long from, long to) {
+        ArrayList<MonthlyReadingModel> monthlyReadings = loadMonthlyReadings(table, itemId, from, to, null);
         if (monthlyReadings.size() > 0) {
             return monthlyReadings.get(0);
         }
@@ -539,9 +514,9 @@ public class DataSubscriptionPointSource {
     /**
      * Najde nejvzdálenější datum záznamu faktury
      *
-     * @param idFak
-     * @param table
-     * @return long
+     * @param idFak id faktury
+     * @param table jméno tabulky
+     * @return long datum
      */
     public long minDateInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
@@ -555,9 +530,9 @@ public class DataSubscriptionPointSource {
     /**
      * Najde nejbližší datum záznamu faktury
      *
-     * @param idFak
-     * @param table
-     * @return long
+     * @param idFak id faktury
+     * @param table jméno tabulky
+     * @return long datum
      */
     public long maxDateInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
@@ -579,9 +554,6 @@ public class DataSubscriptionPointSource {
 
     public double minVTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
-        /*String sql = "SELECT MIN(vt)" +
-                " FROM " + table +
-                " WHERE id_fak=?";*/
         String sql = "SELECT datumOd,vt " +
                 "FROM " + table +
                 " WHERE id_fak=? " +
@@ -592,9 +564,6 @@ public class DataSubscriptionPointSource {
 
     public double maxVTInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
-        /*String sql = "SELECT MAX(vt_kon)" +
-                " FROM " + table +
-                " WHERE id_fak=?";*/
         String sql = "SELECT datumDo,vt_kon " +
                 "FROM " + table +
                 " WHERE id_fak=? " +
@@ -626,9 +595,9 @@ public class DataSubscriptionPointSource {
     /**
      * Provede sql příkaz s argumentem a  vrátí první výsledek
      *
-     * @param sql
-     * @param args
-     * @return long
+     * @param sql  sql příkaz
+     * @param args argumenty
+     * @return long datum
      */
     private long dateInvoice(String sql, String[] args) {
         Cursor cursor = database.rawQuery(sql, args);
@@ -654,7 +623,7 @@ public class DataSubscriptionPointSource {
      * Načte první fakturu podle id
      *
      * @param idFak long id faktury
-     * @return
+     * @return faktura
      */
     public InvoiceModel firstInvoiceByDate(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
@@ -670,7 +639,7 @@ public class DataSubscriptionPointSource {
      * Načte poslední fakturu podle id
      *
      * @param idFak long id faktury
-     * @return
+     * @return faktura
      */
     public InvoiceModel lastInvoiceByDate(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
@@ -683,10 +652,10 @@ public class DataSubscriptionPointSource {
 
 
     /**
-     * Nasčte poslední fakturu z tabulky, bez ohledu na id faktury
+     * Načte poslední fakturu z tabulky, bez ohledu na id faktury
      *
-     * @param table
-     * @return
+     * @param table jméno tabulky
+     * @return faktura
      */
     public InvoiceModel lastInvoiceByDateFromAll(String table) {
         String sql = "SELECT * " +
@@ -697,8 +666,13 @@ public class DataSubscriptionPointSource {
     }
 
 
+    /**
+     * Načte poslední fakturu podle data
+     *
+     * @param table jméno tabulky
+     * @return faktura
+     */
     public MonthlyReadingModel lastMonthlyReadingByDate(String table) {
-        //String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT * " +
                 "FROM " + table +
                 " ORDER BY datum DESC" +
@@ -719,8 +693,8 @@ public class DataSubscriptionPointSource {
     /**
      * Vytvoří objekt měsíčního odečtu z kurzoru
      *
-     * @param cursor
-     * @return
+     * @param cursor kurzor
+     * @return měsíční odečet
      */
     private MonthlyReadingModel createMonthlyReading(Cursor cursor) {
         long id = cursor.getLong(0);
@@ -732,7 +706,7 @@ public class DataSubscriptionPointSource {
         double payment = cursor.getDouble(6);
         String description = cursor.getString(7);
         double otherServices = cursor.getDouble(8);
-        MonthlyReadingModel monthlyReading = new MonthlyReadingModel(
+        return new MonthlyReadingModel(
                 id,
                 date,
                 vt, nt,
@@ -740,17 +714,16 @@ public class DataSubscriptionPointSource {
                 description,
                 otherServices,
                 priceListId,
-                (firstReading == 1) ? true : false);
-        return monthlyReading;
+                firstReading == 1);
     }
 
 
     /**
-     * Načte první fakturu podel argumentu
+     * Načte první fakturu podle argumentu
      *
      * @param args argument id faktury
      * @param sql  sql dotaz
-     * @return
+     * @return faktura
      */
     private InvoiceModel oneInvoice(String[] args, String sql) {
         InvoiceModel invoice = null;
@@ -768,16 +741,19 @@ public class DataSubscriptionPointSource {
     /**
      * Privátní metoda pro načtení měsíčních odečtů podle parametrů
      *
-     * @param table
-     * @param itemId
-     * @return
+     * @param table  jméno tabulky
+     * @param itemId id položky
+     * @return list měsíčních odečtů
      */
-    private ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table, Long itemId, String orderBy) {
-        String selection = "_id=?";
-        String[] args = new String[]{String.valueOf(itemId)};
+    private ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table, Long itemId, long from, long to, String orderBy) {
+        String selection;
+        String[] args;
         if (itemId == null) {
-            args = null;
-            selection = null;
+            args = new String[]{String.valueOf(from), String.valueOf(to)};
+            selection = "datum>=? AND datum<=?";
+        } else {
+            args = new String[]{String.valueOf(itemId), String.valueOf(from), String.valueOf(to)};
+            selection = "_id=? AND datum>=? AND datum<=?";
         }
 
         ArrayList<MonthlyReadingModel> monthlyReadings = new ArrayList<>();
@@ -801,9 +777,9 @@ public class DataSubscriptionPointSource {
     /**
      * Načte arraylist odběrných míst podle argumentů a setřídí podle názvu odběrného místa
      *
-     * @param selection
-     * @param argsSelection
-     * @return
+     * @param selection     podmínka
+     * @param argsSelection argumenty
+     * @return arraylist odběrných míst
      */
     private ArrayList<SubscriptionPointModel> readSubscriptionPoints(String selection, String[] argsSelection) {
         ArrayList<SubscriptionPointModel> stringArrayList = new ArrayList<>();
@@ -822,9 +798,9 @@ public class DataSubscriptionPointSource {
             long milins = Long.parseLong(cursor.getString(3).replace("O", ""));
             int countPhaze = cursor.getInt(4);
             int phaze = cursor.getInt(5);
-            String numerElectrometer = cursor.getString(6);
+            String numberElectrometer = cursor.getString(6);
             String numberSubscriptionPoint = cursor.getString(7);
-            SubscriptionPointModel subscriptionPoints = new SubscriptionPointModel(id, name, description, milins, countPhaze, phaze, numerElectrometer, numberSubscriptionPoint);
+            SubscriptionPointModel subscriptionPoints = new SubscriptionPointModel(id, name, description, milins, countPhaze, phaze, numberElectrometer, numberSubscriptionPoint);
             stringArrayList.add(subscriptionPoints);
         }
         cursor.close();
@@ -835,8 +811,8 @@ public class DataSubscriptionPointSource {
     /**
      * Celkový počet ceníků podle id ceníku
      *
-     * @param priceId
-     * @return
+     * @param priceId id ceníku
+     * @return počet ceníků
      */
     public int countPriceItems(String table, long priceId) {
         Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM " + table + " WHERE cenik_id=" + priceId, null);
@@ -850,10 +826,10 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví data odběrného místa pro zápis do databáze
      *
-     * @param subScriptionPoint
-     * @return
+     * @param subScriptionPoint odběrné místo
+     * @return data odběrného místa
      */
-    private ContentValues createContenValue(SubscriptionPointModel subScriptionPoint) {
+    private ContentValues createContentValue(SubscriptionPointModel subScriptionPoint) {
         ContentValues values = new ContentValues();
         values.put(ODBERENE_MISTO, subScriptionPoint.getName());
         values.put(POPIS, subScriptionPoint.getDescription());
@@ -869,8 +845,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví data měsíčního odečtu pro zápis do databáze
      *
-     * @param monthlyReading
-     * @return
+     * @param monthlyReading měsíční odečet
+     * @return data měsíčního odečtu
      */
     private ContentValues createContentValue(MonthlyReadingModel monthlyReading) {
         ContentValues values = new ContentValues();
@@ -889,9 +865,9 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví data čísla faktury pro seznam faktur pro zápis do databáze
      *
-     * @param numberInvoice
-     * @param idSubscriptionPoint
-     * @return
+     * @param numberInvoice       číslo faktury
+     * @param idSubscriptionPoint id odběrného místa
+     * @return data čísla faktury
      */
     private ContentValues createContentValue(String numberInvoice, long idSubscriptionPoint) {
         ContentValues values = new ContentValues();
@@ -904,8 +880,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví číslo faktury pro úpravu dat do databáze
      *
-     * @param numberInvoice
-     * @return
+     * @param numberInvoice číslo faktury
+     * @return data čísla faktury
      */
     private ContentValues createContentValue(String numberInvoice) {
         ContentValues values = new ContentValues();
@@ -917,8 +893,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví jeden zápis faktury
      *
-     * @param invoice
-     * @return
+     * @param invoice faktura
+     * @return data faktury
      */
     private ContentValues createContentValue(InvoiceModel invoice) {
         ContentValues values = new ContentValues();
@@ -938,8 +914,8 @@ public class DataSubscriptionPointSource {
     /**
      * Sestaví jeden zápis platby
      *
-     * @param payment
-     * @return
+     * @param payment platba
+     * @return data platby
      */
     private ContentValues createContentValue(PaymentModel payment) {
         ContentValues values = new ContentValues();

@@ -5,6 +5,9 @@ import android.os.Parcelable;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPMonthlyReading;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -38,14 +42,18 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  */
 public class MonthlyReadingFragment extends Fragment {
     private final String TAG = "MonthlyReadingFragment";
+    private final String TO = "to";
+    private final String FROM = "from";
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
-    private TextView subscriptionPointName;
-    private TextView tvAlert;
+    private TextView tvSubscriptionPointName;
+    private TextView tvAlert, tvMonthlyReadingFilter;
     private RecyclerView rv;
     private SwitchMaterial swSimplyView, swRegulPrice;
     private ShPMonthlyReading shPMonthlyReading;
     private MonthlyReadingAdapter monthlyReadingAdapter;
+    private long from = 0;
+    private long to = Long.MAX_VALUE;
 
 
     public MonthlyReadingFragment() {
@@ -62,6 +70,30 @@ public class MonthlyReadingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT))
+                        monthlyReadingAdapter.deleteMonthlyReading();
+                });
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingFilterDialogFragment.MONTHLY_READING_FILTER, this,
+                (requestKey, result) -> {
+                    to = result.getLong(MonthlyReadingFilterDialogFragment.TO);
+                    from = result.getLong(MonthlyReadingFilterDialogFragment.FROM);
+                    from = from + ViewHelper.getOffsetTimeZones(from);
+                    tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
+                    tvMonthlyReadingFilter.setText("Zobrazené období: "
+                            + ViewHelper.convertLongToTime(from) + " - " + ViewHelper.convertLongToTime(to));
+                    if(from == 0 && to == Long.MAX_VALUE){
+                        tvMonthlyReadingFilter.setVisibility(View.GONE);
+                        tvSubscriptionPointName.setVisibility(View.VISIBLE);
+                    } else {
+                        tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
+                        tvSubscriptionPointName.setVisibility(View.GONE);
+                    }
+                    loadDataFromDatabase();
+                });
     }
 
 
@@ -71,19 +103,26 @@ public class MonthlyReadingFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_monthly_reading, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(savedInstanceState != null){
+            from = savedInstanceState.getLong(FROM);
+            to = savedInstanceState.getLong(TO);
+        }
+
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
 
         fab = view.findViewById(R.id.fab);
-        subscriptionPointName = view.findViewById(R.id.tvSubscriptionPointName);
+        tvSubscriptionPointName = view.findViewById(R.id.tvSubscriptionPointName);
         swSimplyView = view.findViewById(R.id.swSimplyView);
         swRegulPrice = view.findViewById(R.id.swRegulPrice);
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
+        tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
 
-        subscriptionPointName.setText("");
+        tvSubscriptionPointName.setText("");
 
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
@@ -95,6 +134,7 @@ public class MonthlyReadingFragment extends Fragment {
 
             rv.getLayoutManager().onRestoreInstanceState(out);
         });
+
         swRegulPrice.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (rv != null) {
                 Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
@@ -110,12 +150,6 @@ public class MonthlyReadingFragment extends Fragment {
                     .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
             FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
         });
-
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
-                (requestKey, result) -> {
-                    if (result.getBoolean(YesNoDialogFragment.RESULT))
-                        monthlyReadingAdapter.deleteMonthlyReading();
-                });
     }
 
 
@@ -133,6 +167,32 @@ public class MonthlyReadingFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(FROM, from);
+        outState.putLong(TO, to);
+    }
+    
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        requireActivity().getMenuInflater().inflate(R.menu.menu_monthly_reading, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_filter_monthly_reading) {
+            MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from,to);
+            monthlyReadingFilterDialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void loadDataFromDatabase() {
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         tvAlert.setVisibility(View.VISIBLE);
@@ -141,7 +201,8 @@ public class MonthlyReadingFragment extends Fragment {
         if (subscriptionPoint != null) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();
-            monthlyReadings = dataSubscriptionPointSource.loadMonthlyReadings(subscriptionPoint.getTableO());
+            monthlyReadings = dataSubscriptionPointSource.loadMonthlyReadings(subscriptionPoint.getTableO(), from, to);
+            Log.w(TAG, "loadDataFromDatabase: " + monthlyReadings.size()+" "+from);
             if (!dataSubscriptionPointSource.checkInvoiceExists(subscriptionPoint.getTableTED()))
                 dataSubscriptionPointSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataSubscriptionPointSource.close();
@@ -167,12 +228,12 @@ public class MonthlyReadingFragment extends Fragment {
 
 
     /**
-     * Zobrazí/skryje tlačítko pro přidání měsíčního odečtu. Podle, toho zda je zvoleno odběrné místo.
+     * Zobrazí/skryje tlačítko pro přidání měsíčního odečtu. Podle, zda-li je vybráno odběrné místo.
      */
     private void showFab() {
         if (subscriptionPoint != null) {
             fab.setVisibility(View.VISIBLE);
-            subscriptionPointName.setText(subscriptionPoint.getName());
+            tvSubscriptionPointName.setText(subscriptionPoint.getName());
         } else {
             fab.setVisibility(View.GONE);
         }

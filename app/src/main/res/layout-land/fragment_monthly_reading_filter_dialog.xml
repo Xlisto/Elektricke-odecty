@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/lnMonthlyReadingFilterPickers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rlItemMonthlyReadingFilterDialogOutFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_monthly_reading_gray">
+
+
+            <RelativeLayout
+                android:id="@+id/rlItemMonthlyReadingFilterDialogInFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFilterMonthlyReadingFrom"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/shape_item">
+
+                <DatePicker
+                    android:id="@+id/dpMonthlyReadingFrom"
+                    style="@android:style/Widget.DatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvFilterMonthlyReadingFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="false"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:text="@string/show_monthly_records_from"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlItemMonthlyReadingFilterDialogOutTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_monthly_reading_gray">
+
+            <RelativeLayout
+                android:id="@+id/rlItemMonthlyReadingFilterDialogInTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFilterMonthlyReadingTo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/shape_item">
+
+                <DatePicker
+                    android:id="@+id/dpMonthlyReadingTo"
+                    style="@android:style/Widget.DatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvFilterMonthlyReadingTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:text="@string/show_monthly_records_to"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btnMonthlyReadingFilterReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lnMonthlyReadingFilterPickers"
+        android:layout_centerHorizontal="true"
+        android:text="@string/reser_filter" />
+
+
+</RelativeLayout>

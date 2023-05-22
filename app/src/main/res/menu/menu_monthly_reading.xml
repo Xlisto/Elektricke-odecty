@@ -2,10 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_bottom"
-        android:title="@string/filter_price_list"
+        android:id="@+id/menu_filter_monthly_reading"
+        android:title="@string/filter_monthly_readings"
         android:visible="true"
-        android:icon="@drawable/baseline_filter_alt_24"
         app:showAsAction="always" />
 
 
