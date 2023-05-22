@@ -392,13 +392,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Načte regulované ceny
      */
     void setRegulPrice() {
+        if(year<2021)
+            return;
         ReadRawJSON readRawJSON = new ReadRawJSON(getActivity());
         Handler handler = new Handler();
         final Runnable r = () -> {
 
             PriceListModel priceListModel = readRawJSON.read(year, spDistribucniUzemi.getSelectedItem().toString(),
                     spSazba.getSelectedItem().toString());
-
             ivVT1.setDefaultText(df2.format(priceListModel.getDistVT()));
             ivNT1.setDefaultText(df2.format(priceListModel.getDistNT()));
 

@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.models.PriceListModel;
@@ -21,41 +20,24 @@ import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PriceListEditFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro úpravu ceníku.
  */
 public class PriceListEditFragment extends PriceListAddEditAbstract {
     private final static String TAG = "PriceListEditFragment";
     private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
-    private boolean isFirstLoad = true;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ID = "id";
-    //private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private long itemId;
-    //private String mParam2;
 
     public PriceListEditFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment PriceListEditFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PriceListEditFragment newInstance(long param1) {
+
+    public static PriceListEditFragment newInstance(long id) {
         PriceListEditFragment fragment = new PriceListEditFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_ID, param1);
+        args.putLong(ARG_ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,19 +47,18 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             itemId = getArguments().getLong(ARG_ID);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         if (savedInstanceState != null)
             isFirstLoad = savedInstanceState.getBoolean(IS_FIRST_LOAD);
         return inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -94,6 +75,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         });
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -106,11 +88,13 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         changeDistributionSpinner();
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_FIRST_LOAD, isFirstLoad);
     }
+
 
     /**
      * Načte stávající údaje ceníku a přiřadí do příslušných widgetů
@@ -123,6 +107,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         priceListModel = dataPriceListSource.readPrice(id);
         dataPriceListSource.close();
     }
+
 
     private void setItemPrice() {
         btnFrom.setText(ViewHelper.convertLongToTime(priceListModel.getPlatnostOD()));
@@ -188,6 +173,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         handler.postDelayed(r, 1300);
     }
 
+
     /**
      * Porovná pole stringu načtený ze spinneru s hledaným stringem. Při shodě nastaví položku na spinneru
      *
@@ -204,6 +190,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             }
         }
     }
+
 
     /**
      * Upraví ceník vybraný podle itemId
