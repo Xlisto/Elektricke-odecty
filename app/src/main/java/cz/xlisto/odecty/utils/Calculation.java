@@ -23,6 +23,7 @@ public class Calculation {
     private static int countPhaze = 3;
     private static int power = 25;
 
+
     /**
      * Výpočet jednotkové ceny každé kilowaty v ceníku s DPH
      *
@@ -40,6 +41,7 @@ public class Calculation {
         return pricesDPH;
     }
 
+
     /**
      * Výpočet jednotkové ceny každé kilowaty v ceníku
      *
@@ -55,8 +57,9 @@ public class Calculation {
         return new double[]{vt, nt, stPlat};
     }
 
+
     /**
-     * Výpočet jednotkové ceny každé megawaty s odděleným poze podle spotřeby
+     * Výpočet jednotkové ceny každé megawaty s odděleným poze podle spotřeby, POZE nastaven na max. hodnotu (495)
      *
      * @param priceList         Objekt ceníku PriceListModel
      * @param subscriptionPoint Objekt odběrného místa SubscriptionPointModel
@@ -64,12 +67,31 @@ public class Calculation {
      */
     public static double[] calculatePriceWithoutPozeMwH(PriceListModel priceList, SubscriptionPointModel subscriptionPoint) {
         checkSubscriptionPint(subscriptionPoint);
-        double vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby());
-        double nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby());
-        double poze = priceList.getPoze2();
-        double stPlat = priceList.getMesicniPlat() + priceList.getOte() + priceList.getCinnost() + calculatePriceBreaker(priceList, countPhaze, power);
+        double vt;
+        double nt;
+        double poze;
+        double stPlat;
+        //podmínka pro starší ceník před rokem 2016/
+        if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+            //Výpočet cenaVT+distribuceVT+dan+systemSluzby+OTE (OZE,KVET a DZ (zkráceně POZE) výpočet zvlášť)
+            //Výpočet OZE,KVET,DZ (zkráceně POZE) podle spotřeby
+            //Výpočet stálé měsíční platby: měsíc * (měsíční plat + cena za jistič)
+            vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby()+priceList.getOte());
+            nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby()+priceList.getOte());
+            poze = priceList.getOze();
+            stPlat = priceList.getMesicniPlat()  + calculatePriceBreaker(priceList, countPhaze, power);
+        } else {
+            //Výpočet cenaVT+distribuceVT+dan+systemSluzby
+            //Výpočet POZE podle spotřeby
+            //Výpočet stálé měsíční platby: měsíc * (měsíční plat + cena za jistič + OTE)
+            vt = priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby();
+            nt = priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby();
+            poze = priceList.getPoze2();
+            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power)+priceList.getCinnost();
+        }
         return new double[]{vt, nt, stPlat, poze};
     }
+
 
     /**
      * Výpočet jednotkové ceny každé kilowaty bez poze
@@ -87,12 +109,13 @@ public class Calculation {
         return result;
     }
 
+
     /**
      * Výpočet měsíční platby za podle příkonové hodnoty hlavního jističe
      *
-     * @param priceList Objekt ceníku PriceListModel
-     * @param countPhaze      int - počet fází
-     * @param power    int - příkon hlavního jističe
+     * @param priceList  Objekt ceníku PriceListModel
+     * @param countPhaze int - počet fází
+     * @param power      int - příkon hlavního jističe
      * @return double - cena za jistič
      */
     public static double calculatePriceBreaker(PriceListModel priceList, int countPhaze, int power) {
@@ -102,7 +125,7 @@ public class Calculation {
             if (power <= 25) {
                 priceCircuitBreaker = priceList.getJ0();
             } else {
-                morePower = (double) (power % 25);//Zbytek po dělení - příklad Fáze 1x30 tj. 30/25 = 1 a zbytek 5 (výsledek), výpočet ceny sazba za 1x25A+(počet Amperů navíc*cena)
+                morePower = (power % 25);//Zbytek po dělení - příklad Fáze 1x30 tj. 30/25 = 1 a zbytek 5 (výsledek), výpočet ceny sazba za 1x25A+(počet Amperů navíc*cena)
                 priceCircuitBreaker = priceList.getJ0() + (morePower * priceList.getJ9());
             }
         }
@@ -146,19 +169,20 @@ public class Calculation {
                     priceCircuitBreaker = priceList.getJ13();
                 }
                 if (power > 160) {
-                    morePower = (double) (power % 160);
+                    morePower = (power % 160);
                     priceCircuitBreaker = priceList.getJ13() + (morePower * priceList.getJ14());
                 }
 
             } else {
                 if (power > 63) {
-                    morePower = (double) (power % 63);
+                    morePower = (power % 63);
                     priceCircuitBreaker = priceList.getJ7() + (morePower * priceList.getJ8());
                 }
             }
         }
         return priceCircuitBreaker;
     }
+
 
     /**
      * Vypočítá rozdíl mezi dvěma daty. Výsledek je v měsících.
@@ -175,6 +199,7 @@ public class Calculation {
         return Round.round(differenceDate.getMonth(), 3);
     }
 
+
     /**
      * Kontrola objektu odběrného místa, pokud vyhovuje nastaví se hodnoty jističů do proměnných faze a příkon
      *
@@ -187,15 +212,16 @@ public class Calculation {
         }
     }
 
+
     /**
      * Výpočet POZE dle jeho typu (podle spotřeby nebo podle jističe)
      *
-     * @param priceList  Objekt ceníku PriceListModel
-     * @param countPhaze Počet fází
-     * @param power      Příkon hlavního jističe
+     * @param priceList   Objekt ceníku PriceListModel
+     * @param countPhaze  Počet fází
+     * @param power       Příkon hlavního jističe
      * @param consumption spotřeba v MWh
-     * @param month      Počet měsíců
-     * @param typePoze   Typ poze (podle spotřeby nebo podle jističe)
+     * @param month       Počet měsíců
+     * @param typePoze    Typ poze (podle spotřeby nebo podle jističe)
      * @return double  Cena POZE bezDPH
      */
     public static double getPozeByType(PriceListModel priceList, double countPhaze, double power, double consumption, double month, PozeModel.TypePoze typePoze) {
@@ -206,15 +232,16 @@ public class Calculation {
             return poze.getPoze2();
     }
 
+
     /**
      * Vypočítá obě dvě poze
      * pokud je ceník do roku 2015, vrátí se obě dvě hodnoty stejné
      *
-     * @param priceList  Objekt ceníku PriceListModel
-     * @param countPhaze Počet fází
-     * @param power      Příkon hlavního jističe
+     * @param priceList   Objekt ceníku PriceListModel
+     * @param countPhaze  Počet fází
+     * @param power       Příkon hlavního jističe
      * @param consumption Spotřeba v MWh
-     * @param month      Počet měsíců
+     * @param month       Počet měsíců
      * @return objekt PozeModel
      */
     public static PozeModel getPoze(PriceListModel priceList, double countPhaze, double power, double consumption, double month) {
@@ -228,6 +255,7 @@ public class Calculation {
         }
         return new PozeModel(poze1, poze2);
     }
+
 
     /**
      * Vypočítá poze u všech položek seznamu (faktury)
@@ -257,32 +285,12 @@ public class Calculation {
         return poze;
     }
 
-    /**
-     * Výpočet POZE dle jeho typu (podle spotřeby nebo podle jističe)
-     *
-     * @param invoice   Objekt faktury
-     * @param countPhaze Počet fází
-     * @param phaze     Příkon hlavního jističe
-     * @param context  Kontext
-     * @param typePoze  Typ poze (podle spotřeby nebo podle jističe)
-     * @return
-     */
-    /*public static double getPoze(InvoiceModel invoice, int countPhaze, int phaze, Context context, PozeModel.TypePoze typePoze) {
-        PriceListModel priceList = getPriceList(invoice, context);
-        if (priceList.getRokPlatnost() < NEW_POZE_YEAR)
-            return invoice.getVtNt() * priceList.getOze();
-        if (typePoze.equals(PozeModel.TypePoze.POZE2)) {
-            return invoice.getVtNt() * priceList.getPoze2();
-        } else {
-            return countPhaze * phaze * priceList.getPoze1() * invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE);
-        }
-    }*/
 
     /**
      * Načte ceník podle id uložený ve faktuře
      *
-     * @param invoice
-     * @return
+     * @param invoice Objekt faktury
+     * @return Objekt ceníku PriceListModel
      */
     private static PriceListModel getPriceList(InvoiceModel invoice, Context context) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
@@ -293,34 +301,4 @@ public class Calculation {
             priceList = new PriceListModel();
         return priceList;
     }
-
-    /**
-     * Typy poze
-     * POZE1 - podle hodnoty jističe
-     * POZE2 - podle spotřeby - max. 495 kč/MWh
-     */
-    /*public enum Poze {
-        POZE1,
-        POZE2
-    }*/
-
-
-    /*public Double vypocetMesicuProMesicniOdecty(Long odL, Long doL, int zaokrouhli) {
-        //tady je od a do přehozen
-        double pocetMesicu = -1.0;
-        int den, mesic, rok, pDen, pRok, pMesic;
-        Calendar datumODCalendar = Calendar.getInstance();
-        Calendar datumDOCalendar = Calendar.getInstance();
-        datumODCalendar.setTimeInMillis(odL);
-        datumDOCalendar.setTimeInMillis(doL);
-        den = datumODCalendar.get(Calendar.DAY_OF_MONTH);
-        mesic = datumODCalendar.get(Calendar.MONTH);
-        rok = datumODCalendar.get(Calendar.YEAR);
-        pDen = datumDOCalendar.get(Calendar.DAY_OF_MONTH);
-        pMesic = datumDOCalendar.get(Calendar.MONTH);
-        pRok = datumDOCalendar.get(Calendar.YEAR);
-        DifferenceDate differenceDate = new DifferenceDate(datumDOCalendar, datumODCalendar);
-        pocetMesicu = differenceDate.getMonth();
-        return zaokrouhli(pocetMesicu, zaokrouhli);
-    }*/
 }

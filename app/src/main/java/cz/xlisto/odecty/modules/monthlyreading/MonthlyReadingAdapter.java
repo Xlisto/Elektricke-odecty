@@ -172,7 +172,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     }
 
                 }
-                prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);
+                prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);//vt, nt, stPlat, poze
                 monthPrice = month * prices[2];
                 total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();
                 double difference = monthlyReading.getDifferenceDPH();
