@@ -144,7 +144,7 @@ public class PriceListFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                        priceListAdapter.delteItemPrice();
+                        priceListAdapter.deleteItemPrice();
                         onLoadData();
                     }
                 }));
@@ -210,8 +210,6 @@ public class PriceListFragment extends Fragment {
                         btnBack.setText(getResources().getString(R.string.vybrat));
                         idSelectedPriceList = priceList.getId();
                     }
-                },
-                id -> {
                 }, rv);
         rv.setAdapter(priceListAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));

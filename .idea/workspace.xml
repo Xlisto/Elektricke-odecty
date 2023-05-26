@@ -11,17 +11,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Deaktivace načítání regulovaných cen do roku 2020&#10;- z důvodu absence statických dat, regulované ceny jsou zadaní od 2021">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zobrazení nabídky Filtr ceníků a Filtr odečtů">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -124,7 +128,7 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/odecty_a_mista.db&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -494,7 +498,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684766530882</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Zobrazení nabídky Filtr ceníků a Filtr odečtů">
+      <created>1684786391329</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1684786391329</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -568,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ve ViewHelper doplněna nová metoda getOffsetTimezones(long l).&#10;Metoda přepočítává čas podle časových pásem.&#10;Vypočítá rozdíl nastaveného časového pásma v telefonu o proti UTC0 a připočítá rozdíl do pásma UTC1 (+ letní čas). Výsledek je číslo long, který se připočítává k načtemému datu (long). To je důležité pro korekci, pokud se telefon spustí s nastavením jiného časového pásma." />
     <MESSAGE value="Opravena chyba při editaci záznamu faktury - neukládal se id ceníku." />
     <MESSAGE value="Upraven převod long čísla na data podle časového pásma.&#10;Pro správný výpočet se používá offset časových pásem.&#10;Pro tento účel je vytvořena metoda getOffsetTimezones ve ViewHelper.&#10;Nejprve vypočítá rozdíl času oproti času GMT, potom přičte rozdíl k středoevropskému času." />
     <MESSAGE value="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují." />
@@ -593,6 +603,7 @@
     <MESSAGE value="Zavedení nové funkce - filtrování měsíčních odečtů&#10;- nový MonthlyReadingFilterDialogFragment s layoutem (včetně land rozvržení)&#10;- úpravený vyhledávací dotaz v DataSubscriptionPointSource - doplněný o atributy from a to reprezentující časový údaj v long milisekundách" />
     <MESSAGE value="Oprava výpočtu cen VT, NT, stáleho platu a POZE&#10;Oprava je v Calculation, metodě calculatePriceWithoutPozeMwH, která vrací double pole {vt, nt, stPlat, poze} pro jednotlivé dílčí výsledky v měsíčním zobrazení. Je přidána podmínka reflektující změnu výpočtu od roku 2016." />
     <MESSAGE value="Deaktivace načítání regulovaných cen do roku 2020&#10;- z důvodu absence statických dat, regulované ceny jsou zadaní od 2021" />
-    <option name="LAST_COMMIT_MESSAGE" value="Deaktivace načítání regulovaných cen do roku 2020&#10;- z důvodu absence statických dat, regulované ceny jsou zadaní od 2021" />
+    <MESSAGE value="Zobrazení nabídky Filtr ceníků a Filtr odečtů" />
+    <option name="LAST_COMMIT_MESSAGE" value="Zobrazení nabídky Filtr ceníků a Filtr odečtů" />
   </component>
 </project>

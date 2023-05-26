@@ -3,7 +3,6 @@ package cz.xlisto.odecty.modules.pricelist;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,23 +39,22 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     public static final String TAG = "PriceListAdapter";
     public final static String FLAG_DIALOG_FRAGMENT = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
-    private final OnLongClickItemListener onLongClickItemListener;
     private final boolean showSelectItem;
     private int selectedItem = -1;
-    private long idSelectedPriceList = -1;
-    private Context context;
+    private long idSelectedPriceList;
+    private final Context context;
     private final ArrayList<PriceListModel> items;
     private final SubscriptionPointModel subscriptionPoint;
     private int showButtons = -1;
-    private RecyclerView recyclerView;
+    private final RecyclerView recyclerView;
     private ShPPriceList shPPriceList;
     private long selectedItemId;
     private int selectedPosition;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout relativeLayout;
-        TextView tvOd, tvDo, tvRada, tvProdukt, tvSazba, tvFirma, tvCenaVT, tvCenaNT, tvCenaMesic,
-                tvPoznamka, tvCenaVTRegul, tvCenaNTRegul, tvCenaMesicRegul;
+        TextView tvFrom, tvUntil, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
+                tvNote, tvPriceVTRegul, tvPriceNTRegul, tvPriceMonthRegul;
         RadioButton rbSelectItem;
         LinearLayout lnRegulPrice, lnButtons;
         Button btnEdit, btnDelete, btnDetail;
@@ -68,12 +66,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
     //konstruktor
     public PriceListAdapter(Context context, ArrayList<PriceListModel> items, SubscriptionPointModel subscriptionPoint, boolean selectItem, long idSelectedPriceList,
-                            OnClickItemListener onClickItemListener, OnLongClickItemListener onLongClickItemListener, RecyclerView recyclerView) {
+                            OnClickItemListener onClickItemListener, RecyclerView recyclerView) {
         this.context = context;
         this.items = items;
         this.showSelectItem = selectItem;
         this.onClickItemListener = onClickItemListener;
-        this.onLongClickItemListener = onLongClickItemListener;
         this.idSelectedPriceList = idSelectedPriceList;
         this.subscriptionPoint = subscriptionPoint;
         this.recyclerView = recyclerView;
@@ -91,19 +88,19 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         vh.relativeLayout = v.findViewById(R.id.item_price_list);
         // Získání referencí na jednotlivé komponenty zobrazené seznam
         vh.rbSelectItem = v.findViewById(R.id.rbPriceList);
-        vh.tvOd = v.findViewById(R.id.tvPlatnostZacatek);
-        vh.tvDo = v.findViewById(R.id.tvPlatnostKonec);
-        vh.tvRada = v.findViewById(R.id.tvProduktovaRada);
-        vh.tvProdukt = v.findViewById(R.id.tvProdukt);
-        vh.tvSazba = v.findViewById(R.id.tvSazba);
+        vh.tvFrom = v.findViewById(R.id.tvPlatnostZacatek);
+        vh.tvUntil = v.findViewById(R.id.tvPlatnostKonec);
+        vh.tvSeries = v.findViewById(R.id.tvProduktovaRada);
+        vh.tvProduct = v.findViewById(R.id.tvProdukt);
+        vh.tvRate = v.findViewById(R.id.tvSazba);
         vh.tvFirma = v.findViewById(R.id.tvFirma);
-        vh.tvCenaVT = v.findViewById(R.id.tvCenaVT);
-        vh.tvCenaNT = v.findViewById(R.id.tvCenaNT);
-        vh.tvCenaMesic = v.findViewById(R.id.tvPayment);
-        vh.tvCenaVTRegul = v.findViewById(R.id.tvCenaVTRegul);
-        vh.tvCenaNTRegul = v.findViewById(R.id.tvCenaNTRegul);
-        vh.tvCenaMesicRegul = v.findViewById(R.id.tvCenaMesicRegul);
-        vh.tvPoznamka = v.findViewById(R.id.tvPoznamkaItemPriceList);
+        vh.tvPriceVT = v.findViewById(R.id.tvCenaVT);
+        vh.tvPriceNT = v.findViewById(R.id.tvCenaNT);
+        vh.tvPriceMonth = v.findViewById(R.id.tvPayment);
+        vh.tvPriceVTRegul = v.findViewById(R.id.tvCenaVTRegul);
+        vh.tvPriceNTRegul = v.findViewById(R.id.tvCenaNTRegul);
+        vh.tvPriceMonthRegul = v.findViewById(R.id.tvCenaMesicRegul);
+        vh.tvNote = v.findViewById(R.id.tvPoznamkaItemPriceList);
         vh.lnRegulPrice = v.findViewById(R.id.ln_item_price_list_regul);
         vh.lnButtons = v.findViewById(R.id.lnButtonsPriceListItem);
         vh.btnEdit = v.findViewById(R.id.btnEditPriceListItem);
@@ -115,6 +112,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         return vh;
     }
 
+
     // Naplnění kontejneru daty (kontejner vytvořen v přepsané metodě onCreateViewHolder())
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -125,7 +123,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         String cenaMesic = "Měsíc: " + (df2.format(Round.round(ceny[2]))) + " Kč s DPH";
 
         int year = ViewHelper.yearIntOfLong(priceList.getPlatnostOD());
-        int month = 12;
         PriceListRegulBuilder priceListBuilder = new PriceListRegulBuilder(priceList, year);
         PriceListModel priceListRegul = priceListBuilder.getRegulPriceList();
         double[] cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint);
@@ -138,14 +135,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             //zobrazený radiobutton pro výběr
             holder.rbSelectItem.setVisibility(View.VISIBLE);
             holder.relativeLayout.setTag(position);
-            holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedItem = (int) v.getTag();
-                    idSelectedPriceList = priceList.getId();
-                    notifyDataSetChanged();
-                    onClickItemListener.setClickPriceListListener(priceList);
-                }
+            holder.relativeLayout.setOnClickListener(v -> {
+                selectedItem = (int) v.getTag();
+                idSelectedPriceList = priceList.getId();
+                notifyDataSetChanged();
+                onClickItemListener.setClickPriceListListener(priceList);
             });
             holder.rbSelectItem.setChecked(selectedItem == position);
             if (priceList.getId() == idSelectedPriceList) {
@@ -155,106 +149,93 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         } else {
             //skrytý radiobutton pro výběr
             //nastaví zarovnání na kraj rodiče
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.tvProdukt.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.tvProduct.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_START, 1);
             params.removeRule(RelativeLayout.END_OF);
-            holder.tvProdukt.setLayoutParams(params);
+            holder.tvProduct.setLayoutParams(params);
             holder.rbSelectItem.setVisibility(View.GONE);
-            holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            holder.relativeLayout.setOnClickListener(v -> {
 
-                    if (showButtons >= 0) {
-                        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                        if (viewHolder != null)
-                            viewHolder.itemView.findViewById(R.id.lnButtonsPriceListItem).setVisibility(View.GONE);
-                    }
-
-                    TransitionManager.beginDelayedTransition(recyclerView);
-
-                    if (showButtons == position)
-                        showButtons = -1;
-                    else
-                        showButtons = position;
-
-                    setShowPositionItem(position);
-                    showButtons(holder, position);
+                if (showButtons >= 0) {
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                    if (viewHolder != null)
+                        viewHolder.itemView.findViewById(R.id.lnButtonsPriceListItem).setVisibility(View.GONE);
                 }
+
+                TransitionManager.beginDelayedTransition(recyclerView);
+
+                if (showButtons == position)
+                    showButtons = -1;
+                else
+                    showButtons = position;
+
+                setShowPositionItem(position);
+                showButtons(holder, position);
             });
 
-            holder.btnDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PriceListDetailFragment priceListDetailFragment = PriceListDetailFragment.newInstance(priceList.getId());
-                    FragmentChange.replace((FragmentActivity) context, priceListDetailFragment, MOVE, true);
-                }
+            holder.btnDetail.setOnClickListener(v -> {
+                PriceListDetailFragment priceListDetailFragment = PriceListDetailFragment.newInstance(priceList.getId());
+                FragmentChange.replace((FragmentActivity) context, priceListDetailFragment, MOVE, true);
             });
 
-            holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PriceListEditFragment priceListEditFragment = PriceListEditFragment.newInstance(priceList.getId());
-                    FragmentChange.replace((FragmentActivity) context, priceListEditFragment, MOVE, true);
-                }
+            holder.btnEdit.setOnClickListener(v -> {
+                PriceListEditFragment priceListEditFragment = PriceListEditFragment.newInstance(priceList.getId());
+                FragmentChange.replace((FragmentActivity) context, priceListEditFragment, MOVE, true);
             });
 
-            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedItemId = priceList.getId();
-                    selectedPosition = position;
-                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                            "Opravdu chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT,
-                            priceList.getRada() + " "
-                                    + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
-                                    + ViewHelper.convertLongToTime(priceList.getPlatnostOD()) + " - "
-                                    + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
-                    yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "yesNoDialogFragment");
+            holder.btnDelete.setOnClickListener(v -> {
+                selectedItemId = priceList.getId();
+                selectedPosition = position;
+                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT,
+                        priceList.getRada() + " "
+                                + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
+                                + ViewHelper.convertLongToTime(priceList.getPlatnostOD()) + " - "
+                                + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
+                yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "yesNoDialogFragment");
 
-                }
             });
 
             showButtons(holder, position);
         }
 
-        holder.tvOd.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostOD()));
-        holder.tvDo.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
-        holder.tvRada.setText("" + priceList.getRada());
-        holder.tvProdukt.setText("" + priceList.getProdukt());
-        holder.tvSazba.setText("" + priceList.getSazba());
+        holder.tvFrom.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostOD()));
+        holder.tvUntil.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
+        holder.tvSeries.setText("" + priceList.getRada());
+        holder.tvProduct.setText("" + priceList.getProdukt());
+        holder.tvRate.setText("" + priceList.getSazba());
         holder.tvFirma.setText("" + priceList.getFirma() + "\nDist. území: " + priceList.getDistribuce());
-        holder.tvCenaVT.setText(cenaVT);
-        holder.tvCenaNT.setText(cenaNT);
-        holder.tvCenaMesic.setText(cenaMesic);
+        holder.tvPriceVT.setText(cenaVT);
+        holder.tvPriceNT.setText(cenaNT);
+        holder.tvPriceMonth.setText(cenaMesic);
 
         if (priceListBuilder.isRegulPrice()) {
-            holder.tvCenaVTRegul.setText(cenaVTRegul);
-            holder.tvCenaNTRegul.setText(cenaNTRegul);
-            holder.tvCenaMesicRegul.setText(cenaMesicRegul);
+            holder.tvPriceVTRegul.setText(cenaVTRegul);
+            holder.tvPriceNTRegul.setText(cenaNTRegul);
+            holder.tvPriceMonthRegul.setText(cenaMesicRegul);
         }
 
 
         //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
         if (priceListBuilder.isRegulPrice()) {
             //ceník obsahuje regulovanou cenu
-            //holder.tvPoznamka.setText(context.getResources().getString(R.string.poznamka_info));
-            holder.tvPoznamka.setText(priceListBuilder.getNotes(context));
-            holder.tvPoznamka.setVisibility(View.VISIBLE);
+            holder.tvNote.setText(priceListBuilder.getNotes(context));
+            holder.tvNote.setVisibility(View.VISIBLE);
             holder.lnRegulPrice.setVisibility(View.VISIBLE);
         } else {
-            holder.tvPoznamka.setVisibility(View.GONE);
+            holder.tvNote.setVisibility(View.GONE);
             holder.lnRegulPrice.setVisibility(View.GONE);
         }
 
 
         if (priceList.getCenaNT() == 0) {
             //jednotarifní sazby
-            holder.tvCenaNT.setVisibility(View.GONE);
-            holder.tvCenaNTRegul.setVisibility(View.GONE);
+            holder.tvPriceNT.setVisibility(View.GONE);
+            holder.tvPriceNTRegul.setVisibility(View.GONE);
         } else {
             //dvoutarifní sazby
-            holder.tvCenaNT.setVisibility(View.VISIBLE);
-            holder.tvCenaNTRegul.setVisibility(View.VISIBLE);
+            holder.tvPriceNT.setVisibility(View.VISIBLE);
+            holder.tvPriceNTRegul.setVisibility(View.VISIBLE);
         }
 
         holder.lnButtons.setOnClickListener(v -> {
@@ -266,11 +247,13 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         });
     }
 
+
     @Override
     public int getItemCount() {
         if (items == null) return 0;
         return items.size();
     }
+
 
     @Override
     public long getItemId(int position) {
@@ -283,6 +266,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
         return itemId;
     }
+
 
     private void showButtons(MyViewHolder holder, int position) {
         setShowPositionItem(showButtons);
@@ -297,14 +281,14 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * Smaže vybraný ceník
      */
-    public void delteItemPrice() {
+    public void deleteItemPrice() {
         deleteItemPrice(selectedItemId, selectedPosition);
         setShowPositionItem(-1);
     }
 
 
     /**
-     * Uloží pozici položky ceníku, kde jsou zobrazeny rlačítka
+     * Uloží pozici položky ceníku, kde jsou zobrazeny tlačítka
      * Hodnota -1 skryje všechny tlačítka
      * @param position int pozice položky ceníku, kde se mají zobrazit tlačítka
      */
@@ -316,7 +300,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * Smaže vybraný ceník podle id
      *
-     * @param itemId
+     * @param itemId long id ceníku
      */
     private void deleteItemPrice(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
@@ -341,6 +325,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         notifyItemRangeChanged(position, getItemCount());
     }
 
+
     /**
      * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech
      */
@@ -353,13 +338,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         builder.show();
     }
 
+
     public interface OnClickItemListener {
         void setClickPriceListListener(PriceListModel priceList);
     }
-
-    public interface OnLongClickItemListener {
-        void setLongClickItemListener(long id);
-    }
-
-
 }
