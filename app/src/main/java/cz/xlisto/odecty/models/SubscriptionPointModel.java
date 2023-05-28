@@ -7,13 +7,13 @@ package cz.xlisto.odecty.models;
 public class SubscriptionPointModel {
     private long _id;
     private long milins;
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
     private String subscriptionPointId;
-    private int countPhaze;
-    private int phaze;
-    private String numberElectricMeter;
-    private String numberSubscriptionPoint;
+    private final int countPhaze;
+    private final int phaze;
+    private final String numberElectricMeter;
+    private final String numberSubscriptionPoint;
     public SubscriptionPointModel(long _id,String name, String description, long milins,int countPhaze, int phaze, String numberElectricMeter, String numberSubscriptionPoint) {
         this._id = _id;
         this.name = name;
@@ -35,7 +35,7 @@ public class SubscriptionPointModel {
         this.numberSubscriptionPoint = numberSubscriptionPoint;
     }
 
-    public long get_id() {
+    public long getId() {
         return _id;
     }
 
@@ -71,6 +71,14 @@ public class SubscriptionPointModel {
         return milins;
     }
 
+
+    /**
+     * vrátí identifikační číslo odběrného místa v milisekundách (bez písmenného prefixu)
+     * @return String číslo rozslišující jednotlivá odběrná místa v databázi
+     */
+    public String getIdMilins(){
+        return String.valueOf(milins);
+    }
     public String getTableO(){
         return "O"+milins;
     }

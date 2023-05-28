@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -15,14 +14,9 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,8 +33,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.shp.ShPBackup;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
@@ -52,7 +44,6 @@ public class BackupFragment extends Fragment {
     private static final String TAG = "BackupFragment";
     private static final String DEF_URI = "content://com.android.externalstorage.documents/document/primary%3A";
     private static final String DEF_TREE_URI = "/tree/primary%3A";
-
     private View view;
     private Button btnBackup, btnSelectDir;
     private RecyclerView recyclerView;
@@ -309,7 +300,7 @@ public class BackupFragment extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_WRITE_STORAGE: {
                 // If request is cancelled, the fakturyArrayList arrays are empty.

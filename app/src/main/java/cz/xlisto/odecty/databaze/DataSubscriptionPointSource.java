@@ -3,8 +3,6 @@ package cz.xlisto.odecty.databaze;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
@@ -14,83 +12,47 @@ import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.CASTKA;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.CENIK_ID;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.CISLO_ELE;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.CISLO_FAK;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.CISLO_MISTA;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.DATUM;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.DATUM_DO;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.DATUM_OD;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.FAZE;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.GARANCE;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ID_FAK;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.MIMORADNA;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.NT;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.NT_KON;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ODBERENE_MISTO;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ODBER_ID;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.POPIS;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.POZNAMKA;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.PRIKON;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.PRVNI_ODECET;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.TABLE_NAME_INVOICES;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.TABLE_NAME_SUBSCRIPTION_POINT;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.VT;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.VT_KON;
-import static cz.xlisto.odecty.databaze.DbHelperSubscriptionPoint.ZAPLACENO;
+import static cz.xlisto.odecty.databaze.DbHelper.CASTKA;
+import static cz.xlisto.odecty.databaze.DbHelper.CENIK_ID;
+import static cz.xlisto.odecty.databaze.DbHelper.CISLO_ELE;
+import static cz.xlisto.odecty.databaze.DbHelper.CISLO_FAK;
+import static cz.xlisto.odecty.databaze.DbHelper.CISLO_MISTA;
+import static cz.xlisto.odecty.databaze.DbHelper.DATUM;
+import static cz.xlisto.odecty.databaze.DbHelper.DATUM_DO;
+import static cz.xlisto.odecty.databaze.DbHelper.DATUM_OD;
+import static cz.xlisto.odecty.databaze.DbHelper.FAZE;
+import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
+import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
+import static cz.xlisto.odecty.databaze.DbHelper.MIMORADNA;
+import static cz.xlisto.odecty.databaze.DbHelper.NT;
+import static cz.xlisto.odecty.databaze.DbHelper.NT_KON;
+import static cz.xlisto.odecty.databaze.DbHelper.ODBERENE_MISTO;
+import static cz.xlisto.odecty.databaze.DbHelper.ODBER_ID;
+import static cz.xlisto.odecty.databaze.DbHelper.POPIS;
+import static cz.xlisto.odecty.databaze.DbHelper.POZNAMKA;
+import static cz.xlisto.odecty.databaze.DbHelper.PRIKON;
+import static cz.xlisto.odecty.databaze.DbHelper.PRVNI_ODECET;
+import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_INVOICES;
+import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_SUBSCRIPTION_POINT;
+import static cz.xlisto.odecty.databaze.DbHelper.VT;
+import static cz.xlisto.odecty.databaze.DbHelper.VT_KON;
+import static cz.xlisto.odecty.databaze.DbHelper.ZAPLACENO;
 
 /**
  * Přístup k databázi odběrných míst, faktur, měsíčních odečtů atd.
- * Created by xlisto on 11.11.16.
  */
-public class DataSubscriptionPointSource {
+public class DataSubscriptionPointSource extends DataSource{
     private static final String TAG = "DataSubscriptionPointSource";
-    private final Context context;
-    private DbHelperSubscriptionPoint dbHelperSubscriptionPoint;
-    private SQLiteDatabase database;
 
 
     public DataSubscriptionPointSource(Context context) {
-        this.context = context;
-        dbHelperSubscriptionPoint = new DbHelperSubscriptionPoint(context);
-    }
-
-
-    /**
-     * Otevře spojení s databází odečtů, odběrných míst atd.
-     *
-     * @throws SQLException vyjímka při chybě při otevírání databáze
-     */
-    public void open() throws SQLException {
-        if (database != null) {
-            return;
-        }
-
-        try {
-            database = dbHelperSubscriptionPoint.getWritableDatabase();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            dbHelperSubscriptionPoint = new DbHelperSubscriptionPoint(context);
-            database = dbHelperSubscriptionPoint.getWritableDatabase();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Zavře spojení s databází ceníku
-     */
-    public void close() {
-        if (dbHelperSubscriptionPoint != null) {
-            database.close();
-        }
+        super.context = context;
+        dbHelper = new DbHelper(context);
     }
 
 
     public long insertSubscriptionPoint(SubscriptionPointModel subScriptionPointModel) {
-        dbHelperSubscriptionPoint.createSubscriptionPoint(database, subScriptionPointModel.getMilins());
+        dbHelper.createSubscriptionPoint(database, subScriptionPointModel.getMilins());
         return database.insert(TABLE_NAME_SUBSCRIPTION_POINT, null, createContentValue(subScriptionPointModel));
     }
 
@@ -312,7 +274,7 @@ public class DataSubscriptionPointSource {
         String sql = "select *,(SELECT min(datumOd) from " + subscriptionPoint.getTableFAK() + " WHERE id_fak=faktury._id) as minDate from faktury " +
                 " WHERE odber_id=?" +
                 " ORDER BY minDate DESC";
-        String[] args = new String[]{String.valueOf(subscriptionPoint.get_id())};
+        String[] args = new String[]{String.valueOf(subscriptionPoint.getId())};
 
         Cursor cursor = database.rawQuery(sql, args);
 

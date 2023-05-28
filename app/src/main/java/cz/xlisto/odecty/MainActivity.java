@@ -8,6 +8,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
+import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
@@ -97,6 +98,11 @@ public class MainActivity extends AppCompatActivity  {
             long itemId = item.getItemId();
             if (itemId == R.id.menu_compare_price_list) {
                 actualFragment = PriceListCompareFragment.newInstance();
+                b = true;
+            }
+
+            if(itemId == R.id.menu_hdo) {
+                actualFragment = HdoFragment.newInstance();
                 b = true;
             }
 

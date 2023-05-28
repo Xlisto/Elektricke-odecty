@@ -7,13 +7,18 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/menu_compare_price_list"
-            android:title="Porovnání ceníků"
-            app:showAsAction="always" />
+            android:title="@string/compare_price_list"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_hdo"
+            android:title="@string/hdo_times"
+            app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_backup"
-            android:title="Záloha"
-            app:showAsAction="always" />
+            android:title="@string/backup1"
+            app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_test"

@@ -167,6 +167,7 @@
     <string name="select_folder">Vyber složku</string>
 
     <string name="plus">+</string>
+    <string name="minus">-</string>
     <string name="equals">=</string>
     <string name="add_payment">Přidat platbu</string>
     <string name="discount">Sleva</string>
@@ -180,6 +181,18 @@
     <string name="filter_price_list">Filtr ceníků</string>
     <string name="filter_monthly_readings">Filtr odečtů</string>
     <string name="add_nem_monthly_reading">Přidat nové měření</string>
+    <string name="mon">PO</string>
+    <string name="tue">ÚT</string>
+    <string name="wed">ST</string>
+    <string name="thu">ČT</string>
+    <string name="fri">PÁ</string>
+    <string name="sat">SO</string>
+    <string name="sun">NE</string>
+    <string name="from">OD</string>
+    <string name="until">DO</string>
+    <string name="compare_price_list">Porovnání ceníků</string>
+    <string name="hdo_times">Časy HDO</string>
+    <string name="backup1">Záloha</string>
 
 
 </resources>

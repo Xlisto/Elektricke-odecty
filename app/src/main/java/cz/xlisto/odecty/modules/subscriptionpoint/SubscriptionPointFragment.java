@@ -6,12 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.SubscriptionPoint;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -119,7 +123,7 @@ public class SubscriptionPointFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setText(subscriptionPoints.get(position));
-                shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoints.get(position).get_id());
+                shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoints.get(position).getId());
             }
 
             @Override
@@ -135,7 +139,7 @@ public class SubscriptionPointFragment extends Fragment {
         }
         //nastavení spinneru podle uloženého id odběrného místa
         for (int i = 0; i < subscriptionPoints.size(); i++) {
-            if (subscriptionPoints.get(i).get_id() == shp.get(ID_SUBSCRIPTION_POINT, 0L)) {
+            if (subscriptionPoints.get(i).getId() == shp.get(ID_SUBSCRIPTION_POINT, 0L)) {
                 spSubscriptionPoint.setSelection(i);
                 break;
             }
@@ -149,7 +153,7 @@ public class SubscriptionPointFragment extends Fragment {
      * @param subscriptionPoint Objekt odběrného místa
      */
     private void setText(SubscriptionPointModel subscriptionPoint) {
-        itemId = subscriptionPoint.get_id();
+        itemId = subscriptionPoint.getId();
         milins = subscriptionPoint.getMilins();
         tvDescription.setText(subscriptionPoint.getDescription());
         tvPhaze.setText(subscriptionPoint.getCountPhaze() + " x " + subscriptionPoint.getPhaze() + "A");
@@ -181,10 +185,17 @@ public class SubscriptionPointFragment extends Fragment {
      *
      */
     private void deleteItemSubscriptionPoint() {
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
+        dataSettingsSource.open();
+        Log.w("TAG", "deleteItemSubscriptionPoint: " + Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
+        dataSettingsSource.deleteTimeShift(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
+        dataSettingsSource.close();
+
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);
         dataSubscriptionPointSource.close();
+        ;
         onResume();
     }
 
