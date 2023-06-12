@@ -86,7 +86,7 @@ public class PaymentModel {
     @NonNull
     @Override
     public String toString() {
-        return "PaymentModel\nID: " + getId() + "\nČástka: " + getPayment() + "\nID_faktury: " + getIdFak() + "\nDatum: " + ViewHelper.convertLongToTime(getDate()) + " (" + getDate() + ")\nType payment: " + getTypePayment();
+        return "PaymentModel\nID: " + getId() + "\nČástka: " + getPayment() + "\nID_faktury: " + getIdFak() + "\nDatum: " + ViewHelper.convertLongToDate(getDate()) + " (" + getDate() + ")\nType payment: " + getTypePayment();
     }
 
 

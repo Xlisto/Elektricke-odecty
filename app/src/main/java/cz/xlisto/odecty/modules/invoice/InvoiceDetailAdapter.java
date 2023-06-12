@@ -52,7 +52,7 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         SummaryInvoiceModel si = items.get(position);
-        holder.tvDate.setText(ViewHelper.convertLongToTime(si.getDateOf())+" - "+ViewHelper.convertLongToTime(si.getDateTo()));
+        holder.tvDate.setText(ViewHelper.convertLongToDate(si.getDateOf())+" - "+ViewHelper.convertLongToDate(si.getDateTo()));
         holder.tvTitle.setText(si.getTitle().toString());
         holder.tvAmount.setText(DecimalFormatHelper.df3.format(si.getAmount())+" "+si.getUnit());
         holder.tvPriceUnit.setText(DecimalFormatHelper.df2.format(si.getUnitPrice())+" kč/"+si.getUnit());

@@ -43,8 +43,8 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         dataSubscriptionPointSource.close();
 
         if (loadFromDatabase) {
-            btnDateStart.setText(ViewHelper.convertLongToTime(invoice.getDateFrom()));
-            btnDateEnd.setText(ViewHelper.convertLongToTime(invoice.getDateTo()));
+            btnDateStart.setText(ViewHelper.convertLongToDate(invoice.getDateFrom()));
+            btnDateEnd.setText(ViewHelper.convertLongToDate(invoice.getDateTo()));
             letVTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
             letNTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
             letVTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtEnd()));

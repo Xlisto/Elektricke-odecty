@@ -264,8 +264,8 @@ public class InvoiceFragment extends Fragment {
             //nastavení regulovaného ceníku
             PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
             priceList = priceListRegulBuilder.getRegulPriceList();
-            String dateOf = ViewHelper.convertLongToTime(invoice.getDateFrom());
-            String dateTo = ViewHelper.convertLongToTime(invoice.getDateTo());
+            String dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
+            String dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
             double differentDate = Calculation.differentMonth(dateOf, dateTo, DifferenceDate.TypeDate.INVOICE);
             double[] price = Calculation.calculatePriceWithoutPozeMwH(priceList, subscriptionPoint);
             double vt = (invoice.getVtEnd() - invoice.getVtStart()) / 1000;

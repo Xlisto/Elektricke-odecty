@@ -270,8 +270,8 @@ public class Calculation {
         PozeModel poze = new PozeModel(0, 0);
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
-            String dateOf = ViewHelper.convertLongToTime(invoice.getDateFrom());
-            String dateTo = ViewHelper.convertLongToTime(invoice.getDateTo());
+            String dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
+            String dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
             PriceListModel priceList = getPriceList(invoice, context);
             double vt = invoice.getVt() / 1000;
             double nt = invoice.getNt() / 1000;

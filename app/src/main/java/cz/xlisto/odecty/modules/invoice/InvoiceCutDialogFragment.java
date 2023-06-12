@@ -147,7 +147,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         });
 
         sliderDate.addOnChangeListener((slider, value, fromUser) -> {
-            btnDate.setText(ViewHelper.convertLongToTime(((long) value) * million));
+            btnDate.setText(ViewHelper.convertLongToDate(((long) value) * million));
             setTextView();
         });
 
@@ -213,10 +213,10 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         labNT.setLabel(DecimalFormatHelper.df2.format(minNT) + " - " + DecimalFormatHelper.df2.format(maxNT));
         labNT.setDefaultText(DecimalFormatHelper.df2.format(halfNT));
 
-        tvDate.setText(ViewHelper.convertLongToTime(minDate) + " - " + ViewHelper.convertLongToTime(maxDate));
+        tvDate.setText(ViewHelper.convertLongToDate(minDate) + " - " + ViewHelper.convertLongToDate(maxDate));
 
         // Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
-        sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToTime(((long) value) * million));
+        sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToDate(((long) value) * million));
     }
 
 
@@ -239,8 +239,8 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
 
     private void setTextView() {
-        tvDate.setText(ViewHelper.convertLongToTime(minDate) + " - " + ViewHelper.convertLongToTime((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)) + "\n"
-                + ViewHelper.convertLongToTime(((long) sliderDate.getValue()) * million) + " - " + ViewHelper.convertLongToTime(maxDate));
+        tvDate.setText(ViewHelper.convertLongToDate(minDate) + " - " + ViewHelper.convertLongToDate((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)) + "\n"
+                + ViewHelper.convertLongToDate(((long) sliderDate.getValue()) * million) + " - " + ViewHelper.convertLongToDate(maxDate));
 
         labVT.setLabel(DecimalFormatHelper.df2.format(minVT) + " - " + DecimalFormatHelper.df2.format(sliderVT.getValue()) + "\n"
                 + DecimalFormatHelper.df2.format(sliderVT.getValue()) + " - " + DecimalFormatHelper.df2.format(maxVT));

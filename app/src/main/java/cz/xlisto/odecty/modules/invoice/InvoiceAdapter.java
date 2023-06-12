@@ -146,8 +146,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         checkDate(position, holder, priceListRegulBuilder);
 
 
-        String dateStart = ViewHelper.convertLongToTime(invoice.getDateFrom());
-        String dateEnd = ViewHelper.convertLongToTime(invoice.getDateTo());
+        String dateStart = ViewHelper.convertLongToDate(invoice.getDateFrom());
+        String dateEnd = ViewHelper.convertLongToDate(invoice.getDateTo());
         double differentDate = Calculation.differentMonth(dateStart, dateEnd, DifferenceDate.TypeDate.INVOICE);
         holder.dateStart.setText(dateStart);
         holder.dateEnd.setText(dateEnd);
@@ -339,15 +339,15 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         double vtStart, ntStart, vtEnd, ntEnd, prevVt, prevNt, nextVt, nextNt;
         invoice = items.get(position);
 
-        dateTo = ViewHelper.convertLongToTime(invoice.getDateTo());
-        dateOf = ViewHelper.convertLongToTime(invoice.getDateFrom());
+        dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
+        dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
         vtStart = invoice.getVtStart();
         ntStart = invoice.getNtStart();
         vtEnd = invoice.getVtEnd();
         ntEnd = invoice.getNtEnd();
         if (position > 0) {
             nextInvoice = items.get(position - 1);
-            nextDate = ViewHelper.convertLongToTime(nextInvoice.getDateFrom() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
+            nextDate = ViewHelper.convertLongToDate(nextInvoice.getDateFrom() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
             nextVt = nextInvoice.getVtStart();
             nextNt = nextInvoice.getNtStart();
         } else {
@@ -357,7 +357,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
         if (position < items.size() - 1) {
             prevInvoice = items.get(position + 1);
-            prevDate = ViewHelper.convertLongToTime(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
+            prevDate = ViewHelper.convertLongToDate(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
             prevVt = prevInvoice.getVtEnd();
             prevNt = prevInvoice.getNtEnd();
         } else {

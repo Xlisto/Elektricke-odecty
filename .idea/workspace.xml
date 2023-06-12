@@ -11,18 +11,25 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidání modulu pro evidenci časů HDO (nočního proudu)&#10;Vytvořeny nové třídy pro zobrazení, přidání a editaci záznamů HDO: HdoFragment, HdoAddEditFragmentAbstract, HdoAddFragment, HdoEditFragment.&#10;Vytvořen nový model kontejneru HDO času: HdoModel.&#10;Vytvořena nová třída pro přístup k databázi záznamů HDO: DataHdoSource.&#10;Vytvořena nová třída pro přístup k databázi nastavení aplikace: DataSettingsSource. Modul HDO si v nastavení ukládá rozdíl času hodin u každého odběrného místa">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.">
+      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPHdo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BootCompleteReceiver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSettingsSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSettingsSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/MySpinnerSubscriptionPointAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/MySpinnerSubscriptionPointAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/SubscriptionPointFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/SubscriptionPointFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoNotice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoNotice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -77,8 +84,8 @@
         <option value="editable-svg" />
         <option value="CMakeLists.txt" />
         <option value="xml" />
-        <option value="resourceFile" />
         <option value="layoutResourceFile" />
+        <option value="resourceFile" />
         <option value="Class" />
       </list>
     </option>
@@ -100,6 +107,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="SOFT" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoService.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -111,33 +121,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
-    "cidr.known.project.marker": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/odecty_a_mista.db",
-    "project.structure.last.edited": "Dependencies",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED&quot;: &quot;MaterialButton&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="junit.framework.TestCase" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="cz.xlisto.odecty" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
       <recent name="cz.xlisto.odecty.utils" />
@@ -530,7 +543,21 @@
       <option name="project" value="LOCAL" />
       <updated>1685323833325</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Přidání modulu pro evidenci časů HDO (nočního proudu)&#10;Vytvořeny nové třídy pro zobrazení, přidání a editaci záznamů HDO: HdoFragment, HdoAddEditFragmentAbstract, HdoAddFragment, HdoEditFragment.&#10;Vytvořen nový model kontejneru HDO času: HdoModel.&#10;Vytvořena nová třída pro přístup k databázi záznamů HDO: DataHdoSource.&#10;Vytvořena nová třída pro přístup k databázi nastavení aplikace: DataSettingsSource. Modul HDO si v nastavení ukládá rozdíl času hodin u každého odběrného místa">
+      <created>1685438717809</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1685438717809</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.">
+      <created>1686534158912</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1686534158912</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -604,7 +631,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují." />
     <MESSAGE value="Přidaná složka .idea" />
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
@@ -629,6 +655,7 @@
     <MESSAGE value="Zobrazení nabídky Filtr ceníků a Filtr odečtů" />
     <MESSAGE value="Úprava PriceListAdapter&#10;úprava kodu vyvolávající upozornění." />
     <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu)&#10;Vytvořeny nové třídy pro zobrazení, přidání a editaci záznamů HDO: HdoFragment, HdoAddEditFragmentAbstract, HdoAddFragment, HdoEditFragment.&#10;Vytvořen nový model kontejneru HDO času: HdoModel.&#10;Vytvořena nová třída pro přístup k databázi záznamů HDO: DataHdoSource.&#10;Vytvořena nová třída pro přístup k databázi nastavení aplikace: DataSettingsSource. Modul HDO si v nastavení ukládá rozdíl času hodin u každého odběrného místa" />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidání modulu pro evidenci časů HDO (nočního proudu)&#10;Vytvořeny nové třídy pro zobrazení, přidání a editaci záznamů HDO: HdoFragment, HdoAddEditFragmentAbstract, HdoAddFragment, HdoEditFragment.&#10;Vytvořen nový model kontejneru HDO času: HdoModel.&#10;Vytvořena nová třída pro přístup k databázi záznamů HDO: DataHdoSource.&#10;Vytvořena nová třída pro přístup k databázi nastavení aplikace: DataSettingsSource. Modul HDO si v nastavení ukládá rozdíl času hodin u každého odběrného místa" />
+    <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty." />
   </component>
 </project>

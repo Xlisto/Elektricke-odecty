@@ -83,7 +83,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         PaymentModel payment = items.get(position);
-        holder.tvDate.setText(ViewHelper.convertLongToTime(payment.getDate()));
+        holder.tvDate.setText(ViewHelper.convertLongToDate(payment.getDate()));
         holder.tvPayment.setText(DecimalFormatHelper.df2.format(payment.getPayment()) + " kč");
         holder.tvType.setText("" + payment.getTypePaymentString());
         PaymentModel.getDiscountDPHText(payment.getDiscountDPH(), holder.tvDescription);

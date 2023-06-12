@@ -128,9 +128,9 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
      * Nastaví hodnoty do TextViews
      */
     private void setViews() {
-        tvDateFirst.setText(ViewHelper.convertLongToTime(invoiceFirst.getDateFrom()) + " - " + ViewHelper.convertLongToTime(invoiceFirst.getDateTo()));
-        tvDateSecond.setText(ViewHelper.convertLongToTime(invoiceSecond.getDateFrom()) + " - " + ViewHelper.convertLongToTime(invoiceSecond.getDateTo()));
-        tvDateTotal.setText(ViewHelper.convertLongToTime(invoiceJoined.getDateFrom()) + " - " + ViewHelper.convertLongToTime(invoiceJoined.getDateTo()));
+        tvDateFirst.setText(ViewHelper.convertLongToDate(invoiceFirst.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceFirst.getDateTo()));
+        tvDateSecond.setText(ViewHelper.convertLongToDate(invoiceSecond.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceSecond.getDateTo()));
+        tvDateTotal.setText(ViewHelper.convertLongToDate(invoiceJoined.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceJoined.getDateTo()));
 
         DecimalFormat df2 = DecimalFormatHelper.df2;
         tvVtStartFirst.setText(df2.format(invoiceFirst.getVtStart()));

@@ -126,8 +126,8 @@ public class InvoiceModel {
      * @return
      */
     public double getDifferentDate(DifferenceDate.TypeDate type){
-        String dateOf = ViewHelper.convertLongToTime(getDateFrom());
-        String dateTo = ViewHelper.convertLongToTime(getDateTo());
+        String dateOf = ViewHelper.convertLongToDate(getDateFrom());
+        String dateTo = ViewHelper.convertLongToDate(getDateTo());
         return Calculation.differentMonth(dateOf, dateTo, type);
     }
 

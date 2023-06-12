@@ -76,6 +76,13 @@
             android:textSize="16sp" />
     </LinearLayout>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swHdoService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout"
+        android:text="Sledování nízského tarifu" />
+
     <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
@@ -99,8 +106,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/linearLayout"
-        android:layoutAnimation="@anim/layout_animation_fall_down"/>
+        android:layout_below="@id/swHdoService"
+        android:layoutAnimation="@anim/layout_animation_fall_down" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabHdo"

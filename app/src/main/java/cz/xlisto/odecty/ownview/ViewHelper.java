@@ -34,6 +34,15 @@ public class ViewHelper {
 
 
     /**
+     * Vrátí instanci SimpleDateFormat s výchozím petternem hh:mm:ss
+     * @return SimpleDateFormat s patternem hh:mm:ss
+     */
+    public static SimpleDateFormat getSimpleTimeFormat() {
+        return new SimpleDateFormat("HH:mm:ss", Locale.GERMANY);
+    }
+
+
+    /**
      * Vrátí instanci SimpleDateFormat s možností definovat svůj vlastní pattern
      * příklad: dd.MM.yyyy (25.12.2020)
      * @param pattern  např.: dd.MM.yyyy
@@ -96,9 +105,14 @@ public class ViewHelper {
      * @param l datum v milisekundách
      * @return String datum ve formátu dd.MM.yyyy
      */
-    public static String convertLongToTime(long l) {
+    public static String convertLongToDate(long l) {
         long offset = getOffsetTimeZones(l);
         return getSimpleDateFormat().format(l+offset);
+    }
+
+    public static String convertLongToTime(long l) {
+        long offset = getOffsetTimeZones(l);
+        return getSimpleTimeFormat().format(l+offset);
     }
 
 

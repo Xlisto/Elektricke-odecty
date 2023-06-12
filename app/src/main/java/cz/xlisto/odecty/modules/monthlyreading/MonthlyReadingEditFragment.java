@@ -74,7 +74,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         if (savedInstanceState == null) {
             loadMonthlyReading();
 
-            btnDate.setText(ViewHelper.convertLongToTime(monthlyReading.getDate()));
+            btnDate.setText(ViewHelper.convertLongToDate(monthlyReading.getDate()));
             labVT.setDefaultText(df1.format(monthlyReading.getVt()));
             labNT.setDefaultText(df1.format(monthlyReading.getNt()));
             labPayment.setDefaultText(df2.format(monthlyReading.getPayment()));

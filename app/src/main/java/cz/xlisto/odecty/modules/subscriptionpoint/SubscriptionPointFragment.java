@@ -10,6 +10,7 @@ import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.services.HdoData;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -54,7 +55,8 @@ public class SubscriptionPointFragment extends Fragment {
     public SubscriptionPointFragment() {
     }
 
-    /** Fragment zobrazení odběrných míst
+    /**
+     * Fragment zobrazení odběrných míst
      *
      * @return Nová instance fragmentu SubscriptionPointFragment.
      */
@@ -124,6 +126,8 @@ public class SubscriptionPointFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setText(subscriptionPoints.get(position));
                 shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoints.get(position).getId());
+
+                HdoData.loadHdoData(requireActivity());
             }
 
             @Override
@@ -171,7 +175,6 @@ public class SubscriptionPointFragment extends Fragment {
 
     /**
      * Zobrazí dialogové okno s dotazem na smazání
-     *
      */
     private void showDeleteDialog() {
         YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.smazat_odberne_misto2), FLAG_DELETE_SUBSCRIPTION_POINT);
@@ -179,10 +182,8 @@ public class SubscriptionPointFragment extends Fragment {
     }
 
 
-
     /**
      * Smaže odběrné místo
-     *
      */
     private void deleteItemSubscriptionPoint() {
         DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
@@ -195,7 +196,7 @@ public class SubscriptionPointFragment extends Fragment {
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);
         dataSubscriptionPointSource.close();
-        ;
+
         onResume();
     }
 

@@ -167,8 +167,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         long reads = invoice.getReads();
 
 
-        String startDate = ViewHelper.convertLongToTime(minDate);
-        String endDate = ViewHelper.convertLongToTime(maxDate);
+        String startDate = ViewHelper.convertLongToDate(minDate);
+        String endDate = ViewHelper.convertLongToDate(maxDate);
         double differentDate = Calculation.differentMonth(startDate, endDate, DifferenceDate.TypeDate.INVOICE);
         holder.tvDateOf.setText(startDate);
         holder.tvDateTo.setText(endDate);
@@ -208,8 +208,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         double vtMin, ntMin, vtMax, ntMax, prevVt, prevNt, nextVt, nextNt;
 
         invoiceList = items.get(position);
-        dateOf = ViewHelper.convertLongToTime(invoiceList.getMinDate());
-        dateTo = ViewHelper.convertLongToTime(invoiceList.getMaxDate());
+        dateOf = ViewHelper.convertLongToDate(invoiceList.getMinDate());
+        dateTo = ViewHelper.convertLongToDate(invoiceList.getMaxDate());
         vtMin = invoiceList.getMinVT();
         vtMax = invoiceList.getMaxVT();
         ntMin = invoiceList.getMinNT();
@@ -217,7 +217,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         if (position > 0) {
             nextInvoiceList = items.get(position - 1);
-            nextDate = ViewHelper.convertLongToTime(nextInvoiceList.getMinDate() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
+            nextDate = ViewHelper.convertLongToDate(nextInvoiceList.getMinDate() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
             nextVt = nextInvoiceList.getMinVT();
             nextNt = nextInvoiceList.getMinNT();
         } else {
@@ -227,7 +227,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         }
         if (position < items.size() - 1) {
             lastInvoiceList = items.get(position + 1);
-            prevDate = ViewHelper.convertLongToTime(lastInvoiceList.getMaxDate() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
+            prevDate = ViewHelper.convertLongToDate(lastInvoiceList.getMaxDate() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
             prevVt = lastInvoiceList.getMaxVT();
             prevNt = lastInvoiceList.getMaxNT();
         } else {

@@ -190,8 +190,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                         "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT,
                         priceList.getRada() + " "
                                 + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
-                                + ViewHelper.convertLongToTime(priceList.getPlatnostOD()) + " - "
-                                + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
+                                + ViewHelper.convertLongToDate(priceList.getPlatnostOD()) + " - "
+                                + ViewHelper.convertLongToDate(priceList.getPlatnostDO()));
                 yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "yesNoDialogFragment");
 
             });
@@ -199,8 +199,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             showButtons(holder, position);
         }
 
-        holder.tvFrom.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostOD()));
-        holder.tvUntil.setText("" + ViewHelper.convertLongToTime(priceList.getPlatnostDO()));
+        holder.tvFrom.setText("" + ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
+        holder.tvUntil.setText("" + ViewHelper.convertLongToDate(priceList.getPlatnostDO()));
         holder.tvSeries.setText("" + priceList.getRada());
         holder.tvProduct.setText("" + priceList.getProdukt());
         holder.tvRate.setText("" + priceList.getSazba());

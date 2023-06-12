@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 
-import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToTime;
+import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToDate;
 
 /**
  * Model ceníku
@@ -168,7 +168,7 @@ public class PriceListModel {
         if (this.produkt.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
 
-        return getProdukt() + ", " + getSazba() + ",\nPlatný od: " + convertLongToTime(getPlatnostOD());
+        return getProdukt() + ", " + getSazba() + ",\nPlatný od: " + convertLongToDate(getPlatnostOD());
     }
 
 

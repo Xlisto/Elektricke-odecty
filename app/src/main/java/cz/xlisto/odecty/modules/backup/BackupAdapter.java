@@ -98,7 +98,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 long textLong = Long.parseLong(text);
                 cl.setTimeInMillis(textLong);
                 Date date = cl.getTime();
-                holder.tvName.setText(ViewHelper.convertLongToTime(date.getTime()));
+                holder.tvName.setText(ViewHelper.convertLongToDate(date.getTime()));
             }
 
         } catch (

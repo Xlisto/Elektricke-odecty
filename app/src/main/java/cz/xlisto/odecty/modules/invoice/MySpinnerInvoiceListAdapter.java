@@ -44,8 +44,8 @@ public class MySpinnerInvoiceListAdapter extends ArrayAdapter<InvoiceListModel> 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_invoice_list, parent, false);
 
         InvoiceListModel invoiceList = invoicesList.get(position);
-        String minDate = ViewHelper.convertLongToTime(invoiceList.getMinDate());
-        String maxDate = ViewHelper.convertLongToTime(invoiceList.getMaxDate());
+        String minDate = ViewHelper.convertLongToDate(invoiceList.getMinDate());
+        String maxDate = ViewHelper.convertLongToDate(invoiceList.getMaxDate());
         TextView tvNumberInvoice = view.findViewById(R.id.tvNumberInvoice);
         TextView tvDateInvoice = view.findViewById(R.id.tvDateInvoiceList);
         tvNumberInvoice.setText(invoiceList.getNumberInvoice());

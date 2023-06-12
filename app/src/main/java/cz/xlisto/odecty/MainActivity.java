@@ -13,12 +13,19 @@ import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
+import cz.xlisto.odecty.services.HdoData;
+import cz.xlisto.odecty.services.HdoNotice;
+import cz.xlisto.odecty.services.HdoService;
+import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.utils.FragmentChange;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -28,7 +35,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
@@ -101,17 +108,17 @@ public class MainActivity extends AppCompatActivity  {
                 b = true;
             }
 
-            if(itemId == R.id.menu_hdo) {
+            if (itemId == R.id.menu_hdo) {
                 actualFragment = HdoFragment.newInstance();
                 b = true;
             }
 
-            if (itemId ==  R.id.menu_backup) {
+            if (itemId == R.id.menu_backup) {
                 actualFragment = new BackupFragment();
                 b = true;
             }
 
-            if (itemId ==  R.id.menu_test) {
+            if (itemId == R.id.menu_test) {
                 actualFragment = TestFragment.newInstance();
                 b = true;
             }
@@ -121,7 +128,17 @@ public class MainActivity extends AppCompatActivity  {
             drawer.closeDrawer(GravityCompat.START, true);
             return b;
         });
+        Intent intent = getIntent();
 
+        if (intent.getStringExtra(HdoNotice.ARGS_FRAGMENT) != null) {
+
+            if ((intent.getStringExtra(HdoNotice.ARGS_FRAGMENT)).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
+                getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
+                actualFragment = HdoFragment.newInstance();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                return;
+            }
+        }
         if (savedInstanceState != null) {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
         } else {
@@ -129,6 +146,8 @@ public class MainActivity extends AppCompatActivity  {
             bottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
+
+        startHdoService();
     }
 
 
@@ -171,6 +190,22 @@ public class MainActivity extends AppCompatActivity  {
             } else {
                 super.onBackPressed();
             }
+        }
+    }
+
+
+    /**
+     * Spustí službu pro HDO, pokud je uživatelem povolená
+     */
+    private void startHdoService() {
+        ShPHdo shPHdo = new ShPHdo(getApplicationContext());
+        if (shPHdo.get(ShPHdo.ARG_RUNNING_SERVICE, false)) {
+            HdoData.loadHdoData(getApplicationContext());
+            Intent intent = new Intent(this, HdoService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                startForegroundService(intent);
+            else
+                startService(intent);
         }
     }
 }

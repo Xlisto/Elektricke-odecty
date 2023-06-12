@@ -276,7 +276,7 @@ public class DataPriceListSource {
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
             if (column.equals(PLATNOST_OD)) {
-                arrayList.add(ViewHelper.convertLongToTime(cursor.getLong(0)));
+                arrayList.add(ViewHelper.convertLongToDate(cursor.getLong(0)));
             } else {
                 arrayList.add(cursor.getString(0));
             }

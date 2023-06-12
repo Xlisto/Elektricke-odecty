@@ -130,7 +130,7 @@ public class PriceListDetailFragment extends Fragment {
         ldnDPH = v.findViewById(R.id.ldn_DPH);
 
 
-        ldnDatum.setPrice(ViewHelper.convertLongToTime(priceList.getPlatnostOD()));
+        ldnDatum.setPrice(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
 
         ldnRada.setPrice(priceList.getRada());
         ldnProdukt.setPrice(priceList.getProdukt());

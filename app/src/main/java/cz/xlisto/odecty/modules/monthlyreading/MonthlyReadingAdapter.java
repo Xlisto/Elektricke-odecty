@@ -130,7 +130,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         } else
             holder.tvPriceList.setText(context.getResources().getString(R.string.vyberteCenik));
 
-        holder.tvDate.setText(ViewHelper.convertLongToTime(monthlyReading.getDate()));
+        holder.tvDate.setText(ViewHelper.convertLongToDate(monthlyReading.getDate()));
         holder.tvVt.setText(DecimalFormatHelper.df2.format(monthlyReading.getVt()));
         holder.tvNt.setText(DecimalFormatHelper.df2.format(monthlyReading.getNt()));
         holder.tvPayment.setText(DecimalFormatHelper.df2.format(monthlyReading.getPayment()) + " Kč");
@@ -147,7 +147,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             double total = 0;
             double different = 0;
             monthlyReadingPrevious = items.get(position + 1);
-            month = Calculation.differentMonth(ViewHelper.convertLongToTime(items.get(position + 1).getDate()), holder.tvDate.getText().toString(), DifferenceDate.TypeDate.MONTH);
+            month = Calculation.differentMonth(ViewHelper.convertLongToDate(items.get(position + 1).getDate()), holder.tvDate.getText().toString(), DifferenceDate.TypeDate.MONTH);
             if (priceList != null) {
                 holder.ivWarning.setVisibility(View.GONE);
                 if (showRegulPrice) {

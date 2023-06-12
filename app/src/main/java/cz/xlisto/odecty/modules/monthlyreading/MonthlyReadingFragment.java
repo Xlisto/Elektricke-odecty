@@ -84,7 +84,7 @@ public class MonthlyReadingFragment extends Fragment {
                     from = from + ViewHelper.getOffsetTimeZones(from);
                     tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
                     tvMonthlyReadingFilter.setText("Zobrazené období: "
-                            + ViewHelper.convertLongToTime(from) + " - " + ViewHelper.convertLongToTime(to));
+                            + ViewHelper.convertLongToDate(from) + " - " + ViewHelper.convertLongToDate(to));
                     if(from == 0 && to == Long.MAX_VALUE){
                         tvMonthlyReadingFilter.setVisibility(View.GONE);
                         tvSubscriptionPointName.setVisibility(View.VISIBLE);
