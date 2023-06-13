@@ -172,8 +172,16 @@ public class HdoFragment extends Fragment {
      */
     private void setTimeDifferent() {
         //TODO: doplnit správné časování slov
+        String hours = "hodin";
+        if (timeDifferent / 3600000 == 1) hours = "hodina";
+        if ((timeDifferent / 3600000 >= 2) && (timeDifferent / 3600000) <= 4) hours = "hodiny";
 
-        tvTimeDifference.setText(String.format(Locale.GERMANY, "Rozdíl %01d hodin a %02d minut", timeDifferent / 3600000, (timeDifferent % 3600000) / 60000));
+        String minutes = "minut";
+        if (((timeDifferent % 3600000) / 60000) == 1) minutes = "minuta";
+        if ((((timeDifferent % 3600000) / 60000) >= 2) && (((timeDifferent % 3600000) / 60000) <= 4))
+            minutes = "minuty";
+
+        tvTimeDifference.setText(String.format(Locale.GERMANY, "Rozdíl %01d %s a %02d %s ", timeDifferent / 3600000, hours, (timeDifferent % 3600000) / 60000, minutes));
         setTime();
     }
 
