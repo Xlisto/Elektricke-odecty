@@ -11,19 +11,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.">
-      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPHdo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BootCompleteReceiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/SubscriptionPointFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/subscriptionpoint/SubscriptionPointFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoNotice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoNotice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoService.java" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zobrazení dní HDO&#10;Nahrazení textové platnosti dnů časů HDO zvýrazněnými TextView pro jednotlivé dny.&#10;- zaveden styl pro TextView (styleDaysViewLight)&#10;- zavedena grafika pozadí (shape_days)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,14 +67,14 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="valueResourceFile" />
         <option value="JUnit3 Test Class" />
         <option value="editable-svg" />
         <option value="CMakeLists.txt" />
         <option value="xml" />
         <option value="layoutResourceFile" />
-        <option value="resourceFile" />
         <option value="Class" />
+        <option value="resourceFile" />
+        <option value="valueResourceFile" />
       </list>
     </option>
   </component>
@@ -557,7 +545,21 @@
       <option name="project" value="LOCAL" />
       <updated>1686534158912</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.&#10;Autostart služby s notifikací při restartu zařízení">
+      <created>1686649136897</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1686649136897</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Zobrazení dní HDO&#10;Nahrazení textové platnosti dnů časů HDO zvýrazněnými TextView pro jednotlivé dny.&#10;- zaveden styl pro TextView (styleDaysViewLight)&#10;- zavedena grafika pozadí (shape_days)">
+      <created>1686669448856</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1686669448856</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -631,8 +633,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidaná složka .idea" />
-    <MESSAGE value="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;." />
     <MESSAGE value="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume()." />
     <MESSAGE value="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment." />
@@ -656,6 +656,8 @@
     <MESSAGE value="Úprava PriceListAdapter&#10;úprava kodu vyvolávající upozornění." />
     <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu)&#10;Vytvořeny nové třídy pro zobrazení, přidání a editaci záznamů HDO: HdoFragment, HdoAddEditFragmentAbstract, HdoAddFragment, HdoEditFragment.&#10;Vytvořen nový model kontejneru HDO času: HdoModel.&#10;Vytvořena nová třída pro přístup k databázi záznamů HDO: DataHdoSource.&#10;Vytvořena nová třída pro přístup k databázi nastavení aplikace: DataSettingsSource. Modul HDO si v nastavení ukládá rozdíl času hodin u každého odběrného místa" />
     <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty." />
+    <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.&#10;Autostart služby s notifikací při restartu zařízení" />
+    <MESSAGE value="Zobrazení dní HDO&#10;Nahrazení textové platnosti dnů časů HDO zvýrazněnými TextView pro jednotlivé dny.&#10;- zaveden styl pro TextView (styleDaysViewLight)&#10;- zavedena grafika pozadí (shape_days)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Zobrazení dní HDO&#10;Nahrazení textové platnosti dnů časů HDO zvýrazněnými TextView pro jednotlivé dny.&#10;- zaveden styl pro TextView (styleDaysViewLight)&#10;- zavedena grafika pozadí (shape_days)" />
   </component>
 </project>

@@ -36,7 +36,7 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRele, tvDay, tvTime;
+        TextView tvRele, tvDay, tvTime, tvDayMon, tvDayTue, tvDayWed, tvDayThu, tvDayFri, tvDaySat, tvDaySun;
         LinearLayout lnHdoOut, lnHdoButtons;
         Button btnEdit, btnDelete;
 
@@ -65,6 +65,13 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         vh.tvTime = v.findViewById(R.id.tvTime);
         vh.btnEdit = v.findViewById(R.id.btnEditHdo);
         vh.btnDelete = v.findViewById(R.id.btnDeleteHdo);
+        vh.tvDayMon = v.findViewById(R.id.tvDayMon);
+        vh.tvDayTue = v.findViewById(R.id.tvDayTue);
+        vh.tvDayWed = v.findViewById(R.id.tvDayWed);
+        vh.tvDayThu = v.findViewById(R.id.tvDayThu);
+        vh.tvDayFri = v.findViewById(R.id.tvDayFri);
+        vh.tvDaySat = v.findViewById(R.id.tvDaySat);
+        vh.tvDaySun = v.findViewById(R.id.tvDaySun);
 
         return vh;
     }
@@ -74,19 +81,45 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull HdoAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         HdoModel item = items.get(position);
 
-        String days = "";
-        if (item.getMon() == 1) days = "PO, ";
-        if (item.getTue() == 1) days = days + "ÚT, ";
-        if (item.getWed() == 1) days = days + "ST, ";
-        if (item.getThu() == 1) days = days + "ČT, ";
-        if (item.getFri() == 1) days = days + "PÁ, ";
-        if (item.getSat() == 1) days = days + "SO, ";
-        if (item.getSun() == 1) days = days + "NE, ";
-        if (days.length() > 2)
-            days = days.substring(0, (days.length() - 2));//odstranění poslední čárky na konci řádku, nesmí to být prázdný řetězec
+        if ((item.getMon() == 0)) {
+            holder.tvDayMon.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDayMon.setVisibility(View.VISIBLE);
+        }
+        if ((item.getTue() == 0)) {
+            holder.tvDayTue.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDayTue.setVisibility(View.VISIBLE);
+        }
+        if ((item.getWed() == 0)) {
+            holder.tvDayWed.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDayWed.setVisibility(View.VISIBLE);
+        }
+        if ((item.getThu() == 0)) {
+            holder.tvDayThu.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDayThu.setVisibility(View.VISIBLE);
+        }
+        if ((item.getFri() == 0)) {
+            holder.tvDayFri.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDayFri.setVisibility(View.VISIBLE);
+        }
+        if ((item.getSat() == 0)) {
+            holder.tvDaySat.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDaySat.setVisibility(View.VISIBLE);
+        }
+        if ((item.getSun() == 0)) {
+            holder.tvDaySun.setVisibility(View.INVISIBLE);
+        } else {
+            holder.tvDaySun.setVisibility(View.VISIBLE);
+        }
+
 
         holder.tvRele.setText(item.getRele());
-        holder.tvDay.setText(days);
+        holder.tvDay.setVisibility(View.GONE);
         holder.tvTime.setText("Čas: "+item.getTimeFrom()+" - "+item.getTimeUntil());
 
         holder.lnHdoOut.setOnClickListener(v1 -> {
