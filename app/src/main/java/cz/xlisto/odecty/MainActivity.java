@@ -1,5 +1,15 @@
 package cz.xlisto.odecty;
 
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,29 +19,18 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
+import cz.xlisto.odecty.modules.hdo.HdoSite;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
+import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.services.HdoData;
 import cz.xlisto.odecty.services.HdoNotice;
 import cz.xlisto.odecty.services.HdoService;
 import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.shp.ShPMainActivity;
-import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.utils.FragmentChange;
-
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
@@ -115,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_backup) {
                 actualFragment = new BackupFragment();
+                b = true;
+            }
+
+            if (itemId == R.id.menu_hdo_z_netu) {
+                //actualFragment = TestFragment.newInstance();
+                actualFragment = HdoSite.newInstance();
                 b = true;
             }
 

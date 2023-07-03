@@ -135,6 +135,8 @@ public class HdoFragment extends Fragment {
         loadData();
 
         swHdoService.setChecked(HdoService.isRunningService());
+        HdoService.setHdoModels(hdoModels);
+        HdoService.setDifferentTime(timeDifferent);
     }
 
 
@@ -171,7 +173,6 @@ public class HdoFragment extends Fragment {
      * Nastaví časový posun
      */
     private void setTimeDifferent() {
-        //TODO: doplnit správné časování slov
         String hours = "hodin";
         if (timeDifferent / 3600000 == 1) hours = "hodina";
         if ((timeDifferent / 3600000 >= 2) && (timeDifferent / 3600000) <= 4) hours = "hodiny";

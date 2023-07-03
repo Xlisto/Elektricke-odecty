@@ -21,6 +21,11 @@
             app:showAsAction="ifRoom" />
 
         <item
+            android:id="@+id/menu_hdo_z_netu"
+            android:title="HDO z netu"
+            app:showAsAction="always" />
+
+        <item
             android:id="@+id/menu_test"
             android:title="Testovací fragment"
             app:showAsAction="always" />

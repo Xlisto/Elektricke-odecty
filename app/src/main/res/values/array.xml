@@ -21,4 +21,118 @@
         <item>D 57d</item>
         <item>D 61d</item>
     </string-array>
+
+    <string-array name="distribucni_uzemi_kratke">
+        <item>ČEZ</item>
+        <item>EG.D</item>
+        <item>PRE</item>
+    </string-array>
+
+    <string-array name="area_cez">
+        <item>Střed</item>
+        <item>Sever</item>
+        <item>Západ</item>
+        <item>Východ</item>
+        <item>Morava</item>
+    </string-array>
+
+    <string-array name="area_egd">
+        <item>Uherské Hradiště</item>
+        <item>Kroměříš</item>
+        <item>Zlín</item>
+        <item>Prostějov</item>
+        <item>Vyškov</item>
+        <item>Hodonín</item>
+        <item>Blansko</item>
+        <item>Brno - venkov</item>
+        <item>Brno</item>
+        <item>Břeclav</item>
+        <item>Znojmo</item>
+        <item>Třebíč</item>
+        <item>Ždár nad Sázavou</item>
+        <item>Jihlava</item>
+        <item>Pelhřimov</item>
+        <item>Jindřichův Hradec</item>
+        <item>Tábor</item>
+        <item>Písek</item>
+        <item>Strakonice</item>
+        <item>České Budějovice</item>
+        <item>Český Krumlov</item>
+        <item>Prachatice</item>
+        <item>Nosislav</item>
+        <item>Dačice</item>
+    </string-array>
+
+    <string-array name="area_pre">
+        <item>261 - Elektromobil - podnikatelé</item>
+        <item>262 - Elektromobil - domácnosti</item>
+        <item>485 - odblokování NT</item>
+        <item>486 - odblokování spotřebiče</item>
+        <item>487 - odblokování NT</item>
+        <item>488 - odblokování spotřebiče</item>
+        <item>489 - odblokování přípravy TUV</item>
+        <item>490 - odblokování NT a spotřebiče</item>
+        <item>491 - odblokování NT a spotřebiče</item>
+        <item>492 - odblokování NT</item>
+        <item>497 - odblokování spotřebiče</item>
+        <item>499 - odblokování NT</item>
+        <item>500 - odblokování spotřebiče</item>
+        <item>515 - odblokování NT</item>
+        <item>516 - odblokování spotřebiče</item>
+        <item>517 - odblokování NT</item>
+        <item>518 - odblokování spotřebiče</item>
+        <item>519 - odblokování NT - souvislý</item>
+        <item>520 - odblokování spotřebiče - souvislý</item>
+        <item>521 - odblokování přípravy TUV</item>
+        <item>524 - odblokování NT</item>
+        <item>525 - odblokování NT</item>
+        <item>526 - odblokování spotřebiče</item>
+        <item>527 - odblokování NT</item>
+        <item>528 - odblokování spotřebiče</item>
+        <item>529 - odblokování spotřebiče</item>
+        <item>530 - odblokování přípravy TUV</item>
+        <item>532 - odblokování spotřebiče</item>
+        <item>533 - odblokování NT</item>
+        <item>534 - odblokování spotřebiče</item>
+        <item>535 - odblokování NT</item>
+        <item>536 - odblokování spotřebiče</item>
+        <item>537 - odblokování přípravy TUV</item>
+        <item>540 - odblokování NT</item>
+        <item>543 - odblokování NT</item>
+        <item>544 - odblokování spotřebiče</item>
+        <item>545 - odblokování spotřebiče</item>
+        <item>548 - odblokování spotřebiče</item>
+        <item>549 - odblokování NT</item>
+        <item>550 - odblokování spotřebiče</item>
+        <item>551 - odblokování NT - souvislý</item>
+        <item>552 - odblokování spotřebiče - souvislý</item>
+        <item>553 - odblokování přípravy TUV</item>
+        <item>556 - odblokování NT</item>
+        <item>561 - odblokování spotřebiče</item>
+        <item>565 - odblokování NT sazby</item>
+        <item>566 - odblokování spotřebiče</item>
+        <item>567 - odblokování NT</item>
+        <item>568 - odblokování spotřebiče</item>
+        <item>569 - odblokování přípravy TUV</item>
+        <item>573 - odblokování NT sazby D</item>
+        <item>574 - odblokování spotřebiče</item>
+        <item>575 - odblokování přípravy TUV</item>
+        <item>586 - víkendový tarif</item>
+        <item>597 - odblokování NT</item>
+        <item>598 - odblokování spotřebiče</item>
+        <item>599 - odblokování NT</item>
+        <item>600 - odblokování spotřebiče</item>
+        <item>601 - odblokování přípravy TUV</item>
+        <item>605 - odblokování NT sazby D</item>
+        <item>606 - odblokování spotřebiče</item>
+        <item>607 - odblokování přípravy TUV</item>
+        <item>777 - Emob_C_TAR_777</item>
+        <item>778 - Emob_D_TAR_778</item>
+    </string-array>
+
+    <string-array name="url_hdo">
+        <item>https://www.cezdistribuce.cz/cs/pro-zakazniky/spinani-hdo</item>
+        <item>https://www.egd.cz/casy-platnosti-nizkeho-tarifu</item>
+        <item>https://www.predistribuce.cz/cs/potrebuji-zaridit/zakaznici/stav-hdo/</item>
+    </string-array>
 </resources>
