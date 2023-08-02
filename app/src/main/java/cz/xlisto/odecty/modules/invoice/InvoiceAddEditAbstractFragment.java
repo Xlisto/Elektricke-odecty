@@ -107,11 +107,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        btnBack.setOnClickListener(v -> {
-            Keyboard.hide(requireActivity());
-            loadFromDatabase = true;
-            getParentFragmentManager().popBackStack();
-        });
+        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+
 
         loadSharedPreferences();
 
@@ -153,6 +150,14 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Keyboard.hide(requireActivity());
+        loadFromDatabase = true;
+    }
+
 
 
     /**
