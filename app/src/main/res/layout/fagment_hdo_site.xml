@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/distribucni_uzemi_kratke"/>
+            android:entries="@array/distribucni_uzemi_kratke" />
 
         <Spinner
             android:id="@+id/spDistrict"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.00"
-            android:inputType="numberSigned" />
+            android:text="a1b1dp1" />
 
         <TextView
             android:id="@+id/tvHDOKod"
@@ -57,41 +57,46 @@
         android:layout_below="@+id/lnDistributionArea"
         android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/spA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <Spinner
-            android:id="@+id/spB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <Spinner
-            android:id="@+id/spP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
         <TextView
             android:id="@+id/textView45"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:labelFor="@+id/spA"
             android:text="A" />
 
-        <TextView
-            android:id="@+id/textView46"
+        <Spinner
+            android:id="@+id/spA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="P" />
+            android:layout_weight="1"
+            android:labelFor="@id/textView45" />
 
         <TextView
             android:id="@+id/textView47"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="B" />
+
+        <Spinner
+            android:id="@+id/spB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/textView46" />
+
+        <TextView
+            android:id="@+id/textView46"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DP" />
+
+        <Spinner
+            android:id="@+id/spPB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/textView47" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -118,53 +123,76 @@
             android:text="Načti" />
 
         <Button
-            android:id="@+id/btnVyjimky"
+            android:id="@+id/btnSaveHdo"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Výjimky" />
+            android:text="@string/ulozit" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnProgressBarHdoSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/dialog_progressbar"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/pbLoadData"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvLabelLoadfiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/please_wait" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spDateEgd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lnHdoButtons" />
+
+
+    <TextView
+        android:id="@+id/tvAlertHdoSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_item"
+        android:padding="10dp"
+        android:text="@string/write_hdo"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tvValidityDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/spDateEgd" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHdoSite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/tvDatumPlatnostiEON">
+        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:layout_below="@id/tvValidityDate"/>
 
 
-    </androidx.recyclerview.widget.RecyclerView>
 
-
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/tvDatumPlatnostiEON"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/lnHdoButtons"
-        android:text="Datum platnosti EON:" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginStart="@dimen/fab_margin"
-        android:layout_marginTop="@dimen/fab_margin" />
 
 </RelativeLayout>

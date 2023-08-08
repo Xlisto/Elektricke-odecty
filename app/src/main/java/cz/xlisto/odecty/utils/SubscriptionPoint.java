@@ -12,11 +12,11 @@ public class SubscriptionPoint {
     /**
      * Načte odběrné místo podle id mista uloženého ve sharedpreferences
      *
-     * @param context
-     * @return
+     * @param context Kontext aplikace
+     * @return SubscriptionPointModel - aktuálně zvolené vybrané místo
      */
     static public SubscriptionPointModel load(Context context) {
-        long id = -1L;
+        long id;
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
         id = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT, -1L);
 

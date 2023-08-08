@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <Spinner
+        android:id="@+id/spCodes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvSpinnerLabel"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:id="@+id/tvSpinnerLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_codes" />
+
+    <TextView
+        android:id="@+id/tvExceptionArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spCodes"
+        android:layout_marginTop="10dp"
+        android:text="@string/exception_area" />
+
+    <TextView
+        android:id="@+id/tvExceptionAreaList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvExceptionArea" />
+
+    <Switch
+        android:id="@+id/swExceptionArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvExceptionAreaList"
+        android:checked="true"
+        android:minHeight="48dp"
+        android:text="@string/switch_exception_area" />
+
+</RelativeLayout>

@@ -1,6 +1,9 @@
 package cz.xlisto.odecty.modules.hdo;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -36,8 +39,7 @@ import cz.xlisto.odecty.ownview.ViewHelper;
  */
 public class Connections {
     private static final String TAG = "Connections";
-
-    private OnLoadResultDataListener onLoadResultDataListener;
+    private Handler handler;
 
 
     /**
@@ -47,17 +49,17 @@ public class Connections {
      * @param urlParameters parametry dotazu
      * @param context       kontext aplikace pro zobrazení Toastu při chybě
      */
-    public void sendPostParameters(String urlString, String urlParameters, Context context, Spinner spDistrict) {
+    public void sendPostParameters(String urlString, String urlParameters, String code, Context context, Spinner spDistrict) {
         URL url = builderURL(urlString);
         HttpsURLConnection connection = builderConnection(url);
-        JSONObject jsonParam = null;
+        //JSONObject jsonParam = null;
         try {
             //hlavička
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Host", "api.egd.cz");
 
             //parametry v hlavičce dotaz
-            jsonParam = new JSONObject(urlParameters);
+            //jsonParam = new JSONObject(urlParameters);
             // odeslání parametrů do hlavičky
             connection.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -66,24 +68,47 @@ public class Connections {
             wr.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
         }
 
         InputStream in = readInputStream(connection, context);
         String result = readerStream(in);
+        Message message = new Message();
 
-        onLoadResultDataListener.onLoadResultData(result);
+
         try {
-            if (jsonParam != null) {
-                if (jsonParam.get("operationName").toString().equals("searchKod")) {
-                    test2(result, spDistrict, urlString, context);
+            JSONObject resultJson = new JSONObject(result);
+            JSONObject resultData = resultJson.getJSONObject("data");
+            JSONObject resultHdo = resultData.getJSONObject("hdo");
+            if (resultHdo.has("searchKod")) {
+                JSONArray resultSearch = resultHdo.getJSONArray("searchKod");
+
+                JSONObject jsonData = new JSONObject(result);
+                JSONArray jsonSearchCode = jsonData.getJSONObject("data")
+                        .getJSONObject("hdo")
+                        .getJSONArray("searchKod");
+                if(jsonSearchCode.length()>0) {
+                    JSONArray jsonCategoryGroups = jsonSearchCode.getJSONObject(0).getJSONArray("kategorieSkupiny");
+                    if(jsonCategoryGroups.length() == 1){
+                        searchHdoParseInputDates(result, spDistrict, code, urlString, context);
+                    } else {
+                        message.obj = new ResultData(resultSearch.toString(), ResultType.CODES, spDistrict.getSelectedItem().toString(),getCategoryEgd(spDistrict), urlString);
+                        handler.sendMessage(message);
+                    }
+                } else {
+                    message.obj = new ResultData("[]", ResultType.EGD, "",getCategoryEgd(spDistrict), urlString);
+                    message.what = 100;
+                    handler.sendMessage(message);
                 }
             }
+            if (resultHdo.has("search")) {
+                JSONArray resultSearch = resultHdo.getJSONArray("search");
+                message.obj = new ResultData(resultSearch.toString(), ResultType.EGD,"");
+                message.what = 100;
+                handler.sendMessage(message);
+            }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-
     }
 
 
@@ -94,10 +119,13 @@ public class Connections {
      * @param distributionAreaIndex index distribuční oblasti (0-CEZ, 1-EON, 2- PRE)
      * @param context               kontext aplikace pro zobrazení Toastu při chybě
      */
-    public void sendPost(String urlString, int distributionAreaIndex, String code, Context context, Spinner spDistrict, LinearLayout root) {
+    public void sendPost(String urlString, int distributionAreaIndex, String code, Context context, Spinner spDistrict, LinearLayout root, Handler handler) {
+        this.handler = handler;
         //0-CEZ, 1-EON, 2- PRE
         //načte komplet www stránku ze které potom parsuji potřebná data
+        Log.w(TAG, "builderURL: sendpost " + urlString);
         URL url = builderURL(urlString);
+        Log.w(TAG, "sendPost: " + urlString);
         HttpsURLConnection connection = builderConnection(url);
         InputStream in = readInputStream(connection, context);
 
@@ -105,8 +133,9 @@ public class Connections {
             if (distributionAreaIndex == 0) parseJSONCEZ(in);
             if (distributionAreaIndex == 1) parseEGD(in, code, context, spDistrict, root);
             if (distributionAreaIndex == 2) parseJSONPRE(in);
+
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
     }
@@ -119,11 +148,12 @@ public class Connections {
      * @return URL adresy
      */
     private URL builderURL(String urlString) {
-        URL url;
+        URL url = null;
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return url;
     }
@@ -171,78 +201,13 @@ public class Connections {
      */
     private void parseJSONCEZ(InputStream in) throws JSONException {
         String readerStream = readerStream(in);
-        JSONArray jsonArray = new JSONArray(readerStream);
-        onLoadResultDataListener.onLoadResultData(jsonArray.toString());
-    }
-
-
-    /**
-     * Načte stream z EGD a nalezne token
-     *
-     * @param in InputStream
-     */
-    private void parseEGD(InputStream in, String code, Context context, Spinner spDistrict, LinearLayout root) {
-        String readerStream = readerStream(in);
-
-        String apiUrl, apiToken, apiAuthBasic;
-
-        org.jsoup.nodes.Document doc = Jsoup.parse(readerStream);//tagy www
-        Elements scripts = doc.getElementsByTag("script");//vyhledá všechny tagy scripty
-        for (int i = 0; i < scripts.size(); i++) {
-            if (scripts.get(i).data().contains("\"api_token\"")) {
-                try {
-                    JSONObject jsonObject = new JSONObject(scripts.get(i).data());
-                    JSONObject jsonEon = jsonObject.getJSONObject("eon");
-                    JSONObject jsonHDO = jsonEon.getJSONObject("HDO");
-                    apiUrl = jsonHDO.get("api_url").toString();
-                    apiToken = jsonHDO.get("api_token").toString();
-                    apiAuthBasic = jsonHDO.get("api_authbasic").toString();
-                    onLoadToken(apiUrl, apiToken, apiAuthBasic, code, context, spDistrict, root);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-
-    private void onLoadToken(String apiUrl, String apiToken, String apiAuthBasic, String code, Context context, Spinner spDistrict, LinearLayout root) {
-
-        String page = CodeWeb.htmlPage.replace("***12345***", apiToken);
-
-        ((FragmentActivity) context).runOnUiThread(() -> {
-            final String[] urlHdo = {""};
-            WebView webView = new WebView(context);
-            WebViewClientImpl webViewClient = new WebViewClientImpl();
-            WebAppInterface webAppInterface = new WebAppInterface();
-            webAppInterface.setOnSaveUrlListener(url -> urlHdo[0] = urlHdo[0] + url);
-
-            webView.setWebViewClient(webViewClient);
-            webView.setWebChromeClient(new WebChromeClient());
-            webView.getSettings().setDomStorageEnabled(true);
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.clearCache(true);
-            webView.clearHistory();
-            webView.clearMatches();
-            webView.clearFormData();
-            webView.addJavascriptInterface(webAppInterface, "Android");
-            webView.loadData(page, "text/html", "UTF-8");
-            webViewClient.setOnPageFinishedListener(() -> searchKod(urlHdo[0], code, context, spDistrict));
-            root.addView(webView);
-            webView.setVisibility(View.GONE);
-
-        });
-    }
-
-    private void searchKod(String urlHdo, String code, Context context, Spinner spDistrict) {
-        if (urlHdo.endsWith("/")) return;
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            //String code = etHdoCode.getText().toString();
-            String urlParameters = "{\"operationName\":\"searchKod\",\"variables\":{\"input\":{\"kod\":\"" + code + "\",\"limit\":10}}," +
-                    "\"query\":\"query searchKod($input: HdoSearchKodInput!) {hdo { searchKod(input: $input) {kod varianta kategorieSkupiny {kategorie skupina kody __typename}__typename}__typename}}\"}";
-            sendPostParameters(urlHdo, urlParameters, context, spDistrict);
-        });
+        JSONObject jsonRoot = new JSONObject(readerStream);
+        JSONArray jsonArray = jsonRoot.getJSONArray("data");
+        ResultData resultData = new ResultData(jsonArray.toString(), ResultType.CEZ,"");
+        Message message = new Message();
+        message.obj = resultData;
+        message.what = 100;
+        handler.sendMessage(message);
     }
 
 
@@ -296,8 +261,82 @@ public class Connections {
             jsonArray.put(jsonObject);
 
         }
+        ResultData resultData = new ResultData(jsonArray.toString(), ResultType.PRE,"");
+        Message message = new Message();
+        message.obj = resultData;
+        message.what = 100;
+        handler.sendMessage(message);
+    }
 
-        onLoadResultDataListener.onLoadResultData(jsonArray.toString());
+
+    /**
+     * Načte stream z EGD a nalezne token
+     *
+     * @param in InputStream
+     */
+    private void parseEGD(InputStream in, String code, Context context, Spinner spDistrict, LinearLayout root) {
+        String readerStream = readerStream(in);
+
+        String apiUrl, apiToken, apiAuthBasic;
+
+        org.jsoup.nodes.Document doc = Jsoup.parse(readerStream);//tagy www
+        Elements scripts = doc.getElementsByTag("script");//vyhledá všechny tagy scripty
+        for (int i = 0; i < scripts.size(); i++) {
+            if (scripts.get(i).data().contains("\"api_token\"")) {
+                try {
+                    JSONObject jsonObject = new JSONObject(scripts.get(i).data());
+                    JSONObject jsonEon = jsonObject.getJSONObject("eon");
+                    JSONObject jsonHDO = jsonEon.getJSONObject("HDO");
+                    apiUrl = jsonHDO.get("api_url").toString();
+                    apiToken = jsonHDO.get("api_token").toString();
+                    apiAuthBasic = jsonHDO.get("api_authbasic").toString();
+                    onLoadToken(apiUrl, apiToken, apiAuthBasic, code, context, spDistrict, root);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Zobrazení html stránky s javascripty pro načtení tokenu
+     * @param apiUrl nevyužito
+     * @param apiToken  token pro přístup k datům
+     * @param apiAuthBasic nevyužito
+     * @param code kód povelu HDO
+     * @param context kontext aplikace
+     * @param spDistrict spinner s okresy
+     * @param root kořenový layout pro zobrazení webview
+     */
+    private void onLoadToken(String apiUrl, String apiToken, String apiAuthBasic, String code, Context context, Spinner spDistrict, LinearLayout root) {
+
+        String page = CodeWeb.htmlPage.replace("***12345***", apiToken);
+
+        ((FragmentActivity) context).runOnUiThread(() -> {
+            final String[] urlHdo = {""};
+            WebView webView = new WebView(context);
+            //LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            //webView.setLayoutParams(params);
+            WebViewClientImpl webViewClient = new WebViewClientImpl();
+            WebAppInterface webAppInterface = new WebAppInterface();
+            webAppInterface.setOnSaveUrlListener(url -> urlHdo[0] = urlHdo[0] + url);
+
+            webView.setWebViewClient(webViewClient);
+            webView.setWebChromeClient(new WebChromeClient());
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.clearCache(true);
+            webView.clearHistory();
+            webView.clearMatches();
+            webView.clearFormData();
+            webView.addJavascriptInterface(webAppInterface, "Android");
+            webView.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
+
+            webViewClient.setOnPageFinishedListener(() -> searchKod(urlHdo[0], code, context, spDistrict));
+            root.addView(webView);
+            webView.setVisibility(View.GONE);
+        });
     }
 
 
@@ -324,18 +363,38 @@ public class Connections {
 
 
     /**
-     * Nastavení posluchače pro načtení finálních dat HDO
-     *
-     * @param onLoadResultDataListener posluchač pro načtení finálních dat HDO
+     * Sestaví dotaz na EGD pro získání kategorie a skupiny
+     * @param urlHdo url HDO
+     * @param code kód
+     * @param context kontext aplikace
+     * @param spDistrict spinner okresů
      */
-    public void setOnLoadResultDataListener(OnLoadResultDataListener onLoadResultDataListener) {
-        this.onLoadResultDataListener = onLoadResultDataListener;
+    private void searchKod(String urlHdo, String code, Context context, Spinner spDistrict) {
+        if (urlHdo.endsWith("/")) return;
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            String urlParameters = "{\"operationName\":\"searchKod\",\"variables\":{\"input\":{\"kod\":\"" + code + "\",\"limit\":10}}," +
+                    "\"query\":\"query searchKod($input: HdoSearchKodInput!) {hdo { searchKod(input: $input) {kod varianta kategorieSkupiny {kategorie skupina kody __typename}__typename}__typename}}\"}";
+            Log.w("urlParameters", urlParameters);
+            sendPostParameters(urlHdo, urlParameters, code, context, spDistrict);
+        });
     }
 
-    private void test2(String jsonDataString, Spinner spDistrict, String urlHdo, Context context) {
 
+    /**
+     * Z dotazu na EGD získá kategorie a skupiny, potřebný na druhý dotaz pro získání časů HDO
+     * @param jsonDataString json data;
+     * @param spDistrict spinner s krajem
+     * @param code kód HDO
+     * @param urlHdo url HDO
+     * @param context kontext aplikace
+     */
+    private void searchHdoParseInputDates(String jsonDataString, Spinner spDistrict, String code, String urlHdo, Context context) {
         String category = getCategoryEgd(spDistrict);
         String group = "";
+        ResultData resultDataObj = new ResultData(jsonDataString, ResultType.CODES, "",getCategoryEgd(spDistrict), urlHdo);
+        Message message = new Message();
+        message.obj = resultDataObj;
         try {
             JSONObject jsonObject = new JSONObject(jsonDataString);
             JSONObject jsonData = jsonObject.getJSONObject("data");
@@ -346,33 +405,49 @@ public class Connections {
                 JSONArray jsonKategorieSkupiny = jsonKod.getJSONArray("kategorieSkupiny");
                 for (int j = 0; j < jsonKategorieSkupiny.length(); j++) {
                     JSONObject jsonKategorieSkupina = jsonKategorieSkupiny.getJSONObject(j);
-                    if (jsonKategorieSkupina.getString("kategorie").equals(category))
+                    Log.w("kategorie", jsonKategorieSkupina.getString("kategorie"));
+                    if (jsonKategorieSkupina.getString("kategorie").equals("PH"))
+                        category = "PH";
+                    if (jsonKategorieSkupina.getString("kategorie").equals("SM"))
+                        category = "SM";
+                    if (jsonKategorieSkupina.getString("kategorie").equals("TOU"))
+                        category = "TOU";
+                    if (jsonKategorieSkupina.getString("kategorie").equals(category)) {
                         group = jsonKategorieSkupina.getString("skupina");
+                        if (jsonKategorieSkupina.getString("kategorie").equals("SM"))
+                            group = code.toUpperCase();
+                    }
                 }
             }
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        String finalGroup = group;
-        executor.execute(() -> {
-            String urlParameters = "{\"operationName\": \"search\",\"variables\": {\"input\": {\"kategorie\": \"" + category + "\",\"skupina\": \"" + finalGroup + "\"}}," +
-                    "\"query\": \"query search($input: HdoSearchInput!) { hdo { search(input: $input) { od { den mesic rok __typename}do{den mesic rok __typename}sazby{sazba dny{ denVTydnu casy { od do __typename}__typename} __typename}__typename} __typename}}\"}";
+        searchHdo(group, category, urlHdo, code, context, spDistrict);
 
-            sendPostParameters(urlHdo, urlParameters, context, spDistrict);
-
-        });
     }
 
 
     /**
-     * Posluchač na finální načtení dat HDO
+     * Sestaví dotaz pro server pro získání HDO dat o tarifu
+     * @param group skupina tarifu
+     * @param category kategorie tarifu
+     * @param urlHdo url serveru
+     * @param code kód tarifu
+     * @param context kontext aplikace
+     * @param spDistrict spinner okresů
      */
-    interface OnLoadResultDataListener {
-        void onLoadResultData(String result);
+    public void searchHdo(String group, String category, String urlHdo, String code, Context context, Spinner spDistrict) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            String urlParameters = "{\"operationName\": \"search\",\"variables\": {\"input\": {\"kategorie\": \"" + category + "\",\"skupina\": \"" + group + "\"}}," +
+                    "\"query\": \"query search($input: HdoSearchInput!) { hdo { search(input: $input) { od { den mesic rok __typename}do{den mesic rok __typename}sazby{sazba dny{ denVTydnu casy { od do __typename}__typename} __typename}__typename} __typename}}\"}";
+
+            sendPostParameters(urlHdo, urlParameters, code, context, spDistrict);
+        });
     }
+
 
     /**
      * Vrátí kategorii EGD podle vybraného okresu
@@ -410,5 +485,37 @@ public class Connections {
                 return "ZAPAD";
         }
         return "";
+    }
+
+
+    /**
+     * Kontejner pro návratová data
+     */
+    static class ResultData {
+        String result, areaEgd, area,urlString;
+        ResultType resultType;
+
+        public ResultData(String result, ResultType resultType, String area) {
+            this(result, resultType, area, "", "");
+        }
+
+        public ResultData(String result, ResultType resultType, String area,String areaEgd, String urlString) {
+            this.result = result;
+            this.resultType = resultType;
+            this.areaEgd = areaEgd;
+            this.urlString = urlString;
+            this.area = area;
+        }
+    }
+
+
+    /**
+     * Typ výsledku získání dat
+     */
+    enum ResultType {
+        CEZ,
+        EGD,
+        PRE,
+        CODES
     }
 }

@@ -190,7 +190,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_1.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\m3u8\NT_ON.png" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -223,7 +223,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\Xlisto\Desktop\electric_meter_1.png" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Desktop\m3u8\NT_ON.png" />
+                                      <entry key="outputName" value="ic_nt_on" />
                                     </map>
                                   </option>
                                 </PersistentState>

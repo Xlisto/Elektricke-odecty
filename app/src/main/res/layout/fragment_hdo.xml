@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,11 +11,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView18"
-        android:layout_centerHorizontal="true"
+        android:layout_centerHorizontal="false"
+        android:layout_marginStart="10dp"
         android:gravity="center_horizontal"
         android:text="New Text"
         android:textSize="40sp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageViewIconNT"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/textView18"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@drawable/nt_on" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -46,7 +58,7 @@
 
 
         <Button
-            android:id="@+id/btnNactiHdo"
+            android:id="@+id/btnHdoLoad"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,6 +95,18 @@
         android:layout_below="@id/linearLayout"
         android:text="Sledování nízského tarifu" />
 
+    <Spinner
+        android:id="@+id/spReleSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/swHdoService" />
+
+    <TextView
+        android:id="@+id/tvHdoDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spReleSettings" />
+
     <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
@@ -106,7 +130,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/swHdoService"
+        android:layout_below="@id/tvHdoDate"
         android:layoutAnimation="@anim/layout_animation_fall_down" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

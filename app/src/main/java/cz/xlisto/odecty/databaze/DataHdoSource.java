@@ -28,13 +28,30 @@ public class DataHdoSource extends DataSource {
      * @return ArrayList<HdoModel>
      */
     public ArrayList<HdoModel> loadHdo(String table) {
-        open();
+        return loadHdo(table, null);
+    }
+
+
+    /**
+     * Načte hdo data z databáze
+     *
+     * @param table      Tabulka se záznamy HDO
+     * @param selectRele String filtr pro sloupec rele
+     * @return ArrayList<HdoModel>
+     */
+    public ArrayList<HdoModel> loadHdo(String table, String selectRele) {
+        String selection = null;
+        String[] selectionArgs = null;
+        if (selectRele != null) {
+            selection = DbHelper.COLUMN_RELE + " = ? ";
+            selectionArgs = new String[]{selectRele};
+        }
 
         ArrayList<HdoModel> hdoModels = new ArrayList<>();
         Cursor cursor = database.query(table,
                 null,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 null,
                 null,
                 null);
@@ -44,6 +61,8 @@ public class DataHdoSource extends DataSource {
             HdoModel hdoModel = new HdoModel(
                     cursor.getLong(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_RELE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DATE_FROM)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DATE_UNTIL)),
                     cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TIME_FROM)),
                     cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TIME_UNTIL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_MON)),
@@ -52,21 +71,41 @@ public class DataHdoSource extends DataSource {
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_THU)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_FRI)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SAT)),
-                    cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SUN))
+                    cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SUN)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA))
             );
             hdoModels.add(hdoModel);
         }
         cursor.close();
-        close();
         return hdoModels;
     }
 
+    public void clearHdo(String table) {
+        open();
+        database.delete(table, null, null);
+        close();
+    }
+
+    /**
+     * Uloží HdoModely do databáze
+     *
+     * @param hdoModels ArrayList<HdoModel>
+     * @param table     String jméno tabulky
+     */
+    public void saveHdo(ArrayList<HdoModel> hdoModels, String table) {
+        open();
+        database.delete(table, null, null);
+        for (HdoModel hdoModel : hdoModels) {
+            database.insert(table, null, createContentValues(hdoModel));
+        }
+        close();
+    }
 
     /**
      * Uloží HdoModel do databáze
      *
      * @param hdoModel HdoModel
-     * @param table String jméno tabulky
+     * @param table    String jméno tabulky
      */
     public void saveHdo(HdoModel hdoModel, String table) {
         open();
@@ -79,11 +118,11 @@ public class DataHdoSource extends DataSource {
      * Uloží aktualizovaný HdoModel do databáze
      *
      * @param hdoModel HdoModel
-     * @param table Tabulka se záznamy HDO
+     * @param table    Tabulka se záznamy HDO
      */
     public void updateHdo(HdoModel hdoModel, String table) {
         open();
-        database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[] {hdoModel.getId() + ""});
+        database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[]{hdoModel.getId() + ""});
         close();
     }
 
@@ -91,13 +130,39 @@ public class DataHdoSource extends DataSource {
     /**
      * Smaže HdoModel z databáze
      *
-     * @param id long  id hdomodelu
+     * @param id    long  id hdomodelu
      * @param table Tabulka se záznamy HDO
      */
     public void deleteHdo(long id, String table) {
         open();
-        database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[] {id + ""});
+        database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[]{id + ""});
         close();
+    }
+
+
+    /**
+     * Vrátí seznam rele
+     *
+     * @param table Tabulka se záznamy HDO
+     * @return ArrayList<String> seznam rele
+     */
+    public ArrayList<String> getReles(String table) {
+
+        ArrayList<String> reles = new ArrayList<>();
+        Cursor cursor = database.query(table,
+                new String[]{DbHelper.COLUMN_RELE},
+                null,
+                null,
+                DbHelper.COLUMN_RELE,
+                null,
+                null);
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+            reles.add(cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_RELE)));
+        }
+        cursor.close();
+        return reles;
     }
 
 
@@ -110,6 +175,8 @@ public class DataHdoSource extends DataSource {
     private ContentValues createContentValues(HdoModel hdoModel) {
         ContentValues values = new ContentValues();
         values.put(DbHelper.COLUMN_RELE, hdoModel.getRele());
+        values.put(DbHelper.COLUMN_DATE_FROM, hdoModel.getDateFrom());
+        values.put(DbHelper.COLUMN_DATE_UNTIL, hdoModel.getDateUntil());
         values.put(DbHelper.COLUMN_TIME_FROM, hdoModel.getTimeFrom());
         values.put(DbHelper.COLUMN_TIME_UNTIL, hdoModel.getTimeUntil());
         values.put(DbHelper.COLUMN_MON, hdoModel.getMon());
@@ -119,6 +186,7 @@ public class DataHdoSource extends DataSource {
         values.put(DbHelper.COLUMN_FRI, hdoModel.getFri());
         values.put(DbHelper.COLUMN_SAT, hdoModel.getSat());
         values.put(DbHelper.COLUMN_SUN, hdoModel.getSun());
+        values.put(DbHelper.COLUMN_DISTRIBUTION_AREA, hdoModel.getDistributionArea());
         return values;
     }
 }

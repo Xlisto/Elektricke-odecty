@@ -131,7 +131,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         String until = String.format("%02d:%02d", hourUntil, minuteUntil);
         initDays();
 
-        return new HdoModel("", from, until, mon, tue, wed, thu, fri, sat, sun);
+        return new HdoModel("", "","",from, until, mon, tue, wed, thu, fri, sat, sun,"");
     }
 
     void initDays() {

@@ -18,8 +18,8 @@ import static cz.xlisto.odecty.databaze.DbHelper.CISLO_ELE;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_FAK;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_MISTA;
 import static cz.xlisto.odecty.databaze.DbHelper.DATUM;
-import static cz.xlisto.odecty.databaze.DbHelper.DATUM_DO;
-import static cz.xlisto.odecty.databaze.DbHelper.DATUM_OD;
+import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_UNTIL;
+import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_FROM;
 import static cz.xlisto.odecty.databaze.DbHelper.FAZE;
 import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
 import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
@@ -860,8 +860,8 @@ public class DataSubscriptionPointSource extends DataSource{
      */
     private ContentValues createContentValue(InvoiceModel invoice) {
         ContentValues values = new ContentValues();
-        values.put(DATUM_OD, invoice.getDateFrom());
-        values.put(DATUM_DO, invoice.getDateTo());
+        values.put(COLUMN_DATE_FROM, invoice.getDateFrom());
+        values.put(COLUMN_DATE_UNTIL, invoice.getDateTo());
         values.put(VT, invoice.getVtStart());
         values.put(VT_KON, invoice.getVtEnd());
         values.put(NT, invoice.getNtStart());

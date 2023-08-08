@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
-import cz.xlisto.odecty.modules.hdo.HdoSite;
+import cz.xlisto.odecty.modules.hdo.HdoSiteFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_hdo_z_netu) {
                 //actualFragment = TestFragment.newInstance();
-                actualFragment = HdoSite.newInstance();
+                actualFragment = HdoSiteFragment.newInstance();
                 b = true;
             }
 
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (intent.getStringExtra(HdoNotice.ARGS_FRAGMENT) != null) {
 
-            if ((intent.getStringExtra(HdoNotice.ARGS_FRAGMENT)).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
+            if ((Objects.requireNonNull(intent.getStringExtra(HdoNotice.ARGS_FRAGMENT))).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
                 getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
                 actualFragment = HdoFragment.newInstance();
                 FragmentChange.replace(this, actualFragment, ALPHA);

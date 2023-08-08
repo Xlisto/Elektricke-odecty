@@ -7,6 +7,7 @@ import android.content.Context;
  */
 public class ShPHdo extends ShP{
     private static final String TAG = "ShPHdo";
+    public static final String ARG_RELE = "hdoRele";
 
     public static final String ARG_RUNNING_SERVICE = "hdoRunningService";
 

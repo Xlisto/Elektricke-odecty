@@ -2,6 +2,7 @@ package cz.xlisto.odecty.modules.hdo;
 
 import android.annotation.SuppressLint;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +34,12 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     public static final String FLAG_HDO_ADAPTER_DELETE = "flagHdoAdapterDelete";
     private static long selectedId;
     private static int selectedPosition;
+    private static boolean clickables;
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRele, tvDay, tvTime, tvDayMon, tvDayTue, tvDayWed, tvDayThu, tvDayFri, tvDaySat, tvDaySun;
-        LinearLayout lnHdoOut, lnHdoButtons;
+        TextView tvRele, tvDate, tvTime, tvDayMon, tvDayTue, tvDayWed, tvDayThu, tvDayFri, tvDaySat, tvDaySun;
+        LinearLayout lnHdoOut, lnHdoButtons, lnHdoDays;
         Button btnEdit, btnDelete;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -46,9 +48,10 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    public HdoAdapter(ArrayList<HdoModel> items, RecyclerView recyclerView) {
+    public HdoAdapter(ArrayList<HdoModel> items, RecyclerView recyclerView, boolean clickables) {
         this.items = items;
         this.recyclerView = recyclerView;
+        this.clickables = clickables;
     }
 
 
@@ -61,10 +64,11 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         vh.lnHdoOut = v.findViewById(R.id.lnHdoOut);
         vh.lnHdoButtons = v.findViewById(R.id.lnButtonsHdo);
         vh.tvRele = v.findViewById(R.id.tvRele);
-        vh.tvDay = v.findViewById(R.id.tvDay);
+        vh.tvDate = v.findViewById(R.id.tvDateHdoSite);
         vh.tvTime = v.findViewById(R.id.tvTime);
         vh.btnEdit = v.findViewById(R.id.btnEditHdo);
         vh.btnDelete = v.findViewById(R.id.btnDeleteHdo);
+        vh.lnHdoDays = v.findViewById(R.id.lnHdoDays);
         vh.tvDayMon = v.findViewById(R.id.tvDayMon);
         vh.tvDayTue = v.findViewById(R.id.tvDayTue);
         vh.tvDayWed = v.findViewById(R.id.tvDayWed);
@@ -119,10 +123,23 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
 
         holder.tvRele.setText(item.getRele());
-        holder.tvDay.setVisibility(View.GONE);
-        holder.tvTime.setText("Čas: "+item.getTimeFrom()+" - "+item.getTimeUntil());
+        Log.w(TAG, "onBindViewHolder: " + item.getRele() + " " + item.getDistributionArea() + " " + item.getDateFrom() + " " + item.getTimeFrom() + " " + item.getTimeUntil());
+
+        if (item.getDistributionArea().equals(DistributionArea.PRE.toString())) {
+            holder.tvDate.setVisibility(View.VISIBLE);
+            holder.lnHdoDays.setVisibility(View.GONE);
+            holder.tvDate.setText(item.getDateFrom());
+        } else {
+            holder.tvDate.setVisibility(View.GONE);
+            holder.lnHdoDays.setVisibility(View.VISIBLE);
+        }
+
+
+
+        holder.tvTime.setText("Čas: " + item.getTimeFrom() + " - " + item.getTimeUntil());
 
         holder.lnHdoOut.setOnClickListener(v1 -> {
+            if (!clickables) return;
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
                 if (viewHolder != null)
@@ -143,7 +160,7 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             selectedId = hdoModel.getId();
             selectedPosition = position;
             HdoEditFragment hdoEditFragment = HdoEditFragment.newInstance(hdoModel);
-            FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE,true);
+            FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE, true);
         });
 
         holder.btnDelete.setOnClickListener(v -> {
@@ -153,6 +170,8 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
         });
         showButtons(holder, position);
+
+
     }
 
 

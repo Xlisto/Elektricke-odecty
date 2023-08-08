@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -17,11 +22,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +39,7 @@ import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.SimpleDateFormatHelper;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.services.HdoData;
 import cz.xlisto.odecty.services.HdoService;
 import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.utils.DetectNightMode;
@@ -47,11 +55,14 @@ public class HdoFragment extends Fragment {
     private static final long minute = 60000;
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
-    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo;
+    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo;
+    private ImageView imageViewIconNT;
     private SwitchMaterial swHdoService;
+    private Spinner spRele, spReleSettings;
     private RecyclerView rvHdo;
     private long idSubscriptionPoint, timeDifferent;
     private ArrayList<HdoModel> hdoModels = new ArrayList<>();
+    private ArrayList<String> reles = new ArrayList<>();
     private HdoAdapter hdoAdapter;
     private Intent hdoServiceIntent;
 
@@ -78,14 +89,19 @@ public class HdoFragment extends Fragment {
         tvTimeHdo = view.findViewById(cz.xlisto.odecty.R.id.tvTimeHdo);
         tvTimeDifference = view.findViewById(cz.xlisto.odecty.R.id.tvTimeDifference);
         tvAlertHdo = view.findViewById(cz.xlisto.odecty.R.id.tvAlertHdo);
+        tvDateHdo = view.findViewById(R.id.tvHdoDate);
         rvHdo = view.findViewById(cz.xlisto.odecty.R.id.rvHdo);
         swHdoService = view.findViewById(R.id.swHdoService);
+        spRele = view.findViewById(R.id.spRele);
+        spReleSettings = view.findViewById(R.id.spReleSettings);
+        imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         FloatingActionButton fabAddHdo = view.findViewById(cz.xlisto.odecty.R.id.fabHdo);
 
         Button btnAddHour = view.findViewById(cz.xlisto.odecty.R.id.btnAddHour);
         Button btnRemoveHour = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveHour);
         Button btnAddMinute = view.findViewById(cz.xlisto.odecty.R.id.btnAddMinute);
         Button btnRemoveMinute = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveMinute);
+        Button btnHdoLoad = view.findViewById(cz.xlisto.odecty.R.id.btnHdoLoad);
 
         btnAddMinute.setOnClickListener(v -> changeTimeShift(timeDifferent += minute));
         btnRemoveMinute.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute));
@@ -97,15 +113,57 @@ public class HdoFragment extends Fragment {
             FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
         });
 
+        btnHdoLoad.setOnClickListener(v -> {
+            HdoSiteFragment hdoSite = new HdoSiteFragment();
+            FragmentChange.replace(requireActivity(), hdoSite, FragmentChange.Transaction.MOVE, true);
+        });
+
         swHdoService.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
             if (isChecked) {
+                HdoData.loadHdoData(requireActivity());
                 startService();
             } else {
                 stopService();
             }
+
+            if(reles.size() > 1  && swHdoService.isChecked())
+                spReleSettings.setVisibility(View.VISIBLE);
+            else
+                spReleSettings.setVisibility(View.GONE);
+
             ShPHdo shPHdo = new ShPHdo(requireContext());
             shPHdo.set(ShPHdo.ARG_RUNNING_SERVICE, isChecked);
         });
+
+        spRele.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.w(TAG, "onItemSelected: " + spRele.getAdapter().getItem(position).toString());
+                loadData(spRele.getAdapter().getItem(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ShPHdo shPHdo = new ShPHdo(requireContext());
+                String idSbp = Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getTableHDO();
+                shPHdo.set(ShPHdo.ARG_RELE+idSbp, spReleSettings.getAdapter().getItem(position).toString());
+                HdoData.loadHdoData(requireActivity());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener(HdoAdapter.FLAG_HDO_ADAPTER_DELETE, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -133,6 +191,7 @@ public class HdoFragment extends Fragment {
         startTimer();
         showAlert();
         loadData();
+        loadReles();
 
         swHdoService.setChecked(HdoService.isRunningService());
         HdoService.setHdoModels(hdoModels);
@@ -202,16 +261,18 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Nastaví barvu textu podle toho, zda je čas v rozmezí HDO
+     * Nastaví barvu textu podle toho, zda je čas v rozmezí HDO a zobrazí ikonu HDO
      */
     private void setTextHdoColor(boolean show) {
         if (show) {
             tvTimeHdo.setTextColor(Color.parseColor("#187e34"));
+            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.nt_on));
         } else {
             if (DetectNightMode.isNightMode(requireActivity()))
                 tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
             else
                 tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_light));
+            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.nt_off));
         }
     }
 
@@ -231,15 +292,72 @@ public class HdoFragment extends Fragment {
     /**
      * Načte hdo data z databáze a nastaví adapter
      */
-    private void loadData() {
+    private void loadData(){
+        loadData(null);
+    }
+
+
+    /**
+     * Načte hdo data z databáze a nastaví adapter
+     * @param rele - rele, které se má načíst
+     */
+    private void loadData(String rele) {
 
         DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
-        dataHdoSource.open();
         hdoModels.clear();
-        hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO());
+        dataHdoSource.open();
+        if(rele != null)
+            hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), rele);
+        else
+            hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO());
         dataHdoSource.close();
 
+        Log.w(TAG, "loadData: " + hdoModels.size());
+        String date = "";
+        String distributionArea = "";
+        for (int i = 0; i < hdoModels.size(); i++) {
+            distributionArea = hdoModels.get(i).getDistributionArea();
+            if (i == 0)
+                date = hdoModels.get(i).getDateFrom();
+            if (i == hdoModels.size() - 1) {
+
+                if (hdoModels.get(i).getDistributionArea().equals(DistributionArea.PRE.toString()))
+                    date = date + " - " + hdoModels.get(i).getDateFrom();
+                else
+                    date = date + " - " + hdoModels.get(i).getDateUntil();
+            }
+
+        }
+
         setAdapter();
+        if (distributionArea.equals("")) {
+            tvDateHdo.setVisibility(View.GONE);
+        } else {
+            tvDateHdo.setVisibility(View.VISIBLE);
+            tvDateHdo.setText(date);
+        }
+
+    }
+
+
+    /**
+     * Načte seznam relé z databáze a nastaví spinner
+     * Pokud je pouze jedno rele, spinner se nezobrazí
+     */
+    private void loadReles() {
+        DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
+        dataHdoSource.open();
+        reles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
+        dataHdoSource.close();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, reles);
+        spRele.setAdapter(adapter);
+        spReleSettings.setAdapter(adapter);
+        if(reles.size() > 1)
+            spRele.setVisibility(View.VISIBLE);
+        else
+            spRele.setVisibility(View.GONE);
+
+
     }
 
 
@@ -247,7 +365,7 @@ public class HdoFragment extends Fragment {
      * Nastaví adapter pro recycler view
      */
     private void setAdapter() {
-        hdoAdapter = new HdoAdapter(hdoModels, rvHdo);
+        hdoAdapter = new HdoAdapter(hdoModels, rvHdo, true);
         rvHdo.setAdapter(hdoAdapter);
         rvHdo.setLayoutManager(new LinearLayoutManager(requireActivity()));
     }

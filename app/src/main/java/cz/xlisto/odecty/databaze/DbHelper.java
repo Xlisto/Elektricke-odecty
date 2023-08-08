@@ -39,8 +39,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String JMENO = "jmeno";
     public static final String HODNOTA = "hodnota";
     //HDO
-    public static final String DATUM_OD = "datumOd";
-    public static final String DATUM_DO = "datumDo";
+    public static final String COLUMN_DATE_FROM = "datumOd";
+    public static final String COLUMN_DATE_UNTIL = "datumDo";
     public static final String COLUMN_MON = "po";
     public static final String COLUMN_TUE = "ut";
     public static final String COLUMN_WED = "st";
@@ -52,7 +52,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME_FROM = "cas_od";
     public static final String COLUMN_TIME_UNTIL = "cas_do";
     public static final String COLUMN_RELE = "rele";
-    public static final String DISTRIBUCE = "distribuce";
+    public static final String COLUMN_DISTRIBUTION_AREA = "distribuce";
     //faktury
     public static final String CISLO_FAK = "cislo_fak";
     //faktura - detail
@@ -186,9 +186,9 @@ public class DbHelper extends SQLiteOpenHelper {
     private void createHDOTable(SQLiteDatabase db, long milins) {
         //tabulka HDO
         final String TABLE_HDO_CREATE = "CREATE TABLE " + TABLE_NAME_HDO + milins +
-                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DATUM_OD + " TEXT, " + DATUM_DO + " TEXT, " +
+                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_DATE_FROM + " TEXT, " + COLUMN_DATE_UNTIL + " TEXT, " +
                 COLUMN_MON + " TEXT, " + COLUMN_TUE + " TEXT, " + COLUMN_WED + " TEXT, " + COLUMN_THU + " TEXT, " + COLUMN_FRI + " TEXT, " + COLUMN_SAT + " TEXT, " + COLUMN_SUN + " TEXT, " +
-                SV + " TEXT, " + COLUMN_TIME_FROM + " TEXT, " + COLUMN_TIME_UNTIL + " TEXT, " + COLUMN_RELE + " TEXT, " + DISTRIBUCE + " TEXT );";
+                SV + " TEXT, " + COLUMN_TIME_FROM + " TEXT, " + COLUMN_TIME_UNTIL + " TEXT, " + COLUMN_RELE + " TEXT, " + COLUMN_DISTRIBUTION_AREA + " TEXT );";
         sqlExec(db, TABLE_HDO_CREATE);
     }
 
@@ -202,7 +202,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private void createInvoicesTable(SQLiteDatabase db, long milins) {
         //faktura s odečty
         final String TABLE_FAK_CREATE = "CREATE TABLE " + TABLE_NAME_FAK + milins +
-                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DATUM_OD + " TEXT, " + DATUM_DO + " TEXT, " + VT + " TEXT, " +
+                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_DATE_FROM + " TEXT, " + COLUMN_DATE_UNTIL + " TEXT, " + VT + " TEXT, " +
                 NT + " TEXT, " + VT_KON + " TEXT, " + NT_KON + " TEXT, " + ID_FAK + " TEXT, " + CENIK_ID + " TEXT, " + GARANCE + " TEXT, " + DATUM_PLATBY + " TEXT, " +
                 STALA_PLATBA + " TEXT );";
         sqlExec(db, TABLE_FAK_CREATE);
@@ -218,7 +218,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private void createNoInvoiceTable(SQLiteDatabase db, long milins) {
         //aktuální období bez vystavené faktury
         final String TABLE_TED_CREATE = "CREATE TABLE " + TABLE_NAME_TED + milins +
-                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DATUM_OD + " TEXT, " + DATUM_DO + " TEXT, " + VT + " TEXT, " +
+                " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_DATE_FROM + " TEXT, " + COLUMN_DATE_UNTIL + " TEXT, " + VT + " TEXT, " +
                 NT + " TEXT, " + VT_KON + " TEXT, " + NT_KON + " TEXT, " + ID_FAK + " TEXT, " + CENIK_ID + " TEXT, " + GARANCE + " TEXT, " + DATUM_PLATBY + " TEXT, " +
                 STALA_PLATBA + " TEXT );";
         sqlExec(db, TABLE_TED_CREATE);

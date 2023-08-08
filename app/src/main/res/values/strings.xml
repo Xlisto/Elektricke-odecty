@@ -194,5 +194,24 @@
     <string name="hdo_times">Časy HDO</string>
     <string name="backup1">Záloha</string>
 
+    <string name="no_hdo">Žádný rozvrh HDO</string>
+    <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI</string>
+    <string name="select_hdo">Vyberte povel přijímače a \nstiskněte tlačítko NAČTI</string>
+
+    <string name="select_codes">Vyberte skupinu kódů</string>
+    <string name="save_hdo">Uložit načtené časy HDO do paměti?</string>
+    <string name="save_hdo_message">Původní uložené časy HDO budou přepsány.</string>
+
+    <string name="exception_area">Výjimky ve vašem okrese:</string>
+    <string name="switch_exception_area">Výjimka se mě netýká</string>
+
+    <string name="exception_brno">Pokud je na Vašem přijímači nápis \"dálková parametrizace\" a odběrné místo se nachází v některých těchto lokalitách: Cvrčovice, Ivaň, Pasohlávky, Pohořelice, Přibice, Vlasatice, Vranovice, Nosislav. \nVypněte následující přepínač.</string>
+    <string name="exception_jihlava">Pokud se vaše odběrné místo nachází v některých těchto lokalitách: Mysletice, Olší, Zadní Vydří. \nVypněte následující přepínač.</string>
+    <string name="exception_trebic">Pokud se vaše odběrné místo nachází v některých těchto lokalitách: Choděbudice, Lovčovice, Menhartice, Pálovice, Panenská. \nVypněte následující přepínač.</string>
+    <string name="exception_jindrichuv_hradec">Pokud se vaše odběrné místo nachází v některých těchto lokalitách: Báňovice, Bělčovice, Bílkov, Borek, Borová, Brandlín, Budeč, Budíškovice, Cizkrajov, Červený Hrádek, Český Rudolec, Dančovice, Dešná, Dobrohošť, Dolní Bolíkov, Dolní Němčice, Dvůr Hejnice, Heřmaneč, Hluboká, Holešice, Horní Němčice, Horní Radíkov, Horní Slatina, Hostkovice, Hradišťko, Hříšice, Chlumec, Chvaletín, Chvalkovice, Chytrov, Janov, Jersice, Kadolec, Karlov, Klášter, Kostelní Vydří, Krokovice, Lidéřovice, Lipnice, Lipolec, Lipová, Lomy, Loucký Mlýn, Máchův Mlýn, Malý Pěčín, Manešovice, Marketa, Markvarec, Maršov, Matějovec, Modletice, Mutišov, MutnáNová Ves, Nové Dvory (Volfířov), Nové Dvory (Staré Hobzí), Nové Hobzí, Olšany, Ostojkovice, Peč, Peníkov, Písečné, Plačovice, Poldovka, Prostřední Vydří, Radíkov, Radlice, Rancířov, Rožnov, Řečice, Slavětín, Slavonice, Stálkov, Staré Hobzí, Stoječín, Šach, Toužín, Třebětice, Urbaneč, Václavov, Valtínov (TS2), Velká Lhota, Velký Jeníkov, Vesce, Veselíčko, Vlastkovec, Vlažinka, Vnorovice, Volfířov, Vostezy, Županovice. \nVypněte následující přepínač.</string>
+    <string name="exception_hodonin">Pokud je na Vašem přijímači nápis \"dálková parametrizace\". \nVypněte následující přepínač.</string>
+    <string name="exception_breclav">Pokud je na Vašem přijímači nápis \"dálková parametrizace\". \nVypněte následující přepínač.</string>
+
+
 
 </resources>
