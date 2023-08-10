@@ -52,6 +52,7 @@
     <string name="zpet">Zpět</string>
     <string name="pridat">Přidat</string>
     <string name="vybrat">Vybrat</string>
+    <string name="clipdata">Schánka</string>
 
     <string name="label_for">Label for:</string>
     <string name="label_edittext">Label EditText</string>

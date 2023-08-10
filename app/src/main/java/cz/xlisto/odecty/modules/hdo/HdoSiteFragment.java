@@ -1,5 +1,8 @@
 package cz.xlisto.odecty.modules.hdo;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -177,6 +180,7 @@ public class HdoSiteFragment extends Fragment {
         Button btnHdoSite = view.findViewById(R.id.btnHdoSite);
         Button btnHdoLoadData = view.findViewById(R.id.btnHdoLoadData);
         Button btnSaveHdo = view.findViewById(R.id.btnSaveHdo);
+        Button btnClipData = view.findViewById(R.id.btnClipData);
         etHdoCode = view.findViewById(R.id.etHdoCode);
         lnCode = view.findViewById(R.id.lnCode);
         lnCodesEdg = view.findViewById(R.id.lnCodeEgd);
@@ -316,6 +320,13 @@ public class HdoSiteFragment extends Fragment {
 
         }
         spDistrict.setSelection(4);
+
+        btnClipData.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) requireActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            String textClip = HdoClipData.create(hdoList, spDistributionArea.getSelectedItem().toString());
+            ClipData clip = ClipData.newPlainText("HDO", textClip);
+            clipboard.setPrimaryClip(clip);
+        });
     }
 
 
