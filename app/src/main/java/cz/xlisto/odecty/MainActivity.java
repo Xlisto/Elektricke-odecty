@@ -1,10 +1,12 @@
 package cz.xlisto.odecty;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
+    private BottomNavigationView bottomNavigationView;
     private ShPMainActivity shPMainActivity;
+    private int orientation;
     private boolean secondClick = false;
 
 
@@ -49,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        setConfiguration(getResources().getConfiguration());
+
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         shPMainActivity = new ShPMainActivity(getApplicationContext());
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             long itemId = item.getItemId();
 
             if (itemId == R.id.meni_prices) {
+                navigationView.setCheckedItem(R.id.menu_price_list);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
                 actualFragment = PriceListFragment.newInstance(false, -1L);
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.meni_monthly_readings) {
+                navigationView.setCheckedItem(R.id.menu_monthly_reads);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
@@ -86,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.meni_subscription_points) {
+                navigationView.setCheckedItem(R.id.menu_subscription_points);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
                 actualFragment = SubscriptionPointFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
@@ -93,39 +102,68 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.meni_invoice) {
+                navigationView.setCheckedItem(R.id.menu_invoices);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_invoice);
                 actualFragment = InvoiceListFragment.newInstance("x", "x");
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 return true;
             }
-            return false;
+
+            return itemId == R.id.meni_nothing;
         });
 
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
             long itemId = item.getItemId();
+            if (itemId == R.id.menu_price_list) {
+                bottomNavigationView.setSelectedItemId(R.id.meni_prices);
+                actualFragment = PriceListFragment.newInstance(false, -1L);
+                b = true;
+            }
             if (itemId == R.id.menu_compare_price_list) {
+                uncheckedBottomNavigation();
                 actualFragment = PriceListCompareFragment.newInstance();
                 b = true;
             }
 
+            if (itemId == R.id.menu_monthly_reads) {
+                bottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+                actualFragment = MonthlyReadingFragment.newInstance();
+                b = true;
+            }
+
+            if (itemId == R.id.menu_subscription_points) {
+                bottomNavigationView.setSelectedItemId(R.id.meni_subscription_points);
+                actualFragment = SubscriptionPointFragment.newInstance();
+                b = true;
+            }
+
+            if (itemId == R.id.menu_invoices) {
+                bottomNavigationView.setSelectedItemId(R.id.meni_invoice);
+                actualFragment = InvoiceListFragment.newInstance("x", "x");
+                b = true;
+            }
+
             if (itemId == R.id.menu_hdo) {
+                //uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
                 b = true;
             }
 
             if (itemId == R.id.menu_backup) {
+                //uncheckedBottomNavigation();
                 actualFragment = new BackupFragment();
                 b = true;
             }
 
             if (itemId == R.id.menu_hdo_z_netu) {
-                //actualFragment = TestFragment.newInstance();
+                //uncheckedBottomNavigation();
                 actualFragment = HdoSiteFragment.newInstance();
                 b = true;
             }
 
             if (itemId == R.id.menu_test) {
+                //uncheckedBottomNavigation();
                 actualFragment = TestFragment.newInstance();
                 b = true;
             }
@@ -138,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent.getStringExtra(HdoNotice.ARGS_FRAGMENT) != null) {
-
+            //nastavení fragmentu při kliknutí z notifikace
             if ((Objects.requireNonNull(intent.getStringExtra(HdoNotice.ARGS_FRAGMENT))).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
                 getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
                 actualFragment = HdoFragment.newInstance();
@@ -155,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         startHdoService();
+        setVisibilityBottomNavigation();
     }
 
 
@@ -198,6 +237,47 @@ public class MainActivity extends AppCompatActivity {
                 super.onBackPressed();
             }
         }
+    }
+
+
+    /**
+     * Akce při změně orientace obrazovky
+     * @param newConfig nová konfigurace
+     */
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setConfiguration(newConfig);
+        setVisibilityBottomNavigation();
+    }
+
+
+    /**
+     * Nastaví orientaci obrazovky
+     * @param newConfig nová konfigurace
+     */
+    private void setConfiguration(@NonNull Configuration newConfig) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            orientation = Configuration.ORIENTATION_LANDSCAPE;
+        else
+            orientation = Configuration.ORIENTATION_PORTRAIT;
+    }
+
+
+    /**
+     * Nastaví viditelnost bottomNavigationView
+     */
+    private void setVisibilityBottomNavigation(){
+        bottomNavigationView.setVisibility(orientation == 1 ? View.VISIBLE : View.GONE);
+    }
+
+
+    /**
+     * Odznačí všechny položky bottomNavigationView
+     * Nastaví se aktivní neviditelná položka :)
+     */
+    private void uncheckedBottomNavigation(){
+        bottomNavigationView.setSelectedItemId(R.id.meni_nothing);
     }
 
 

@@ -6,8 +6,28 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/menu_price_list"
+            android:title="@string/price_lists"
+            app:showAsAction="ifRoom" />
+
+        <item
             android:id="@+id/menu_compare_price_list"
             android:title="@string/compare_price_list"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_monthly_reads"
+            android:title="@string/month_reads"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_subscription_points"
+            android:title="@string/subscription_points"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_invoices"
+            android:title="@string/invoices"
             app:showAsAction="ifRoom" />
 
         <item

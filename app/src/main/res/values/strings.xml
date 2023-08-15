@@ -192,6 +192,10 @@
     <string name="from">OD</string>
     <string name="until">DO</string>
     <string name="compare_price_list">Porovnání ceníků</string>
+    <string name="price_lists">Ceníky</string>
+    <string name="month_reads">Měsíční odečty</string>
+    <string name="subscription_points">Odběrná místa</string>
+    <string name="invoices">Fakturace</string>
     <string name="hdo_times">Časy HDO</string>
     <string name="backup1">Záloha</string>
 

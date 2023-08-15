@@ -11,11 +11,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoClipData.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fagment_hdo_site.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fagment_hdo_site.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_bottom_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_bottom_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,7 +25,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -129,32 +131,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED&quot;: &quot;ContextMenuRecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED&quot;: &quot;SwitchCompat&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED&quot;: &quot;MaterialButton&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/cz.xlisto.odecty_preferences.xml&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED": "ContextMenuRecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED": "SwitchCompat",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
+    "cidr.known.project.marker": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater"
   }
-}</component>
+}]]></component>
   <component name="PsdUISettings">
-    <option name="MODULE_TAB" value="Signing Configs" />
+    <option name="MODULE_TAB" value="Default Config" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
   </component>
@@ -641,7 +643,21 @@
       <option name="project" value="LOCAL" />
       <updated>1691564517903</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo.">
+      <created>1691672697166</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1691672697166</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo.">
+      <created>1691672785720</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1691672785720</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -715,8 +731,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Použití konstant InvoiceAbstract.D01 a InvoiceAddEditAbstractFragment.D02&#10;Nahrazení textových řetězců &quot;D 01d&quot; a &quot;D 02d&quot; konstantami." />
-    <MESSAGE value="Doplnění části else do podmínky skrývající položku odkazující na nízský tarif ve Spenneru detailu faktury.&#10;Doplněna znovu nastavení proměnné hidenNT =  false pro zpětné zobtazení po skrytí položek nízského tarifu." />
     <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedineční identifikátory použitých widgetů" />
     <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
     <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
@@ -740,6 +754,8 @@
     <MESSAGE value="Vytvořen fragment a třída pro načítání dat HDO ze stránek distributorů&#10;&#10;HdoSite - fragment aplikace&#10;Connections - přístup k rozhraní api.&#10;CodeWeb - statická stránka pro získání tokenu" />
     <MESSAGE value="Opravena chyba při nezobrazení údajů v editaci faktury pokud se klikno na tlačítko zpět na zařízení." />
     <MESSAGE value="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci" />
-    <option name="LAST_COMMIT_MESSAGE" value="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci" />
+    <MESSAGE value="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo." />
+    <MESSAGE value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
+    <option name="LAST_COMMIT_MESSAGE" value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
   </component>
 </project>
