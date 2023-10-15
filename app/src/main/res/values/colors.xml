@@ -19,4 +19,7 @@
     <color name="color_yes">#008000</color>
     <color name="color_bar">#012587</color>
     <color name="color_bar_dark">#295EEE</color>
+    <color name="color_axis">#FF222222</color>
+    <color name="color_graph_background">#FFFFFFFF</color>
+
 </resources>

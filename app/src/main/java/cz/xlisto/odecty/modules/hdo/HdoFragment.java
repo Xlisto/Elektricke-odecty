@@ -253,7 +253,7 @@ public class HdoFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();//získání aktuálního času
         calendar.setTimeInMillis(calendar.getTimeInMillis() + timeDifferent);//nastavení kalendáře na aktuální čas + časový posun
         long miliseconds = calendar.getTimeInMillis();//aktuální čas v milisekundách s časovým posunem
-        tvTimeHdo.setText(SimpleDateFormatHelper.timeFormatOnlyTime.format(miliseconds).toUpperCase());
+        tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
         if (hdoModels.size() == 0) return;
 
         setTextHdoColor(HdoTime.checkHdo(hdoModels, calendar));

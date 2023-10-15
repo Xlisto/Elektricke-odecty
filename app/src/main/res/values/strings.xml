@@ -198,6 +198,7 @@
     <string name="invoices">Fakturace</string>
     <string name="hdo_times">Časy HDO</string>
     <string name="backup1">Záloha</string>
+    <string name="graph_month">Měsíční graf</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
     <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI</string>
@@ -216,6 +217,14 @@
     <string name="exception_jindrichuv_hradec">Pokud se vaše odběrné místo nachází v některých těchto lokalitách: Báňovice, Bělčovice, Bílkov, Borek, Borová, Brandlín, Budeč, Budíškovice, Cizkrajov, Červený Hrádek, Český Rudolec, Dančovice, Dešná, Dobrohošť, Dolní Bolíkov, Dolní Němčice, Dvůr Hejnice, Heřmaneč, Hluboká, Holešice, Horní Němčice, Horní Radíkov, Horní Slatina, Hostkovice, Hradišťko, Hříšice, Chlumec, Chvaletín, Chvalkovice, Chytrov, Janov, Jersice, Kadolec, Karlov, Klášter, Kostelní Vydří, Krokovice, Lidéřovice, Lipnice, Lipolec, Lipová, Lomy, Loucký Mlýn, Máchův Mlýn, Malý Pěčín, Manešovice, Marketa, Markvarec, Maršov, Matějovec, Modletice, Mutišov, MutnáNová Ves, Nové Dvory (Volfířov), Nové Dvory (Staré Hobzí), Nové Hobzí, Olšany, Ostojkovice, Peč, Peníkov, Písečné, Plačovice, Poldovka, Prostřední Vydří, Radíkov, Radlice, Rancířov, Rožnov, Řečice, Slavětín, Slavonice, Stálkov, Staré Hobzí, Stoječín, Šach, Toužín, Třebětice, Urbaneč, Václavov, Valtínov (TS2), Velká Lhota, Velký Jeníkov, Vesce, Veselíčko, Vlastkovec, Vlažinka, Vnorovice, Volfířov, Vostezy, Županovice. \nVypněte následující přepínač.</string>
     <string name="exception_hodonin">Pokud je na Vašem přijímači nápis \"dálková parametrizace\". \nVypněte následující přepínač.</string>
     <string name="exception_breclav">Pokud je na Vašem přijímači nápis \"dálková parametrizace\". \nVypněte následující přepínač.</string>
+
+
+    <string name="description_btn_period">Přepíná mezi ročním a měsičním grafem</string>
+    <string name="description_btn_type">Přepíná mezi čárovým a sloupcovým grafem</string>
+    <string name="description_btn_vt">Zobrazí/skryje vysoký tarif</string>
+    <string name="description_btn_nt">Zobrazí/skryje nízský tarif</string>
+    <string name="description_btn_zoom_in">Zvětší graf</string>
+    <string name="description_btn_zoom_out">Zmenší graf</string>
 
 
 

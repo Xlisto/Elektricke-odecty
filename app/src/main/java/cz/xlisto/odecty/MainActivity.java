@@ -14,6 +14,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,8 +23,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
+import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
-import cz.xlisto.odecty.modules.hdo.HdoSiteFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.menu_hdo) {
-                //uncheckedBottomNavigation();
+                uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
                 b = true;
             }
@@ -156,14 +157,14 @@ public class MainActivity extends AppCompatActivity {
                 b = true;
             }
 
-            if (itemId == R.id.menu_hdo_z_netu) {
-                //uncheckedBottomNavigation();
-                actualFragment = HdoSiteFragment.newInstance();
+            if (itemId == R.id.menu_graph_month) {
+                uncheckedBottomNavigation();
+                actualFragment = GraphMonthFragment.newInstance();
                 b = true;
             }
 
             if (itemId == R.id.menu_test) {
-                //uncheckedBottomNavigation();
+                uncheckedBottomNavigation();
                 actualFragment = TestFragment.newInstance();
                 b = true;
             }
@@ -194,6 +195,33 @@ public class MainActivity extends AppCompatActivity {
 
         startHdoService();
         setVisibilityBottomNavigation();
+
+        /*
+         * Akce kliknutí na tlačítko zpět
+         * Pokud je otevřený drawer, zavře ho
+         * Pokud je otevřený podřízený fragment, vrátí se o fragment zpět
+         * Pokud je otevřený hlavní fragment a je poslední, ukončí aplikaci
+         */
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    int pf = getSupportFragmentManager().getBackStackEntryCount();
+                    if (pf > 0) {
+                        getSupportFragmentManager().popBackStack();//vrácení o fragment zpět, když je nějaký
+                    } else if (!secondClick) {
+                        secondClick = true;
+                        Toast.makeText(getApplication(), "Následující kliknutí aplikaci ukončí", Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(() -> secondClick = false, 2000);
+                    } else {
+                        finish();
+                    }
+                }
+            }
+        });
     }
 
 
@@ -211,32 +239,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
-    }
-
-
-    /**
-     * Akce kliknutí na tlačítko zpět
-     * Pokud je otevřený drawer, zavře ho
-     * Pokud je otevřený fragment, vrátí se o fragment zpět
-     * Pokud je otevřený fragment a je poslední, ukončí aplikaci
-     */
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            int pf = getSupportFragmentManager().getBackStackEntryCount();
-            if (pf > 0) {
-                getSupportFragmentManager().popBackStack();//vrácení o fragment zpět, když je nějaký
-            } else if (!secondClick) {
-                secondClick = true;
-                Toast.makeText(getApplication(), "Následující kliknutí aplikaci ukončí", Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(() -> secondClick = false, 2000);
-            } else {
-                super.onBackPressed();
-            }
-        }
     }
 
 

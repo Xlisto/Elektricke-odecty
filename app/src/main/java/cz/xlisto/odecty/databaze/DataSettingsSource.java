@@ -3,7 +3,6 @@ package cz.xlisto.odecty.databaze;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 
@@ -17,11 +16,63 @@ import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_SETTINGS;
 public class DataSettingsSource extends DataSource {
     private static final String TAG = "DataSettingsSource";
     private static final String PREFIX_TIME_SHIFT = "posunCasu";
+    private static final String PREFIX_COLOR_VT = "colorVT";
+    private static final String PREFIX_COLOR_NT = "colorNT";
 
 
     public DataSettingsSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
+    }
+
+
+    /**
+     * Načte barvy pro VT a NT
+     * Pokud záznam bude chybět - nastaví se výchozí červená a modrá
+     *
+     * @return pole celých čísel s barvami
+     */
+    public int[] loadColorVTNT() {
+
+        String selection = "jmeno=?";
+        String[] argsVT = new String[]{PREFIX_COLOR_VT};
+        String[] argsNT = new String[]{PREFIX_COLOR_NT};
+
+        Cursor cursorVT = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                argsVT,
+                null,
+                null,
+                null);
+
+        Cursor cursorNT = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                argsNT,
+                null,
+                null,
+                null);
+
+        cursorVT.moveToFirst();
+        cursorNT.moveToFirst();
+
+        int[] colors = new int[2];
+
+        if (cursorVT.getCount() > 0)
+            colors[0] = cursorVT.getInt(cursorVT.getColumnIndexOrThrow("hodnota"));
+        else
+            colors[0] = 0xFFFF0000;//red
+
+        if (cursorNT.getCount() > 0)
+            colors[1] = cursorNT.getInt(cursorNT.getColumnIndexOrThrow("hodnota"));
+        else
+            colors[1] = 0xFF0000FF;//blue
+
+        cursorVT.close();
+        cursorNT.close();
+
+        return colors;
     }
 
 
@@ -51,7 +102,7 @@ public class DataSettingsSource extends DataSource {
      * @return long posun času v milisekundách
      */
     public long loadTimeShift(long idSubscriptionPoint) {
-        if(idSubscriptionPoint < 0) return 0;
+        if (idSubscriptionPoint < 0) return 0;
         String timeShiftName = loadTimeShiftName(idSubscriptionPoint);
 
         String selection = "jmeno=?";
@@ -104,6 +155,7 @@ public class DataSettingsSource extends DataSource {
 
     /**
      * Smaže posun času pro dané odběrné místo
+     *
      * @param idSubscriptionPoint id odběrného místa
      */
     public void deleteTimeShift(long idSubscriptionPoint) {

@@ -41,8 +41,8 @@
             app:showAsAction="ifRoom" />
 
         <item
-            android:id="@+id/menu_hdo_z_netu"
-            android:title="HDO z netu"
+            android:id="@+id/menu_graph_month"
+            android:title="@string/graph_month"
             app:showAsAction="always" />
 
         <item

@@ -25,6 +25,20 @@
                                               <map>
                                                 <entry key="color" value="000000" />
                                                 <entry key="imagePath" value="C:\Users\Xlisto\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="opacityPercent" value="60" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ico_graph_column.gif" />
+                                                <entry key="opacityPercent" value="60" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -54,6 +68,12 @@
                                       </entry>
                                     </map>
                                   </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ico_graph_column.gif" />
+                                    </map>
+                                  </option>
                                 </PersistentState>
                               </value>
                             </entry>
@@ -81,7 +101,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_1.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ico_graph_column.gif" />
                                                 <entry key="scalingPercent" value="79" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -140,6 +160,18 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ic_graph_month_right_gray.png" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="text">
                                         <value>
                                           <PersistentState>
@@ -162,6 +194,13 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ic_graph_month_right_gray.png" />
+                                      <entry key="outputName" value="ic_graph_month_right_gray" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -309,7 +348,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="NOTIFICATION" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

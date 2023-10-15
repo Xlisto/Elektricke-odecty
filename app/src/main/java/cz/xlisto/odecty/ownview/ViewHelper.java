@@ -34,6 +34,24 @@ public class ViewHelper {
 
 
     /**
+     * Vrátí instanci SimpleDateFormat s výchozím petternem yyyy
+     * @return SimpleDateFormat s patternem yyyy
+     */
+    public static SimpleDateFormat getSimpleDateFormatYear() {
+        return new SimpleDateFormat("yyyy", Locale.GERMANY);
+    }
+
+
+    /**
+     * Vrátí instanci SimpleDateFormat s výchozím petternem MM
+     * @return SimpleDateFormat s patternem MM
+     */
+    public static SimpleDateFormat getSimpleDateFormatMonth() {
+        return new SimpleDateFormat("MM", Locale.GERMANY);
+    }
+
+
+    /**
      * Vrátí instanci SimpleDateFormat s výchozím petternem hh:mm:ss
      * @return SimpleDateFormat s patternem hh:mm:ss
      */

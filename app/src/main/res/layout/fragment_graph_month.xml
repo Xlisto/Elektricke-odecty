@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <cz.xlisto.odecty.modules.graphmonth.GraphMonthView
+        android:id="@+id/graphMonthView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ln_buttons_monthly_graph"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="?android:attr/colorBackground" />
+
+    <LinearLayout
+        android:id="@+id/ln_buttons_monthly_graph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imgBtnType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:adjustViewBounds="false"
+            android:backgroundTint="#FEFEFE"
+            android:cropToPadding="false"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_column"
+            android:contentDescription="@string/description_btn_type" />
+
+        <ImageButton
+            android:id="@+id/imgBtnPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FEFEFE"
+            android:contentDescription="@string/description_btn_period"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_year" />
+
+        <ImageButton
+            android:id="@+id/imgBtnVT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FEFEFE"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_vt_off"
+            android:contentDescription="@string/description_btn_vt" />
+
+        <ImageButton
+            android:id="@+id/imgBtnNT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FEFEFE"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_nt_off"
+            android:contentDescription="@string/description_btn_nt" />
+
+        <ImageButton
+            android:id="@+id/imgBtnLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FEFEFE"
+            android:contentDescription="@string/description_btn_zoom_in"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_month_left_gray" />
+
+        <ImageButton
+            android:id="@+id/imgBtnRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FEFEFE"
+            android:contentDescription="@string/description_btn_zoom_out"
+            android:padding="1dp"
+            android:src="@mipmap/ic_graph_month_right_gray" />
+    </LinearLayout>
+
+</RelativeLayout>

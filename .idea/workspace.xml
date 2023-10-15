@@ -11,14 +11,126 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataGraphMonth.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/ConsuptionModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/MonthlyConsuptionModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/YearConsuptionModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/ConsuptionContainer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_graph_month.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_month.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month_compare.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month_left_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month_right_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month_compare.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month_left_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month_right_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month_compare.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month_left_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month_right_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month_compare.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month_left_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month_right_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month_compare.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month_left_gray.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month_right_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_bottom_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_bottom_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSettingsSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSettingsSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/format/SimpleDateFormatHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/format/SimpleDateFormatHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/ViewHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/ViewHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoData.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/services/HdoData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_column.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_column.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_line.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_month.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_nt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_vt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_year.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_year.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_minus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_minus_gray.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_minus_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_graph_zoom_plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_column.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_column.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_line.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_month.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_nt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_vt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_year.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_year.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_minus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_minus_gray.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_minus_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_graph_zoom_plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_column.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_column.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_line.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_month.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_nt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_vt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_year.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_year.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_minus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_minus_gray.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_minus_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_graph_zoom_plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_column.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_column.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_line.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_month.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_nt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_vt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_year.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_year.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_minus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_minus_gray.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_minus_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_graph_zoom_plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_column.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_column.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_line.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_line.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_month.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_nt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt_off.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt_off.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt_on.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_vt_on.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_year.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_year.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_minus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_minus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_minus_gray.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_minus_gray.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_graph_zoom_plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,9 +193,10 @@
         <option value="xml" />
         <option value="resourceFile" />
         <option value="valueResourceFile" />
-        <option value="layoutResourceFile" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="layoutResourceFile" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -131,30 +244,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED": "ContextMenuRecyclerView",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED": "SwitchCompat",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
-    "cidr.known.project.marker": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED&quot;: &quot;GraphMonthView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED&quot;: &quot;ContextMenuRecyclerView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED&quot;: &quot;SwitchCompat&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED&quot;: &quot;MaterialButton&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.android.tools.idea.logcat.settings.LogcatApplicationSettingsConfigurableProvider&quot;
   }
-}]]></component>
+}</component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Default Config" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
@@ -313,13 +429,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Přidány gradle scripty&#10;- build.gradle v app&#10;- build.gradle&#10;- gradle.properties&#10;- gradle-wrapper.properties&#10;- proguard-rules.pro&#10;- settings.gradle">
-      <created>1682890986248</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1682890986248</updated>
     </task>
     <task id="LOCAL-00002" summary="Přidány gradle scripty&#10;- build.gradle v app&#10;- build.gradle&#10;- gradle.properties&#10;- gradle-wrapper.properties&#10;- proguard-rules.pro&#10;- settings.gradle&#10;- gradlew&#10;- gradlew.bat">
       <created>1682891492552</created>
@@ -657,7 +766,14 @@
       <option name="project" value="LOCAL" />
       <updated>1691672785720</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation.">
+      <created>1692064090804</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1692064090804</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -731,7 +847,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedineční identifikátory použitých widgetů" />
     <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init zakomentován řádek generující nové id EditTextu (editText.setId(View.generateViewId());) &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
     <MESSAGE value="Opravena varování (&quot;W/View: couldn't find view with id xxxxxxxxx&quot;) při zobrazení vlastní komponenty LabelEditText.&#10;V metodě init je EditText přidáván programově a z layoutu label_price_detail.xml odebrán. &#10;Doplněny konstruktory s atributy defStyleAtr a defstyleRes do vlastních widgetů LabelEditTExt a LabelPriceDetail.&#10;&#10;V příslušných xml rozvržení použity jedinečné identifikátory použitých widgetů" />
     <MESSAGE value="Oprava upozornění v MainActivity.java" />
@@ -756,6 +871,7 @@
     <MESSAGE value="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci" />
     <MESSAGE value="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo." />
     <MESSAGE value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
-    <option name="LAST_COMMIT_MESSAGE" value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
+    <MESSAGE value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
   </component>
 </project>

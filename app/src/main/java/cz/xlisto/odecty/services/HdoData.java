@@ -42,7 +42,8 @@ public class HdoData {
 
             ArrayList<String> reles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
 
-            rele = reles.get(0);
+            if (reles.size() > 0)
+                rele = reles.get(0);
         }
         if (!rele.isEmpty()) {
             title += " - " + rele;

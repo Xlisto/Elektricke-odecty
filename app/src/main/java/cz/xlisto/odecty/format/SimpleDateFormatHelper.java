@@ -9,7 +9,9 @@ import java.util.Locale;
 public class SimpleDateFormatHelper {
     private static final String TAG = "SimpleDateFormatHelper";
 
-    public static SimpleDateFormat timeFormatOnlyTime = new SimpleDateFormat("HH:mm:ss EE", Locale.getDefault());
-    public static SimpleDateFormat timeFormatDateAndTime = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
-    public static SimpleDateFormat timeFormatDateAndTimeWithSeconds = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+    public static SimpleDateFormat onlyTime = new SimpleDateFormat("HH:mm:ss EE", Locale.getDefault());
+    public static SimpleDateFormat dateAndTime = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+    public static SimpleDateFormat dateAndTimeWithSeconds = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+    public static SimpleDateFormat month = new SimpleDateFormat("MM",Locale.getDefault());
+    public static SimpleDateFormat year = new SimpleDateFormat("yyyy",Locale.getDefault());
 }

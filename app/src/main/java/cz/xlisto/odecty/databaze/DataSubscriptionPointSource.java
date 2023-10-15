@@ -246,7 +246,7 @@ public class DataSubscriptionPointSource extends DataSource{
      * @return arraylist měsíčních odečtů
      */
     public ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table, long from, long to) {
-        return loadMonthlyReadings(table, null, from, to, DATUM + " DESC, " + PRVNI_ODECET + " ASC, " + VT + " DESC, " + NT + " DESC");
+        return loadMonthlyReadings(table, null, from, to, DATUM + " DESC, " + PRVNI_ODECET + " DESC, " + VT + " DESC, " + NT + " DESC");
     }
 
 
