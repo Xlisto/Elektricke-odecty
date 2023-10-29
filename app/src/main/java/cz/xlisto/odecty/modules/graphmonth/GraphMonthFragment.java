@@ -37,11 +37,6 @@ public class GraphMonthFragment extends Fragment {
     }
 
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -219,8 +214,7 @@ public class GraphMonthFragment extends Fragment {
         if (showPeriod == 2) {
             btnLeft.setImageResource(R.mipmap.ic_graph_month_left_gray);
             btnRight.setImageResource(R.mipmap.ic_graph_month_right_gray);
-        }
-        else {
+        } else {
             btnLeft.setImageResource(R.mipmap.ic_graph_zoom_minus);
             btnRight.setImageResource(R.mipmap.ic_graph_zoom_plus);
         }

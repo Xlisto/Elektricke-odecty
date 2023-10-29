@@ -43,12 +43,17 @@
         <item
             android:id="@+id/menu_graph_month"
             android:title="@string/graph_month"
-            app:showAsAction="always" />
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_graph_color"
+            android:title="@string/graph_color"
+            app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_test"
             android:title="Testovací fragment"
-            app:showAsAction="always" />
+            app:showAsAction="ifRoom" />
 
     </group>
 </menu>

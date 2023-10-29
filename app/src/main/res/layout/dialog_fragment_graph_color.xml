@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etVTDialogFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/tvVTDialogFragmentDescription"
+            android:layout_toStartOf="@id/vVT"
+            android:autofillHints=""
+            android:ems="5"
+            android:hint="@string/hint_vt_color"
+            android:inputType="text"
+            android:labelFor="@id/tvVTDialogFragmentDescription"
+            android:minHeight="48dp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <EditText
+            android:id="@+id/etNTDialogFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/etVTDialogFragment"
+            android:layout_alignStart="@id/etVTDialogFragment"
+            android:layout_below="@id/etVTDialogFragment"
+            android:autofillHints=""
+            android:ems="5"
+            android:hint="@string/hint_nt_color"
+            android:inputType="text"
+            android:labelFor="@id/tvNTDialogFragmentDescription"
+            android:minHeight="48dp"
+            tools:ignore="VisualLintTextFieldSize" />
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@id/recycleViewColor"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:maxWidth="200dp"
+                    android:text="@string/zrusit"
+                    android:textColor="#D81B60" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnSave"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:maxWidth="200dp"
+                    android:text="@string/set"
+                    android:textColor="#D81B60" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvVTDialogFragmentDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/etVTDialogFragment"
+            android:text="@string/description_vt_color" />
+
+        <TextView
+            android:id="@+id/tvNTDialogFragmentDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/etNTDialogFragment"
+            android:text="@string/description_nt_color" />
+
+        <View
+            android:id="@+id/vNT"
+            android:layout_width="50dp"
+            android:layout_height="38dp"
+            android:layout_alignBottom="@id/etNTDialogFragment"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/etNTDialogFragment"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_no" />
+
+        <View
+            android:id="@+id/vVT"
+            android:layout_width="50dp"
+            android:layout_height="38dp"
+            android:layout_alignBottom="@id/etVTDialogFragment"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/etVTDialogFragment"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/black" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleViewColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etNTDialogFragment" />
+    </RelativeLayout>
+</ScrollView>

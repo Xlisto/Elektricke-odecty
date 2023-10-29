@@ -163,6 +163,12 @@ public class MainActivity extends AppCompatActivity {
                 b = true;
             }
 
+            if (itemId == R.id.menu_graph_color) {
+                uncheckedBottomNavigation();
+                actualFragment = cz.xlisto.odecty.modules.graphcolor.GraphColorFragment.newInstance();
+                b = true;
+            }
+
             if (itemId == R.id.menu_test) {
                 uncheckedBottomNavigation();
                 actualFragment = TestFragment.newInstance();

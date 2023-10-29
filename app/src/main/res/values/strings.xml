@@ -199,6 +199,7 @@
     <string name="hdo_times">Časy HDO</string>
     <string name="backup1">Záloha</string>
     <string name="graph_month">Měsíční graf</string>
+    <string name="graph_color">Barva tarifu</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
     <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI</string>
@@ -225,6 +226,17 @@
     <string name="description_btn_nt">Zobrazí/skryje nízský tarif</string>
     <string name="description_btn_zoom_in">Zvětší graf</string>
     <string name="description_btn_zoom_out">Zmenší graf</string>
+
+
+    <string name="description_vt_color">Barva VT</string>
+    <string name="hint_vt_color">#0c5292</string>
+    <string name="contentdescription_vt_color">Nastavení barvy vysokého tarifu</string>
+    <string name="hint_nt_color">#b42016</string>
+    <string name="description_nt_color">Barva NT</string>
+    <string name="contentdescription_nt_color">Nastavení barvy nízskéh tarifu</string>
+    <string name="set_color_html">Nastavení barvy podle notace HTML </string>
+    <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
+    <string name="set">Nastav </string>
 
 
 

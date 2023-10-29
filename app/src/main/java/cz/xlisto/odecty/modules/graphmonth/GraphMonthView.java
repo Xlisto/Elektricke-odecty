@@ -72,15 +72,18 @@ public class GraphMonthView extends View {
         init();
     }
 
+
     public GraphMonthView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
+
     public GraphMonthView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
+
 
     public GraphMonthView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -139,6 +142,7 @@ public class GraphMonthView extends View {
         setMeasuredDimension(width, height);
     }
 
+
     @Nullable
     @Override
     protected Parcelable onSaveInstanceState() {
@@ -157,6 +161,7 @@ public class GraphMonthView extends View {
         return bundle;
     }
 
+
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         Bundle bundle = (Bundle) state;
@@ -173,6 +178,7 @@ public class GraphMonthView extends View {
         state = bundle.getParcelable("superstate");
         super.onRestoreInstanceState(state);
     }
+
 
     /**
      * Nastaví výšku grafu s odečtením na pozici dolního popisku os
@@ -579,15 +585,16 @@ public class GraphMonthView extends View {
         text.setColor(getResources().getColor(R.color.color_axis));
         text.setTextSize(dipToPx(8));
         int y = heightGraph - dipToPx(2);
-        canvas.rotate(-90, x, y);
         int textMeasureVT = (int) text.measureText("VT: " + DecimalFormatHelper.df2.format(vt));
         int textMeasureNT = (int) text.measureText("NT: " + DecimalFormatHelper.df2.format(nt));
+        canvas.rotate(-90, x, y);
         int textMeasure = Math.max(textMeasureVT, textMeasureNT);
         //VT
         if (showVT) {
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), background);
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), border);
-            canvas.drawText("VT: " + DecimalFormatHelper.df2.format(vt), x + dipToPx(2) - moveConsuption, y - dipToPx(3), text);
+            canvas.drawRoundRect(x - dipToPx(1)- moveConsuption, y - dipToPx(1), x  + textMeasure+ dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), background);
+            canvas.drawRoundRect(x - dipToPx(1)- moveConsuption, y - dipToPx(1), x  + textMeasure+dipToPx(5)- moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), border);
+            canvas.drawText("VT: " + DecimalFormatHelper.df2.format(vt), x + dipToPx(2)- moveConsuption, y - dipToPx(3), text);
+
 
         }
         //NT
@@ -822,7 +829,7 @@ public class GraphMonthView extends View {
      */
     private void animated() {
 
-        final int count = 2000;
+        final int count = 1000;
         ValueAnimator valueAnimator = ValueAnimator.ofInt(0, count);
         //TODO: Nastavení duration na 0 se vypne animace
         valueAnimator.setDuration(1000L);
@@ -847,7 +854,7 @@ public class GraphMonthView extends View {
                     }
                     break;
             }
-            moveConsuption = 200 - (int) valueAnimator1.getAnimatedValue() / 10;
+            moveConsuption = count - (int) valueAnimator1.getAnimatedValue();
             invalidate();
         });
 
