@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataGraphMonth;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
+import cz.xlisto.odecty.shp.ShPGraphMonth;
 
 /**
  * Xlisto 20.08.2023 21:53
@@ -30,6 +31,7 @@ public class GraphMonthFragment extends Fragment {
     private int showPeriod = 1; // 0 - month, 1 - year, 2 - moth compare
     private int compareMonth = 0;
     private boolean showTypeGraph = true;
+    private ShPGraphMonth shPGraphMonth;
 
 
     public static GraphMonthFragment newInstance() {
@@ -49,6 +51,8 @@ public class GraphMonthFragment extends Fragment {
         btnLeft = view.findViewById(R.id.imgBtnLeft);
         btnRight = view.findViewById(R.id.imgBtnRight);
 
+        shPGraphMonth = new ShPGraphMonth(getContext());
+
 
         btnShowVT.setOnClickListener(v -> {
             showVT = !showVT;
@@ -59,6 +63,7 @@ public class GraphMonthFragment extends Fragment {
             graphMonthView.setShowNT(showNT);
             setImageIconNT();
             setImageIconVT();
+            shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_VT, showVT);
         });
 
         btnShowNT.setOnClickListener(v -> {
@@ -70,6 +75,7 @@ public class GraphMonthFragment extends Fragment {
             graphMonthView.setShowNT(showNT);
             setImageIconNT();
             setImageIconVT();
+            shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_NT, showNT);
         });
 
         btnChangePeriod.setOnClickListener(v -> {
@@ -78,12 +84,14 @@ public class GraphMonthFragment extends Fragment {
             graphMonthView.changePeriod(showPeriod);
             setImageIconPeriod();
             setImageIconZoom();
+            shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_PERIOD, showPeriod);
         });
 
         btnTypeGraph.setOnClickListener(v -> {
             showTypeGraph = !showTypeGraph;
             graphMonthView.setTypeShowGraph(showTypeGraph);
             setImageIconTypeGraph();
+            shPGraphMonth.set(ShPGraphMonth.ARG_TYPE_GRAPH, showTypeGraph);
         });
 
         btnLeft.setOnClickListener(v -> {
@@ -91,6 +99,7 @@ public class GraphMonthFragment extends Fragment {
                 compareMonth--;
                 if (compareMonth < 0) compareMonth = 11;
                 graphMonthView.setCompareMonth(compareMonth);
+                shPGraphMonth.set(ShPGraphMonth.ARG_COMPARE_MONTH, compareMonth);
             } else {
                 graphMonthView.setCofDown();
             }
@@ -101,26 +110,19 @@ public class GraphMonthFragment extends Fragment {
                 compareMonth++;
                 if (compareMonth > 11) compareMonth = 0;
                 graphMonthView.setCompareMonth(compareMonth);
+                shPGraphMonth.set(ARG_COMPARE_MONTH, compareMonth);
             } else {
                 graphMonthView.setCofUp();
             }
         });
 
         if (savedInstanceState != null) {
-            showPeriod = savedInstanceState.getInt(ARG_IS_SHOW_PERIOD);
-            showVT = savedInstanceState.getBoolean(ARG_IS_SHOW_VT);
-            showNT = savedInstanceState.getBoolean(ARG_IS_SHOW_NT);
-            showTypeGraph = savedInstanceState.getBoolean(ARG_TYPE_GRAPH);
-            compareMonth = savedInstanceState.getInt(ARG_COMPARE_MONTH);
-            graphMonthView.changePeriod(showPeriod);
-            graphMonthView.setShowVT(showVT);
-            graphMonthView.setShowNT(showNT);
-            graphMonthView.setTypeShowGraph(showTypeGraph);
-            setImageIconPeriod();
-            setImageIconVT();
-            setImageIconNT();
-            setImageIconTypeGraph();
-            setImageIconZoom();
+            showPeriod = savedInstanceState.getInt(ShPGraphMonth.ARG_IS_SHOW_PERIOD);
+            showVT = savedInstanceState.getBoolean(ShPGraphMonth.ARG_IS_SHOW_VT);
+            showNT = savedInstanceState.getBoolean(ShPGraphMonth.ARG_IS_SHOW_NT);
+            showTypeGraph = savedInstanceState.getBoolean(ShPGraphMonth.ARG_TYPE_GRAPH);
+            compareMonth = savedInstanceState.getInt(ShPGraphMonth.ARG_COMPARE_MONTH);
+            setGraphMontView();
         }
         return view;
     }
@@ -140,6 +142,14 @@ public class GraphMonthFragment extends Fragment {
         graphMonthView.setColors(graphColors[0], graphColors[1]);
 
         setImageIconZoom();
+
+        showPeriod = shPGraphMonth.get(ARG_IS_SHOW_PERIOD, 1);
+        showTypeGraph = shPGraphMonth.get(ARG_TYPE_GRAPH, true);
+        showVT = shPGraphMonth.get(ARG_IS_SHOW_VT, true);
+        showNT = shPGraphMonth.get(ARG_IS_SHOW_NT, true);
+        compareMonth = shPGraphMonth.get(ARG_COMPARE_MONTH, 1);
+        setGraphMontView();
+
     }
 
 
@@ -151,6 +161,23 @@ public class GraphMonthFragment extends Fragment {
         outState.putBoolean(ARG_IS_SHOW_NT, showNT);
         outState.putBoolean(ARG_TYPE_GRAPH, showTypeGraph);
         outState.putInt(ARG_COMPARE_MONTH, compareMonth);
+    }
+
+
+    /**
+     * Nastaví parametry GraphView
+     */
+    private void setGraphMontView(){
+        graphMonthView.changePeriod(showPeriod);
+        graphMonthView.setShowVT(showVT);
+        graphMonthView.setShowNT(showNT);
+        graphMonthView.setTypeShowGraph(showTypeGraph);
+        graphMonthView.setCompareMonth(compareMonth);
+        setImageIconPeriod();
+        setImageIconVT();
+        setImageIconNT();
+        setImageIconTypeGraph();
+        setImageIconZoom();
     }
 
 

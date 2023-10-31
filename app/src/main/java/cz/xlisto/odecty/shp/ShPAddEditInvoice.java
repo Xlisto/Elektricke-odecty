@@ -3,6 +3,7 @@ package cz.xlisto.odecty.shp;
 import android.content.Context;
 
 /**
+ * Třída pro ukládání nastavení přidání/)pravení faktury.
  * Xlisto 05.02.2023 9:32
  */
 public class ShPAddEditInvoice extends ShP {

@@ -11,11 +11,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPGraphMonth.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dialog_fragment_graph_color.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_fragment_graph_color.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_color.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_color.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPAddEditInvoice.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -319,41 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Přidány gradle scripty&#10;- build.gradle v app&#10;- build.gradle&#10;- gradle.properties&#10;- gradle-wrapper.properties&#10;- proguard-rules.pro&#10;- settings.gradle&#10;- gradlew&#10;- gradlew.bat&#10;- gradle/wrapper/gradle-wrapper.jar&#10;- .gitignore">
-      <created>1682900391631</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1682900391631</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Ve ViewHelper doplněna nová metoda getOffsetTimezones(long l).&#10;Metoda přepočítává čas podle časových pásem.&#10;Vypočítá rozdíl nastaveného časového pásma v telefonu o proti UTC0 a připočítá rozdíl do pásma UTC1 (+ letní čas). Výsledek je číslo long, který se připočítává k načtemému datu (long). To je důležité pro korekci, pokud se telefon spustí s nastavením jiného časového pásma.">
-      <created>1683056520893</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1683056520893</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Opravena chyba při editaci záznamu faktury - neukládal se id ceníku.">
-      <created>1683064021031</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1683064021031</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Upraven převod long čísla na data podle časového pásma.&#10;Pro správný výpočet se používá offset časových pásem.&#10;Pro tento účel je vytvořena metoda getOffsetTimezones ve ViewHelper.&#10;Nejprve vypočítá rozdíl času oproti času GMT, potom přičte rozdíl k středoevropskému času.">
-      <created>1683066335867</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1683066335867</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Přidaná nová konstanta pro červenou výstražnou barvu pro zvýraznění nenavazujících dat ve faktuře.&#10;Odstraněn Toast informující jaká data nenavazují.">
-      <created>1683076834051</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1683076834051</updated>
     </task>
     <task id="LOCAL-00010" summary="Přidaná složka .idea">
       <created>1683079157334</created>
@@ -663,7 +628,42 @@
       <option name="project" value="LOCAL" />
       <updated>1698613354938</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět.">
+      <created>1698654455546</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1698654455546</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět.">
+      <created>1698775345311</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1698775345311</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět.">
+      <created>1698775370467</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1698775370467</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět.">
+      <created>1698775409541</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1698775409541</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět.">
+      <created>1698775484734</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1698775484734</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -737,10 +737,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Oprava upozornění v MainActivity.java" />
-    <MESSAGE value="Úprava tříd (úprava konstant) přistupující SharedPreference. Přidán další konstruktor do abstraktní třídy ShP." />
-    <MESSAGE value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distřibuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území." />
-    <MESSAGE value="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry." />
     <MESSAGE value="Přidána funkce na slučování záznamů v období bez faktury - opravena chyba při rotaci.&#10;Při rotaci zařízení se ztratil kontext na posluchače výsledku kliknutí.&#10;Listener z InvoiceJoinDialogFragment odstraněn a nahrazen &quot;getParentFragmentManager().setFragmentResult(RESULT_JOIN_DIALOG_FRAGMENT, bundle);&quot;&#10;Posluchač výsledků kliknutí tlačítka na dialogového okna je v InvoiceFragment v metodě onCreatedView: &quot;requireActivity().getSupportFragmentManager().setFragmentResultListener...&quot;&#10;&#10;Pro průběh animace sjednocení je vytvořena metoda (setUpdateJoin(ArrayList&lt;InvoiceModel&gt; items, int position)) pro aktualizaci ArrayListu položek. Kde jsou volány metody notifyItemRemoved(position) a notifyItemRangeChanged(position, getItemCount()." />
     <MESSAGE value="Opravena funkce na rozdělování záznamů v období bez faktury - opravena chyba při rotaci.&#10;Při rotaci zařízení se ztratil kontext na posluchače výsledku kliknutí.&#10;Listener z InvoiceCutDialogFragment odstraněn a nahrazen &quot;getParentFragmentManager().setFragmentResult(RESULT_CUT_DIALOG_FRAGMENT, bundle);&quot;&#10;Posluchač výsledků kliknutí tlačítka na dialogového okna je v InvoiceFragment v metodě onCreatedView: &quot;requireActivity().getSupportFragmentManager().setFragmentResultListener...&quot;&#10;&#10;Pro průběh animace rozdělení je vytvořena metoda (setUpdateCut(ArrayList&lt;InvoiceModel&gt; items, int position)) pro aktualizaci ArrayListu položek. Kde jsou volány metody notifyItemInsered(position) a notifyItemRangeChanged(position, getItemCount()." />
     <MESSAGE value="Doplněn typ platby - Podpora státu&#10;Přidán chceckBox ve fragmentu přidání/úpravy platby" />
@@ -762,6 +758,10 @@
     <MESSAGE value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro zobrazování grafu spotřeby&#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět." />
+    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
+    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
+    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se statickými metodami přo převod hodnot čísel z int na html formát a zpět." />
+    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět." />
   </component>
 </project>
