@@ -107,7 +107,7 @@ public class GraphMonthView extends View {
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        if (period == 0 || period ==2) {
+        if (period == 0 || period == 2) {
             setSteep((int) maxMonthly);
             setMultiple((int) maxMonthly);
         } else if (period == 1) {
@@ -409,33 +409,50 @@ public class GraphMonthView extends View {
                 break;
         }
 
+        int startX, stopX, lastX = 0;
         for (int i = 0; i < consuption.size() - 1; i++) {
+            startX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
+            stopX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
+            lastX = (dipToPx(30) * (consuption.size())) + left + xMoveGraph;
+            if (graphType)
+                stopX = (dipToPx(30) * (i + 2)) + left + xMoveGraph;
+
             int stopVTStart = consuption.get(i).getConsuptionVTAnimace();
             int stopVTEnd = consuption.get(i + 1).getConsuptionVTAnimace();
             int stopNTStart = consuption.get(i).getConsuptionNTAnimace();
             int stopNTEnd = consuption.get(i + 1).getConsuptionNTAnimace();
+
+            if (startX > (width + 50) || startX < 0) {
+                stopVTStart = consuption.get(i).getConsuptionVT().intValue();
+                stopVTEnd = consuption.get(i + 1).getConsuptionVT().intValue();
+                stopNTStart = consuption.get(i).getConsuptionNT().intValue();
+                stopNTEnd = consuption.get(i + 1).getConsuptionNT().intValue();
+            }
             if (showVT) {
                 if (graphType) {
-                    drawLine(canvas, lineVT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep), (dipToPx(30) * (i + 2)) + left + xMoveGraph, heightGraph - (int) (stopVTEnd * steep / multipleSteep));
-                    drawCircle(canvas, lineVT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
+                    drawLine(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), stopX, heightGraph - (int) (stopVTEnd * steep / multipleSteep));
+                    drawCircle(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
                 } else
-                    drawRect(canvas, lineVT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph, (dipToPx(30) * (i + 1)) + left + xMoveGraph - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                    drawRect(canvas, lineVT, startX, heightGraph, stopX - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
             }
             if (showNT) {
                 if (graphType) {
-                    drawLine(canvas, lineNT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - (int) (stopNTStart * steep / multipleSteep), (dipToPx(30) * (i + 2)) + left + xMoveGraph, heightGraph - (int) (stopNTEnd * steep / multipleSteep));
-                    drawCircle(canvas, lineNT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
+                    drawLine(canvas, lineNT, startX, heightGraph - (int) (stopNTStart * steep / multipleSteep), stopX, heightGraph - (int) (stopNTEnd * steep / multipleSteep));
+                    drawCircle(canvas, lineNT, startX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
 
                 } else
-                    drawRect(canvas, lineNT, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph, (dipToPx(30) * (i + 1)) + left + xMoveGraph + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                    drawRect(canvas, lineNT, startX, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
             }
             int minConsuption = Math.min(stopVTStart, stopNTStart);
             if (!showNT) minConsuption = stopVTStart;
             if (!showVT) minConsuption = stopNTStart;
+
             if (graphType)
-                drawLine(canvas, line, (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - dipToPx(10), (dipToPx(30) * (i + 1)) + left + xMoveGraph, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
+                //vykreslení pomocných svislých os
+                drawLine(canvas, line, startX, heightGraph - dipToPx(10), startX, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
             else
-                drawConsuption(canvas, (dipToPx(30) * (i + 1)) + left + xMoveGraph, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
+                //vykreslení spotřeby ve spodní části sloupců
+                drawConsuption(canvas, startX, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
         }
 
         //poslední záznam
@@ -444,26 +461,27 @@ public class GraphMonthView extends View {
         int stopNTStart = lastMonthlyConsuption.getConsuptionNTAnimace();
         if (showVT) {
             if (graphType)
-                drawCircle(canvas, lineVT, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
+                drawCircle(canvas, lineVT, lastX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
             else
-                drawRect(canvas, lineVT, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph, (dipToPx(30) * (consuption.size())) + left + xMoveGraph - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                drawRect(canvas, lineVT, lastX, heightGraph, lastX - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
 
         }
         if (showNT) {
             if (graphType)
-                drawCircle(canvas, lineNT, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
+                drawCircle(canvas, lineNT, lastX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
             else
-                drawRect(canvas, lineNT, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph, (dipToPx(30) * (consuption.size())) + left + xMoveGraph + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                drawRect(canvas, lineNT, lastX, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
 
         }
+        //vykreslení spotřeby ve spodní části sloupců
         if (!graphType)
-            drawConsuption(canvas, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, consuption.get(consuption.size() - 1).getConsuptionVT(), consuption.get(consuption.size() - 1).getConsuptionNT());
+            drawConsuption(canvas, lastX, consuption.get(consuption.size() - 1).getConsuptionVT(), consuption.get(consuption.size() - 1).getConsuptionNT());
 
         //poslední záznam
         int minConsuption = Math.min(stopVTStart, stopNTStart);
         if (!showNT) minConsuption = stopVTStart;
         if (!showVT) minConsuption = stopNTStart;
-        drawLine(canvas, line, (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph - dipToPx(10), (dipToPx(30) * (consuption.size())) + left + xMoveGraph, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
+        drawLine(canvas, line, lastX, heightGraph - dipToPx(10), lastX, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
 
         drawLegend(canvas, lineVT, lineNT);
 
@@ -575,6 +593,14 @@ public class GraphMonthView extends View {
     }
 
 
+    /**
+     * Vypíše spotřebu VT a NT ve spodní části sloupcového grafu
+     *
+     * @param canvas plátno
+     * @param x      pozice x
+     * @param vt     spotřeba VT
+     * @param nt     spotřeba NT
+     */
     private void drawConsuption(Canvas canvas, int x, double vt, double nt) {
         Paint text = new Paint();
         Paint background = new Paint();
@@ -589,11 +615,13 @@ public class GraphMonthView extends View {
         int textMeasureNT = (int) text.measureText("NT: " + DecimalFormatHelper.df2.format(nt));
         canvas.rotate(-90, x, y);
         int textMeasure = Math.max(textMeasureVT, textMeasureNT);
+        if (x > width + 50)
+            moveConsuption = 0;//deaktivuje animaci u spotřeby ve spodním části sloupcového grafu
         //VT
         if (showVT) {
-            canvas.drawRoundRect(x - dipToPx(1)- moveConsuption, y - dipToPx(1), x  + textMeasure+ dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), background);
-            canvas.drawRoundRect(x - dipToPx(1)- moveConsuption, y - dipToPx(1), x  + textMeasure+dipToPx(5)- moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), border);
-            canvas.drawText("VT: " + DecimalFormatHelper.df2.format(vt), x + dipToPx(2)- moveConsuption, y - dipToPx(3), text);
+            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), background);
+            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), border);
+            canvas.drawText("VT: " + DecimalFormatHelper.df2.format(vt), x + dipToPx(2) - moveConsuption, y - dipToPx(3), text);
 
 
         }
