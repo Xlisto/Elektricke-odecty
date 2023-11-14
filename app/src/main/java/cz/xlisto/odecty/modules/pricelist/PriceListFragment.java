@@ -27,6 +27,8 @@ import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPAddEditInvoice;
 import cz.xlisto.odecty.shp.ShPFilter;
+import cz.xlisto.odecty.shp.ShPPriceList;
+import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
@@ -43,6 +45,7 @@ public class PriceListFragment extends Fragment {
     private ShPFilter shpFilter;
     private static final String SHOW_SELECT_ITEM = "param1";
     private static final String ID_SELECTED_PRICE_LIST = "param2";
+    private static final String ARG_ID_FRAGMENT = "idFragment";
     private boolean showSelectItem; //true = zobrazí radiobutton pro výběr ceníku
     private long idSelectedPriceList;
     private RecyclerView rv;
@@ -53,6 +56,8 @@ public class PriceListFragment extends Fragment {
     private SubscriptionPointModel subscriptionPoint;
     private PriceListAdapter priceListAdapter;
     private ArrayList<PriceListModel> priceListModels;
+    private int idFragment = 0; //id fragmentu pro zobrazení detailu ceníku v land režimu
+    private ShPPriceList shPPriceList;
 
 
     public PriceListFragment() {
@@ -101,6 +106,13 @@ public class PriceListFragment extends Fragment {
             showSelectItem = getArguments().getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = getArguments().getLong(ID_SELECTED_PRICE_LIST);
         }
+
+        if (savedInstanceState != null) {
+            showSelectItem = savedInstanceState.getBoolean(SHOW_SELECT_ITEM);
+            idSelectedPriceList = savedInstanceState.getLong(ID_SELECTED_PRICE_LIST);
+            idFragment = savedInstanceState.getInt(ARG_ID_FRAGMENT);
+        }
+
     }
 
 
@@ -114,6 +126,8 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        shPPriceList = new ShPPriceList(getContext());
+
         FloatingActionButton fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.rv_price_list);
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist);
@@ -146,11 +160,25 @@ public class PriceListFragment extends Fragment {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         priceListAdapter.deleteItemPrice();
                         onLoadData();
+                        priceListAdapter.setHideButtons();
+                        idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
+                        showDetailPriceFragment(false);
                     }
                 }));
 
         onLoadData();
         setAdapter();
+        setIdSelectedPriceListFromShp();
+        showDetailPriceFragment(true);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(ID_SELECTED_PRICE_LIST, idSelectedPriceList);
+        outState.putBoolean(SHOW_SELECT_ITEM, showSelectItem);
+        outState.putInt(ARG_ID_FRAGMENT, idFragment);
     }
 
 
@@ -167,6 +195,9 @@ public class PriceListFragment extends Fragment {
             PriceListFilterDialogFragment.newInstance(() -> {
                 onLoadData();
                 setAdapter();
+                priceListAdapter.setHideButtons();
+                idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
+                showDetailPriceFragment(false);
             }).show(requireActivity().getSupportFragmentManager(), TAG);
         }
         return super.onOptionsItemSelected(item);
@@ -209,10 +240,65 @@ public class PriceListFragment extends Fragment {
                         //onSelectedPriceListListener.getOnSelectedItemPriceList(priceList);
                         btnBack.setText(getResources().getString(R.string.vybrat));
                         idSelectedPriceList = priceList.getId();
+                    } else {
+                        idSelectedPriceList = -1;
                     }
+
+                    if (priceList != null) {
+                        idSelectedPriceList = priceList.getId();
+
+                    } else {
+                        idSelectedPriceList = -1;
+                    }
+                    showDetailPriceFragment(false);
                 }, rv);
         rv.setAdapter(priceListAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+
+    private void showDetailPriceFragment(boolean showAfterRotation) {
+        PriceListDetailFragment fragment;
+        if (showAfterRotation) {
+            fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
+            if (fragment != null) {
+                requireActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            }
+            idFragment = 0;
+        }
+        if (DetectScreenMode.isLandscape(requireActivity())) {
+            if (idSelectedPriceList != -1) {
+                if (idFragment == 0) {
+                    fragment = PriceListDetailFragment.newInstance(idSelectedPriceList,true);
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fl_price_list_right, fragment)
+                            .commit();
+                    idFragment = fragment.getId();
+                } else {
+                    fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
+                    assert fragment != null;
+                    fragment.loadPrice(idSelectedPriceList);
+                }
+
+
+            } else {
+                if (idFragment != 0) {
+                    fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
+                    if (fragment != null) {
+                        requireActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                        idFragment = 0;
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Načte ID vybraného ceníku z Shared Preferences
+     */
+    private void setIdSelectedPriceListFromShp() {
+        idSelectedPriceList = shPPriceList.get(ShPPriceList.SHOW_ID_ITEM_PRICE_LIST, -1L);
     }
 
 

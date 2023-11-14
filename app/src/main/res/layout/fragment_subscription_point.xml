@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -156,21 +155,25 @@
 
                 <Button
                     android:id="@+id/btnEdit"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:text="@string/upravit_odberne_misto" />
+                    android:text="@string/upravit_odberne_misto"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:maxWidth="100dp"/>
 
                 <Button
                     android:id="@+id/btnDelete"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"
-                    android:text="@string/smazat_odberne_misto" />
+                    android:text="@string/smazat_odberne_misto"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:maxWidth="100dp"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -217,7 +220,7 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
-        android:contentDescription="@string/pridat"
+        android:contentDescription="@string/add"
         android:src="@drawable/ic_content_add" />
 
 

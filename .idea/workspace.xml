@@ -11,9 +11,24 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána třída ShPGraphMonth pro ukládání stavu zobrazeného měsíčního grafu ve SharedPreferences.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/DetectScreenMode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_detail.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_detail_infragment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_detail.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/label_price_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/label_price_detail.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,8 +93,8 @@
         <option value="Enum" />
         <option value="Interface" />
         <option value="resourceFile" />
-        <option value="layoutResourceFile" />
         <option value="Class" />
+        <option value="layoutResourceFile" />
       </list>
     </option>
   </component>
@@ -129,36 +144,36 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "PROJECT_TRUSTED_KEY": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java_SELECTED": "GraphColorView",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/NastavBarvuView.java_SELECTED": "GraphColorView",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED": "GraphMonthView",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED": "ContextMenuRecyclerView",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
-    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED": "SwitchCompat",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED": "View",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED": "Button",
-    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED": "TextView",
-    "cidr.known.project.marker": "true",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
-    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "AndroidSdkUpdater"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java_SELECTED&quot;: &quot;GraphColorView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/NastavBarvuView.java_SELECTED&quot;: &quot;GraphColorView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED&quot;: &quot;GraphMonthView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED&quot;: &quot;ContextMenuRecyclerView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED&quot;: &quot;SwitchCompat&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED&quot;: &quot;MaterialButton&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED&quot;: &quot;Button&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED&quot;: &quot;TextView&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/MotoMixAndroid2&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
   }
-}]]></component>
+}</component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Default Config" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
@@ -172,6 +187,9 @@
       <recent name="junit.framework.TestCase" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-land" />
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w300dp-land" />
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w1000dp-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\libs" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -317,13 +335,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Přidaná složka .idea">
-      <created>1683079213244</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1683079213244</updated>
     </task>
     <task id="LOCAL-00012" summary="Přidaná složka .idea">
       <created>1683079294538</created>
@@ -661,7 +672,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698780705042</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="Optimalizace vykreslení měsíčního grafu (GraphMonthView)&#10;Počáteční animace povolena pouze pro část prvků seznamu, které jsou viditelné na obrazovce.">
+      <created>1698979895644</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1698979895644</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -735,8 +753,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena funkce na rozdělování záznamů v období bez faktury - opravena chyba při rotaci.&#10;Při rotaci zařízení se ztratil kontext na posluchače výsledku kliknutí.&#10;Listener z InvoiceCutDialogFragment odstraněn a nahrazen &quot;getParentFragmentManager().setFragmentResult(RESULT_CUT_DIALOG_FRAGMENT, bundle);&quot;&#10;Posluchač výsledků kliknutí tlačítka na dialogového okna je v InvoiceFragment v metodě onCreatedView: &quot;requireActivity().getSupportFragmentManager().setFragmentResultListener...&quot;&#10;&#10;Pro průběh animace rozdělení je vytvořena metoda (setUpdateCut(ArrayList&lt;InvoiceModel&gt; items, int position)) pro aktualizaci ArrayListu položek. Kde jsou volány metody notifyItemInsered(position) a notifyItemRangeChanged(position, getItemCount()." />
-    <MESSAGE value="Doplněn typ platby - Podpora státu&#10;Přidán chceckBox ve fragmentu přidání/úpravy platby" />
     <MESSAGE value="Skrytí zobrazených editačních tlačítek v záznamech faktury a plateb při novém otevření faktury" />
     <MESSAGE value="Zavedení nové funkce - filtrování měsíčních odečtů&#10;- nový MonthlyReadingFilterDialogFragment s layoutem (včetně land rozvržení)&#10;- úpravený vyhledávací dotaz v DataSubscriptionPointSource - doplněný o atributy from a to reprezentující časový údaj v long milisekundách" />
     <MESSAGE value="Oprava výpočtu cen VT, NT, stáleho platu a POZE&#10;Oprava je v Calculation, metodě calculatePriceWithoutPozeMwH, která vrací double pole {vt, nt, stPlat, poze} pro jednotlivé dílčí výsledky v měsíčním zobrazení. Je přidána podmínka reflektující změnu výpočtu od roku 2016." />
@@ -760,6 +776,8 @@
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se statickými metodami přo převod hodnot čísel z int na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět." />
     <MESSAGE value="Přidána třída ShPGraphMonth pro ukládání stavu zobrazeného měsíčního grafu ve SharedPreferences." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidána třída ShPGraphMonth pro ukládání stavu zobrazeného měsíčního grafu ve SharedPreferences." />
+    <MESSAGE value="Optimalizace vykreslení měsíčního grafu (GraphMonthView)&#10;Počáteční animace povolena pouze pro část prvků seznamu, které jsou viditelné na obrazovce." />
+    <MESSAGE value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
   </component>
 </project>

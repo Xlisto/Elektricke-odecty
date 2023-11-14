@@ -41,6 +41,6 @@
         android:layout_above="@id/tvlPriceDetailPrice"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false"
-        android:text="@string/label_for" />
+        android:text="@string/label_item" />
 
 </RelativeLayout>

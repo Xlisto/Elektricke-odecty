@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.ConsuptionModel;
-import cz.xlisto.odecty.models.MonthlyConsuptionModel;
 
 
 /**
@@ -354,8 +353,8 @@ public class GraphMonthView extends View {
         for (int i = 0; i < consuption.size(); i++) {
             if (period == 0 || period == 2) {
 
-                int textMeasureMonth = (int) text.measureText(((MonthlyConsuptionModel) consuption.get(i)).getDateMonthAsStringShort());
-                drawText(canvas, text, (dipToPx(30) * (i + 1)) + left + xMoveGraph - (textMeasureMonth / 2), height - dipToPx(10), ((MonthlyConsuptionModel) consuption.get(i)).getDateMonthAsStringShort());
+                int textMeasureMonth = (int) text.measureText((consuption.get(i)).getDateMonthAsStringShort());
+                drawText(canvas, text, (dipToPx(30) * (i + 1)) + left + xMoveGraph - (textMeasureMonth / 2), height - dipToPx(10), (consuption.get(i)).getDateMonthAsStringShort());
                 int textMeasureYear = (int) text.measureText(consuption.get(i).getYearAsString());
                 drawText(canvas, text, (dipToPx(30) * (i + 1)) + left + xMoveGraph - (textMeasureYear / 2), height, consuption.get(i).getYearAsString());
             } else if (period == 1) {

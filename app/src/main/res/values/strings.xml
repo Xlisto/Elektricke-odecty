@@ -50,7 +50,7 @@
 
     <string name="ulozit">Uložit</string>
     <string name="zpet">Zpět</string>
-    <string name="pridat">Přidat</string>
+    <string name="add">Přidat</string>
     <string name="vybrat">Vybrat</string>
     <string name="clipdata">Schánka</string>
 
@@ -58,6 +58,7 @@
     <string name="label_edittext">Label EditText</string>
     <string name="label_price_detail">Detail</string>
     <string name="label_price_item">ItemPrice</string>
+    <string name="label_item">Item</string>
 
     <string name="description_date_from">Platnost od</string>
     <string name="description_date_until">Platnost do</string>
@@ -233,11 +234,13 @@
     <string name="contentdescription_vt_color">Nastavení barvy vysokého tarifu</string>
     <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
-    <string name="contentdescription_nt_color">Nastavení barvy nízskéh tarifu</string>
+    <string name="contentdescription_nt_color">Nastavení barvy nízského tarifu</string>
     <string name="set_color_html">Nastavení barvy podle notace HTML </string>
     <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
     <string name="set">Nastav </string>
 
+    <string name="dist_uzemi">\nDist. území:&#160;</string>
+    <string name="empty">&#160;</string>
 
 
 </resources>

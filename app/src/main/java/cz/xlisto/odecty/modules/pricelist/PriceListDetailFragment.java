@@ -9,6 +9,7 @@ import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.models.PriceListRegulBuilder;
 import cz.xlisto.odecty.ownview.LabelPriceDetail;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.DetectScreenMode;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,64 +27,63 @@ import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
  * create an instance of this fragment.
  */
 public class PriceListDetailFragment extends Fragment {
-    private static String TAG = "PriceListDetailFragment";
+    private final static String TAG = "PriceListDetailFragment";
     private LabelPriceDetail ldnDatum;
     private LabelPriceDetail ldnRada, ldnProdukt, ldnSazba, ldnDodavatel, ldnUzemi;
     private LabelPriceDetail ldnVTDodavka, ldnNTDodavka, ldnMesPlat;
     private LabelPriceDetail ldnVTDistribuce, ldnNTDistribuce;
-    private LabelPriceDetail ldnJ0, ldnJ1, ldnJ2, ldnJ3, ldnJ4, ldnJ5, ldnJ6, ldnJ7, ldnJ8, ldnJ9,ldnJ10,ldnJ11,ldnJ12,ldnJ13,ldnJ14;
+    private LabelPriceDetail ldnJ0, ldnJ1, ldnJ2, ldnJ3, ldnJ4, ldnJ5, ldnJ6, ldnJ7, ldnJ8, ldnJ9, ldnJ10, ldnJ11, ldnJ12, ldnJ13, ldnJ14;
     private LabelPriceDetail ldnSystemSluzby, ldnOTE, ldnPOZE1, ldnPOZE2;
     private LabelPriceDetail ldnDan, ldnDPH;
-    private TextView tvPoznamka, tvPoznamkaVT, tvPoznamkaNT,tvPoznamkaPlat, tvPoznamkaPOZE1,tvPoznamkaPOZE2;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "price_list_id";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
+    private TextView tvPoznamka, tvPoznamkaVT, tvPoznamkaNT, tvPoznamkaPlat, tvPoznamkaPOZE1, tvPoznamkaPOZE2;
+    private static final String PRICE_ID = "price_list_id";
+    private static final String SHOW_IN_FRAGMENT = "show_in_fragment";
     private long price_id;
-    private String mParam2;
+    private boolean showInFragment;
 
     public PriceListDetailFragment() {
         // Required empty public constructor
     }
 
+
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Tato metoda vytvoří novou instanci tohoto fragment s definovanými parametry.
      *
      * @param priceListId Parameter 1.
-     * @return A new instance of fragment PriceListDetailFragment.
+     * @return Nová instance fragmentu PriceListDetailFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static PriceListDetailFragment newInstance(long priceListId) {
+        return newInstance(priceListId, false);
+    }
+
+    public static PriceListDetailFragment newInstance(long priceListId, boolean showInFragment) {
         PriceListDetailFragment fragment = new PriceListDetailFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_PARAM1, priceListId);
-        //args.putString(ARG_PARAM2, param2);
+        args.putLong(PRICE_ID, priceListId);
+        args.putBoolean(SHOW_IN_FRAGMENT, showInFragment);
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            price_id = getArguments().getLong(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
+            price_id = getArguments().getLong(PRICE_ID);
+            showInFragment = getArguments().getBoolean(SHOW_IN_FRAGMENT);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
-        dataPriceListSource.open();
-        PriceListModel priceList = dataPriceListSource.readPrice(price_id);
-        dataPriceListSource.close();
-
         View v = inflater.inflate(R.layout.fragment_price_list_detail, container, false);
+        if (showInFragment && DetectScreenMode.isLandscape(requireActivity())) {
+            v = inflater.inflate(R.layout.fragment_price_list_detail_infragment, container, false);
+        }
+
         ldnDatum = v.findViewById(R.id.ldnPlatnost);
 
         ldnRada = v.findViewById(R.id.ldnRada);
@@ -129,6 +129,18 @@ public class PriceListDetailFragment extends Fragment {
         ldnDan = v.findViewById(R.id.ldn_dan);
         ldnDPH = v.findViewById(R.id.ldn_DPH);
 
+        loadPrice(price_id);
+
+        return v;
+    }
+
+
+    public void loadPrice(long priceId) {
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        dataPriceListSource.open();
+        PriceListModel priceList = dataPriceListSource.readPrice(priceId);
+        dataPriceListSource.close();
+
 
         ldnDatum.setPrice(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
 
@@ -170,7 +182,7 @@ public class PriceListDetailFragment extends Fragment {
         ldnDPH.setPrice(df2.format(priceList.getDph()));
 
         //skrytí u NT u jednotarifního ceníku
-        if(priceList.getDistNT()==0){
+        if (priceList.getDistNT() == 0) {
             ldnNTDistribuce.setVisibility(View.GONE);
             ldnNTDodavka.setVisibility(View.GONE);
         } else {
@@ -178,7 +190,7 @@ public class PriceListDetailFragment extends Fragment {
             ldnNTDodavka.setVisibility(View.VISIBLE);
         }
 
-        if(priceList.getJ10()==0){
+        if (priceList.getJ10() == 0) {
             //méně hodnot jističů
             ldnJ10.setVisibility(View.GONE);
             ldnJ11.setVisibility(View.GONE);
@@ -186,8 +198,8 @@ public class PriceListDetailFragment extends Fragment {
             ldnJ13.setVisibility(View.GONE);
             ldnJ14.setVisibility(View.GONE);
             ldnJ8.setVisibility(View.VISIBLE);
-        }else{
-            //více hodnot jističů
+        } else {
+            //vice hodnot jističů
             ldnJ10.setVisibility(View.VISIBLE);
             ldnJ11.setVisibility(View.VISIBLE);
             ldnJ12.setVisibility(View.VISIBLE);
@@ -198,7 +210,7 @@ public class PriceListDetailFragment extends Fragment {
 
         Calendar calendar = ViewHelper.parseCalendarFromString(ldnDatum.getPrice());
         int year = calendar.get(Calendar.YEAR);
-        if(year < 2016) {
+        if (year < 2016) {
             ldnOTE.setPrice(df2.format(priceList.getOte()));
             ldnOTE.setLabel(getResources().getString(R.string.cinnost_ote));
             ldnOTE.setItem(getResources().getString(R.string.kc_MWh));
@@ -211,7 +223,7 @@ public class PriceListDetailFragment extends Fragment {
 
         //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
         tvPoznamka.setVisibility(View.GONE);
-        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList,year);
+        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, year);
         String poznamka = priceListRegulBuilder.getNotes(getActivity());
         String maxVT = priceListRegulBuilder.getMaxVT();
         String maxNT = priceListRegulBuilder.getMaxNT();
@@ -233,19 +245,19 @@ public class PriceListDetailFragment extends Fragment {
         }
 
 
-        setPoznamka(tvPoznamkaVT,maxVT);
-        setPoznamka(tvPoznamkaNT,maxNT);
-        setPoznamka(tvPoznamkaPlat,maxPlat);
-        setPoznamka(tvPoznamkaPOZE1,maxPOZE1);
-        setPoznamka(tvPoznamkaPOZE2,maxPOZE2);
-        return v;
+        setPoznamka(tvPoznamkaVT, maxVT);
+        setPoznamka(tvPoznamkaNT, maxNT);
+        setPoznamka(tvPoznamkaPlat, maxPlat);
+        setPoznamka(tvPoznamkaPOZE1, maxPOZE1);
+        setPoznamka(tvPoznamkaPOZE2, maxPOZE2);
     }
 
-    private void setPoznamka(TextView tv, String s){
-        if(s!=null){
+
+    private void setPoznamka(TextView tv, String s) {
+        if (s != null) {
             tv.setVisibility(View.VISIBLE);
             tv.setText(s);
-        }else {
+        } else {
             tv.setVisibility(View.GONE);
         }
     }
