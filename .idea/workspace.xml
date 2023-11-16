@@ -11,25 +11,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/DetectScreenMode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_detail.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_detail_infragment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPPriceList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_detail.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/label_price_detail.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/label_price_detail.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -167,7 +149,7 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/MotoMixAndroid2&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -335,20 +317,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Přidaná složka .idea">
-      <created>1683079294538</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1683079294538</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Ošetření chyby výpočtu ve fakturách, pod se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;.">
-      <created>1683193698523</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1683193698523</updated>
     </task>
     <task id="LOCAL-00014" summary="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;.">
       <created>1683193756015</created>
@@ -679,7 +647,21 @@
       <option name="project" value="LOCAL" />
       <updated>1698979895644</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu.">
+      <created>1700000116276</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1700000116276</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO.">
+      <created>1700173557879</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1700173557879</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -753,7 +735,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Skrytí zobrazených editačních tlačítek v záznamech faktury a plateb při novém otevření faktury" />
     <MESSAGE value="Zavedení nové funkce - filtrování měsíčních odečtů&#10;- nový MonthlyReadingFilterDialogFragment s layoutem (včetně land rozvržení)&#10;- úpravený vyhledávací dotaz v DataSubscriptionPointSource - doplněný o atributy from a to reprezentující časový údaj v long milisekundách" />
     <MESSAGE value="Oprava výpočtu cen VT, NT, stáleho platu a POZE&#10;Oprava je v Calculation, metodě calculatePriceWithoutPozeMwH, která vrací double pole {vt, nt, stPlat, poze} pro jednotlivé dílčí výsledky v měsíčním zobrazení. Je přidána podmínka reflektující změnu výpočtu od roku 2016." />
     <MESSAGE value="Deaktivace načítání regulovaných cen do roku 2020&#10;- z důvodu absence statických dat, regulované ceny jsou zadaní od 2021" />
@@ -778,6 +759,7 @@
     <MESSAGE value="Přidána třída ShPGraphMonth pro ukládání stavu zobrazeného měsíčního grafu ve SharedPreferences." />
     <MESSAGE value="Optimalizace vykreslení měsíčního grafu (GraphMonthView)&#10;Počáteční animace povolena pouze pro část prvků seznamu, které jsou viditelné na obrazovce." />
     <MESSAGE value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
+    <MESSAGE value="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
+    <option name="LAST_COMMIT_MESSAGE" value="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
   </component>
 </project>

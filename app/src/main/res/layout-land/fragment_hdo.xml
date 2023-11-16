@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="horizontal"
+    android:baselineAligned="false">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="5dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/imageViewIconNT"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/textView18"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/image_destription_nt"
+            app:srcCompat="@drawable/nt_on" />
+
+        <LinearLayout
+            android:id="@+id/llButon1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTimeDifference"
+            android:elevation="6dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnAddHour"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="80"
+                android:elevation="6dp"
+                android:text="@string/plus_hour"
+                android:textSize="16sp"
+                android:translationZ="6dp" />
+
+            <Button
+                android:id="@+id/btnRemoveHour"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="80"
+                android:text="@string/minus_hour"
+                android:textSize="16sp" />
+
+
+            <Button
+                android:id="@+id/btnAddMinute"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="80"
+                android:elevation="6dp"
+                android:text="@string/plus_minute"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnRemoveMinute"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="80"
+                android:elevation="6dp"
+                android:text="@string/minus_minute"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/llButon1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHdoLoad"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:text="@string/load_hdo"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/spRele"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/textView18"
+            android:minHeight="48dp"
+            android:minWidth="48dp" />
+
+        <TextView
+            android:id="@+id/tvTimeHdo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView18"
+            android:layout_centerHorizontal="false"
+            android:layout_marginStart="10dp"
+            android:gravity="center_horizontal"
+            android:text="New Text"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tvHdoDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/spRele"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:minHeight="48dp"
+            android:text="@string/time_meter"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTimeDifference"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/tvTimeHdo"
+            android:gravity="center_horizontal"
+            android:text="@string/different_time" />
+
+
+        <TextView
+            android:id="@+id/tvNotValidHDO"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:textColor="#ff0000"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabHdo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:layout_marginEnd="@dimen/fab_margin"
+            android:layout_marginStart="@dimen/fab_margin"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:contentDescription="@string/image_destription_new_hdo"
+            android:src="@drawable/ic_content_add" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swHdoService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/llButton2"
+            android:text="@string/watch_low_tarif" />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="5dp"
+        android:layout_weight="1">
+
+        <Spinner
+            android:id="@+id/spReleSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:id="@+id/tvAlertHdo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_item"
+            android:padding="10dp"
+            android:text="@string/create_place"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvHdo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/spReleSettings"
+            android:layoutAnimation="@anim/layout_animation_fall_down" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+

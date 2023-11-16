@@ -137,6 +137,7 @@
     </string-array>
 
     <string-array name="egd_code1">
+        <item />
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -149,6 +150,7 @@
     </string-array>
 
     <string-array name="egd_code2">
+        <item />
         <item>1</item>
         <item>2</item>
         <item>3</item>

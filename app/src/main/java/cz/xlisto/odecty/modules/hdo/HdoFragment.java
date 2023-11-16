@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,7 +126,7 @@ public class HdoFragment extends Fragment {
                 stopService();
             }
 
-            if(reles.size() > 1  && swHdoService.isChecked())
+            if (reles.size() > 1 && swHdoService.isChecked())
                 spReleSettings.setVisibility(View.VISIBLE);
             else
                 spReleSettings.setVisibility(View.GONE);
@@ -139,7 +138,6 @@ public class HdoFragment extends Fragment {
         spRele.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.w(TAG, "onItemSelected: " + spRele.getAdapter().getItem(position).toString());
                 loadData(spRele.getAdapter().getItem(position).toString());
             }
 
@@ -154,7 +152,7 @@ public class HdoFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ShPHdo shPHdo = new ShPHdo(requireContext());
                 String idSbp = Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getTableHDO();
-                shPHdo.set(ShPHdo.ARG_RELE+idSbp, spReleSettings.getAdapter().getItem(position).toString());
+                shPHdo.set(ShPHdo.ARG_RELE + idSbp, spReleSettings.getAdapter().getItem(position).toString());
                 HdoData.loadHdoData(requireActivity());
             }
 
@@ -266,13 +264,13 @@ public class HdoFragment extends Fragment {
     private void setTextHdoColor(boolean show) {
         if (show) {
             tvTimeHdo.setTextColor(Color.parseColor("#187e34"));
-            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.nt_on));
+            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_on));
         } else {
             if (DetectNightMode.isNightMode(requireActivity()))
                 tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
             else
                 tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_light));
-            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.nt_off));
+            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_off));
         }
     }
 
@@ -292,13 +290,14 @@ public class HdoFragment extends Fragment {
     /**
      * Načte hdo data z databáze a nastaví adapter
      */
-    private void loadData(){
+    private void loadData() {
         loadData(null);
     }
 
 
     /**
      * Načte hdo data z databáze a nastaví adapter
+     *
      * @param rele - rele, které se má načíst
      */
     private void loadData(String rele) {
@@ -306,13 +305,12 @@ public class HdoFragment extends Fragment {
         DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
         hdoModels.clear();
         dataHdoSource.open();
-        if(rele != null)
+        if (rele != null)
             hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), rele);
         else
             hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO());
         dataHdoSource.close();
 
-        Log.w(TAG, "loadData: " + hdoModels.size());
         String date = "";
         String distributionArea = "";
         for (int i = 0; i < hdoModels.size(); i++) {
@@ -352,7 +350,7 @@ public class HdoFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, reles);
         spRele.setAdapter(adapter);
         spReleSettings.setAdapter(adapter);
-        if(reles.size() > 1)
+        if (reles.size() > 1)
             spRele.setVisibility(View.VISIBLE);
         else
             spRele.setVisibility(View.GONE);
@@ -384,6 +382,7 @@ public class HdoFragment extends Fragment {
      */
     private void startService() {
         HdoService.setHdoModels(hdoModels);
+        if (subscriptionPoint == null) return;
         HdoService.setTitle(getResources().getString(R.string.app_name) + " - " + subscriptionPoint.getName());
 
         //myIntent.putExtra(HdoService.NOTIFICATION_HDO_SERVICE, isLowHdo);

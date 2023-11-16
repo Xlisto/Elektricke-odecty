@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp">
@@ -10,7 +9,7 @@
         android:id="@+id/tvTimeHdo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView18"
+        android:layout_below="@id/textView18"
         android:layout_centerHorizontal="false"
         android:layout_marginStart="10dp"
         android:gravity="center_horizontal"
@@ -26,10 +25,11 @@
         android:layout_below="@id/textView18"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="5dp"
+        android:contentDescription="@string/image_destription_nt"
         app:srcCompat="@drawable/nt_on" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/llButon1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTimeDifference"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="80"
             android:elevation="6dp"
-            android:text="@string/plus"
+            android:text="@string/plus_hour"
             android:textSize="16sp"
             android:translationZ="6dp" />
 
@@ -53,19 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="80"
-            android:text="@string/minus"
+            android:text="@string/minus_hour"
             android:textSize="16sp" />
 
-
-        <Button
-            android:id="@+id/btnHdoLoad"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:elevation="6dp"
-            android:text="Načti HDO"
-            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btnAddMinute"
@@ -74,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="80"
             android:elevation="6dp"
-            android:text="@string/plus"
+            android:text="@string/plus_minute"
             android:textSize="16sp" />
 
         <Button
@@ -84,22 +74,42 @@
             android:layout_height="wrap_content"
             android:layout_weight="80"
             android:elevation="6dp"
-            android:text="@string/minus"
+            android:text="@string/minus_minute"
             android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llButton2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llButon1"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnHdoLoad"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="6dp"
+            android:text="@string/load_hdo"
+            android:textSize="16sp" />
+
     </LinearLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swHdoService"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayout"
-        android:text="Sledování nízského tarifu" />
+        android:layout_below="@id/llButton2"
+        android:text="@string/watch_low_tarif" />
 
     <Spinner
         android:id="@+id/spReleSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/swHdoService" />
+        android:layout_below="@id/swHdoService"
+        android:minHeight="48dp"/>
 
     <TextView
         android:id="@+id/tvHdoDate"
@@ -111,9 +121,13 @@
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/spRele"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="Čas elektroměru" />
+        android:minHeight="48dp"
+        android:text="@string/time_meter"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvTimeDifference"
@@ -123,7 +137,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/tvTimeHdo"
         android:gravity="center_horizontal"
-        android:text="Rozdíl hodin" />
+        android:text="@string/different_time" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHdo"
@@ -144,20 +158,22 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
+        android:contentDescription="@string/image_destription_new_hdo"
         android:src="@drawable/ic_content_add" />
 
     <Spinner
         android:id="@+id/spRele"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tvTimeHdo"
+
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/textView18"
-        android:minHeight="48dp" />
+        android:minHeight="48dp"
+        android:minWidth="48dp" />
 
     <TextView
-        android:id="@+id/tvNeplatneHDO"
+        android:id="@+id/tvNotValidHDO"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_centerHorizontal="true"
@@ -177,7 +193,7 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/shape_item"
         android:padding="10dp"
-        android:text="@string/vytvorte_odberne_misto"
+        android:text="@string/create_place"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </RelativeLayout>

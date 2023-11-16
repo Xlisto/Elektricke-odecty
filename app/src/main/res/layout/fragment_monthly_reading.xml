@@ -35,7 +35,7 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/shape_item"
         android:padding="10dp"
-        android:text="@string/vytvorte_odberne_misto"
+        android:text="@string/create_place"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

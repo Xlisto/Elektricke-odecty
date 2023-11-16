@@ -3,7 +3,6 @@ package cz.xlisto.odecty.modules.monthlyreading;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -202,7 +201,6 @@ public class MonthlyReadingFragment extends Fragment {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();
             monthlyReadings = dataSubscriptionPointSource.loadMonthlyReadings(subscriptionPoint.getTableO(), from, to);
-            Log.w(TAG, "loadDataFromDatabase: " + monthlyReadings.size()+" "+from);
             if (!dataSubscriptionPointSource.checkInvoiceExists(subscriptionPoint.getTableTED()))
                 dataSubscriptionPointSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataSubscriptionPointSource.close();
@@ -222,7 +220,7 @@ public class MonthlyReadingFragment extends Fragment {
                 tvAlert.setText(getResources().getString(R.string.pridejte_mesicni_odecty));
             }
         } else {
-            tvAlert.setText(getResources().getString(R.string.vytvorte_odberne_misto));
+            tvAlert.setText(getResources().getString(R.string.create_place));
         }
     }
 

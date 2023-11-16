@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.services;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -48,7 +47,6 @@ public class HdoData {
         if (!rele.isEmpty()) {
             title += " - " + rele;
         }
-        Log.w(TAG, "loadHdoData: rele: " + rele);
 
 
         ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), rele);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/buttonBarButtonStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,6 +21,7 @@
 
             <Button
                 android:id="@+id/btnJoin"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
@@ -30,6 +32,7 @@
 
             <Button
                 android:id="@+id/btnJoinCancel"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
@@ -54,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvJoinDate2"
                 android:background="@drawable/shape_item">
+
                 <LinearLayout
                     android:id="@+id/llJoinInnerDescription2"
                     android:layout_width="wrap_content"
@@ -82,8 +86,8 @@
                     android:id="@+id/llJoinInnerStart2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_toEndOf="@id/llJoinInnerDescription2">
+                    android:layout_toEndOf="@id/llJoinInnerDescription2"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvJoinVTStart2"
@@ -177,76 +181,75 @@
                 android:background="@drawable/shape_item">
 
 
+                <LinearLayout
+                    android:id="@+id/llJoinInnerDescription3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerDescription3"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tvJoinVTDescription3"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvJoinVTDescription3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:text="@string/vt2"
-                            android:textSize="16sp" />
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/vt2"
+                        android:textSize="16sp" />
 
 
-                        <TextView
-                            android:id="@+id/tvJoinNTDescription3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:text="@string/nt2"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTDescription3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/nt2"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerStart3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_toEndOf="@id/llJoinInnerDescription3">
+                <LinearLayout
+                    android:id="@+id/llJoinInnerStart3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/llJoinInnerDescription3"
+                    android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvJoinVTStart3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvJoinVTStart3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/tvJoinNTStart3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTStart3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerDash3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_toEndOf="@+id/llJoinInnerStart3">
+                <LinearLayout
+                    android:id="@+id/llJoinInnerDash3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/llJoinInnerStart3"
+                    android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvJoinVTDash3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginStart="5dp"
-                            android:text="@string/dash"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvJoinVTDash3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/dash"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/tvJoinNTDash3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginStart="5dp"
-                            android:text="@string/dash"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTDash3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/dash"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/llJoinInnerEnd3"
@@ -267,7 +270,6 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp" />
                 </LinearLayout>
-
 
 
             </RelativeLayout>
@@ -301,76 +303,75 @@
                 android:background="@drawable/shape_item">
 
 
+                <LinearLayout
+                    android:id="@+id/llJoinInnerDescription1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerDescription1"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tvJoinVTDescription1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/tvJoinVTDescription1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:text="@string/vt2"
-                            android:textSize="16sp" />
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/vt2"
+                        android:textSize="16sp" />
 
 
-                        <TextView
-                            android:id="@+id/tvJoinNTDescription1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:text="@string/nt2"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTDescription1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/nt2"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerStart1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_toEndOf="@id/llJoinInnerDescription1">
+                <LinearLayout
+                    android:id="@+id/llJoinInnerStart1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@id/llJoinInnerDescription1"
+                    android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvJoinVTStart1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvJoinVTStart1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/tvJoinNTStart1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTStart1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llJoinInnerDash1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_toEndOf="@+id/llJoinInnerStart1">
+                <LinearLayout
+                    android:id="@+id/llJoinInnerDash1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/llJoinInnerStart1"
+                    android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvJoinVTDash1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginStart="5dp"
-                            android:text="@string/dash"
-                            android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvJoinVTDash1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/dash"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:id="@+id/tvJoinNTDash1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:layout_marginStart="5dp"
-                            android:text="@string/dash"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvJoinNTDash1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/dash"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/llJoinInnerEnd1"
@@ -391,7 +392,6 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp" />
                 </LinearLayout>
-
 
 
             </RelativeLayout>
@@ -417,7 +417,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="-10dp"
             android:layout_marginTop="-10dp"
-            android:text="@string/plus"
+            android:text="@string/plus_hour"
             android:textSize="34sp" />
 
         <TextView

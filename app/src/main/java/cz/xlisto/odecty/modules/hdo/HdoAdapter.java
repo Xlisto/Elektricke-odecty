@@ -2,7 +2,6 @@ package cz.xlisto.odecty.modules.hdo;
 
 import android.annotation.SuppressLint;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,7 +122,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
 
         holder.tvRele.setText(item.getRele());
-        Log.w(TAG, "onBindViewHolder: " + item.getRele() + " " + item.getDistributionArea() + " " + item.getDateFrom() + " " + item.getTimeFrom() + " " + item.getTimeUntil());
 
         if (item.getDistributionArea().equals(DistributionArea.PRE.toString())) {
             holder.tvDate.setVisibility(View.VISIBLE);

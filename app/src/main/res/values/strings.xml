@@ -52,7 +52,6 @@
     <string name="zpet">Zpět</string>
     <string name="add">Přidat</string>
     <string name="vybrat">Vybrat</string>
-    <string name="clipdata">Schánka</string>
 
     <string name="label_for">Label for:</string>
     <string name="label_edittext">Label EditText</string>
@@ -108,7 +107,7 @@
     <string name="upravit_odberne_misto">Upravit odběrné místo</string>
     <string name="smazat_odberne_misto">Smazat odběrné místo</string>
     <string name="smazat_odberne_misto2">Smazat odběrné místo?</string>
-    <string name="vytvorte_odberne_misto">Vytvořte nové odběrné místo</string>
+    <string name="create_place">Vytvořte nové odběrné místo</string>
 
     <string name="kc">Kč</string>
     <string name="ok">OK</string>
@@ -168,8 +167,10 @@
     <string name="backup">Zálohuj</string>
     <string name="select_folder">Vyber složku</string>
 
-    <string name="plus">+</string>
-    <string name="minus">-</string>
+    <string name="plus_hour">+ hod</string>
+    <string name="minus_hour">- hod</string>
+    <string name="plus_minute">+ min</string>
+    <string name="minus_minute">- min</string>
     <string name="equals">=</string>
     <string name="add_payment">Přidat platbu</string>
     <string name="discount">Sleva</string>
@@ -201,9 +202,15 @@
     <string name="backup1">Záloha</string>
     <string name="graph_month">Měsíční graf</string>
     <string name="graph_color">Barva tarifu</string>
+    <string name="load_hdo">Načti HDO z internetu</string>
+    <string name="different_time">Rozdíl hodin</string>
+    <string name="watch_low_tarif">Sledování nízského tarifu</string>
+    <string name="time_meter">Čas elektroměru</string>
+    <string name="image_destription_nt">Ikona zobrazující aktivní nízský tarif</string>
+    <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
-    <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI</string>
+    <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI ČASY</string>
     <string name="select_hdo">Vyberte povel přijímače a \nstiskněte tlačítko NAČTI</string>
 
     <string name="select_codes">Vyberte skupinu kódů</string>
@@ -241,6 +248,19 @@
 
     <string name="dist_uzemi">\nDist. území:&#160;</string>
     <string name="empty">&#160;</string>
+
+
+    <string name="load_www">Zobraz www</string>
+    <string name="load_time">Načti časy</string>
+    <string name="save_time">Ulož HDO časy</string>
+    <string name="save_to_clipboard">Ulož do schránky</string>
+    <string name="code_example">a1b1dp1</string>
+    <string name="hdo_code">HDO kód:</string>
+    <string name="a">A</string>
+    <string name="b">B</string>
+    <string name="dp">DP</string>
+    <string name="hint_hdo_code">Zadejte kód povelu</string>
+    <string name="total_dph">Celkem s DPH</string>
 
 
 </resources>

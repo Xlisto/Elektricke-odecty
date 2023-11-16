@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,7 +167,7 @@ public class HdoSiteFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fagment_hdo_site, container, false);
+        return inflater.inflate(R.layout.fragment_hdo_site, container, false);
     }
 
 
@@ -187,7 +186,7 @@ public class HdoSiteFragment extends Fragment {
         rvHdoSite = view.findViewById(R.id.rvHdoSite);
         tvAlert = view.findViewById(R.id.tvAlertHdoSite);
         tvValidityDate = view.findViewById(R.id.tvValidityDate);
-        lnHdoButtons = view.findViewById(R.id.lnHdoButtons);
+        lnHdoButtons = view.findViewById(R.id.lnHdoButtons1);
         spDateEgd = view.findViewById(R.id.spDateEgd);
         lnProgessBarHdoSite = view.findViewById(R.id.lnProgressBarHdoSite);
         spA = view.findViewById(R.id.spA);
@@ -314,7 +313,6 @@ public class HdoSiteFragment extends Fragment {
         spPB.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code2)));
 
         if (savedInstanceState != null) {
-            Log.w(TAG, "onViewCreated: " + savedInstanceState.getInt(ARG_DISTRICT_SELECTED));
             resultJson = savedInstanceState.getString(ARG_RESULT_JSON);
             setAdapter(hdoList);
 
@@ -327,6 +325,8 @@ public class HdoSiteFragment extends Fragment {
             ClipData clip = ClipData.newPlainText("HDO", textClip);
             clipboard.setPrimaryClip(clip);
         });
+
+
     }
 
 
@@ -377,6 +377,7 @@ public class HdoSiteFragment extends Fragment {
         startActivity(intent);
     }
 
+
     /**
      * Sestaví url podle nastavení formuláře a zavolá načtení dat
      */
@@ -405,6 +406,7 @@ public class HdoSiteFragment extends Fragment {
             connections.sendPost(url, distributionAreaIndex, etHdoCode.getText().toString(), requireActivity(), spDistrict, lnHdoButtons, handler);
         });
     }
+
 
     private void buildRecyclerView(String jsonData) {
         hdoList.clear();
@@ -451,6 +453,7 @@ public class HdoSiteFragment extends Fragment {
         setVisibilityProgressBar(false);
     }
 
+
     private ArrayList<HdoModel> buildCEZ(String jsonData) {
         ArrayList<HdoModel> hdoList = new ArrayList<>();
         try {
@@ -494,9 +497,9 @@ public class HdoSiteFragment extends Fragment {
         return hdoList;
     }
 
+
     private ArrayList<HdoListContainer> buildEGD(String jsonData) {
         ArrayList<HdoListContainer> hdoListContainers = new ArrayList<>();
-        Log.w(TAG, "buildEGD: " + jsonData);
         //první průchod vrací objekt s kody - přeskakuji
 
         try {
@@ -516,7 +519,6 @@ public class HdoSiteFragment extends Fragment {
                     JSONObject[] jsonDaysObj = new JSONObject[jsonDays.length()];
                     for (int k = 0; k < jsonDays.length(); k++) {
                         jsonDaysObj[k] = jsonDays.getJSONObject(k);
-                        //Log.w(TAG, "buildEGD: " + jsonDaysObj[k]);
                     }
                     ArrayList<JSONObject> jsonObjectArrayList = JsonHdoEgdMerge.init(jsonDaysObj);
                     for (int l = 0; l < jsonObjectArrayList.size(); l++) {
@@ -606,7 +608,6 @@ public class HdoSiteFragment extends Fragment {
                         break;
                     }
                     HdoModel hdo = new HdoModel(rele, date, "", timeOn, timeOff, 0, 0, 0, 0, 0, 0, 0, DistributionArea.PRE.toString());
-                    Log.w(TAG, "buildPRE: " + hdo);
                     hdoList.add(hdo);
                 }
             }
@@ -660,7 +661,6 @@ public class HdoSiteFragment extends Fragment {
      * Nastaví text upozornění podle vybraného distributora
      */
     private void setTextAlert() {
-        Log.w(TAG, "setTextAlert: " + spDistributionArea.getSelectedItemPosition());
         switch (spDistributionArea.getSelectedItemPosition()) {
             case 0:
             case 1:
@@ -691,7 +691,11 @@ public class HdoSiteFragment extends Fragment {
      * Nastaví a sestaví kód HDO z vybraných spinnerů
      */
     private void setHdoCodeFromSpinners() {
-        String code = "A" + spA.getSelectedItem()
+        if (spA.getSelectedItem().equals("")
+                && spB.getSelectedItem().equals("")
+                && spPB.getSelectedItem().equals("")) return;
+
+                String code = "A" + spA.getSelectedItem()
                 + "B" + spB.getSelectedItem()
                 + "DP" + spPB.getSelectedItem();
         etHdoCode.setText(code);
