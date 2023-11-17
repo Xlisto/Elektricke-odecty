@@ -212,7 +212,7 @@ public class HdoFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                requireActivity().runOnUiThread(timerTick);//zavolání překreslení GUI});
+                requireActivity().runOnUiThread(timerTick);//zavolání překreslení GUI
             }
         }, 0, 1000);
     }
@@ -262,15 +262,17 @@ public class HdoFragment extends Fragment {
      * Nastaví barvu textu podle toho, zda je čas v rozmezí HDO a zobrazí ikonu HDO
      */
     private void setTextHdoColor(boolean show) {
-        if (show) {
-            tvTimeHdo.setTextColor(Color.parseColor("#187e34"));
-            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_on));
-        } else {
-            if (DetectNightMode.isNightMode(requireActivity()))
-                tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
-            else
-                tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_light));
-            imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_off));
+        if (isAdded()) {
+            if (show) {
+                tvTimeHdo.setTextColor(Color.parseColor("#187e34"));
+                imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_on));
+            } else {
+                if (DetectNightMode.isNightMode(requireActivity()))
+                    tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
+                else
+                    tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_light));
+                imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_off));
+            }
         }
     }
 

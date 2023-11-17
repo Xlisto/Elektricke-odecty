@@ -11,7 +11,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -317,13 +322,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Ošetření chyby výpočtu ve fakturách, podkud se nenačte žádný ceník.&#10;Při nenalezení požadovaného ceníku v databázi pod daným id, se vytvoří prázdný ceník s nastavenými cenami na 0 a jménem produktu &quot;Ceník nenalezen!!!&quot;&#10;Do PriceListModel přidána metoda isEmpty(). Vrací true, když název ceníku obsahuje &quot;Ceník nenalezen!!!&quot;.">
-      <created>1683193756015</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1683193756015</updated>
     </task>
     <task id="LOCAL-00015" summary="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume().">
       <created>1683194818132</created>
@@ -661,7 +659,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700173557879</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO.">
+      <created>1700173717154</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1700173717154</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
