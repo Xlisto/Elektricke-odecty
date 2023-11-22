@@ -41,7 +41,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/tvPocetMist"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
         android:text="@string/zpet" />
 
     <cz.xlisto.odecty.ownview.ContextMenuRecyclerView

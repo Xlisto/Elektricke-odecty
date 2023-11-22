@@ -263,4 +263,9 @@
     <string name="total_dph">Celkem s DPH</string>
 
 
+    <string name="btn_date_description_from">Datum začátku faktury</string>
+    <string name="btn_date_description_to">Datum konce faktury</string>
+    <string name="btn_date">Datum</string>
+
+
 </resources>

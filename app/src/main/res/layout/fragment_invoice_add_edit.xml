@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,9 +8,10 @@
     <Button
         android:id="@+id/btnSelectPriceList"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/lnButtonsInvoice"
+        android:layout_alignParentEnd="true"
         android:text="@string/vyberCenik" />
 
     <LinearLayout
@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:gravity="end"
         android:orientation="horizontal">
 
         <Button
@@ -26,7 +27,6 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/zpet"
             android:textColor="#D81B60" />
 
@@ -35,7 +35,6 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/ulozit"
             android:textColor="#D81B60" />
     </LinearLayout>
@@ -50,13 +49,14 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/lnButtonsInvoiceDateAddEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="end"
                 android:orientation="horizontal">
 
                 <Button
@@ -64,16 +64,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:text="Datum" />
+                    android:contentDescription="@string/btn_date_description_from"
+                    android:text="@string/datum" />
 
                 <Button
                     android:id="@+id/btnDateEnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:text="Datum" />
+                    android:contentDescription="@string/btn_date_description_to"
+                    android:text="@string/datum" />
             </LinearLayout>
 
             <LinearLayout
