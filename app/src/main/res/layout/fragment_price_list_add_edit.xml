@@ -143,8 +143,8 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginBottom="5dp"
                         android:layout_toEndOf="@id/tvUzemiSeznam"
-                        android:labelFor="@+id/spSazbaSeznam"
                         android:gravity="end"
+                        android:labelFor="@+id/spSazbaSeznam"
                         android:text="@string/sazba_distribuce" />
 
                 </RelativeLayout>
@@ -165,8 +165,8 @@
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivProdukt"
                     android:inputType="text"
-                    app:hintText="E.ON"
                     app:direction="vertical"
+                    app:hintText="E.ON"
                     app:label="@string/dodavatel" />
 
                 <cz.xlisto.odecty.ownview.LabelEditText
@@ -174,8 +174,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="text"
-                    app:hintText="Ceníková řada"
                     app:direction="vertical"
+                    app:hintText="Ceníková řada"
                     app:label="@string/produktova_rada" />
 
 
@@ -299,26 +299,6 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/shape_item">
-
-                <TextView
-                    android:id="@+id/tvMesicniPlatDleJistice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/mesicni_plat_za_prikon"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/swJistic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvMesicniPlatDleJistice"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginStart="5dp"
-                    android:maxWidth="300dp" />
 
                 <LinearLayout
                     android:id="@+id/ln"
@@ -509,7 +489,25 @@
                         app:label="@string/jistic_nad_25_za_A" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvMesicniPlatDleJistice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/mesicni_plat_za_prikon"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/swJistic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvMesicniPlatDleJistice"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="5dp"
+                    android:maxWidth="300dp" />
 
 
             </RelativeLayout>
@@ -600,20 +598,6 @@
                     app:hintText="@string/nuly"
                     app:label="@string/poze_dle_spotreby" />
 
-                <!--<EditText
-                    android:id="@+id/etPOZE"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:text="23.96" />-->
-
-                <!--<TextView
-                    android:id="@+id/tvPOZEJistic2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/etPOZE"
-                    android:text="POZE dle jističe" />-->
-
 
                 <cz.xlisto.odecty.ownview.LabelEditText
                     android:id="@+id/ivSystemoveSluzby"
@@ -665,24 +649,6 @@
                     app:label="@string/dph" />
 
             </RelativeLayout>
-
-
-            <!--
-            <RelativeLayout
-                android:id="@+id/r10"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <View
-                    android:id="@+id/oddel1"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/etDistribucniUzemi"
-                    android:background="@android:color/black" />
-            </RelativeLayout>-->
 
 
         </LinearLayout>

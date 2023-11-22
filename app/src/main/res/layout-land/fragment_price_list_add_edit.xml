@@ -1,0 +1,684 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ll"
+        android:layout_above="@id/buttons"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/lr1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/layoutDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/btnPlatnostDO"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:autofillHints="01.10.2022"
+                        android:contentDescription="@string/description_date_until"
+                        android:focusable="true"
+                        android:inputType="none"
+                        android:minHeight="48dp"
+                        android:text="@string/datum_cislem" />
+
+                    <Button
+                        android:id="@+id/btnPlatnostOD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/tvPomlka"
+                        android:contentDescription="@string/description_date_from"
+                        android:focusable="true"
+                        android:importantForAutofill="no"
+                        android:inputType="none"
+                        android:minHeight="48dp"
+                        android:text="@string/datum_cislem" />
+
+                    <TextView
+                        android:id="@+id/tvPomlka"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/btnPlatnostOD"
+                        android:layout_toStartOf="@id/btnPlatnostDO"
+                        android:text="@string/pomlka" />
+
+                    <TextView
+                        android:id="@+id/tvDateInvoiceListDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/btnPlatnostOD"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_toStartOf="@id/btnPlatnostOD"
+                        android:text="@string/platnost_cenik" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ivDodavatel"
+                        android:layout_marginTop="5dp">
+
+                        <Spinner
+                            android:id="@+id/spDistribucniUzemiSeznam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tvUzemiSeznam"
+                            android:entries="@array/distribucni_uzemi"
+
+                            android:minHeight="48dp"
+                            android:minWidth="160dp" />
+
+                        <Spinner
+                            android:id="@+id/spSazbaSeznam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_below="@id/tvUzemiSeznam"
+                            android:entries="@array/sazby"
+                            android:minHeight="48dp"
+                            android:minWidth="140dp" />
+
+                        <TextView
+                            android:id="@+id/tvUzemiSeznam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:labelFor="@+id/spDistribucniUzemiSeznam"
+                            android:text="@string/distribucni_uzemi" />
+
+                        <TextView
+                            android:id="@+id/tvSazbaSeznam"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginBottom="5dp"
+                            android:layout_toEndOf="@id/tvUzemiSeznam"
+                            android:gravity="end"
+                            android:labelFor="@+id/spSazbaSeznam"
+                            android:text="@string/sazba_distribuce" />
+
+                    </RelativeLayout>
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivProdukt"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/ivRada"
+                        android:inputType="text"
+                        app:direction="vertical"
+                        app:hintText="Produkt"
+                        app:label="@string/produkt" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivDodavatel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/ivProdukt"
+                        android:inputType="text"
+                        app:direction="vertical"
+                        app:hintText="E.ON"
+                        app:label="@string/dodavatel" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivRada"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="text"
+                        app:direction="vertical"
+                        app:hintText="Ceníková řada"
+                        app:label="@string/produktova_rada" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutNeregul"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <TextView
+                        android:id="@+id/tvCenaZaDodavku"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="false"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/cena_za_dodavku"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivNT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvCenaZaDodavku"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@id/ivVT"
+                        android:ems="4"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="4"
+                        app:hintText="@string/nuly"
+                        app:label="@string/nt2" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivPlat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/tvCenaZaDodavku"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="4"
+                        app:hintText="@string/nuly"
+                        app:label="@string/mesicni_plat" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivVT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvCenaZaDodavku"
+                        android:layout_marginStart="5dp"
+                        android:ems="4"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="4"
+                        app:hintText="@string/nuly"
+                        app:label="@string/vt2" />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/lr2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/layoutRegul"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <TextView
+                        android:id="@+id/tvCenaZaDistribuci"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/cena_za_distribuci"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivNT1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/tvCenaZaDistribuci"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="5"
+                        app:hintText="@string/nuly"
+                        app:label="@string/nt2" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivVT1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvCenaZaDistribuci"
+                        android:layout_marginStart="5dp"
+                        android:ems="4"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="4"
+                        app:hintText="@string/nuly"
+                        app:label="@string/vt2" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutJistic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <LinearLayout
+                        android:id="@+id/ln"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/swJistic"
+                        android:orientation="vertical">
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ0"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_do_10" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_10" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_16" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_20" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ4"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_25" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ5"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_32" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ6"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_40" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ7"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_50" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ10"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_63" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ11"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_80" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ12"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_100" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ13"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_125" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ14"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_160" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ8"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_63_za_A" />
+
+                        <cz.xlisto.odecty.ownview.LabelEditText
+                            android:id="@+id/ivJ9"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginStart="5dp"
+                            android:gravity="end"
+                            android:inputType="numberDecimal"
+                            android:maxEms="4"
+                            app:hintText="@string/nuly"
+                            app:label="@string/jistic_nad_25_za_A" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvMesicniPlatDleJistice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/mesicni_plat_za_prikon"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/swJistic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvMesicniPlatDleJistice"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginStart="5dp"
+                        android:maxWidth="300dp" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutOZE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <TextView
+                        android:id="@+id/tvCenaZaOstatniSluzby"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/cena_za_ostatni_regulovane_sluzby"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivOTE"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/tvCenaZaOstatniSluzby"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/cinnost_ote" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivCinnostOperatoraTrhu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/tvCenaZaOstatniSluzby"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="16dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/cinnost_operatora_trhu" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivOZE"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/ivSystemoveSluzby"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivPOZE1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/ivOZE"
+                        android:layout_marginStart="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/poze_dle_jistice">
+
+                    </cz.xlisto.odecty.ownview.LabelEditText>
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivPOZE2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/ivOZE"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/poze_dle_spotreby" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivSystemoveSluzby"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/tvCenaZaOstatniSluzby"
+                        android:layout_marginStart="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/systemove_sluzby" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/layoutDan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivDan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        app:hintText="@string/nuly"
+                        app:label="@string/dan_z_elektriny">
+
+                    </cz.xlisto.odecty.ownview.LabelEditText>
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/ivDPH"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+
+                        android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@id/ivDan"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minWidth="48dp"
+                        app:hintText="@string/nuly"
+                        app:label="@string/dph" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnZpet"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="200dp"
+            android:text="@string/zpet"
+            android:textColor="#D81B60" />
+
+        <Button
+            android:id="@+id/btnUloz"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="200dp"
+            android:text="@string/ulozit"
+            android:textColor="#D81B60" />
+    </LinearLayout>
+
+
+</RelativeLayout>

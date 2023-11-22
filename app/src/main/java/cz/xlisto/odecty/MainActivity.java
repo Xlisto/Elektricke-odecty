@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.menu_backup) {
-                //uncheckedBottomNavigation();
+                uncheckedBottomNavigation();
                 actualFragment = new BackupFragment();
                 b = true;
             }

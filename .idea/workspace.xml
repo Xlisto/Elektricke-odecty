@@ -11,18 +11,19 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravený pád aplikace při přechodu z HdoSiteFragment nebo HdoAddFragment/HdoEditFragment pomocí toast menu do fragmentů PriceListFragment, MonthlyReadingFragment, SubscriptionPointFragment nebo InvoiceListFragment.&#10;&#10;Chyba byla způsobena brzo vyvolaným vláknem pro překreslení aktuálních hodin elektroměru, když ještě/už nebyl fragment připojen. Doplněna podmínka na kontrolu připojeného fragmentu.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -322,13 +323,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Přidání kontroly ne-nulového ceníku do MonthlyReadingEditFragment.&#10;Kontrola přidána na konec metody onResume().">
-      <created>1683194818132</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1683194818132</updated>
     </task>
     <task id="LOCAL-00016" summary="Přidána úprava časového údaje při ukládání/editaci měsíčního záznamu.&#10;Ve třídě MonthlyReadingAddEditFragmentAbstract, v metodě createMonthlyReading() doplněno volání metody ViewHelper.getOffsetTimeZones. Získaný offset se od načtených datumů odečítá.&#10;&#10;Ve třídě InvoiceAddEditAbstractFragment, v metodě createInvoice() doplněno volání metody ViewHelper.getOffsetTimeZones pro proměnné start a end. Výsledný offset je odečítán.&#10;&#10;Doplněny komentáře k třídám MonthlyReadingAdapter, MonthlyReadingAddEditFragmentAbstract, MonthlyReadingAddFragment, MonthlyReadingEditFragment, InvoiceAddEditAbstractFragment, InvoiceEditFragment.">
       <created>1683232778307</created>
@@ -666,7 +660,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700173717154</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="Opravený pád aplikace při přechodu z HdoSiteFragment nebo HdoAddFragment/HdoEditFragment pomocí toast menu do fragmentů PriceListFragment, MonthlyReadingFragment, SubscriptionPointFragment nebo InvoiceListFragment.&#10;&#10;Chyba byla způsobena brzo vyvolaným vláknem pro překreslení aktuálních hodin elektroměru, když ještě/už nebyl fragment připojen. Doplněna podmínka na kontrolu připojeného fragmentu.">
+      <created>1700254927372</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1700254927372</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -740,7 +741,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Zavedení nové funkce - filtrování měsíčních odečtů&#10;- nový MonthlyReadingFilterDialogFragment s layoutem (včetně land rozvržení)&#10;- úpravený vyhledávací dotaz v DataSubscriptionPointSource - doplněný o atributy from a to reprezentující časový údaj v long milisekundách" />
     <MESSAGE value="Oprava výpočtu cen VT, NT, stáleho platu a POZE&#10;Oprava je v Calculation, metodě calculatePriceWithoutPozeMwH, která vrací double pole {vt, nt, stPlat, poze} pro jednotlivé dílčí výsledky v měsíčním zobrazení. Je přidána podmínka reflektující změnu výpočtu od roku 2016." />
     <MESSAGE value="Deaktivace načítání regulovaných cen do roku 2020&#10;- z důvodu absence statických dat, regulované ceny jsou zadaní od 2021" />
     <MESSAGE value="Zobrazení nabídky Filtr ceníků a Filtr odečtů" />
@@ -765,6 +765,7 @@
     <MESSAGE value="Optimalizace vykreslení měsíčního grafu (GraphMonthView)&#10;Počáteční animace povolena pouze pro část prvků seznamu, které jsou viditelné na obrazovce." />
     <MESSAGE value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
     <MESSAGE value="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
+    <MESSAGE value="Opravený pád aplikace při přechodu z HdoSiteFragment nebo HdoAddFragment/HdoEditFragment pomocí toast menu do fragmentů PriceListFragment, MonthlyReadingFragment, SubscriptionPointFragment nebo InvoiceListFragment.&#10;&#10;Chyba byla způsobena brzo vyvolaným vláknem pro překreslení aktuálních hodin elektroměru, když ještě/už nebyl fragment připojen. Doplněna podmínka na kontrolu připojeného fragmentu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opravený pád aplikace při přechodu z HdoSiteFragment nebo HdoAddFragment/HdoEditFragment pomocí toast menu do fragmentů PriceListFragment, MonthlyReadingFragment, SubscriptionPointFragment nebo InvoiceListFragment.&#10;&#10;Chyba byla způsobena brzo vyvolaným vláknem pro překreslení aktuálních hodin elektroměru, když ještě/už nebyl fragment připojen. Doplněna podmínka na kontrolu připojeného fragmentu." />
   </component>
 </project>
