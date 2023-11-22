@@ -1,0 +1,199 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:imeOptions="flagNoExtractUi"
+    tools:context="cz.xlisto.odecty.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/lnButtonsMonthlyReading"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <RelativeLayout
+                    android:id="@+id/rlState"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/shape_item"
+                    tools:ignore="UselessParent">
+
+                    <Button
+                        android:id="@+id/btnDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/tvDatumOdectuPocatek"
+                        android:maxWidth="320dp"
+                        android:text="@string/datum" />
+
+                    <TextView
+                        android:id="@+id/tvDatumOdectuPocatek"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/btnDate"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/datumOdectu" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/labVT"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/btnDate"
+                        android:layout_marginTop="15dp"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/stavVt" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/labNT"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/labVT"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/stavNt" />
+
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/labPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/labNT"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/pravidelnaZaloha" />
+
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/rlOther"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/rlDescription"
+                    android:background="@drawable/shape_item">
+
+                    <Button
+                        android:id="@+id/btnSelectPriceList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@id/cbAddPayment"
+                        android:maxWidth="320dp"
+                        android:text="@string/vyberCenik" />
+
+                    <CheckBox
+                        android:id="@+id/cbFirstReading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbAddPayment"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/prvniOdecet" />
+
+                    <CheckBox
+                        android:id="@+id/cbAddPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/pridatZalohu"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/shape_item">
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/labDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="text"
+                        app:direction="vertical"
+
+                        app:label="@string/poznamka" />
+
+                    <cz.xlisto.odecty.ownview.LabelEditText
+                        android:id="@+id/labOtherServices"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/labDescription"
+                        android:imeOptions="flagNoFullscreen"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/dalsi_sluzby" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnButtonsMonthlyReading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnBackMonthlyReading"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zpet"
+            android:textColor="#D81B60" />
+
+        <Button
+            android:id="@+id/btnSaveMonthlyReading"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ulozit"
+            android:textColor="#D81B60" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>
