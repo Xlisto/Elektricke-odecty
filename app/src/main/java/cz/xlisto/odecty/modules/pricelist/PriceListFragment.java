@@ -142,7 +142,8 @@ public class PriceListFragment extends Fragment {
             ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
             shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, idSelectedPriceList);
             if (onSelectedPriceListListener != null) {
-                onSelectedPriceListListener.getOnSelectedItemPriceList(selectedPrice);
+                if (selectedPrice != null)
+                    onSelectedPriceListListener.getOnSelectedItemPriceList(selectedPrice);
             }
             getParentFragmentManager().popBackStack();
         });
@@ -269,7 +270,7 @@ public class PriceListFragment extends Fragment {
         if (DetectScreenMode.isLandscape(requireActivity())) {
             if (idSelectedPriceList != -1) {
                 if (idFragment == 0) {
-                    fragment = PriceListDetailFragment.newInstance(idSelectedPriceList,true);
+                    fragment = PriceListDetailFragment.newInstance(idSelectedPriceList, true);
                     requireActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fl_price_list_right, fragment)
                             .commit();
