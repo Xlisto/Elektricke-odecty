@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutJistic"
     android:layout_width="match_parent"
     android:layout_height="120dp"
@@ -16,7 +17,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:contentDescription="@string/logo"
-        android:src="@mipmap/ic_launcher" />
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/title"

@@ -57,7 +57,7 @@ public class DataSubscriptionPointSource extends DataSource{
     }
 
 
-    public void insertMonthlyReading(MonthlyReadingModel monthlyReading, String tableName) {
+    public void insertMonthlyReading(String tableName,MonthlyReadingModel monthlyReading) {
         database.insert(tableName, null, createContentValue(monthlyReading));
     }
 

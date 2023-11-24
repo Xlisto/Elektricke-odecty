@@ -1,18 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     android:imeOptions="flagNoExtractUi"
+    android:padding="10dp"
     tools:context="cz.xlisto.odecty.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/lnButtonsMonthlyReading"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -112,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@id/cbAddPayment"
+                        android:layout_below="@id/tvResultDate"
                         android:maxWidth="320dp"
                         android:text="@string/vyberCenik" />
 
@@ -120,7 +121,7 @@
                         android:id="@+id/cbFirstReading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/cbAddPayment"
+                        android:layout_below="@id/tvResultDate"
                         android:checked="false"
                         android:minHeight="48dp"
                         android:text="@string/prvniOdecet" />
@@ -133,6 +134,39 @@
                         android:text="@string/pridatZalohu"
                         tools:ignore="TouchTargetSizeCheck" />
 
+                    <EditText
+                        android:id="@+id/etDatePayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="false"
+                        android:layout_below="@id/cbAddPayment"
+                        android:layout_toEndOf="@id/tvContentAddPayment"
+                        android:autofillHints="15"
+                        android:ems="3"
+                        android:inputType="date"
+                        android:maxEms="4"
+                        android:minEms="2"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp" />
+
+                    <TextView
+                        android:id="@+id/tvContentAddPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/etDatePayment"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp"
+                        android:labelFor="@id/etDatePayment"
+                        android:text="@string/how_date_pay" />
+
+                    <TextView
+                        android:id="@+id/tvResultDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/etDatePayment"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="5dp" />
+
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -142,10 +176,19 @@
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/shape_item">
 
+                    <CheckBox
+                        android:id="@+id/cbShowDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/other_items" />
+
                     <cz.xlisto.odecty.ownview.LabelEditText
                         android:id="@+id/labDescription"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_below="@id/cbShowDescription"
                         android:inputType="text"
                         app:direction="vertical"
 
@@ -193,7 +236,6 @@
             android:text="@string/ulozit"
             android:textColor="#D81B60" />
     </LinearLayout>
-
 
 
 </RelativeLayout>

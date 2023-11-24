@@ -1,17 +1,23 @@
 package cz.xlisto.odecty.modules.monthlyreading;
 
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
+import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.modules.invoice.WithOutInvoiceService;
 import cz.xlisto.odecty.ownview.LabelEditText;
@@ -20,18 +26,18 @@ import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPAddEditMonthlyReading;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.Keyboard;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 import static cz.xlisto.odecty.ownview.OwnDatePicker.showDialog;
 import static cz.xlisto.odecty.ownview.ViewHelper.parseCalendarFromString;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ADD_PAYMENT_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.DATE_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.DESCRIPTION_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.FIRS_READING_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.NT_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.OTHER_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.PAYMENT_MONTHLY_READING;
-import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.VT_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_DATE_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_SHOW_DESCRIPTION_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_FIRST_READING_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_NT_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_OTHER_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_PAYMENT_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_VT_MONTHLY_READING;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 /**
@@ -41,23 +47,25 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     private final String TAG = "MonthlyReadingAddEditFragmentAbstract";
     Button btnBack, btnSave, btnDate, btnSelectPriceList;
     LabelEditText labVT, labNT, labPayment, labDescription, labOtherServices;
-    CheckBox cbAddPayment, cbFirstReading;
+    CheckBox cbAddPayment, cbFirstReading, cbShowDescription;
+    EditText etDatePayment;
+    TextView tvContentAddPayment, tvResultDate;
     PriceListModel selectedPriceList;
     SubscriptionPointModel subscriptionPoint;
+    RelativeLayout rlRoot;
     ShPAddEditMonthlyReading shPAddEditMonthlyReading;
     long selectedIdPriceList = -1L;
     boolean isFirstLoad = true;
-    private final String IS_FIRST_LOAD = "isFirstLoad";
-    private final String DATE = "date";
-    private final String VT = "vt";
-    private final String NT = "nt";
-    private final String PAYMENT = "payment";
-    private final String DESCRIPTION = "description";
-    private final String OTHER_SERVICE = "otherServices";
-    private final String ADD_PAYMENT = "addPayment";
-    private final String FIRST_READING = "firstReading";
-    private final String SELECTED_ID_PRICE_LIST = "selectedIdPriceList";
-    private final String BTN_PRICE_LIST = "btnPriceList";
+    private final String ARG_IS_FIRST_LOAD = "isFirstLoad";
+    private final String ARG_DATE = "date";
+    private final String ARG_VT = "vt";
+    private final String ARG_NT = "nt";
+    private final String ARG_PAYMENT = "payment";
+    private final String ARG_DESCRIPTION = "description";
+    private final String ARG_OTHER_SERVICE = "otherServices";
+    private final String ARG_SHOW_DESCRIPTION = "showDescription";
+    private final String ARG_SELECTED_ID_PRICE_LIST = "selectedIdPriceList";
+    private final String ARG_BTN_PRICE_LIST = "btnPriceList";
     private static boolean restoreSharedPreferences = false;
 
 
@@ -86,6 +94,19 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         labOtherServices = view.findViewById(R.id.labOtherServices);
         cbAddPayment = view.findViewById(R.id.cbAddPayment);
         cbFirstReading = view.findViewById(R.id.cbFirstReading);
+        cbShowDescription = view.findViewById(R.id.cbShowDescription);
+        etDatePayment = view.findViewById(R.id.etDatePayment);
+        tvContentAddPayment = view.findViewById(R.id.tvContentAddPayment);
+        tvResultDate = view.findViewById(R.id.tvResultDate);
+        rlRoot = view.findViewById(R.id.rlRoot);
+
+
+        cbShowDescription.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION, false));
+        cbFirstReading.setChecked(shPAddEditMonthlyReading.get(ARG_FIRST_READING_MONTHLY_READING, false));
+
+
+        if (cbFirstReading.isChecked())
+            cbAddPayment.setEnabled(false);
 
         cbFirstReading.setOnCheckedChangeListener((buttonView, isChecked) -> {
             labPayment.setEnabled(!isChecked);
@@ -95,7 +116,15 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
                 btnSelectPriceList.setVisibility(View.GONE);
             else
                 btnSelectPriceList.setVisibility(View.VISIBLE);
+            cbAddPayment.setChecked(false);
+            shPAddEditMonthlyReading.set(ARG_FIRST_READING_MONTHLY_READING, cbFirstReading.isChecked());
         });
+
+        cbShowDescription.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            shPAddEditMonthlyReading.set(ARG_SHOW_DESCRIPTION, cbShowDescription.isChecked());
+            setShowDescription();
+        });
+
 
         btnDate.setOnClickListener(v -> showDialog(getActivity(), day -> {
             btnDate.setText(day);
@@ -104,7 +133,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
 
         btnSelectPriceList.setOnClickListener(v -> {
             saveSharedPreferences();
-            restoreSharedPreferences = true;
 
             PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPriceList);
             priceListFragment.setOnSelectedPriceListListener(priceList -> {
@@ -115,20 +143,22 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        btnBack.setOnClickListener(v -> {
+            Keyboard.hide(requireActivity());
+            getParentFragmentManager().popBackStack();
+        });
+
 
         if (savedInstanceState != null) {
-            isFirstLoad = savedInstanceState.getBoolean(IS_FIRST_LOAD);
-            btnDate.setText(savedInstanceState.getString(DATE, ""));
-            labVT.setDefaultText(savedInstanceState.getString(VT, "0"));
-            labNT.setDefaultText(savedInstanceState.getString(NT, "0"));
-            labPayment.setDefaultText(savedInstanceState.getString(PAYMENT, "0"));
-            labDescription.setDefaultText(savedInstanceState.getString(DESCRIPTION, ""));
-            labOtherServices.setDefaultText(savedInstanceState.getString(OTHER_SERVICE, ""));
-            cbAddPayment.setChecked(savedInstanceState.getBoolean(ADD_PAYMENT, false));
-            cbFirstReading.setChecked(savedInstanceState.getBoolean(FIRST_READING, false));
-            selectedIdPriceList = savedInstanceState.getLong(SELECTED_ID_PRICE_LIST);
-            btnSelectPriceList.setText(savedInstanceState.getString(BTN_PRICE_LIST));
+            isFirstLoad = savedInstanceState.getBoolean(ARG_IS_FIRST_LOAD);
+            btnDate.setText(savedInstanceState.getString(ARG_DATE, ""));
+            labVT.setDefaultText(savedInstanceState.getString(ARG_VT, "0"));
+            labNT.setDefaultText(savedInstanceState.getString(ARG_NT, "0"));
+            labPayment.setDefaultText(savedInstanceState.getString(ARG_PAYMENT, "0"));
+            labDescription.setDefaultText(savedInstanceState.getString(ARG_DESCRIPTION, ""));
+            labOtherServices.setDefaultText(savedInstanceState.getString(ARG_OTHER_SERVICE, ""));
+            selectedIdPriceList = savedInstanceState.getLong(ARG_SELECTED_ID_PRICE_LIST);
+            btnSelectPriceList.setText(savedInstanceState.getString(ARG_BTN_PRICE_LIST));
         }
     }
 
@@ -147,23 +177,24 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
 
         if (restoreSharedPreferences)
             restoreSharedPreferences();
+
+        setShowDescription();
+        setShowAddPayment();
     }
 
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(IS_FIRST_LOAD, isFirstLoad);
-        outState.putString(DATE, btnDate.getText().toString());
-        outState.putString(VT, labVT.getText());
-        outState.putString(NT, labNT.getText());
-        outState.putString(PAYMENT, labPayment.getText());
-        outState.putString(DESCRIPTION, labDescription.getText());
-        outState.putString(OTHER_SERVICE, labOtherServices.getText());
-        outState.putBoolean(ADD_PAYMENT, cbAddPayment.isChecked());
-        outState.putBoolean(FIRST_READING, cbFirstReading.isChecked());
-        outState.putLong(SELECTED_ID_PRICE_LIST, selectedIdPriceList);
-        outState.putString(BTN_PRICE_LIST, btnSelectPriceList.getText().toString());
+        outState.putBoolean(ARG_IS_FIRST_LOAD, isFirstLoad);
+        outState.putString(ARG_DATE, btnDate.getText().toString());
+        outState.putString(ARG_VT, labVT.getText());
+        outState.putString(ARG_NT, labNT.getText());
+        outState.putString(ARG_PAYMENT, labPayment.getText());
+        outState.putString(ARG_DESCRIPTION, labDescription.getText());
+        outState.putString(ARG_OTHER_SERVICE, labOtherServices.getText());
+        outState.putLong(ARG_SELECTED_ID_PRICE_LIST, selectedIdPriceList);
+        outState.putString(ARG_BTN_PRICE_LIST, btnSelectPriceList.getText().toString());
     }
 
 
@@ -181,19 +212,27 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
                 selectedIdPriceList, cbFirstReading.isChecked());
     }
 
+    /**
+     * Sestaví objekt platby z údajů widgetů
+     *
+     * @return PaymentModel Objekt platby
+     */
+    PaymentModel createPayment(long date) {
+        date -= ViewHelper.getOffsetTimeZones(date);
+        return new PaymentModel(-1L, -1L, date, labPayment.getDouble(), 2);
+    }
+
 
     /**
      * Uloží hodnoty widgetů do sharedprefences
      */
     void saveSharedPreferences() {
-        shPAddEditMonthlyReading.set(VT_MONTHLY_READING, labVT.getText());
-        shPAddEditMonthlyReading.set(NT_MONTHLY_READING, labNT.getText());
-        shPAddEditMonthlyReading.set(DESCRIPTION_MONTHLY_READING, labDescription.getText());
-        shPAddEditMonthlyReading.set(PAYMENT_MONTHLY_READING, labPayment.getText());
-        shPAddEditMonthlyReading.set(OTHER_MONTHLY_READING, labOtherServices.getText());
-        shPAddEditMonthlyReading.set(ADD_PAYMENT_MONTHLY_READING, cbAddPayment.isChecked());
-        shPAddEditMonthlyReading.set(FIRS_READING_MONTHLY_READING, cbFirstReading.isChecked());
-        shPAddEditMonthlyReading.set(DATE_MONTHLY_READING, btnDate.getText().toString());
+        shPAddEditMonthlyReading.set(ARG_VT_MONTHLY_READING, labVT.getText());
+        shPAddEditMonthlyReading.set(ARG_NT_MONTHLY_READING, labNT.getText());
+        shPAddEditMonthlyReading.set(ARG_DESCRIPTION, labDescription.getText());
+        shPAddEditMonthlyReading.set(ARG_PAYMENT_MONTHLY_READING, labPayment.getText());
+        shPAddEditMonthlyReading.set(ARG_OTHER_MONTHLY_READING, labOtherServices.getText());
+        shPAddEditMonthlyReading.set(ARG_DATE_MONTHLY_READING, btnDate.getText().toString());
         restoreSharedPreferences = true;
     }
 
@@ -202,15 +241,44 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      * Obnoví hodnoty widgetů ze sharedprefences
      */
     void restoreSharedPreferences() {
-        labVT.setDefaultText(shPAddEditMonthlyReading.get(VT_MONTHLY_READING, ""));
-        labNT.setDefaultText(shPAddEditMonthlyReading.get(NT_MONTHLY_READING, ""));
-        labDescription.setDefaultText(shPAddEditMonthlyReading.get(DESCRIPTION_MONTHLY_READING, ""));
-        labPayment.setDefaultText(shPAddEditMonthlyReading.get(PAYMENT_MONTHLY_READING, ""));
-        labOtherServices.setDefaultText(shPAddEditMonthlyReading.get(OTHER_MONTHLY_READING, ""));
-        cbAddPayment.setChecked(shPAddEditMonthlyReading.get(ADD_PAYMENT_MONTHLY_READING, false));
-        cbFirstReading.setChecked(shPAddEditMonthlyReading.get(FIRS_READING_MONTHLY_READING, false));
-        btnDate.setText(shPAddEditMonthlyReading.get(DATE_MONTHLY_READING, ""));
+        labVT.setDefaultText(shPAddEditMonthlyReading.get(ARG_VT_MONTHLY_READING, ""));
+        labNT.setDefaultText(shPAddEditMonthlyReading.get(ARG_NT_MONTHLY_READING, ""));
+        labDescription.setDefaultText(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION_MONTHLY_READING, ""));
+        labPayment.setDefaultText(shPAddEditMonthlyReading.get(ARG_PAYMENT_MONTHLY_READING, ""));
+        labOtherServices.setDefaultText(shPAddEditMonthlyReading.get(ARG_OTHER_MONTHLY_READING, ""));
+        btnDate.setText(shPAddEditMonthlyReading.get(ARG_DATE_MONTHLY_READING, ""));
         restoreSharedPreferences = false;
+    }
+
+
+    /**
+     * Nastaví zaškrtnutí checkboxu "Přidat platbu" a zobrazí/skryje edittext pro zadání data platby
+     */
+    void setShowAddPayment() {
+        TransitionManager.beginDelayedTransition(rlRoot);
+        if (cbAddPayment.isChecked()) {
+            etDatePayment.setVisibility(View.VISIBLE);
+            tvContentAddPayment.setVisibility(View.VISIBLE);
+            tvResultDate.setVisibility(View.VISIBLE);
+        } else {
+            etDatePayment.setVisibility(View.GONE);
+            tvContentAddPayment.setVisibility(View.GONE);
+            tvResultDate.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Nastaví zaškrtnutí checkboxu "Zobrazit popis" a zobrazí/skryje labeledity pro zadání poznámky a další doplňkové služby
+     */
+    void setShowDescription() {
+        TransitionManager.beginDelayedTransition(rlRoot);
+        if (cbShowDescription.isChecked()) {
+            labDescription.setVisibility(View.VISIBLE);
+            labOtherServices.setVisibility(View.VISIBLE);
+        } else {
+            labDescription.setVisibility(View.GONE);
+            labOtherServices.setVisibility(View.GONE);
+        }
     }
 
 

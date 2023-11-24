@@ -128,6 +128,8 @@
     <string name="poznamka">Poznámka:</string>
     <string name="dalsi_sluzby">Další doplňkové služby nebo slevy:</string>
     <string name="vyberCenik">Vybrat ceník</string>
+    <string name="other_items">Další údaje</string>
+    <string name="result_date">Platba bude evidována k datu:&#160;</string>
 
     <string name="vyberteCenik">Vyberte ceník</string>
     <string name="smazat_mesicni_odecet">Smazat měsíční odečet?</string>
@@ -266,6 +268,10 @@
     <string name="btn_date_description_from">Datum začátku faktury</string>
     <string name="btn_date_description_to">Datum konce faktury</string>
     <string name="btn_date">Datum</string>
+
+
+    <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
+    <string name="edittext_date_payment_description">Napiště, kolikáteho bude zaplacena záloha za tento odečet.</string>
 
 
 </resources>

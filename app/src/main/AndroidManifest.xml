@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Odecty"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <service
             android:name= ".services.HdoService"
             android:label="HDO Service"

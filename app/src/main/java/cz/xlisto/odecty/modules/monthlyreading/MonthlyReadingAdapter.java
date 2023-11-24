@@ -222,7 +222,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         holder.btnEdit.setOnClickListener(v -> {
             MonthlyReadingEditFragment monthlyReadingEditFragment = MonthlyReadingEditFragment.newInstance(
                     subscriptionPoint.getTableO(),
-                    subscriptionPoint.getTablePLATBY(),
                     monthlyReading.getId());
             FragmentChange.replace((FragmentActivity) context, monthlyReadingEditFragment, MOVE, true);
         });
