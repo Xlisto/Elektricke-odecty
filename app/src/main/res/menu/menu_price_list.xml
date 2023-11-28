@@ -2,10 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_bottom"
+        android:id="@+id/menu_delete_unused_pricelist"
+        android:title="@string/delete_price_list"
+        android:visible="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_filter_pricelist"
         android:title="@string/filter_price_list"
         android:visible="true"
-        app:showAsAction="always" />
-
+        app:showAsAction="ifRoom" />
 
 </menu>

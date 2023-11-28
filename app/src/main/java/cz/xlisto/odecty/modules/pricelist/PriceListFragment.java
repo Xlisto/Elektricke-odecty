@@ -156,7 +156,8 @@ public class PriceListFragment extends Fragment {
             btnBack.setVisibility(View.GONE);
         }
 
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT, this,
+        //listener při potvrzení smazání ceníku
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         priceListAdapter.deleteItemPrice();
@@ -166,6 +167,23 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
+
+        //listener při potvrzení smazání nevyužitých ceníků
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
+                ((requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+                        dataPriceListSource.open();
+                        dataPriceListSource.deleteUnusedPriceList();
+                        dataPriceListSource.close();
+                        onLoadData();
+                        setAdapter();
+                        priceListAdapter.setHideButtons();
+                        idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
+                        showDetailPriceFragment(false);
+                    }
+                }));
+
 
         onLoadData();
         setAdapter();
@@ -192,7 +210,7 @@ public class PriceListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final int id = item.getItemId();
-        if (id == R.id.menu_bottom) {
+        if (id == R.id.menu_filter_pricelist) {
             PriceListFilterDialogFragment.newInstance(() -> {
                 onLoadData();
                 setAdapter();
@@ -200,6 +218,12 @@ public class PriceListFragment extends Fragment {
                 idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
                 showDetailPriceFragment(false);
             }).show(requireActivity().getSupportFragmentManager(), TAG);
+        }
+
+        if (id == R.id.menu_delete_unused_pricelist) {
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.delete_unused_pricelist),
+                    YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, getResources().getString(R.string.delete_unused_pricelist_content));
+            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
         }
         return super.onOptionsItemSelected(item);
     }

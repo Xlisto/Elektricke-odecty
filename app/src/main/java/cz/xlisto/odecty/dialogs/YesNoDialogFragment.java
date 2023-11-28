@@ -2,7 +2,6 @@ package cz.xlisto.odecty.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +17,7 @@ public class YesNoDialogFragment extends DialogFragment {
     public static final String TAG = "YesNoDialogFragment";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
-    private static final String FLAG_RESULT_DIALOG_FRAGMENT = "flagResultDialogFragment";
+    public static final String FLAG_RESULT_DIALOG_FRAGMENT = "flagResultDialogFragment";
     public static final String RESULT = "result";
 
     private String title = "";

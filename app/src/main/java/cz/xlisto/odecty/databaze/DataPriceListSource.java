@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
 import static cz.xlisto.odecty.databaze.DBHelperPriceList.AUTOR;
@@ -58,16 +60,17 @@ public class DataPriceListSource {
     private DBHelperPriceList dbHelperPriceList;
     private SQLiteDatabase database;
 
+
     public DataPriceListSource(Context context) {
         this.context = context;
         dbHelperPriceList = new DBHelperPriceList(context);
     }
 
+
     /**
      * Otevře spojení s databází ceníku
      *
-     * @return
-     * @throws SQLException
+     * @throws SQLException pokud se nepodaří otevřít databázi
      */
     public void open() throws SQLException {
         if (database != null) {
@@ -80,12 +83,11 @@ public class DataPriceListSource {
             e.printStackTrace();
             dbHelperPriceList = new DBHelperPriceList(context);
             database = dbHelperPriceList.getWritableDatabase();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Zavře spojení s databází ceníku
@@ -97,41 +99,86 @@ public class DataPriceListSource {
         }
     }
 
+
     /**
      * Přidá jednu sazbu ceníku
      *
-     * @param priceListModel
-     * @return
+     * @param priceListModel objekt ceník
+     * @return long insertID id vloženého ceníku
      */
     public long insertPriceList(PriceListModel priceListModel) {
-        long insertID = database.insert(TABLE_NAME_PRICE, null, createContenValue(priceListModel));
-        return insertID;
+        return database.insert(TABLE_NAME_PRICE, null, createContentValue(priceListModel));
     }
+
 
     /**
      * Upraví jednu sazbu ceníku
      *
-     * @param priceListModel
-     * @param itemId
-     * @return
+     * @param priceListModel objekt ceník
+     * @param itemId         id ceníku
+     * @return long updateID id upraveného ceníku
      */
     public long updatePriceList(PriceListModel priceListModel, long itemId) {
-        return database.update(TABLE_NAME_PRICE, createContenValue(priceListModel),
+        return database.update(TABLE_NAME_PRICE, createContentValue(priceListModel),
                 "_id=?", new String[]{String.valueOf(itemId)});
     }
 
+
     /**
      * Smaže ceník podle ID
-     * @param itemId
-     * @return long deleteId smazané položky
+     *
+     * @param itemId id ceníku
      */
-    public long deletePriceList(long itemId) {
-        long deleteId = database.delete(TABLE_NAME_PRICE, "_id=?",
+    public void deletePriceList(long itemId) {
+        database.delete(TABLE_NAME_PRICE, "_id=?",
                 new String[]{String.valueOf(itemId)});
-        return deleteId;
     }
 
-    private ContentValues createContenValue(PriceListModel priceListModel) {
+
+    /**
+     * Vyhledá id ceníků ve všech tabulkách, které nejsou využitý a následně  je smaže
+     */
+    public void deleteUnusedPriceList() {
+        //dotaz na všechny použité id ceníků
+        StringBuilder select = new StringBuilder("SELECT cenik_id \nFROM (");
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
+        //sestaní dotazu na všechny použité id ceníků
+        for (int i = 0; i < subscriptionPointModels.size(); i++) {
+            if (i > 0)
+                select.append("\nUNION\n");
+            select.append("SELECT DISTINCT cenik_id FROM ").append(subscriptionPointModels.get(i).getTableO()).append("\nUNION\n");
+            select.append("SELECT DISTINCT cenik_id FROM ").append(subscriptionPointModels.get(i).getTableFAK());
+        }
+
+        select.append(");");
+
+        Cursor cursor = dataSubscriptionPointSource.database.rawQuery(select.toString(), null);
+        //seznam použitých id ceníků
+        String[] ids = new String[cursor.getCount()];
+        //podle počtu použitých id ceníků se vytvoří počet zástupných znaků (?)
+        StringBuilder questionMarks = new StringBuilder();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+            ids[i] = cursor.getString(0);
+            if (i > 0)
+                questionMarks.append(",");
+            questionMarks.append("?");
+        }
+        database.delete(TABLE_NAME_PRICE, "_id NOT IN (" + questionMarks + ")", ids);
+        cursor.close();
+        dataSubscriptionPointSource.close();
+    }
+
+
+    /**
+     * Vytvoří ContentValues pro vložení do databáze
+     *
+     * @param priceListModel objekt ceník
+     * @return ContentValues hodnoty ceníku
+     */
+    private ContentValues createContentValue(PriceListModel priceListModel) {
         ContentValues values = new ContentValues();
         values.put(RADA, priceListModel.getRada());
         values.put(PRODUKT, priceListModel.getProdukt());
@@ -174,25 +221,27 @@ public class DataPriceListSource {
         return values;
     }
 
+
     /**
      * Načte všechny ceníky, filtr je nastaven na výběr všeho
      *
-     * @return
+     * @return ArrayList<PriceListModel> seznam ceníků
      */
     public ArrayList<PriceListModel> readPriceList() {
         return readPriceList("%", "%", "%", "%", "%", "%");
     }
 
+
     /**
-     * Načte všechny ceníky vyhovující filtu
+     * Načte všechny ceníky vyhovující filtru
      *
-     * @param rada
-     * @param produkt
-     * @param sazba
-     * @param dodavatel
-     * @param uzemi
-     * @param datum
-     * @return
+     * @param rada      filtr pro název řady
+     * @param produkt   filtr pro název produktu
+     * @param sazba     filtr pro sazbu
+     * @param dodavatel filtr pro název dodavatele
+     * @param uzemi     filtr pro název území
+     * @param datum     filtr pro datum platnosti
+     * @return ArrayList<PriceListModel> seznam ceníků
      */
     public ArrayList<PriceListModel> readPriceList(String rada, String produkt, String sazba, String dodavatel, String uzemi, String datum) {
         String selection = "rada LIKE ? AND produkt LIKE ? AND sazba LIKE ? AND firma LIKE ? AND distribuce LIKE ? AND platnost_od LIKE ?";
@@ -200,11 +249,12 @@ public class DataPriceListSource {
         return readPriceList(selection, args);
     }
 
+
     /**
      * Načte jeden ceník podle id v databázi
      *
-     * @param id
-     * @return
+     * @param id id ceníku
+     * @return PriceListModel objekt ceníku
      */
     public PriceListModel readPrice(long id) {
         String selection = "_id=?";
@@ -216,12 +266,13 @@ public class DataPriceListSource {
             return new PriceListModel();
     }
 
+
     /**
      * Privátní metoda pro načítání ceníků podle parametrů
      *
-     * @param selection
-     * @param argsSelection
-     * @return
+     * @param selection     podmínka pro výběr ceníku
+     * @param argsSelection argumenty pro výběr ceníku
+     * @return ArrayList<PriceListModel> seznam ceníků
      */
     private ArrayList<PriceListModel> readPriceList(String selection, String[] argsSelection) {
         Cursor cursor = database.query(TABLE_NAME_PRICE, null,
@@ -254,7 +305,7 @@ public class DataPriceListSource {
         cursor.close();
         return priceListModels;
     }
-    //constantsCursorRada = db.rawQuery("SELECT rada, COUNT(rada) AS pocet_vyskytu FROM ceniky GROUP BY rada HAVING pocet_vyskytu >0", null);
+
 
     /**
      * Načte seznam ceníků podle podle názvů
@@ -262,7 +313,7 @@ public class DataPriceListSource {
      * @param column konstanty DBHelperPriceList.RADA, DBHelperPriceList.PRODUKT, DBHelperPriceList.SAZBA,
      *               DBHelperPriceList.FIRMA,DBHelperPriceList.DISTRIBUCE a DBHelperPriceList.DATUM_PLATNOSTI
      *               PLATNOST_OD převede z Long na datum String
-     * @return
+     * @return ArrayList<String> seznam názvů
      */
     public ArrayList<String> readPriceListCount(String column) {
         ArrayList<String> arrayList = new ArrayList<>();
@@ -286,9 +337,11 @@ public class DataPriceListSource {
         return arrayList;
     }
 
+
     /**
      * Celkový počet ceníků
-     * @return
+     *
+     * @return int počet ceníků
      */
     public int countPriceItems() {
         Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME_PRICE, null);

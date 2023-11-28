@@ -37,7 +37,7 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
     public static final String TAG = "PriceListAdapter";
-    public final static String FLAG_DIALOG_FRAGMENT = "dialogFragmentDeletePriceList";
+    public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
     private final boolean showSelectItem;
     private int selectedItem = -1;
@@ -196,7 +196,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                 selectedItemId = priceList.getId();
                 selectedPosition = position;
                 YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT,
+                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST,
                         priceList.getRada() + " "
                                 + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
                                 + ViewHelper.convertLongToDate(priceList.getPlatnostOD()) + " - "

@@ -82,6 +82,8 @@
     <string name="jednotkova_cena">Jednotková cena</string>
 
     <string name="smazat_cenik">Smazat ceník?</string>
+    <string name="delete_unused_pricelist">Smazat nepoužité ceníky?</string>
+    <string name="delete_unused_pricelist_content">Touto akcí nevratně smažete všechny ceníky, které nejsou použity v měsíčních odečtech, ani ve fakturách.</string>
     <string name="ano">ANO</string>
     <string name="ne">NE</string>
 
@@ -184,6 +186,7 @@
     <string name="show_monthly_records_to">Měsíční odečty DO</string>
     <string name="reser_filter">Vynulovat filtr</string>
     <string name="filter_price_list">Filtr ceníků</string>
+    <string name="delete_price_list">Smazat nevyužité ceníky</string>
     <string name="filter_monthly_readings">Filtr odečtů</string>
     <string name="add_nem_monthly_reading">Přidat nové měření</string>
     <string name="mon">PO</string>

@@ -11,9 +11,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby.">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přídána možnost smazat všechny dosud nikde nepoužité ceníky." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -321,20 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1682887291375</updated>
-    </task>
-    <task id="LOCAL-00023" summary="Oprava upozornění v MainActivity.java">
-      <created>1683569126421</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1683569126421</updated>
-    </task>
-    <task id="LOCAL-00024" summary="Úprava tříd (úprava konstant) přistupující SharedPreference. Přidán další konstruktor do abstraktní třídy ShP.">
-      <created>1683571400488</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1683571400488</updated>
     </task>
     <task id="LOCAL-00025" summary="Oprava chyby ve fragmentech přídání/úpravy ceníku, kde se špatně zobrazovala hodnota spinnerů nastavující distribuční území a sazbu.&#10; Úprava se týká tříd PriceListAddFragment, PriceListEditFragment a PriceListAddEditAbstract.&#10; Do PriceListModel jsou přidány konstanty PRE, CEZ, EON a EGN reprezentující zkratky těchto distibičních území a odstraněny nepoužívané gettry.">
       <created>1683572910592</created>
@@ -665,7 +649,21 @@
       <option name="project" value="LOCAL" />
       <updated>1700856551509</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby.">
+      <created>1700857107418</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1700857107418</updated>
+    </task>
+    <task id="LOCAL-00073" summary="Přídána možnost smazat všechny dosud nikde nepoužité ceníky.">
+      <created>1701208453097</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1701208453097</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -739,7 +737,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidání modulu pro evidenci časů HDO (nočního proudu) - služba s notifikací&#10;Přidání služby s notifikací zobrazující aktuální sazbu HDO.&#10;Vyhodnocení času HDO. Metoda přepracována a zavedena do statické třídy.&#10;Přidání ikony notifikace do traylišty.&#10;Autostart služby s notifikací při restartu zařízení" />
     <MESSAGE value="Zobrazení dní HDO&#10;Nahrazení textové platnosti dnů časů HDO zvýrazněnými TextView pro jednotlivé dny.&#10;- zaveden styl pro TextView (styleDaysViewLight)&#10;- zavedena grafika pozadí (shape_days)" />
     <MESSAGE value="Vytvořen fragment a třída pro načítání dat HDO ze stránek distributorů&#10;&#10;HdoSite - fragment aplikace&#10;Connections - přístup k rozhraní api.&#10;CodeWeb - statická stránka pro získání tokenu" />
     <MESSAGE value="Opravena chyba při nezobrazení údajů v editaci faktury pokud se klikno na tlačítko zpět na zařízení." />
@@ -764,6 +761,7 @@
     <MESSAGE value="Úprava rozvržení přidání/úpravy platby pro režim landscape." />
     <MESSAGE value="Oprava chyby pádu aplikace&#10;Ve fragmentu pro výběr ceníku a nevybrání žádného ceníku, při stisku tlačítka zpět aplikace havarovala. Příčina byla v null parametru pro výběr ceníku. &#10;Přidána podmínka na vybraný ceník." />
     <MESSAGE value="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby." />
+    <MESSAGE value="Přídána možnost smazat všechny dosud nikde nepoužité ceníky." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přídána možnost smazat všechny dosud nikde nepoužité ceníky." />
   </component>
 </project>
