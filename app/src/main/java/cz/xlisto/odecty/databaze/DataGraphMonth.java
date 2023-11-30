@@ -35,7 +35,8 @@ public class DataGraphMonth extends DataSource {
      * @return ArrayList sestavený z objektů SpotrebaFaktura, který reprezentuje celkovou měsíční spotřebu
      */
     public ConsuptionContainer loadConsuptions() {
-        String table = Objects.requireNonNull(SubscriptionPoint.load(context)).getTableO();
+        if(SubscriptionPoint.load(context) == null) return null;
+        String table = (Objects.requireNonNull(SubscriptionPoint.load(context))).getTableO();
         if (table == null) return null;
         String orderBy = DbHelper.DATUM + " ASC, " + DbHelper.PRVNI_ODECET + " ASC";
         boolean add = false;

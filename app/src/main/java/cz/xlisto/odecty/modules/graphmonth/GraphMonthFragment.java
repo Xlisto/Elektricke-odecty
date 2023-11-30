@@ -122,7 +122,7 @@ public class GraphMonthFragment extends Fragment {
             showNT = savedInstanceState.getBoolean(ShPGraphMonth.ARG_IS_SHOW_NT);
             showTypeGraph = savedInstanceState.getBoolean(ShPGraphMonth.ARG_TYPE_GRAPH);
             compareMonth = savedInstanceState.getInt(ShPGraphMonth.ARG_COMPARE_MONTH);
-            setGraphMontView();
+            setGraphMonthView();
         }
         return view;
     }
@@ -148,8 +148,7 @@ public class GraphMonthFragment extends Fragment {
         showVT = shPGraphMonth.get(ARG_IS_SHOW_VT, true);
         showNT = shPGraphMonth.get(ARG_IS_SHOW_NT, true);
         compareMonth = shPGraphMonth.get(ARG_COMPARE_MONTH, 1);
-        setGraphMontView();
-
+        setGraphMonthView();
     }
 
 
@@ -167,7 +166,7 @@ public class GraphMonthFragment extends Fragment {
     /**
      * Nastaví parametry GraphView
      */
-    private void setGraphMontView(){
+    private void setGraphMonthView() {
         graphMonthView.changePeriod(showPeriod);
         graphMonthView.setShowVT(showVT);
         graphMonthView.setShowNT(showNT);
