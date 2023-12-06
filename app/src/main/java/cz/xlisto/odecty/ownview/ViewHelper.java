@@ -34,6 +34,16 @@ public class ViewHelper {
 
 
     /**
+     * Vrátí instanci SimpleDateFormat s výchozím petternem dd.MM.yyyy  HH.mm.ss
+     * znak : je zakázaný pro unix systémy, proto je použita tečka
+     * @return SimpleDateFormat s patternem dd.MM.yyyy  HH.mm.ss
+     */
+    public static SimpleDateFormat getSimpleDateFormatForFiles() {
+        return new SimpleDateFormat("dd.MM.yyyy  HH.mm.ss", Locale.GERMANY);
+    }
+
+
+    /**
      * Vrátí instanci SimpleDateFormat s výchozím petternem yyyy
      * @return SimpleDateFormat s patternem yyyy
      */

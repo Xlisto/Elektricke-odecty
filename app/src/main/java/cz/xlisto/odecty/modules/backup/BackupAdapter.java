@@ -12,8 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
-import cz.xlisto.odecty.ownview.ViewHelper;
+
 
 /**
  * Adaptér zobrazení souboru záloh
@@ -87,36 +85,35 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
 
         boolean cenik = Objects.requireNonNull(object.getName()).contains(".cenik");
         boolean odecet = Objects.requireNonNull(object.getName()).contains(".odecet");
-        boolean zip = Objects.requireNonNull(object.getName()).contains("ElektroDroid.zip");
+        boolean zip_old = Objects.requireNonNull(object.getName()).contains("ElektroDroid.zip");
+        boolean zip_now = Objects.requireNonNull(object.getName()).contains("El odecet.zip");
+
+
         if (cenik) text = object.getName().replace(".cenik", "");
         if (odecet) text = object.getName().replace(".odecet", "");
-        if (zip) text = object.getName().replace("ElektroDroid.zip", "");
-        Calendar cl = Calendar.getInstance();
-        holder.tvName.setText(text);
-        try {
-            if (!zip) {
-                long textLong = Long.parseLong(text);
-                cl.setTimeInMillis(textLong);
-                Date date = cl.getTime();
-                holder.tvName.setText(ViewHelper.convertLongToDate(date.getTime()));
-            }
-
-        } catch (
-                Exception e) {
-            e.printStackTrace();
+        if (zip_old) {
+            text = object.getName().replace(" ElektroDroid.zip", "");
         }
+        if (zip_now) {
+            text = object.getName().replace(" El odecet.zip", "");
+        }
+        holder.tvName.setText(text);
+
 
         if (cenik) {
             holder.iconFile.setImageResource(R.mipmap.ic_cenik);
-            holder.tvTyp.setText("záloha ceník");
+            holder.tvTyp.setText(context.getResources().getString(R.string.backup_pricelist));
         }
         if (odecet) {
             holder.iconFile.setImageResource(R.mipmap.ic_odecet);
-            holder.tvTyp.setText("Záloha odečet");
+            holder.tvTyp.setText(context.getResources().getString(R.string.backup_readings));
         }
-        if (zip) {
-            holder.iconFile.setImageResource(R.mipmap.ic_odecet);
-            holder.tvTyp.setText("Záloha komprimovaná");
+        if (zip_old || zip_now) {
+            if (zip_old)
+                holder.iconFile.setImageResource(R.mipmap.ic_odecet);
+            if (zip_now)
+                holder.iconFile.setImageResource(R.mipmap.ic_odecet_new);
+            holder.tvTyp.setText(context.getResources().getString(R.string.backup_zip));
         }
 
         showButtons(holder, position);
@@ -146,7 +143,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             selectedFile = object;
             selectedPosition = position;
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance("Smazat zálohu", FLAG_DIALOG_FRAGMENT_DELETE);
-            yesNoDialogFragment.show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
+            yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
     }
 
@@ -172,12 +169,21 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     }
 
 
+    /**
+     * Obnoví data ze záložního vybraného souboru zip
+     */
     public void recoverDatabaseFromZip() {
-        RecoverDataFromBackupFile.recoverDatabaseFromZip(context,selectedFile);
+        RecoverDataFromBackupFile.recoverDatabaseFromZip(context, selectedFile);
         selectedFile = null;
     }
 
 
+    /**
+     * Zobrazí tlačítka pro obnovu a smazání zálohy
+     *
+     * @param holder   view holder
+     * @param position pozice
+     */
     private void showButtons(MyViewHolder holder, int position) {
         if (showButtons == position)
             holder.ln.setVisibility(View.VISIBLE);
