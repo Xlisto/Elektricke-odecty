@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
 
+        //spodní lišta
         bottomNavigationView.setOnItemSelectedListener(item -> {
             long itemId = item.getItemId();
 
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             return itemId == R.id.meni_nothing;
         });
 
+        //levý drawer
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
             long itemId = item.getItemId();
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_backup) {
                 uncheckedBottomNavigation();
-                actualFragment = new BackupFragment();
+                actualFragment = BackupFragment.newInstance();
                 b = true;
             }
 

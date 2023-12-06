@@ -24,12 +24,11 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 
 
 /**
- * Obnoví data ze záložních souborů
+ * Obnoví data ze záložních ZIP souborů
  * Xlisto 13.05.2023 10:04
  */
-public class RecoverDataFromBackupFile {
+public class RecoverDataFromBackupFile extends RecoverData{
     private static final String TAG = "RecoverDataFromFile";
-    private static final String DEF_URI = "content://com.android.externalstorage.documents/document/primary%3A";
 
 
     public static void recoverDatabaseFromZip(Context context,DocumentFile f) {
@@ -96,7 +95,9 @@ public class RecoverDataFromBackupFile {
 
             int c;
             byte[] buffer = new byte[1024];
-            while ((c = dst.read(buffer)) != -1) {
+            while (true) {
+                assert dst != null;
+                if ((c = dst.read(buffer)) == -1) break;
                 src.write(buffer, 0, c);
             }
 
@@ -147,9 +148,11 @@ public class RecoverDataFromBackupFile {
 
                 int len;
                 while ((len = zis.read(buffer)) > 0) {
+                    assert fos != null;
                     fos.write(buffer, 0, len);
                 }
 
+                assert fos != null;
                 fos.close();
                 files.add(newFiled);
                 ze = zis.getNextEntry();

@@ -123,6 +123,7 @@
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
     <string name="prvniOdecet">Prvni odečet</string>
+    <string name="addBackup">Vytvořit záložní zip soubor</string>
     <string name="datumOdectu">Datum odečtu: </string>
     <string name="stavNt">Stav počitadla nízského tarifu: </string>
     <string name="stavVt">Stav počitadla vysokého tarifu: </string>
@@ -276,7 +277,7 @@
     <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
     <string name="edittext_date_payment_description">Napiště, kolikáteho bude zaplacena záloha za tento odečet.</string>
 
-    <string name="no_folder">Nejprve vyberte složku pro zálohy. \nDoporučeno vybrat výchozí složku: El_odecty_zalohy.</string>
+    <string name="no_folder">!!! ZÁLOHA NEVYTVOŘENA !!! \n\nNejprve vyberte složku pro zálohy. \nDoporučeno vybrat výchozí složku: El_odecty_zalohy.</string>
     <string name="backup_created">Vytvořena záloha na vnitřním uložišti.</string>
     <string name="backup_pricelist">Záloha ceníků</string>
     <string name="backup_readings">Záloha odečtů</string>

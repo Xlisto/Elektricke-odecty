@@ -113,15 +113,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@id/tvResultDate"
+                        android:layout_below="@id/cbAddBackup"
                         android:maxWidth="320dp"
                         android:text="@string/vyberCenik" />
+
+                    <CheckBox
+                        android:id="@+id/cbAddBackup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvResultDate"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/addBackup" />
 
                     <CheckBox
                         android:id="@+id/cbFirstReading"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/tvResultDate"
+                        android:layout_below="@id/cbAddBackup"
                         android:checked="false"
                         android:minHeight="48dp"
                         android:text="@string/prvniOdecet" />

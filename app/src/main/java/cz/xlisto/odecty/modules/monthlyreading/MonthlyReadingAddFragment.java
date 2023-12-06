@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_SHOW_ADD_PAYMENT_MONTHLY_READING;
+import static cz.xlisto.odecty.shp.ShPMonthlyReading.ADD_BACKUP_NEW_READING;
 
 /**
  * Fragment pro přidání měsíčního odečtu.
@@ -79,6 +80,9 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 }
                 dataSubscriptionPointSource.close();
                 updateLastItemInvoice();
+                if (cbAddBackup.isChecked()) {
+                    backupMonthlyReading();
+                }
                 getParentFragmentManager().popBackStack();
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
@@ -89,6 +93,8 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
             shPAddEditMonthlyReading.set(ARG_SHOW_ADD_PAYMENT_MONTHLY_READING, cbAddPayment.isChecked());
             setShowAddPayment();
         });
+
+        cbAddBackup.setOnCheckedChangeListener((buttonView, isChecked) -> shPAddEditMonthlyReading.set(ADD_BACKUP_NEW_READING, cbAddBackup.isChecked()));
 
         etDatePayment.addTextChangedListener(new TextWatcher() {
             @Override
@@ -108,8 +114,10 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         });
         etDatePayment.setText(shPAddEditMonthlyReading.get(ARG_DATE_PAYMENT, ""));
         cbAddPayment.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_ADD_PAYMENT_MONTHLY_READING, false));
+        cbAddBackup.setChecked(shPAddEditMonthlyReading.get(ADD_BACKUP_NEW_READING, false));
         setDatePayment();
     }
+
 
     /**
      * Doplní platné datum podle zadaného data platby do tvResultDate

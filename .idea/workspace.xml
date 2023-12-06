@@ -6,28 +6,26 @@
         <device id="_device_class_phone" />
       </config>
     </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading_add_edit.xml">
+        <config>
+          <state>landscape</state>
+          <theme>@style/Theme.Odecty.NoActionBar</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading_add_edit.xml">
+        <config>
+          <theme>@style/Theme.Odecty.NoActionBar</theme>
+        </config>
+      </layout>
+    </layouts>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba pádu při zobrazení grafu při nevybraném odběrném místě.&#10;&#10;Opravena chyna přo zoomování grafu.">
-      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_odecet_new.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_odecet_new.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_odecet_new.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_odecet_new.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_odecet_new.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/ViewHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/ViewHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -692,7 +690,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -766,8 +764,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Vytvořen fragment a třída pro načítání dat HDO ze stránek distributorů&#10;&#10;HdoSite - fragment aplikace&#10;Connections - přístup k rozhraní api.&#10;CodeWeb - statická stránka pro získání tokenu" />
-    <MESSAGE value="Opravena chyba při nezobrazení údajů v editaci faktury pokud se klikno na tlačítko zpět na zařízení." />
     <MESSAGE value="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci" />
     <MESSAGE value="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo." />
     <MESSAGE value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
@@ -791,6 +787,8 @@
     <MESSAGE value="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby." />
     <MESSAGE value="Přídána možnost smazat všechny dosud nikde nepoužité ceníky." />
     <MESSAGE value="Opravena chyba pádu při zobrazení grafu při nevybraném odběrném místě.&#10;&#10;Opravena chyna přo zoomování grafu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba pádu při zobrazení grafu při nevybraném odběrném místě.&#10;&#10;Opravena chyna přo zoomování grafu." />
+    <MESSAGE value="dokončeno vytváření záložních soborů na interní uložiště.&#10;&#10;Záložní soubory z nové verze mají příponu El odečet.zip. Pro odlišení od starších používají aktulizovanou ikonu s novým logem aplikace v pravém rohu ikony." />
+    <MESSAGE value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
   </component>
 </project>

@@ -14,6 +14,7 @@ import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
 import static cz.xlisto.odecty.format.DecimalFormatHelper.*;
+import static cz.xlisto.odecty.shp.ShPMonthlyReading.ADD_BACKUP_EDT_READING;
 
 /**
  * Fragment pro editaci měsíčního odečtu.
@@ -88,15 +89,22 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         tvResultDate.setVisibility(View.GONE);
         etDatePayment.setVisibility(View.GONE);
 
+        cbAddBackup.setOnCheckedChangeListener((buttonView, isChecked) -> shPAddEditMonthlyReading.set(ADD_BACKUP_EDT_READING, cbAddBackup.isChecked()));
+
 
         btnSave.setOnClickListener(v -> {
             if (priceList != null || cbFirstReading.isChecked()) {
                 updateMonthlyReading(itemId);
+                if (cbAddBackup.isChecked()) {
+                    backupMonthlyReading();
+                }
                 getParentFragmentManager().popBackStack();
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
             }
         });
+
+        cbAddBackup.setChecked(shPAddEditMonthlyReading.get(ADD_BACKUP_EDT_READING, false));
     }
 
 
@@ -138,7 +146,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
 
 
     /**
-     * Uloží úpravený měsíční odečet do databáze.
+     * Uloží upravený měsíční odečet do databáze.
      * @param itemId long id měsíčního odečtu v databázi.
      */
     private void updateMonthlyReading(long itemId) {

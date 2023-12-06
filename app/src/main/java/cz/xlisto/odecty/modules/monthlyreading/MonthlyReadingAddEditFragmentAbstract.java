@@ -19,6 +19,7 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.modules.backup.SaveDataToBackupFile;
 import cz.xlisto.odecty.modules.invoice.WithOutInvoiceService;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
@@ -47,7 +48,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     private final String TAG = "MonthlyReadingAddEditFragmentAbstract";
     Button btnBack, btnSave, btnDate, btnSelectPriceList;
     LabelEditText labVT, labNT, labPayment, labDescription, labOtherServices;
-    CheckBox cbAddPayment, cbFirstReading, cbShowDescription;
+    CheckBox cbAddPayment, cbFirstReading, cbShowDescription, cbAddBackup;
     EditText etDatePayment;
     TextView tvContentAddPayment, tvResultDate;
     PriceListModel selectedPriceList;
@@ -94,6 +95,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         labOtherServices = view.findViewById(R.id.labOtherServices);
         cbAddPayment = view.findViewById(R.id.cbAddPayment);
         cbFirstReading = view.findViewById(R.id.cbFirstReading);
+        cbAddBackup = view.findViewById(R.id.cbAddBackup);
         cbShowDescription = view.findViewById(R.id.cbShowDescription);
         etDatePayment = view.findViewById(R.id.etDatePayment);
         tvContentAddPayment = view.findViewById(R.id.tvContentAddPayment);
@@ -212,6 +214,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
                 selectedIdPriceList, cbFirstReading.isChecked());
     }
 
+
     /**
      * Sestaví objekt platby z údajů widgetů
      *
@@ -267,6 +270,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         }
     }
 
+
     /**
      * Nastaví zaškrtnutí checkboxu "Zobrazit popis" a zobrazí/skryje labeledity pro zadání poznámky a další doplňkové služby
      */
@@ -287,5 +291,13 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      */
     void updateLastItemInvoice() {
         WithOutInvoiceService.editLastItemInInvoice(getActivity(), subscriptionPoint.getTableTED(), createMonthlyReading());
+    }
+
+
+    /**
+     * Vytvoří zálohu měsíčního odečtu
+     */
+    void backupMonthlyReading() {
+        SaveDataToBackupFile.saveToZip(requireActivity());
     }
 }
