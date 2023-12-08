@@ -6,15 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,11 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.modules.backup.FilterNameFile;
 import cz.xlisto.odecty.permission.Files;
-import cz.xlisto.odecty.permission.Permissions;
 import cz.xlisto.odecty.modules.backup.RecoverData;
-import cz.xlisto.odecty.modules.backup.SortFile;
 import cz.xlisto.odecty.shp.ShPBackup;
 
 /**
@@ -40,9 +33,8 @@ import cz.xlisto.odecty.shp.ShPBackup;
 public class ExportImportPriceListFragment extends Fragment {
     private static final String TAG = "ExportImportPriceListFragment";
     private ShPBackup shPBackup;
-    private Uri uri;
     private RecyclerView recyclerView;
-    private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
+    private final ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private ExportImportPriceListAdapter importExportAdapter;
     //private final Handler handler = new Handler(Looper.getMainLooper());
@@ -95,7 +87,7 @@ public class ExportImportPriceListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         documentFiles.clear();
         recyclerView.setAdapter(new ExportImportPriceListAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));

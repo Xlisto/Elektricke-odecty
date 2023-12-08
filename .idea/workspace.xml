@@ -49,35 +49,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Files.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/MyToast.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_import_export_price_list.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/my_toast.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_alert.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_price_list.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_alert.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_price_list.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_alert.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_price_list.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_alert.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_price_list.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_alert.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_price_list.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/Permissions.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Permissions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/RecoverData.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/RecoverData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/SaveDataToBackupFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/SaveDataToBackupFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_nav_view.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Permissions.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Permissions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -745,7 +722,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -819,7 +796,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Načítání časů HDO z EGD&#10;- zapracování výjímek okresů JH, Dačice, Jihlava a Brno-venkov&#10;- ukládání do databáze telefonu&#10;- při zobrazení možnost volby relé&#10;. nastavení volby relé pro notifikaci" />
     <MESSAGE value="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo." />
     <MESSAGE value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
     <MESSAGE value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
@@ -844,6 +820,7 @@
     <MESSAGE value="Opravena chyba pádu při zobrazení grafu při nevybraném odběrném místě.&#10;&#10;Opravena chyna přo zoomování grafu." />
     <MESSAGE value="dokončeno vytváření záložních soborů na interní uložiště.&#10;&#10;Záložní soubory z nové verze mají příponu El odečet.zip. Pro odlišení od starších používají aktulizovanou ikonu s novým logem aplikace v pravém rohu ikony." />
     <MESSAGE value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
+    <MESSAGE value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
   </component>
 </project>
