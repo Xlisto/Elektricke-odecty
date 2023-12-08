@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.Keyboard;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -83,6 +84,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 if (cbAddBackup.isChecked()) {
                     backupMonthlyReading();
                 }
+                Keyboard.hide(requireActivity());
                 getParentFragmentManager().popBackStack();
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();

@@ -12,6 +12,7 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.Keyboard;
 
 import static cz.xlisto.odecty.format.DecimalFormatHelper.*;
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.ADD_BACKUP_EDT_READING;
@@ -98,6 +99,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
                 if (cbAddBackup.isChecked()) {
                     backupMonthlyReading();
                 }
+                Keyboard.hide(requireActivity());
                 getParentFragmentManager().popBackStack();
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
