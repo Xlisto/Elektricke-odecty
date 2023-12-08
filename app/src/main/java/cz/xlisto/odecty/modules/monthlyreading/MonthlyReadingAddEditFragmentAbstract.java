@@ -298,6 +298,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      * Vytvoří zálohu měsíčního odečtu
      */
     void backupMonthlyReading() {
-        SaveDataToBackupFile.saveToZip(requireActivity());
+        SaveDataToBackupFile.saveToZip(requireActivity(),null);
     }
 }

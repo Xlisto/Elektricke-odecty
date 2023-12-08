@@ -51,8 +51,8 @@
             app:showAsAction="ifRoom" />
 
         <item
-            android:id="@+id/menu_test"
-            android:title="Testovací fragment"
+            android:id="@+id/menu_export_price_list"
+            android:title="@string/import_export_price_list"
             app:showAsAction="ifRoom" />
 
     </group>

@@ -1,4 +1,4 @@
-package cz.xlisto.odecty.modules.backup;
+package cz.xlisto.odecty.permission;
 
 import android.Manifest;
 import android.app.Activity;

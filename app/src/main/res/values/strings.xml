@@ -169,7 +169,7 @@
     <string name="delete">Smaž</string>
     <string name="join_previous">Spoj s předchozím</string>
     <string name="please_wait">Chvilku strpení…</string>
-    <string name="backup">Zálohuj</string>
+    <string name="backup">Vytvoř zálohu</string>
     <string name="select_folder">Vyber složku</string>
 
     <string name="plus_hour">+ hod</string>
@@ -208,6 +208,7 @@
     <string name="backup1">Záloha</string>
     <string name="graph_month">Měsíční graf</string>
     <string name="graph_color">Barva tarifu</string>
+    <string name="import_export_price_list">Export/Import samostatných ceníků</string>
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
     <string name="watch_low_tarif">Sledování nízského tarifu</string>
@@ -277,10 +278,11 @@
     <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
     <string name="edittext_date_payment_description">Napiště, kolikáteho bude zaplacena záloha za tento odečet.</string>
 
-    <string name="no_folder">!!! ZÁLOHA NEVYTVOŘENA !!! \n\nNejprve vyberte složku pro zálohy. \nDoporučeno vybrat výchozí složku: El_odecty_zalohy.</string>
+    <string name="no_folder">!!! ZÁLOHA NEVYTVOŘENA !!! \n\nNejprve vytvořte, vyberte a povolte aplikaci přístup do složky pro zálohy. </string>
     <string name="backup_created">Vytvořena záloha na vnitřním uložišti.</string>
     <string name="backup_pricelist">Záloha ceníků</string>
     <string name="backup_readings">Záloha odečtů</string>
     <string name="backup_zip">Komprimovaná záloha odečtů a ceníků</string>
+    <string name="icon_alert">Ikona varování</string>
 
 </resources>

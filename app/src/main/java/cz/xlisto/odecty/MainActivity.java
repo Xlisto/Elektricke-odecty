@@ -23,6 +23,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
+import cz.xlisto.odecty.modules.exportimportpricelist.ExportImportPriceListFragment;
 import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
@@ -171,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
                 b = true;
             }
 
-            if (itemId == R.id.menu_test) {
+            if (itemId == R.id.menu_export_price_list) {
                 uncheckedBottomNavigation();
-                actualFragment = TestFragment.newInstance();
+                actualFragment = ExportImportPriceListFragment.newInstance();
                 b = true;
             }
 

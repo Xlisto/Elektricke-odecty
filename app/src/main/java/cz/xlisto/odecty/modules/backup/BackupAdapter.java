@@ -3,6 +3,7 @@ package cz.xlisto.odecty.modules.backup;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,6 +131,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 showButtons = -1;
             else
                 showButtons = position;
+            selectedPosition = position;
+            Log.w(TAG, "moveToPosition3: " + selectedPosition);
             showButtons(holder, position);
         });
 
@@ -174,7 +177,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      */
     public void recoverDatabaseFromZip() {
         RecoverDataFromBackupFile.recoverDatabaseFromZip(context, selectedFile);
-        selectedFile = null;
+        //selectedFile = null;
     }
 
 
@@ -189,5 +192,17 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.ln.setVisibility(View.VISIBLE);
         else
             holder.ln.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Posune index vybrané položky a jednu pozici a nastaví aktuálně vybraný soubor
+     */
+    public void moveToPosition() {
+        if (selectedPosition >= 0 && showButtons >= 0) {
+            selectedPosition = selectedPosition + 1;
+            selectedFile = documentFiles.get(selectedPosition);
+            showButtons = selectedPosition;
+        }
     }
 }

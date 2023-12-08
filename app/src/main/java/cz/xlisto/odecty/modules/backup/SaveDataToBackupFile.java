@@ -3,6 +3,7 @@ package cz.xlisto.odecty.modules.backup;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,21 +23,31 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPBackup;
+import cz.xlisto.odecty.utils.MyToast;
 
 /**
  * Uloží databáze do ZIPu
  * Xlisto 06.12.2023 17:04
  */
-public class SaveDataToBackupFile extends RecoverData{
+public class SaveDataToBackupFile extends RecoverData {
     private static final String TAG = "SaveBackup";
 
 
     /**
      * Uloží databáze do ZIPu
      */
-    public static DocumentFile saveToZip(Context context) {
-        Date date = new Date();
+    public static void saveToZip(Context context, Handler handler) {
+        ShPBackup shPBackup = new ShPBackup(context);
+        Uri treeUri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, DEF_TREE_URI));
+        DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);
+
+        if (pickedDir == null || !pickedDir.canWrite()) {
+            MyToast.makeText(context, context.getResources().getString(R.string.no_folder), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         //vytvoření a zápis do textového souboru s posledními záznamy
+        Date date = new Date();
         String s = readDataFromDatabase(context);
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("info.txt", Context.MODE_PRIVATE));
@@ -46,13 +57,9 @@ public class SaveDataToBackupFile extends RecoverData{
             e.printStackTrace();
         }
 
-        ShPBackup shPBackup = new ShPBackup(context);
-        Uri treeUri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, DEF_TREE_URI));
-        DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);
-
         //uložení zálohovaných souborů do ZIPu
-        assert pickedDir != null;
-        DocumentFile f = pickedDir.createFile("plain/text", generateNameFile(date.getTime()) + " " + filtersFileName[3]);
+        DocumentFile f = pickedDir.createFile("plain/text", generateNameFile(date.getTime()) + " " + RecoverData.getFiltersFileName()[3]);
+
 
         String applicationId = BuildConfig.APPLICATION_ID;
         File f1 = new File(Environment.getDataDirectory(), "//data//" + applicationId + "//databases//odecty_a_mista");
@@ -65,7 +72,7 @@ public class SaveDataToBackupFile extends RecoverData{
         }
         //musí tady být kontrola na výběr a oprávnění složky. Pokud není, vrací chybu: requires android.permission.MANAGE_DOCUMENTS or android.permission.MANAGE_DOCUMENTS
 
-        if (pickedDir.getName() != null && isDirectory) {
+        if (pickedDir.canWrite() && isDirectory) {
             try {
                 File f3 = new File((context).getFilesDir() + "//info.txt");
 
@@ -98,17 +105,8 @@ public class SaveDataToBackupFile extends RecoverData{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-
-            File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/El_odecty_zalohy");
-            if (!dir.exists())
-                dir.mkdir(); //kontrola existence složky, pokud neexistuje, vytvoří se nová
-
-            Toast.makeText(context, context.getResources().getString(R.string.no_folder), Toast.LENGTH_LONG).show();
+            handler.sendMessage(handler.obtainMessage(1, f));
         }
-
-        return f;
-
     }
 
 
@@ -157,13 +155,5 @@ public class SaveDataToBackupFile extends RecoverData{
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(l);
         return ViewHelper.getSimpleDateFormatForFiles().format(new Date(calendar.getTimeInMillis()));
-    }
-
-
-    /**
-     * Vrátí pole obsahující povolené přípony - filterFileName
-     */
-    public static String[] getFiltersFileName() {
-        return filtersFileName;
     }
 }
