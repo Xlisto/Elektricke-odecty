@@ -3,7 +3,6 @@ package cz.xlisto.odecty.dialogs;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -49,9 +48,7 @@ public class YesNoDialogRecyclerViewAdapter extends RecyclerView.Adapter<YesNoDi
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PriceListModel priceList = priceLists.get(position);
         holder.cbTitle.setText(priceList.getSazba()+", "+priceList.getProdukt());
-        holder.cbTitle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            priceList.setChecked(isChecked);
-        });
+        holder.cbTitle.setOnCheckedChangeListener((buttonView, isChecked) -> priceList.setChecked(isChecked));
         holder.cbTitle.setChecked(priceList.isChecked());
     }
 

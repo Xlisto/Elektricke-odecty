@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,19 +33,19 @@ import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.*;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 public class PriceListCompareFragment extends Fragment {
-    private static String TAG = "PriceListCompareFragment";
-    private static String KC_MWH = " Kč/MWh";
-    private static String KC = " Kč";
-    private static String KC_MONTH = " Kč/měsíc";
-    private static String ID_PRICE_LIST_LEFT = "id_price_list_left";
-    private static String ID_PRICE_LIST_RIGHT = "id_price_list_right";
-    private static String AMOUNT_VT = "vt";
-    private static String AMOUNT_NT = "nt";
-    private static String COUNT_MONTH = "month";
-    private static String PHAZE = "phaze";
-    private static String POWER = "power";
-    private static String SERVICES_L = "services_r";
-    private static String SERVICES_R = "services_l";
+    private static final String TAG = "PriceListCompareFragment";
+    private static final String KC_MWH = " Kč/MWh";
+    private static final String KC = " Kč";
+    private static final String KC_MONTH = " Kč/měsíc";
+    private static final String ID_PRICE_LIST_LEFT = "id_price_list_left";
+    private static final String ID_PRICE_LIST_RIGHT = "id_price_list_right";
+    private static final String AMOUNT_VT = "vt";
+    private static final String AMOUNT_NT = "nt";
+    private static final String COUNT_MONTH = "month";
+    private static final String PHAZE = "phaze";
+    private static final String POWER = "power";
+    private static final String SERVICES_L = "services_r";
+    private static final String SERVICES_R = "services_l";
 
     private double vt = 1, nt = 1, month = 1, phaze = 3, power = 25, servicesL = 0, servicesR = 0;
     private Button btnLeft, btnRight;
@@ -69,14 +67,13 @@ public class PriceListCompareFragment extends Fragment {
     private TextView tvShowRegulPriceLabel;
     private PriceListModel priceListLeft, priceListRight, priceListLeftRegul, priceListRightRegul, priceListLeftNERegul, priceListRightNERegul;
     private PriceListRegulBuilder priceListLeftRegulBuilder, priceListRightRegulBuilder;
-    private long idPriceListLeft = -1l, idPriceListRight = -1l;
+    private long idPriceListLeft = -1L, idPriceListRight = -1L;
     private SubscriptionPointModel subscriptionPoint;
     private double[] totalPriceLeft, totalPriceRight;
     private double totalPozeLeft, totalPozeRight, totalRight, totalLeft;
 
     public static PriceListCompareFragment newInstance() {
-        PriceListCompareFragment fragment = new PriceListCompareFragment();
-        return fragment;
+        return new PriceListCompareFragment();
     }
 
     @Override
@@ -84,8 +81,8 @@ public class PriceListCompareFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
-        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1l);
-        if (idSubscriptionPoint != -1l) {
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
+        if (idSubscriptionPoint != -1L) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();
             subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
@@ -165,7 +162,7 @@ public class PriceListCompareFragment extends Fragment {
                 createNeregulPriceListLeft();
             });
 
-            FragmentChange.replace(getActivity(), priceListFragment, MOVE, true);
+            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
         btnRight.setOnClickListener(v -> {
@@ -176,22 +173,12 @@ public class PriceListCompareFragment extends Fragment {
                 createNeregulPriceListRight();
             });
 
-            FragmentChange.replace(getActivity(), priceListFragment, MOVE, true);
+            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        swLeft.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onResume();
-            }
-        });
+        swLeft.setOnCheckedChangeListener((buttonView, isChecked) -> onResume());
 
-        swRight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                onResume();
-            }
-        });
+        swRight.setOnCheckedChangeListener((buttonView, isChecked) -> onResume());
 
         tvShowRegulPriceLabel.setVisibility(GONE);
         showSwLeft(false);
@@ -232,12 +219,7 @@ public class PriceListCompareFragment extends Fragment {
 
         ownprcUzemi.visibleSeparator(false);
 
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                comparePriceList();
-            }
-        };
+        Runnable r = this::comparePriceList;
         r.run();
 
     }
@@ -258,28 +240,25 @@ public class PriceListCompareFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_price_list_compare, menu);
+        requireActivity().getMenuInflater().inflate(R.menu.menu_price_list_compare, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.menu_values) {
-            PriceListAddParametersDialogFragment.newInstance(new PriceListAddParametersDialogFragment.CloseDialogWithPositiveButtonListener() {
-                                                                 @Override
-                                                                 public void onCloseDialogWithPositiveButton(double vt, double nt, double month, double phaze, double power, double servicesL, double servicesR) {
-                                                                     PriceListCompareFragment.this.vt = vt;
-                                                                     PriceListCompareFragment.this.nt = nt;
-                                                                     PriceListCompareFragment.this.month = month;
-                                                                     PriceListCompareFragment.this.phaze = phaze;
-                                                                     PriceListCompareFragment.this.power = power;
-                                                                     PriceListCompareFragment.this.servicesL = servicesL;
-                                                                     PriceListCompareFragment.this.servicesR = servicesR;
-                                                                     onResume();
-                                                                 }
-                                                             }
+            PriceListAddParametersDialogFragment.newInstance((vt, nt, month, phaze, power, servicesL, servicesR) -> {
+                        PriceListCompareFragment.this.vt = vt;
+                        PriceListCompareFragment.this.nt = nt;
+                        PriceListCompareFragment.this.month = month;
+                        PriceListCompareFragment.this.phaze = phaze;
+                        PriceListCompareFragment.this.power = power;
+                        PriceListCompareFragment.this.servicesL = servicesL;
+                        PriceListCompareFragment.this.servicesR = servicesR;
+                        onResume();
+                    }
                     , vt, nt, month, servicesL, servicesR
-            ).show(getActivity().getSupportFragmentManager(), TAG);
+            ).show(requireActivity().getSupportFragmentManager(), TAG);
 
             return true;
         }
@@ -289,9 +268,9 @@ public class PriceListCompareFragment extends Fragment {
     /**
      * Skryje nepoužíté OwnPriceListCompare
      *
-     * @param ownPriceListCompare
-     * @param left
-     * @param right
+     * @param ownPriceListCompare vlastní ceník
+     * @param left                levá strana
+     * @param right               pravá strana
      */
     private void setHideNotUsedItem(OwnPriceListCompare ownPriceListCompare, double left, double right) {
         if (left == 0 && right == 0) {
@@ -304,11 +283,11 @@ public class PriceListCompareFragment extends Fragment {
     /**
      * Nastaví typ dílčí ceny pro zobrazení adekvátních jednotkových cen v ceníku a nastaví dvě desetinná místa
      *
-     * @param ownPriceListCompare
-     * @param differentPrice
-     * @param type
+     * @param ownPriceListCompare vlastní ceník
+     * @param differentPrice      rozdílná cena
+     * @param type                typ dílčí ceny
      */
-    private void setdifferentPrice(OwnPriceListCompare ownPriceListCompare, double differentPrice, Type type) {
+    private void setDifferentPrice(OwnPriceListCompare ownPriceListCompare, double differentPrice, Type type) {
         double quantity = 1;
         if (type.equals(VT))
             quantity = vt;
@@ -322,21 +301,21 @@ public class PriceListCompareFragment extends Fragment {
     }
 
     /**
-     * Naformátuje rozdílnou cenu a přiřadí zobrazení na dvě desitinná místa
+     * Naformátuje rozdílnou cenu a přiřadí zobrazení na dvě desetinná místa
      *
-     * @param ownPriceListCompare
-     * @param d1
+     * @param ownPriceListCompare vlastní ceník
+     * @param d1                  rozdílná cena
      */
-    private void setdifferentPrice(OwnPriceListCompare ownPriceListCompare, double d1) {
+    private void setDifferentPrice(OwnPriceListCompare ownPriceListCompare, double d1) {
         ownPriceListCompare.setDifferent(d1, df2);
     }
 
     /**
-     * Připočítá k dané cené DPH podle platného ceníku
+     * Připočítá k dané ceně DPH podle platného ceníku
      *
-     * @param d
-     * @param dph
-     * @return
+     * @param d   cena
+     * @param dph DPH
+     * @return cena s DPH
      */
     private double addDPH(double d, double dph) {
         return d + (d * dph / 100);
@@ -361,10 +340,10 @@ public class PriceListCompareFragment extends Fragment {
     /**
      * Nastaví regulovaný nebo neregulovaný ceník
      *
-     * @param b
-     * @param prRegul
-     * @param prNERegul
-     * @return
+     * @param b         true = regulovaný ceník, false = neregulovaný ceník
+     * @param prRegul   regulovaný ceník
+     * @param prNERegul neregulovaný ceník
+     * @return regulovaný nebo neregulovaný ceník
      */
     private PriceListModel setPriceList(boolean b, PriceListModel prRegul, PriceListModel prNERegul) {
         if (b)
@@ -376,7 +355,7 @@ public class PriceListCompareFragment extends Fragment {
     /**
      * Zobrazí/skryje switch na levé straně
      *
-     * @param b
+     * @param b true = zobrazí, false = skryje
      */
     private void showSwLeft(boolean b) {
         if (b) {
@@ -391,7 +370,7 @@ public class PriceListCompareFragment extends Fragment {
     /**
      * Zobrazí/skryje switch na pravé straně
      *
-     * @param b
+     * @param b true = zobrazí, false = skryje
      */
     private void showSwRight(boolean b) {
         if (b) {
@@ -558,67 +537,67 @@ public class PriceListCompareFragment extends Fragment {
             if (priceListRightRegulBuilder.isRegulPrice() && priceListLeftRegulBuilder.isRegulPrice())
                 tvShowRegulPriceLabel.setVisibility(VISIBLE);
             double difVT = priceListLeft.getCenaVT() - priceListRight.getCenaVT();
-            setdifferentPrice(ownprcVT, difVT, VT);
+            setDifferentPrice(ownprcVT, difVT, VT);
 
             double difNT = priceListLeft.getCenaNT() - priceListRight.getCenaNT();
-            setdifferentPrice(ownprcNT, difNT, NT);
+            setDifferentPrice(ownprcNT, difNT, NT);
 
             double difPayment = priceListLeft.getMesicniPlat() - priceListRight.getMesicniPlat();
-            setdifferentPrice(ownprcPayment, difPayment, MONTH);
+            setDifferentPrice(ownprcPayment, difPayment, MONTH);
 
             double difRegulVT = priceListLeft.getDistVT() - priceListRight.getDistVT();
-            setdifferentPrice(ownprcVTRegul, difRegulVT, VT);
+            setDifferentPrice(ownprcVTRegul, difRegulVT, VT);
 
             double difRegulNT = priceListLeft.getDistNT() - priceListRight.getDistNT();
-            setdifferentPrice(ownprcNTRegul, difRegulNT, NT);
+            setDifferentPrice(ownprcNTRegul, difRegulNT, NT);
 
             double difJ0 = priceListLeft.getJ0() - priceListRight.getJ0();
-            setdifferentPrice(ownprcJ0, difJ0, MONTH);
+            setDifferentPrice(ownprcJ0, difJ0, MONTH);
 
             double difJ1 = priceListLeft.getJ1() - priceListRight.getJ1();
-            setdifferentPrice(ownprcJ1, difJ1, MONTH);
+            setDifferentPrice(ownprcJ1, difJ1, MONTH);
 
             double difJ2 = priceListLeft.getJ2() - priceListRight.getJ2();
-            setdifferentPrice(ownprcJ2, difJ2, MONTH);
+            setDifferentPrice(ownprcJ2, difJ2, MONTH);
 
             double difJ3 = priceListLeft.getJ3() - priceListRight.getJ3();
-            setdifferentPrice(ownprcJ3, difJ3, MONTH);
+            setDifferentPrice(ownprcJ3, difJ3, MONTH);
 
             double difJ4 = priceListLeft.getJ4() - priceListRight.getJ4();
-            setdifferentPrice(ownprcJ4, difJ4, MONTH);
+            setDifferentPrice(ownprcJ4, difJ4, MONTH);
 
             double difJ5 = priceListLeft.getJ5() - priceListRight.getJ5();
-            setdifferentPrice(ownprcJ5, difJ5, MONTH);
+            setDifferentPrice(ownprcJ5, difJ5, MONTH);
 
             double difJ6 = priceListLeft.getJ6() - priceListRight.getJ6();
-            setdifferentPrice(ownprcJ6, difJ6, MONTH);
+            setDifferentPrice(ownprcJ6, difJ6, MONTH);
 
             double difJ7 = priceListLeft.getJ7() - priceListRight.getJ7();
-            setdifferentPrice(ownprcJ7, difJ7, MONTH);
+            setDifferentPrice(ownprcJ7, difJ7, MONTH);
 
             double difJ8 = priceListLeft.getJ8() - priceListRight.getJ8();
-            setdifferentPrice(ownprcJ8, difJ8, MONTH);
+            setDifferentPrice(ownprcJ8, difJ8, MONTH);
 
             double difJ9 = priceListLeft.getJ9() - priceListRight.getJ9();
-            setdifferentPrice(ownprcJ9, difJ9, MONTH);
+            setDifferentPrice(ownprcJ9, difJ9, MONTH);
 
             double difJ10 = priceListLeft.getJ10() - priceListRight.getJ10();
-            setdifferentPrice(ownprcJ10, difJ10, MONTH);
+            setDifferentPrice(ownprcJ10, difJ10, MONTH);
 
             double difJ11 = priceListLeft.getJ11() - priceListRight.getJ11();
-            setdifferentPrice(ownprcJ11, difJ11, MONTH);
+            setDifferentPrice(ownprcJ11, difJ11, MONTH);
 
             double difJ12 = priceListLeft.getJ12() - priceListRight.getJ12();
-            setdifferentPrice(ownprcJ12, difJ12, MONTH);
+            setDifferentPrice(ownprcJ12, difJ12, MONTH);
 
             double difJ13 = priceListLeft.getJ13() - priceListRight.getJ13();
-            setdifferentPrice(ownprcJ13, difJ13, MONTH);
+            setDifferentPrice(ownprcJ13, difJ13, MONTH);
 
             double difJ14 = priceListLeft.getJ14() - priceListRight.getJ14();
-            setdifferentPrice(ownprcJ14, difJ14, MONTH);
+            setDifferentPrice(ownprcJ14, difJ14, MONTH);
 
             double difSystem = priceListLeft.getSystemSluzby() - priceListRight.getSystemSluzby();
-            setdifferentPrice(ownprcSystem, difSystem, VT_NT);
+            setDifferentPrice(ownprcSystem, difSystem, VT_NT);
 
             //načítám ote, pokud je činnost větší než nula, použiji tuto hodnotu
             //ote a cinnost jsou stejné údaje, liší se typem ceníku
@@ -629,10 +608,10 @@ public class PriceListCompareFragment extends Fragment {
             if (priceListRight.getCinnost() > 0)
                 oteRight = priceListRight.getCinnost();
             double difOTE = oteLeft - oteRight;
-            setdifferentPrice(ownprcOTE, difOTE, MONTH);
+            setDifferentPrice(ownprcOTE, difOTE, MONTH);
 
             double difPOZE1 = priceListLeft.getPoze1() - priceListRight.getPoze1();
-            setdifferentPrice(ownprcPOZE1, difPOZE1, MONTH);
+            setDifferentPrice(ownprcPOZE1, difPOZE1, MONTH);
 
             //načítám oze, pokud je poze větší než nula, použiji tuto hodnotu
             //oze a poze2 jsou stejné údaje, liší se typem ceníku
@@ -643,31 +622,30 @@ public class PriceListCompareFragment extends Fragment {
             if (priceListRight.getPoze2() > 0)
                 poze2Right = priceListRight.getPoze2();
             double difPOZE2 = poze2Left - poze2Right;
-            setdifferentPrice(ownprcPOZE2, difPOZE2, VT_NT);
+            setDifferentPrice(ownprcPOZE2, difPOZE2, VT_NT);
 
             //rozdíl v celkovém součtu
-            //TODO: doplnit výzvu k výběru odběrného místa k dokončení výpočtů
             if (subscriptionPoint != null) {
                 double difTotalVT = totalPriceLeft[0] - totalPriceRight[0];
                 double difTotalNT = totalPriceLeft[1] - totalPriceRight[1];
                 double difTotalPayment = totalPriceLeft[2] - totalPriceRight[2] - servicesL - servicesR;
                 double difTotalPoze = totalPozeLeft - totalPozeRight;
-                setdifferentPrice(ownprcTotalVT, difTotalVT, VT);
-                setdifferentPrice(ownprcTotalNT, difTotalNT, NT);
-                setdifferentPrice(ownprcTotalPayment, difTotalPayment, MONTH);
-                setdifferentPrice(ownprcTotalPoze, difTotalPoze);
+                setDifferentPrice(ownprcTotalVT, difTotalVT, VT);
+                setDifferentPrice(ownprcTotalNT, difTotalNT, NT);
+                setDifferentPrice(ownprcTotalPayment, difTotalPayment, MONTH);
+                setDifferentPrice(ownprcTotalPoze, difTotalPoze);
 
                 //rozdíl v celkovém součtu s DPH levá strana
                 double difTotalVTDPH = addDPH(totalPriceLeft[0], priceListLeft.getDph()) - addDPH(totalPriceRight[0], priceListRight.getDph());
                 double difTotalNTDPH = addDPH(totalPriceLeft[1], priceListLeft.getDph()) - addDPH(totalPriceRight[1], priceListRight.getDph());
                 double difTotalPaymentDPH = addDPH(totalPriceLeft[2] + servicesL, priceListLeft.getDph()) - addDPH(totalPriceRight[2] + servicesR, priceListRight.getDph());
                 double difTotalPozeDPH = addDPH(totalPozeLeft, priceListLeft.getDph()) - addDPH(totalPozeRight, priceListRight.getDph());
-                setdifferentPrice(ownprcTotalVTDPH, difTotalVTDPH, VT);
-                setdifferentPrice(ownprcTotalNTDPH, difTotalNTDPH, NT);
-                setdifferentPrice(ownprcTotalPaymentDPH, difTotalPaymentDPH, MONTH);
+                setDifferentPrice(ownprcTotalVTDPH, difTotalVTDPH, VT);
+                setDifferentPrice(ownprcTotalNTDPH, difTotalNTDPH, NT);
+                setDifferentPrice(ownprcTotalPaymentDPH, difTotalPaymentDPH, MONTH);
 
-                setdifferentPrice(ownprcTotalPozeDPH, difTotalPozeDPH);
-                setdifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getDph()) - addDPH(totalRight, priceListRight.getDph()));
+                setDifferentPrice(ownprcTotalPozeDPH, difTotalPozeDPH);
+                setDifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getDph()) - addDPH(totalRight, priceListRight.getDph()));
 
                 setHideNotUsedItem(ownprcNT, priceListLeft.getCenaNT(), priceListRight.getCenaNT());
                 setHideNotUsedItem(ownprcNTRegul, priceListLeft.getDistNT(), priceListRight.getDistNT());
