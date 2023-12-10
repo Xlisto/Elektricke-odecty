@@ -23,7 +23,7 @@ import cz.xlisto.odecty.R;
 public class Permissions {
     private static final String TAG = "Permissions";
 
-    private static final int REQUEST_WRITE_STORAGE = 0;//může být jakékoliv číslo typu int, slouží pro oddělení jednotlivých oprávnění, klidně můžu používat rovnou čísla int, ale takto je to přehlednější
+    public static final int REQUEST_WRITE_STORAGE = 0;//může být jakékoliv číslo typu int, slouží pro oddělení jednotlivých oprávnění, klidně můžu používat rovnou čísla int, ale takto je to přehlednější
 
 
     private Permissions() {

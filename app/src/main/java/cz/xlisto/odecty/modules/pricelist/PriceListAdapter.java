@@ -337,10 +337,19 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     private void deleteItemPrice(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
-        int pricesTED = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableTED(), itemId);
-        int pricesFAK = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableFAK(), itemId);
-        int pricesMON = dataSubscriptionPointSource.countPriceItems(subscriptionPoint.getTableO(), itemId);
+        //seznam odběrných míst
+        ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
+        int pricesTED = 0;
+        int pricesFAK = 0;
+        int pricesMON = 0;
+        //iterace všemi odběrnými místy a hledání použitých ceníků
+        for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
+            pricesTED += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableTED(), itemId);
+            pricesFAK += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableFAK(), itemId);
+            pricesMON += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableO(), itemId);
+        }
         dataSubscriptionPointSource.close();
+
         if (pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
             showWarningDialog(pricesTED, pricesFAK, pricesMON);
             return;

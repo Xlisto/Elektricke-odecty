@@ -144,7 +144,7 @@ public class DataPriceListSource {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
-        //sestaní dotazu na všechny použité id ceníků
+        //sestavení dotazu na všechny použité id ceníků
         for (int i = 0; i < subscriptionPointModels.size(); i++) {
             if (i > 0)
                 select.append("\nUNION\n");
@@ -229,6 +229,49 @@ public class DataPriceListSource {
      */
     public ArrayList<PriceListModel> readPriceList() {
         return readPriceList("%", "%", "%", "%", "%", "%");
+    }
+
+
+    /**
+     * Spočítá ceníky podle filtru
+     *
+     * @param rada       filtr pro název řady
+     * @param firma      filtr pro název distribuční firmy
+     * @param platnostOd filtr pro datum platnosti
+     * @param distribuce filtr pro název distribučního území
+     * @return int počet ceníků
+     */
+    public int countPriceListItems(String rada, String produkt, String sazba, String firma, String platnostOd, String distribuce) {
+        Log.w(TAG, "countPriceListItems: " + rada + ", " + produkt + ", " + sazba + ", " + firma + ", " + platnostOd + ", " + distribuce);
+        String sql = "SELECT count(*) FROM ceniky WHERE rada = ? AND produkt = ? AND sazba = ? AND firma = ? AND platnost_od = ? AND distribuce = ? ";
+        String[] args = new String[]{rada, produkt, sazba, firma, platnostOd, distribuce};
+        Cursor cursor = database.rawQuery(sql, args);
+        cursor.moveToFirst();
+        int itemsCount = cursor.getInt(0);
+        cursor.close();
+        return itemsCount;
+    }
+
+
+    /**
+     * Vrátí id ceníku podle parametrů
+     *
+     * @param rada       filtr pro název řady
+     * @param produkt    filtr pro název produktu
+     * @param sazba      filtr pro sazbu
+     * @param firma      filtr pro název dodavatele
+     * @param platnostOd filtr pro datum platnosti
+     * @param distribuce filtr pro název distribučního území
+     * @return long id ceníku
+     */
+    public long idPriceListItem(String rada, String produkt, String sazba, String firma, String platnostOd, String distribuce) {
+        String sql = "SELECT _id FROM ceniky WHERE rada = ? AND produkt = ? AND sazba = ? AND firma = ? AND platnost_od = ? AND distribuce = ? ";
+        String[] args = new String[]{rada, produkt, sazba, firma, platnostOd, distribuce};
+        Cursor cursor = database.rawQuery(sql, args);
+        cursor.moveToFirst();
+        long id = cursor.getLong(0);
+        cursor.close();
+        return id;
     }
 
 

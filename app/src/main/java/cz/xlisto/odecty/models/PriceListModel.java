@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.models;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
@@ -9,7 +10,7 @@ import static cz.xlisto.odecty.ownview.ViewHelper.convertLongToDate;
 /**
  * Model ceníku
  */
-public class PriceListModel {
+public class PriceListModel implements Serializable {
     public final static int NEW_POZE_YEAR = 2016;
     public final static String PRE = "PRE";
     public final static String CEZ = "ČEZ";
@@ -58,6 +59,7 @@ public class PriceListModel {
     private final String mwh = " Kč/MWh";
     private final String mes = " Kč/měsíc";
     private final String jis = " Kč za 1A/měsíc";
+    private boolean isChecked = false;
 
 
     //nulový konstruktor s názvem Ceník nenalezen
@@ -418,6 +420,10 @@ public class PriceListModel {
         return email;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -561,5 +567,10 @@ public class PriceListModel {
 
     public void setDph(Double dph) {
         this.dph = dph;
+    }
+
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

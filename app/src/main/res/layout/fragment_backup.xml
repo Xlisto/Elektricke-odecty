@@ -33,7 +33,7 @@
         android:layoutAnimation="@anim/layout_animation_fall_down" />
 
     <Button
-        android:id="@+id/btnVynerSlozku"
+        android:id="@+id/btnVyberSlozkuBackup"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

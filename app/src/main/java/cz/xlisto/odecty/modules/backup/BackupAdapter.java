@@ -3,7 +3,6 @@ package cz.xlisto.odecty.modules.backup;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,7 +131,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             else
                 showButtons = position;
             selectedPosition = position;
-            Log.w(TAG, "moveToPosition3: " + selectedPosition);
+
             showButtons(holder, position);
         });
 

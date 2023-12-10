@@ -20,9 +20,10 @@ public class YesNoDialogFragment extends DialogFragment {
     public static final String FLAG_RESULT_DIALOG_FRAGMENT = "flagResultDialogFragment";
     public static final String RESULT = "result";
 
-    private String title = "";
-    private String message = "";
-    private String flagResultDialogFragment;
+    protected String title = "";
+    protected String message = "";
+    protected String flagResultDialogFragment;
+    protected AlertDialog.Builder builder;
 
     public YesNoDialogFragment() {
     }
@@ -53,7 +54,7 @@ public class YesNoDialogFragment extends DialogFragment {
             message = savedInstanceState.getString(MESSAGE);
             flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT);
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {

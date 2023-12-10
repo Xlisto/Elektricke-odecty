@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -645,37 +646,40 @@ public class PriceListCompareFragment extends Fragment {
             setdifferentPrice(ownprcPOZE2, difPOZE2, VT_NT);
 
             //rozdíl v celkovém součtu
-            double difTotalVT = totalPriceLeft[0] - totalPriceRight[0];
-            double difTotalNT = totalPriceLeft[1] - totalPriceRight[1];
-            double difTotalPayment = totalPriceLeft[2] - totalPriceRight[2] - servicesL - servicesR;
-            double difTotalPoze = totalPozeLeft - totalPozeRight;
-            setdifferentPrice(ownprcTotalVT, difTotalVT, VT);
-            setdifferentPrice(ownprcTotalNT, difTotalNT, NT);
-            setdifferentPrice(ownprcTotalPayment, difTotalPayment, MONTH);
-            setdifferentPrice(ownprcTotalPoze, difTotalPoze);
+            //TODO: doplnit výzvu k výběru odběrného místa k dokončení výpočtů
+            if (subscriptionPoint != null) {
+                double difTotalVT = totalPriceLeft[0] - totalPriceRight[0];
+                double difTotalNT = totalPriceLeft[1] - totalPriceRight[1];
+                double difTotalPayment = totalPriceLeft[2] - totalPriceRight[2] - servicesL - servicesR;
+                double difTotalPoze = totalPozeLeft - totalPozeRight;
+                setdifferentPrice(ownprcTotalVT, difTotalVT, VT);
+                setdifferentPrice(ownprcTotalNT, difTotalNT, NT);
+                setdifferentPrice(ownprcTotalPayment, difTotalPayment, MONTH);
+                setdifferentPrice(ownprcTotalPoze, difTotalPoze);
 
-            //rozdíl v celkovém součtu s DPH levá strana
-            double difTotalVTDPH = addDPH(totalPriceLeft[0], priceListLeft.getDph()) - addDPH(totalPriceRight[0], priceListRight.getDph());
-            double difTotalNTDPH = addDPH(totalPriceLeft[1], priceListLeft.getDph()) - addDPH(totalPriceRight[1], priceListRight.getDph());
-            double difTotalPaymentDPH = addDPH(totalPriceLeft[2] + servicesL, priceListLeft.getDph()) - addDPH(totalPriceRight[2] + servicesR, priceListRight.getDph());
-            double difTotalPozeDPH = addDPH(totalPozeLeft, priceListLeft.getDph()) - addDPH(totalPozeRight, priceListRight.getDph());
-            setdifferentPrice(ownprcTotalVTDPH, difTotalVTDPH, VT);
-            setdifferentPrice(ownprcTotalNTDPH, difTotalNTDPH, NT);
-            setdifferentPrice(ownprcTotalPaymentDPH, difTotalPaymentDPH, MONTH);
+                //rozdíl v celkovém součtu s DPH levá strana
+                double difTotalVTDPH = addDPH(totalPriceLeft[0], priceListLeft.getDph()) - addDPH(totalPriceRight[0], priceListRight.getDph());
+                double difTotalNTDPH = addDPH(totalPriceLeft[1], priceListLeft.getDph()) - addDPH(totalPriceRight[1], priceListRight.getDph());
+                double difTotalPaymentDPH = addDPH(totalPriceLeft[2] + servicesL, priceListLeft.getDph()) - addDPH(totalPriceRight[2] + servicesR, priceListRight.getDph());
+                double difTotalPozeDPH = addDPH(totalPozeLeft, priceListLeft.getDph()) - addDPH(totalPozeRight, priceListRight.getDph());
+                setdifferentPrice(ownprcTotalVTDPH, difTotalVTDPH, VT);
+                setdifferentPrice(ownprcTotalNTDPH, difTotalNTDPH, NT);
+                setdifferentPrice(ownprcTotalPaymentDPH, difTotalPaymentDPH, MONTH);
 
-            setdifferentPrice(ownprcTotalPozeDPH, difTotalPozeDPH);
-            setdifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getDph()) - addDPH(totalRight, priceListRight.getDph()));
+                setdifferentPrice(ownprcTotalPozeDPH, difTotalPozeDPH);
+                setdifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getDph()) - addDPH(totalRight, priceListRight.getDph()));
 
-            setHideNotUsedItem(ownprcNT, priceListLeft.getCenaNT(), priceListRight.getCenaNT());
-            setHideNotUsedItem(ownprcNTRegul, priceListLeft.getDistNT(), priceListRight.getDistNT());
-            setHideNotUsedItem(ownprcJ7, priceListLeft.getJ7(), priceListRight.getJ7());
-            setHideNotUsedItem(ownprcJ8, priceListLeft.getJ8(), priceListRight.getJ8());
-            setHideNotUsedItem(ownprcJ9, priceListLeft.getJ9(), priceListRight.getJ9());
-            setHideNotUsedItem(ownprcJ10, priceListLeft.getJ10(), priceListRight.getJ10());
-            setHideNotUsedItem(ownprcJ11, priceListLeft.getJ11(), priceListRight.getJ11());
-            setHideNotUsedItem(ownprcJ12, priceListLeft.getJ12(), priceListRight.getJ12());
-            setHideNotUsedItem(ownprcJ13, priceListLeft.getJ13(), priceListRight.getJ13());
-            setHideNotUsedItem(ownprcJ14, priceListLeft.getJ14(), priceListRight.getJ14());
+                setHideNotUsedItem(ownprcNT, priceListLeft.getCenaNT(), priceListRight.getCenaNT());
+                setHideNotUsedItem(ownprcNTRegul, priceListLeft.getDistNT(), priceListRight.getDistNT());
+                setHideNotUsedItem(ownprcJ7, priceListLeft.getJ7(), priceListRight.getJ7());
+                setHideNotUsedItem(ownprcJ8, priceListLeft.getJ8(), priceListRight.getJ8());
+                setHideNotUsedItem(ownprcJ9, priceListLeft.getJ9(), priceListRight.getJ9());
+                setHideNotUsedItem(ownprcJ10, priceListLeft.getJ10(), priceListRight.getJ10());
+                setHideNotUsedItem(ownprcJ11, priceListLeft.getJ11(), priceListRight.getJ11());
+                setHideNotUsedItem(ownprcJ12, priceListLeft.getJ12(), priceListRight.getJ12());
+                setHideNotUsedItem(ownprcJ13, priceListLeft.getJ13(), priceListRight.getJ13());
+                setHideNotUsedItem(ownprcJ14, priceListLeft.getJ14(), priceListRight.getJ14());
+            }
 
         }
     }

@@ -290,4 +290,14 @@
     <string name="allow_write_to_storage">Povolte zápis do paměti zařízení</string>
     <string name="allow">POVOLIT</string>
 
+    <string name="tab_item_in_table">v telefonu</string>
+    <string name="tab_item_in_files">v souborech</string>
+
+    <string name="saved_prices_list">Vybrané ceníky uloženy.</string>
+    <string name="rewrite_prices_list">Vybrané ceníky přepsány.</string>
+
+    <string name="tab_invoice">Faktura</string>
+    <string name="tab_details">Detaily</string>
+    <string name="tab_payments">Platby</string>
+
 </resources>

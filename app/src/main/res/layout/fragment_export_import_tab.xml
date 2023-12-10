@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".modules.invoice.InvoiceTabFragment">
+    android:layout_height="match_parent">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tab_invoice"/>
+            android:text="@string/tab_item_in_files" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tab_details"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/tab_payments"/>
+            android:text="@string/tab_item_in_table" />
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tabLayout"/>
-
+        android:layout_below="@id/tabLayout" />
 
 </RelativeLayout>

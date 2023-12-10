@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
-import cz.xlisto.odecty.modules.exportimportpricelist.ExportImportPriceListFragment;
+import cz.xlisto.odecty.modules.exportimportpricelist.ExportImportPriceListTabFragment;
 import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_export_price_list) {
                 uncheckedBottomNavigation();
-                actualFragment = ExportImportPriceListFragment.newInstance();
+                actualFragment = ExportImportPriceListTabFragment.newInstance();
                 b = true;
             }
 
@@ -231,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
 
@@ -239,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
 
         //Save the fragment's instance
-        if (actualFragment != null)
+        if (actualFragment != null && actualFragment.isAdded() && !actualFragment.isDetached())
             getSupportFragmentManager().putFragment(outState, ACTUAL_FRAGMENT, actualFragment);
 
     }
@@ -253,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Akce při změně orientace obrazovky
+     *
      * @param newConfig nová konfigurace
      */
     @Override
@@ -265,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Nastaví orientaci obrazovky
+     *
      * @param newConfig nová konfigurace
      */
     private void setConfiguration(@NonNull Configuration newConfig) {
@@ -278,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Nastaví viditelnost bottomNavigationView
      */
-    private void setVisibilityBottomNavigation(){
+    private void setVisibilityBottomNavigation() {
         bottomNavigationView.setVisibility(orientation == 1 ? View.VISIBLE : View.GONE);
     }
 
@@ -287,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
      * Odznačí všechny položky bottomNavigationView
      * Nastaví se aktivní neviditelná položka :)
      */
-    private void uncheckedBottomNavigation(){
+    private void uncheckedBottomNavigation() {
         bottomNavigationView.setSelectedItemId(R.id.meni_nothing);
     }
 
@@ -305,5 +309,16 @@ public class MainActivity extends AppCompatActivity {
             else
                 startService(intent);
         }
+    }
+
+
+    /**
+     * Nastaví jako aktivní vybranou položku bottomNavigationView
+     *
+     * @param id id položky
+     */
+    public void onCheckedNavigationItem(int id) {
+        Log.w(TAG, "onCheckedNavigationItem: " + id);
+        bottomNavigationView.setSelectedItemId(id);
     }
 }

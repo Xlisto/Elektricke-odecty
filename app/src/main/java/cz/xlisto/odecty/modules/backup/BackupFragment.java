@@ -32,6 +32,8 @@ import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.permission.Files;
 import cz.xlisto.odecty.shp.ShPBackup;
 
+import static cz.xlisto.odecty.permission.Permissions.REQUEST_WRITE_STORAGE;
+
 /**
  * Xlisto 07.03.2023 12:36
  */
@@ -40,7 +42,6 @@ public class BackupFragment extends Fragment {
     private Button btnBackup;
     private RecyclerView recyclerView;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
-    private static final int REQUEST_WRITE_STORAGE = 0;//může být jakékoliv číslo typu int, slouží pro oddělení jednotlivých oprávnění
     private ShPBackup shPBackup;
     private LinearLayout lnProgressBar;
     private BackupAdapter backupAdapter;
@@ -129,14 +130,13 @@ public class BackupFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         shPBackup = new ShPBackup(requireContext());
         btnBackup = view.findViewById(R.id.btnZalohuj);
-        Button btnSelectDir = view.findViewById(R.id.btnVynerSlozku);
+        Button btnSelectDir = view.findViewById(R.id.btnVyberSlozkuBackup);
         recyclerView = view.findViewById(R.id.recyclerViewBackup);
         btnBackup.setOnClickListener(v -> saveToZip());
         btnSelectDir.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_BACKUP, this, (requestKey, result) -> {
-
 
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 backupAdapter.recoverDatabaseFromZip();

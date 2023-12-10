@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -284,7 +285,7 @@ public class PriceListFragment extends Fragment {
 
     private void showDetailPriceFragment(boolean showAfterRotation) {
         PriceListDetailFragment fragment;
-        if (showAfterRotation) {
+        if (showAfterRotation && idFragment != 0) {
             fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
             if (fragment != null) {
                 requireActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();

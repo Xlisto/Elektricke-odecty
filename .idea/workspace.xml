@@ -13,7 +13,28 @@
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_yes_no_dialog_recycler_view.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_export_import_tab.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_import_export_price_list.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -23,12 +44,32 @@
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_payment.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_yes_no_dialog_recycler_view.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_backup.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_invoice_detail.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_yes_no_dialog_recycler_view.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -49,11 +90,33 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogRecyclerViewAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogRecyclerViewFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListTabFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/MyExportImportPagerAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/JSONPriceList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_yes_no_dialog_recycler_view.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_export_import_tab.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_yes_no_dialog_recycler_view.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_yes_no_dialog_recycler_view.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataPriceListSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataPriceListSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/BackupFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ExportImportPriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Permissions.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/permission/Permissions.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_import_export_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_import_export_price_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
@@ -121,9 +184,9 @@
         <option value="xml" />
         <option value="valueResourceFile" />
         <option value="Enum" />
-        <option value="Interface" />
         <option value="resourceFile" />
         <option value="Class" />
+        <option value="Interface" />
         <option value="layoutResourceFile" />
       </list>
     </option>
@@ -193,10 +256,12 @@
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED": "SwitchCompat",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.10.0/93873f2a41da69e38213dbe9ed91a0402a903c88/material-1.10.0-sources.jar!/com/google/android/material/navigation/NavigationBarView.java_SELECTED": "NavigationBarView",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED": "View",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED": "ViewGroup",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED": "Button",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED": "TextView",
     "cf.first.check.clang-format": "false",
@@ -204,7 +269,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/01.07.2023  20.09.26.odecet",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -722,7 +787,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -796,7 +861,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidání načtených HDO časů do schránky v textové podobě pro možnost uložit na jiné místo." />
     <MESSAGE value="Bottomnavigation je zobrazován jen v režimu na výšku.&#10;Spárování zvýraznění vybraných položek v Bottomnavigation s Navigation." />
     <MESSAGE value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro zobrazování grafu spotřeby&#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
@@ -821,6 +885,7 @@
     <MESSAGE value="dokončeno vytváření záložních soborů na interní uložiště.&#10;&#10;Záložní soubory z nové verze mají příponu El odečet.zip. Pro odlišení od starších používají aktulizovanou ikonu s novým logem aplikace v pravém rohu ikony." />
     <MESSAGE value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
     <MESSAGE value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
+    <MESSAGE value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
   </component>
 </project>
