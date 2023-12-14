@@ -208,13 +208,13 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             showButtons(holder, position);
         }
 
-        String distUzemi = context.getResources().getString(R.string.dist_uzemi);
+        String distUzemi = context.getResources().getString(R.string.dist_uzemi,priceList.getFirma(), priceList.getDistribuce());
         holder.tvFrom.setText(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
         holder.tvUntil.setText(ViewHelper.convertLongToDate(priceList.getPlatnostDO()));
         holder.tvSeries.setText(priceList.getRada());
         holder.tvProduct.setText(priceList.getProdukt());
         holder.tvRate.setText(priceList.getSazba());
-        holder.tvFirma.setText(priceList.getFirma() + distUzemi + priceList.getDistribuce());
+        holder.tvFirma.setText(distUzemi);
         holder.tvPriceVT.setText(cenaVT);
         holder.tvPriceNT.setText(cenaNT);
         holder.tvPriceMonth.setText(cenaMesic);
@@ -278,6 +278,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
+    /**
+     * Zobrazí tlačítka pro editaci a smazání ceníku
+     * @param holder MyViewHolder
+     * @param position int pozice položky ceníku
+     */
     private void showButtons(MyViewHolder holder, int position) {
         setShowPositionItem(showButtons);
         if (position == showButtons) {

@@ -51,15 +51,15 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 /**
  * Xlisto 06.12.2023 18:40
  */
-public class ExportImportPriceListFragment extends Fragment {
+public class ImportPriceListFragment extends Fragment {
     private static final String TAG = "ExportImportPriceListFragment";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES = "exportDialogFragment1Prices";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES = "exportDialogFragment2Prices";
     private ShPBackup shPBackup;
     private RecyclerView recyclerView;
     private LinearLayout lnProgressBar;
-    private final ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
-    private ExportImportPriceListAdapter importExportAdapter;
+    private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
+    private ImportPriceListAdapter importExportAdapter;
     private static final String[] filtersFileName = {".json"};
     private static PriceListModel doublePriceList;//ceníky, který je v databázi vícekrát
     private static ArrayList<PriceListModel> singlePriceLists;//ceníky, které jsou v databázi jednou
@@ -78,28 +78,33 @@ public class ExportImportPriceListFragment extends Fragment {
             }
     );
 
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
+    private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
-            importExportAdapter = new ExportImportPriceListAdapter(requireActivity(), (ArrayList<DocumentFile>) msg.obj, recyclerView);
+            documentFiles.clear();
+            documentFiles = (ArrayList<DocumentFile>) msg.obj;
+            importExportAdapter = new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView);
             recyclerView.setAdapter(importExportAdapter);
             recyclerView.scheduleLayoutAnimation();
             recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
             showLnProgressBar(false);
+            handlerLoadFile.removeCallbacksAndMessages(null);
+            handlerLoadFile.removeMessages(22);
         }
     };
 
 
-    public static ExportImportPriceListFragment newInstance() {
-        return new ExportImportPriceListFragment();
+    public static ImportPriceListFragment newInstance() {
+        return new ImportPriceListFragment();
     }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_import_export_price_list, container, false);
+        return inflater.inflate(R.layout.fragment_import_price_list, container, false);
     }
 
 
@@ -115,7 +120,7 @@ public class ExportImportPriceListFragment extends Fragment {
 
 
         //listener dialogového okna na smazání souboru JSON zálohy
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(ExportImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE, this, (requestKey, result) -> {
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE, this, (requestKey, result) -> {
 
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 importExportAdapter.deleteFile();
@@ -126,7 +131,7 @@ public class ExportImportPriceListFragment extends Fragment {
 
         //listener při seznamu vybraných ceníků k importu
         //zde je seznam zatržených ceníků připravených k importu do databáze
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(ExportImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP, this, (requestKey, result) -> {
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 ArrayList<PriceListModel> priceLists = (ArrayList<PriceListModel>) result.getSerializable(SELECTED_ARRAYLIST);
                 assert priceLists != null;
@@ -179,15 +184,15 @@ public class ExportImportPriceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        if (Files.permissions(requireActivity(), uri)) {
+            new Files().loadFiles(requireActivity(), uri, filtersFileName, handlerLoadFile, resultTree, 22);
+        }
+
         documentFiles.clear();
-        recyclerView.setAdapter(new ExportImportPriceListAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
+        recyclerView.setAdapter(new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-
         showLnProgressBar(true);
-        Files.loadFiles(requireActivity(), uri, filtersFileName, handler, resultTree);
-
     }
 
 

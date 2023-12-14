@@ -154,6 +154,6 @@ public class SaveDataToBackupFile extends RecoverData {
     private static String generateNameFile(long l) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(l);
-        return ViewHelper.getSimpleDateFormatForFiles().format(new Date(calendar.getTimeInMillis()));
+        return ViewHelper.getSimpleDateTimeFormatForFiles().format(new Date(calendar.getTimeInMillis()));
     }
 }

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,16 +61,19 @@ public class BackupFragment extends Fragment {
     //handler pro načtení souborů
     private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
         @Override
-        @SuppressWarnings("unchecked")
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
-            documentFiles =  (ArrayList<DocumentFile>) msg.obj;
+            documentFiles.clear();
+            documentFiles = (ArrayList<DocumentFile>) msg.obj;
+            Log.w(TAG, "handleMessage: backup " + documentFiles.size());
             backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView);
             recyclerView.setAdapter(backupAdapter);
             recyclerView.scheduleLayoutAnimation();
             recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
             showLnProgressBar(false);
+            handlerLoadFile.removeCallbacksAndMessages(null);
+            handlerLoadFile.removeMessages(1);
         }
     };
     //handler pro uložení souboru
@@ -98,7 +102,7 @@ public class BackupFragment extends Fragment {
                 });
 
                 // Spuštění animace
-                if (recyclerViewHeight < itemHeight * (backupAdapter.getItemCount()+1))
+                if (recyclerViewHeight < itemHeight * (backupAdapter.getItemCount() + 1))
                     animator.start();
             }
 
@@ -158,16 +162,17 @@ public class BackupFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
-        if (Files.permissions(requireActivity(), uri))
+        btnBackup.setEnabled(Files.permissions(requireActivity(), uri));
+        if (Files.permissions(requireActivity(), uri)) {
             showLnProgressBar(true);
-
+            new Files().loadFiles(requireActivity(), uri, RecoverData.getFiltersFileName(), handlerLoadFile, resultTree, 1);
+        }
 
         documentFiles.clear();
         recyclerView.setAdapter(new BackupAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-        btnBackup.setEnabled(Files.permissions(requireActivity(), uri));
-        Files.loadFiles(requireActivity(), uri, RecoverData.getFiltersFileName(), handlerLoadFile, resultTree);
+
     }
 
 

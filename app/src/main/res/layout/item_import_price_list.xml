@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlImportItem"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginTop="2dp"
+    android:animateLayoutChanges="false"
+    android:background="@drawable/shape_monthly_reading_gray"
+    android:clickable="false">
+
+    <RelativeLayout
+        android:id="@+id/rlImportItemIn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_item">
+
+        <ImageView
+            android:id="@+id/imgIconFile"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignBottom="@id/tvType2ImportExportFile"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="false"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="3dp"
+            android:clickable="false"
+            android:contentDescription="@string/ikona"
+            android:src="@mipmap/ic_price_list" />
+
+        <LinearLayout
+            android:id="@+id/lnButtonsExportImport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvType2ImportExportFile"
+            android:clickable="false"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnRestoreImportExport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:text="@string/add_price_list" />
+
+            <Button
+                android:id="@+id/btnDeleteImportExport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:text="@string/delete_price_list_file" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvType2ImportExportFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tvNameImportExportFile"
+            android:layout_below="@+id/tvTypeImportExportFile"
+            android:clickable="false"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvTypeImportExportFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tvNameImportExportFile"
+            android:layout_below="@+id/tvNameImportExportFile"
+            android:clickable="false"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvNameImportExportFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/imgIconFile"
+            android:clickable="false"
+            android:fontFamily="sans-serif-black"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+</RelativeLayout>

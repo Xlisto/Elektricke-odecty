@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlExportItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
+    android:clickable="true"
+    android:background="@drawable/shape_monthly_reading_gray">
+
+    <RelativeLayout
+        android:id="@+id/rlExportExportItemIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_item">
+
+
+        <TextView
+            android:id="@+id/tvExportDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvExportArea"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="3dp"
+            android:layout_toEndOf="@id/tvExportDate"
+            android:gravity="end"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvExportRada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvExportDate"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvExportFirma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvExportDate"
+            android:layout_marginStart="3dp"
+            android:layout_toEndOf="@id/tvExportRada"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textSize="16sp" />
+    </RelativeLayout>
+</RelativeLayout>

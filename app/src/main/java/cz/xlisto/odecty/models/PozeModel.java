@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.models;
 
 /**
+ * Model pro poze
  * Xlisto 15.02.2023 14:19
  */
 public class PozeModel {
@@ -40,20 +41,17 @@ public class PozeModel {
      * Vybere menší POZE
      * Spotřeba se zadává v MWh
      *
-     * @return
+     * @return menší POZE
      */
     public double getPoze() {
-        if (poze1 < poze2)
-            return poze1;
-        else
-            return poze2;
+        return Math.min(poze1, poze2);
     }
 
     /**
      * Vybere menší POZE
      * Spotřeba se zadává v MWh
      *
-     * @return
+     * @return menší POZE
      */
     public double getMinPoze() {
         return getPoze();
@@ -65,9 +63,7 @@ public class PozeModel {
      * @return false = POZE podle jističe; true = POZE podle spotřeby
      */
     public boolean isMAXPoze() {
-        if (poze1 < poze2)
-            return false;
-        return true;
+        return !(poze1 < poze2);
     }
 
     public TypePoze getTypePoze() {

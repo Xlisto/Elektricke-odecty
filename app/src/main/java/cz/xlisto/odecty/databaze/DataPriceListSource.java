@@ -5,11 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.models.PriceListSumModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
@@ -242,7 +242,6 @@ public class DataPriceListSource {
      * @return int počet ceníků
      */
     public int countPriceListItems(String rada, String produkt, String sazba, String firma, String platnostOd, String distribuce) {
-        Log.w(TAG, "countPriceListItems: " + rada + ", " + produkt + ", " + sazba + ", " + firma + ", " + platnostOd + ", " + distribuce);
         String sql = "SELECT count(*) FROM ceniky WHERE rada = ? AND produkt = ? AND sazba = ? AND firma = ? AND platnost_od = ? AND distribuce = ? ";
         String[] args = new String[]{rada, produkt, sazba, firma, platnostOd, distribuce};
         Cursor cursor = database.rawQuery(sql, args);
@@ -347,6 +346,26 @@ public class DataPriceListSource {
         }
         cursor.close();
         return priceListModels;
+    }
+
+
+    /**
+     * Načte souhrný seznam ceníků podle podle rada a platnost_od
+     *
+     * @return ArrayList<PriceListSumModel> seznam souhrnu ceníků
+     */
+    public ArrayList<PriceListSumModel> readSumPriceList() {
+        Cursor cursor = database.query(TABLE_NAME_PRICE, new String[]{"rada", "distribuce", "platnost_od", "firma","count(*)"}, null, null,
+                "rada, platnost_od", null, null);
+        ArrayList<PriceListSumModel> priceListSumModels = new ArrayList<>();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+            PriceListSumModel priceListSumModel = new PriceListSumModel(cursor.getString(0),
+                    cursor.getString(1), cursor.getLong(2), cursor.getString(3),cursor.getInt(4));
+            priceListSumModels.add(priceListSumModel);
+        }
+        cursor.close();
+        return priceListSumModels;
     }
 
 

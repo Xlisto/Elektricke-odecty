@@ -51,8 +51,12 @@
             app:showAsAction="ifRoom" />
 
         <item
+            android:id="@+id/menu_import_price_list"
+            android:title="@string/import_price_list"
+            app:showAsAction="ifRoom" />
+        <item
             android:id="@+id/menu_export_price_list"
-            android:title="@string/import_export_price_list"
+            android:title="@string/export_price_list"
             app:showAsAction="ifRoom" />
 
     </group>

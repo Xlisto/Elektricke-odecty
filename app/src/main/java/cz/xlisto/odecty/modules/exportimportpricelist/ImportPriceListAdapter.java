@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,16 +23,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogRecyclerViewFragment;
+import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.JSONPriceList;
 
 /**
  * Xlisto 06.12.2023 18:57
  */
-public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImportPriceListAdapter.MyViewHolder>{
+public class ImportPriceListAdapter extends RecyclerView.Adapter<ImportPriceListAdapter.MyViewHolder> {
     private static final String TAG = "ExportImportPriceListAdapter";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP = "exportDialogFragmentBackup";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE = "exportDialogFragmentDelete";
-
     private final List<DocumentFile> documentFiles;
     private final Context context;
     private final RecyclerView recyclerView;
@@ -40,7 +42,7 @@ public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImp
     private static DocumentFile selectedFile;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName,tvTyp;
+        TextView tvName, tvTyp, tvTyp2;
         RelativeLayout rl;
         LinearLayout ln;
         Button btnRestore, btnDelete;
@@ -50,21 +52,23 @@ public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImp
         }
     }
 
-    public ExportImportPriceListAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView) {
+    public ImportPriceListAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView) {
         this.documentFiles = documentFiles;
         this.context = context;
         this.recyclerView = recyclerView;
-        showButtons = -1;selectedPosition = -1;
+        showButtons = -1;
+        selectedPosition = -1;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_import_export_price_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_import_price_list, parent, false);
         MyViewHolder vh = new MyViewHolder(view);
         vh.tvName = view.findViewById(R.id.tvNameImportExportFile);
         vh.tvTyp = view.findViewById(R.id.tvTypeImportExportFile);
-        vh.rl = view.findViewById(R.id.rlImportExportItem);
+        vh.tvTyp2 = view.findViewById(R.id.tvType2ImportExportFile);
+        vh.rl = view.findViewById(R.id.rlImportItem);
         vh.ln = view.findViewById(R.id.lnButtonsExportImport);
         vh.btnRestore = view.findViewById(R.id.btnRestoreImportExport);
         vh.btnDelete = view.findViewById(R.id.btnDeleteImportExport);
@@ -74,9 +78,17 @@ public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImp
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
-    DocumentFile documentFile = documentFiles.get(position);
-
-    holder.tvName.setText(Objects.requireNonNull(documentFile.getName()).replace(".json",""));
+        DocumentFile documentFile = documentFiles.get(position);
+        holder.tvName.setText(Objects.requireNonNull(documentFile.getName()).replace(".json", ""));
+        Runnable runnable = () -> {
+                ArrayList<PriceListModel> priceList = (new JSONPriceList().getPriceList(context, documentFile));
+                if(priceList.size()>0) {
+                    holder.tvName.setText(priceList.get(0).getRada());
+                    holder.tvTyp.setText(context.getResources().getString(R.string.import_price_list_typ1,priceList.get(0).getFirma(),priceList.get(0).getDistribuce()));
+                    holder.tvTyp2.setText(context.getResources().getString(R.string.import_price_list_typ2,priceList.size(),ViewHelper.convertLongToDate(priceList.get(0).getPlatnostOD())));
+                }
+        };
+        runnable.run();
 
         holder.rl.setOnClickListener(v -> {
             TransitionManager.beginDelayedTransition(recyclerView);
@@ -98,7 +110,7 @@ public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImp
         holder.btnRestore.setOnClickListener(v -> {
             selectedFile = documentFile;
             YesNoDialogRecyclerViewFragment yesNoDialogRecyclerViewFragment = YesNoDialogRecyclerViewFragment
-                    .newInstance("Nahrát ceník do aplikace", FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP,documentFile);
+                    .newInstance("Nahrát ceník do aplikace", FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP, documentFile);
             yesNoDialogRecyclerViewFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
@@ -129,6 +141,7 @@ public class ExportImportPriceListAdapter extends RecyclerView.Adapter<ExportImp
         notifyItemRemoved(selectedPosition);
         notifyItemRangeChanged(selectedPosition, documentFiles.size());
         selectedFile = null;
+        selectedPosition = -1;
         showButtons = -1;
     }
 

@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -29,19 +32,27 @@ public class Files {
     private static final String TAG = "Files";
     public static final String DEF_URI = "content://com.android.externalstorage.documents/document/primary%3A";
     //"content://com.android.externalstorage.documents/document/primary:"
-    private static final ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
-    static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-    public static void loadFiles(Activity activity, Uri uri, String[] filtersFileName, Handler handler, ActivityResultLauncher<Intent> resultTree) {
+    public ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
+    /**
+     * Načte seznam souborů ve složce
+     *
+     * @param activity        activity aplikace
+     * @param uri             Uri složky
+     * @param filtersFileName pole názvů souborů
+     * @param handler         handler pro zpracování výsledku
+     * @param resultTree      callback pro výběr složky
+     * @param what            číslo zprávy
+     */
+    public void loadFiles(Activity activity, Uri uri, String[] filtersFileName, Handler handler, ActivityResultLauncher<Intent> resultTree, int what) {
         if (permissions(activity, uri)) {
-            documentFiles.clear();
-
             executorService.execute(() -> {
                 DocumentFile pickedDir = DocumentFile.fromTreeUri(activity, uri);
                 if (pickedDir != null) {
+                    final ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
                     if (pickedDir.canRead()) {
+                        //documentFiles.clear();
                         for (DocumentFile file : pickedDir.listFiles()) {
 
                             try {
@@ -54,12 +65,68 @@ public class Files {
                                 e.printStackTrace();
                             }
                         }
-
                         SortFile.quickSortDate(documentFiles);
                     }
-                    handler.sendMessage(handler.obtainMessage(1, documentFiles));
+                    handler.sendMessage(handler.obtainMessage(what, documentFiles));
+
                 }
             });
+        } else {
+            Snackbar.make(Objects.requireNonNull(activity.getCurrentFocus()), activity.getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+                    .setAction(activity.getResources().getString(R.string.select), v -> openTree(true, activity, resultTree))
+                    .show();
+        }
+    }
+
+
+    /**
+     * Zkontroluje výskyt souboru ve složce
+     *
+     * @param activity activity aplikace
+     * @param uri      Uri složky
+     * @param nameFile název souboru
+     * @return true pokud existuje
+     */
+    public boolean existJSONFile(Activity activity, String nameFile,Uri uri) {
+        if (permissions(activity, uri)) {
+            DocumentFile folder = DocumentFile.fromTreeUri(activity, uri);
+            if (folder != null) {
+                DocumentFile file = folder.findFile(nameFile);
+                return file != null;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Uložení ceník v JSON formátu do souboru
+     *
+     * @param json     JSON
+     * @param nameFile název souboru
+     * @param uri      Uri složky
+     */
+    public void saveJSONFile(Activity activity, String json, String nameFile, Uri uri, ActivityResultLauncher<Intent> resultTree) {
+
+        if (permissions(activity, uri)) {
+            DocumentFile folder = DocumentFile.fromTreeUri(activity, uri);
+            if (folder != null) {
+                DocumentFile file = folder.findFile(nameFile);
+                if (file == null)
+                    file = folder.createFile("application/json", nameFile);
+                OutputStream out;
+                try {
+                    assert file != null;
+                    out = activity.getContentResolver().openOutputStream(file.getUri());
+                    assert out != null;
+                    out.write(json.getBytes());
+                    out.flush();
+                    out.close();
+                    Toast.makeText(activity, "Uloženo", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         } else {
             Snackbar.make(Objects.requireNonNull(activity.getCurrentFocus()), activity.getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
                     .setAction(activity.getResources().getString(R.string.select), v -> openTree(true, activity, resultTree))

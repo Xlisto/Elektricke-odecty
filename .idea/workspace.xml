@@ -24,12 +24,17 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_export_import_tab.xml">
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_export_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_import_export_price_list.xml">
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_import_price_list.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_import_tab.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -59,12 +64,27 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_import_export_price_list.xml">
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_export_price_list.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_import_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_invoice_detail.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -90,11 +110,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zavedena nová funkce Import ceníků z JSON souboru&#10;&#10;Příprava pro novou funkci Export ceníků do JSON souboru">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Dokončena nová funkce Import ceníků z JSON souboru">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/YesNoDialogRecyclerViewAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ImportPriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/exportimportpricelist/ImportPriceListAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,8 +179,8 @@
         <option value="valueResourceFile" />
         <option value="Enum" />
         <option value="resourceFile" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
         <option value="layoutResourceFile" />
       </list>
     </option>
@@ -245,7 +263,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -763,7 +781,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -837,7 +855,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidán fragment pro zobrazování grafu &#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro zobrazování grafu spotřeby&#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
@@ -862,6 +879,7 @@
     <MESSAGE value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
     <MESSAGE value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
     <MESSAGE value="Zavedena nová funkce Import ceníků z JSON souboru&#10;&#10;Příprava pro novou funkci Export ceníků do JSON souboru" />
-    <option name="LAST_COMMIT_MESSAGE" value="Zavedena nová funkce Import ceníků z JSON souboru&#10;&#10;Příprava pro novou funkci Export ceníků do JSON souboru" />
+    <MESSAGE value="Dokončena nová funkce Import ceníků z JSON souboru" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dokončena nová funkce Import ceníků z JSON souboru" />
   </component>
 </project>
