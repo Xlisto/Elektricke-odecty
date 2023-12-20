@@ -39,6 +39,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_join.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -115,20 +120,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Dokončena nová funkce Import ceníků z JSON souboru">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána volba možnosti zadání výměny elektroměru ve fakturách&#10;Volba vyřadí kontrolu náváznosti stavů měřidel.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceJoinDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceJoinDialogFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_invoice.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_invoice.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_join.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_join.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -798,7 +792,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -872,7 +866,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidán fragment pro zobrazování grafu spotřeby&#10;- mesíční spotřeby/ roční spotřeby/ porovnání mesíční spotřeby&#10;- vytvořen nový view pro zobrazení grafu: GraphMonthView&#10;- vytvořena nová grafika tlačítek pro ovládání grafu&#10;- pro přenos dat o spotřebě vytvořeny modely YearConsuptionModel a MonthlyConsuptionModel jež mají společný interface ConsuptionModel a datový kontejner ConsuptionContainer pro přenost všech tří typu dat" />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čícel zint na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
@@ -897,6 +890,7 @@
     <MESSAGE value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
     <MESSAGE value="Zavedena nová funkce Import ceníků z JSON souboru&#10;&#10;Příprava pro novou funkci Export ceníků do JSON souboru" />
     <MESSAGE value="Dokončena nová funkce Import ceníků z JSON souboru" />
-    <option name="LAST_COMMIT_MESSAGE" value="Dokončena nová funkce Import ceníků z JSON souboru" />
+    <MESSAGE value="Přidána volba možnosti zadání výměny elektroměru ve fakturách&#10;Volba vyřadí kontrolu náváznosti stavů měřidel." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidána volba možnosti zadání výměny elektroměru ve fakturách&#10;Volba vyřadí kontrolu náváznosti stavů měřidel." />
   </component>
 </project>

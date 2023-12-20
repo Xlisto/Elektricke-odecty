@@ -179,6 +179,7 @@
     <string name="plus_minute">+ min</string>
     <string name="minus_minute">- min</string>
     <string name="equals">=</string>
+    <string name="plus">+</string>
     <string name="add_payment">Přidat platbu</string>
     <string name="discount">Sleva</string>
     <string name="supplement">Doplatek</string>
