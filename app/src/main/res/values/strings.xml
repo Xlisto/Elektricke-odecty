@@ -331,5 +331,6 @@
     <string name="records">Záznamy: %d</string>
     <string name="no_records">Faktura neobsahuje žádné záznamy</string>
     <string name="add_records">Přidat záznamy</string>
+    <string name="show_period">Zobrazené období: %s - %s</string>
 
 </resources>

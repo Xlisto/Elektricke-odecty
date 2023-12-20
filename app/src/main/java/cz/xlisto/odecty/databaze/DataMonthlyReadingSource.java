@@ -16,6 +16,7 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 public class DataMonthlyReadingSource extends DataSource {
     private static final String TAG = "DataMonthlyReadingSource";
 
+
     public DataMonthlyReadingSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
@@ -47,7 +48,7 @@ public class DataMonthlyReadingSource extends DataSource {
                     .append("POSLEDNÍ ZAPSANÝ ODEČET:\n");
 
             //načtení posledního měsíčního odečtu
-            MonthlyReadingModel monthlyReading = loadLastMonthlyReading(table);
+            MonthlyReadingModel monthlyReading = loadLastMonthlyReadingByDate(table);
             sb.append("Datum: ").append(ViewHelper.convertLongToDate(monthlyReading.getDate())).append("   VT: ")
                     .append(monthlyReading.getVt()).append("   NT: ").append(monthlyReading.getNt()).append("\n")
                     .append("\n")
@@ -59,12 +60,12 @@ public class DataMonthlyReadingSource extends DataSource {
 
 
     /**
-     * Načte poslední měsíční odečet
+     * Načte poslední měsíční odečet podle data
      *
      * @param table databázová tabulka s měsíčními odečty
      * @return objekt MonthlyReadingModel - měsíční odečet
      */
-    private MonthlyReadingModel loadLastMonthlyReading(String table) {
+    public MonthlyReadingModel loadLastMonthlyReadingByDate(String table) {
         String orderBy = DbHelper.DATUM + " DESC LIMIT 1";
 
         Cursor cursor = database.query(table,
@@ -80,6 +81,18 @@ public class DataMonthlyReadingSource extends DataSource {
         MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
         cursor.close();
         return monthlyReadingModel;
+    }
+
+
+    /**
+     * Smaže měsíční odečet podle ID
+     *
+     * @param itemId id měsíčního odečtu
+     * @param table  název tabulky
+     */
+    public void deleteMonthlyReading(long itemId, String table) {
+        database.delete(table, "_id=?",
+                new String[]{String.valueOf(itemId)});
     }
 
 

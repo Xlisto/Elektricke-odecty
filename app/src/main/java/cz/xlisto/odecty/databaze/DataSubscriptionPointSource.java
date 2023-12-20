@@ -175,18 +175,6 @@ public class DataSubscriptionPointSource extends DataSource{
 
 
     /**
-     * Smaže měsíční odečet podle ID
-     *
-     * @param itemId id měsíčního odečtu
-     * @param table  název tabulky
-     */
-    public void deleteMonthlyReading(long itemId, String table) {
-        database.delete(table, "_id=?",
-                new String[]{String.valueOf(itemId)});
-    }
-
-
-    /**
      * Smaže jeden záznam ve faktuře
      *
      * @param itemId id záznamu
@@ -626,30 +614,6 @@ public class DataSubscriptionPointSource extends DataSource{
                 " ORDER BY datumDo DESC" +
                 " LIMIT 1";
         return oneInvoice(null, sql);
-    }
-
-
-    /**
-     * Načte poslední fakturu podle data
-     *
-     * @param table jméno tabulky
-     * @return faktura
-     */
-    public MonthlyReadingModel lastMonthlyReadingByDate(String table) {
-        String sql = "SELECT * " +
-                "FROM " + table +
-                " ORDER BY datum DESC" +
-                " LIMIT 1";
-
-        Cursor cursor = database.rawQuery(sql, null);
-        MonthlyReadingModel monthlyReading = null;
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            monthlyReading = createMonthlyReading(cursor);
-        }
-        cursor.close();
-        return monthlyReading;
     }
 
 

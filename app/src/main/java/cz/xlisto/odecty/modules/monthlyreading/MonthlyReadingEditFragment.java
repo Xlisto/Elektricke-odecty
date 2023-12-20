@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -156,6 +157,15 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.updateMonthlyReading(createMonthlyReading(), itemId, tableO);
         dataSubscriptionPointSource.close();
-        updateLastItemInvoice();
+
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getActivity());
+        dataMonthlyReadingSource.open();
+        MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
+        dataMonthlyReadingSource.close();
+        //kontrola, zda-li je upravovaný měsíční odečet posledním odečtem
+        if(lastMonthlyReading.getId() == itemId){
+            //úprava posledního záznamu v období bez faktury
+            updateLastItemInvoice();
+        }
     }
 }

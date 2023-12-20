@@ -5,7 +5,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
@@ -74,13 +76,24 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
             if (selectedIdPriceList > 0 || cbFirstReading.isChecked()) {
                 DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
                 dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.insertMonthlyReading(tableO, createMonthlyReading());
+                MonthlyReadingModel newMonthlyReading = createMonthlyReading();
+                dataSubscriptionPointSource.insertMonthlyReading(tableO, newMonthlyReading);
                 //přidat platbu: true; první odečet: false
                 if (cbAddPayment.isChecked() && !cbFirstReading.isChecked()) {
                     dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));
                 }
                 dataSubscriptionPointSource.close();
-                updateLastItemInvoice();
+
+                DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getContext());
+                dataMonthlyReadingSource.open();
+                MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
+                dataMonthlyReadingSource.close();
+                if(lastMonthlyReading.getDate() <= newMonthlyReading.getDate()){
+                    //úprava posledního záznamu v období bez faktury
+                    updateLastItemInvoice();
+                }
+
+
                 if (cbAddBackup.isChecked()) {
                     backupMonthlyReading();
                 }

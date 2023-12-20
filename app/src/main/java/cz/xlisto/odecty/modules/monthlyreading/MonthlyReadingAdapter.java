@@ -17,11 +17,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -182,11 +183,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 different = monthlyReading.getPayment() - total;
             }
             String color = "red";
-            holder.rootRelativeLayout.setBackground(context.getResources().getDrawable(R.drawable.shape_montly_reading_no));
+            holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_montly_reading_no, null));
             int imageResource = R.mipmap.ic_ne;
             if (different >= 0) {
                 color = "#008000";
-                holder.rootRelativeLayout.setBackground(context.getResources().getDrawable(R.drawable.shape_montly_reading_yes));
+                holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_montly_reading_yes, null));
                 imageResource = R.mipmap.ic_ano;
             }
 
@@ -234,7 +235,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-        if (monthlyReading.isFirst() || position==items.size()-1) {
+        if (monthlyReading.isFirst() || position == items.size() - 1) {
             holder.tvPriceList.setVisibility(View.GONE);
             holder.tvPayment.setVisibility(View.GONE);
             holder.rl3.setVisibility(View.GONE);
@@ -245,7 +246,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvMonthPrice.setVisibility(View.GONE);
             holder.ivIconResult.setVisibility(View.GONE);
             holder.tvMonth.setText("První odečet. \nPoužití při prvním záznamu nebo výměně elektroměru.");
-            holder.rootRelativeLayout.setBackground(context.getResources().getDrawable(R.drawable.shape_monthly_reading_gray));
+            holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_gray, null));
             holder.ivWarning.setVisibility(View.GONE);
             if (simplyView) {
 
@@ -372,7 +373,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      */
     public void showSimpleView(boolean b) {
         this.simplyView = b;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, getItemCount());
     }
 
 
@@ -381,7 +382,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      */
     public void setShowRegulPrice(boolean b) {
         this.showRegulPrice = b;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, getItemCount());
     }
 
 
@@ -400,11 +401,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * @param position int pozice v RecyclerAdapteru
      */
     private void deleteMonthlyReading(long itemId, int position) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
-        MonthlyReadingModel lastMonthlyReading = dataSubscriptionPointSource.lastMonthlyReadingByDate(subscriptionPoint.getTableO());
-        dataSubscriptionPointSource.close();
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
+        dataMonthlyReadingSource.open();
+        dataMonthlyReadingSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
+        MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(subscriptionPoint.getTableO());
+        dataMonthlyReadingSource.close();
+
         //odebere položku z adapter a přepočítá pozice, vynuluje showButtons jež ukazuje na rozbalenou položku
         showButtons = -1;
         items.remove(position);

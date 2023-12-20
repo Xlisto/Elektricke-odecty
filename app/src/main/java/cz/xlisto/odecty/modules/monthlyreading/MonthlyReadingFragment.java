@@ -70,6 +70,7 @@ public class MonthlyReadingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        //posluchač potvrzení smazání záznamu
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
                 (requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT))
@@ -82,8 +83,7 @@ public class MonthlyReadingFragment extends Fragment {
                     from = result.getLong(MonthlyReadingFilterDialogFragment.FROM);
                     from = from + ViewHelper.getOffsetTimeZones(from);
                     tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
-                    tvMonthlyReadingFilter.setText("Zobrazené období: "
-                            + ViewHelper.convertLongToDate(from) + " - " + ViewHelper.convertLongToDate(to));
+                    tvMonthlyReadingFilter.setText(getResources().getString(R.string.show_period, ViewHelper.convertLongToDate(from), ViewHelper.convertLongToDate(to)));
                     if(from == 0 && to == Long.MAX_VALUE){
                         tvMonthlyReadingFilter.setVisibility(View.GONE);
                         tvSubscriptionPointName.setVisibility(View.VISIBLE);
@@ -192,6 +192,9 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Načte měsíční odečty z databáze a zobrazí je v RecyclerView.
+     */
     private void loadDataFromDatabase() {
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         tvAlert.setVisibility(View.VISIBLE);
