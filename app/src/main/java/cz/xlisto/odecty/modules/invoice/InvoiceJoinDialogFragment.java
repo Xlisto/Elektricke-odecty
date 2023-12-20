@@ -2,6 +2,7 @@ package cz.xlisto.odecty.modules.invoice;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +33,7 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     public static final String RESULT_JOIN_DIALOG_FRAGMENT = "resultJoinDialogFragment";
     private String table;
     private int position;
+    private Context context;
     private InvoiceModel invoiceFirst, invoiceSecond, invoiceJoined;
     private TextView tvDateFirst, tvDateSecond, tvDateTotal;
     private TextView tvVtStartFirst, tvVtStartSecond, tvVtStartTotal;
@@ -49,6 +51,13 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         InvoiceJoinDialogFragment invoiceJoinDialogFragment = new InvoiceJoinDialogFragment();
         invoiceJoinDialogFragment.setArguments(bundle);
         return invoiceJoinDialogFragment;
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
 
@@ -128,9 +137,9 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
      * Nastaví hodnoty do TextViews
      */
     private void setViews() {
-        tvDateFirst.setText(ViewHelper.convertLongToDate(invoiceFirst.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceFirst.getDateTo()));
-        tvDateSecond.setText(ViewHelper.convertLongToDate(invoiceSecond.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceSecond.getDateTo()));
-        tvDateTotal.setText(ViewHelper.convertLongToDate(invoiceJoined.getDateFrom()) + " - " + ViewHelper.convertLongToDate(invoiceJoined.getDateTo()));
+        tvDateFirst.setText(context.getResources().getString(R.string.string_dash_string,ViewHelper.convertLongToDate(invoiceFirst.getDateFrom()),ViewHelper.convertLongToDate(invoiceFirst.getDateTo())));
+        tvDateSecond.setText(context.getResources().getString(R.string.string_dash_string,ViewHelper.convertLongToDate(invoiceSecond.getDateFrom()),ViewHelper.convertLongToDate(invoiceSecond.getDateTo())));
+        tvDateTotal.setText(context.getResources().getString(R.string.string_dash_string,ViewHelper.convertLongToDate(invoiceJoined.getDateFrom()),ViewHelper.convertLongToDate(invoiceJoined.getDateTo())));
 
         DecimalFormat df2 = DecimalFormatHelper.df2;
         tvVtStartFirst.setText(df2.format(invoiceFirst.getVtStart()));
@@ -162,7 +171,7 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
 
         return new InvoiceModel(invoiceFirst.getId(),
                 invoiceSecond.getDateFrom(), invoiceFirst.getDateTo(), invoiceSecond.getVtStart(), invoiceFirst.getVtEnd(), invoiceSecond.getNtStart(), invoiceFirst.getNtEnd(),
-                invoiceFirst.getIdInvoice(),invoiceFirst.getIdPriceList(),invoiceFirst.getOtherServices(),invoiceFirst.getNumberInvoice());
+                invoiceFirst.getIdInvoice(),invoiceFirst.getIdPriceList(),invoiceFirst.getOtherServices(),invoiceFirst.getNumberInvoice(),invoiceFirst.isChangedElectricMeter());
     }
 
 }

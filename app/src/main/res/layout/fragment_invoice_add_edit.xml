@@ -144,12 +144,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/lnInvoiceEnd"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/shape_item"
                 android:ems="5"
                 android:inputType="number|numberDecimal"
                 android:maxEms="10"
                 app:hintText="@string/_0"
                 app:label="Ostatní služby" />
+
+            <CheckBox
+                android:id="@+id/cbIsChangedElectrometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/letOtherServices"
+                android:background="@drawable/shape_item"
+                android:text="@string/changed_electric_meter" />
 
 
         </RelativeLayout>

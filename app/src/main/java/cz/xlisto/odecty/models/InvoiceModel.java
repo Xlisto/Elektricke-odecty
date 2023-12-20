@@ -18,17 +18,18 @@ public class InvoiceModel {
     private double ntStart;
     private double ntEnd;
     private long idPriceList;
-    private long idInvoice;
-    private double otherServices;
-    private String numberInvoice;
+    private final long idInvoice;
+    private final double otherServices;
+    private final String numberInvoice;
+    private final boolean isChangedElectricMeter;
     private TypePoze typePoze;
 
-    public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice) {
-        this(dateOf, dateTo, vtStart, vtEnd, ntStart, ntEnd, idInvoice, idPriceList, otherServices, numberInvoice);
+    public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
+        this(dateOf, dateTo, vtStart, vtEnd, ntStart, ntEnd, idInvoice, idPriceList, otherServices, numberInvoice, isChangedElectricMeter);
         this.id = id;
     }
 
-    public InvoiceModel(long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice) {
+    public InvoiceModel(long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
         this.dateFrom = dateOf;
         this.dateTo = dateTo;
         this.vtStart = vtStart;
@@ -39,6 +40,7 @@ public class InvoiceModel {
         this.idInvoice = idInvoice;
         this.otherServices = otherServices;
         this.numberInvoice = numberInvoice;
+        this.isChangedElectricMeter = isChangedElectricMeter;
     }
 
     public long getId() {
@@ -99,7 +101,7 @@ public class InvoiceModel {
 
     /**
      * Spotřeba vysokého tarifu
-     * @return
+     * @return double spotřeba vysokého tarifu
      */
     public double getVt(){
         return vtEnd-vtStart;
@@ -107,15 +109,15 @@ public class InvoiceModel {
 
     /**
      * Spotřeba nízského tarifu
-     * @return
+     * @return double spotřeba nízského tarifu
      */
     public double getNt(){
         return ntEnd-ntStart;
     }
 
     /**
-     * Spotřeba vyokého a nízského tarifu
-     * @return
+     * Spotřeba vysokého a nízského tarifu
+     * @return double spotřeba vysokého a nízského tarifu
      */
     public double getVtNt(){
         return getVt()+getNt();
@@ -123,12 +125,21 @@ public class InvoiceModel {
 
     /**
      * Rozdíl mezi datumy v měsících
-     * @return
+     * @return double rozdíl mezi datumy v měsících
      */
     public double getDifferentDate(DifferenceDate.TypeDate type){
         String dateOf = ViewHelper.convertLongToDate(getDateFrom());
         String dateTo = ViewHelper.convertLongToDate(getDateTo());
         return Calculation.differentMonth(dateOf, dateTo, type);
+    }
+
+
+    /**
+     * Zda byl změněn elektroměr
+     * @return true pokud byl změněn elektroměr
+     */
+    public boolean isChangedElectricMeter() {
+        return isChangedElectricMeter;
     }
 
     public void setDateFrom(long dateOf) {

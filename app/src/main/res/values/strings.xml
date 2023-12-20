@@ -14,6 +14,7 @@
     <string name="vt">VT</string>
     <string name="vt2">VT:</string>
     <string name="mesicni_plat">Plat:</string>
+    <string name="other_services">Ostatní služby(+)/slevy(-) v ceníku nezahrnuté:</string>
     <string name="cena_za_dodavku">Cena za dodávku elektřiny (neregulovaná)</string>
     <string name="cena_za_distribuci">Cena za zajištění distribuce elektřiny (regulovaná)</string>
     <string name="sazba_distribuce">Sazba dist.</string>
@@ -119,6 +120,7 @@
     <string name="zalohy">Záloha</string>
     <string name="pridejte_mesicni_odecty">Přidejte měsíční odečty</string>
     <string name="regul_alert">Období obsahuje regulované i neregulované ceny</string>
+    <string name="new_meter">Byla provedena výměna elektroměru</string>
     <string name="alert">Varování nekonzistence dat</string>
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
@@ -306,5 +308,27 @@
     <string name="export_price_list_rewrite_file_message">Soubor %s již existuje. Chcete jej přepsat?</string>
     <string name="import_price_list_typ1">Dodavatel: %s\nDist. území: %s</string>
     <string name="import_price_list_typ2">"Počet sazeb: %d, Platnost: %s</string>
+    <string name="changed_electric_meter">Výměna elektroměru</string>
+
+    <string name="alert_title">Upozornění</string>
+    <string name="alert_message_date">Zkontrolujte rozsah platnosti záznamu. Datum začátku je větší než datum konce.</string>
+    <string name="alert_message_vt">Zkontrolujte odečet. Počáteční stav VT je větší než koncový.</string>
+    <string name="alert_message_nt">Zkontrolujte odečet. Počáteční stav NT je větší než koncový.</string>
+    <string name="alert_message_edit_last_record">\nUpravte záznamy poslední faktury nebo měsíčních odečtů.</string>
+
+    <string name="double_in_brackets">(%.3f)</string>
+    <string name="consuption">Sp.: %s kWh</string>
+    <string name="string_price">%s Kč</string>
+    <string name="fixed_salary">Stálý plat: %.2f Kč</string>
+    <string name="poze">POZE (OZE): %.2f Kč</string>
+    <string name="other_service">%s Kč</string>
+    <string name="total">"Celkem: %s Kč bez DPH"</string>
+    <string name="total_with_tax">%s Kč s DPH</string>
+    <string name="string_dash_string">%s - %s</string>
+    <string name="string_dash_string_enter_string_dash_string">%s - %s\n%s + %s</string>
+    <string name="advances">Zálohy: %d</string>
+    <string name="records">Záznamy: %d</string>
+    <string name="no_records">Faktura neobsahuje žádné záznamy</string>
+    <string name="add_records">Přidat záznamy</string>
 
 </resources>

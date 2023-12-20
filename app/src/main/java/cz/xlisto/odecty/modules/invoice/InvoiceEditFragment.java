@@ -50,6 +50,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             letVTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtEnd()));
             letNTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtEnd()));
             letOtherServices.setDefaultText(DecimalFormatHelper.df2.format(invoice.getOtherServices()));
+            chIsChangedElectricMeter.setChecked(invoice.isChangedElectricMeter());
 
             selectedIdPrice = invoice.getIdPriceList();
             selectedIdInvoice = invoice.getIdInvoice();

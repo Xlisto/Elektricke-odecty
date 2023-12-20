@@ -2,6 +2,7 @@ package cz.xlisto.odecty.modules.invoice;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,7 +27,7 @@ import cz.xlisto.odecty.ownview.ViewHelper;
  * Xlisto 10.04.2023 17:47
  */
 public class InvoiceCutDialogFragment extends DialogFragment {
-    public  static final String TAG = "InvoiceCutDialogFragment";
+    public static final String TAG = "InvoiceCutDialogFragment";
     private final static String MIN_DATE = "minDate";
     private final static String MAX_DATE = "maxDate";
     private final static String MAX_VT = "maxVt";
@@ -40,6 +41,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private final static String TABLE = "table";
     public static final String RESULT = "result";
     public static final String RESULT_CUT_DIALOG_FRAGMENT = "resultCutDialogFragment";
+    private Context context;
     private double maxVT, minVT, maxNT, minNT, otherServices;
     private long minDate, maxDate, idPriceList, id;
     private boolean showNT;
@@ -70,6 +72,12 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         return frag;
     }
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,9 +203,9 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         double differenceNT = maxNT - minNT;
         double halfNT = minNT + (differenceNT / 2);
 
-        sliderDate.setValueFrom((minDate + (25 * 60 * 60 * 1000)) / million);
-        sliderDate.setValueTo((maxDate) / million);
-        sliderDate.setValue(halfDate / million);
+        sliderDate.setValueFrom((float) (minDate + (25 * 60 * 60 * 1000)) / million);
+        sliderDate.setValueTo((float) (maxDate) / million);
+        sliderDate.setValue((float) halfDate / million);
 
         sliderVT.setValueFrom((float) minVT);
         sliderVT.setValueTo((float) maxVT);
@@ -207,13 +215,16 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         sliderNT.setValueTo((float) maxNT);
         sliderNT.setValue((float) halfNT);
 
-        labVT.setLabel(DecimalFormatHelper.df2.format(minVT) + " - " + DecimalFormatHelper.df2.format(maxVT));
+        labVT.setLabel(context.getResources().getString(R.string.string_dash_string,
+                DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(maxVT)));
         labVT.setDefaultText(DecimalFormatHelper.df2.format(halfVT));
 
-        labNT.setLabel(DecimalFormatHelper.df2.format(minNT) + " - " + DecimalFormatHelper.df2.format(maxNT));
+        labNT.setLabel(context.getResources().getString(R.string.string_dash_string,
+                DecimalFormatHelper.df2.format(minNT), DecimalFormatHelper.df2.format(maxNT)));
         labNT.setDefaultText(DecimalFormatHelper.df2.format(halfNT));
 
-        tvDate.setText(ViewHelper.convertLongToDate(minDate) + " - " + ViewHelper.convertLongToDate(maxDate));
+        tvDate.setText(context.getResources().getString(R.string.string_dash_string,
+                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(maxDate)));
 
         // Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
         sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToDate(((long) value) * million));
@@ -239,24 +250,28 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
 
     private void setTextView() {
-        tvDate.setText(ViewHelper.convertLongToDate(minDate) + " - " + ViewHelper.convertLongToDate((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)) + "\n"
-                + ViewHelper.convertLongToDate(((long) sliderDate.getValue()) * million) + " - " + ViewHelper.convertLongToDate(maxDate));
+        tvDate.setText(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
+                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)),
+                ViewHelper.convertLongToDate(((long) sliderDate.getValue()) * million), ViewHelper.convertLongToDate(maxDate)));
 
-        labVT.setLabel(DecimalFormatHelper.df2.format(minVT) + " - " + DecimalFormatHelper.df2.format(sliderVT.getValue()) + "\n"
-                + DecimalFormatHelper.df2.format(sliderVT.getValue()) + " - " + DecimalFormatHelper.df2.format(maxVT));
+        labVT.setLabel(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
+                DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(sliderVT.getValue()),
+                DecimalFormatHelper.df2.format(sliderVT.getValue()), DecimalFormatHelper.df2.format(maxVT)));
 
-        labNT.setLabel(DecimalFormatHelper.df2.format(minNT) + " - " + DecimalFormatHelper.df2.format(sliderNT.getValue()) + "\n"
-                + DecimalFormatHelper.df2.format(sliderNT.getValue()) + " - " + DecimalFormatHelper.df2.format(maxNT));
+        labNT.setLabel(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
+                DecimalFormatHelper.df2.format(minNT), DecimalFormatHelper.df2.format(sliderNT.getValue()),
+                DecimalFormatHelper.df2.format(sliderNT.getValue()), DecimalFormatHelper.df2.format(maxNT)));
     }
 
 
+    //todo: doplnit detekci výměny elektroměru
     private void cut(long idPriceList, long id, double otherServices) {
         InvoiceModel firstInvoice = new InvoiceModel(id, minDate, ((long) (sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000),
                 minVT, sliderVT.getValue(), minNT, sliderNT.getValue(), -1L,
-                idPriceList, otherServices, "");
+                idPriceList, otherServices, "", false);
         InvoiceModel secondInvoice = new InvoiceModel(((long) sliderDate.getValue()) * million, maxDate,
                 sliderVT.getValue(), maxVT, sliderNT.getValue(), maxNT, -1L,
-                idPriceList, otherServices, "");
+                idPriceList, otherServices, "", false);
 
         WithOutInvoiceService.cutInvoice(getActivity(), firstInvoice, secondInvoice);
     }

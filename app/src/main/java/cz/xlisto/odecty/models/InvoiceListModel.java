@@ -7,7 +7,7 @@ public class InvoiceListModel {
     private static final String TAG = "InvoiceModel";
 
     private long idFak;
-    private String numberInvoice;
+    private final String numberInvoice;
     private long minDate, maxDate, payments, reads;
     private double minVT, maxVT, minNT, maxNT;
 

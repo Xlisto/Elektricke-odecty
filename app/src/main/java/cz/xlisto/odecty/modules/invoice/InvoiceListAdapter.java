@@ -45,7 +45,6 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private final RecyclerView recyclerView;
     private String tableFak, tableNow, tablePay;
     private ColorStateList originalTextViewColors;
-
     private int showButtons = -1;
     private ShPInvoiceList shPInvoiceList;
 
@@ -67,11 +66,13 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
     }
 
+
     public InvoiceListAdapter(Context context, ArrayList<InvoiceListModel> items, RecyclerView recyclerView) {
         this.context = context;
         this.items = items;
         this.recyclerView = recyclerView;
     }
+
 
     @NonNull
     @Override
@@ -110,7 +111,6 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final InvoiceListModel invoice = items.get(position);
         checkDate(position, holder);
-        //holder.getBindingAdapterPosition();
         holder.id = invoice.getIdFak();
         loadTableName();
         holder.relativeLayout.setOnClickListener(v -> {
@@ -172,16 +172,16 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         double differentDate = Calculation.differentMonth(startDate, endDate, DifferenceDate.TypeDate.INVOICE);
         holder.tvDateOf.setText(startDate);
         holder.tvDateTo.setText(endDate);
-        holder.tvDateDifferent.setText("(" + differentDate + ")");
+        holder.tvDateDifferent.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
 
         if (payments > 0)
-            holder.tvPayments.setText("Zálohy: " + payments);
+            holder.tvPayments.setText(context.getResources().getString(R.string.advances, payments));
 
         if (reads > 0)
-            holder.tvReads.setText("Záznamy: " + reads);
+            holder.tvReads.setText(context.getResources().getString(R.string.records, reads));
         else {
-            holder.tvReads.setText("Faktura neobsahuje žádné záznamy");
-            holder.btnShowInvoice.setText("Přidat záznamy");
+            holder.tvReads.setText(context.getResources().getString(R.string.no_records));
+            holder.btnShowInvoice.setText(context.getResources().getString(R.string.add_records));
         }
         holder.tvNumberInvoice.setText(invoice.getNumberInvoice());
         holder.lnButtons1.setVisibility(View.GONE);

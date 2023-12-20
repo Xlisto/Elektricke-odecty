@@ -5,8 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
+
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +45,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     static final String OTHER_SERVICES = "other";
     static final String SELECTED_ID_PRICE = "selectedIdPrice";
     static final String SELECTED_ID_INVOICE = "selectedIdInvoice";
+    static final String IS_CHANGED_ELECTROMETER = "isChangedElectrometer";
     static boolean loadFromDatabase = true;
     private PriceListModel selectedPrice;
     long selectedIdPrice = -1L;
@@ -50,6 +54,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
     LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     String numberInvoice, table;
+    CheckBox chIsChangedElectricMeter;
     String oldDateStart = "1.1.2023";
     String oldDateEnd = "31.12.2023";
 
@@ -62,6 +67,9 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             selectedIdInvoice = getArguments().getLong(ID_FAK);
             id = getArguments().getLong(ID);
         }
+        Calendar calendar = Calendar.getInstance();
+        oldDateStart = "1.1."+calendar.get(Calendar.YEAR);
+        oldDateEnd = "31.12."+calendar.get(Calendar.YEAR);
     }
 
 
@@ -85,6 +93,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         letNTStart = view.findViewById(R.id.letNTStart);
         letNTEnd = view.findViewById(R.id.letNTEnd);
         letOtherServices = view.findViewById(R.id.letOtherServices);
+        chIsChangedElectricMeter = view.findViewById(R.id.cbIsChangedElectrometer);
 
         btnDateStart.setOnClickListener(v -> OwnDatePicker.showDialog(getActivity(), date -> btnDateStart.setText(date), oldDateStart));
 
@@ -122,6 +131,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             letOtherServices.setDefaultText(savedInstanceState.getString(OTHER_SERVICES));
             selectedIdPrice = savedInstanceState.getLong(SELECTED_ID_PRICE, -1L);
             selectedIdInvoice = savedInstanceState.getLong(SELECTED_ID_INVOICE, -1L);
+            chIsChangedElectricMeter.setChecked(savedInstanceState.getBoolean(IS_CHANGED_ELECTROMETER, false));
         }
     }
 
@@ -149,6 +159,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         outState.putString(OTHER_SERVICES, letOtherServices.getText());
         outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
+        outState.putBoolean(IS_CHANGED_ELECTROMETER, chIsChangedElectricMeter.isChecked());
     }
 
     @Override
@@ -175,7 +186,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
                 letVTStart.getDouble(), letVTEnd.getDouble(),
                 letNTStart.getDouble(), letNTEnd.getDouble(),
                 selectedIdInvoice, selectedIdPrice,
-                letOtherServices.getDouble(), numberInvoice
+                letOtherServices.getDouble(), numberInvoice,
+                chIsChangedElectricMeter.isChecked()
         );
     }
 

@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
@@ -57,7 +58,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView vtStart, vtEnd, vTDif, ntStart, ntEnd, ntDif, dateStart, dateEnd, dateDifference, vtPrice, ntPrice, tvPayment, tvPOZE, tvPriceTotal, tvPriceTotalDPH, tvOtherServices, tvOtherServicesDescription, tvAlert;
+        TextView vtStart, vtEnd, vTDif, ntStart, ntEnd, ntDif, dateStart, dateEnd, dateDifference,
+                vtPrice, ntPrice, tvPayment, tvPOZE, tvPriceTotal, tvPriceTotalDPH, tvOtherServices,
+                tvOtherServicesDescription, tvAlert, tvNewMeter;
         TextView tvNtDescription, tvNtDash;
         Button btnEdit, btnDelete, btnCut, btnJoin;
         RelativeLayout itemInvoice;
@@ -114,6 +117,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         vh.tvOtherServicesDescription = v.findViewById(R.id.tvOtherServicesDescription);
         vh.imgAlert = v.findViewById(R.id.imageViewWarningInvoice);
         vh.tvAlert = v.findViewById(R.id.tvAlertInvoice);
+        vh.tvNewMeter = v.findViewById(R.id.tvAlertNewMeter);
         originalTextViewColors = vh.vtStart.getTextColors();
         return vh;
     }
@@ -151,7 +155,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         double differentDate = Calculation.differentMonth(dateStart, dateEnd, DifferenceDate.TypeDate.INVOICE);
         holder.dateStart.setText(dateStart);
         holder.dateEnd.setText(dateEnd);
-        holder.dateDifference.setText("(" + differentDate + ")");
+        holder.dateDifference.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
 
         holder.vtStart.setText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
         holder.ntStart.setText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
@@ -166,18 +170,18 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         double poze = Calculation.getPozeByType(priceList, subScriptionPoint.getCountPhaze(), subScriptionPoint.getPhaze(), (vtDif + ntDif) / 1000, differentDate, typePoze);
         double otherServices = differentDate * invoice.getOtherServices();
 
-        holder.vTDif.setText("Sp.: " + DecimalFormatHelper.df2.format(vtDif) + " kWh");
-        holder.ntDif.setText("Sp.: " + DecimalFormatHelper.df2.format(ntDif) + " kWh");
-        holder.vtPrice.setText("" + DecimalFormatHelper.df2.format(vtTotal) + " kč");
-        holder.ntPrice.setText("" + DecimalFormatHelper.df2.format(ntTotal) + " kč");
-        holder.tvPayment.setText("Stálý plat: " + DecimalFormatHelper.df2.format(paymentTotal) + "kč");
-        holder.tvPOZE.setText("POZE (OZE): " + DecimalFormatHelper.df2.format(poze) + " kč");
-        holder.tvOtherServices.setText(" " + DecimalFormatHelper.df2.format(otherServices) + " kč");
+        holder.vTDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(vtDif)));
+        holder.ntDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(ntDif)));
+        holder.vtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(vtTotal)));
+        holder.ntPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(ntTotal)));
+        holder.tvPayment.setText(context.getResources().getString(R.string.fixed_salary,paymentTotal));
+        holder.tvPOZE.setText(context.getResources().getString(R.string.poze, poze));
+        holder.tvOtherServices.setText(context.getResources().getString(R.string.other_service, DecimalFormatHelper.df2.format(otherServices)));
 
         double total = vtTotal + ntTotal + paymentTotal + poze + otherServices;
         double totalDPH = total + (total * priceList.getDph() / 100);
-        holder.tvPriceTotal.setText("Celkem: " + DecimalFormatHelper.df2.format(total) + " kč bez DPH");
-        holder.tvPriceTotalDPH.setText(DecimalFormatHelper.df2.format(totalDPH) + " kč s DPH");
+        holder.tvPriceTotal.setText(context.getResources().getString(R.string.total, DecimalFormatHelper.df2.format(total)));
+        holder.tvPriceTotalDPH.setText(context.getResources().getString(R.string.total_with_tax, DecimalFormatHelper.df2.format(totalDPH)));
 
 
         holder.itemInvoice.setOnClickListener(v -> {
@@ -202,6 +206,21 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         });
 
         holder.btnCut.setOnClickListener(v -> {
+            String message = "";
+            if(invoice.getDateFrom()>invoice.getDateTo()){
+                message = context.getResources().getString(R.string.alert_message_date);
+            }
+            if(invoice.getVtStart()>invoice.getVtEnd()){
+                message = context.getResources().getString(R.string.alert_message_vt);
+            }
+            if(invoice.getNtStart()>invoice.getNtEnd()){
+                message = context.getResources().getString(R.string.alert_message_nt);
+            }
+            if(!message.equals("")){
+                message += context.getResources().getString(R.string.alert_message_edit_last_record);
+                OwnAlertDialog.show(context, context.getResources().getString(R.string.alert_title), message);
+                return;
+            }
             InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),
                     invoice.getVtStart(), invoice.getVtEnd(), invoice.getNtStart(), invoice.getNtEnd(), showNT, priceList.getId(), invoice.getId(), invoice.getOtherServices(), table);
             invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
@@ -240,8 +259,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         showButtons(holder, invoice, position);
     }
 
-    public void deleteItem(){
-        deleteItem(selectedId,selectedPosition);
+    public void deleteItem() {
+        deleteItem(selectedId, selectedPosition);
     }
 
     @Override
@@ -291,7 +310,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     /**
      * Aktualizuje data v adaptéru při změně dat - přidání položky
      *
-     * @param items   ArrayList položek
+     * @param items    ArrayList položek
      * @param position int pozice položky
      */
     public void setUpdateCut(ArrayList<InvoiceModel> items, int position) {
@@ -337,6 +356,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         InvoiceModel invoice, prevInvoice, nextInvoice;
         String dateOf, dateTo, prevDate, nextDate;
         double vtStart, ntStart, vtEnd, ntEnd, prevVt, prevNt, nextVt, nextNt;
+        boolean isChangedElectricMeter, isChangedElectricMeterNext;
         invoice = items.get(position);
 
         dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
@@ -345,15 +365,18 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         ntStart = invoice.getNtStart();
         vtEnd = invoice.getVtEnd();
         ntEnd = invoice.getNtEnd();
+        isChangedElectricMeter = invoice.isChangedElectricMeter();
         if (position > 0) {
             nextInvoice = items.get(position - 1);
             nextDate = ViewHelper.convertLongToDate(nextInvoice.getDateFrom() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
             nextVt = nextInvoice.getVtStart();
             nextNt = nextInvoice.getNtStart();
+            isChangedElectricMeterNext = nextInvoice.isChangedElectricMeter();
         } else {
             nextDate = dateTo;
             nextVt = vtEnd;
             nextNt = ntEnd;
+            isChangedElectricMeterNext = isChangedElectricMeter;
         }
         if (position < items.size() - 1) {
             prevInvoice = items.get(position + 1);
@@ -368,26 +391,36 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         //zvýrazenění datumu
         setTextAlertColor(holder.dateStart, dateOf.equals(prevDate));
         setTextAlertColor(holder.dateEnd, dateTo.equals(nextDate));
-        setTextAlertColor(holder.vtStart, vtStart == prevVt);
-        setTextAlertColor(holder.vtEnd, vtEnd == nextVt);
-        setTextAlertColor(holder.ntStart, ntStart == prevNt);
-        setTextAlertColor(holder.ntEnd, ntEnd == nextNt);
+
+        //zvýraznění hodnot (pokud je nastavena výměna elektroměru, barvy se nemění)
+        setTextAlertColor(holder.vtStart, vtStart == prevVt || isChangedElectricMeter);
+        setTextAlertColor(holder.vtEnd, vtEnd == nextVt || isChangedElectricMeterNext);
+        setTextAlertColor(holder.ntStart, ntStart == prevNt || isChangedElectricMeter);
+        setTextAlertColor(holder.ntEnd, ntEnd == nextNt || isChangedElectricMeterNext);
+
+        //zobrazení textu o výměně elektroměru
+        if (!isChangedElectricMeterNext && !isChangedElectricMeter) {
+            holder.tvNewMeter.setVisibility(View.GONE);
+        } else {
+            holder.tvNewMeter.setVisibility(View.VISIBLE);
+        }
 
         //zobrazení ikony alertu
-        if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && vtStart == prevVt && vtEnd == nextVt && ntStart == prevNt && ntEnd == nextNt && !isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
+        if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && !isOverDateRegulPrice(priceListRegulBuilder, invoice)
+                && (((vtStart == prevVt && ntStart == prevNt) && vtEnd == nextVt && ntEnd == nextNt)
+                || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
+                || (vtEnd != nextVt && ntEnd != nextNt && isChangedElectricMeterNext))) {
             holder.imgAlert.setVisibility(View.GONE);
             holder.tvAlert.setVisibility(View.GONE);
-
         } else {
             //zobrazení varovného vykřičníku
             holder.imgAlert.setVisibility(View.VISIBLE);
-
-            //zobrazení varovného textu na období státních regulací
-            if (!isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
-                holder.tvAlert.setVisibility(View.GONE);
-            } else {
+            if (isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
+                //zobrazení varovného textu na období státních regulací
                 holder.tvAlert.setVisibility(View.VISIBLE);
                 holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+            } else {
+                holder.tvAlert.setVisibility(View.GONE);
             }
         }
     }

@@ -20,6 +20,7 @@ import static cz.xlisto.odecty.databaze.DbHelper.CISLO_MISTA;
 import static cz.xlisto.odecty.databaze.DbHelper.DATUM;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_UNTIL;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_FROM;
+import static cz.xlisto.odecty.databaze.DbHelper.DATUM_PLATBY;
 import static cz.xlisto.odecty.databaze.DbHelper.FAZE;
 import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
 import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
@@ -354,7 +355,7 @@ public class DataSubscriptionPointSource extends DataSource{
                 cursor.getDouble(3), cursor.getDouble(5),
                 cursor.getDouble(4), cursor.getDouble(6),
                 cursor.getLong(7), cursor.getLong(8),
-                cursor.getDouble(9), "");
+                cursor.getDouble(9), "", cursor.getInt(10) == 1);
     }
 
 
@@ -402,7 +403,7 @@ public class DataSubscriptionPointSource extends DataSource{
      * @param table název tabulky
      */
     public void insertFirstRecordWithoutInvoice(String table) {
-        InvoiceModel invoice = new InvoiceModel(0, 0, 0, 0, 0, 0, -1L, 0, 0, "");
+        InvoiceModel invoice = new InvoiceModel(0, 0, 0, 0, 0, 0, -1L, 0, 0, "", false);
         insertInvoice(table, invoice);
     }
 
@@ -869,6 +870,8 @@ public class DataSubscriptionPointSource extends DataSource{
         values.put(ID_FAK, invoice.getIdInvoice());
         values.put(CENIK_ID, invoice.getIdPriceList());
         values.put(GARANCE, invoice.getOtherServices());
+        //TODO: přejmenovat název sloupce v databázi/ teď se zde nachází údaj o výměně elektroměru
+        values.put(DATUM_PLATBY, invoice.isChangedElectricMeter());
         return values;
     }
 
