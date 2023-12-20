@@ -120,12 +120,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravený text v dialogovém okně pro slučování záznamů ve faktuře.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/distribuce.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/distribuce.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/jistice.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/jistice.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/ostatni.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/ostatni.json" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněny regulovné ceny pro rok 2024" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -134,7 +129,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -793,7 +788,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -867,7 +862,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se sattickymi metodami přo převod hodnot čísel z int na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se statickými metodami přo převod hodnot čísel z int na html formát a zpět." />
     <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět." />
@@ -892,6 +886,7 @@
     <MESSAGE value="Dokončena nová funkce Import ceníků z JSON souboru" />
     <MESSAGE value="Přidána volba možnosti zadání výměny elektroměru ve fakturách&#10;Volba vyřadí kontrolu náváznosti stavů měřidel." />
     <MESSAGE value="Opravený text v dialogovém okně pro slučování záznamů ve faktuře." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravený text v dialogovém okně pro slučování záznamů ve faktuře." />
+    <MESSAGE value="Doplněny regulovné ceny pro rok 2024" />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněny regulovné ceny pro rok 2024" />
   </component>
 </project>

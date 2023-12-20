@@ -204,6 +204,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@id/tvPlatnostZacatek"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="@string/produktova_rada"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
