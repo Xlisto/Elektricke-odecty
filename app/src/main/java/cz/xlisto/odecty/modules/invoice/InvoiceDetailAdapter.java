@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.invoice;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.SummaryInvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
@@ -19,8 +19,9 @@ import cz.xlisto.odecty.ownview.ViewHelper;
  */
 public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdapter.MyViewHolder> {
     private static final String TAG = "InvoiceDetailAdapter";
-    private ArrayList<SummaryInvoiceModel> items;
+    private final ArrayList<SummaryInvoiceModel> items;
     private double totalPrice;
+    private final Context context;
     private Listener listener;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -31,9 +32,10 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
 
     }
 
-    public InvoiceDetailAdapter(ArrayList<SummaryInvoiceModel> items) {
+    public InvoiceDetailAdapter(Context context,ArrayList<SummaryInvoiceModel> items) {
         this.items = items;
         this.totalPrice = 0;
+        this.context = context;
     }
 
     @NonNull
@@ -52,11 +54,11 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         SummaryInvoiceModel si = items.get(position);
-        holder.tvDate.setText(ViewHelper.convertLongToDate(si.getDateOf())+" - "+ViewHelper.convertLongToDate(si.getDateTo()));
+        holder.tvDate.setText(context.getResources().getString(R.string.string_dash_string,ViewHelper.convertLongToDate(si.getDateOf()),ViewHelper.convertLongToDate(si.getDateTo())));
         holder.tvTitle.setText(si.getTitle().toString());
-        holder.tvAmount.setText(DecimalFormatHelper.df3.format(si.getAmount())+" "+si.getUnit());
-        holder.tvPriceUnit.setText(DecimalFormatHelper.df2.format(si.getUnitPrice())+" kč/"+si.getUnit());
-        holder.tvTotalPrice.setText(DecimalFormatHelper.df2.format(si.getTotalPrice())+" kč");
+        holder.tvAmount.setText(context.getResources().getString(R.string.text_amount,si.getAmount(),si.getUnit()));
+        holder.tvPriceUnit.setText(context.getResources().getString(R.string.text_price_unit,si.getUnitPrice(),si.getUnit()));
+        holder.tvTotalPrice.setText(context.getResources().getString(R.string.float_price,si.getTotalPrice()));
         totalPrice += si.getTotalPrice();
         listener.getTotalPrice(totalPrice);
     }

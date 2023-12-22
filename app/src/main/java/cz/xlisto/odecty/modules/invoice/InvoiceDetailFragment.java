@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
+import static cz.xlisto.odecty.models.PriceListModel.NEW_POZE_YEAR;
 import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D01;
 import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D02;
 
@@ -92,7 +92,6 @@ public class InvoiceDetailFragment extends Fragment {
         invoiceDetailFragment.setArguments(bundle);
         return invoiceDetailFragment;
     }
-
 
 
     @Override
@@ -198,8 +197,8 @@ public class InvoiceDetailFragment extends Fragment {
 
 
     private void setRecyclerView() {
-        invoiceDetailAdapter = new InvoiceDetailAdapter(summaryInvoices);
-        invoiceDetailAdapter.setListener(totalPrice -> tvTotal.setText("Celkem " + DecimalFormatHelper.df2.format(totalPrice) + " kč bez DPH"));
+        invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
+        invoiceDetailAdapter.setListener(totalPrice -> tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice))));
         rv.setAdapter(invoiceDetailAdapter);
 
 
@@ -263,12 +262,10 @@ public class InvoiceDetailFragment extends Fragment {
                         spinner.setSelection(0);
                     if (spinner.getSelectedItemPosition() == 5)
                         spinner.setSelection(4);
-                } else {
-                    hiddenNT = false;
                 }
             }
 
-            String s = "" + spinner.getSelectedItem().toString();
+            String s = spinner.getSelectedItem().toString();
             if (s.equals(SummaryInvoiceModel.Title.VT.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                         invoice.getVt() / 1000, priceList.getCenaVT(),
@@ -307,9 +304,15 @@ public class InvoiceDetailFragment extends Fragment {
                         SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
             } else if (s.equals(SummaryInvoiceModel.Title.POZE.toString())) {
                 if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {//podle spotřeby
-                    summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                            invoice.getVtNt() / 1000, priceList.getPoze2(),
-                            SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
+                    if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+                        summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
+                                invoice.getVtNt() / 1000, priceList.getOze(),
+                                SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
+                    } else {
+                        summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
+                                invoice.getVtNt() / 1000, priceList.getPoze2(),
+                                SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
+                    }
                 } else {//podle jističe
                     summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                             invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getPoze1() * countPhaze * phaze,
@@ -336,22 +339,9 @@ public class InvoiceDetailFragment extends Fragment {
             }
         }
 
-        for (int i = 0; i < summaryInvoices.size(); i++) {
-            SummaryInvoiceModel sm = summaryInvoices.get(i);
-            Log.w(TAG, "Fak " + i + " " + sm.getTitle() + " " + sm.getAmount() + " " + sm.getUnit() + " " + sm.getUnitPrice() + " " + sm.getTotalPrice());
-        }
-        Log.w(TAG, "Fak ");
-
-        for (int i = 0; i < mergedSummaryInvoices.size(); i++) {
-            SummaryInvoiceModel sm = mergedSummaryInvoices.get(i);
-            Log.w(TAG, "Fak merged: " + i + " " + sm.getTitle() + " " + sm.getAmount() + " " + sm.getUnit() + " " + sm.getUnitPrice() + " " + sm.getTotalPrice());
-        }
-
-        InvoiceDetailAdapter invoiceDetailAdapter = new InvoiceDetailAdapter(summaryInvoices);
+        InvoiceDetailAdapter invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
         rv.setAdapter(invoiceDetailAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-
     }
 
 
