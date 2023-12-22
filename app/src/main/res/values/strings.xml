@@ -320,7 +320,7 @@
     <string name="double_in_brackets">(%.3f)</string>
     <string name="consuption">Sp.: %s kWh</string>
     <string name="string_price">%s Kč</string>
-    <string name="fixed_salary">Stálý plat: %.2f Kč</string>
+    <string name="fixed_salary">St. plat, jist. a op. trhu: %.2f Kč</string>
     <string name="poze">POZE (OZE): %.2f Kč</string>
     <string name="other_service">%s Kč</string>
     <string name="total">"Celkem: %s Kč bez DPH"</string>
@@ -332,5 +332,17 @@
     <string name="no_records">Faktura neobsahuje žádné záznamy</string>
     <string name="add_records">Přidat záznamy</string>
     <string name="show_period">Zobrazené období: %s - %s</string>
+    <string name="total_vt">Celkem spotřeba VT: %.3f MWh</string>
+    <string name="total_nt">Celkem spotřeba NT: %.3f MWh</string>
+    <string name="total_vt_nt">Celkem spotřeba VT a NT: %.3f MWh</string>
+    <string name="price_vt">Cena VT (bez DPH): %.2f Kč</string>
+    <string name="price_nt">Cena NT (bez DPH): %.2f Kč</string>
+    <string name="price_fixed_salary">Cena st. platů (bez DPH): %.2f Kč</string>
+    <string name="price_poze">Cena POZE (bez DPH): %.2f Kč</string>
+    <string name="price_other_services">Ostatní služby/slevy bez DPH: %.2f Kč</string>
+    <string name="price_without_taxes">Cena bez DPH: %.2f Kč</string>
+    <string name="price_with_taxes">Cena s DPH: %.2f Kč</string>
+    <string name="paymented_advances">Zaplacené zálohy: %.2f Kč</string>
+    <string name="balance">Bilance: %.2f Kč</string>
 
 </resources>

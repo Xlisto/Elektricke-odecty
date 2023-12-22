@@ -120,15 +120,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Omezen nadpis názvu v položce ceníku na 1 řádek">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0,">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +131,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -279,7 +272,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/odecty_a_mista.db",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Variables",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -797,7 +790,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -871,8 +864,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická se statickými metodami přo převod hodnot čísel z int na html formát a zpět." />
-    <MESSAGE value="Přidán fragment pro nastavení barev pro linky grafu (GraphColorFragment) + vlastní view pro zobrazení barevné palety (GraphColorView).&#10;Doplněno dialogové okno (GraphColorDialogFragment) pro zadání přesné barvy v HTML formátu a zobrazena historie posledních 3 použitých barevných párů.&#10;Historie baervných párů se ukládá do databáze a v případě vytvoření zálohy, bude též zahrnuta v záloze.&#10;Nová statická metoda se statickými metodami pro převod hodnot čísel barev z int na html formát a zpět." />
     <MESSAGE value="Přidána třída ShPGraphMonth pro ukládání stavu zobrazeného měsíčního grafu ve SharedPreferences." />
     <MESSAGE value="Optimalizace vykreslení měsíčního grafu (GraphMonthView)&#10;Počáteční animace povolena pouze pro část prvků seznamu, které jsou viditelné na obrazovce." />
     <MESSAGE value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
@@ -896,6 +887,8 @@
     <MESSAGE value="Opravený text v dialogovém okně pro slučování záznamů ve faktuře." />
     <MESSAGE value="Doplněny regulovné ceny pro rok 2024" />
     <MESSAGE value="Omezen nadpis názvu v položce ceníku na 1 řádek" />
-    <option name="LAST_COMMIT_MESSAGE" value="Omezen nadpis názvu v položce ceníku na 1 řádek" />
+    <MESSAGE value="Přidána kontrola úpravy posledního záznamu v období bez faktury při novém, upraveném nebo smaazaném měsíčním odečtu.&#10;&#10;- na základě nalezene chyby, když se upravoval jakýkoliv měsíční odečet, automaticky se aktualizoval poslední záznam v období bez faktury" />
+    <MESSAGE value="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0," />
+    <option name="LAST_COMMIT_MESSAGE" value="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0," />
   </component>
 </project>

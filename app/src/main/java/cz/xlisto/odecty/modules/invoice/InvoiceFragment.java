@@ -10,7 +10,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -23,7 +22,6 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
-import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.PozeModel;
@@ -36,6 +34,8 @@ import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+
+import static cz.xlisto.odecty.models.PriceListModel.NEW_POZE_YEAR;
 
 
 /**
@@ -129,14 +129,14 @@ public class InvoiceFragment extends Fragment {
             btnAdd.setVisibility(View.GONE);
         }
 
-        //posluchač na změnu počtu záznamů ve faktuře - sloučení záznamů
+        //posluchač na změnu počtu záznamů ve faktuře - spojení záznamů
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceJoinDialogFragment.RESULT_JOIN_DIALOG_FRAGMENT,
                 this,
                 (requestKey, result) -> {
                     if (result.getBoolean(InvoiceJoinDialogFragment.RESULT)) {
                         loadInvoice();
-                        invoiceAdapter.setUpdateJoin(invoices,position);
+                        invoiceAdapter.setUpdateJoin(invoices, position);
                     }
                 });
         //posluchač na změnu počtu záznamů ve faktuře - rozdělení záznamů
@@ -146,7 +146,7 @@ public class InvoiceFragment extends Fragment {
                 (requestKey, result) -> {
                     if (result.getBoolean(InvoiceCutDialogFragment.RESULT)) {
                         loadInvoice();
-                        invoiceAdapter.setUpdateCut(invoices,position);
+                        invoiceAdapter.setUpdateCut(invoices, position);
                     }
                 });
         //posluchač na odstranění záznamu ve faktuře
@@ -263,11 +263,11 @@ public class InvoiceFragment extends Fragment {
 
             //nastavení regulovaného ceníku
             PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
-            priceList = priceListRegulBuilder.getRegulPriceList();
+            PriceListModel regulPriceList = priceListRegulBuilder.getRegulPriceList();
             String dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
             String dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
             double differentDate = Calculation.differentMonth(dateOf, dateTo, DifferenceDate.TypeDate.INVOICE);
-            double[] price = Calculation.calculatePriceWithoutPozeMwH(priceList, subscriptionPoint);
+            double[] price = Calculation.calculatePriceWithoutPozeMwH(regulPriceList, subscriptionPoint);
             double vt = (invoice.getVtEnd() - invoice.getVtStart()) / 1000;
             double nt = (invoice.getNtEnd() - invoice.getNtStart()) / 1000;
             double ntVt = nt + vt;
@@ -276,9 +276,19 @@ public class InvoiceFragment extends Fragment {
             price[0] *= vt;
             price[1] *= nt;
             price[2] *= differentDate;
-            price[3] *= ntVt;
-            totalOtherServices += (invoice.getOtherServices() * differentDate);
 
+            //poze počítá podle typu, který se vybere podle celkové spotřeby na faktuře
+            if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {
+                if(priceList.getRokPlatnost() < NEW_POZE_YEAR){
+                    price[3] = ntVt * regulPriceList.getOze();//poze dle spotřeby starší ceník
+                }else{
+                    price[3] = ntVt * regulPriceList.getPoze2();//poze dle spotřeby novější ceník
+                }
+            } else {
+                price[3] = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentDate * regulPriceList.getPoze1();//poze dle jističe
+            }
+
+            totalOtherServices += (invoice.getOtherServices() * differentDate);
 
             for (int j = 0; j < priceTotal.length; j++) {
                 priceTotal[j] += price[j];
@@ -292,10 +302,10 @@ public class InvoiceFragment extends Fragment {
         totalPriceVt = priceTotal[0];
         totalPriceNt = priceTotal[1];
         totalPayment = priceTotal[2];
-        //totalPoze = priceTotal[3];
-        totalPoze = poze.getPoze();
+        totalPoze = priceTotal[3];
 
-        return new double[]{totalVt, totalNT, (totalNT + totalVt), totalPriceVt, totalPriceNt, totalPayment, totalPoze, totalOtherServices, total, totalDPH - discount, payment, payment - totalDPH + discount};
+        return new double[]{totalVt, totalNT, (totalNT + totalVt), totalPriceVt, totalPriceNt,
+                totalPayment, totalPoze, totalOtherServices, total, totalDPH - discount, payment, payment - totalDPH + discount};
     }
 
 
@@ -319,8 +329,7 @@ public class InvoiceFragment extends Fragment {
      */
     private void setTotalTextView() {
 
-        String s = "", sEnd;
-        DecimalFormat df;
+        String s;
         if (totalPrice[7] == 0 && showTypeTotalPrice == 7)
             showTypeTotalPrice++;//pokud jsou ostatní služby rovny 0, posune se zobrazení o další
         if (totalPrice[1] == 0 && showTypeTotalPrice == 1)
@@ -329,51 +338,46 @@ public class InvoiceFragment extends Fragment {
             showTypeTotalPrice++;//pokud spotřeba NT je 0 a zobrazení NT ceny NT, přeskočí se rovnou na cenu platů
         switch (showTypeTotalPrice) {
             case 0:
-                s = "Celkem spotřeba VT: ";
+                s = getResources().getString(R.string.total_vt, totalPrice[showTypeTotalPrice]);
                 break;
             case 1:
-                s = "Celkem spotřeba NT: ";
+                s = getResources().getString(R.string.total_nt, totalPrice[showTypeTotalPrice]);
                 break;
             case 2:
-                s = "Celkem spotřeba VT+NT: ";
+                s = getResources().getString(R.string.total_vt_nt, totalPrice[showTypeTotalPrice]);
                 break;
             case 3:
-                s = "Cena VT (bez DPH): ";
+                s = getResources().getString(R.string.price_vt, totalPrice[showTypeTotalPrice]);
                 break;
             case 4:
-                s = "Cena NT (bez DPH): ";
+                s = getResources().getString(R.string.price_nt, totalPrice[showTypeTotalPrice]);
                 break;
             case 5:
-                s = "Cena st. platů (bez DPH): ";
+                s = getResources().getString(R.string.price_fixed_salary, totalPrice[showTypeTotalPrice]);
                 break;
             case 6:
-                s = "Cena POZE (bez DPH): ";
+                s = getResources().getString(R.string.price_poze, totalPrice[showTypeTotalPrice]);
                 break;
             case 7:
-                s = "Ostatní služby/slevy bez DPH: ";
+                s = getResources().getString(R.string.price_other_services, totalPrice[showTypeTotalPrice]);
                 break;
             case 8:
-                s = "Cena bez DPH: ";
+                s = getResources().getString(R.string.price_without_taxes, totalPrice[showTypeTotalPrice]);
                 break;
             case 9:
-                s = "Cena s DPH: ";
+                s = getResources().getString(R.string.price_with_taxes, totalPrice[showTypeTotalPrice]);
                 break;
             case 10:
-                s = "Zaplacené zálohy: ";
+                s = getResources().getString(R.string.paymented_advances, totalPrice[showTypeTotalPrice]);
                 break;
             case 11:
-                s = "Bilance: ";
+                s = getResources().getString(R.string.balance, totalPrice[showTypeTotalPrice]);
                 break;
+            default:
+                s = "";
 
         }
-        if (showTypeTotalPrice <= 2) {
-            sEnd = " MWh";
-            df = DecimalFormatHelper.df3;
-        } else {
-            sEnd = " kč";
-            df = DecimalFormatHelper.df2;
-        }
-        tvTotal.setText(s + df.format(totalPrice[showTypeTotalPrice]) + sEnd);
+        tvTotal.setText(s);
     }
 
 
