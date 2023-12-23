@@ -20,6 +20,17 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnJoinCancel"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:maxWidth="320dp"
+                android:text="@string/zrusit" />
+
+            <Button
                 android:id="@+id/btnJoin"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -30,16 +41,6 @@
                 android:maxWidth="320dp"
                 android:text="@string/join" />
 
-            <Button
-                android:id="@+id/btnJoinCancel"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:maxWidth="320dp"
-                android:text="@string/zrusit" />
         </LinearLayout>
 
         <RelativeLayout

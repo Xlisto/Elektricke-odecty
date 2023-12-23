@@ -8,158 +8,163 @@
     android:paddingStart="10dp">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/rlDate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_marginTop="15dp">
 
-            <RelativeLayout
-                android:id="@+id/rlDate"
+            <Button
+                android:id="@+id/btnDate"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:layout_marginStart="15dp"
+                android:contentDescription="@string/btn_description_date_cut" />
 
-                <Button
-                    android:id="@+id/btnDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:contentDescription="Datum rozdělení" />
-
-                <TextView
-                    android:id="@+id/tvDateInvoices"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@id/btnDate"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toEndOf="@id/btnDate"
-                    android:gravity="end" />
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/sliderDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/btnDate"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginStart="30dp"
-                    android:contentDescription="Rozdělení podle data"
-                    android:paddingEnd="30dp"
-                    android:paddingStart="30dp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rlVT"
+            <TextView
+                android:id="@+id/tvDateInvoices"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/btnDate"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/btnDate"
+                android:gravity="end" />
 
-                <TextView
-                    android:id="@+id/tvVTtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:text="VT" />
-
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/sliderVT"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/labVT"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginStart="30dp"
-                    android:contentDescription="Rozdělení měřiče VT"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp" />
-
-
-                <cz.xlisto.odecty.ownview.LabelEditText
-                    android:id="@+id/labVT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvVTtitle"
-                    android:ems="6"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp"
-                    app:defaultText="@string/_0" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rlNT"
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderDate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <TextView
-                    android:id="@+id/tvNTtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="15dp"
-                    android:text="NT" />
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/sliderNT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/labNT"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginStart="30dp"
-                    android:contentDescription="Rozdělení měřiče NT "
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp" />
-
-
-                <cz.xlisto.odecty.ownview.LabelEditText
-                    android:id="@+id/labNT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvNTtitle"
-                    android:ems="6"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp"
-                    app:defaultText="@string/_0" />
-
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/rlButtons"
-                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:minWidth="640dp"
-                android:orientation="horizontal">
+                android:layout_below="@id/btnDate"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:contentDescription="@string/slider_description_date_cut"
+                android:paddingEnd="30dp"
+                android:paddingStart="30dp" />
 
-                <Button
-                    android:id="@+id/btnCut"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_weight="1"
-                    android:maxWidth="320dp"
-                    android:text="@string/cut" />
+        </RelativeLayout>
 
-                <Button
-                    android:id="@+id/btnCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:maxWidth="320dp"
-                    android:text="@string/zrusit" />
-            </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/rlVT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvVTtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                android:text="@string/vt" />
+
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderVT"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/labVT"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:contentDescription="@string/slider_description_vt_cut"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp" />
+
+
+            <cz.xlisto.odecty.ownview.LabelEditText
+                android:id="@+id/labVT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvVTtitle"
+                android:ems="6"
+                android:gravity="end"
+                android:inputType="numberDecimal"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                app:defaultText="@string/_0" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlNT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/tvNTtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                android:text="@string/nt" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderNT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/labNT"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:contentDescription="@string/slider_description_nt_cut"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp" />
+
+
+            <cz.xlisto.odecty.ownview.LabelEditText
+                android:id="@+id/labNT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNTtitle"
+                android:ems="6"
+                android:gravity="end"
+                android:inputType="numberDecimal"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                app:defaultText="@string/_0" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/rlButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="640dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancel"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:maxWidth="320dp"
+                android:text="@string/zrusit" />
+
+            <Button
+                android:id="@+id/btnCut"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_weight="1"
+                android:maxWidth="320dp"
+                android:text="@string/cut" />
+
 
         </LinearLayout>
 
+    </LinearLayout>
 
 
 </ScrollView>

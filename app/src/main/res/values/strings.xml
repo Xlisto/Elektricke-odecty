@@ -316,6 +316,7 @@
     <string name="alert_message_vt">Zkontrolujte odečet. Počáteční stav VT je větší než koncový.</string>
     <string name="alert_message_nt">Zkontrolujte odečet. Počáteční stav NT je větší než koncový.</string>
     <string name="alert_message_edit_last_record">\nUpravte záznamy poslední faktury nebo měsíčních odečtů.</string>
+    <string name="alert_title_delete_invoice_item">Smazat záznam z faktury</string>
 
     <string name="double_in_brackets">(%.3f)</string>
     <string name="consuption">Sp.: %s kWh</string>
@@ -347,5 +348,10 @@
     <string name="balance">Bilance: %.2f Kč</string>
     <string name="text_amount">%.3f %s</string>
     <string name="text_price_unit">%.2f Kč/%s</string>
+
+    <string name="btn_description_date_cut">Datum rozdělení</string>
+    <string name="slider_description_date_cut">Rozdělení podle data</string>
+    <string name="slider_description_vt_cut">Rozdělení měřiče VT</string>
+    <string name="slider_description_nt_cut">Rozdělení měřiče NT</string>
 
 </resources>

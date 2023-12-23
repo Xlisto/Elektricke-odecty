@@ -226,7 +226,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             invoiceCutDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
         });
 
-        holder.btnJoin.setEnabled(position != items.size() - 1);
+        holder.btnJoin.setEnabled(position != items.size() - 1 && !invoice.isChangedElectricMeter());
         InvoiceModel finalInvoicePrevious = invoicePrevious;
         holder.btnJoin.setOnClickListener(v -> {
             if (finalInvoicePrevious != null) {
@@ -238,7 +238,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.btnDelete.setOnClickListener(v -> {
             selectedId = invoice.getId();
             selectedPosition = position;
-            YesNoDialogFragment.newInstance("Smazat záznam z faktury", INVOICE_ADAPTER_DELETE_INVOICE).show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
+            YesNoDialogFragment.newInstance(context.getResources().getString(R.string.alert_title_delete_invoice_item),
+                    INVOICE_ADAPTER_DELETE_INVOICE).show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
         });
 
 
@@ -409,7 +410,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && !isOverDateRegulPrice(priceListRegulBuilder, invoice)
                 && (((vtStart == prevVt && ntStart == prevNt) && vtEnd == nextVt && ntEnd == nextNt)
                 || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
-                || (vtEnd != nextVt && ntEnd != nextNt && isChangedElectricMeterNext))) {
+                || (ntEnd != nextNt && isChangedElectricMeterNext)
+                || (vtEnd != nextVt && isChangedElectricMeterNext))) {
             holder.imgAlert.setVisibility(View.GONE);
             holder.tvAlert.setVisibility(View.GONE);
         } else {
