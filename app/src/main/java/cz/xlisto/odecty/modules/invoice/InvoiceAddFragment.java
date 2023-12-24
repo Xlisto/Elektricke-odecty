@@ -5,7 +5,11 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.OwnAlertDialog;
+import cz.xlisto.odecty.models.InvoiceModel;
+import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
 /**
@@ -33,14 +37,25 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
             if(checkData())
                 return;
 
-            DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-            dataSubscriptionPointSource.open();
-            dataSubscriptionPointSource.insertInvoice(table, createInvoice());
-            dataSubscriptionPointSource.close();
+            InvoiceModel createdInvoice = createInvoice();
 
-            WithOutInvoiceService.editFirstItemInInvoice(getActivity());
-            Keyboard.hide(requireActivity());
-            getParentFragmentManager().popBackStack();
+            //kontrola zda datum nepřekročí první záznam v období bez faktury
+            if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)){
+                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
+                dataSubscriptionPointSource.open();
+                dataSubscriptionPointSource.insertInvoice(table, createdInvoice);
+                dataSubscriptionPointSource.close();
+
+                WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
+                Keyboard.hide(requireActivity());
+                getParentFragmentManager().popBackStack();
+            } else {
+                OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
+                        requireContext().getResources().getString(R.string.date_is_not_correct, ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
+            }
+
+
+
         });
     }
 }

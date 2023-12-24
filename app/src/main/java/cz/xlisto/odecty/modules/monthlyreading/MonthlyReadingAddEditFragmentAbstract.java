@@ -290,7 +290,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      * Upraví poslední záznam v období bez faktury, navazující na měsíční odečet
      */
     void updateLastItemInvoice() {
-        WithOutInvoiceService.editLastItemInInvoice(getActivity(), subscriptionPoint.getTableTED(), createMonthlyReading());
+        WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), createMonthlyReading());
     }
 
 

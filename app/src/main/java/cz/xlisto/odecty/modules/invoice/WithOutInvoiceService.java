@@ -1,15 +1,15 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
-import android.util.Log;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
-import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+
 
 /**
  * Xlisto 18.04.2023 21:06
@@ -34,12 +34,13 @@ public class WithOutInvoiceService {
 
     }
 
+
     /**
      * Detekce prvního (nejstaršího) záznamu v období bezfaktury a následná kontrola se zvoleným id faktury
      *
      * @param context kontext aplikace
-     * @param idFak long id faktury
-     * @param id long id záznamu
+     * @param idFak   long id faktury
+     * @param id      long id záznamu
      */
     public static boolean firstRecordInvoice(Context context, long idFak, long id) {
         String table = getTable(context, idFak);
@@ -52,12 +53,13 @@ public class WithOutInvoiceService {
         return firstInvoice.getId() == id;
     }
 
+
     /**
      * Detekce posledního (nejnovějšího) záznamu v období bezfaktury a následná kontrola se zvoleným id faktury
      *
      * @param context kontext aplikace
-     * @param idFak     long id faktury
-     * @param id    long id záznamu
+     * @param idFak   long id faktury
+     * @param id      long id záznamu
      * @return boolean true - poslední záznam, false - není poslední záznam
      */
     public static boolean lastRecordInvoice(Context context, long idFak, long id) {
@@ -71,11 +73,12 @@ public class WithOutInvoiceService {
         return lastInvoice.getId() == id;
     }
 
+
     /**
      * Podle idFak detekuje a načte tabulku databáze
      *
-     * @param context   kontext aplikace
-     * @param idFak     long id faktury
+     * @param context kontext aplikace
+     * @param idFak   long id faktury
      * @return String název tabulky
      */
     private static String getTable(Context context, long idFak) {
@@ -86,8 +89,11 @@ public class WithOutInvoiceService {
         }
     }
 
+
     /**
      * Upraví poslední záznam (koncová data) v období bezfaktury podle měsíčního odečtu
+     *
+     * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
@@ -100,20 +106,42 @@ public class WithOutInvoiceService {
         dataSubscriptionPointSource.close();
     }
 
+
     /**
      * Upraví první záznam (počáteční data) v období bezfaktury podle posledního záznamu zapsané faktury
+     *
+     * @param context kontext aplikace
      */
     public static void editFirstItemInInvoice(Context context) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
-        InvoiceModel invoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
-        InvoiceModel invoiceLast = dataSubscriptionPointSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
-        if (invoiceLast != null) {
-            invoice.setDateFrom(invoiceLast.getDateTo() + (25 * 60 * 60 * 1000));
-            invoice.setVtStart(invoiceLast.getVtEnd());
-            invoice.setNtStart(invoiceLast.getNtEnd());
+        InvoiceModel itemFirstWithoutInvoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        InvoiceModel itemLastInvoice = dataSubscriptionPointSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
+        if (itemLastInvoice != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(itemLastInvoice.getDateTo());
+            calendar.add(Calendar.DATE,1);
+            itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
+            itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
+            itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
         }
-        dataSubscriptionPointSource.updateInvoice(invoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), invoice);
+        dataSubscriptionPointSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
         dataSubscriptionPointSource.close();
+    }
+
+
+    /**
+     * Zkontroluje datum prvního záznamu (koncová data) v období bezfaktury podle, aby nepřesáhly koncový datum prvního záznamu
+     *
+     * @param context           kontext aplikace
+     * @param itemEditedInvoice upravovaný záznam
+     * @return boolean true - datum je v pořádku (menší), false - datum je chybné (větší)
+     */
+    public static boolean checkDateFirstItemInvoice(Context context, InvoiceModel itemEditedInvoice) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        InvoiceModel itemFirstWithoutInvoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        dataSubscriptionPointSource.close();
+        return itemEditedInvoice.getDateTo() < itemFirstWithoutInvoice.getDateTo();
     }
 }

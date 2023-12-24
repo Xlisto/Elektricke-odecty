@@ -245,6 +245,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvNtDif.setVisibility(View.GONE);
             holder.tvMonthPrice.setVisibility(View.GONE);
             holder.ivIconResult.setVisibility(View.GONE);
+            holder.tvAlertRegulPrice.setVisibility(View.GONE);
             holder.tvMonth.setText("První odečet. \nPoužití při prvním záznamu nebo výměně elektroměru.");
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_gray, null));
             holder.ivWarning.setVisibility(View.GONE);

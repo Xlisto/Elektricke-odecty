@@ -5,8 +5,10 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
@@ -94,14 +96,24 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             if (checkData())
                 return;
 
-            DataSubscriptionPointSource dataSubscriptionPointSource1 = new DataSubscriptionPointSource(getActivity());
-            dataSubscriptionPointSource1.open();
-            dataSubscriptionPointSource1.updateInvoice(id, table, createInvoice(id,selectedIdPrice));
-            dataSubscriptionPointSource1.close();
-            Keyboard.hide(requireActivity());
-            WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
-            loadFromDatabase = true;
-            getParentFragmentManager().popBackStack();
+            InvoiceModel createdInvoice = createInvoice(id,selectedIdPrice);
+
+            //kontrola zda datum nepřekročí první záznam v období bez faktury
+            if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)) {
+                DataSubscriptionPointSource dataSubscriptionPointSource1 = new DataSubscriptionPointSource(requireActivity());
+                dataSubscriptionPointSource1.open();
+                dataSubscriptionPointSource1.updateInvoice(id, table, createdInvoice);
+                dataSubscriptionPointSource1.close();
+
+                Keyboard.hide(requireActivity());
+
+                WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
+                loadFromDatabase = true;
+                getParentFragmentManager().popBackStack();
+            } else {
+                OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
+                        requireContext().getResources().getString(R.string.date_is_not_correct,ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
+            }
         });
 
         oldDateStart = btnDateStart.getText().toString();

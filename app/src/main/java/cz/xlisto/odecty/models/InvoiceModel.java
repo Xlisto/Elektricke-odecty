@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.models;
 
+import androidx.annotation.NonNull;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
@@ -164,6 +165,27 @@ public class InvoiceModel {
 
     public void setNtEnd(double ntEnd) {
         this.ntEnd = ntEnd;
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "InvoiceModel{" +
+                "id=" + id +
+                ", dateFrom=" + ViewHelper.convertLongToDate(dateFrom) +
+                ", dateTo=" + ViewHelper.convertLongToDate(dateTo) +
+                ", \nvtStart=" + vtStart +
+                ", vtEnd=" + vtEnd +
+                ", \nntStart=" + ntStart +
+                ", ntEnd=" + ntEnd +
+                ", \nidPriceList=" + idPriceList +
+                ", idInvoice=" + idInvoice +
+                ", otherServices=" + otherServices +
+                ", numberInvoice='" + numberInvoice + '\'' +
+                ", isChangedElectricMeter=" + isChangedElectricMeter +
+                ", typePoze=" + typePoze +
+                '}';
     }
 
     enum TypePoze {

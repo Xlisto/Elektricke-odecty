@@ -354,4 +354,7 @@
     <string name="slider_description_vt_cut">Rozdělení měřiče VT</string>
     <string name="slider_description_nt_cut">Rozdělení měřiče NT</string>
 
+    <string name="error">Chyba</string>
+    <string name="date_is_not_correct">Datum (%s) nesmí překročit datum v prvním záznamu v období bez faktury</string>
+
 </resources>
