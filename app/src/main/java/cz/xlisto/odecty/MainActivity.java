@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
@@ -24,6 +23,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
+import cz.xlisto.odecty.modules.dashboard.DashBoardFragment;
 import cz.xlisto.odecty.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.odecty.modules.exportimportpricelist.ImportPriceListFragment;
 import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
@@ -33,6 +33,7 @@ import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
+import cz.xlisto.odecty.ownview.MyBottomNavigationView;
 import cz.xlisto.odecty.services.HdoData;
 import cz.xlisto.odecty.services.HdoNotice;
 import cz.xlisto.odecty.services.HdoService;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
-    private BottomNavigationView bottomNavigationView;
+    private MyBottomNavigationView myBottomNavigationView;
     private ShPMainActivity shPMainActivity;
     private int orientation;
     private boolean secondClick = false;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         setConfiguration(getResources().getConfiguration());
 
-        bottomNavigationView = findViewById(R.id.bottomNavigation);
+        myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
         shPMainActivity = new ShPMainActivity(getApplicationContext());
@@ -79,8 +80,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         //spodní lišta
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        myBottomNavigationView.setOnItemSelectedListener(item -> {
             long itemId = item.getItemId();
+            if (itemId == R.id.meni_dashboard) {
+                navigationView.setCheckedItem(R.id.menu_dashboard);
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_dashboard);
+                actualFragment = DashBoardFragment.newInstance();
+                FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                return true;
+            }
 
             if (itemId == R.id.meni_prices) {
                 navigationView.setCheckedItem(R.id.menu_price_list);
@@ -108,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.meni_invoice) {
                 navigationView.setCheckedItem(R.id.menu_invoices);
-                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_invoice);
+                shPMainActivity.set(ACTUAL_FRAGMENT, -1);
                 actualFragment = InvoiceListFragment.newInstance("x", "x");
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 return true;
@@ -121,8 +129,13 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
             long itemId = item.getItemId();
+            if (itemId == R.id.menu_dashboard) {
+                myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
+                actualFragment = DashBoardFragment.newInstance();
+                b = true;
+            }
             if (itemId == R.id.menu_price_list) {
-                bottomNavigationView.setSelectedItemId(R.id.meni_prices);
+                myBottomNavigationView.setSelectedItemId(R.id.meni_prices);
                 actualFragment = PriceListFragment.newInstance(false, -1L);
                 b = true;
             }
@@ -133,19 +146,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (itemId == R.id.menu_monthly_reads) {
-                bottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+                myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
                 b = true;
             }
 
             if (itemId == R.id.menu_subscription_points) {
-                bottomNavigationView.setSelectedItemId(R.id.meni_subscription_points);
+                myBottomNavigationView.setSelectedItemId(R.id.meni_subscription_points);
                 actualFragment = SubscriptionPointFragment.newInstance();
                 b = true;
             }
 
             if (itemId == R.id.menu_invoices) {
-                bottomNavigationView.setSelectedItemId(R.id.meni_invoice);
+                myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
                 actualFragment = InvoiceListFragment.newInstance("x", "x");
                 b = true;
             }
@@ -176,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_import_price_list) {
                 uncheckedBottomNavigation();
-                //actualFragment = ExportImportPriceListTabFragment.newInstance();
                 actualFragment = ImportPriceListFragment.newInstance();
                 b = true;
             }
@@ -207,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
         } else {
             actualFragment = MonthlyReadingFragment.newInstance();
-            bottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
+            myBottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
 
@@ -291,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
      * Nastaví viditelnost bottomNavigationView
      */
     private void setVisibilityBottomNavigation() {
-        bottomNavigationView.setVisibility(orientation == 1 ? View.VISIBLE : View.GONE);
+        myBottomNavigationView.setVisibility(orientation == 1 ? View.VISIBLE : View.GONE);
     }
 
 
@@ -300,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
      * Nastaví se aktivní neviditelná položka :)
      */
     private void uncheckedBottomNavigation() {
-        bottomNavigationView.setSelectedItemId(R.id.meni_nothing);
+        myBottomNavigationView.setSelectedItemId(R.id.meni_nothing);
     }
 
 
@@ -327,6 +339,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onCheckedNavigationItem(int id) {
         Log.w(TAG, "onCheckedNavigationItem: " + id);
-        bottomNavigationView.setSelectedItemId(id);
+        myBottomNavigationView.setSelectedItemId(id);
     }
 }

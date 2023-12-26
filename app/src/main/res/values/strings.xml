@@ -202,6 +202,7 @@
     <string name="sun">NE</string>
     <string name="from">OD</string>
     <string name="until">DO</string>
+    <string name="dashboard">Přehled</string>
     <string name="compare_price_list">Porovnání ceníků</string>
     <string name="price_lists">Ceníky</string>
     <string name="month_reads">Měsíční odečty</string>

@@ -11,7 +11,7 @@
         android:name="cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bottomNavigation"
+        android:layout_above="@id/myBottomNavigation"
         android:layout_below="@id/appBarLayout"
         tools:layout="@layout/fragment_price_list" />
 
@@ -30,8 +30,9 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
+
+    <cz.xlisto.odecty.ownview.MyBottomNavigationView
+        android:id="@+id/myBottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

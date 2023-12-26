@@ -6,6 +6,11 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/menu_dashboard"
+            android:title="@string/dashboard"
+            app:showAsAction="ifRoom" />
+
+        <item
             android:id="@+id/menu_price_list"
             android:title="@string/price_lists"
             app:showAsAction="ifRoom" />

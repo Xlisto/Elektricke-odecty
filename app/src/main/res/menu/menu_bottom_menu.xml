@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/meni_dashboard"
+        android:title="@string/dashboard"
+        android:visible="true"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_dashboard"/>
+
+    <item
         android:id="@+id/meni_prices"
         android:title="@string/price_lists"
         android:visible="true"
