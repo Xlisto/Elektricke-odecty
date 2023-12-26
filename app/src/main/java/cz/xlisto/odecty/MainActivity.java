@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.meni_invoice) {
                 navigationView.setCheckedItem(R.id.menu_invoices);
                 shPMainActivity.set(ACTUAL_FRAGMENT, -1);
-                actualFragment = InvoiceListFragment.newInstance("x", "x");
+                actualFragment = InvoiceListFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 return true;
             }
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.menu_invoices) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
-                actualFragment = InvoiceListFragment.newInstance("x", "x");
+                actualFragment = InvoiceListFragment.newInstance();
                 b = true;
             }
 

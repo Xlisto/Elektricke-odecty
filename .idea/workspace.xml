@@ -150,20 +150,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidán fragment Dashboard a vytvořen MyBottomNavigationView, jež rozšiřuje BottomNavigationView na celkem 6 položek, aby bylo možné použít 6. skryté položky. Kvůli tomu, že BottomNavigationView nejde odoznačit všechny položky.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceDetailFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceJoinDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceJoinDialogFragment.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami.">
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/payment/PaymentFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/payment/PaymentFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -834,7 +822,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -908,7 +896,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněné landscape rozložení pro nový/úpravu měsíčního odečtu." />
     <MESSAGE value="Úprava rozvržení tlačítek Zrušit a Ulož.&#10;&#10;Změna zobrazení jen na potřebnou šířku, zarovnání na pravou stranu." />
     <MESSAGE value="Úprava rozvržení přidání/úpravy platby pro režim landscape." />
     <MESSAGE value="Oprava chyby pádu aplikace&#10;Ve fragmentu pro výběr ceníku a nevybrání žádného ceníku, při stisku tlačítka zpět aplikace havarovala. Příčina byla v null parametru pro výběr ceníku. &#10;Přidána podmínka na vybraný ceník." />
@@ -933,6 +920,7 @@
     <MESSAGE value="Přidána podmínka pro zvýraznění výstrahy při větším počátečním datumu oproti koncovému datumu v záznamu faktury." />
     <MESSAGE value="Odstraněné tlačítko pro výběr složky ve fragmentu pro import ceníků. Nahrazeno položkou menu. Stejné menu doplněno do fragmentu pro export ceníků." />
     <MESSAGE value="Přidán fragment Dashboard a vytvořen MyBottomNavigationView, jež rozšiřuje BottomNavigationView na celkem 6 položek, aby bylo možné použít 6. skryté položky. Kvůli tomu, že BottomNavigationView nejde odoznačit všechny položky." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidán fragment Dashboard a vytvořen MyBottomNavigationView, jež rozšiřuje BottomNavigationView na celkem 6 položek, aby bylo možné použít 6. skryté položky. Kvůli tomu, že BottomNavigationView nejde odoznačit všechny položky." />
+    <MESSAGE value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
+    <option name="LAST_COMMIT_MESSAGE" value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
   </component>
 </project>
