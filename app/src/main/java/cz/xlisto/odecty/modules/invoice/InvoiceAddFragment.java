@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
@@ -41,10 +41,10 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
 
             //kontrola zda datum nepřekročí první záznam v období bez faktury
             if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)){
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-                dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.insertInvoice(table, createdInvoice);
-                dataSubscriptionPointSource.close();
+                DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+                dataInvoiceSource.open();
+                dataInvoiceSource.insertInvoice(table, createdInvoice);
+                dataInvoiceSource.close();
 
                 WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
                 Keyboard.hide(requireActivity());

@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.Calendar;
 import java.util.Objects;
 
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -25,12 +25,12 @@ public class WithOutInvoiceService {
      * @param invoiceNew      nový záznam
      */
     public static void cutInvoice(Context context, InvoiceModel invoiceOriginal, InvoiceModel invoiceNew) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         String tableTed = Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED();
-        dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.insertInvoice(tableTed, invoiceNew);
-        dataSubscriptionPointSource.updateInvoice(invoiceOriginal.getId(), tableTed, invoiceOriginal);
-        dataSubscriptionPointSource.close();
+        dataInvoiceSource.open();
+        dataInvoiceSource.insertInvoice(tableTed, invoiceNew);
+        dataInvoiceSource.updateInvoice(invoiceOriginal.getId(), tableTed, invoiceOriginal);
+        dataInvoiceSource.close();
 
     }
 
@@ -44,11 +44,11 @@ public class WithOutInvoiceService {
      */
     public static boolean firstRecordInvoice(Context context, long idFak, long id) {
         String table = getTable(context, idFak);
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
 
-        InvoiceModel firstInvoice = dataSubscriptionPointSource.firstInvoiceByDate(idFak, table);
-        dataSubscriptionPointSource.close();
+        InvoiceModel firstInvoice = dataInvoiceSource.firstInvoiceByDate(idFak, table);
+        dataInvoiceSource.close();
 
         return firstInvoice.getId() == id;
     }
@@ -64,11 +64,10 @@ public class WithOutInvoiceService {
      */
     public static boolean lastRecordInvoice(Context context, long idFak, long id) {
         String table = getTable(context, idFak);
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-
-        InvoiceModel lastInvoice = dataSubscriptionPointSource.lastInvoiceByDate(idFak, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel lastInvoice = dataInvoiceSource.lastInvoiceByDate(idFak, table);
+        dataInvoiceSource.close();
 
         return lastInvoice.getId() == id;
     }
@@ -96,14 +95,14 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        InvoiceModel invoice = dataSubscriptionPointSource.lastInvoiceByDate(-1L, table);
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel invoice = dataInvoiceSource.lastInvoiceByDate(-1L, table);
         invoice.setDateTo(monthlyReading.getDate());
         invoice.setVtEnd(monthlyReading.getVt());
         invoice.setNtEnd(monthlyReading.getNt());
-        dataSubscriptionPointSource.updateInvoice(invoice.getId(), table, invoice);
-        dataSubscriptionPointSource.close();
+        dataInvoiceSource.updateInvoice(invoice.getId(), table, invoice);
+        dataInvoiceSource.close();
     }
 
 
@@ -113,10 +112,10 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editFirstItemInInvoice(Context context) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        InvoiceModel itemFirstWithoutInvoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
-        InvoiceModel itemLastInvoice = dataSubscriptionPointSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        InvoiceModel itemLastInvoice = dataInvoiceSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
         if (itemLastInvoice != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(itemLastInvoice.getDateTo());
@@ -125,8 +124,8 @@ public class WithOutInvoiceService {
             itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
             itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
         }
-        dataSubscriptionPointSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
-        dataSubscriptionPointSource.close();
+        dataInvoiceSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
+        dataInvoiceSource.close();
     }
 
 
@@ -138,10 +137,10 @@ public class WithOutInvoiceService {
      * @return boolean true - datum je v pořádku (menší), false - datum je chybné (větší)
      */
     public static boolean checkDateFirstItemInvoice(Context context, InvoiceModel itemEditedInvoice) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        InvoiceModel itemFirstWithoutInvoice = dataSubscriptionPointSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        dataInvoiceSource.close();
         return itemEditedInvoice.getDateTo() < itemFirstWithoutInvoice.getDateTo();
     }
 }

@@ -20,8 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
@@ -329,10 +329,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      * @param id ID položky, kterou chceme smazat z databáze
      */
     private void deleteItem(long id, int position) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.deleteInvoice(id, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        dataInvoiceSource.deleteInvoice(id, table);
+        dataInvoiceSource.close();
         showButtons = -1;
         items.remove(position);
         notifyItemRemoved(position);

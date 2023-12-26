@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
@@ -172,11 +173,11 @@ public class PaymentFragment extends Fragment {
      * Nastaví formátovaný celkový součet na TextView
      */
     private void setTotal() {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
-        dataSubscriptionPointSource.open();
-        double discountPayment = dataSubscriptionPointSource.sumDiscount(idFak, table);
-        double total = dataSubscriptionPointSource.sumPayment(idFak, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getContext());
+        dataInvoiceSource.open();
+        double discountPayment = dataInvoiceSource.sumDiscount(idFak, table);
+        double total = dataInvoiceSource.sumPayment(idFak, table);
+        dataInvoiceSource.close();
 
         PaymentModel.getDiscountDPHText(discountPayment, tvDiscount);
         tvTotal.setText("Součet: " + DecimalFormatHelper.df2.format(total));

@@ -19,8 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PaymentModel;
@@ -190,17 +190,17 @@ public class InvoiceFragment extends Fragment {
 
 
     private void loadInvoice() {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        dataInvoiceSource.open();
         subscriptionPoint = SubscriptionPoint.load(getActivity());
         //zkontroluje zda existuje záznam v tabulce NOW, pokud ne, vytvoří prázdný záznam
-        boolean exists = dataSubscriptionPointSource.checkInvoiceExists(tableNOW);
+        boolean exists = dataInvoiceSource.checkInvoiceExists(tableNOW);
         if (!exists) {
-            dataSubscriptionPointSource.insertFirstRecordWithoutInvoice(tableNOW);
+            dataInvoiceSource.insertFirstRecordWithoutInvoice(tableNOW);
         }
-        invoices = dataSubscriptionPointSource.loadInvoices(idFak, table);
-        discount = dataSubscriptionPointSource.sumDiscount(idFak, tablePAY);
-        dataSubscriptionPointSource.close();
+        invoices = dataInvoiceSource.loadInvoices(idFak, table);
+        discount = dataInvoiceSource.sumDiscount(idFak, tablePAY);
+        dataInvoiceSource.close();
 
         poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), getActivity());
         totalPrice = calculationTotalInvoice(invoices, subscriptionPoint, poze);
@@ -241,10 +241,10 @@ public class InvoiceFragment extends Fragment {
      * @param subscriptionPoint nastavení odběrného místa
      */
     private double[] calculationTotalInvoice(ArrayList<InvoiceModel> invoices, SubscriptionPointModel subscriptionPoint, PozeModel poze) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
-        double payment = dataSubscriptionPointSource.sumPayment(idFak, tablePAY);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
+        dataInvoiceSource.open();
+        double payment = dataInvoiceSource.sumPayment(idFak, tablePAY);
+        dataInvoiceSource.close();
 
         double[] priceTotal = new double[4];
         double total = 0, totalDPH = 0;

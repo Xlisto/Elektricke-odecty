@@ -24,8 +24,8 @@ import java.util.Objects;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PozeModel;
@@ -189,10 +189,10 @@ public class InvoiceDetailFragment extends Fragment {
 
 
     private void loadInvoice() {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
-        invoices = dataSubscriptionPointSource.loadInvoices(idFak, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
+        dataInvoiceSource.open();
+        invoices = dataInvoiceSource.loadInvoices(idFak, table);
+        dataInvoiceSource.close();
     }
 
 

@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -85,10 +86,10 @@ public class InvoiceListFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 String numberInvoice = bundle.getString(NUMBER_INVOICE);
                 long idInvoice = bundle.getLong(ID_INVOICE);
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-                dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.updateInvoiceList(numberInvoice, idInvoice);
-                dataSubscriptionPointSource.close();
+                DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
+                dataInvoiceSource.open();
+                dataInvoiceSource.updateInvoiceList(numberInvoice, idInvoice);
+                dataInvoiceSource.close();
                 onResume();
             }
         });
@@ -97,10 +98,10 @@ public class InvoiceListFragment extends Fragment {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 String numberInvoice = bundle.getString(NUMBER_INVOICE);
                 long idSubscriptionPoint = bundle.getLong(ID_SUBSCRIPTIONPOINT);
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-                dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.insertInvoiceList(numberInvoice,idSubscriptionPoint);
-                dataSubscriptionPointSource.close();
+                DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+                dataInvoiceSource.open();
+                dataInvoiceSource.insertInvoiceList(numberInvoice,idSubscriptionPoint);
+                dataInvoiceSource.close();
                 onResume();
             }
         });
@@ -138,11 +139,15 @@ public class InvoiceListFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        dataSubscriptionPointSource.close();
+
         if(subscriptionPoint==null)
             return;
-        ArrayList<InvoiceListModel> invoices = dataSubscriptionPointSource.loadInvoiceLists(subscriptionPoint);
 
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        dataInvoiceSource.open();
+        ArrayList<InvoiceListModel> invoices = dataInvoiceSource.loadInvoiceLists(subscriptionPoint);
+        dataInvoiceSource.close();
         InvoiceListAdapter invoiceAdapter = new InvoiceListAdapter(getContext(), invoices,rv);
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));

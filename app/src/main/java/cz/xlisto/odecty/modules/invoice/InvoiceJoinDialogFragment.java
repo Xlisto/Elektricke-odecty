@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
@@ -71,11 +71,11 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         table = getArguments().getString(TABLE);
         position = getArguments().getInt(POSITION);
 
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
-        dataSubscriptionPointSource.open();
-        invoiceFirst = dataSubscriptionPointSource.loadInvoice(idInvoiceFirst, table);
-        invoiceSecond = dataSubscriptionPointSource.loadInvoice(idInvoiceSecond, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
+        dataInvoiceSource.open();
+        invoiceFirst = dataInvoiceSource.loadInvoice(idInvoiceFirst, table);
+        invoiceSecond = dataInvoiceSource.loadInvoice(idInvoiceSecond, table);
+        dataInvoiceSource.close();
 
         invoiceJoined = joinInvoices(invoiceFirst, invoiceSecond);
     }
@@ -112,11 +112,11 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
 
         btnCancel.setOnClickListener(v -> dismiss());
         btnJoin.setOnClickListener(v -> {
-            DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
-            dataSubscriptionPointSource.open();
-            dataSubscriptionPointSource.updateInvoice(invoiceJoined.getId(), table, invoiceJoined);
-            dataSubscriptionPointSource.deleteInvoice(invoiceSecond.getId(), table);
-            dataSubscriptionPointSource.close();
+            DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
+            dataInvoiceSource.open();
+            dataInvoiceSource.updateInvoice(invoiceJoined.getId(), table, invoiceJoined);
+            dataInvoiceSource.deleteInvoice(invoiceSecond.getId(), table);
+            dataInvoiceSource.close();
 
             Bundle bundle = new Bundle();
             bundle.putBoolean(RESULT, true);

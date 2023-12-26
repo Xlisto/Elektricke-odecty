@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -201,12 +202,16 @@ public class MonthlyReadingFragment extends Fragment {
 
         ArrayList<MonthlyReadingModel> monthlyReadings;
         if (subscriptionPoint != null) {
-            DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
+            DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
             dataSubscriptionPointSource.open();
             monthlyReadings = dataSubscriptionPointSource.loadMonthlyReadings(subscriptionPoint.getTableO(), from, to);
-            if (!dataSubscriptionPointSource.checkInvoiceExists(subscriptionPoint.getTableTED()))
-                dataSubscriptionPointSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataSubscriptionPointSource.close();
+
+            DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
+            dataInvoiceSource.open();
+            if (!dataInvoiceSource.checkInvoiceExists(subscriptionPoint.getTableTED()))
+                dataInvoiceSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
+            dataInvoiceSource.close();
 
             monthlyReadingAdapter = new MonthlyReadingAdapter(getActivity(), monthlyReadings,
                     subscriptionPoint,

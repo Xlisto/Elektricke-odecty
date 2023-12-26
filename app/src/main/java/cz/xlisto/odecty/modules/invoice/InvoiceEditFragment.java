@@ -6,8 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
@@ -39,10 +39,10 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         super.onViewCreated(view, savedInstanceState);
 
         //načte odběrné místo
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
-        InvoiceModel invoice = dataSubscriptionPointSource.loadInvoice(id, table);
-        dataSubscriptionPointSource.close();
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        dataInvoiceSource.open();
+        InvoiceModel invoice = dataInvoiceSource.loadInvoice(id, table);
+        dataInvoiceSource.close();
 
         if (loadFromDatabase) {
             btnDateStart.setText(ViewHelper.convertLongToDate(invoice.getDateFrom()));
@@ -100,10 +100,10 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
 
             //kontrola zda datum nepřekročí první záznam v období bez faktury
             if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)) {
-                DataSubscriptionPointSource dataSubscriptionPointSource1 = new DataSubscriptionPointSource(requireActivity());
-                dataSubscriptionPointSource1.open();
-                dataSubscriptionPointSource1.updateInvoice(id, table, createdInvoice);
-                dataSubscriptionPointSource1.close();
+                DataInvoiceSource dataInvoiceSource1 = new DataInvoiceSource(requireActivity());
+                dataInvoiceSource1.open();
+                dataInvoiceSource1.updateInvoice(id, table, createdInvoice);
+                dataInvoiceSource1.close();
 
                 Keyboard.hide(requireActivity());
 
