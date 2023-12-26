@@ -125,16 +125,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Úprava podmínky pro zobrazování upozornění při nesouladu navazujících odečtů.&#10;- přidána podmínka pro zablokování spojení záznamů při zaškrtnuté volbě: Výměna elektroměru&#10;- úprava dialogového okna pro rozdělení a spojení záznamu">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Kontrola přidání/úpravy zadaných faktur, aby nepřekročila konečný datum v prvním záznamu v období bezfaktury.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +138,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -803,7 +797,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="110" />
+    <option name="localTasksCounter" value="111" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -877,7 +871,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ceník a detail ceníku jsou zobrazeny společně v landscape režimu&#10;Pro zobrazení detailu ceníku v landscape režimu uvnitř fragmentu je použitý jiné rozvržení, které se nastavuje programově podle parametru v kontruktoru. Obsah je totožný s rozvžením v porttrait režimu." />
     <MESSAGE value="Rozložení landscape režimu pro fragmenty HDO čas, načtení HDO časů z internetu a přidání/úpravu HSO časů&#10;&#10;Upraveno doplňování kodu u EGD při volbách ze spinerů. Pokud nejsou zvoleny, resp. jsou nastaveny u všech třech první položky (prázdný string), kod se nenastaví.&#10;&#10;Doplněna kontrola chyby na nulový subScriptionPoint při aktivaci služby na sledování platnosti HDO." />
     <MESSAGE value="Opravený pád aplikace při přechodu z HdoSiteFragment nebo HdoAddFragment/HdoEditFragment pomocí toast menu do fragmentů PriceListFragment, MonthlyReadingFragment, SubscriptionPointFragment nebo InvoiceListFragment.&#10;&#10;Chyba byla způsobena brzo vyvolaným vláknem pro překreslení aktuálních hodin elektroměru, když ještě/už nebyl fragment připojen. Doplněna podmínka na kontrolu připojeného fragmentu." />
     <MESSAGE value="Doplněné landscape rozložení pro nový/úpravu ceníku." />
@@ -902,6 +895,7 @@
     <MESSAGE value="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0," />
     <MESSAGE value="Oprava zobrazení POZE v detailu faktury." />
     <MESSAGE value="Úprava podmínky pro zobrazování upozornění při nesouladu navazujících odečtů.&#10;- přidána podmínka pro zablokování spojení záznamů při zaškrtnuté volbě: Výměna elektroměru&#10;- úprava dialogového okna pro rozdělení a spojení záznamu" />
-    <option name="LAST_COMMIT_MESSAGE" value="Úprava podmínky pro zobrazování upozornění při nesouladu navazujících odečtů.&#10;- přidána podmínka pro zablokování spojení záznamů při zaškrtnuté volbě: Výměna elektroměru&#10;- úprava dialogového okna pro rozdělení a spojení záznamu" />
+    <MESSAGE value="Kontrola přidání/úpravy zadaných faktur, aby nepřekročila konečný datum v prvním záznamu v období bezfaktury." />
+    <option name="LAST_COMMIT_MESSAGE" value="Kontrola přidání/úpravy zadaných faktur, aby nepřekročila konečný datum v prvním záznamu v období bezfaktury." />
   </component>
 </project>

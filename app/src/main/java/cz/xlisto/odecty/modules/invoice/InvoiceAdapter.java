@@ -60,7 +60,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView vtStart, vtEnd, vTDif, ntStart, ntEnd, ntDif, dateStart, dateEnd, dateDifference,
                 vtPrice, ntPrice, tvPayment, tvPOZE, tvPriceTotal, tvPriceTotalDPH, tvOtherServices,
-                tvOtherServicesDescription, tvAlert, tvNewMeter;
+                tvOtherServicesDescription, tvAlert, tvNewMeter, tvDash;
         TextView tvNtDescription, tvNtDash;
         Button btnEdit, btnDelete, btnCut, btnJoin;
         RelativeLayout itemInvoice;
@@ -118,6 +118,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         vh.imgAlert = v.findViewById(R.id.imageViewWarningInvoice);
         vh.tvAlert = v.findViewById(R.id.tvAlertInvoice);
         vh.tvNewMeter = v.findViewById(R.id.tvAlertNewMeter);
+        vh.tvDash = v.findViewById(R.id.tvDash);
         originalTextViewColors = vh.vtStart.getTextColors();
         return vh;
     }
@@ -369,7 +370,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         isChangedElectricMeter = invoice.isChangedElectricMeter();
         if (position > 0) {
             nextInvoice = items.get(position - 1);
-            nextDate = ViewHelper.convertLongToDate(nextInvoice.getDateFrom() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(nextInvoice.getDateFrom());
+            calendar.add(Calendar.DATE, -1);
+            nextDate = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
             nextVt = nextInvoice.getVtStart();
             nextNt = nextInvoice.getNtStart();
             isChangedElectricMeterNext = nextInvoice.isChangedElectricMeter();
@@ -381,7 +385,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
         if (position < items.size() - 1) {
             prevInvoice = items.get(position + 1);
-            prevDate = ViewHelper.convertLongToDate(prevInvoice.getDateTo() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(prevInvoice.getDateTo());
+            calendar.add(Calendar.DATE, 1);
+            prevDate = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
             prevVt = prevInvoice.getVtEnd();
             prevNt = prevInvoice.getNtEnd();
         } else {
@@ -389,9 +396,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             prevVt = vtStart;
             prevNt = ntStart;
         }
+
         //zvýrazenění datumu
-        setTextAlertColor(holder.dateStart, dateOf.equals(prevDate));
-        setTextAlertColor(holder.dateEnd, dateTo.equals(nextDate));
+        setTextAlertColor(holder.dateStart, dateOf.equals(prevDate) && invoice.getDateFrom() <= invoice.getDateTo());
+        setTextAlertColor(holder.dateEnd, dateTo.equals(nextDate) && invoice.getDateFrom() <= invoice.getDateTo());
+        setTextAlertColor(holder.dateDifference, invoice.getDateFrom() <= invoice.getDateTo());
+        setTextAlertColor(holder.tvDash, invoice.getDateFrom() <= invoice.getDateTo());
 
         //zvýraznění hodnot (pokud je nastavena výměna elektroměru, barvy se nemění)
         setTextAlertColor(holder.vtStart, vtStart == prevVt || isChangedElectricMeter);
@@ -409,9 +419,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         //zobrazení ikony alertu
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && !isOverDateRegulPrice(priceListRegulBuilder, invoice)
                 && (((vtStart == prevVt && ntStart == prevNt) && vtEnd == nextVt && ntEnd == nextNt)
+                && invoice.getDateFrom() <= invoice.getDateTo()//porovnání začátku a konce data
                 || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
-                || (ntEnd != nextNt && isChangedElectricMeterNext)
-                || (vtEnd != nextVt && isChangedElectricMeterNext))) {
+                || (ntEnd != nextNt && isChangedElectricMeterNext)//výměna elektroměru
+                || (vtEnd != nextVt && isChangedElectricMeterNext)//výměna elektroměru
+        )) {
             holder.imgAlert.setVisibility(View.GONE);
             holder.tvAlert.setVisibility(View.GONE);
         } else {
