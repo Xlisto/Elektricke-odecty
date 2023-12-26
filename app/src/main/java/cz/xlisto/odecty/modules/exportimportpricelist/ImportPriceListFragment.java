@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -101,6 +103,13 @@ public class ImportPriceListFragment extends Fragment {
     }
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -114,9 +123,6 @@ public class ImportPriceListFragment extends Fragment {
         shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
-        Button btnSelectDir = view.findViewById(R.id.btnSelectFolderImportExport);
-
-        btnSelectDir.setOnClickListener(v -> Files.openTree(false, requireActivity(), resultTree));
 
 
         //listener dialogového okna na smazání souboru JSON zálohy
@@ -195,6 +201,21 @@ public class ImportPriceListFragment extends Fragment {
         showLnProgressBar(true);
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        requireActivity().getMenuInflater().inflate(R.menu.menu_export, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.menu_item_select_folder) {
+            Files.openTree(false, requireActivity(), resultTree);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * Zobrazí nebo skryje LinearLayout s ProgressBar

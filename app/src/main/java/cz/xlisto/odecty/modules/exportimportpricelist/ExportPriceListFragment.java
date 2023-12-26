@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -57,6 +60,13 @@ public class ExportPriceListFragment extends Fragment {
                 }
             }
     );
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
 
     @Nullable
@@ -126,5 +136,21 @@ public class ExportPriceListFragment extends Fragment {
         exportPriceListAdapter = new ExportPriceListAdapter(getContext(), priceListSumModels);
         recyclerView.setAdapter(exportPriceListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        requireActivity().getMenuInflater().inflate(R.menu.menu_export, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.menu_item_select_folder) {
+            Files.openTree(false, requireActivity(), resultTree);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
