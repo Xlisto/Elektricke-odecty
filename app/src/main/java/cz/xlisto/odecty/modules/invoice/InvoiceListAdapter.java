@@ -191,6 +191,11 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         holder.tvNTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxNT()));
 
         showButtons(holder, position);
+
+        if(invoice.getIdFak() == -1)
+            holder.btnNumberInvoice.setEnabled(false);
+        else
+            holder.btnNumberInvoice.setEnabled(true);
     }
 
 
