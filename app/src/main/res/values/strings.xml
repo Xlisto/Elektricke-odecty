@@ -326,6 +326,7 @@
     <string name="fixed_salary">St. plat, jist. a op. trhu: %.2f Kč</string>
     <string name="poze">POZE (OZE): %.2f Kč</string>
     <string name="other_service">%s Kč</string>
+    <string name="sum">"Součet: %.2f Kč"</string>
     <string name="total">"Celkem: %s Kč bez DPH"</string>
     <string name="total_with_tax">%s Kč s DPH</string>
     <string name="string_dash_string">%s - %s</string>

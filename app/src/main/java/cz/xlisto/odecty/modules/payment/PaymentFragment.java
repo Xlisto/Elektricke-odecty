@@ -21,7 +21,6 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
-import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
@@ -180,6 +179,6 @@ public class PaymentFragment extends Fragment {
         dataInvoiceSource.close();
 
         PaymentModel.getDiscountDPHText(discountPayment, tvDiscount);
-        tvTotal.setText("Součet: " + DecimalFormatHelper.df2.format(total));
+        tvTotal.setText(getResources().getString(R.string.sum,total));
     }
 }

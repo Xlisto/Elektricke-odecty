@@ -93,7 +93,7 @@ public class DataInvoiceSource extends DataSource {
 
         invoices.add(new InvoiceListModel(-1L, "Období bez faktury", minDateNow, maxDateNow, countPaymentsNow, countReadsNow, minVtNow, maxVtNow, minNtNow, maxNtNow));
 
-        String sql = "select *,(SELECT min(datumOd) from " + subscriptionPoint.getTableFAK() + " WHERE id_fak=faktury._id) as minDate from faktury " +
+        String sql = "select *,(SELECT min(" + COLUMN_DATE_FROM + ") from " + subscriptionPoint.getTableFAK() + " WHERE " + ID_FAK + "=faktury._id) as minDate from faktury " +
                 " WHERE odber_id=?" +
                 " ORDER BY minDate DESC";
         String[] args = new String[]{String.valueOf(subscriptionPoint.getId())};
@@ -127,11 +127,11 @@ public class DataInvoiceSource extends DataSource {
      * @return seznam záznamů faktury
      */
     public ArrayList<InvoiceModel> loadInvoices(long idInvoice, String table) {
-        String selection = "id_fak=?";
+        String selection = ID_FAK + "=?";
         String[] args = new String[]{String.valueOf(idInvoice)};
 
         ArrayList<InvoiceModel> invoices = new ArrayList<>();
-        Cursor cursor = database.query(table, null, selection, args, null, null, "datumOd DESC");
+        Cursor cursor = database.query(table, null, selection, args, null, null, COLUMN_DATE_FROM + " DESC");
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
             invoices.add(createInvoice(cursor));
@@ -187,8 +187,8 @@ public class DataInvoiceSource extends DataSource {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT * " +
                 "FROM " + table +
-                " WHERE id_fak=? " +
-                "ORDER BY datumOd DESC";
+                " WHERE " + ID_FAK + "=? " +
+                "ORDER BY " + COLUMN_DATE_FROM + "DESC";
         return oneInvoice(args, sql);
     }
 
@@ -202,7 +202,7 @@ public class DataInvoiceSource extends DataSource {
     public InvoiceModel lastInvoiceByDateFromAll(String table) {
         String sql = "SELECT * " +
                 "FROM " + table +
-                " ORDER BY datumDo DESC" +
+                " ORDER BY " + COLUMN_DATE_UNTIL + " DESC" +
                 " LIMIT 1";
         return oneInvoice(null, sql);
     }
@@ -229,8 +229,8 @@ public class DataInvoiceSource extends DataSource {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT * " +
                 "FROM " + table +
-                " WHERE id_fak=? " +
-                "ORDER BY datumOd ASC";
+                " WHERE " + ID_FAK + "=? " +
+                "ORDER BY " + COLUMN_DATE_FROM + " ASC";
         return oneInvoice(args, sql);
     }
 
@@ -312,7 +312,7 @@ public class DataInvoiceSource extends DataSource {
      */
     public double sumDiscount(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
-                        "IFNULL((SELECT sum(castka*0.21) FROM " + table + " WHERE id_fak=? AND mimoradna!=3 AND datum >= 1635721200000 AND datum <= 1640908800000),0))",
+                        "IFNULL((SELECT sum(castka*0.21) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3 AND datum >= 1635721200000 AND datum <= 1640908800000),0))",
                 new String[]{String.valueOf(idFak)});
         cursor.moveToFirst();
         double result = cursor.getDouble(0);
@@ -341,8 +341,8 @@ public class DataInvoiceSource extends DataSource {
      */
     public double sumPayment(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
-                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE id_fak=? AND mimoradna!=3),0)  - " +
-                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE id_fak=? AND mimoradna=3),0)) as total " +
+                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3),0)  - " +
+                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna=3),0)) as total " +
                 "GROUP BY total", new String[]{String.valueOf(idFak), String.valueOf(idFak)});
         cursor.moveToFirst();
         double result = cursor.getDouble(0);
@@ -395,9 +395,9 @@ public class DataInvoiceSource extends DataSource {
      */
     public long minDateInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
-        String sql = "SELECT MIN(datumOd)" +
+        String sql = "SELECT MIN(" + COLUMN_DATE_FROM + ")" +
                 " FROM " + table +
-                " WHERE id_fak=?";
+                " WHERE " + ID_FAK + "=?";
         return getLongCountInvoice(sql, args);
     }
 
@@ -411,9 +411,9 @@ public class DataInvoiceSource extends DataSource {
      */
     public long maxDateInvoice(long idFak, String table) {
         String[] args = new String[]{String.valueOf(idFak)};
-        String sql = "SELECT MAX(datumDo)" +
+        String sql = "SELECT MAX(" + COLUMN_DATE_UNTIL + ")" +
                 " FROM " + table +
-                " WHERE id_fak=?";
+                " WHERE " + ID_FAK + "=?";
         return getLongCountInvoice(sql, args);
     }
 
@@ -429,7 +429,7 @@ public class DataInvoiceSource extends DataSource {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT COUNT(*)" +
                 " FROM " + table +
-                " WHERE id_fak=?";
+                " WHERE " + ID_FAK + "=?";
         return getLongCountInvoice(sql, args);
     }
 
@@ -487,6 +487,7 @@ public class DataInvoiceSource extends DataSource {
 
     /**
      * Najde nejvyšší hodnotu NT záznamu faktury
+     *
      * @param idFak id faktury
      * @param table jméno tabulky
      * @return double hodnota NT
@@ -521,7 +522,8 @@ public class DataInvoiceSource extends DataSource {
     /**
      * Provede sql příkaz s argumentem a vrátí první výsledek jako double
      * Vhodné pro agregační funkce
-     * @param sql sql příkaz
+     *
+     * @param sql  sql příkaz
      * @param args argumenty
      * @return double hodnota
      */
