@@ -39,6 +39,16 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_month.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_import_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -89,6 +99,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_hdo.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_import_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -104,7 +119,17 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_invoice_sum.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_payment.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -150,7 +175,28 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Deaktivace tlačítka na změnu čísla faktury u období bez faktury">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListSumModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceSumModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphDashBoardView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/InvoiceSumAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPDashBoard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable-night/shape_border.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/shape_border.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_invoice_sum.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/payment/PaymentAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/payment/PaymentAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/Calculation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/Calculation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -216,8 +262,8 @@
         <option value="valueResourceFile" />
         <option value="Enum" />
         <option value="Interface" />
-        <option value="resourceFile" />
         <option value="layoutResourceFile" />
+        <option value="resourceFile" />
         <option value="Class" />
       </list>
     </option>
@@ -278,6 +324,7 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphDashBoardView.java_SELECTED": "GraphDashBoardView",
     "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java_SELECTED": "GraphColorView",
     "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/NastavBarvuView.java_SELECTED": "GraphColorView",
     "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED": "GraphMonthView",
@@ -295,6 +342,7 @@
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED": "View",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED": "ViewGroup",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AdapterView.java_SELECTED": "AdapterView",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED": "Button",
     "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED": "TextView",
     "cf.first.check.clang-format": "false",
@@ -302,7 +350,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
+    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/res/drawable-night",
     "project.structure.last.edited": "Variables",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -316,6 +364,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable-night" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app" />
     </key>
@@ -820,7 +869,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="121" />
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -894,7 +943,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Úprava rozvržení tlačítek Zrušit a Ulož.&#10;&#10;Změna zobrazení jen na potřebnou šířku, zarovnání na pravou stranu." />
     <MESSAGE value="Úprava rozvržení přidání/úpravy platby pro režim landscape." />
     <MESSAGE value="Oprava chyby pádu aplikace&#10;Ve fragmentu pro výběr ceníku a nevybrání žádného ceníku, při stisku tlačítka zpět aplikace havarovala. Příčina byla v null parametru pro výběr ceníku. &#10;Přidána podmínka na vybraný ceník." />
     <MESSAGE value="Přídána možnost automaticky přidat zálohovou platbu do aktuálního období.&#10;K tomu účelu je upraveno rozložení, aby se položoky pro přidání platby a volitelných položek skrývaly/zobrazovaly podle volby." />
@@ -919,6 +967,7 @@
     <MESSAGE value="Odstraněné tlačítko pro výběr složky ve fragmentu pro import ceníků. Nahrazeno položkou menu. Stejné menu doplněno do fragmentu pro export ceníků." />
     <MESSAGE value="Přidán fragment Dashboard a vytvořen MyBottomNavigationView, jež rozšiřuje BottomNavigationView na celkem 6 položek, aby bylo možné použít 6. skryté položky. Kvůli tomu, že BottomNavigationView nejde odoznačit všechny položky." />
     <MESSAGE value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
-    <option name="LAST_COMMIT_MESSAGE" value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
+    <MESSAGE value="Deaktivace tlačítka na změnu čísla faktury u období bez faktury" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deaktivace tlačítka na změnu čísla faktury u období bez faktury" />
   </component>
 </project>

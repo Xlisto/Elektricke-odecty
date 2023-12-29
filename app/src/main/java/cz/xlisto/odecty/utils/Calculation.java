@@ -187,6 +187,24 @@ public class Calculation {
     /**
      * Vypočítá rozdíl mezi dvěma daty. Výsledek je v měsících.
      *
+     * @param date1    První datum jako číslo long
+     * @param date2    Druhé datum jako číslo long
+     * @param typeDate Typ výpočtu podle použití měsíční odečty/fakturace (používá se rozdíl jednoho dne    )
+     * @return double - rozdíl mezi daty v měsících zaokrouhlený na tři desetinná místa
+     */
+    public static double differentMonth(long date1, long date2, DifferenceDate.TypeDate typeDate){
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTimeInMillis(date1);
+        cal2.setTimeInMillis(date2);
+        DifferenceDate differenceDate = new DifferenceDate(cal1, cal2, typeDate);
+        return Round.round(differenceDate.getMonth(), 3);
+    }
+
+
+    /**
+     * Vypočítá rozdíl mezi dvěma daty. Výsledek je v měsících.
+     *
      * @param date1    První datum ve formátu dd.MM.yyyy
      * @param date2    Druhé datum ve formátu dd.MM.yyyy
      * @param typeDate Typ výpočtu podle použití měsíční odečty/fakturace (používá se rozdíl jednoho dne    )
@@ -195,8 +213,7 @@ public class Calculation {
     public static double differentMonth(String date1, String date2, DifferenceDate.TypeDate typeDate) {
         Calendar cal1 = ViewHelper.parseCalendarFromString(date1);
         Calendar cal2 = ViewHelper.parseCalendarFromString(date2);
-        DifferenceDate differenceDate = new DifferenceDate(cal1, cal2, typeDate);
-        return Round.round(differenceDate.getMonth(), 3);
+        return differentMonth(cal1.getTimeInMillis(), cal2.getTimeInMillis(), typeDate);
     }
 
 

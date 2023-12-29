@@ -325,7 +325,7 @@
     <string name="float_price">%.2f Kč</string>
     <string name="fixed_salary">St. plat, jist. a op. trhu: %.2f Kč</string>
     <string name="poze">POZE (OZE): %.2f Kč</string>
-    <string name="other_service">%s Kč</string>
+    <string name="string_with_kc">%s Kč</string>
     <string name="sum">"Součet: %.2f Kč"</string>
     <string name="total">"Celkem: %s Kč bez DPH"</string>
     <string name="total_with_tax">%s Kč s DPH</string>
@@ -350,6 +350,8 @@
     <string name="balance">Bilance: %.2f Kč</string>
     <string name="text_amount">%.3f %s</string>
     <string name="text_price_unit">%.2f Kč/%s</string>
+    <string name="number_sum_invoce">Faktura: %d</string>
+    <string name="date_sum_invoce">%s - %s</string>
 
     <string name="btn_description_date_cut">Datum rozdělení</string>
     <string name="slider_description_date_cut">Rozdělení podle data</string>
@@ -358,5 +360,18 @@
 
     <string name="error">Chyba</string>
     <string name="date_is_not_correct">Datum (%s) nesmí překročit datum v prvním záznamu v období bez faktury</string>
+    <string name="show_total_consuption">Celková spotřeba</string>
+    <string name="vt_consuption">VT: %.2f kWh</string>
+    <string name="vt_text_consuption">VT: %.2f kWh, průměrně: %.2f kWh/měsíc</string>
+    <string name="nt_consuption">NT: %.2f kWh</string>
+    <string name="nt_text_consuption">NT: %.2f kWh, průměrně: %.2f kWh/měsíc</string>
+    <string name="total_consuption">%.2f kWh</string>
+    <string name="total_text_consuption">%.2f kWh, průměrně: %.2f kWh/měsíc</string>
+    <string name="no_invoices">Žádné faktury k zobrazení</string>
+
+    <string name="btn_left_content_description_sum_invoices">Zobrazí souhrnné faktury předchozího místa</string>
+    <string name="btn_right_content_description_sum_invoices">Zobrazí souhrnné faktury následujícího místa</string>
+
+
 
 </resources>

@@ -84,8 +84,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         PaymentModel payment = items.get(position);
         holder.tvDate.setText(ViewHelper.convertLongToDate(payment.getDate()));
-        holder.tvPayment.setText(DecimalFormatHelper.df2.format(payment.getPayment()) + " kč");
-        holder.tvType.setText("" + payment.getTypePaymentString());
+        holder.tvPayment.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(payment.getPayment())));
+        holder.tvType.setText(payment.getTypePaymentString());
         PaymentModel.getDiscountDPHText(payment.getDiscountDPH(), holder.tvDescription);
 
         holder.rlPaymentOut.setOnClickListener(v1 -> {
@@ -160,6 +160,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         else
             holder.lnButtons.setVisibility(View.GONE);
     }
+
 
     public static void resetShowButtons() {
         showButtons = -1;

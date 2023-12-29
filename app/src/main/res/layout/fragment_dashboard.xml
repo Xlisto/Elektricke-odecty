@@ -3,4 +3,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageButton
+        android:id="@+id/imgBtnLeftDashBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:contentDescription="@string/btn_left_content_description_sum_invoices"
+        android:src="@mipmap/ic_graph_month_left" />
+
+    <ImageButton
+        android:id="@+id/imgBtnRightDashBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@android:color/transparent"
+        android:contentDescription="@string/btn_right_content_description_sum_invoices"
+        android:src="@mipmap/ic_graph_month_right" />
+
+    <TextView
+        android:id="@+id/tvNameDashBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/swShowTotalConsuption"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="false"
+        android:layout_centerVertical="false"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvInvoiceSum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/swShowTotalConsuption"
+        android:background="@drawable/shape_border" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swShowTotalConsuption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgBtnRightDashBoard"
+        android:text="@string/show_total_consuption" />
+
+    <TextView
+        android:id="@+id/tvNoInvoices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/rvInvoiceSum"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="90dp"
+        android:text="@string/no_invoices"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spSortInvoiceSum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/imgBtnRightDashBoard"
+        android:minHeight="48dp"
+        android:minWidth="48dp" />
+
 </RelativeLayout>

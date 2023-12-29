@@ -90,14 +90,13 @@ public class GraphMonthView extends View {
 
 
     private void init() {
-        //invalidate();
         setSaveEnabled(true);
         animated();
     }
 
 
     /**
-     * Called when the view should render its content.
+     * Voláno, když má zobrazení vykreslit svůj obsah.
      *
      * @param canvas the canvas on which the background will be drawn
      */

@@ -29,4 +29,10 @@
         <attr name="separator" format="boolean"/>
         <attr name="visibleDifferent" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="GraphDashBoardView">
+        <attr name="consuptionMax" format="float"/>
+        <attr name="consuption" format="float"/>
+        <attr name="colorGraph" format="color"/>
+    </declare-styleable>
 </resources>

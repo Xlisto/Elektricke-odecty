@@ -7,13 +7,16 @@ import android.database.Cursor;
 import java.util.ArrayList;
 
 import cz.xlisto.odecty.models.InvoiceListModel;
+import cz.xlisto.odecty.models.InvoiceListSumModel;
 import cz.xlisto.odecty.models.InvoiceModel;
+import cz.xlisto.odecty.models.InvoiceSumModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 
 import static cz.xlisto.odecty.databaze.DbHelper.CENIK_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_FAK;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_FROM;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_UNTIL;
+import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.DATUM_PLATBY;
 import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
 import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
@@ -23,6 +26,7 @@ import static cz.xlisto.odecty.databaze.DbHelper.ODBER_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_INVOICES;
 import static cz.xlisto.odecty.databaze.DbHelper.VT;
 import static cz.xlisto.odecty.databaze.DbHelper.VT_KON;
+
 
 /**
  * Přístup k databázi faktur
@@ -68,7 +72,6 @@ public class DataInvoiceSource extends DataSource {
     public void updateInvoiceList(String number, long id) {
         database.update(TABLE_NAME_INVOICES, createContentValue(number),
                 "_id=?", new String[]{String.valueOf(id)});
-
     }
 
 
@@ -114,8 +117,6 @@ public class DataInvoiceSource extends DataSource {
             invoices.add(new InvoiceListModel(cursor.getLong(0), cursor.getString(1), minDate, maxDate, countPayments, countReads, minVt, maxVt, minNt, maxNt));
         }
         cursor.close();
-
-
         return invoices;
     }
 
@@ -160,7 +161,6 @@ public class DataInvoiceSource extends DataSource {
         }
         cursor.close();
         return invoice;
-
     }
 
 
@@ -415,6 +415,73 @@ public class DataInvoiceSource extends DataSource {
                 " FROM " + table +
                 " WHERE " + ID_FAK + "=?";
         return getLongCountInvoice(sql, args);
+    }
+
+
+    public InvoiceListSumModel getListSumInvoices() {
+        InvoiceListSumModel invoiceListSumModel = new InvoiceListSumModel();
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+
+        ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
+        for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
+            double[] maxVTNT = getMaxSumInvoices(subscriptionPointModel.getTableFAK());
+            invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK()),
+                    subscriptionPointModel.getName(),maxVTNT);
+        }
+        dataSubscriptionPointSource.close();
+        return invoiceListSumModel;
+    }
+
+
+    /**
+     * Provede součet záznamů ve fakturách s seřadí je podle datumu od
+     *
+     * @param table jméno tabulky
+     * @return ArrayList<InvoiceSumModel> seznam součtu spotřeby faktur
+     */
+    public ArrayList<InvoiceSumModel> getSumInvoices(String table) {
+        String sql = "SELECT F." + ID_FAK + ",K." + CISLO_FAK + ", MIN(F." + COLUMN_DATE_FROM + "),MAX(F." + COLUMN_DATE_UNTIL
+                + "),SUM(F." + VT_KON + "-F." + VT + ") as total_vt, SUM(F." + NT_KON + "-F." + NT + ") as total_nt " +
+                "FROM " + table + " F " +
+                "JOIN faktury K ON F." + ID_FAK + " = K." + COLUMN_ID + " " +
+                "GROUP BY " + ID_FAK + " " +
+                "ORDER BY MIN(F." + COLUMN_DATE_FROM + ") DESC";
+        Cursor cursor = database.rawQuery(sql, null);
+        ArrayList<InvoiceSumModel> sumInvoices = new ArrayList<>();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+            sumInvoices.add(new InvoiceSumModel(cursor.getLong(0), //id faktury
+                    cursor.getLong(1), //číslo faktury
+                    cursor.getLong(2), //datum od
+                    cursor.getLong(3), //datum do
+                    cursor.getDouble(4), //součet VT
+                    cursor.getDouble(5)));//součet NT
+        }
+        cursor.close();
+        return sumInvoices;
+    }
+
+
+    /**
+     * Provede součet spotřeby ve fakturách a vrátí nejvyšší hodnoty vt a nt
+     *
+     * @param table jméno tabulky
+     */
+    public double[] getMaxSumInvoices(String table) {
+        String sql = "SELECT MAX(subquery.total_vt) as max_total_vt, MAX(subquery.total_nt) as max_total_nt " +
+                "FROM ( " +
+                "SELECT SUM(" + VT_KON + "-" + VT + ") as total_vt, SUM(" + NT_KON + "-" + NT + ") as total_nt " +
+                "FROM " + table + " " +
+                "GROUP BY " + ID_FAK + " " +
+                "ORDER BY " + COLUMN_DATE_FROM + " DESC " +
+                ") as subquery;";
+        Cursor cursor = database.rawQuery(sql, null);
+        cursor.moveToFirst();
+        double maxTotalVT = cursor.getDouble(0);
+        double maxTotalNT = cursor.getDouble(1);
+        cursor.close();
+        return new double[]{maxTotalVT, maxTotalNT};
     }
 
 

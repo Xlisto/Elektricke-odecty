@@ -5,7 +5,9 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 
+
 /**
+ * Model jednoho záznamu pro fakturu
  * Xlisto 02.02.2023 3:40
  */
 public class InvoiceModel {
@@ -25,10 +27,12 @@ public class InvoiceModel {
     private final boolean isChangedElectricMeter;
     private TypePoze typePoze;
 
+
     public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
         this(dateOf, dateTo, vtStart, vtEnd, ntStart, ntEnd, idInvoice, idPriceList, otherServices, numberInvoice, isChangedElectricMeter);
         this.id = id;
     }
+
 
     public InvoiceModel(long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
         this.dateFrom = dateOf;
@@ -44,91 +48,113 @@ public class InvoiceModel {
         this.isChangedElectricMeter = isChangedElectricMeter;
     }
 
+
     public long getId() {
         return id;
     }
+
 
     public long getDateFrom() {
         return dateFrom;
     }
 
+
     public long getDateTo() {
         return dateTo;
     }
+
 
     public double getVtStart() {
         return vtStart;
     }
 
+
     public double getVtEnd() {
         return vtEnd;
     }
+
 
     public double getNtStart() {
         return ntStart;
     }
 
+
     public double getNtEnd() {
         return ntEnd;
     }
+
 
     public long getIdPriceList() {
         return idPriceList;
     }
 
+
     public long getIdInvoice() {
         return idInvoice;
     }
+
 
     public double getOtherServices() {
         return otherServices;
     }
 
+
     public String getNumberInvoice() {
         return numberInvoice;
     }
+
 
     public TypePoze getTypePoze() {
         return typePoze;
     }
 
+
     public void setId(long id) {
         this.id = id;
     }
+
 
     public void setIdPriceList(long idPriceList) {
         this.idPriceList = idPriceList;
     }
 
+
     /**
      * Spotřeba vysokého tarifu
+     *
      * @return double spotřeba vysokého tarifu
      */
-    public double getVt(){
-        return vtEnd-vtStart;
+    public double getVt() {
+        return vtEnd - vtStart;
     }
+
 
     /**
      * Spotřeba nízského tarifu
+     *
      * @return double spotřeba nízského tarifu
      */
-    public double getNt(){
-        return ntEnd-ntStart;
+    public double getNt() {
+        return ntEnd - ntStart;
     }
+
 
     /**
      * Spotřeba vysokého a nízského tarifu
+     *
      * @return double spotřeba vysokého a nízského tarifu
      */
-    public double getVtNt(){
-        return getVt()+getNt();
+    public double getVtNt() {
+        return getVt() + getNt();
     }
+
 
     /**
      * Rozdíl mezi datumy v měsících
+     *
      * @return double rozdíl mezi datumy v měsících
      */
-    public double getDifferentDate(DifferenceDate.TypeDate type){
+    public double getDifferentDate(DifferenceDate.TypeDate type) {
         String dateOf = ViewHelper.convertLongToDate(getDateFrom());
         String dateTo = ViewHelper.convertLongToDate(getDateTo());
         return Calculation.differentMonth(dateOf, dateTo, type);
@@ -137,31 +163,38 @@ public class InvoiceModel {
 
     /**
      * Zda byl změněn elektroměr
+     *
      * @return true pokud byl změněn elektroměr
      */
     public boolean isChangedElectricMeter() {
         return isChangedElectricMeter;
     }
 
+
     public void setDateFrom(long dateOf) {
         this.dateFrom = dateOf;
     }
+
 
     public void setDateTo(long dateTo) {
         this.dateTo = dateTo;
     }
 
+
     public void setVtStart(double vtStart) {
         this.vtStart = vtStart;
     }
+
 
     public void setVtEnd(double vtEnd) {
         this.vtEnd = vtEnd;
     }
 
+
     public void setNtStart(double ntStart) {
         this.ntStart = ntStart;
     }
+
 
     public void setNtEnd(double ntEnd) {
         this.ntEnd = ntEnd;
@@ -187,6 +220,7 @@ public class InvoiceModel {
                 ", typePoze=" + typePoze +
                 '}';
     }
+
 
     enum TypePoze {
         POZE1,

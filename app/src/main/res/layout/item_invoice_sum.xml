@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="2dp"
+    android:background="@drawable/shape_monthly_reading_gray">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvSumInvoceNumber"
+        android:background="@drawable/shape_item">
+
+        <cz.xlisto.odecty.modules.dashboard.GraphDashBoardView
+            android:id="@+id/graphDashBoardViewVT"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_toStartOf="@id/tvVTConsuption"
+            app:colorGraph="@color/color_no"
+            app:consuption="30" />
+
+        <cz.xlisto.odecty.modules.dashboard.GraphDashBoardView
+            android:id="@+id/graphDashBoardViewNT"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_below="@id/graphDashBoardViewVT"
+            android:layout_toStartOf="@id/tvNTConsuption"
+            app:colorGraph="#012893" />
+
+        <TextView
+            android:id="@+id/tvVTConsuption"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/graphDashBoardViewVT"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="7dp"
+            android:gravity="end"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvNTConsuption"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/graphDashBoardViewNT"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="7dp"
+            android:gravity="end"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvSumInvoceNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvSumInvoceDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/tvSumInvoceNumber"
+        android:gravity="end"
+        android:textSize="14sp" />
+</RelativeLayout>

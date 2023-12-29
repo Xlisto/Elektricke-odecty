@@ -219,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
         } else {
             actualFragment = MonthlyReadingFragment.newInstance();
-            myBottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
+            //myBottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
+            myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+            shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
 
@@ -252,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
 

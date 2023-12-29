@@ -177,7 +177,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.ntPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(ntTotal)));
         holder.tvPayment.setText(context.getResources().getString(R.string.fixed_salary,paymentTotal));
         holder.tvPOZE.setText(context.getResources().getString(R.string.poze, poze));
-        holder.tvOtherServices.setText(context.getResources().getString(R.string.other_service, DecimalFormatHelper.df2.format(otherServices)));
+        holder.tvOtherServices.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(otherServices)));
 
         double total = vtTotal + ntTotal + paymentTotal + poze + otherServices;
         double totalDPH = total + (total * priceList.getDph() / 100);
