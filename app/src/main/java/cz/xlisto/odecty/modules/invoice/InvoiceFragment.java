@@ -277,6 +277,7 @@ public class InvoiceFragment extends Fragment {
             price[1] *= nt;
             price[2] *= differentDate;
 
+            //TODO předělat objekt POZE, aby obsahoval tuto podmínku, stejná je v Calculation, možná komplet výpočet přesunout do Calculation
             //poze počítá podle typu, který se vybere podle celkové spotřeby na faktuře
             if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {
                 if(priceList.getRokPlatnost() < NEW_POZE_YEAR){

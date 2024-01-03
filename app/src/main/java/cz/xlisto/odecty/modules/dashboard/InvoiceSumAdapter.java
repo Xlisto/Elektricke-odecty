@@ -33,7 +33,7 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvSum, tvDate, tvVtConsuption, tvNtConsuption;
-        GraphDashBoardView graphDashBoardViewVT, graphDashBoardViewNT;
+        GraphConsuptionInvoiceGraphView graphConsuptionInvoiceGraphViewVT, graphConsuptionInvoiceGraphViewNT;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,8 +60,8 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
         vh.tvDate = v.findViewById(R.id.tvSumInvoceDate);
         vh.tvVtConsuption = v.findViewById(R.id.tvVTConsuption);
         vh.tvNtConsuption = v.findViewById(R.id.tvNTConsuption);
-        vh.graphDashBoardViewVT = v.findViewById(R.id.graphDashBoardViewVT);
-        vh.graphDashBoardViewNT = v.findViewById(R.id.graphDashBoardViewNT);
+        vh.graphConsuptionInvoiceGraphViewVT = v.findViewById(R.id.graphDashBoardViewVT);
+        vh.graphConsuptionInvoiceGraphViewNT = v.findViewById(R.id.graphDashBoardViewNT);
         return vh;
     }
 
@@ -78,25 +78,25 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
         double averageNT = is.getTotalNT()/dif;
         double averageTotal = is.getTotal()/dif;
 
-        holder.graphDashBoardViewVT.setConsuption(is.getTotalVT());
-        holder.graphDashBoardViewVT.setConsuptionMax(max);
-        holder.graphDashBoardViewVT.setColorGraph(colorVT);
-        holder.graphDashBoardViewVT.setConsuption(context.getResources().getString(R.string.vt_text_consuption,is.getTotalVT(),averageVT));
+        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(is.getTotalVT());
+        holder.graphConsuptionInvoiceGraphViewVT.setConsuptionMax(max);
+        holder.graphConsuptionInvoiceGraphViewVT.setColorGraph(colorVT);
+        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(context.getResources().getString(R.string.vt_text_consuption,is.getTotalVT(),averageVT));
         holder.tvVtConsuption.setText(context.getResources().getString(R.string.vt_consuption, is.getTotalVT()));
 
         if (isShowTotal) {
-            holder.graphDashBoardViewVT.setConsuption(is.getTotal());
-            holder.graphDashBoardViewVT.setConsuption(context.getResources().getString(R.string.total_text_consuption,is.getTotal(),averageTotal));
+            holder.graphConsuptionInvoiceGraphViewVT.setConsuption(is.getTotal());
+            holder.graphConsuptionInvoiceGraphViewVT.setConsuption(context.getResources().getString(R.string.total_text_consuption,is.getTotal(),averageTotal));
             holder.tvVtConsuption.setText(context.getResources().getString(R.string.total_consuption, is.getTotal()));
-            holder.graphDashBoardViewNT.setVisibility(View.GONE);
+            holder.graphConsuptionInvoiceGraphViewNT.setVisibility(View.GONE);
             holder.tvNtConsuption.setVisibility(View.GONE);
         }
 
         if(!isShowTotal) {
-            holder.graphDashBoardViewNT.setConsuption(is.getTotalNT());
-            holder.graphDashBoardViewNT.setConsuptionMax(max);
-            holder.graphDashBoardViewNT.setColorGraph(colorNT);
-            holder.graphDashBoardViewNT.setConsuption(context.getResources().getString(R.string.nt_text_consuption,is.getTotalNT(),averageNT));
+            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(is.getTotalNT());
+            holder.graphConsuptionInvoiceGraphViewNT.setConsuptionMax(max);
+            holder.graphConsuptionInvoiceGraphViewNT.setColorGraph(colorNT);
+            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(context.getResources().getString(R.string.nt_text_consuption,is.getTotalNT(),averageNT));
             holder.tvNtConsuption.setText(context.getResources().getString(R.string.nt_consuption, is.getTotalNT()));
         }
     }

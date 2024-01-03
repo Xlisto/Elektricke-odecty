@@ -41,6 +41,9 @@ public class DashBoardFragment extends Fragment {
     private boolean isShowTotal = false;
     private int[] colorVTNT;
     private InvoiceListSumModel invoiceListSumModel;
+    private GraphTotalConsuptionView graphTotalConsuptionView;
+    private double previousPayment = 0;
+    private double previousConsuption = 0;
 
 
     public static DashBoardFragment newInstance() {
@@ -65,6 +68,7 @@ public class DashBoardFragment extends Fragment {
         SwitchCompat swShowTotalConsuption = view.findViewById(R.id.swShowTotalConsuption);
         tvNoInvoices = view.findViewById(R.id.tvNoInvoices);
         spSort = view.findViewById(R.id.spSortInvoiceSum);
+        graphTotalConsuptionView = view.findViewById(R.id.graphTotalConsuptionView);
 
         ShPDashBoard shPDashBoard = new ShPDashBoard(requireActivity());
         shPDashBoard.get(ShPDashBoard.IS_SHOW_TOTAL, false);
@@ -83,6 +87,7 @@ public class DashBoardFragment extends Fragment {
                 showInvoiceSum--;
                 shPDashBoard.set(ShPDashBoard.SHOW_INVOICE_SUM, showInvoiceSum);
                 setAdapter();
+                setGraphTotalConsuptionView();
             }
         });
 
@@ -91,6 +96,7 @@ public class DashBoardFragment extends Fragment {
                 showInvoiceSum++;
                 shPDashBoard.set(ShPDashBoard.SHOW_INVOICE_SUM, showInvoiceSum);
                 setAdapter();
+                setGraphTotalConsuptionView();
             }
         });
 
@@ -129,7 +135,9 @@ public class DashBoardFragment extends Fragment {
         dataInvoiceSource.open();
         invoiceListSumModel = dataInvoiceSource.getListSumInvoices();
         dataInvoiceSource.close();
+
         setAdapter();
+        setGraphTotalConsuptionView();
     }
 
 
@@ -141,7 +149,6 @@ public class DashBoardFragment extends Fragment {
         double max = invoiceListSumModel.getMaxValue(showInvoiceSum);
         if (isShowTotal)
             max = invoiceListSumModel.getMaxValueTotal(showInvoiceSum);
-
 
         InvoiceSumAdapter invoiceSumAdapter = new InvoiceSumAdapter(requireContext(), invoiceListSumModel.getInvoiceSumModels(showInvoiceSum), colorVTNT,
                 max, isShowTotal);
@@ -236,6 +243,19 @@ public class DashBoardFragment extends Fragment {
                 break;
         }
 
+    }
+
+
+    /**
+     * Nastaví spotřebu a platby do GraphTotalConsuptionView
+     */
+    private void setGraphTotalConsuptionView() {
+        double payment = invoiceListSumModel.getInvoiceSumPayments(showInvoiceSum);
+        double consuption = invoiceListSumModel.getInvoiceSumTotalPrices(showInvoiceSum);
+        graphTotalConsuptionView.setPayment(payment, previousPayment);
+        graphTotalConsuptionView.setConsuption(consuption, previousConsuption);
+        previousConsuption = consuption;
+        previousPayment = payment;
     }
 
 

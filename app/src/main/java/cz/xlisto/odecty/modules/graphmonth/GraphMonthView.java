@@ -862,7 +862,7 @@ public class GraphMonthView extends View {
         //TODO: Nastavení duration na 0 se vypne animace
         valueAnimator.setDuration(1000L);
 
-        valueAnimator.addUpdateListener(valueAnimator1 -> {
+        valueAnimator.addUpdateListener((ValueAnimator valueAnimator1) -> {
             switch (period) {
                 case 0:
                     for (int j = 0; j < monthlyConsuption.size(); j++) {

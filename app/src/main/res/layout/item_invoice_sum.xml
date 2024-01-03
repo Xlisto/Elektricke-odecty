@@ -15,7 +15,7 @@
         android:layout_below="@id/tvSumInvoceNumber"
         android:background="@drawable/shape_item">
 
-        <cz.xlisto.odecty.modules.dashboard.GraphDashBoardView
+        <cz.xlisto.odecty.modules.dashboard.GraphConsuptionInvoiceGraphView
             android:id="@+id/graphDashBoardViewVT"
             android:layout_width="match_parent"
             android:layout_height="30dp"
@@ -23,7 +23,7 @@
             app:colorGraph="@color/color_no"
             app:consuption="30" />
 
-        <cz.xlisto.odecty.modules.dashboard.GraphDashBoardView
+        <cz.xlisto.odecty.modules.dashboard.GraphConsuptionInvoiceGraphView
             android:id="@+id/graphDashBoardViewNT"
             android:layout_width="match_parent"
             android:layout_height="30dp"

@@ -3,6 +3,7 @@ package cz.xlisto.odecty.databaze;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import cz.xlisto.odecty.models.InvoiceListSumModel;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.InvoiceSumModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.utils.Calculation;
 
 import static cz.xlisto.odecty.databaze.DbHelper.CENIK_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_FAK;
@@ -188,7 +190,7 @@ public class DataInvoiceSource extends DataSource {
         String sql = "SELECT * " +
                 "FROM " + table +
                 " WHERE " + ID_FAK + "=? " +
-                "ORDER BY " + COLUMN_DATE_FROM + "DESC";
+                "ORDER BY " + COLUMN_DATE_FROM + " DESC";
         return oneInvoice(args, sql);
     }
 
@@ -418,16 +420,24 @@ public class DataInvoiceSource extends DataSource {
     }
 
 
+    /**
+     * Vrátí seznam součtů faktur pro jednotlivá odběrná místa
+     * @return InvoiceListSumModel seznam součtů faktur
+     */
     public InvoiceListSumModel getListSumInvoices() {
         InvoiceListSumModel invoiceListSumModel = new InvoiceListSumModel();
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
-
         ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
         for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
             double[] maxVTNT = getMaxSumInvoices(subscriptionPointModel.getTableFAK());
+            double sumPayment = sumPayment(-1L, subscriptionPointModel.getTablePLATBY());
+            ArrayList<InvoiceModel> invoices = loadInvoices(-1L, subscriptionPointModel.getTableTED());
+            double totalPrice = Calculation.getTotalSumInvoice(invoices, subscriptionPointModel, context);
             invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK()),
-                    subscriptionPointModel.getName(),maxVTNT);
+                    subscriptionPointModel.getName(),maxVTNT,sumPayment, totalPrice);
+            Log.w(TAG, "getListSumInvoices: " + totalPrice);
+
         }
         dataSubscriptionPointSource.close();
         return invoiceListSumModel;

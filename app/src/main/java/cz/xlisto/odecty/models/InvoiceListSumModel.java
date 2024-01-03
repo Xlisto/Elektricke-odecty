@@ -9,21 +9,26 @@ import java.util.ArrayList;
 public class InvoiceListSumModel {
     private static final String TAG = "InvoiceListSumModel";
     private final ArrayList<String> names;
-    private final ArrayList<double[]> maxValue;
+    private final ArrayList<double[]> maxValues;
     private final ArrayList<ArrayList<InvoiceSumModel>> invoiceSumModels;
+    private final ArrayList<Double> invoiceSumPayments, invoiceSumTotalPrices;
 
 
     public InvoiceListSumModel() {
+        this.invoiceSumPayments = new ArrayList<>();
         this.names = new ArrayList<>();
-        this.maxValue = new ArrayList<>();
+        this.maxValues = new ArrayList<>();
         this.invoiceSumModels = new ArrayList<>();
+        this.invoiceSumTotalPrices = new ArrayList<>();
     }
 
 
-    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, String name, double[] maxValue) {
+    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, String name, double[] maxValue, double sumPayment, double sumTotalPrice) {
         invoiceSumModels.add(invoiceSumModel);
         names.add(name);
-        this.maxValue.add(maxValue);
+        maxValues.add(maxValue);
+        invoiceSumPayments.add(sumPayment);
+        invoiceSumTotalPrices.add(sumTotalPrice);
     }
 
 
@@ -45,7 +50,7 @@ public class InvoiceListSumModel {
      * @return maximální hodnota
      */
     public double getMaxValue(int index) {
-        return Math.max(maxValue.get(index)[0], maxValue.get(index)[1]);
+        return Math.max(maxValues.get(index)[0], maxValues.get(index)[1]);
     }
 
 
@@ -56,7 +61,7 @@ public class InvoiceListSumModel {
      * @return maximální hodnota celkem VT + NT
      */
     public double getMaxValueTotal(int index) {
-        return maxValue.get(index)[0] + maxValue.get(index)[1];
+        return maxValues.get(index)[0] + maxValues.get(index)[1];
     }
 
 
@@ -78,5 +83,27 @@ public class InvoiceListSumModel {
      */
     public ArrayList<InvoiceSumModel> getInvoiceSumModels(int index) {
         return invoiceSumModels.get(index);
+    }
+
+
+    /**
+     * Vrátí součet plateb
+     *
+     * @param index index v ArrayListu součtů plateb
+     * @return součet plateb
+     */
+    public double getInvoiceSumPayments(int index) {
+        return invoiceSumPayments.get(index);
+    }
+
+
+    /**
+     * Vrátí součet celkové ceny
+     *
+     * @param index index v ArrayListu součtů celkové ceny
+     * @return součet celkové ceny
+     */
+    public double getInvoiceSumTotalPrices(int index) {
+        return invoiceSumTotalPrices.get(index);
     }
 }

@@ -9,6 +9,7 @@ import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PozeModel;
 import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.models.PriceListRegulBuilder;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
@@ -76,10 +77,10 @@ public class Calculation {
             //Výpočet cenaVT+distribuceVT+dan+systemSluzby+OTE (OZE,KVET a DZ (zkráceně POZE) výpočet zvlášť)
             //Výpočet OZE,KVET,DZ (zkráceně POZE) podle spotřeby
             //Výpočet stálé měsíční platby: měsíc * (měsíční plat + cena za jistič)
-            vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby()+priceList.getOte());
-            nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby()+priceList.getOte());
+            vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby() + priceList.getOte());
+            nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby() + priceList.getOte());
             poze = priceList.getOze();
-            stPlat = priceList.getMesicniPlat()  + calculatePriceBreaker(priceList, countPhaze, power);
+            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power);
         } else {
             //Výpočet cenaVT+distribuceVT+dan+systemSluzby
             //Výpočet POZE podle spotřeby
@@ -87,7 +88,7 @@ public class Calculation {
             vt = priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby();
             nt = priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby();
             poze = priceList.getPoze2();
-            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power)+priceList.getCinnost();
+            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power) + priceList.getCinnost();
         }
         return new double[]{vt, nt, stPlat, poze};
     }
@@ -192,7 +193,7 @@ public class Calculation {
      * @param typeDate Typ výpočtu podle použití měsíční odečty/fakturace (používá se rozdíl jednoho dne    )
      * @return double - rozdíl mezi daty v měsících zaokrouhlený na tři desetinná místa
      */
-    public static double differentMonth(long date1, long date2, DifferenceDate.TypeDate typeDate){
+    public static double differentMonth(long date1, long date2, DifferenceDate.TypeDate typeDate) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         cal1.setTimeInMillis(date1);
@@ -275,7 +276,7 @@ public class Calculation {
 
 
     /**
-     * Vypočítá poze u všech položek seznamu (faktury)
+     * Vypočítá celkové poze (podle jističe i podle spotřeby) ze všech položek seznamu (faktury)
      *
      * @param invoices   Seznam faktur
      * @param countPhaze Počet fází
@@ -317,5 +318,47 @@ public class Calculation {
         if (priceList == null)
             priceList = new PriceListModel();
         return priceList;
+    }
+
+
+    /**
+     * Vypočítá celkovou cenu faktur
+     *
+     * @param invoices Seznam faktur
+     * @return double - celková suma faktur
+     */
+    public static double getTotalSumInvoice(ArrayList<InvoiceModel> invoices, SubscriptionPointModel subscriptionPoint, Context context) {
+        double sum = 0;
+        for (int i = 0; i < invoices.size(); i++) {
+            PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(getPriceList(invoices.get(i), context));
+            PriceListModel priceList = priceListRegulBuilder.getRegulPriceList();
+            PozeModel poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), context);
+
+            double vtConsuption = invoices.get(i).getVt();//nastavení spotřeby VT
+            double ntConsuption = invoices.get(i).getNt();//nastavení spotřeby NT
+            double differentMonth = differentMonth(invoices.get(i).getDateFrom(), invoices.get(i).getDateTo(), DifferenceDate.TypeDate.INVOICE);//nastavení počtu měsíců
+
+            double[] price = calculatePriceWithoutPozeMwH(priceList, subscriptionPoint);//vt, nt, stPlat, poze
+
+            //poze počítá podle typu, který se vybere podle celkové spotřeby na faktuře
+            double pozePrice;
+            //TODO předělat objekt POZE, aby obsahoval tuto podmínku, stejná je v InvoiceFragment
+            if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {
+                if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+                    pozePrice = (vtConsuption + ntConsuption) * priceList.getOze() / 1000;//poze dle spotřeby starší ceník
+                } else {
+                    pozePrice = (vtConsuption + ntConsuption) * priceList.getPoze2() / 1000;//poze dle spotřeby novější ceník
+                }
+            } else {
+                pozePrice = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentMonth * priceList.getPoze1();//poze dle jističe
+            }
+
+            double vtPrice = vtConsuption * price[0] / 1000;
+            double ntPrice = ntConsuption * price[1] / 1000;
+            double stPlat = differentMonth * price[2];
+
+            sum += (vtPrice + ntPrice + stPlat + pozePrice + ((vtPrice + ntPrice + stPlat + pozePrice) * priceList.getDph() / 100));
+        }
+        return sum;
     }
 }

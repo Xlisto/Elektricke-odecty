@@ -147,6 +147,22 @@ public class DataSubscriptionPointSource extends DataSource{
     }
 
 
+    /** Sečte platby jedné faktury
+     * @param idFak id faktury
+     * @param table jméno tabulky
+     * @return součet plateb
+     */
+    public double loadSumPayment(long idFak, String table){
+        String selection = "id_fak=?";
+        String[] args = new String[]{String.valueOf(idFak)};
+        Cursor cursor = database.query(table, new String[]{"SUM(castka)"}, selection, args, null, null, null);
+        cursor.moveToFirst();
+        double sum = cursor.getDouble(0);
+        cursor.close();
+        return sum;
+    }
+
+
     /**
      * Načte seznam zálohových plateb
      *

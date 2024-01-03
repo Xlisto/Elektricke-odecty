@@ -137,6 +137,9 @@ public class WithOutInvoiceService {
      * @return boolean true - datum je v pořádku (menší), false - datum je chybné (větší)
      */
     public static boolean checkDateFirstItemInvoice(Context context, InvoiceModel itemEditedInvoice) {
+        //když upravuji záznam bezfaktury - tuto podmínku vyřazuji
+        if(itemEditedInvoice.getIdInvoice() == -1L)
+            return true;
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
         InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
