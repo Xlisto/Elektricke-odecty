@@ -266,7 +266,7 @@
     <string name="load_time">Načti časy</string>
     <string name="save_time">Ulož HDO časy</string>
     <string name="save_to_clipboard">Ulož do schránky</string>
-    <string name="code_example">a1b1dp1</string>
+    <string name="code_example">a1b1dp2</string>
     <string name="hdo_code">HDO kód:</string>
     <string name="a">A</string>
     <string name="b">B</string>
