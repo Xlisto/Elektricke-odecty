@@ -352,6 +352,7 @@
     <string name="text_price_unit">%.2f Kč/%s</string>
     <string name="number_sum_invoce">Faktura: %d</string>
     <string name="date_sum_invoce">%s - %s</string>
+    <string name="power">%d x %d A"</string>
 
     <string name="btn_description_date_cut">Datum rozdělení</string>
     <string name="slider_description_date_cut">Rozdělení podle data</string>

@@ -56,6 +56,7 @@ public class SubscriptionPointFragment extends Fragment {
     public SubscriptionPointFragment() {
     }
 
+
     /**
      * Fragment zobrazení odběrných míst
      *
@@ -132,6 +133,7 @@ public class SubscriptionPointFragment extends Fragment {
                 HdoData.loadHdoData(requireActivity());
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -162,7 +164,7 @@ public class SubscriptionPointFragment extends Fragment {
         itemId = subscriptionPoint.getId();
         milins = subscriptionPoint.getMilins();
         tvDescription.setText(subscriptionPoint.getDescription());
-        tvPhaze.setText(subscriptionPoint.getCountPhaze() + " x " + subscriptionPoint.getPhaze() + "A");
+        tvPhaze.setText(getResources().getString(R.string.power, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze()));
         tvNumberElectricMeter.setText(subscriptionPoint.getNumberElectricMeter());
         tvNumberSubscriptionPoint.setText(subscriptionPoint.getNumberSubscriptionPoint());
     }
@@ -174,6 +176,7 @@ public class SubscriptionPointFragment extends Fragment {
     private void edit() {
         FragmentChange.replace(requireActivity(), SubscriptionPointEditFragment.newInstance(itemId), MOVE, true);
     }
+
 
     /**
      * Zobrazí dialogové okno s dotazem na smazání
@@ -201,6 +204,7 @@ public class SubscriptionPointFragment extends Fragment {
 
         onResume();
     }
+
 
     /**
      * Při žádném odběrném místě zobrazí výzvu k založení nového místa
