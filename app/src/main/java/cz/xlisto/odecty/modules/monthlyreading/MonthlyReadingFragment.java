@@ -46,7 +46,6 @@ public class MonthlyReadingFragment extends Fragment {
     private final String FROM = "from";
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
-    private TextView tvSubscriptionPointName;
     private TextView tvAlert, tvMonthlyReadingFilter;
     private RecyclerView rv;
     private SwitchMaterial swSimplyView, swRegulPrice;
@@ -87,10 +86,8 @@ public class MonthlyReadingFragment extends Fragment {
                     tvMonthlyReadingFilter.setText(getResources().getString(R.string.show_period, ViewHelper.convertLongToDate(from), ViewHelper.convertLongToDate(to)));
                     if(from == 0 && to == Long.MAX_VALUE){
                         tvMonthlyReadingFilter.setVisibility(View.GONE);
-                        tvSubscriptionPointName.setVisibility(View.VISIBLE);
                     } else {
                         tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
-                        tvSubscriptionPointName.setVisibility(View.GONE);
                     }
                     loadDataFromDatabase();
                 });
@@ -115,14 +112,11 @@ public class MonthlyReadingFragment extends Fragment {
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
 
         fab = view.findViewById(R.id.fab);
-        tvSubscriptionPointName = view.findViewById(R.id.tvSubscriptionPointName);
         swSimplyView = view.findViewById(R.id.swSimplyView);
         swRegulPrice = view.findViewById(R.id.swRegulPrice);
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
-
-        tvSubscriptionPointName.setText("");
 
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
@@ -239,7 +233,6 @@ public class MonthlyReadingFragment extends Fragment {
     private void showFab() {
         if (subscriptionPoint != null) {
             fab.setVisibility(View.VISIBLE);
-            tvSubscriptionPointName.setText(subscriptionPoint.getName());
         } else {
             fab.setVisibility(View.GONE);
         }

@@ -16,15 +16,6 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/tvSubscriptionPointName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="5dp"
-        android:layout_below="@+id/tvMonthlyReadingFilter"
-        android:layout_toStartOf="@id/swSimplyView" />
-
-    <TextView
         android:id="@+id/tvAlertMonthlyReading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,7 +45,7 @@
         android:id="@+id/swRegulPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvSubscriptionPointName"
+        android:layout_below="@id/tvMonthlyReadingFilter"
         android:layout_marginStart="5dp"
         android:elegantTextHeight="false"
         android:foregroundGravity="left"
@@ -68,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/tvSubscriptionPointName"
+        android:layout_below="@id/tvMonthlyReadingFilter"
         android:layout_marginEnd="5dp"
         android:minHeight="48dp"
         android:text="@string/zjednodusene_zobrazeni" />

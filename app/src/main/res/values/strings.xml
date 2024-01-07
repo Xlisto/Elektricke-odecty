@@ -212,8 +212,8 @@
     <string name="backup1">Záloha</string>
     <string name="graph_month">Měsíční graf</string>
     <string name="graph_color">Barva tarifu</string>
-    <string name="import_price_list">Import samostatných ceníků</string>
-    <string name="export_price_list">Export samostatných ceníků</string>
+    <string name="import_price_list">Import ceníků</string>
+    <string name="export_price_list">Export ceníků</string>
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
     <string name="watch_low_tarif">Sledování nízského tarifu</string>
@@ -254,7 +254,7 @@
     <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
     <string name="contentdescription_nt_color">Nastavení barvy nízského tarifu</string>
-    <string name="set_color_html">Nastavení barvy podle notace HTML </string>
+    <string name="set_color_html">Nastavení barvy</string>
     <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
     <string name="set">Nastav </string>
 

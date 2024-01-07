@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
     private MyBottomNavigationView myBottomNavigationView;
+    private TextView toolbarTitle, toolbarSubtitle;
     private ShPMainActivity shPMainActivity;
     private int orientation;
     private boolean secondClick = false;
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
         //Horní toolbar + zobrazení tlačítka
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
+        toolbarSubtitle = toolbar.findViewById(R.id.toolbar_subtitle);
+        toolbarSubtitle.setText("Dodatečný text");
 
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_dashboard);
                 actualFragment = DashBoardFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.dashboard));
                 return true;
             }
 
@@ -95,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
                 actualFragment = PriceListFragment.newInstance(false, -1L);
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.price_lists));
                 return true;
             }
 
@@ -103,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.month_reads));
                 return true;
             }
 
@@ -111,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
                 actualFragment = SubscriptionPointFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.subscription_points));
                 return true;
             }
 
@@ -119,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 shPMainActivity.set(ACTUAL_FRAGMENT, -1);
                 actualFragment = InvoiceListFragment.newInstance();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.invoices));
                 return true;
             }
 
@@ -132,22 +142,26 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.menu_dashboard) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
                 actualFragment = DashBoardFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.dashboard));
                 b = true;
             }
             if (itemId == R.id.menu_price_list) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_prices);
                 actualFragment = PriceListFragment.newInstance(false, -1L);
+                setToolbarTitle(getResources().getString(R.string.price_lists));
                 b = true;
             }
             if (itemId == R.id.menu_compare_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = PriceListCompareFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.compare_price_list));
                 b = true;
             }
 
             if (itemId == R.id.menu_monthly_reads) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.month_reads));
                 b = true;
             }
 
@@ -160,42 +174,49 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.menu_invoices) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
                 actualFragment = InvoiceListFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.invoices));
                 b = true;
             }
 
             if (itemId == R.id.menu_hdo) {
                 uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.hdo_times));
                 b = true;
             }
 
             if (itemId == R.id.menu_backup) {
                 uncheckedBottomNavigation();
                 actualFragment = BackupFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.backup1));
                 b = true;
             }
 
             if (itemId == R.id.menu_graph_month) {
                 uncheckedBottomNavigation();
                 actualFragment = GraphMonthFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.graph_month));
                 b = true;
             }
 
             if (itemId == R.id.menu_graph_color) {
                 uncheckedBottomNavigation();
                 actualFragment = cz.xlisto.odecty.modules.graphcolor.GraphColorFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.graph_color));
                 b = true;
             }
 
             if (itemId == R.id.menu_import_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ImportPriceListFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.import_price_list));
                 b = true;
             }
 
             if (itemId == R.id.menu_export_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ExportPriceListFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.export_price_list));
                 b = true;
             }
 
@@ -254,6 +275,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
+        setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
     }
 
 
@@ -339,7 +363,28 @@ public class MainActivity extends AppCompatActivity {
      * @param id id položky
      */
     public void onCheckedNavigationItem(int id) {
-        Log.w(TAG, "onCheckedNavigationItem: " + id);
         myBottomNavigationView.setSelectedItemId(id);
+    }
+
+
+    /**
+     * Nastaví titulek toolbaru
+     *
+     * @param title titulek
+     */
+    private void setToolbarTitle(String title) {
+        shPMainActivity.set(ShPMainActivity.PRIMARY_TITLE, title);
+        toolbarTitle.setText(title);
+    }
+
+
+    /**
+     * Nastaví podtitulek toolbaru
+     *
+     * @param subtitle podtitulek
+     */
+    public void setToolbarSubtitle(String subtitle) {
+        shPMainActivity.set(ShPMainActivity.SECONDARY_TITLE, subtitle);
+        toolbarSubtitle.setText(subtitle);
     }
 }
