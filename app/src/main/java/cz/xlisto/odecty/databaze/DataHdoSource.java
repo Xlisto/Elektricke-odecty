@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import cz.xlisto.odecty.models.HdoModel;
 
 /**
+ * Třída pro přístup k datum HDO
  * Xlisto 26.05.2023 18:52
  */
 public class DataHdoSource extends DataSource {
@@ -20,6 +21,16 @@ public class DataHdoSource extends DataSource {
         dbHelper = new DbHelper(context);
     }
 
+    /**
+     * Načte hdo data z databáze a vyfiltruje je podle sloupce datumOd nebo po,ut,st,ct,pa,so,ne
+     *
+     * @param table Tabulka se záznamy HDO
+     * @return ArrayList<HdoModel>
+     */
+    public ArrayList<HdoModel> loadHdo(String table, String datumOd, int dayOfWeek) {
+        return loadHdo(table, datumOd, dayOfWeek, null);
+    }
+
 
     /**
      * Načte hdo data z databáze
@@ -28,7 +39,7 @@ public class DataHdoSource extends DataSource {
      * @return ArrayList<HdoModel>
      */
     public ArrayList<HdoModel> loadHdo(String table) {
-        return loadHdo(table, null);
+        return loadHdo(table, null, null, null);
     }
 
 
@@ -36,17 +47,61 @@ public class DataHdoSource extends DataSource {
      * Načte hdo data z databáze
      *
      * @param table      Tabulka se záznamy HDO
+     * @param datumOd    String datum platnosti (PRE)
+     * @param dayOfWeek  Integer den v týdnu (jak jej vrací Calendar)
      * @param selectRele String filtr pro sloupec rele
      * @return ArrayList<HdoModel>
      */
-    public ArrayList<HdoModel> loadHdo(String table, String selectRele) {
-        String selection = null;
-        String[] selectionArgs = null;
-        if (selectRele != null) {
-            selection = DbHelper.COLUMN_RELE + " = ? ";
-            selectionArgs = new String[]{selectRele};
+    public ArrayList<HdoModel> loadHdo(String table, String datumOd, Integer dayOfWeek, String selectRele) {
+        String distributionArea = getDistributionArea(table);
+
+        String selection = "";
+        String selectionDayOfWeek = "";
+        if (dayOfWeek != null) {
+            switch (dayOfWeek - 1) {
+                case 0:
+                    selectionDayOfWeek = DbHelper.COLUMN_SUN;
+                    break;
+                case 1:
+                    selectionDayOfWeek = DbHelper.COLUMN_MON;
+                    break;
+                case 2:
+                    selectionDayOfWeek = DbHelper.COLUMN_TUE;
+                    break;
+                case 3:
+                    selectionDayOfWeek = DbHelper.COLUMN_WED;
+                    break;
+                case 4:
+                    selectionDayOfWeek = DbHelper.COLUMN_THU;
+                    break;
+                case 5:
+                    selectionDayOfWeek = DbHelper.COLUMN_FRI;
+                    break;
+                case 6:
+                    selectionDayOfWeek = DbHelper.COLUMN_SAT;
+                    break;
+            }
         }
 
+        ArrayList<String> selectionArgsList = new ArrayList<>();
+        //vyhledávání podle datumu - používá PRE
+        if (distributionArea != null && distributionArea.equals("PRE") && datumOd != null) {
+            selection += DbHelper.COLUMN_DATE_FROM + " = ?";
+            selectionArgsList.add(datumOd);
+        }
+        //vyhledávání podle dne v týdnu
+        if (distributionArea == null && dayOfWeek != null) {
+            selection += selectionDayOfWeek + " = ? ";
+            selectionArgsList.add("1");
+        }
+        //vyhledávání podle relé
+        if (selectRele != null) {
+            if (!selection.isEmpty()) selection += " AND ";
+            selection += DbHelper.COLUMN_RELE + " = ? ";
+            selectionArgsList.add(selectRele);
+        }
+
+        String[] selectionArgs = selectionArgsList.toArray(new String[0]);
         ArrayList<HdoModel> hdoModels = new ArrayList<>();
         Cursor cursor = database.query(table,
                 null,
@@ -80,11 +135,36 @@ public class DataHdoSource extends DataSource {
         return hdoModels;
     }
 
+
+    /**
+     * Zjistí z jaké distribuce se data nachází
+     *
+     * @param table Tabulka se záznamy HDO
+     */
+    private String getDistributionArea(String table) {
+        String distributionArea;
+        Cursor cursor = database.query(table,
+                new String[]{DbHelper.COLUMN_DISTRIBUTION_AREA},
+                null,
+                null,
+                null,
+                null,
+                null,
+                "1");
+
+        cursor.moveToFirst();
+        distributionArea = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA));
+        cursor.close();
+        return distributionArea;
+    }
+
+
     public void clearHdo(String table) {
         open();
         database.delete(table, null, null);
         close();
     }
+
 
     /**
      * Uloží HdoModely do databáze
@@ -100,6 +180,7 @@ public class DataHdoSource extends DataSource {
         }
         close();
     }
+
 
     /**
      * Uloží HdoModel do databáze
@@ -122,7 +203,7 @@ public class DataHdoSource extends DataSource {
      */
     public void updateHdo(HdoModel hdoModel, String table) {
         open();
-        database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[]{hdoModel.getId() + ""});
+        database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(hdoModel.getId())});
         close();
     }
 
@@ -135,7 +216,7 @@ public class DataHdoSource extends DataSource {
      */
     public void deleteHdo(long id, String table) {
         open();
-        database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[]{id + ""});
+        database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         close();
     }
 

@@ -49,7 +49,7 @@ public class HdoData {
         }
 
 
-        ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), rele);
+        ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null,null,rele);
         dataHdoSource.close();
         HdoService.setHdoModels(hdoModels);
         HdoService.setTitle(title);

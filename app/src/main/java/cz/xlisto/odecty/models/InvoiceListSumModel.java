@@ -11,7 +11,9 @@ public class InvoiceListSumModel {
     private final ArrayList<String> names;
     private final ArrayList<double[]> maxValues;
     private final ArrayList<ArrayList<InvoiceSumModel>> invoiceSumModels;
+    private final ArrayList<ArrayList<HdoModel>> hdoModels;
     private final ArrayList<Double> invoiceSumPayments, invoiceSumTotalPrices;
+    private final ArrayList<Long> hdoTimeShifts;
 
 
     public InvoiceListSumModel() {
@@ -20,15 +22,19 @@ public class InvoiceListSumModel {
         this.maxValues = new ArrayList<>();
         this.invoiceSumModels = new ArrayList<>();
         this.invoiceSumTotalPrices = new ArrayList<>();
+        this.hdoModels = new ArrayList<>();
+        this.hdoTimeShifts = new ArrayList<>();
     }
 
 
-    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, String name, double[] maxValue, double sumPayment, double sumTotalPrice) {
+    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, ArrayList<HdoModel> hdoModels, long timeShift, String name, double[] maxValue, double sumPayment, double sumTotalPrice) {
         invoiceSumModels.add(invoiceSumModel);
+        this.hdoModels.add(hdoModels);
         names.add(name);
         maxValues.add(maxValue);
         invoiceSumPayments.add(sumPayment);
         invoiceSumTotalPrices.add(sumTotalPrice);
+        hdoTimeShifts.add(timeShift);
     }
 
 
@@ -87,6 +93,17 @@ public class InvoiceListSumModel {
 
 
     /**
+     * Vrátí seznam HdoModelů
+     *
+     * @param index index v ArrayListu HdoModelů
+     * @return seznam HdoModelů
+     */
+    public ArrayList<HdoModel> getHdoModels(int index) {
+        return hdoModels.get(index);
+    }
+
+
+    /**
      * Vrátí součet plateb
      *
      * @param index index v ArrayListu součtů plateb
@@ -94,6 +111,17 @@ public class InvoiceListSumModel {
      */
     public double getInvoiceSumPayments(int index) {
         return invoiceSumPayments.get(index);
+    }
+
+
+    /**
+     * Vrátí časový posun hodin v elektroměru
+     *
+     * @param index index v ArrayListu časových posunů
+     * @return long časový posun hodin v elektroměru
+     */
+    public long getHdoTimeShift(int index) {
+        return hdoTimeShifts.get(index);
     }
 
 

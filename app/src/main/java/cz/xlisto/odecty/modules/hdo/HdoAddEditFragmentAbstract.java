@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,6 +19,7 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.HdoModel;
 
 /**
+ * Abstraktní třída pro přidání/editaci dat s časy HDO
  * Xlisto 26.05.2023 21:13
  */
 public class HdoAddEditFragmentAbstract extends Fragment {
@@ -43,6 +46,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_hdo_add_edit, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -105,6 +109,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         return hdo;
     }
 
+
     /**
      * Vytvoří objekt HdoModel z aktuálních hodnot v UI
      *
@@ -127,12 +132,13 @@ public class HdoAddEditFragmentAbstract extends Fragment {
             minuteUntil = timePickerUntil.getCurrentMinute();
         }
 
-        String from = String.format("%02d:%02d", hourFrom, minuteFrom);
-        String until = String.format("%02d:%02d", hourUntil, minuteUntil);
+        String from = String.format(Locale.getDefault(), "%02d:%02d", hourFrom, minuteFrom);
+        String until = String.format(Locale.getDefault(), "%02d:%02d", hourUntil, minuteUntil);
         initDays();
 
-        return new HdoModel("", "","",from, until, mon, tue, wed, thu, fri, sat, sun,"");
+        return new HdoModel("", "0", "0", from, until, mon, tue, wed, thu, fri, sat, sun, "");
     }
+
 
     void initDays() {
         mon = cbMonday.isChecked() ? 1 : 0;
@@ -143,6 +149,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         sat = cbSaturday.isChecked() ? 1 : 0;
         sun = cbSunday.isChecked() ? 1 : 0;
     }
+
 
     boolean checkSelectedDays() {
         initDays();

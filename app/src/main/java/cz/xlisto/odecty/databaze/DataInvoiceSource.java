@@ -3,15 +3,17 @@ package cz.xlisto.odecty.databaze;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.InvoiceListSumModel;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.InvoiceSumModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Calculation;
 
 import static cz.xlisto.odecty.databaze.DbHelper.CENIK_ID;
@@ -421,25 +423,36 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
-     * Vrátí seznam součtů faktur pro jednotlivá odběrná místa
-     * @return InvoiceListSumModel seznam součtů faktur
+     * Načte seznam součtů faktur, součet zaplacených záloh, součet spotřeby
+     *
+     * @return InvoiceListSumModel seznam součtů pro dashboard
      */
-    public InvoiceListSumModel getListSumInvoices() {
+    public InvoiceListSumModel getListSumData() {
+        String todayDate = ViewHelper.getTodayDate();
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         InvoiceListSumModel invoiceListSumModel = new InvoiceListSumModel();
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        DataHdoSource dataHdoSource = new DataHdoSource(context);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(context);
         dataSubscriptionPointSource.open();
+        dataHdoSource.open();
+        dataSettingsSource.open();
         ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
         for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
             double[] maxVTNT = getMaxSumInvoices(subscriptionPointModel.getTableFAK());
             double sumPayment = sumPayment(-1L, subscriptionPointModel.getTablePLATBY());
+            ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPointModel.getTableHDO(), todayDate, dayOfWeek);
             ArrayList<InvoiceModel> invoices = loadInvoices(-1L, subscriptionPointModel.getTableTED());
             double totalPrice = Calculation.getTotalSumInvoice(invoices, subscriptionPointModel, context);
+            long timeShift = dataSettingsSource.loadTimeShift(subscriptionPointModel.getId());
             invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK()),
-                    subscriptionPointModel.getName(),maxVTNT,sumPayment, totalPrice);
-            Log.w(TAG, "getListSumInvoices: " + totalPrice);
+                    hdoModels, timeShift, subscriptionPointModel.getName(), maxVTNT, sumPayment, totalPrice);
 
         }
+        dataSettingsSource.close();
         dataSubscriptionPointSource.close();
+        dataHdoSource.close();
         return invoiceListSumModel;
     }
 

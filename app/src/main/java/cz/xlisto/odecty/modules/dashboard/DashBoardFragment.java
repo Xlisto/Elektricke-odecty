@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
+import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.InvoiceListSumModel;
 import cz.xlisto.odecty.shp.ShPDashBoard;
 
@@ -42,6 +44,7 @@ public class DashBoardFragment extends Fragment {
     private int[] colorVTNT;
     private InvoiceListSumModel invoiceListSumModel;
     private GraphTotalConsuptionView graphTotalConsuptionView;
+    private GraphTotalHdoView graphTotalHdoView;
     private double previousPayment = 0;
     private double previousConsuption = 0;
 
@@ -69,6 +72,7 @@ public class DashBoardFragment extends Fragment {
         tvNoInvoices = view.findViewById(R.id.tvNoInvoices);
         spSort = view.findViewById(R.id.spSortInvoiceSum);
         graphTotalConsuptionView = view.findViewById(R.id.graphTotalConsuptionView);
+        graphTotalHdoView = view.findViewById(R.id.graphTotalHdoView);
 
         ShPDashBoard shPDashBoard = new ShPDashBoard(requireActivity());
         shPDashBoard.get(ShPDashBoard.IS_SHOW_TOTAL, false);
@@ -88,6 +92,7 @@ public class DashBoardFragment extends Fragment {
                 shPDashBoard.set(ShPDashBoard.SHOW_INVOICE_SUM, showInvoiceSum);
                 setAdapter();
                 setGraphTotalConsuptionView();
+                setTimeHDO();
             }
         });
 
@@ -97,6 +102,7 @@ public class DashBoardFragment extends Fragment {
                 shPDashBoard.set(ShPDashBoard.SHOW_INVOICE_SUM, showInvoiceSum);
                 setAdapter();
                 setGraphTotalConsuptionView();
+                setTimeHDO();
             }
         });
 
@@ -113,6 +119,7 @@ public class DashBoardFragment extends Fragment {
                 DashBoardFragment.this.sortInvoiceSumModels(typeCompare);
                 DashBoardFragment.this.setAdapter();
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -133,11 +140,12 @@ public class DashBoardFragment extends Fragment {
 
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
-        invoiceListSumModel = dataInvoiceSource.getListSumInvoices();
+        invoiceListSumModel = dataInvoiceSource.getListSumData();
         dataInvoiceSource.close();
 
         setAdapter();
         setGraphTotalConsuptionView();
+        setTimeHDO();
     }
 
 
@@ -252,10 +260,19 @@ public class DashBoardFragment extends Fragment {
     private void setGraphTotalConsuptionView() {
         double payment = invoiceListSumModel.getInvoiceSumPayments(showInvoiceSum);
         double consuption = invoiceListSumModel.getInvoiceSumTotalPrices(showInvoiceSum);
-        graphTotalConsuptionView.setPayment(payment, previousPayment);
-        graphTotalConsuptionView.setConsuption(consuption, previousConsuption);
+        graphTotalConsuptionView.setPaymentAndConsuption(payment, previousPayment, consuption, previousConsuption);
         previousConsuption = consuption;
         previousPayment = payment;
+    }
+
+
+    /**
+     * Nastaví časový posun pro ručičku času HDO
+     */
+    private void setTimeHDO() {
+        ArrayList<HdoModel> hdoModels = invoiceListSumModel.getHdoModels(showInvoiceSum);
+        long timeShift = invoiceListSumModel.getHdoTimeShift(showInvoiceSum);
+        graphTotalHdoView.setHdoModels(hdoModels, timeShift);
     }
 
 

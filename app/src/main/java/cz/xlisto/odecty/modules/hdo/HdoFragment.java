@@ -47,6 +47,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 
 /**
+ * Fragment zobrazující časy HDO
  * Xlisto 26.05.2023 10:35
  */
 public class HdoFragment extends Fragment {
@@ -67,6 +68,7 @@ public class HdoFragment extends Fragment {
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
+
 
     public static HdoFragment newInstance() {
         return new HdoFragment();
@@ -141,6 +143,7 @@ public class HdoFragment extends Fragment {
                 loadData(spRele.getAdapter().getItem(position).toString());
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -155,6 +158,7 @@ public class HdoFragment extends Fragment {
                 shPHdo.set(ShPHdo.ARG_RELE + idSbp, spReleSettings.getAdapter().getItem(position).toString());
                 HdoData.loadHdoData(requireActivity());
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -308,7 +312,7 @@ public class HdoFragment extends Fragment {
         hdoModels.clear();
         dataHdoSource.open();
         if (rele != null)
-            hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), rele);
+            hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null, null, rele);
         else
             hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO());
         dataHdoSource.close();

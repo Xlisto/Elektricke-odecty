@@ -39,4 +39,11 @@
     <declare-styleable name="GraphTotalConsuptionView">
         <attr name="colorText" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="GraphTotalHdoView">
+        <attr name="colorClock" format="color"/>
+        <attr name="colorTimeTUV" format="color"/>
+        <attr name="colorTimeTAR" format="color"/>
+        <attr name="colorTimePV" format="color"/>
+    </declare-styleable>
 </resources>

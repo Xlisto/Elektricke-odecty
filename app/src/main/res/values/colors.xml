@@ -21,5 +21,8 @@
     <color name="color_bar_dark">#295EEE</color>
     <color name="color_axis">#FF222222</color>
     <color name="color_graph_background">#FFFFFFFF</color>
+    <color name="color_hdo_time_TUV">#F8B189</color>
+    <color name="color_hdo_time_TAR">#96D777</color>
+    <color name="color_hdo_time_PV">#607EA3</color>
 
 </resources>

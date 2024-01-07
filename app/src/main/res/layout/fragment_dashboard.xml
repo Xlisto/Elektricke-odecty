@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp">
 
     <RelativeLayout
         android:id="@+id/rlGraphTotalConsuptionButtons"
@@ -48,14 +49,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rlGraphTotalConsuptionButtons"
-        android:background="@drawable/shape_border">
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp">
 
         <cz.xlisto.odecty.modules.dashboard.GraphTotalConsuptionView
             android:id="@+id/graphTotalConsuptionView"
-            colorText=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/shape_border"
             app:colorText="@color/color_axis" />
+
+        <cz.xlisto.odecty.modules.dashboard.GraphTotalHdoView
+            android:id="@+id/graphTotalHdoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="2dp"
+            android:background="@drawable/shape_border"
+            app:colorClock="@color/color_axis"
+            app:colorTimePV="@color/color_hdo_time_PV"
+            app:colorTimeTAR="@color/color_hdo_time_TAR"
+            app:colorTimeTUV="@color/color_hdo_time_TUV" />
     </RelativeLayout>
 
     <RelativeLayout
