@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -177,7 +176,6 @@ public class GraphTotalHdoView extends View {
             int smaller = dpToPx(getContext(), 13);
             if (DetectScreenMode.isLandscape(getContext()))
                 smaller = dpToPx(getContext(), 16);
-            Log.w(TAG, "drawTime: " + model.getRele());
 
             if (model.getRele().contains("TUV") || !model.getRele().contains("TAR") && !model.getRele().contains("PV")) {
                 // Vykreslení výseče

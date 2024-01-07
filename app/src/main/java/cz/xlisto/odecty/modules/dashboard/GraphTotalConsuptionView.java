@@ -42,21 +42,26 @@ public class GraphTotalConsuptionView extends View {
     private final Paint pLine = new Paint();
     private final Paint pTextPayment = new Paint();
     private final Paint pTextConsuption = new Paint();
+    private final Paint pTextResult = new Paint();
     private double consuptionAngle;
+
 
     public GraphTotalConsuptionView(Context context) {
         super(context);
     }
+
 
     public GraphTotalConsuptionView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
     }
 
+
     public GraphTotalConsuptionView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
     }
+
 
     public GraphTotalConsuptionView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -99,10 +104,12 @@ public class GraphTotalConsuptionView extends View {
         pTextConsuption.setColor(colorText);
         pTextConsuption.setTextSize(dpToPx(getContext(), 12));
 
+        pTextResult.setTextSize(dpToPx(getContext(), 12));
+
 
         drawPayment(canvas);
-        drawConsuption(canvas);
         drawTexts(canvas);
+        drawConsuption(canvas);
     }
 
 
@@ -156,6 +163,7 @@ public class GraphTotalConsuptionView extends View {
 
     }
 
+
     /**
      * Kreslení spotřeby
      *
@@ -185,7 +193,8 @@ public class GraphTotalConsuptionView extends View {
      */
     private void drawTexts(Canvas canvas) {
         // Kreslení textu
-        String text = "%.2f Kč";
+        //String text = "%.2f Kč";
+        String text = getContext().getResources().getString(R.string.float_price);
         int widthTextPayment = (int) pTextPayment.measureText(format(Locale.getDefault(), text, payment));
         int textXPayment = dpToPx(getContext(), 5);
         int textYPayment = dpToPx(getContext(), 13);
@@ -194,9 +203,27 @@ public class GraphTotalConsuptionView extends View {
         int textXConsuption = size - (widthTextConsuption) - dpToPx(getContext(), 5);
         int textYConsuption = dpToPx(getContext(), 13);
 
+        double difference = (payment - consuption);
+        String result;
+        if (payment > consuption) {
+            result = "Přeplatek";
+            pTextResult.setColor(Color.parseColor("#2b9e42"));
+        } else {
+            result = "Nedoplatek";
+            pTextResult.setColor(Color.parseColor("#9d0505"));
+        }
+
+
+        int widthTextResult = (int) pTextPayment.measureText(result);
+        int textYResult = dpToPx(getContext(), 55);
+
+        int widthTextDifference = (int) pTextPayment.measureText(format(Locale.getDefault(), text, difference));
+        int textYDifference = dpToPx(getContext(), 70);
 
         canvas.drawText(format(Locale.getDefault(), text, payment), textXPayment, textYPayment, pTextPayment);
         canvas.drawText(format(Locale.getDefault(), text, consuption), textXConsuption, textYConsuption, pTextConsuption);
+        canvas.drawText(result, (float) size / 2 - (float) (widthTextResult / 2), textYResult, pTextResult);
+        canvas.drawText(format(Locale.getDefault(), text, difference), (float) size / 2 - (float) (widthTextDifference / 2), textYDifference, pTextResult);
     }
 
 
