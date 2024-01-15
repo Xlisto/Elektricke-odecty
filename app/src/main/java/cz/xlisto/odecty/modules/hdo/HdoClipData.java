@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.odecty.models.HdoModel;
 
+
 /**
  * Sestaví textovou podobu týdenního HDO rozvrhu pro vložení do schránky
  * Xlisto 10.08.2023 13:53

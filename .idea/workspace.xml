@@ -3,6 +3,9 @@
   <component name="AndroidLayouts">
     <shared>
       <config>
+        <device id="_device_class_tablet" />
+        <device id="_device_class_desktop" />
+        <device id="2.7in QVGA" />
         <device id="_device_class_phone" />
       </config>
     </shared>
@@ -10,6 +13,11 @@
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml">
         <config>
           <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml">
+        <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -57,6 +65,12 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml">
         <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml">
+        <config>
+          <state>portrait</state>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -211,10 +225,30 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změněb ToolBar - nyní zobrazuje aktuálně vybraný fragment a název zvoleného odběrného místa">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněný text zobrazující rozdíl mezi zaplacenými zálohami a celkovou spotřebou do GraphTotalConsuptionView.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/assets/js_1DF26LOAETnEz4Q1tK4rzQiWvRhLoiNeAJZWOWUmdes.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/assets/js_3f-AkdHM-oWDcAiTwNrcaCq3xP9rCv1d63p8-bNnBIA.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/assets/js_7F9oylb6BkJXuZtGzY-o84sxM-U-Ax0FPeZnmP2soSk.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/assets/js_cw_-PLrgwIOnxx8gqxTJZGcUBNk2wzv8rhOGybK2Y-4.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/assets/js_lYFLFrumHanZQsyOELvAkfM4y2o7A25j0-bhpkjz4Hc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/BuildCEZ.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/BuildEGD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/BuildPRE.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/MyViewModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/SpinnerDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/SpinnerDialogFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/CodeWeb.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/CodeWeb.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/Connections.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/Connections.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoClipData.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoClipData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,7 +258,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -341,6 +375,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphConsuptionInvoiceGraphView.java_SELECTED&quot;: &quot;GraphConsuptionInvoiceGraphView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphDashBoardView.java_SELECTED&quot;: &quot;GraphDashBoardView&quot;,
@@ -363,8 +398,10 @@
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED&quot;: &quot;ViewGroup&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AdapterView.java_SELECTED&quot;: &quot;AdapterView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED&quot;: &quot;Button&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Spinner.java_SELECTED&quot;: &quot;Spinner&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED&quot;: &quot;TextView&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
@@ -372,7 +409,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Variables&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
@@ -389,12 +426,14 @@
   }
 }</component>
   <component name="PsdUISettings">
-    <option name="MODULE_TAB" value="Properties" />
+    <option name="MODULE_TAB" value="Default Config" />
+    <option name="BUILD_VARIANTS_TAB" value="Build Types" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\libs" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable-night" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable" />
@@ -404,11 +443,11 @@
       <recent name="junit.framework.TestCase" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\assets" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\mipmap" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w300dp-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w1000dp-land" />
-      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\libs" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="cz.xlisto.odecty" />
@@ -901,7 +940,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="133" />
+    <option name="localTasksCounter" value="135" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -963,7 +1002,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="dokončeno vytváření záložních soborů na interní uložiště.&#10;&#10;Záložní soubory z nové verze mají příponu El odečet.zip. Pro odlišení od starších používají aktulizovanou ikonu s novým logem aplikace v pravém rohu ikony." />
     <MESSAGE value="Přidána možnost vytvoření automatické zálohy při novém, upraveném měsíčním odečtu.&#10;&#10;Upraveno rozložení pro nový a úpravu měsíčního odečt.&#10;Mechanizmus pro vytváření záloh přesunut do statické metody do třídy SaveDataToBackupFile." />
     <MESSAGE value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
     <MESSAGE value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
@@ -988,6 +1026,7 @@
     <MESSAGE value="Vytvořen widget pro zobazení celkové spotřeby s celkem zapalcenými zálohami&#10;Přidán do DashBoard" />
     <MESSAGE value="Vytvořen widget pro zobazení časů HDO pro aktuální den" />
     <MESSAGE value="Změněb ToolBar - nyní zobrazuje aktuálně vybraný fragment a název zvoleného odběrného místa" />
-    <option name="LAST_COMMIT_MESSAGE" value="Změněb ToolBar - nyní zobrazuje aktuálně vybraný fragment a název zvoleného odběrného místa" />
+    <MESSAGE value="Doplněný text zobrazující rozdíl mezi zaplacenými zálohami a celkovou spotřebou do GraphTotalConsuptionView." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněný text zobrazující rozdíl mezi zaplacenými zálohami a celkovou spotřebou do GraphTotalConsuptionView." />
   </component>
 </project>

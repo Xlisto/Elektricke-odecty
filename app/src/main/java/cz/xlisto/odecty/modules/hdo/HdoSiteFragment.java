@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
@@ -40,7 +35,6 @@ import cz.xlisto.odecty.dialogs.SpinnerDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
-import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
@@ -49,111 +43,31 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
  * Xlisto 15.06.2023 21:28
  */
 public class HdoSiteFragment extends Fragment {
-    private static final String TAG = "HdoSite";
+    private static final String TAG = "HdoSiteFragment";
     private static final String FLAG_RESULT_SPINNER_DIALOG_FRAGMENT = "flagResultSpinnerDialogFragment";
     private static final String FLAG_RESULT_YES_NO_DIALOG_FRAGMENT = "flagResultYesNoDialogFragment";
     private static final String ARG_RESULT_JSON = "resultJson";
-    private static final String ARG_DISTRICT_SELECTED = "areaSelected";
     private LinearLayout lnCode, lnCodesEdg, lnHdoButtons, lnProgessBarHdoSite;
     private Spinner spDistributionArea, spDistrict, spDateEgd, spA, spB, spPB;
     private EditText etHdoCode;
     private TextView tvAlert, tvValidityDate;
     private RecyclerView rvHdoSite;
-    private static final Connections connections = new Connections();
     private final ArrayList<String> codes = new ArrayList<>();
     private final ArrayList<String> codesException = new ArrayList<>();
     private final ArrayList<String[]> groupsList = new ArrayList<>();
     private final ArrayList<String[]> groupsExceptionList = new ArrayList<>();
-    private ArrayList<HdoModel> hdoList = new ArrayList<>();
+    private final ArrayList<HdoModel> hdoList = new ArrayList<>();
+    private final ArrayList<HdoListContainer> hdoListContainer = new ArrayList<>();
     private String urlHdo, resultJson;
-    private ExecutorService executor;
-
+    private boolean isClearArrayLists = true;
+    private HdoSiteViewModel viewModel;
+    private String resultArea, exceptionArea;
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
-            setVisibilityProgressBar(false);
-            Connections.ResultData resultData = (Connections.ResultData) msg.obj;
-            if (resultData.resultType.equals(Connections.ResultType.CODES)) {
-                codes.clear();
-                codesException.clear();
-                groupsList.clear();
-                groupsExceptionList.clear();
-                HdoSiteFragment.this.urlHdo = resultData.urlString;
-                //zobrazené kodu z EGD
-                try {
-                    JSONArray jsonArray = new JSONArray(resultData.result);
-                    if (jsonArray.length() == 0) {
-                        setVisibilityAlert(true);
-                        Toast.makeText(requireActivity(), "Žádná data, zkontrolujte správnost HDO povelu", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonGroupHdoCodes = jsonArray.getJSONObject(i);
-                        JSONArray jsonCategoryGroups = jsonGroupHdoCodes.getJSONArray("kategorieSkupiny");
-                        for (int j = 0; j < jsonCategoryGroups.length(); j++) {
-                            JSONObject jsonCategoryGroup = jsonCategoryGroups.getJSONObject(j);
-                            JSONArray jsonCodes = jsonCategoryGroup.getJSONArray("kody");
-                            String category = jsonCategoryGroup.getString("kategorie");//ZAPAD;VYCHOD;VERSACOM
-                            String group = jsonCategoryGroup.getString("skupina");
-
-                            if (category.equals(resultData.areaEgd)) {
-                                codes.add(jsonCodes.toString());
-                                groupsList.add(new String[]{group, category});
-                            }
-
-                            if (resultData.area.equals("Brno - venkov") && category.equals("VERSACOM")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Jihlava") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Třebíč") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Jindřichův Hradec") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Hodonín") && category.equals("VERSACOM")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Břeclav") && category.equals("VERSACOM")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            }
-                        }
-                        if (codes.size() > 0) {
-                            //TODO: tady potřebuji okres
-                            String exceptionAreaList = "";
-                            switch (resultData.area) {
-                                case "Brno - venkov":
-                                    exceptionAreaList = getResources().getString(R.string.exception_brno);
-                                    break;
-                                case "Jihlava":
-                                    exceptionAreaList = getResources().getString(R.string.exception_jihlava);
-                                    break;
-                                case "Třebíč":
-                                    exceptionAreaList = getResources().getString(R.string.exception_trebic);
-                                    break;
-                                case "Jindřichův Hradec":
-                                    exceptionAreaList = getResources().getString(R.string.exception_jindrichuv_hradec);
-                                    break;
-                                case "Hodonín":
-                                    exceptionAreaList = getResources().getString(R.string.exception_hodonin);
-                                    break;
-                                case "Břeclav":
-                                    exceptionAreaList = getResources().getString(R.string.exception_breclav);
-                                    break;
-                            }
-                            SpinnerDialogFragment.newInstance("Vyber", codes, codesException, groupsList, groupsExceptionList, resultData.area, exceptionAreaList, FLAG_RESULT_SPINNER_DIALOG_FRAGMENT)
-                                    .show(getChildFragmentManager(), "spinnerDialog");
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                buildRecyclerView(resultData.result);
+            if (msg.what == 300) {
+                isClearArrayLists = true;
             }
         }
     };
@@ -161,6 +75,59 @@ public class HdoSiteFragment extends Fragment {
 
     public static HdoSiteFragment newInstance() {
         return new HdoSiteFragment();
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(requireActivity()).get(HdoSiteViewModel.class);
+
+        viewModel.setExceptionBrno(getResources().getString(R.string.exception_brno));
+        viewModel.setExceptionJihlava(getResources().getString(R.string.exception_jihlava));
+        viewModel.setExceptionTrebic(getResources().getString(R.string.exception_trebic));
+        viewModel.setExceptionJindrichuvHradec(getResources().getString(R.string.exception_jindrichuv_hradec));
+        viewModel.setExceptionHodonin(getResources().getString(R.string.exception_hodonin));
+        viewModel.setExceptionBreclav(getResources().getString(R.string.exception_breclav));
+        viewModel.setShowAlert();
+
+
+        viewModel.getCodesContainer().observe(this, codesContainer -> {
+            this.codes.clear();
+            this.codes.addAll(codesContainer.codes);
+            this.codesException.clear();
+            this.codesException.addAll(codesContainer.codesException);
+            this.groupsList.clear();
+            this.groupsList.addAll(codesContainer.groupsList);
+            this.groupsExceptionList.clear();
+            this.groupsExceptionList.addAll(codesContainer.groupsExceptionList);
+            this.resultArea = codesContainer.area;
+            this.exceptionArea = codesContainer.exceptionAreaList;
+            this.urlHdo = codesContainer.urlHdo;
+
+        });
+
+        viewModel.shouldShowDialog().observe(this, shouldShowDialog -> {
+            if (shouldShowDialog) {
+                SpinnerDialogFragment.newInstance(getResources().getString(R.string.select), codes, codesException, groupsList, groupsExceptionList, resultArea, exceptionArea, FLAG_RESULT_SPINNER_DIALOG_FRAGMENT)
+                        .show(getChildFragmentManager(), "spinnerDialog");
+            }
+            viewModel.hideDialog();
+        });
+
+        viewModel.shouldShowAlert().observe(this, shouldShowAlert -> {
+            setVisibilityAlert(shouldShowAlert);
+            if (shouldShowAlert) {
+                setVisibilityProgressBar(false);
+                //Toast.makeText(requireActivity(), getResources().getString(R.string.no_hdo_codes), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.shouldShowProgress().observe(this, this::setVisibilityProgressBar);
+
+        if (savedInstanceState != null) {
+            isClearArrayLists = false;
+        }
     }
 
 
@@ -200,6 +167,7 @@ public class HdoSiteFragment extends Fragment {
                 setHdoCodeFromSpinners();
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -211,6 +179,7 @@ public class HdoSiteFragment extends Fragment {
                 setHdoCodeFromSpinners();
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -221,6 +190,7 @@ public class HdoSiteFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setHdoCodeFromSpinners();
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -237,11 +207,13 @@ public class HdoSiteFragment extends Fragment {
 
             if (isYes) {
                 String code = etHdoCode.getText().toString();
-                connections.searchHdo(group, category, urlHdo, code, requireActivity(), spDistrict);
-            } else {
-                setVisibilityProgressBar(false);
-            }
-            executor = null;
+
+                viewModel.runSecondAsyncOperation(group, category, urlHdo, code, requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition());
+            } //else {
+            //setVisibilityProgressBar(false);
+            //}
+            viewModel.hideDialog();
+            //executor = null;
         });
 
         //posluchač pro zavření dialogového okna s dotazem na uložení do databáze
@@ -256,7 +228,6 @@ public class HdoSiteFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 hideWidgets(position);
-
                 switch (position) {
                     case 0:
                         spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_cez)));
@@ -269,24 +240,23 @@ public class HdoSiteFragment extends Fragment {
                         break;
 
                 }
-
-                //setAdapter(new ArrayList<HdoModel>());
+                clear();
                 setTextAlert();
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
         spDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                //setAdapter(new ArrayList<HdoModel>());
+                clear();
                 setTextAlert();
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -297,7 +267,7 @@ public class HdoSiteFragment extends Fragment {
         btnHdoSite.setOnClickListener(v -> openHdoSite());
 
         btnHdoLoadData.setOnClickListener(v -> {
-            setAdapter(new ArrayList<>());
+            clearArrayLists();
             Keyboard.hide(requireActivity());
             urlBuilder();
         });
@@ -306,7 +276,7 @@ public class HdoSiteFragment extends Fragment {
                 .show(requireActivity().getSupportFragmentManager(), "saveHdo"));
 
 
-        hideWidgets(0);
+        //hideWidgets(0);
 
         spA.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code1)));
         spB.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code1)));
@@ -314,8 +284,7 @@ public class HdoSiteFragment extends Fragment {
 
         if (savedInstanceState != null) {
             resultJson = savedInstanceState.getString(ARG_RESULT_JSON);
-            setAdapter(hdoList);
-
+            isClearArrayLists = false;
         }
         spDistrict.setSelection(4);
 
@@ -326,7 +295,61 @@ public class HdoSiteFragment extends Fragment {
             clipboard.setPrimaryClip(clip);
         });
 
+        viewModel.getValidityDates().observe(getViewLifecycleOwner(), validityDates -> {
+            if (validityDates.length == 0) return;
+            setTvValidityDate(validityDates[0]);
+            spDateEgd.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, validityDates));
+        });
 
+        viewModel.getHdoListModels().observe(getViewLifecycleOwner(), hdoListModels -> {
+            hdoListContainer.clear();
+            hdoListContainer.addAll(hdoListModels);
+            if (hdoListModels.size() > 0) {
+                setAdapter(hdoListModels.get(0).getHdoList());
+                hdoList.clear();
+                //hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
+                if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD)
+                    hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
+                else
+                    hdoList.addAll(hdoListModels.get(0).getHdoList());
+
+                if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD) {
+                    spDateEgd.setVisibility(View.VISIBLE);
+                } else {
+                    tvValidityDate.setVisibility(View.VISIBLE);
+                }
+            }
+            setAdapter(hdoList);
+        });
+
+
+        spDateEgd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (hdoListContainer.size() == 0) return;
+                setAdapter(hdoListContainer.get(position).getHdoList());
+                hdoList.clear();
+                hdoList.addAll(hdoListContainer.get(position).getHdoList());
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //handler pro povolení vymazání obsahu arraylistu
+        Message message = new Message();
+        message.what = 300;
+        handler.sendMessageDelayed(message, 1000);
     }
 
 
@@ -334,7 +357,6 @@ public class HdoSiteFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ARG_RESULT_JSON, resultJson);
-        outState.putInt(ARG_DISTRICT_SELECTED, spDistrict.getSelectedItemPosition());
     }
 
 
@@ -394,239 +416,19 @@ public class HdoSiteFragment extends Fragment {
      * @param distributionAreaIndex index distribuční sítě (0-CEZ, 1-EON, 2- PRE)
      */
     private void loadData(String url, int distributionAreaIndex) {
-        setVisibilityProgressBar(true);
-        setVisibilityAlert(false);
 
-        executor = Executors.newSingleThreadExecutor();
+        //executor = Executors.newSingleThreadExecutor();
         //0-CEZ,1-EGD,2-PRE
-
-        executor.execute(() -> {
-
-            //Background work here
-            connections.sendPost(url, distributionAreaIndex, etHdoCode.getText().toString(), requireActivity(), spDistrict, lnHdoButtons, handler);
-        });
+        viewModel.runAsyncOperation(url, distributionAreaIndex, etHdoCode.getText().toString(), requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition(), lnHdoButtons);
     }
 
-
-    private void buildRecyclerView(String jsonData) {
-        hdoList.clear();
-        if (spDistributionArea.getSelectedItemPosition() == 0) {
-            hdoList = buildCEZ(jsonData);
-        } else if (spDistributionArea.getSelectedItemPosition() == 1) {
-
-            ArrayList<HdoListContainer> hdoListContainer = buildEGD(jsonData);
-            //při první průchodu vrátí null, ukončuji
-            if (hdoListContainer == null)
-                return;
-            if (hdoListContainer.size() != 0) {
-                hdoList = hdoListContainer.get(0).getHdoList();
-                String[] validityDate = new String[hdoListContainer.size()];
-                for (int i = 0; i < hdoListContainer.size(); i++) {
-                    validityDate[i] = hdoListContainer.get(i).validityDate;
-                }
-                spDateEgd.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, validityDate));
-                spDateEgd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        setAdapter(hdoListContainer.get(position).getHdoList());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-
-            }
-        } else if (spDistributionArea.getSelectedItemPosition() == 2) {
-            hdoList = buildPRE(jsonData);
-        }
-
-        setAdapter(hdoList);
-        rvHdoSite.getRecycledViewPool().clear();
-        Objects.requireNonNull(rvHdoSite.getAdapter()).notifyDataSetChanged();
-        if (hdoList.size() == 0) {
-            tvAlert.setText(getResources().getText(R.string.no_hdo));
-            Toast.makeText(requireActivity(), "Žádná data, zkontrolujte správnost HDO povelu", Toast.LENGTH_SHORT).show();
-        }
-        //requireActivity().runOnUiThread(() -> setVisibilityProgressBar(false));
-        setVisibilityProgressBar(false);
-    }
-
-
-    private ArrayList<HdoModel> buildCEZ(String jsonData) {
-        ArrayList<HdoModel> hdoList = new ArrayList<>();
-        try {
-            JSONArray jsonRoot = new JSONArray(jsonData);
-            for (int i = 0; i < jsonRoot.length(); i++) {
-                JSONObject jsonHdo = jsonRoot.getJSONObject(i);
-                String validFrom = ViewHelper.convertLongToDate(jsonHdo.getLong("VALID_FROM"));
-                String validTo = ViewHelper.convertLongToDate(jsonHdo.getLong("VALID_TO"));
-                setTvValidityDate(validFrom + " - " + validTo);
-                String day = jsonHdo.getString("PLATNOST");
-                String sazba = jsonHdo.getString("SAZBA");
-                String info = jsonHdo.getString("INFO")
-                        .replace("sazba", "")
-                        .replace("+", "");
-                String rele = sazba;
-                if (info.length() > 0) {
-                    rele += " + " + info;
-                }
-                for (int j = 1; j < 11; j++) {
-                    String timeOn = jsonHdo.getString("CAS_ZAP_" + j);
-                    String timeOff = jsonHdo.getString("CAS_VYP_" + j);
-                    if (timeOn.equals("null") || timeOff.equals("null")) {
-                        break;
-                    }
-                    HdoModel hdo = null;
-                    if (day.equals("Po - Pá")) {
-                        hdo = new HdoModel(rele, validFrom, validTo, timeOn, timeOff, 1, 1, 1, 1, 1, 0, 0, DistributionArea.CEZ.toString());
-
-                    }
-                    if (day.equals("So - Ne")) {
-                        hdo = new HdoModel(rele, validFrom, validTo, timeOn, timeOff, 0, 0, 0, 0, 0, 1, 1, DistributionArea.CEZ.toString());
-                    }
-                    if (hdo != null) {
-                        hdoList.add(hdo);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return hdoList;
-    }
-
-
-    private ArrayList<HdoListContainer> buildEGD(String jsonData) {
-        ArrayList<HdoListContainer> hdoListContainers = new ArrayList<>();
-        //první průchod vrací objekt s kody - přeskakuji
-
-        try {
-
-            JSONArray jsonRoot = new JSONArray(jsonData);
-            for (int i = 0; i < jsonRoot.length(); i++) {
-                ArrayList<HdoModel> hdoList = new ArrayList<>();
-                JSONObject jsonHdo = jsonRoot.getJSONObject(i);
-                JSONObject jsonDateFrom = jsonHdo.getJSONObject("od");
-                JSONObject jsonDateTo = jsonHdo.getJSONObject("do");
-                String validDate = parseEgdDate(jsonDateFrom) + " - " + parseEgdDate(jsonDateTo);
-                JSONArray jsonRates = jsonHdo.getJSONArray("sazby");
-                for (int j = 0; j < jsonRates.length(); j++) {
-                    JSONObject jsonRate = jsonRates.getJSONObject(j);
-                    String rate = jsonRate.getString("sazba");
-                    JSONArray jsonDays = jsonRate.getJSONArray("dny");
-                    JSONObject[] jsonDaysObj = new JSONObject[jsonDays.length()];
-                    for (int k = 0; k < jsonDays.length(); k++) {
-                        jsonDaysObj[k] = jsonDays.getJSONObject(k);
-                    }
-                    ArrayList<JSONObject> jsonObjectArrayList = JsonHdoEgdMerge.init(jsonDaysObj);
-                    for (int l = 0; l < jsonObjectArrayList.size(); l++) {
-                        JSONObject jsonObject = jsonObjectArrayList.get(l);
-                        JSONArray day = jsonObject.getJSONArray("denVTydnu");
-                        JSONArray times = jsonObject.getJSONArray("casy");
-                        for (int m = 0; m < times.length(); m++) {
-                            JSONObject time = times.getJSONObject(m);
-                            String timeOn = time.getString("od");
-                            String timeOff = time.getString("do");
-                            HdoModel hdo = new HdoModel(rate, parseEgdDate(jsonDateFrom), parseEgdDate(jsonDateTo), timeOn, timeOff,
-                                    containsDay(day, "1"),
-                                    containsDay(day, "2"),
-                                    containsDay(day, "3"),
-                                    containsDay(day, "4"),
-                                    containsDay(day, "5"),
-                                    containsDay(day, "6"),
-                                    containsDay(day, "7"),
-                                    DistributionArea.EGD.toString());
-                            hdoList.add(hdo);
-                        }
-                    }
-                }
-                HdoListContainer hdoListContainer = new HdoListContainer(hdoList, validDate);
-                hdoListContainers.add(hdoListContainer);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return hdoListContainers;
-    }
-
-
-    /**
-     * Sestaví text data z objektu json
-     *
-     * @param jsonObject objekt json s datem platnosti HDO
-     * @return textový řetězec s datem platnosti HDO, např. 1.1.2020 - 31.12.2020, Datumy platnosti jako 9999 odstraní
-     */
-    private String parseEgdDate(JSONObject jsonObject) {
-        String date = "";
-        try {
-            date = "" + jsonObject.get("den") + "." + jsonObject.get("mesic") + "." + jsonObject.get("rok");
-            date = date.replace(".9999", "").replace("1900", "");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return date;
-    }
-
-
-    private int containsDay(JSONArray jsonArray, String day) {
-        if (jsonArray.toString().contains(day))
-            return 1;
-        else
-            return 0;
-    }
-
-
-    /**
-     * Sestaví seznam HDO pro PRE
-     *
-     * @param jsonData objekt json s daty HDO
-     * @return seznam HDO
-     */
-    private ArrayList<HdoModel> buildPRE(String jsonData) {
-        ArrayList<HdoModel> hdoList = new ArrayList<>();
-        try {
-            JSONArray jsonRoot = new JSONArray(jsonData);
-            String validityDate = null;
-            //PRE
-            for (int i = 0; i < jsonRoot.length(); i++) {
-                JSONObject jsonObject = jsonRoot.getJSONObject(i);
-                String rele = jsonObject.getString("kodPovelu");
-                String date = jsonObject.getString("platnost");
-
-                if (i == 0)
-                    validityDate = date;
-                if (i == jsonRoot.length() - 1)
-                    validityDate += " - " + date;
-
-                for (int j = 0; j < 10; j++) {
-                    String timeOn = jsonObject.getString("casZap" + j);
-                    String timeOff = jsonObject.getString("casVyp" + j);
-                    if (timeOn.equals("") || timeOff.equals("")) {
-                        break;
-                    }
-                    HdoModel hdo = new HdoModel(rele, date, "", timeOn, timeOff, 0, 0, 0, 0, 0, 0, 0, DistributionArea.PRE.toString());
-                    hdoList.add(hdo);
-                }
-            }
-            setTvValidityDate(validityDate);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return hdoList;
-    }
 
     /**
      * Nastaví adapter pro recycler view
      */
     private void setAdapter(ArrayList<HdoModel> hdoModels) {
-        setVisibilityAlert(hdoModels.size() == 0);
-
         HdoAdapter hdoAdapter = new HdoAdapter(hdoModels, rvHdoSite, false);
         rvHdoSite.setAdapter(hdoAdapter);
-        hdoAdapter.notifyDataSetChanged();
         rvHdoSite.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvHdoSite.scheduleLayoutAnimation();
     }
@@ -638,22 +440,20 @@ public class HdoSiteFragment extends Fragment {
      * @param date text platnosti
      */
     private void setTvValidityDate(String date) {
-        tvValidityDate.setText("Platnost: " + date);
+        tvValidityDate.setText(getResources().getString(R.string.validity, date));
     }
 
 
     /**
      * Nastaví viditelnost upozornění a skryje text platnosti
-     *
-     * @param b true = zobrazit, false = skrýt
      */
     private void setVisibilityAlert(boolean b) {
-        if (b) {
+        if (b)
             tvAlert.setVisibility(View.VISIBLE);
-            tvValidityDate.setText("");
-        } else {
+        else
             tvAlert.setVisibility(View.INVISIBLE);
-        }
+
+
     }
 
 
@@ -695,7 +495,7 @@ public class HdoSiteFragment extends Fragment {
                 && spB.getSelectedItem().equals("")
                 && spPB.getSelectedItem().equals("")) return;
 
-                String code = "A" + spA.getSelectedItem()
+        String code = "A" + spA.getSelectedItem()
                 + "B" + spB.getSelectedItem()
                 + "DP" + spPB.getSelectedItem();
         etHdoCode.setText(code);
@@ -706,36 +506,70 @@ public class HdoSiteFragment extends Fragment {
      * Uloží HDO do databáze
      */
     private void saveHdo() {
-        if (hdoList != null) {
-            if (hdoList.size() > 0) {
-                SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
-                assert subscriptionPoint != null;
-                String tableHdo = subscriptionPoint.getTableHDO();
-                if (tableHdo == null || tableHdo.equals("")) {
-                    Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
-                dataHdoSource.saveHdo(hdoList, tableHdo);
-            } else {
-                Toast.makeText(requireActivity(), "Nejprve načtěte data", Toast.LENGTH_SHORT).show();
+        if (hdoList.size() > 0) {
+            SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
+            assert subscriptionPoint != null;
+            String tableHdo = subscriptionPoint.getTableHDO();
+            if (tableHdo == null || tableHdo.equals("")) {
+                Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
+                return;
             }
+            DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
+            dataHdoSource.saveHdo(hdoList, tableHdo);
         } else {
             Toast.makeText(requireActivity(), "Nejprve načtěte data", Toast.LENGTH_SHORT).show();
         }
     }
 
+
+    /**
+     * Smaže obsah arraylistů
+     */
+    private void clearArrayLists() {
+        hdoList.clear();
+        hdoListContainer.clear();
+        viewModel.clearData();
+    }
+
+
+    /**
+     * Smaže obsah arraylistů, recyclerview, spinnerů
+     */
+    private void clear() {
+        if (isClearArrayLists) {
+            clearArrayLists();
+            setAdapter(new ArrayList<>());
+            spDateEgd.setVisibility(View.GONE);
+            tvValidityDate.setVisibility(View.GONE);
+        }
+    }
+
+
     static class HdoListContainer {
         ArrayList<HdoModel> hdoList;
         String validityDate;
+        Distribution distribution;
 
-        public HdoListContainer(ArrayList<HdoModel> hdoList, String validityDate) {
+
+        public HdoListContainer(ArrayList<HdoModel> hdoList, String validityDate, Distribution distributionArea) {
             this.hdoList = hdoList;
             this.validityDate = validityDate;
+            this.distribution = distributionArea;
         }
+
 
         public ArrayList<HdoModel> getHdoList() {
             return hdoList;
+        }
+
+
+        public Distribution getDistribution() {
+            return distribution;
+        }
+
+
+        enum Distribution {
+            CEZ, EGD, PRE
         }
     }
 }

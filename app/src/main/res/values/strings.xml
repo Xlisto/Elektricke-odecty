@@ -373,6 +373,8 @@
     <string name="btn_left_content_description_sum_invoices">Zobrazí souhrnné faktury předchozího místa</string>
     <string name="btn_right_content_description_sum_invoices">Zobrazí souhrnné faktury následujícího místa</string>
 
+    <string name="no_hdo_codes">Žádná data, zkontrolujte správnost HDO povelu</string>
+
 
 
 </resources>

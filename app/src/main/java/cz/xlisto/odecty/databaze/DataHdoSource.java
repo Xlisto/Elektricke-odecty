@@ -152,6 +152,7 @@ public class DataHdoSource extends DataSource {
                 null,
                 "1");
 
+        if(cursor.getCount() == 0) return null;
         cursor.moveToFirst();
         distributionArea = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA));
         cursor.close();

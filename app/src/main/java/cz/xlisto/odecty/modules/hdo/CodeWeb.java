@@ -214,15 +214,15 @@ public abstract class CodeWeb {
             "\t\t\"permissionsHash\": \"c8042ad81050fc1d07198ccf7b968746f2f9c113afed377f6a8989a0cb414692\"\n" +
             "\t}\n" +
             "}</script>\n" +
-            "  <script src=\"https://www.elektrodroid.xlisto.com/vyhled_files/js_cw_-PLrgwIOnxx8gqxTJZGcUBNk2wzv8rhOGybK2Y-4.js.stažený soubor\"\n" +
+            "  <script type=\"text/javascript\" src=\"file:///android_asset/js_cw_-PLrgwIOnxx8gqxTJZGcUBNk2wzv8rhOGybK2Y-4.js\"\n" +
             "    wfd-invisible=\"true\"></script>\n" +
-            "  <script src=\"https://www.elektrodroid.xlisto.com/vyhled_files/js_7F9oylb6BkJXuZtGzY-o84sxM-U-Ax0FPeZnmP2soSk.js.stažený soubor\"\n" +
+            "  <script type=\"text/javascript\" src=\"file:///android_asset/js_7F9oylb6BkJXuZtGzY-o84sxM-U-Ax0FPeZnmP2soSk.js\"\n" +
             "    wfd-invisible=\"true\"></script>\n" +
-            "  <script src=\"https://www.elektrodroid.xlisto.com/vyhled_files/js_lYFLFrumHanZQsyOELvAkfM4y2o7A25j0-bhpkjz4Hc.js.stažený soubor\"\n" +
+            "  <script type=\"text/javascript\" src=\"file:///android_asset/js_lYFLFrumHanZQsyOELvAkfM4y2o7A25j0-bhpkjz4Hc.js\"\n" +
             "    wfd-invisible=\"true\"></script>\n" +
-            "  <script src=\"https://www.elektrodroid.xlisto.com/vyhled_files/js_1DF26LOAETnEz4Q1tK4rzQiWvRhLoiNeAJZWOWUmdes.js\"\n" +
+            "  <script type=\"text/javascript\" src=\"file:///android_asset/js_1DF26LOAETnEz4Q1tK4rzQiWvRhLoiNeAJZWOWUmdes.js\"\n" +
             "    wfd-invisible=\"true\"></script>\n" +
-            "  <script src=\"https://www.elektrodroid.xlisto.com/vyhled_files/js_3f-AkdHM-oWDcAiTwNrcaCq3xP9rCv1d63p8-bNnBIA.js.stažený soubor\"\n" +
+            "  <script type=\"text/javascript\" src=\"file:///android_asset/js_3f-AkdHM-oWDcAiTwNrcaCq3xP9rCv1d63p8-bNnBIA.js\"\n" +
             "    wfd-invisible=\"true\"></script>\n" +
             "</body>\n" +
             "</html>";

@@ -2,6 +2,7 @@ package cz.xlisto.odecty.models;
 
 import androidx.annotation.NonNull;
 
+
 /**
  * Model pro časy HDO
  * Xlisto 26.05.2023 18:44
@@ -63,6 +64,7 @@ public class HdoModel {
         return dateFrom;
     }
 
+
     public String getDateUntil() {
         return dateUntil;
     }
@@ -112,8 +114,9 @@ public class HdoModel {
         return sun;
     }
 
+
     public String getDistributionArea() {
-        if(distributionArea==null)
+        if (distributionArea == null)
             return "";
         return distributionArea;
     }

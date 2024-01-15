@@ -19,11 +19,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import cz.xlisto.odecty.R;
 
+
 /**
+ * dialogové okno se spinnerem pro výběr kódu
  * Xlisto 11.07.2023 5:31
  */
 public class SpinnerDialogFragment extends DialogFragment {
     private static final String TAG = "SpinnerDialogFragment";
+    public static final String ARG_TITLE = "title";
     public static final String ARG_CODE = "code";
     public static final String ARG_GROUP = "group";
     public static final String ARG_CATEGORY = "category";
@@ -32,9 +35,11 @@ public class SpinnerDialogFragment extends DialogFragment {
     private static final String ARG_GROUPS_LIST = "groupsList";
     private static final String ARG_GROUP_EXCEPTION_LIST = "groupExceptionList";
     public static final String ARG_AREA = "area";
+    public static final String ARG_EXCEPTION_AREA = "exceptionArea";
     public static final String ARG_IS_EXCEPTION = "isExceptionArea";
     public static final String ARG_POSITION = "position";
     public static final String RESULT = "result";
+    public static final String FLAG_RESULT_DIALOG_FRAGMENT = "flagResultDialogFragment";
 
     private String title = "";
     private String area = "";
@@ -48,32 +53,25 @@ public class SpinnerDialogFragment extends DialogFragment {
     private int selectedPosition;
     private boolean isExceptionArea = false;
 
+
     public static SpinnerDialogFragment newInstance(String title, ArrayList<String> codes, ArrayList<String> codesException, ArrayList<String[]> groupsList, ArrayList<String[]> groupExceptionList, String area, String exceptionArea, String flagResultDialogFragment) {
         SpinnerDialogFragment spinnerDialogFragment = new SpinnerDialogFragment();
         spinnerDialogFragment.title = title;
         spinnerDialogFragment.codes = codes;
         spinnerDialogFragment.groupsList = groupsList;
-        spinnerDialogFragment.groupExceptionList = groupExceptionList;
         spinnerDialogFragment.codesException = codesException;
+        spinnerDialogFragment.groupExceptionList = groupExceptionList;
         spinnerDialogFragment.exceptionArea = exceptionArea;
         spinnerDialogFragment.area = area;
         spinnerDialogFragment.flagResultDialogFragment = flagResultDialogFragment;
+        Log.w(TAG, "newInstance: " + codes.size() + " " + codesException.size() + " " + groupsList.size() + " " + groupExceptionList.size() + " " + area + " " + exceptionArea);
         return spinnerDialogFragment;
     }
+
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            codes = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES);
-            codesException = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES_EXCEPTION);
-            groupsList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUPS_LIST);
-            groupExceptionList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUP_EXCEPTION_LIST);
-            area = savedInstanceState.getString(ARG_AREA);
-            isExceptionArea = savedInstanceState.getBoolean(ARG_IS_EXCEPTION);
-            swExceptionArea.setChecked(isExceptionArea);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(title);
         View view = View.inflate(requireContext(), R.layout.dialog_spinner, null);
@@ -81,11 +79,26 @@ public class SpinnerDialogFragment extends DialogFragment {
         swExceptionArea = view.findViewById(R.id.swExceptionArea);
         TextView tvExceptionArea = view.findViewById(R.id.tvExceptionArea);
         TextView tvExceptionAreaList = view.findViewById(R.id.tvExceptionAreaList);
+
+        if (savedInstanceState != null) {
+            builder.setTitle(savedInstanceState.getString(ARG_TITLE));
+            codes = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES);
+            groupsList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUPS_LIST);
+            codesException = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES_EXCEPTION);
+            groupExceptionList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUP_EXCEPTION_LIST);
+            exceptionArea = savedInstanceState.getString(ARG_EXCEPTION_AREA);
+            area = savedInstanceState.getString(ARG_AREA);
+            isExceptionArea = savedInstanceState.getBoolean(ARG_IS_EXCEPTION);
+            swExceptionArea.setChecked(isExceptionArea);
+            flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT);
+        }
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedPosition = position;
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -93,12 +106,12 @@ public class SpinnerDialogFragment extends DialogFragment {
             }
         });
         builder.setView(view);
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setPositiveButton(requireContext().getResources().getString(R.string.ok), (dialog, which) -> {
             Bundle bundle = new Bundle();
             bundle.putBoolean(RESULT, true);
             bundle.putInt(ARG_POSITION, selectedPosition);
             bundle.putString(ARG_AREA, area);
-            if(!isExceptionArea) {
+            if (!isExceptionArea) {
                 bundle.putString(ARG_CODE, codesException.get(selectedPosition));
                 bundle.putString(ARG_GROUP, groupExceptionList.get(selectedPosition)[0]);
                 bundle.putString(ARG_CATEGORY, groupExceptionList.get(selectedPosition)[1]);
@@ -109,7 +122,7 @@ public class SpinnerDialogFragment extends DialogFragment {
             }
             requireActivity().getSupportFragmentManager().setFragmentResult(flagResultDialogFragment, bundle);
         });
-        builder.setNegativeButton("Zrušit", (dialog, which) -> {
+        builder.setNegativeButton(requireContext().getResources().getString(R.string.zrusit), (dialog, which) -> {
             Bundle bundle = new Bundle();
             bundle.putBoolean(RESULT, false);
             requireActivity().getSupportFragmentManager().setFragmentResult(flagResultDialogFragment, bundle);
@@ -121,7 +134,7 @@ public class SpinnerDialogFragment extends DialogFragment {
         });
         isExceptionArea = swExceptionArea.isChecked();
 
-        if (exceptionArea == null || exceptionArea.isEmpty() || codesException.size()==0) {
+        if (exceptionArea == null || exceptionArea.isEmpty() || codesException.size() == 0) {
             tvExceptionAreaList.setVisibility(View.GONE);
             tvExceptionArea.setVisibility(View.GONE);
             swExceptionArea.setVisibility(View.GONE);
@@ -134,16 +147,22 @@ public class SpinnerDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(ARG_TITLE, title);
         outState.putSerializable(ARG_CODES, codes);
         outState.putSerializable(ARG_CODES_EXCEPTION, codesException);
         outState.putSerializable(ARG_GROUPS_LIST, groupsList);
         outState.putSerializable(ARG_GROUP_EXCEPTION_LIST, groupExceptionList);
         outState.putBoolean(ARG_IS_EXCEPTION, isExceptionArea);
         outState.putString(ARG_AREA, area);
+        outState.putString(ARG_EXCEPTION_AREA, exceptionArea);
+        outState.putString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
+        outState.putBoolean(ARG_POSITION, swExceptionArea.isChecked());
     }
+
 
     private void setAdapter(ArrayList<String> list) {
         spinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, list));
