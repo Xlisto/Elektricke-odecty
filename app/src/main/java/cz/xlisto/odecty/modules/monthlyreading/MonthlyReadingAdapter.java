@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import cz.xlisto.odecty.utils.FragmentChange;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * Adapter pro zobrazení měsíčních odečtů, pro RecyclerView..
  */
@@ -60,6 +62,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNtDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice;
         ImageView ivIconResult, ivWarning;
         Button btnEdit, btnDelete;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -134,12 +137,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         holder.tvDate.setText(ViewHelper.convertLongToDate(monthlyReading.getDate()));
         holder.tvVt.setText(DecimalFormatHelper.df2.format(monthlyReading.getVt()));
         holder.tvNt.setText(DecimalFormatHelper.df2.format(monthlyReading.getNt()));
-        holder.tvPayment.setText(DecimalFormatHelper.df2.format(monthlyReading.getPayment()) + " Kč");
+        holder.tvPayment.setText(context.getResources().getString(R.string.float_price, monthlyReading.getPayment()));
         holder.tvAlertRegulPrice.setVisibility(View.GONE);
 
         //výpočet
         if ((position + 1) < items.size()) {
-            String differenceDescription = " Kč s DPH";
+            String differenceDescription = context.getResources().getString(R.string.kc_with_tax);
             double vtDiff = monthlyReading.getVt() - items.get(position + 1).getVt();
             double ntDiff = monthlyReading.getNt() - items.get(position + 1).getNt();
             double[] prices = new double[]{0, 0, 0, 0};
@@ -165,11 +168,27 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
                     priceList = priceListRegulBuilder.getRegulPriceList();
 
-                    boolean overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
+                    Calendar calendarEnd = Calendar.getInstance();
+                    calendarEnd.setTimeInMillis(items.get(position).getDate());
+                    calendarEnd.add(Calendar.DAY_OF_MONTH, -1);
+                    long dateStart = items.get(position + 1).getDate();
+                    long dateEnd = calendarEnd.getTimeInMillis();
 
-                    if (overDateRegulPrice) {
+                    boolean overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
+                    boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
+                    Log.w(TAG, "dates: " + ViewHelper.convertLongToDate(dateStart) + " - " + ViewHelper.convertLongToDate(dateEnd));
+                    Log.w(TAG, "dates: " + overDatePriceList);
+
+                    if (overDateRegulPrice || !overDatePriceList) {
                         holder.ivWarning.setVisibility(View.VISIBLE);
                         holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
+                        if (!overDatePriceList) {
+                            holder.tvAlertRegulPrice.setText(context.getResources().getString(R.string.alert_date_price_list));
+                            holder.tvAlertRegulPrice.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+                        }
+                    } else {
+                        holder.ivWarning.setVisibility(View.GONE);
+                        holder.tvAlertRegulPrice.setVisibility(View.GONE);
                     }
 
                 }
@@ -178,7 +197,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();
                 double difference = monthlyReading.getDifferenceDPH();
                 if (difference > 0)
-                    differenceDescription = " Kč se slevou DPH";
+                    differenceDescription = context.getResources().getString(R.string.kc_with_discount);
                 total = total + (total * priceList.getDph() / 100) - difference;
                 different = monthlyReading.getPayment() - total;
             }
@@ -192,16 +211,16 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
 
             holder.ivIconResult.setImageResource(imageResource);
-            holder.tvVtDif.setText(DecimalFormatHelper.df2.format(vtDiff) + " kWh");
-            holder.tvNtDif.setText(DecimalFormatHelper.df2.format(ntDiff) + " kWh");
-            holder.tvVtPrice.setText(DecimalFormatHelper.df2.format(prices[0] * vtDiff) + " Kč");
-            holder.tvNtPrice.setText(DecimalFormatHelper.df2.format(prices[1] * ntDiff) + " Kč");
-            holder.tvPozePrice.setText(DecimalFormatHelper.df2.format(prices[3] * (vtDiff + ntDiff)) + " Kč");
-            holder.tvNextServicesPrice.setText(DecimalFormatHelper.df2.format(items.get(position).getOtherServices()) + " Kč");
-            holder.tvMonth.setText(Html.fromHtml("Počet měsíců: <b>" + (DecimalFormatHelper.df3.format(month))));
-            holder.tvMonthPrice.setText(DecimalFormatHelper.df2.format(monthPrice) + " Kč");
-            holder.tvTotalPrice.setText(Html.fromHtml("Celkem: <b>" + DecimalFormatHelper.df2.format(total) + "</b>" + differenceDescription));
-            holder.tvDifferentPrice.setText(Html.fromHtml("Rozdíl: <b><font color=\"" + color + "\">" + DecimalFormatHelper.df2.format(different) + "</b> Kč"));
+            holder.tvVtDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(vtDiff)));
+            holder.tvNtDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(ntDiff)));
+            holder.tvVtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[0] * vtDiff)));
+            holder.tvNtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[1] * ntDiff)));
+            holder.tvPozePrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[3] * (vtDiff + ntDiff))));
+            holder.tvNextServicesPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(items.get(position).getOtherServices())));
+            holder.tvMonth.setText(Html.fromHtml(context.getResources().getString(R.string.count_months_html, (DecimalFormatHelper.df3.format(month)))));
+            holder.tvMonthPrice.setText(context.getResources().getString(R.string.string_price,DecimalFormatHelper.df2.format(monthPrice)));
+            holder.tvTotalPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_price_html, DecimalFormatHelper.df2.format(total), differenceDescription)));
+            holder.tvDifferentPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_different_html,color, DecimalFormatHelper.df2.format(different))));
         }
 
         holder.rootRelativeLayout.setOnClickListener(v -> {

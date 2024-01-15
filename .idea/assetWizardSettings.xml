@@ -101,7 +101,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ico_graph_column.gif" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
                                                 <entry key="scalingPercent" value="79" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -136,8 +136,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="outputName" value="notification_icon" />
+                                      <entry key="backgroundColor" value="b2acfd" />
+                                      <entry key="outputName" value="ic_launcher_test" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -166,7 +166,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ic_alert.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -200,9 +200,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
+                                      <entry key="backgroundColor" value="85acf5" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\Xlisto\Mega\DROPBOX\AndroidProjects\ElektroDroid - grafika\ic_alert.png" />
-                                      <entry key="outputName" value="ic_alert" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
+                                      <entry key="outputName" value="ic_launcher_test" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -346,11 +347,6 @@
                                 </PersistentState>
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                        <option name="values">
-                          <map>
-                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>

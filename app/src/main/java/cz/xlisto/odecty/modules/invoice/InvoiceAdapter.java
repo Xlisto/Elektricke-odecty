@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
+
 
 /**
  * Adaptér pro zobrazení záznamu faktur
@@ -175,7 +177,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.ntDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(ntDif)));
         holder.vtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(vtTotal)));
         holder.ntPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(ntTotal)));
-        holder.tvPayment.setText(context.getResources().getString(R.string.fixed_salary,paymentTotal));
+        holder.tvPayment.setText(context.getResources().getString(R.string.fixed_salary, paymentTotal));
         holder.tvPOZE.setText(context.getResources().getString(R.string.poze, poze));
         holder.tvOtherServices.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(otherServices)));
 
@@ -208,16 +210,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
         holder.btnCut.setOnClickListener(v -> {
             String message = "";
-            if(invoice.getDateFrom()>invoice.getDateTo()){
+            if (invoice.getDateFrom() > invoice.getDateTo()) {
                 message = context.getResources().getString(R.string.alert_message_date);
             }
-            if(invoice.getVtStart()>invoice.getVtEnd()){
+            if (invoice.getVtStart() > invoice.getVtEnd()) {
                 message = context.getResources().getString(R.string.alert_message_vt);
             }
-            if(invoice.getNtStart()>invoice.getNtEnd()){
+            if (invoice.getNtStart() > invoice.getNtEnd()) {
                 message = context.getResources().getString(R.string.alert_message_nt);
             }
-            if(!message.equals("")){
+            if (!message.equals("")) {
                 message += context.getResources().getString(R.string.alert_message_edit_last_record);
                 OwnAlertDialog.show(context, context.getResources().getString(R.string.alert_title), message);
                 return;
@@ -261,9 +263,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         showButtons(holder, invoice, position);
     }
 
+
     public void deleteItem() {
         deleteItem(selectedId, selectedPosition);
     }
+
 
     @Override
     public int getItemCount() {
@@ -356,6 +360,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private void checkDate(int position, MyViewHolder holder, PriceListRegulBuilder
             priceListRegulBuilder) {
         InvoiceModel invoice, prevInvoice, nextInvoice;
+        PriceListModel priceList = priceListRegulBuilder.getRegulPriceList();
         String dateOf, dateTo, prevDate, nextDate;
         double vtStart, ntStart, vtEnd, ntEnd, prevVt, prevNt, nextVt, nextNt;
         boolean isChangedElectricMeter, isChangedElectricMeterNext;
@@ -420,9 +425,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && !isOverDateRegulPrice(priceListRegulBuilder, invoice)
                 && (((vtStart == prevVt && ntStart == prevNt) && vtEnd == nextVt && ntEnd == nextNt)
                 && invoice.getDateFrom() <= invoice.getDateTo()//porovnání začátku a konce data
+                && priceList.getPlatnostDO() >= invoice.getDateTo()
+                && priceList.getPlatnostOD() <= invoice.getDateFrom()
                 || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
                 || (ntEnd != nextNt && isChangedElectricMeterNext)//výměna elektroměru
                 || (vtEnd != nextVt && isChangedElectricMeterNext)//výměna elektroměru
+
         )) {
             holder.imgAlert.setVisibility(View.GONE);
             holder.tvAlert.setVisibility(View.GONE);
@@ -435,6 +443,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
             } else {
                 holder.tvAlert.setVisibility(View.GONE);
+            }
+            if(priceList.getPlatnostDO() >= invoice.getDateTo() || priceList.getPlatnostOD() <= invoice.getDateFrom()){
+                holder.tvAlert.setVisibility(View.VISIBLE);
+                holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
             }
         }
     }
@@ -464,6 +476,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         return ((startRegulPrice > dateStartMonthlyReading) && (startRegulPrice <= dateEndMonthlyReading))
                 || ((endRegulPrice >= dateStartMonthlyReading) && (endRegulPrice < dateEndMonthlyReading));
     }
+
 
     /**
      * Nastaví barvu textového pole pro upozornění na určitou akci.
@@ -503,6 +516,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.ntDif.setVisibility(View.GONE);
         }
     }
+
 
     public static void resetShowButtons() {
         showButtons = -1;

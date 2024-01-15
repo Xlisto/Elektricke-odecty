@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -289,7 +290,7 @@ public class InvoiceFragment extends Fragment {
                 price[3] = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentDate * regulPriceList.getPoze1();//poze dle jističe
             }
 
-            totalOtherServices += (invoice.getOtherServices() * differentDate);
+            totalOtherServices = (invoice.getOtherServices() * differentDate);
 
             for (int j = 0; j < priceTotal.length; j++) {
                 priceTotal[j] += price[j];

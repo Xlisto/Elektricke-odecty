@@ -122,6 +122,7 @@
     <string name="regul_alert">Období obsahuje regulované i neregulované ceny</string>
     <string name="new_meter">Byla provedena výměna elektroměru</string>
     <string name="alert">Varování nekonzistence dat</string>
+    <string name="alert_date_price_list">Pro období je použitý neplatný ceník</string>
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
     <string name="prvniOdecet">Prvni odečet</string>
@@ -352,7 +353,10 @@
     <string name="text_price_unit">%.2f Kč/%s</string>
     <string name="number_sum_invoce">Faktura: %d</string>
     <string name="date_sum_invoce">%s - %s</string>
-    <string name="power">%d x %d A"</string>
+    <string name="power">%d x %d A</string>
+    <string name="count_months_html">Počet měsíců:  &lt;b&gt;%s&lt;/b&gt;</string>
+    <string name="total_price_html">Celkem:  &lt;b&gt;%s&lt;/b&gt; %s</string>
+    <string name="total_different_html">Rozdíl: &lt;b&gt;&lt;font color=&quot;%s&quot;&gt;%s&lt;/b&gt; Kč</string>
 
     <string name="btn_description_date_cut">Datum rozdělení</string>
     <string name="slider_description_date_cut">Rozdělení podle data</string>
@@ -374,6 +378,8 @@
     <string name="btn_right_content_description_sum_invoices">Zobrazí souhrnné faktury následujícího místa</string>
 
     <string name="no_hdo_codes">Žádná data, zkontrolujte správnost HDO povelu</string>
+    <string name="kc_with_tax"> Kč s DPH</string>
+    <string name="kc_with_discount"> Kč se slevou DPH</string>
 
 
 
