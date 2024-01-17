@@ -3,7 +3,6 @@ package cz.xlisto.odecty.modules.backup;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -11,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -27,42 +27,47 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
  * Obnoví data ze záložních ZIP souborů
  * Xlisto 13.05.2023 10:04
  */
-public class RecoverDataFromBackupFile extends RecoverData{
+public class RecoverDataFromBackupFile extends RecoverData {
     private static final String TAG = "RecoverDataFromFile";
 
 
-    public static void recoverDatabaseFromZip(Context context,DocumentFile f) {
+    public static boolean recoverDatabaseFromZip(Context context, DocumentFile f) {
         if (f == null || context == null) {
             Toast.makeText(context, "Data se neobnovila", Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
 
         if (Objects.requireNonNull(f.getName()).contains(".zip")) {
+            Boolean[] b = new Boolean[2];
             //zip archiv, který se rozbalí do povolený složky
-            ArrayList<DocumentFile> files = unzip(context,f);
+            ArrayList<DocumentFile> files = unzip(context, f);
             for (int i = 0; i < files.size(); i++) {
-                Log.w(TAG, "Rozbalené soubory: " + files.get(i).getName());
                 if (Objects.equals(files.get(i).getName(), "odecet.db") || Objects.equals(files.get(i).getName(), "cenik.db")) {
-                    recoverDatabaseFromFile(context,files.get(i));
+                    b[i] = recoverDatabaseFromFile(context, files.get(i));
                 }
             }
             //úklid složky temp
             deleteDirectory(files);
+
+            if (b[0] == null || b[1] == null)
+                return false;
+            return b[0] && b[1];
         } else {
             //původní záložní soubory
-            recoverDatabaseFromFile(context,f);
+            return recoverDatabaseFromFile(context, f);
         }
     }
 
 
     /**
      * Obnoví databázi ze záložních souborů
+     *
      * @param context kontext aplikace
-     * @param f DocumentFile soubor
+     * @param f       DocumentFile soubor
      */
-    private static void recoverDatabaseFromFile(Context context, DocumentFile f) {
+    private static boolean recoverDatabaseFromFile(Context context, DocumentFile f) {
         if (f == null || context == null) {
-            return;
+            return false;
         }
         //kontrola databáze, zdali existuje, pokud ne vytvoří se a pak se následně přepíše obnovovaným souborem
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
@@ -78,19 +83,23 @@ public class RecoverDataFromBackupFile extends RecoverData{
 
             boolean cenik = Objects.requireNonNull(f.getName()).contains("cenik");
             if (cenik) {
-                Log.w(TAG, " soubor přípona: .cenik");
                 currentDBPath = "//data//" + context.getPackageName() + "//databases//databaze_cenik";
             }
 
             boolean odecet = f.getName().contains("odecet");
             if (odecet) {
-                Log.w(TAG, " soubor přípona: .odecet");
                 currentDBPath = "//data//" + context.getPackageName() + "//databases//odecty_a_mista";
             }
 
             File currentDB = new File(data, currentDBPath);//vnitřní databáze
 
-            OutputStream src = new FileOutputStream(currentDB);
+            OutputStream src;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                src = Files.newOutputStream(currentDB.toPath());
+            } else {
+                src = new FileOutputStream(currentDB);
+            }
+
             InputStream dst = context.getContentResolver().openInputStream(f.getUri());
 
             int c;
@@ -107,13 +116,14 @@ public class RecoverDataFromBackupFile extends RecoverData{
 
             //nastavení barev VT a NT
             //TODO: doplnit nastavení aplikace
+
             //new Databaze(getActivity()).getColorApp();//načtení barev z databáze a nastavení do sharedPreferences, otevírá si a zavírá databázy
             ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
             shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
-            Toast.makeText(context, "Úspěšně obnoveno. Zvolte aktuální odběrné místo.", Toast.LENGTH_LONG).show();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(context, "Bohužel se něco nepovedlo při obnově: \n" + e, Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 
@@ -124,7 +134,7 @@ public class RecoverDataFromBackupFile extends RecoverData{
      * @param documentFile soubor se zálohou
      * @return ArrayList<DocumentFile> seznam souborů
      */
-    private static ArrayList<DocumentFile> unzip(Context context,DocumentFile documentFile) {
+    private static ArrayList<DocumentFile> unzip(Context context, DocumentFile documentFile) {
         ShPBackup shPBackup = new ShPBackup(context);
         Uri treeUri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, DEF_URI));
         DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);

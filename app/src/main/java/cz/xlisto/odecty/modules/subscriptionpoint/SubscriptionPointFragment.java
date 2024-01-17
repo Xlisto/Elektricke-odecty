@@ -5,15 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import cz.xlisto.odecty.MainActivity;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
-import cz.xlisto.odecty.services.HdoData;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.MainActivityHelper;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 import android.util.Log;
@@ -128,9 +127,8 @@ public class SubscriptionPointFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setText(subscriptionPoints.get(position));
                 shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoints.get(position).getId());
-                MainActivity mainActivity = (MainActivity) requireActivity();
-                mainActivity.setToolbarSubtitle(subscriptionPoints.get(position).getName());
-                HdoData.loadHdoData(requireActivity());
+
+                MainActivityHelper.updateToolbarAndLoadData(requireActivity());
             }
 
 

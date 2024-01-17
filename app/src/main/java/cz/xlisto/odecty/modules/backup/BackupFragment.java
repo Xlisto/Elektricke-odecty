@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +28,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.permission.Files;
 import cz.xlisto.odecty.shp.ShPBackup;
+import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
+import cz.xlisto.odecty.utils.MainActivityHelper;
 
 import static cz.xlisto.odecty.permission.Permissions.REQUEST_WRITE_STORAGE;
+
 
 /**
  * Xlisto 07.03.2023 12:36
@@ -65,8 +68,7 @@ public class BackupFragment extends Fragment {
             super.handleMessage(msg);
             documentFiles.clear();
             documentFiles = (ArrayList<DocumentFile>) msg.obj;
-            Log.w(TAG, "handleMessage: backup " + documentFiles.size());
-            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView);
+            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery);
             recyclerView.setAdapter(backupAdapter);
             recyclerView.scheduleLayoutAnimation();
             recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
@@ -107,6 +109,27 @@ public class BackupFragment extends Fragment {
             }
 
             btnBackup.setEnabled(true);
+        }
+    };
+    //handler pro výsledek obnovení databáze
+    private final Handler handlerResultRecovery = new Handler(Looper.getMainLooper()) {
+        public void handleMessage(@NonNull android.os.Message msg) {
+            super.handleMessage(msg);
+            boolean b = (boolean) msg.obj;
+            if (b) {
+                Snackbar.make(requireView(), getResources().getString(R.string.recovery_ok), Snackbar.LENGTH_LONG).show();
+
+                ShPBackup shPSubscriptionPoint = new ShPBackup(requireContext());
+                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
+                dataSubscriptionPointSource.open();
+                dataSubscriptionPointSource.loadFirstIdSubscriptionPoint();
+                shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, dataSubscriptionPointSource.loadFirstIdSubscriptionPoint());
+                dataSubscriptionPointSource.close();
+
+                MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+            } else {
+                Snackbar.make(requireView(), getResources().getString(R.string.recovery_fail), Snackbar.LENGTH_LONG).show();
+            }
         }
     };
 
@@ -169,7 +192,7 @@ public class BackupFragment extends Fragment {
         }
 
         documentFiles.clear();
-        recyclerView.setAdapter(new BackupAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
+        recyclerView.setAdapter(new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
 

@@ -316,6 +316,28 @@ public class DataSubscriptionPointSource extends DataSource{
 
 
     /**
+     * Načte id prvního nalezeného odběrného místa
+     * Vhodné pro nastavení aktuálního odběrného místa po aktualizaci
+     *
+     * @return id odběrného místa
+     */
+    public long loadFirstIdSubscriptionPoint(){
+        Cursor cursor = database.query(TABLE_NAME_SUBSCRIPTION_POINT,
+                new String[]{"_id"},
+                null,
+                null,
+                null,
+                null,
+                null);
+        if(cursor.getCount() == 0)
+            return -1;
+        cursor.moveToFirst();
+        long id = cursor.getLong(0);
+        cursor.close();
+        return id;
+    }
+
+    /**
      * Načte arraylist odběrných míst podle argumentů a setřídí podle názvu odběrného místa
      *
      * @param selection     podmínka

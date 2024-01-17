@@ -383,6 +383,8 @@
     <string name="kc_with_discount"> Kč se slevou DPH</string>
 
     <string name="no_subsriptionpoint">Není vybráno odběrné místo</string>
+    <string name="recovery_ok">Obnovení proběhlo úspěšně</string>
+    <string name="recovery_fail">Obnovení se nezdařilo</string>
 
 
 </resources>

@@ -2,6 +2,8 @@ package cz.xlisto.odecty.modules.backup;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     private static int showButtons = -1;
     private int selectedPosition;
     private static DocumentFile selectedFile;
+    private final Handler handler;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -48,16 +51,18 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         Button btnRestore;
         Button btnDelete;
 
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }
 
 
-    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView) {
+    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView, Handler handler) {
         this.documentFiles = documentFiles;
         this.context = context;
         this.recyclerView = recyclerView;
+        this.handler = handler;
     }
 
 
@@ -175,8 +180,10 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * Obnoví data ze záložního vybraného souboru zip
      */
     public void recoverDatabaseFromZip() {
-        RecoverDataFromBackupFile.recoverDatabaseFromZip(context, selectedFile);
-        //selectedFile = null;
+        boolean b = RecoverDataFromBackupFile.recoverDatabaseFromZip(context, selectedFile);
+        Message msg = new Message();
+        msg.obj = b;
+        handler.sendMessage(msg);
     }
 
 
