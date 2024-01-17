@@ -339,7 +339,7 @@ public class HdoSiteFragment extends Fragment {
             }
         });
 
-        if (getSubscriptionPoint() != null) {
+        if (getSubscriptionPoint() == null) {
             btnSaveHdo.setEnabled(false);
         }
 

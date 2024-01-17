@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.hdo;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,9 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     private static final String ARG_TIME_FROM = "timeFrom";
     private static final String ARG_TIME_UNTIL = "timeUntil";
     private static final String ARG_IS_FIRST_LOAD = "isFirstLoad";
+    private static final String ARG_RELE = "rele";
+    private static final String ARG_DATE_FROM = "dateFrom";
+    private static final String ARG_DATE_UNTIL = "dateUntil";
     private long id;
     private int mon, tue, wed, thu, fri, sat, sun;
     private String timeFrom, timeUntil;
@@ -44,7 +48,9 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
         args.putInt(ARG_SUN, hdoModel.getSun());
         args.putString(ARG_TIME_FROM, hdoModel.getTimeFrom());
         args.putString(ARG_TIME_UNTIL, hdoModel.getTimeUntil());
-
+        args.putString(ARG_RELE, hdoModel.getRele());
+        args.putString(ARG_DATE_FROM, hdoModel.getDateFrom());
+        args.putString(ARG_DATE_UNTIL, hdoModel.getDateUntil());
 
         fragment.setArguments(args);
         return fragment;
@@ -65,7 +71,12 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
             sun = getArguments().getInt(ARG_SUN);
             timeFrom = getArguments().getString(ARG_TIME_FROM);
             timeUntil = getArguments().getString(ARG_TIME_UNTIL);
+            rele = getArguments().getString(ARG_RELE);
+            dateFrom = getArguments().getString(ARG_DATE_FROM);
+            dateUntil = getArguments().getString(ARG_DATE_UNTIL);
             isFirstLoad = getArguments().getBoolean(ARG_IS_FIRST_LOAD,true);
+
+            Log.w(TAG, "onCreate: " + dateFrom + " - " + dateFrom);
         }
     }
 

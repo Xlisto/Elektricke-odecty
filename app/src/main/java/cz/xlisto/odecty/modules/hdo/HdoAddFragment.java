@@ -47,6 +47,9 @@ public class HdoAddFragment extends HdoAddEditFragmentAbstract{
         DataHdoSource dataHdoSource = new DataHdoSource(requireContext());
         dataHdoSource.open();
         if (subscriptionPoint != null) {
+            dateFrom = "0";
+            dateUntil = "0";
+            rele = "";
             dataHdoSource.saveHdo(createHdo(),subscriptionPoint.getTableHDO());
         }
         dataHdoSource.close();

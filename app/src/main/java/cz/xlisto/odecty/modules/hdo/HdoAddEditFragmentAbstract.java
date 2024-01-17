@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.HdoModel;
 
+
 /**
  * Abstraktní třída pro přidání/editaci dat s časy HDO
  * Xlisto 26.05.2023 21:13
@@ -39,6 +40,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     int fri = 0;
     int sat = 0;
     int sun = 0;
+    String rele, dateFrom, dateUntil;
 
 
     @Nullable
@@ -136,7 +138,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         String until = String.format(Locale.getDefault(), "%02d:%02d", hourUntil, minuteUntil);
         initDays();
 
-        return new HdoModel("", "0", "0", from, until, mon, tue, wed, thu, fri, sat, sun, "");
+        return new HdoModel(rele, dateFrom, dateUntil, from, until, mon, tue, wed, thu, fri, sat, sun, "");
     }
 
 
@@ -154,7 +156,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     boolean checkSelectedDays() {
         initDays();
         if (mon + tue + wed + thu + fri + sat + sun == 0) {
-            Toast.makeText(getContext(), "Musíte vybrat alespoň jeden den", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.have_to_coise_day), Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;

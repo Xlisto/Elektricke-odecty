@@ -21,7 +21,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -154,10 +153,11 @@ public class HdoFragment extends Fragment {
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ShPHdo shPHdo = new ShPHdo(requireContext());
+                /*ShPHdo shPHdo = new ShPHdo(requireContext());
                 String idSbp = Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getTableHDO();
                 shPHdo.set(ShPHdo.ARG_RELE + idSbp, spReleSettings.getAdapter().getItem(position).toString());
-                HdoData.loadHdoData(requireActivity());
+                HdoData.loadHdoData(requireActivity());*/
+                loadData(spRele.getAdapter().getItem(position).toString());
             }
 
 
@@ -364,8 +364,8 @@ public class HdoFragment extends Fragment {
         spReleSettings.setAdapter(adapter);
         if (reles.size() > 1)
             spRele.setVisibility(View.VISIBLE);
-        else
-            spRele.setVisibility(View.GONE);
+
+        spRele.setVisibility(View.GONE);
 
 
     }

@@ -29,10 +29,10 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     private static final String TAG = "HdoAdapter";
     private final ArrayList<HdoModel> items;
     private final RecyclerView recyclerView;
-    private static int showButtons = -1;
+    private int showButtons = -1;
     public static final String FLAG_HDO_ADAPTER_DELETE = "flagHdoAdapterDelete";
-    private static long selectedId;
-    private static int selectedPosition;
+    private long selectedId;
+    private int selectedPosition;
     private static boolean clickables;
 
 
@@ -132,9 +132,7 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             holder.lnHdoDays.setVisibility(View.VISIBLE);
         }
 
-
-
-        holder.tvTime.setText("Čas: " + item.getTimeFrom() + " - " + item.getTimeUntil());
+        holder.tvTime.setText(holder.itemView.getContext().getResources().getString(R.string.time, item.getTimeFrom(), item.getTimeUntil()));
 
         holder.lnHdoOut.setOnClickListener(v1 -> {
             if (!clickables) return;

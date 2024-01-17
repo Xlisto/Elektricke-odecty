@@ -373,6 +373,7 @@
     <string name="nt_text_consuption">NT: %.2f kWh, průměrně: %.2f kWh/měsíc</string>
     <string name="total_consuption">%.2f kWh</string>
     <string name="total_text_consuption">%.2f kWh, průměrně: %.2f kWh/měsíc</string>
+    <string name="time">"Čas: %s - %s</string>
     <string name="no_invoices">Žádné faktury k zobrazení</string>
 
     <string name="btn_left_content_description_sum_invoices">Zobrazí souhrnné faktury předchozího místa</string>
@@ -385,6 +386,7 @@
     <string name="no_subsriptionpoint">Není vybráno odběrné místo</string>
     <string name="recovery_ok">Obnovení proběhlo úspěšně</string>
     <string name="recovery_fail">Obnovení se nezdařilo</string>
+    <string name="have_to_coise_day">Musíte vybrat alespoň jeden den</string>
 
 
 </resources>
