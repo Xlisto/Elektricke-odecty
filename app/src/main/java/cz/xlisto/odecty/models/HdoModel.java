@@ -76,6 +76,8 @@ public class HdoModel {
 
 
     public String getTimeUntil() {
+        if(timeUntil.equals("23:59"))
+            return "0:00";
         return timeUntil;
     }
 

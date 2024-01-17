@@ -79,6 +79,7 @@ public class DashBoardFragment extends Fragment {
         TextView tvAlertNoSubscriptionPoint = view.findViewById(R.id.tvAlertDashboard);
 
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
+        tvAlertNoSubscriptionPoint.setVisibility(View.GONE);
         if (subscriptionPointModel == null) {
             tvName.setText(getResources().getString(R.string.no_subsriptionpoint));
             tvAlertNoSubscriptionPoint.setVisibility(View.VISIBLE);

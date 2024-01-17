@@ -162,10 +162,46 @@ public class GraphTotalHdoView extends View {
      */
     private void drawTime(Canvas canvas) {
         //vykreslení výseče času
+
         if (models == null) return;
 
-        // Procházení seznamu a kreslení výsečí
+        //detetekce dnešního dne
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
+
         for (HdoModel model : models) {
+            // Procházení seznamu a kreslení výsečí
+            switch (today) {
+                case Calendar.MONDAY:
+                    if (model.getMon()==0) continue;
+                    break;
+                case Calendar.TUESDAY:
+                    if (model.getTue()==0)
+                        continue;
+                    break;
+                case Calendar.WEDNESDAY:
+                    if (model.getWed()==0)
+                        continue;
+                    break;
+                case Calendar.THURSDAY:
+                    if (model.getThu()==0)
+                        continue;
+                    break;
+                case Calendar.FRIDAY:
+                    if (model.getFri()==0)
+                        continue;
+                    break;
+                case Calendar.SATURDAY:
+                    if (model.getSat()==0)
+                        continue;
+                    break;
+                case Calendar.SUNDAY:
+                    if (model.getSun()==0)
+                        continue;
+                    break;
+            }
+
             // Převod času na úhly
             float startAngle = convertTimeToAngle(model.getTimeFrom()); // Převod času začátku na úhel
             float endAngle = convertTimeToAngle(model.getTimeUntil()); // Převod času konce na úhel
