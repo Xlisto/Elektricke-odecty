@@ -112,7 +112,6 @@
             android:layout_centerHorizontal="false"
             android:layout_marginStart="10dp"
             android:gravity="center_horizontal"
-            android:text="New Text"
             android:textSize="40sp"
             android:textStyle="bold" />
 

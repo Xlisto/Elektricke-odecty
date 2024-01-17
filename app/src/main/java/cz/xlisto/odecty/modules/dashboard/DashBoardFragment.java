@@ -27,7 +27,10 @@ import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.InvoiceListSumModel;
+import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPDashBoard;
+import cz.xlisto.odecty.utils.SubscriptionPoint;
+
 
 /**
  * Dashboard - přehled důležitých informací
@@ -73,6 +76,15 @@ public class DashBoardFragment extends Fragment {
         spSort = view.findViewById(R.id.spSortInvoiceSum);
         graphTotalConsuptionView = view.findViewById(R.id.graphTotalConsuptionView);
         graphTotalHdoView = view.findViewById(R.id.graphTotalHdoView);
+        TextView tvAlertNoSubscriptionPoint = view.findViewById(R.id.tvAlertDashboard);
+
+        SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
+        if (subscriptionPointModel == null) {
+            tvName.setText(getResources().getString(R.string.no_subsriptionpoint));
+            tvAlertNoSubscriptionPoint.setVisibility(View.VISIBLE);
+            return;
+        }
+
 
         ShPDashBoard shPDashBoard = new ShPDashBoard(requireActivity());
         shPDashBoard.get(ShPDashBoard.IS_SHOW_TOTAL, false);
@@ -133,6 +145,7 @@ public class DashBoardFragment extends Fragment {
      * Načte data z databáze
      */
     private void loadData() {
+
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireActivity());
         dataSettingsSource.open();
         colorVTNT = dataSettingsSource.loadColorVTNT();
@@ -153,7 +166,6 @@ public class DashBoardFragment extends Fragment {
      * Nastaví adaptér pro zobrazení seznamu faktur
      */
     private void setAdapter() {
-
         double max = invoiceListSumModel.getMaxValue(showInvoiceSum);
         if (isShowTotal)
             max = invoiceListSumModel.getMaxValueTotal(showInvoiceSum);

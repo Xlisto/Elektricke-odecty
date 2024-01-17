@@ -182,6 +182,7 @@
     <string name="equals">=</string>
     <string name="plus">+</string>
     <string name="add_payment">Přidat platbu</string>
+    <string name="add_invoice">Přidat fakturu</string>
     <string name="discount">Sleva</string>
     <string name="supplement">Doplatek</string>
     <string name="payment">Záloha</string>
@@ -381,6 +382,7 @@
     <string name="kc_with_tax"> Kč s DPH</string>
     <string name="kc_with_discount"> Kč se slevou DPH</string>
 
+    <string name="no_subsriptionpoint">Není vybráno odběrné místo</string>
 
 
 </resources>

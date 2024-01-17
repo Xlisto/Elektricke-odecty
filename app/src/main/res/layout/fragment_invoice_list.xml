@@ -13,7 +13,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
-        android:text="Přidat Fakturu" />
+        android:text="@string/add_invoice" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoiceList"
@@ -26,5 +26,10 @@
         android:paddingEnd="5dp"
         android:paddingStart="5dp"
         android:paddingTop="5dp" />
+
+    <TextView
+        android:id="@+id/tvAlertInvoiceList"
+        style="@style/AlertNoSubscriptionPoint"
+        android:visibility="gone" />
 </RelativeLayout>
 

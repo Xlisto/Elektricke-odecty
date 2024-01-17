@@ -65,6 +65,7 @@ public class HdoFragment extends Fragment {
     private ArrayList<String> reles = new ArrayList<>();
     private HdoAdapter hdoAdapter;
     private Intent hdoServiceIntent;
+    private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour;
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
@@ -98,10 +99,10 @@ public class HdoFragment extends Fragment {
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         FloatingActionButton fabAddHdo = view.findViewById(cz.xlisto.odecty.R.id.fabHdo);
 
-        Button btnAddHour = view.findViewById(cz.xlisto.odecty.R.id.btnAddHour);
-        Button btnRemoveHour = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveHour);
-        Button btnAddMinute = view.findViewById(cz.xlisto.odecty.R.id.btnAddMinute);
-        Button btnRemoveMinute = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveMinute);
+        btnAddHour = view.findViewById(cz.xlisto.odecty.R.id.btnAddHour);
+        btnRemoveHour = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveHour);
+        btnAddMinute = view.findViewById(cz.xlisto.odecty.R.id.btnAddMinute);
+        btnRemoveMinute = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveMinute);
         Button btnHdoLoad = view.findViewById(cz.xlisto.odecty.R.id.btnHdoLoad);
 
         btnAddMinute.setOnClickListener(v -> changeTimeShift(timeDifferent += minute));
@@ -166,7 +167,6 @@ public class HdoFragment extends Fragment {
             }
         });
 
-
         requireActivity().getSupportFragmentManager().setFragmentResultListener(HdoAdapter.FLAG_HDO_ADAPTER_DELETE, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 deleteHdo();
@@ -183,6 +183,12 @@ public class HdoFragment extends Fragment {
             idSubscriptionPoint = subscriptionPoint.getId();
         else {
             idSubscriptionPoint = -1L;
+            btnAddMinute.setEnabled(false);
+            btnRemoveMinute.setEnabled(false);
+            btnAddHour.setEnabled(false);
+            btnRemoveHour.setEnabled(false);
+            imageViewIconNT.setVisibility(View.GONE);
+
             return;
         }
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
@@ -424,6 +430,7 @@ public class HdoFragment extends Fragment {
      * Uloží do databáze časový posun, nastaví textview s časovým posunem a aktualizuje časový údaj ve službě
      */
     private void changeTimeShift(long timeShift) {
+        if (idSubscriptionPoint == -1L) return;
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
         dataSettingsSource.open();
         dataSettingsSource.changeTimeShift(idSubscriptionPoint, timeShift);

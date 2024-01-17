@@ -20,6 +20,7 @@ import cz.xlisto.odecty.databaze.DataGraphColor;
 
 import static cz.xlisto.odecty.R.menu.menu_graph_color;
 
+
 /**
  * Fragment pro nastavení barev grafu
  * Xlisto 17.10.2023 21:13
@@ -74,7 +75,7 @@ public class GraphColorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DataGraphColor dataGraphColor = new DataGraphColor(getContext());
+        DataGraphColor dataGraphColor = new DataGraphColor(requireContext());
         dataGraphColor.open();
         int[] colors = dataGraphColor.loadColors();
         dataGraphColor.close();
@@ -88,7 +89,6 @@ public class GraphColorFragment extends Fragment {
                 GraphColorDialogFragment.RESULT_GRAPH_COLOR_DIALOG_FRAGMENT,
                 this,
                 (requestKey, result) -> {
-                    Log.w(TAG, "onViewCreated: " + result.getString(GraphColorDialogFragment.ARG_VT_COLOR));
                     vtColor = result.getString(GraphColorDialogFragment.ARG_VT_COLOR);
                     ntColor = result.getString(GraphColorDialogFragment.ARG_NT_COLOR);
                     graphColorView.setColorsHTML(vtColor, ntColor);

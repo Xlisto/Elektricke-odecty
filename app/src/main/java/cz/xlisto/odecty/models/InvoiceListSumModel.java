@@ -2,6 +2,7 @@ package cz.xlisto.odecty.models;
 
 import java.util.ArrayList;
 
+
 /**
  * Model seznamu součtu faktur
  * Xlisto 28.12.2023 10:52
@@ -56,6 +57,7 @@ public class InvoiceListSumModel {
      * @return maximální hodnota
      */
     public double getMaxValue(int index) {
+        if (maxValues.size() == 0) return 0;
         return Math.max(maxValues.get(index)[0], maxValues.get(index)[1]);
     }
 

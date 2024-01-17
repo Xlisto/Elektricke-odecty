@@ -127,6 +127,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_below="@id/viewInvoiceSum" />
+
+        <TextView
+            android:id="@+id/tvAlertDashboard"
+            style="@style/AlertNoSubscriptionPoint"
+            android:visibility="visible" />
     </RelativeLayout>
 
 

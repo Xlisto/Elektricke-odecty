@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,8 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
+import cz.xlisto.odecty.utils.SubscriptionPoint;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,11 +86,19 @@ public class InvoiceListFragment extends Fragment {
         readIdSubscriptionPoint();
         Button addInvoice = view.findViewById(R.id.btnAddPayment);
         rv = view.findViewById(R.id.recycleViewInvoiceList);
+        TextView tvNoInvoice = view.findViewById(R.id.tvAlertInvoiceList);
 
         addInvoice.setOnClickListener(v -> {
            InvoiceListAddDialogFragment invoiceAddDialogFragment= InvoiceListAddDialogFragment.newInstance(idSubscriptionPoint);
            invoiceAddDialogFragment.show(requireActivity().getSupportFragmentManager(),TAG);
         });
+
+        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
+        if(subscriptionPoint == null){
+            tvNoInvoice.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.INVISIBLE);
+            addInvoice.setEnabled(false);
+        }
     }
 
 

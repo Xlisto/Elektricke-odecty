@@ -339,6 +339,10 @@ public class HdoSiteFragment extends Fragment {
             }
         });
 
+        if (getSubscriptionPoint() != null) {
+            btnSaveHdo.setEnabled(false);
+        }
+
     }
 
 
@@ -507,8 +511,11 @@ public class HdoSiteFragment extends Fragment {
      */
     private void saveHdo() {
         if (hdoList.size() > 0) {
-            SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
-            assert subscriptionPoint != null;
+            SubscriptionPointModel subscriptionPoint = getSubscriptionPoint();
+            if (subscriptionPoint == null) {
+                return;
+            }
+
             String tableHdo = subscriptionPoint.getTableHDO();
             if (tableHdo == null || tableHdo.equals("")) {
                 Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
@@ -542,6 +549,16 @@ public class HdoSiteFragment extends Fragment {
             spDateEgd.setVisibility(View.GONE);
             tvValidityDate.setVisibility(View.GONE);
         }
+    }
+
+
+    /**
+     * Vrátí odběrné místo
+     *
+     * @return odběrné místo
+     */
+    private SubscriptionPointModel getSubscriptionPoint() {
+        return SubscriptionPoint.load(requireActivity());
     }
 
 

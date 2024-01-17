@@ -17,6 +17,12 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -71,7 +77,6 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml">
         <config>
-          <state>portrait</state>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -100,6 +105,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -123,6 +133,11 @@
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml">
         <config>
           <theme>@style/Theme.Odecty.NoActionBar</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_yes_no_dialog_recycler_view.xml">
@@ -231,9 +246,24 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Upravený načítání časů HDO. &#10;Použit ViewModel pro zachování dat při rotaci obrazovky">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraveno překrytí textview v položce zálohové platby.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/styleTvAlertNoSubscriptionPoint.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataGraphColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataGraphColor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListSumModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListSumModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/HdoSiteFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -297,12 +327,12 @@
         <option value="editable-svg" />
         <option value="CMakeLists.txt" />
         <option value="xml" />
-        <option value="valueResourceFile" />
         <option value="Enum" />
         <option value="Interface" />
         <option value="layoutResourceFile" />
-        <option value="resourceFile" />
         <option value="Class" />
+        <option value="resourceFile" />
+        <option value="valueResourceFile" />
       </list>
     </option>
   </component>
@@ -401,7 +431,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Disk Google/ElektroDroid-záloha/16.01.2024  00.15.18 ElektroDroid.zip&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/odecty_a_mista.db&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -936,7 +966,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="137" />
+    <option name="localTasksCounter" value="138" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -998,7 +1028,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněny úpravy k vytváření záloh. Založení exportu/importu samostatných ceníků. Operace se soubory vyčleněna do nové třídy.&#10;&#10;- BackupFragment a BackupAdapter: doplněny podmínky, pokud chybí složka, opraveny zobrazení položek v adaptéru&#10;- třída Files: kontroluje oprávnění k přístupu do složky, vrací seznam souborů&#10;- nová třída Mytoast pro zobrazení dlouhého textu; použita při zobrazení varování, když chybí složka pro zálohu&#10;. nová ikona žlutého vykřičníku pro Mytoast" />
     <MESSAGE value="Doplněno skrývání klávesnice při uložení nového/upraveného měsíčního odečtu." />
     <MESSAGE value="Zavedena nová funkce Import ceníků z JSON souboru&#10;&#10;Příprava pro novou funkci Export ceníků do JSON souboru" />
     <MESSAGE value="Dokončena nová funkce Import ceníků z JSON souboru" />
@@ -1023,6 +1052,7 @@
     <MESSAGE value="Změněb ToolBar - nyní zobrazuje aktuálně vybraný fragment a název zvoleného odběrného místa" />
     <MESSAGE value="Doplněný text zobrazující rozdíl mezi zaplacenými zálohami a celkovou spotřebou do GraphTotalConsuptionView." />
     <MESSAGE value="Upravený načítání časů HDO. &#10;Použit ViewModel pro zachování dat při rotaci obrazovky" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upravený načítání časů HDO. &#10;Použit ViewModel pro zachování dat při rotaci obrazovky" />
+    <MESSAGE value="Opraveno překrytí textview v položce zálohové platby." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opraveno překrytí textview v položce zálohové platby." />
   </component>
 </project>
