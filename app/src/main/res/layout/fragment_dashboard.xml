@@ -5,58 +5,20 @@
     android:layout_height="wrap_content"
     android:layout_margin="2dp">
 
-    <RelativeLayout
-        android:id="@+id/rlGraphTotalConsuptionButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_border">
-
-        <ImageButton
-            android:id="@+id/imgBtnLeftDashBoard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
-            android:contentDescription="@string/btn_left_content_description_sum_invoices"
-            android:src="@mipmap/ic_graph_month_left" />
-
-        <ImageButton
-            android:id="@+id/imgBtnRightDashBoard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:backgroundTint="@android:color/transparent"
-            android:contentDescription="@string/btn_right_content_description_sum_invoices"
-            android:src="@mipmap/ic_graph_month_right" />
-
-        <TextView
-            android:id="@+id/tvNameDashBoard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="false"
-            android:layout_marginBottom="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/imgBtnLeftDashBoard"
-            android:layout_toStartOf="@id/imgBtnRightDashBoard"
-            android:gravity="center"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rlGraphTotalConsuptionMetersSum"
+    <LinearLayout
+        android:id="@+id/llGraphTotalConsuptionMetersSum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rlGraphTotalConsuptionButtons"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp">
+        android:orientation="horizontal">
 
         <cz.xlisto.odecty.modules.dashboard.GraphTotalConsuptionView
             android:id="@+id/graphTotalConsuptionView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
             android:background="@drawable/shape_border"
             app:colorText="@color/color_axis" />
 
@@ -64,27 +26,29 @@
             android:id="@+id/graphTotalHdoView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
             android:background="@drawable/shape_border"
             app:colorClock="@color/color_axis"
             app:colorTimePV="@color/color_hdo_time_PV"
             app:colorTimeTAR="@color/color_hdo_time_TAR"
             app:colorTimeTUV="@color/color_hdo_time_TUV" />
-    </RelativeLayout>
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/llMeter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rlGraphTotalConsuptionMetersSum"
+        android:layout_below="@id/llGraphTotalConsuptionMetersSum"
         android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
+            android:layout_marginEnd="1dp"
             android:layout_weight="1"
             android:background="@drawable/shape_border"
             android:orientation="vertical">
@@ -156,6 +120,47 @@
 
 
     </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rlGraphTotalConsuptionButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/shape_border">
+
+        <ImageButton
+            android:id="@+id/imgBtnLeftDashBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/btn_left_content_description_sum_invoices"
+            android:src="@mipmap/ic_graph_month_left" />
+
+        <ImageButton
+            android:id="@+id/imgBtnRightDashBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="@string/btn_right_content_description_sum_invoices"
+            android:src="@mipmap/ic_graph_month_right" />
+
+        <TextView
+            android:id="@+id/tvNameDashBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/imgBtnLeftDashBoard"
+            android:layout_toStartOf="@id/imgBtnRightDashBoard"
+            android:gravity="center"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rlGraphTotalConsuptionInvoicesSum"

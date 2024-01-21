@@ -20,6 +20,7 @@ import cz.xlisto.odecty.utils.DetectScreenMode;
 
 import static cz.xlisto.odecty.utils.DensityUtils.*;
 
+
 /**
  * Xlisto 03.01.2024 12:18
  */
@@ -128,11 +129,6 @@ public class GraphTotalHdoView extends View {
         centerX = size / 4; // Střed kruhu
         centerY = size / 4;
         radius = size / 4 - padding; // Poloměr kruhu
-        if (DetectScreenMode.isLandscape(getContext())) {
-            radius = size / 2 - padding;
-            centerX = size / 2; // Střed kruhu
-            centerY = size / 2;
-        }
 
         drawTime(canvas);
         drawNumbers(canvas);
@@ -148,10 +144,10 @@ public class GraphTotalHdoView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
-        if (DetectScreenMode.isLandscape(getContext()))
-            setMeasuredDimension(size * 2, size);
-        else
-            setMeasuredDimension(size / 2, size / 2);
+       /* if (DetectScreenMode.isLandscape(getContext()))
+            setMeasuredDimension(width/2, size);
+        else*/
+        setMeasuredDimension(size, size / 2);
     }
 
 
@@ -165,7 +161,7 @@ public class GraphTotalHdoView extends View {
 
         if (models == null) return;
 
-        //detetekce dnešního dne
+        //detekce dnešního dne
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
         int today = calendar.get(Calendar.DAY_OF_WEEK);
@@ -174,30 +170,30 @@ public class GraphTotalHdoView extends View {
             // Procházení seznamu a kreslení výsečí
             switch (today) {
                 case Calendar.MONDAY:
-                    if (model.getMon()==0) continue;
+                    if (model.getMon() == 0) continue;
                     break;
                 case Calendar.TUESDAY:
-                    if (model.getTue()==0)
+                    if (model.getTue() == 0)
                         continue;
                     break;
                 case Calendar.WEDNESDAY:
-                    if (model.getWed()==0)
+                    if (model.getWed() == 0)
                         continue;
                     break;
                 case Calendar.THURSDAY:
-                    if (model.getThu()==0)
+                    if (model.getThu() == 0)
                         continue;
                     break;
                 case Calendar.FRIDAY:
-                    if (model.getFri()==0)
+                    if (model.getFri() == 0)
                         continue;
                     break;
                 case Calendar.SATURDAY:
-                    if (model.getSat()==0)
+                    if (model.getSat() == 0)
                         continue;
                     break;
                 case Calendar.SUNDAY:
-                    if (model.getSun()==0)
+                    if (model.getSun() == 0)
                         continue;
                     break;
             }
@@ -216,21 +212,15 @@ public class GraphTotalHdoView extends View {
             if (model.getRele().contains("TUV") || !model.getRele().contains("TAR") && !model.getRele().contains("PV")) {
                 // Vykreslení výseče
                 RectF oval = new RectF(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding);
-                if (DetectScreenMode.isLandscape(getContext()))
-                    oval = new RectF(padding, padding, size - padding, size - padding);
                 canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
             } else if (model.getRele().contains("TAR")) {
                 // Vykreslení výseče
                 RectF oval = new RectF(padding + smaller, padding + smaller, (float) size / 2 - padding - smaller, (float) size / 2 - padding - smaller);
-                if (DetectScreenMode.isLandscape(getContext()))
-                    oval = new RectF(padding + smaller, padding + smaller, size - padding - smaller, size - padding - smaller);
                 canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
             } else if (model.getRele().contains("PV")) {
                 // Vykreslení výseče
                 smaller *= 2;
                 RectF oval = new RectF(padding + smaller, padding + smaller, (float) size / 2 - padding - smaller, (float) size / 2 - padding - smaller);
-                if (DetectScreenMode.isLandscape(getContext()))
-                    oval = new RectF(padding + smaller, padding + smaller, size - padding - smaller, size - padding - smaller);
                 canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
             }
 
@@ -325,10 +315,10 @@ public class GraphTotalHdoView extends View {
             canvas.drawLine(startX, startY, endX, endY, pClock);
         }
 
-        if (DetectScreenMode.isLandscape(getContext()))
-            canvas.drawArc(padding, padding, size - padding, size - padding, 0, 360, false, pClock);
-        else
-            canvas.drawArc(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding, 0, 360, false, pClock);
+        //if (DetectScreenMode.isLandscape(getContext()))
+        //    canvas.drawArc(padding, padding, size - padding, size - padding, 0, 360, false, pClock);
+        //else
+        canvas.drawArc(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding, 0, 360, false, pClock);
     }
 
 
@@ -340,18 +330,11 @@ public class GraphTotalHdoView extends View {
     private void drawLegend(Canvas canvas) {
         // Legenda
         int legendSize = dpToPx(getContext(), 11);
-        if (DetectScreenMode.isLandscape(getContext()))
-            legendSize = dpToPx(getContext(), 15);
         int legendPadding = dpToPx(getContext(), 8);
-        int legendTextSize = dpToPx(getContext(), 8);
         int legendTextPadding = dpToPx(getContext(), 7);
 
         int legendX = size / 2 + padding;
         int legendY = padding;
-
-        if (DetectScreenMode.isLandscape(getContext())) {
-            legendX = size + padding;
-        }
 
         // Vykreslení legendy
         RectF oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);

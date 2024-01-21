@@ -18,11 +18,11 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
-import cz.xlisto.odecty.utils.DetectScreenMode;
 
 import static cz.xlisto.odecty.utils.ColorUtils.*;
 import static cz.xlisto.odecty.utils.DensityUtils.*;
 import static java.lang.String.format;
+
 
 /**
  * Grafické zobrazení plateb období bez faktury
@@ -181,8 +181,13 @@ public class GraphTotalConsuptionView extends View {
         int yEnd = (int) (y - r * Math.sin(radians));
 
         // Kreslení úsečky
-        canvas.drawLine(x, y, xEnd, yEnd, pLine);
-        canvas.drawCircle(x, y, dpToPx(getContext(), 5), pLine);
+        canvas.drawLine(x, y - getPaddingBottom() * 2 - 4, xEnd, yEnd, pLine);
+        //canvas.drawCircle(x, y - getPaddingBottom(), dpToPx(getContext(), 5), pLine);
+        float radius = dpToPx(getContext(), 5);
+        float centerY = y - getPaddingBottom() - 1;
+        RectF rect = new RectF((float) x - radius, centerY - radius, (float) x + radius, centerY + radius);
+
+        canvas.drawArc(rect, 180, 180, false, pLine);
     }
 
 
@@ -193,9 +198,7 @@ public class GraphTotalConsuptionView extends View {
      */
     private void drawTexts(Canvas canvas) {
         // Kreslení textu
-        //String text = "%.2f Kč";
         String text = getContext().getResources().getString(R.string.float_price);
-        int widthTextPayment = (int) pTextPayment.measureText(format(Locale.getDefault(), text, payment));
         int textXPayment = dpToPx(getContext(), 5);
         int textYPayment = dpToPx(getContext(), 13);
 
@@ -248,10 +251,8 @@ public class GraphTotalConsuptionView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
-        if (DetectScreenMode.isLandscape(getContext()))
-            setMeasuredDimension(size, size / 2);
-        else
-            setMeasuredDimension(size / 2, size / 2);
+
+        setMeasuredDimension(size, size / 2);
     }
 
 

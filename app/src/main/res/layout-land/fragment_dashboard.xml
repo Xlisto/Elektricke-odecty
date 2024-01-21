@@ -54,7 +54,7 @@
                 android:textSize="16sp" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rlGraphTotalConsuptionMetersSum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 android:id="@+id/rlgraphTotalConsuptionView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
                 android:layout_marginBottom="2dp"
                 android:layout_marginEnd="1dp"
                 android:layout_marginTop="2dp"
@@ -82,8 +82,10 @@
                 android:id="@+id/rlgraphTotalHdoView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rlgraphTotalConsuptionView"
-                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
                 android:background="@drawable/shape_border">
 
                 <cz.xlisto.odecty.modules.dashboard.GraphTotalHdoView
@@ -98,7 +100,7 @@
             </RelativeLayout>
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/llMeter"
