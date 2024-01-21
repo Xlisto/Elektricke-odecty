@@ -9,6 +9,7 @@ import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
+
 /**
  * Přístup k databázi měsíčních odečtů
  * Xlisto 01.12.2023 9:40
@@ -56,6 +57,30 @@ public class DataMonthlyReadingSource extends DataSource {
         }
 
         return sb.toString();
+    }
+
+
+    /**
+     * Načte poslední záznam VT a NT
+     *
+     * @param table název tabulky
+     * @return pole s VT a NT
+     */
+    public double[] loadLastVtNt(String table) {
+        String orderBy = DbHelper.DATUM + " DESC LIMIT 1";
+
+        Cursor cursor = database.query(table,
+                new String[]{DbHelper.VT, DbHelper.NT},
+                null,
+                null,
+                null,
+                null,
+                orderBy);
+        if (cursor.getCount() == 0) return new double[]{0, 0};
+        cursor.moveToFirst();
+        double vt = cursor.getDouble(0);
+        double nt = cursor.getDouble(1);
+        return new double[]{vt, nt};
     }
 
 

@@ -446,8 +446,14 @@ public class DataInvoiceSource extends DataSource {
             ArrayList<InvoiceModel> invoices = loadInvoices(-1L, subscriptionPointModel.getTableTED());
             double totalPrice = Calculation.getTotalSumInvoice(invoices, subscriptionPointModel, context);
             long timeShift = dataSettingsSource.loadTimeShift(subscriptionPointModel.getId());
+            DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
+            dataMonthlyReadingSource.open();
+            double VT = dataMonthlyReadingSource.loadLastVtNt(subscriptionPointModel.getTableO())[0];
+            double NT = dataMonthlyReadingSource.loadLastVtNt(subscriptionPointModel.getTableO())[1];
+            dataMonthlyReadingSource.close();
             invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK()),
-                    hdoModels, timeShift, subscriptionPointModel.getName(), maxVTNT, sumPayment, totalPrice);
+                    hdoModels, timeShift, subscriptionPointModel.getName(), maxVTNT, sumPayment, totalPrice,
+                    VT,NT);
 
         }
         dataSettingsSource.close();

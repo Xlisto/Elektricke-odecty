@@ -11,6 +11,8 @@ public class InvoiceListSumModel {
     private static final String TAG = "InvoiceListSumModel";
     private final ArrayList<String> names;
     private final ArrayList<double[]> maxValues;
+    private final ArrayList<Double> meterValuesVT;
+    private final ArrayList<Double> meterValuesNT;
     private final ArrayList<ArrayList<InvoiceSumModel>> invoiceSumModels;
     private final ArrayList<ArrayList<HdoModel>> hdoModels;
     private final ArrayList<Double> invoiceSumPayments, invoiceSumTotalPrices;
@@ -25,10 +27,14 @@ public class InvoiceListSumModel {
         this.invoiceSumTotalPrices = new ArrayList<>();
         this.hdoModels = new ArrayList<>();
         this.hdoTimeShifts = new ArrayList<>();
+        this.meterValuesVT = new ArrayList<>();
+        this.meterValuesNT = new ArrayList<>();
     }
 
 
-    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, ArrayList<HdoModel> hdoModels, long timeShift, String name, double[] maxValue, double sumPayment, double sumTotalPrice) {
+    public void addInvoiceSumModel(ArrayList<InvoiceSumModel> invoiceSumModel, ArrayList<HdoModel> hdoModels,
+                                   long timeShift, String name, double[] maxValue, double sumPayment, double sumTotalPrice,
+                                   double meterValuesVT, double meterValuesNT) {
         invoiceSumModels.add(invoiceSumModel);
         this.hdoModels.add(hdoModels);
         names.add(name);
@@ -36,6 +42,8 @@ public class InvoiceListSumModel {
         invoiceSumPayments.add(sumPayment);
         invoiceSumTotalPrices.add(sumTotalPrice);
         hdoTimeShifts.add(timeShift);
+        this.meterValuesVT.add(meterValuesVT);
+        this.meterValuesNT.add(meterValuesNT);
     }
 
 
@@ -91,6 +99,28 @@ public class InvoiceListSumModel {
      */
     public ArrayList<InvoiceSumModel> getInvoiceSumModels(int index) {
         return invoiceSumModels.get(index);
+    }
+
+
+    /**
+     * Vrátí stav elektroměru VT
+     *
+     * @param index index v ArrayListu stavů elektroměrů VT
+     * @return stav elektroměru VT
+     */
+    public double getMeterValuesVT(int index) {
+        return meterValuesVT.get(index);
+    }
+
+
+    /**
+     * Vrátí stav elektroměru NT
+     *
+     * @param index index v ArrayListu stavů elektroměrů NT
+     * @return stav elektroměru NT
+     */
+    public double getMeterValuesNT(int index) {
+        return meterValuesNT.get(index);
     }
 
 

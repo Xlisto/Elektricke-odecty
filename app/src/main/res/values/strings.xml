@@ -388,5 +388,10 @@
     <string name="recovery_fail">Obnovení se nezdařilo</string>
     <string name="have_to_coise_day">Musíte vybrat alespoň jeden den</string>
 
+    <string name="high_tariff">VT</string>
+    <string name="low_tariff">NT</string>
+
+    <string name="kwh">kWh</string>
+
 
 </resources>

@@ -28,6 +28,7 @@ import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.InvoiceListSumModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.ownview.NumbersMeter;
 import cz.xlisto.odecty.shp.ShPDashBoard;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
@@ -48,6 +49,7 @@ public class DashBoardFragment extends Fragment {
     private InvoiceListSumModel invoiceListSumModel;
     private GraphTotalConsuptionView graphTotalConsuptionView;
     private GraphTotalHdoView graphTotalHdoView;
+    private NumbersMeter numbersMeterVT, numbersMeterNT;
     private double previousPayment = 0;
     private double previousConsuption = 0;
 
@@ -77,6 +79,8 @@ public class DashBoardFragment extends Fragment {
         graphTotalConsuptionView = view.findViewById(R.id.graphTotalConsuptionView);
         graphTotalHdoView = view.findViewById(R.id.graphTotalHdoView);
         TextView tvAlertNoSubscriptionPoint = view.findViewById(R.id.tvAlertDashboard);
+        numbersMeterVT = view.findViewById(R.id.numbersMeterVT);
+        numbersMeterNT = view.findViewById(R.id.numbersMeterNT);
 
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
         tvAlertNoSubscriptionPoint.setVisibility(View.GONE);
@@ -106,6 +110,7 @@ public class DashBoardFragment extends Fragment {
                 setAdapter();
                 setGraphTotalConsuptionView();
                 setTimeHDO();
+                setNumbersMeter();
             }
         });
 
@@ -116,6 +121,7 @@ public class DashBoardFragment extends Fragment {
                 setAdapter();
                 setGraphTotalConsuptionView();
                 setTimeHDO();
+                setNumbersMeter();
             }
         });
 
@@ -139,6 +145,8 @@ public class DashBoardFragment extends Fragment {
 
             }
         });
+
+
     }
 
 
@@ -160,6 +168,7 @@ public class DashBoardFragment extends Fragment {
         setAdapter();
         setGraphTotalConsuptionView();
         setTimeHDO();
+        setNumbersMeter();
     }
 
 
@@ -286,6 +295,13 @@ public class DashBoardFragment extends Fragment {
         ArrayList<HdoModel> hdoModels = invoiceListSumModel.getHdoModels(showInvoiceSum);
         long timeShift = invoiceListSumModel.getHdoTimeShift(showInvoiceSum);
         graphTotalHdoView.setHdoModels(hdoModels, timeShift);
+    }
+
+    private void setNumbersMeter(){
+        int VT = (int) (invoiceListSumModel.getMeterValuesVT(showInvoiceSum)*10);
+        int NT = (int) (invoiceListSumModel.getMeterValuesNT(showInvoiceSum)*10);
+        numbersMeterVT.setCurrentNumber(VT);
+        numbersMeterNT.setCurrentNumber(NT);
     }
 
 

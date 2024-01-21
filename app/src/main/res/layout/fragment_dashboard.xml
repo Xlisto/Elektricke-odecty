@@ -73,11 +73,95 @@
             app:colorTimeTUV="@color/color_hdo_time_TUV" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/llMeter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlGraphTotalConsuptionMetersSum"
+        android:layout_marginBottom="2dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_border"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvVTTariff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/numbersMeterVT"
+                android:layout_marginStart="5dp"
+                android:text="@string/high_tariff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNTTariff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/numbersMeterNT"
+                android:layout_below="@id/numbersMeterVT"
+                android:layout_marginStart="5dp"
+
+                android:text="@string/low_tariff"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvVTTariffKwh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/numbersMeterVT"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:text="@string/kwh"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNTTariffKwh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/numbersMeterNT"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:text="@string/kwh"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <cz.xlisto.odecty.ownview.NumbersMeter
+                android:id="@+id/numbersMeterVT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvVTTariff"
+                android:layout_toStartOf="@id/tvVTTariffKwh" />
+
+            <cz.xlisto.odecty.ownview.NumbersMeter
+                android:id="@+id/numbersMeterNT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/numbersMeterVT"
+                android:layout_toEndOf="@id/tvNTTariff"
+                android:layout_toStartOf="@id/tvNTTariffKwh" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/rlGraphTotalConsuptionInvoicesSum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rlGraphTotalConsuptionMetersSum"
+        android:layout_below="@id/llMeter"
         android:background="@drawable/shape_border">
 
         <TextView
@@ -90,6 +174,11 @@
             android:text="@string/no_invoices"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAlertDashboard"
+            style="@style/AlertNoSubscriptionPoint"
+            android:visibility="visible" />
 
         <View
             android:id="@+id/viewInvoiceSum"
@@ -128,10 +217,7 @@
             android:layout_alignParentBottom="true"
             android:layout_below="@id/viewInvoiceSum" />
 
-        <TextView
-            android:id="@+id/tvAlertDashboard"
-            style="@style/AlertNoSubscriptionPoint"
-            android:visibility="visible" />
+
     </RelativeLayout>
 
 

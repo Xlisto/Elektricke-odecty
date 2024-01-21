@@ -166,7 +166,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Documents\9.png" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -200,10 +200,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="backgroundColor" value="85acf5" />
+                                      <entry key="backgroundColor" value="13f304" />
+                                      <entry key="cropped" value="true" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
-                                      <entry key="outputName" value="ic_launcher_test" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Documents\9.png" />
+                                      <entry key="outputName" value="number_9" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -347,6 +348,11 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>
