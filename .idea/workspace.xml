@@ -246,59 +246,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_5.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_6.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/number_9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/number_9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/number_9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/number_9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/number_9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_7.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_8.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/number_9.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListSumModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceListSumModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/DashBoardFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -1005,7 +953,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1079,7 +1027,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidána volba možnosti zadání výměny elektroměru ve fakturách&#10;Volba vyřadí kontrolu náváznosti stavů měřidel." />
     <MESSAGE value="Opravený text v dialogovém okně pro slučování záznamů ve faktuře." />
     <MESSAGE value="Doplněny regulovné ceny pro rok 2024" />
     <MESSAGE value="Omezen nadpis názvu v položce ceníku na 1 řádek" />
@@ -1104,6 +1051,7 @@
     <MESSAGE value="Opraveny pády aplikace v DashBoard, HdoSiteFragment, pokud nebylo nastasveno odběrné místo." />
     <MESSAGE value="Doplněna detekce dne u widgetu zobrazující čas HDO v DashBoard a doplněna náhrada času 23.59 za 0:00." />
     <MESSAGE value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
+    <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
+    <option name="LAST_COMMIT_MESSAGE" value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
   </component>
 </project>

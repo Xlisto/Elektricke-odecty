@@ -20,6 +20,9 @@ import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.ConsuptionModel;
+import cz.xlisto.odecty.utils.ColorHelper;
+import cz.xlisto.odecty.utils.ColorUtils;
+import cz.xlisto.odecty.utils.DensityUtils;
 
 
 /**
@@ -384,16 +387,25 @@ public class GraphMonthView extends View {
         Paint.Style style = Paint.Style.FILL;
         Paint lineVT = new Paint();
         Paint lineNT = new Paint();
+        Paint lineVTBorder = new Paint();
+        Paint lineNTBorder = new Paint();
         Paint line = new Paint();
         lineVT.setColor(colorVT);
         lineNT.setColor(colorNT);
+        lineVTBorder.setColor(ColorUtils.darkerColor(colorVT));
+        lineNTBorder.setColor(ColorUtils.darkerColor(colorNT));
         line.setColor(getResources().getColor(R.color.color_axis));
         lineVT.setStrokeWidth(strokeWidth);
         lineNT.setStrokeWidth(strokeWidth);
+        int borderGraph=DensityUtils.dpToPx(getContext(), 1);
+        lineVTBorder.setStrokeWidth(borderGraph);
+        lineNTBorder.setStrokeWidth(borderGraph);
         line.setStrokeWidth(1);
         lineVT.setStyle(style);
         lineNT.setStyle(style);
-        line.setStyle(Paint.Style.FILL);
+        line.setStyle(style);
+        lineVTBorder.setStyle(Paint.Style.STROKE);
+        lineNTBorder.setStyle(Paint.Style.STROKE);
         line.setPathEffect(new DashPathEffect(new float[]{10f, 20f}, 0f));
 
 
@@ -434,20 +446,27 @@ public class GraphMonthView extends View {
                 stopNTStart = consuption.get(i).getConsuptionNT().intValue();
                 stopNTEnd = consuption.get(i + 1).getConsuptionNT().intValue();
             }
+
+
             if (showVT) {
                 if (graphType) {
                     drawLine(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), stopX, heightGraph - (int) (stopVTEnd * steep / multipleSteep));
                     drawCircle(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
-                } else
-                    drawRect(canvas, lineVT, startX, heightGraph, stopX - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                } else {
+                    drawRect(canvas, lineVT, startX, heightGraph, stopX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                    drawRect(canvas, lineVTBorder, startX, heightGraph, stopX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                }
             }
             if (showNT) {
                 if (graphType) {
                     drawLine(canvas, lineNT, startX, heightGraph - (int) (stopNTStart * steep / multipleSteep), stopX, heightGraph - (int) (stopNTEnd * steep / multipleSteep));
                     drawCircle(canvas, lineNT, startX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
 
-                } else
-                    drawRect(canvas, lineNT, startX, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                } else {
+
+                    drawRect(canvas, lineNT, startX+borderGraph, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                    drawRect(canvas, lineNTBorder, startX+borderGraph, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                }
             }
             int minConsuption = Math.min(stopVTStart, stopNTStart);
             if (!showNT) minConsuption = stopVTStart;
@@ -458,7 +477,7 @@ public class GraphMonthView extends View {
                 drawLine(canvas, line, startX, heightGraph - dipToPx(10), startX, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
             else
                 //vykreslení spotřeby ve spodní části sloupců
-                drawConsuption(canvas, startX, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
+                drawConsuption(canvas, startX+borderGraph/2, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
         }
 
         //poslední záznam
@@ -469,16 +488,18 @@ public class GraphMonthView extends View {
             if (showVT) {
                 if (graphType)
                     drawCircle(canvas, lineVT, lastX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
-                else
-                    drawRect(canvas, lineVT, lastX, heightGraph, lastX - dipToPx(12), heightGraph - (int) (stopVTStart * steep / multipleSteep));
-
+                else {
+                    drawRect(canvas, lineVT, lastX, heightGraph, lastX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                    drawRect(canvas, lineVTBorder, lastX, heightGraph, lastX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                }
             }
             if (showNT) {
                 if (graphType)
                     drawCircle(canvas, lineNT, lastX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
-                else
-                    drawRect(canvas, lineNT, lastX, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
-
+                else {
+                    drawRect(canvas, lineNT, lastX+borderGraph, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                    drawRect(canvas, lineNTBorder, lastX+borderGraph, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                }
             }
             //vykreslení spotřeby ve spodní části sloupců
             if (!graphType)
@@ -667,7 +688,6 @@ public class GraphMonthView extends View {
 
     /**
      * Výpočet násobku pro rozestup mřížky
-     *
      */
     private void setMultiple() {
         //kontrola minimálního koeficientu pro přesnost grafu
@@ -677,7 +697,7 @@ public class GraphMonthView extends View {
         if (steep == 0)
             return;
         //kontrola rozsahu přesnosti grafu, koeficientem lze přesnost upravovat
-        while ((steep * multiple) > cof){
+        while ((steep * multiple) > cof) {
             multiple -= 5;
         }
 
@@ -923,10 +943,10 @@ public class GraphMonthView extends View {
      */
     public void setCofUp() {
         cof -= 20;
-        multiple -=5; //aktualizace při kliknutí, se pokaždé hodnota zvýšila, zatím nevím proč
+        multiple -= 5; //aktualizace při kliknutí, se pokaždé hodnota zvýšila, zatím nevím proč
 
-        while((steep*multiple)<(cof)) {
-            cof -=20;
+        while ((steep * multiple) < (cof)) {
+            cof -= 20;
         }
         init();
     }
@@ -938,8 +958,8 @@ public class GraphMonthView extends View {
     public void setCofDown() {
         cof += 20;
 
-        while((steep*multiple)>cof) {
-            cof +=20;
+        while ((steep * multiple) > cof) {
+            cof += 20;
         }
 
         init();
