@@ -41,6 +41,7 @@ public class PriceListDetailFragment extends Fragment {
     private long price_id;
     private boolean showInFragment;
 
+
     public PriceListDetailFragment() {
         // Required empty public constructor
     }
@@ -55,6 +56,7 @@ public class PriceListDetailFragment extends Fragment {
     public static PriceListDetailFragment newInstance(long priceListId) {
         return newInstance(priceListId, false);
     }
+
 
     public static PriceListDetailFragment newInstance(long priceListId, boolean showInFragment) {
         PriceListDetailFragment fragment = new PriceListDetailFragment();
@@ -234,25 +236,35 @@ public class PriceListDetailFragment extends Fragment {
         if (priceListRegulBuilder.isRegulPrice()) {
             tvPoznamka.setText(poznamka);
             tvPoznamka.setVisibility(View.VISIBLE);
+            setPoznamka(tvPoznamkaVT, maxVT);
+            setPoznamka(tvPoznamkaPOZE1, maxPOZE1);
+            setPoznamka(tvPoznamkaPOZE2, maxPOZE2);
 
-            tvPoznamkaNT.setVisibility(View.VISIBLE);
+            tvPoznamkaVT.setVisibility(View.VISIBLE);
+            setPoznamka(tvPoznamkaNT, maxNT);
+
+            //vynechání poznámky NT u jednotarifního ceníku
+            if (priceList.getDistNT() == 0.0) {
+
+                tvPoznamkaNT.setVisibility(View.GONE);
+            }
             tvPoznamkaPlat.setVisibility(View.VISIBLE);
+            setPoznamka(tvPoznamkaPlat, maxPlat);
         } else {
             tvPoznamka.setVisibility(View.GONE);
 
+            tvPoznamkaVT.setVisibility(View.GONE);
             tvPoznamkaNT.setVisibility(View.GONE);
             tvPoznamkaPlat.setVisibility(View.GONE);
         }
-
-
-        setPoznamka(tvPoznamkaVT, maxVT);
-        setPoznamka(tvPoznamkaNT, maxNT);
-        setPoznamka(tvPoznamkaPlat, maxPlat);
-        setPoznamka(tvPoznamkaPOZE1, maxPOZE1);
-        setPoznamka(tvPoznamkaPOZE2, maxPOZE2);
     }
 
 
+    /**
+     * Nastaví poznámku do textview
+     * @param tv textview
+     * @param s poznámka
+     */
     private void setPoznamka(TextView tv, String s) {
         if (s != null) {
             tv.setVisibility(View.VISIBLE);

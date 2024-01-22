@@ -246,9 +246,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplnění posluchače pro načtení regulovaných cen při tvorbě/úpravě ceníku.&#10; při změně data platnosti.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -956,7 +956,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="148" />
+    <option name="localTasksCounter" value="149" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1030,7 +1030,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidána kontrola úpravy posledního záznamu v období bez faktury při novém, upraveném nebo smaazaném měsíčním odečtu.&#10;&#10;- na základě nalezene chyby, když se upravoval jakýkoliv měsíční odečet, automaticky se aktualizoval poslední záznam v období bez faktury" />
     <MESSAGE value="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0," />
     <MESSAGE value="Oprava zobrazení POZE v detailu faktury." />
     <MESSAGE value="Úprava podmínky pro zobrazování upozornění při nesouladu navazujících odečtů.&#10;- přidána podmínka pro zablokování spojení záznamů při zaškrtnuté volbě: Výměna elektroměru&#10;- úprava dialogového okna pro rozdělení a spojení záznamu" />
@@ -1055,6 +1054,7 @@
     <MESSAGE value="Doplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Dplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
-    <option name="LAST_COMMIT_MESSAGE" value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
+    <MESSAGE value="Doplnění posluchače pro načtení regulovaných cen při tvorbě/úpravě ceníku.&#10; při změně data platnosti." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplnění posluchače pro načtení regulovaných cen při tvorbě/úpravě ceníku.&#10; při změně data platnosti." />
   </component>
 </project>
