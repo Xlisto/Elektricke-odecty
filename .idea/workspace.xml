@@ -246,14 +246,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Dplněný tmavší orámování do sloupcového grafu.">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_dashboard.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +258,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -961,7 +956,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="145" />
+    <option name="localTasksCounter" value="148" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1035,8 +1030,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněny regulovné ceny pro rok 2024" />
-    <MESSAGE value="Omezen nadpis názvu v položce ceníku na 1 řádek" />
     <MESSAGE value="Přidána kontrola úpravy posledního záznamu v období bez faktury při novém, upraveném nebo smaazaném měsíčním odečtu.&#10;&#10;- na základě nalezene chyby, když se upravoval jakýkoliv měsíční odečet, automaticky se aktualizoval poslední záznam v období bez faktury" />
     <MESSAGE value="V celkovém součtu ve fakturách opraven celkový výpočet POZE, jež akcepruje dočasné snížení POZE na 0," />
     <MESSAGE value="Oprava zobrazení POZE v detailu faktury." />
@@ -1059,7 +1052,9 @@
     <MESSAGE value="Doplněna detekce dne u widgetu zobrazující čas HDO v DashBoard a doplněna náhrada času 23.59 za 0:00." />
     <MESSAGE value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
     <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
+    <MESSAGE value="Doplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Dplněný tmavší orámování do sloupcového grafu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Dplněný tmavší orámování do sloupcového grafu." />
+    <MESSAGE value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
+    <option name="LAST_COMMIT_MESSAGE" value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
   </component>
 </project>

@@ -27,6 +27,7 @@ import static android.view.View.VISIBLE;
 import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 import static cz.xlisto.odecty.ownview.OwnDatePicker.showDialog;
 
+
 public abstract class PriceListAddEditAbstract extends Fragment {
     public static String TAG = "PriceListAddEditAbstract";
     static final String BTN_FROM = "btnFrom";
@@ -84,11 +85,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
     MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -139,8 +142,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             lastYear = year;
             getYearBtnStart();
             onResume();
+            setRegulPrice();
         }, btnFrom.getText().toString()));
-        btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> btnUntil.setText(day), btnUntil.getText().toString()));
+
+        btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> {
+            btnUntil.setText(day);
+            setRegulPrice();
+        }, btnUntil.getText().toString()));
 
         switchJistic.setOnClickListener(v -> hideItemView());
 
@@ -159,6 +167,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 setRegulPrice();
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -170,6 +179,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setRegulPrice();
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -271,6 +281,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         outState.putInt(LAST_YEAR, year);
     }
 
+
     void setSazbaAdapter() {
         Handler handler = new Handler();
         final Runnable r = () -> {
@@ -283,6 +294,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
     }
 
+
     void setDistribucniUzemiAdapter() {
         Handler handler = new Handler();
         final Runnable r = () -> {
@@ -294,6 +306,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         handler.postDelayed(r, 1140);
     }
 
+
     /**
      * Změni spinner podle data na E.ON nebo EG.D. Položek ČEZ a PRE se netýká
      */
@@ -301,7 +314,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         //nic neměnit, pokud je vybraný index 0, PRE nebo ČEZ
         if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE")
                 || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ")
-                || spDistribucniUzemi.getSelectedItemPosition()==0
+                || spDistribucniUzemi.getSelectedItemPosition() == 0
         ) return;
 
         //po předchozí  podmínce se zde dostanou jen E.ON a EG.D
@@ -321,11 +334,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
     }
 
+
     int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         year = calendar.get(Calendar.YEAR);
         return year;
     }
+
 
     /**
      * Zobrazí/skryje doplňkové hodnoty jističů u tarifu D57d
@@ -366,6 +381,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
     }
 
+
     /**
      * Sestaví objekt ceníku z udajů widgetů
      *
@@ -388,11 +404,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
     }
 
+
     /**
      * Načte regulované ceny
      */
     void setRegulPrice() {
-        if(year<2021)
+        if (year < 2021)
             return;
         ReadRawJSON readRawJSON = new ReadRawJSON(getActivity());
         Handler handler = new Handler();
@@ -431,6 +448,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
             hideItemView();
         };
-        handler.postDelayed(r,1000);
+        handler.postDelayed(r, 1000);
     }
 }
