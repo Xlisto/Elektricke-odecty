@@ -34,6 +34,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PriceListFragment#newInstance} factory method to
@@ -99,7 +100,6 @@ public class PriceListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         shpFilter = new ShPFilter(getActivity());
 
         if (getArguments() != null) {
@@ -112,7 +112,6 @@ public class PriceListFragment extends Fragment {
             idSelectedPriceList = savedInstanceState.getLong(ID_SELECTED_PRICE_LIST);
             idFragment = savedInstanceState.getInt(ARG_ID_FRAGMENT);
         }
-
     }
 
 
@@ -156,6 +155,17 @@ public class PriceListFragment extends Fragment {
             btnBack.setVisibility(View.GONE);
         }
 
+        //listener při potvrzení filtru
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListFilterDialogFragment.FLAG_RESULT_FILTER_DIALOG_FRAGMENT, this,
+                ((requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        onLoadData();
+                        setAdapter();
+                        priceListAdapter.setHideButtons();
+                        showDetailPriceFragment(false);
+                    }
+                }));
+
         //listener při potvrzení smazání ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST, this,
                 ((requestKey, result) -> {
@@ -163,7 +173,7 @@ public class PriceListFragment extends Fragment {
                         priceListAdapter.deleteItemPrice();
                         onLoadData();
                         priceListAdapter.setHideButtons();
-                        idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
+                        idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku
                         showDetailPriceFragment(false);
                     }
                 }));
@@ -179,7 +189,7 @@ public class PriceListFragment extends Fragment {
                         onLoadData();
                         setAdapter();
                         priceListAdapter.setHideButtons();
-                        idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
+                        idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku
                         showDetailPriceFragment(false);
                     }
                 }));
@@ -187,7 +197,7 @@ public class PriceListFragment extends Fragment {
 
         onLoadData();
         setAdapter();
-        setIdSelectedPriceListFromShp();
+        //setIdSelectedPriceListFromShp();
         showDetailPriceFragment(true);
     }
 
@@ -211,13 +221,7 @@ public class PriceListFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.menu_filter_pricelist) {
-            PriceListFilterDialogFragment.newInstance(() -> {
-                onLoadData();
-                setAdapter();
-                priceListAdapter.setHideButtons();
-                idSelectedPriceList = -1; //nastavení n a skrytí fragmentu detailu ceníku
-                showDetailPriceFragment(false);
-            }).show(requireActivity().getSupportFragmentManager(), TAG);
+            PriceListFilterDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), TAG);
         }
 
         if (id == R.id.menu_delete_unused_pricelist) {
@@ -250,7 +254,7 @@ public class PriceListFragment extends Fragment {
         int totalCountPriceList = dataPriceListSource.countPriceItems();
         dataPriceListSource.close();
 
-        tvCountPriceItem.setText(getResources().getString(R.string.pocet_ceniku) + " " + totalCountPriceList + "/" + priceListModels.size());
+        tvCountPriceItem.setText(getResources().getString(R.string.pocet_ceniku, totalCountPriceList, priceListModels.size()));
     }
 
 
@@ -258,7 +262,7 @@ public class PriceListFragment extends Fragment {
      * Nastaví adapter pro zobrazení ceníků
      */
     private void setAdapter() {
-        priceListAdapter = new PriceListAdapter(getActivity(), priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
+        priceListAdapter = new PriceListAdapter(requireActivity(), priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
                 priceList -> {
                     if (onSelectedPriceListListener != null) {
                         selectedPrice = priceList;
@@ -272,8 +276,6 @@ public class PriceListFragment extends Fragment {
                     if (priceList != null) {
                         idSelectedPriceList = priceList.getId();
 
-                    } else {
-                        idSelectedPriceList = -1;
                     }
                     showDetailPriceFragment(false);
                 }, rv);
@@ -282,6 +284,11 @@ public class PriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Zobrazí fragment detailu ceníku
+     *
+     * @param showAfterRotation true = zobrazí fragment po rotaci
+     */
     private void showDetailPriceFragment(boolean showAfterRotation) {
         PriceListDetailFragment fragment;
         if (showAfterRotation && idFragment != 0) {
@@ -327,11 +334,19 @@ public class PriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví listener pro označení vybraného ceníku
+     *
+     * @param onSelectedPriceListListener Listener pro označení vybraného ceníku
+     */
     public void setOnSelectedPriceListListener(OnSelectedPriceList onSelectedPriceListListener) {
         this.onSelectedPriceListListener = onSelectedPriceListListener;
     }
 
 
+    /**
+     * Interface pro označení vybraného ceníku
+     */
     public interface OnSelectedPriceList {
         void getOnSelectedItemPriceList(PriceListModel priceList);
     }

@@ -88,7 +88,7 @@
     <string name="ano">ANO</string>
     <string name="ne">NE</string>
 
-    <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: </string>
+    <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: %d/%d</string>
 
 
     <string name="poznamka_2022">Od října do konce roku je zrušen POZE</string>

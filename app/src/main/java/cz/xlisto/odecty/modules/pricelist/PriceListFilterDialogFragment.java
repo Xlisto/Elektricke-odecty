@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,30 +27,32 @@ import static cz.xlisto.odecty.shp.ShPFilter.SAZBA;
 import static cz.xlisto.odecty.shp.ShPFilter.UZEMI;
 import static cz.xlisto.odecty.databaze.DataPriceListSource.VSE;
 
+
 public class PriceListFilterDialogFragment extends DialogFragment {
-    private static String TAG = PriceListFilterDialogFragment.class.getSimpleName();
+    private final static String TAG = PriceListFilterDialogFragment.class.getSimpleName();
+    public static final String FLAG_RESULT_FILTER_DIALOG_FRAGMENT = "flagPriceListFilterDialogFragment";
+    public static final String RESULT = "result";
     private Spinner spRada, spProdukt, spSazba, spDodavatel, spUzemi, spDatum;
-    private Button btnResetFilter;
-    String rada, produkt, sazba, dodavatel, uzemi, datum = "";
-    private CloseDialogWithPositiveButtonListener closeDialogWithPositiveButtonListener;
+    private String rada, produkt, sazba, dodavatel, uzemi, datum = "";
 
     private ShPFilter shpFilter;
+
 
     public PriceListFilterDialogFragment() {
         // Empty constructor required for DialogFragment
     }
 
-    public static PriceListFilterDialogFragment newInstance(CloseDialogWithPositiveButtonListener closeDialogWithPositiveButtonListener) {
-        PriceListFilterDialogFragment frag = new PriceListFilterDialogFragment();
-        frag.closeDialogWithPositiveButtonListener = closeDialogWithPositiveButtonListener;
-        return frag;
+
+    public static PriceListFilterDialogFragment newInstance() {
+        return new PriceListFilterDialogFragment();
     }
+
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         shpFilter = new ShPFilter(getContext());
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_filter, null);
 
         spRada = dialogView.findViewById(R.id.spRada);
@@ -60,30 +61,26 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         spDodavatel = dialogView.findViewById(R.id.spDodavatel);
         spUzemi = dialogView.findViewById(R.id.spUzemi);
         spDatum = dialogView.findViewById(R.id.spDatum);
-        btnResetFilter = dialogView.findViewById(R.id.btnResetFilter);
+        Button btnResetFilter = dialogView.findViewById(R.id.btnResetFilter);
 
         btnResetFilter.setOnClickListener(v -> setItemSpinnerAll());
 
         builder.setView(dialogView);
         builder.setTitle(R.string.filtr_ceniku);
-        builder.setPositiveButton(R.string.filtr_nastav, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                savePreferences();
-                closeDialogWithPositiveButtonListener.onCloseDialogWithPositiveButton();
-            }
+        builder.setPositiveButton(R.string.filtr_nastav, (dialog, which) -> {
+            savePreferences();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(RESULT, true);
+            getParentFragmentManager().setFragmentResult(FLAG_RESULT_FILTER_DIALOG_FRAGMENT, bundle);
         });
-        builder.setNegativeButton(R.string.zrusit, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
+        builder.setNegativeButton(R.string.zrusit, (dialog, which) -> {
         });
         loadPreferences();
         setDataFromDatabase();
 
         return builder.create();
     }
+
 
     /**
      * Načte seznam ceníků podle RADA, PRODUKT, SAZBA, FIRMA, DISTRIBUCE, PLATNOST_OD a nastaví data do příslušných spinnerů
@@ -120,6 +117,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
 
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -127,15 +125,17 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         });
     }
 
+
     /**
-     * Vytvoří pro spiner adapter z arraylist
+     * Vytvoří pro spinner adapter z arraylist
      *
-     * @param arrayList
-     * @return
+     * @param arrayList - arraylist
+     * @return ArrayAdapter
      */
     private ArrayAdapter<String> setStringAdapter(ArrayList<String> arrayList) {
-        return new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, arrayList);
+        return new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, arrayList);
     }
+
 
     /**
      * Uloží hodnoty spinnerů do sharedprefences
@@ -168,6 +168,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         shpFilter.set(DATUM, datum);
     }
 
+
     /**
      * Načte hodnoty ze sharedpreference, které se mají nastavit na spinnerech
      */
@@ -180,12 +181,14 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         datum = shpFilter.get(DATUM, VSE);
     }
 
+
     /**
-     * Zjistí index a arraylistu vybrané položky ve spinru, pokud nenajde,
+     * Zjistí index a arraylistu vybrané položky ve spinneru, pokud nenalezne,
      * bude nastaven na první položku [VŠE ]
-     * @param arrayList
-     * @param sp
-     * @param item
+     *
+     * @param arrayList - arraylist
+     * @param sp        - spinner
+     * @param item      - vybraná položka
      */
     private void setItemSpinner(ArrayList<String> arrayList, Spinner sp, String item) {
         for (int i = 0; i < arrayList.size(); i++) {
@@ -195,7 +198,8 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         }
     }
 
-    private void setItemSpinnerAll(){
+
+    private void setItemSpinnerAll() {
         spRada.setSelection(0);
         spDatum.setSelection(0);
         spSazba.setSelection(0);
@@ -203,9 +207,4 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         spDodavatel.setSelection(0);
         spUzemi.setSelection(0);
     }
-
-    public interface CloseDialogWithPositiveButtonListener {
-        void onCloseDialogWithPositiveButton();
-    }
-
 }

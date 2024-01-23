@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -176,8 +175,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
                     boolean overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
                     boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
-                    Log.w(TAG, "dates: " + ViewHelper.convertLongToDate(dateStart) + " - " + ViewHelper.convertLongToDate(dateEnd));
-                    Log.w(TAG, "dates: " + overDatePriceList);
 
                     if (overDateRegulPrice || !overDatePriceList) {
                         holder.ivWarning.setVisibility(View.VISIBLE);
