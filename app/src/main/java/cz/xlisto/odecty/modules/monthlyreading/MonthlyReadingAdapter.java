@@ -51,7 +51,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     private final SubscriptionPointModel subscriptionPoint;
     private final RecyclerView recyclerView;
     private long selectedMonthlyReadingId;
-    private int selectedPosition;
+    private static int selectedPosition;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {

@@ -41,6 +41,7 @@ import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_PAYMENT_MONTHLY_
 import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_VT_MONTHLY_READING;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * Abstraktní třída pro přidání a editaci měsíčního odečtu.
  */
@@ -51,7 +52,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     CheckBox cbAddPayment, cbFirstReading, cbShowDescription, cbAddBackup;
     EditText etDatePayment;
     TextView tvContentAddPayment, tvResultDate;
-    PriceListModel selectedPriceList;
+    static PriceListModel selectedPriceList;
     SubscriptionPointModel subscriptionPoint;
     RelativeLayout rlRoot;
     ShPAddEditMonthlyReading shPAddEditMonthlyReading;
@@ -68,6 +69,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     private final String ARG_SELECTED_ID_PRICE_LIST = "selectedIdPriceList";
     private final String ARG_BTN_PRICE_LIST = "btnPriceList";
     private static boolean restoreSharedPreferences = false;
+    private boolean isShowFragment;
 
 
     @Override
@@ -83,6 +85,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         shPAddEditMonthlyReading = new ShPAddEditMonthlyReading(requireActivity());
 
+        isShowFragment = true;
         subscriptionPoint = SubscriptionPoint.load(getActivity());
         btnSave = view.findViewById(R.id.btnSaveMonthlyReading);
         btnBack = view.findViewById(R.id.btnBackMonthlyReading);
@@ -137,10 +140,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
             saveSharedPreferences();
 
             PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPriceList);
-            priceListFragment.setOnSelectedPriceListListener(priceList -> {
-                selectedPriceList = priceList;
-                selectedIdPriceList = selectedPriceList.getId();
-            });
 
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
@@ -150,6 +149,14 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
             getParentFragmentManager().popBackStack();
         });
 
+        //listener pro výběr ceníku
+        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
+            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            if (selectedPriceList != null) {
+                selectedIdPriceList = selectedPriceList.getId();
+                btnSelectPriceList.setText(selectedPriceList.getName());
+            }
+        });
 
         if (savedInstanceState != null) {
             isFirstLoad = savedInstanceState.getBoolean(ARG_IS_FIRST_LOAD);
@@ -189,14 +196,16 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ARG_IS_FIRST_LOAD, isFirstLoad);
-        outState.putString(ARG_DATE, btnDate.getText().toString());
-        outState.putString(ARG_VT, labVT.getText());
-        outState.putString(ARG_NT, labNT.getText());
-        outState.putString(ARG_PAYMENT, labPayment.getText());
-        outState.putString(ARG_DESCRIPTION, labDescription.getText());
-        outState.putString(ARG_OTHER_SERVICE, labOtherServices.getText());
         outState.putLong(ARG_SELECTED_ID_PRICE_LIST, selectedIdPriceList);
-        outState.putString(ARG_BTN_PRICE_LIST, btnSelectPriceList.getText().toString());
+        if (isShowFragment) {
+            outState.putString(ARG_DATE, btnDate.getText().toString());
+            outState.putString(ARG_VT, labVT.getText());
+            outState.putString(ARG_NT, labNT.getText());
+            outState.putString(ARG_PAYMENT, labPayment.getText());
+            outState.putString(ARG_DESCRIPTION, labDescription.getText());
+            outState.putString(ARG_OTHER_SERVICE, labOtherServices.getText());
+            outState.putString(ARG_BTN_PRICE_LIST, btnSelectPriceList.getText().toString());
+        }
     }
 
 
@@ -298,6 +307,13 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      * Vytvoří zálohu měsíčního odečtu
      */
     void backupMonthlyReading() {
-        SaveDataToBackupFile.saveToZip(requireActivity(),null);
+        SaveDataToBackupFile.saveToZip(requireActivity(), null);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        isShowFragment = false;
     }
 }

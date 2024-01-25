@@ -27,7 +27,6 @@ import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPAddEditInvoice;
 import cz.xlisto.odecty.shp.ShPFilter;
-import cz.xlisto.odecty.shp.ShPPriceList;
 import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -42,6 +41,9 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  */
 public class PriceListFragment extends Fragment {
     private static final String TAG = "PriceListFragment";
+    public static final String FLAG_RESULT_PRICE_LIST_FRAGMENT = "flagResultPriceListFragment";
+    public static final String FLAG_PRICE_LIST_FRAGMENT = "flagPriceListFragment";
+    public static final String FLAG_SIDE = "flagSide";
     private PriceListModel selectedPrice;
     private ShPFilter shpFilter;
     private static final String SHOW_SELECT_ITEM = "param1";
@@ -53,12 +55,11 @@ public class PriceListFragment extends Fragment {
     private Fragment priceListAddFragment;
     private TextView tvCountPriceItem;
     private Button btnBack;
-    private OnSelectedPriceList onSelectedPriceListListener;
     private SubscriptionPointModel subscriptionPoint;
     private PriceListAdapter priceListAdapter;
     private ArrayList<PriceListModel> priceListModels;
     private int idFragment = 0; //id fragmentu pro zobrazení detailu ceníku v land režimu
-    private ShPPriceList shPPriceList;
+    private Side side;
 
 
     public PriceListFragment() {
@@ -87,10 +88,24 @@ public class PriceListFragment extends Fragment {
      * @return Nová instance fragmentu PriceListFragment
      */
     public static PriceListFragment newInstance(boolean selectedItem, long idSelectedPriceList) {
+        return newInstance(selectedItem, idSelectedPriceList, null);
+    }
+
+
+    /**
+     * Fragment pro zobrazení ceníků s možností výběru ceníku
+     *
+     * @param selectedItem        Volba zobrazení výběrového radiobuttonu
+     * @param idSelectedPriceList ID vybraného ceníku, -1 nic nevybráno.
+     * @param side                Strana, pro kterou se vybírá ceník pro porovnání ceníků
+     * @return Nová instance fragmentu PriceListFragment
+     */
+    public static PriceListFragment newInstance(boolean selectedItem, long idSelectedPriceList, Side side) {
         PriceListFragment fragment = new PriceListFragment();
         Bundle args = new Bundle();
         args.putBoolean(SHOW_SELECT_ITEM, selectedItem);
         args.putLong(ID_SELECTED_PRICE_LIST, idSelectedPriceList);
+        args.putSerializable(FLAG_SIDE, side);
         fragment.setArguments(args);
         return fragment;
     }
@@ -105,12 +120,14 @@ public class PriceListFragment extends Fragment {
         if (getArguments() != null) {
             showSelectItem = getArguments().getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = getArguments().getLong(ID_SELECTED_PRICE_LIST);
+            side = (Side) getArguments().getSerializable(FLAG_SIDE);
         }
 
         if (savedInstanceState != null) {
             showSelectItem = savedInstanceState.getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = savedInstanceState.getLong(ID_SELECTED_PRICE_LIST);
             idFragment = savedInstanceState.getInt(ARG_ID_FRAGMENT);
+            side = (Side) savedInstanceState.getSerializable(FLAG_SIDE);
         }
     }
 
@@ -125,7 +142,6 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        shPPriceList = new ShPPriceList(getContext());
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.rv_price_list);
@@ -140,12 +156,13 @@ public class PriceListFragment extends Fragment {
         btnBack.setOnClickListener(v -> {
             ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
             shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, idSelectedPriceList);
-            if (onSelectedPriceListListener != null) {
-                if (selectedPrice != null)
-                    onSelectedPriceListListener.getOnSelectedItemPriceList(selectedPrice);
-            }
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, selectedPrice);
+            bundle.putSerializable(PriceListFragment.FLAG_SIDE, side);
+            getParentFragmentManager().setFragmentResult(FLAG_PRICE_LIST_FRAGMENT, bundle);
             getParentFragmentManager().popBackStack();
         });
+
 
         if (showSelectItem) {
             fab.setVisibility(View.GONE);
@@ -155,7 +172,7 @@ public class PriceListFragment extends Fragment {
             btnBack.setVisibility(View.GONE);
         }
 
-        //listener při potvrzení filtru
+        //listener při potvrzení filtru ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListFilterDialogFragment.FLAG_RESULT_FILTER_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -197,7 +214,6 @@ public class PriceListFragment extends Fragment {
 
         onLoadData();
         setAdapter();
-        //setIdSelectedPriceListFromShp();
         showDetailPriceFragment(true);
     }
 
@@ -208,6 +224,7 @@ public class PriceListFragment extends Fragment {
         outState.putLong(ID_SELECTED_PRICE_LIST, idSelectedPriceList);
         outState.putBoolean(SHOW_SELECT_ITEM, showSelectItem);
         outState.putInt(ARG_ID_FRAGMENT, idFragment);
+        outState.putSerializable(FLAG_SIDE, side);
     }
 
 
@@ -264,20 +281,12 @@ public class PriceListFragment extends Fragment {
     private void setAdapter() {
         priceListAdapter = new PriceListAdapter(requireActivity(), priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
                 priceList -> {
-                    if (onSelectedPriceListListener != null) {
-                        selectedPrice = priceList;
-                        //onSelectedPriceListListener.getOnSelectedItemPriceList(priceList);
+                    selectedPrice = priceList;
+                    idSelectedPriceList = -1L;
+                    if (priceList != null) {
                         btnBack.setText(getResources().getString(R.string.vybrat));
                         idSelectedPriceList = priceList.getId();
-                    } else {
-                        idSelectedPriceList = -1;
                     }
-
-                    if (priceList != null) {
-                        idSelectedPriceList = priceList.getId();
-
-                    }
-                    showDetailPriceFragment(false);
                 }, rv);
         rv.setAdapter(priceListAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -327,27 +336,9 @@ public class PriceListFragment extends Fragment {
 
 
     /**
-     * Načte ID vybraného ceníku z Shared Preferences
+     * Strana, pro kterou se vybírá ceník pro porovnání ceníků
      */
-    private void setIdSelectedPriceListFromShp() {
-        idSelectedPriceList = shPPriceList.get(ShPPriceList.SHOW_ID_ITEM_PRICE_LIST, -1L);
-    }
-
-
-    /**
-     * Nastaví listener pro označení vybraného ceníku
-     *
-     * @param onSelectedPriceListListener Listener pro označení vybraného ceníku
-     */
-    public void setOnSelectedPriceListListener(OnSelectedPriceList onSelectedPriceListListener) {
-        this.onSelectedPriceListListener = onSelectedPriceListListener;
-    }
-
-
-    /**
-     * Interface pro označení vybraného ceníku
-     */
-    public interface OnSelectedPriceList {
-        void getOnSelectedItemPriceList(PriceListModel priceList);
+    enum  Side {
+        LEFT, RIGHT
     }
 }

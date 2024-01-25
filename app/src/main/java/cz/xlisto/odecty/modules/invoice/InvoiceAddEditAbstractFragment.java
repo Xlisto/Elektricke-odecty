@@ -27,6 +27,7 @@ import cz.xlisto.odecty.utils.Keyboard;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * Abstraktní třída pro třídy přidání/úpravy položek faktury.
  * Xlisto 04.02.2023 11:58
@@ -47,7 +48,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     static final String SELECTED_ID_INVOICE = "selectedIdInvoice";
     static final String IS_CHANGED_ELECTROMETER = "isChangedElectrometer";
     static boolean loadFromDatabase = true;
-    private PriceListModel selectedPrice;
+    private PriceListModel selectedPriceList;
     long selectedIdPrice = -1L;
     long selectedIdInvoice = -1L;
     long id = -1L;
@@ -57,6 +58,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     CheckBox chIsChangedElectricMeter;
     String oldDateStart = "1.1.2023";
     String oldDateEnd = "31.12.2023";
+    private boolean isShowFragment;
 
 
     @Override
@@ -68,8 +70,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             id = getArguments().getLong(ID);
         }
         Calendar calendar = Calendar.getInstance();
-        oldDateStart = "1.1."+calendar.get(Calendar.YEAR);
-        oldDateEnd = "31.12."+calendar.get(Calendar.YEAR);
+        oldDateStart = "1.1." + calendar.get(Calendar.YEAR);
+        oldDateEnd = "31.12." + calendar.get(Calendar.YEAR);
     }
 
 
@@ -83,6 +85,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        isShowFragment = true;
         btnDateStart = view.findViewById(R.id.btnDateStart);
         btnDateEnd = view.findViewById(R.id.btnDateEnd);
         btnSelectPriceList = view.findViewById(R.id.btnSelectPriceList);
@@ -102,16 +105,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         btnSelectPriceList.setOnClickListener(v -> {
             saveSharedPreferences();
             PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPrice);
-            priceListFragment.setOnSelectedPriceListListener(priceList -> {
-                if(priceList == null) {
-                    Toast.makeText(getActivity(), "Cena nebyla vybrána", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                selectedPrice = priceList;
-                selectedIdPrice = selectedPrice.getId();
-                deactivateNT(selectedPrice.getSazba().equals(InvoiceAbstract.D01) || selectedPrice.getSazba().equals(InvoiceAbstract.D02));
-
-            });
             Keyboard.hide(requireActivity());
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
@@ -120,6 +113,16 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
 
 
         loadSharedPreferences();
+
+        //listener pro výběr ceníku
+        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
+            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            if (selectedPriceList != null) {
+                deactivateNT(selectedPriceList.getSazba().equals(InvoiceAbstract.D01) || selectedPriceList.getSazba().equals(InvoiceAbstract.D02));
+                btnSelectPriceList.setText(selectedPriceList.getName());
+            }
+
+        });
 
         if (savedInstanceState != null) {
             btnDateStart.setText(savedInstanceState.getString(BTN_DATE_OF));
@@ -139,28 +142,27 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (selectedPrice != null) {
-            selectedIdPrice = selectedPrice.getId();
-            deactivateNT(selectedPrice.getSazba().equals(InvoiceAbstract.D01) || selectedPrice.getSazba().equals(InvoiceAbstract.D02));
-            btnSelectPriceList.setText(selectedPrice.getName());
-        }
+
     }
 
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BTN_DATE_OF, btnDateStart.getText().toString());
-        outState.putString(BTN_DATE_TO, btnDateEnd.getText().toString());
-        outState.putString(VT_START, letVTStart.getText());
-        outState.putString(NT_START, letNTStart.getText());
-        outState.putString(VT_END, letVTEnd.getText());
-        outState.putString(NT_END, letNTEnd.getText());
-        outState.putString(OTHER_SERVICES, letOtherServices.getText());
         outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
-        outState.putBoolean(IS_CHANGED_ELECTROMETER, chIsChangedElectricMeter.isChecked());
+        if (isShowFragment) {
+            outState.putString(BTN_DATE_OF, btnDateStart.getText().toString());
+            outState.putString(BTN_DATE_TO, btnDateEnd.getText().toString());
+            outState.putString(VT_START, letVTStart.getText());
+            outState.putString(NT_START, letNTStart.getText());
+            outState.putString(VT_END, letVTEnd.getText());
+            outState.putString(NT_END, letNTEnd.getText());
+            outState.putString(OTHER_SERVICES, letOtherServices.getText());
+            outState.putBoolean(IS_CHANGED_ELECTROMETER, chIsChangedElectricMeter.isChecked());
+        }
     }
+
 
     @Override
     public void onStop() {
@@ -170,9 +172,9 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
-
     /**
      * Vytvoří objekt InvoiceModel - záznam faktury
+     *
      * @return InvoiceModel - jeden záznam faktury
      */
     InvoiceModel createInvoice() {
@@ -180,7 +182,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         selectedIdPrice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_ID_PRICE, -1L);
         long start = ViewHelper.parseCalendarFromString(btnDateStart.getText().toString()).getTimeInMillis();
         long end = ViewHelper.parseCalendarFromString(btnDateEnd.getText().toString()).getTimeInMillis();
-        start -=  ViewHelper.getOffsetTimeZones(start);
+        start -= ViewHelper.getOffsetTimeZones(start);
         end -= ViewHelper.getOffsetTimeZones(end);
         return new InvoiceModel(start, end,
                 letVTStart.getDouble(), letVTEnd.getDouble(),
@@ -194,7 +196,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
 
     /**
      * Vytvoří objekt InvoiceModel - záznam faktury. Nastaví id a idPriceList - používá se při editaci
-     * @param id long id faktury
+     *
+     * @param id          long id faktury
      * @param idPriceList long id ceníku
      * @return InvoiceModel - jeden záznam faktury
      */
@@ -290,5 +293,12 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             letNTStart.setDefaultText("");
             letNTEnd.setDefaultText("");
         }
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        isShowFragment = false;
     }
 }

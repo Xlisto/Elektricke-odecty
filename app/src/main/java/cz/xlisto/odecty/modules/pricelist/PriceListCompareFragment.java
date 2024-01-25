@@ -32,6 +32,7 @@ import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.*;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 public class PriceListCompareFragment extends Fragment {
     private static final String TAG = "PriceListCompareFragment";
     private static final String KC_MWH = " Kč/MWh";
@@ -65,16 +66,19 @@ public class PriceListCompareFragment extends Fragment {
     private OwnPriceListCompare ownprcTotalDPH;
     private SwitchCompat swLeft, swRight;
     private TextView tvShowRegulPriceLabel;
-    private PriceListModel priceListLeft, priceListRight, priceListLeftRegul, priceListRightRegul, priceListLeftNERegul, priceListRightNERegul;
+    private PriceListModel priceListLeft, priceListRight, priceListLeftRegul, priceListRightRegul;
+    private PriceListModel priceListLeftNERegul, priceListRightNERegul;
     private PriceListRegulBuilder priceListLeftRegulBuilder, priceListRightRegulBuilder;
-    private long idPriceListLeft = -1L, idPriceListRight = -1L;
+    private static long idPriceListLeft = -1L, idPriceListRight = -1L;
     private SubscriptionPointModel subscriptionPoint;
     private double[] totalPriceLeft, totalPriceRight;
     private double totalPozeLeft, totalPozeRight, totalRight, totalLeft;
 
+
     public static PriceListCompareFragment newInstance() {
         return new PriceListCompareFragment();
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,12 +94,14 @@ public class PriceListCompareFragment extends Fragment {
         }
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_compare, container, false);
 
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -155,24 +161,12 @@ public class PriceListCompareFragment extends Fragment {
         tvShowRegulPriceLabel = view.findViewById(R.id.tvShowRegulPriceTitle);
 
         btnLeft.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListLeft);
-            priceListFragment.setOnSelectedPriceListListener(priceList -> {
-                priceListLeftNERegul = priceList;
-                idPriceListLeft = priceList.getId();
-                createNeregulPriceListLeft();
-            });
-
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListLeft, PriceListFragment.Side.LEFT);
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
         btnRight.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListRight);
-            priceListFragment.setOnSelectedPriceListListener(priceList -> {
-                priceListRightNERegul = priceList;
-                idPriceListRight = priceList.getId();
-                createNeregulPriceListRight();
-            });
-
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListRight, PriceListFragment.Side.RIGHT);
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
@@ -184,12 +178,29 @@ public class PriceListCompareFragment extends Fragment {
         showSwLeft(false);
         showSwRight(false);
 
+        //listener pro výběr ceníku
+        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
+            PriceListModel priceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            PriceListFragment.Side side = (PriceListFragment.Side) result.getSerializable(PriceListFragment.FLAG_SIDE);
+            if (priceList != null && side != null) {
+                if (side.equals(PriceListFragment.Side.LEFT)) {
+                    priceListLeftNERegul = priceList;
+                    idPriceListLeft = priceList.getId();
+                    createNeregulPriceListLeft();
+                } else {
+                    priceListRightNERegul = priceList;
+                    idPriceListRight = priceList.getId();
+                    createNeregulPriceListRight();
+                }
+            }
+        });
+
 
         if (savedInstanceState != null) {
             idPriceListLeft = savedInstanceState.getLong(ID_PRICE_LIST_LEFT, -1L);
             idPriceListRight = savedInstanceState.getLong(ID_PRICE_LIST_RIGHT, -1L);
 
-            DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+            DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
             dataPriceListSource.open();
             if (idPriceListLeft > 0) {
                 priceListLeftNERegul = dataPriceListSource.readPrice(idPriceListLeft);
@@ -211,6 +222,7 @@ public class PriceListCompareFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -223,6 +235,7 @@ public class PriceListCompareFragment extends Fragment {
         r.run();
 
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -238,10 +251,12 @@ public class PriceListCompareFragment extends Fragment {
         outState.putDouble(SERVICES_R, servicesR);
     }
 
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         requireActivity().getMenuInflater().inflate(R.menu.menu_price_list_compare, menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -265,6 +280,7 @@ public class PriceListCompareFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
      * Skryje nepoužíté OwnPriceListCompare
      *
@@ -279,6 +295,7 @@ public class PriceListCompareFragment extends Fragment {
             ownPriceListCompare.setVisibility(VISIBLE);
         }
     }
+
 
     /**
      * Nastaví typ dílčí ceny pro zobrazení adekvátních jednotkových cen v ceníku a nastaví dvě desetinná místa
@@ -300,6 +317,7 @@ public class PriceListCompareFragment extends Fragment {
         ownPriceListCompare.setDifferent(differentPrice, df2, quantity, type);
     }
 
+
     /**
      * Naformátuje rozdílnou cenu a přiřadí zobrazení na dvě desetinná místa
      *
@@ -309,6 +327,7 @@ public class PriceListCompareFragment extends Fragment {
     private void setDifferentPrice(OwnPriceListCompare ownPriceListCompare, double d1) {
         ownPriceListCompare.setDifferent(d1, df2);
     }
+
 
     /**
      * Připočítá k dané ceně DPH podle platného ceníku
@@ -321,6 +340,7 @@ public class PriceListCompareFragment extends Fragment {
         return d + (d * dph / 100);
     }
 
+
     /**
      * Vytvoří ceník s regulovanou cenou na pravé straně
      */
@@ -329,6 +349,7 @@ public class PriceListCompareFragment extends Fragment {
         priceListRightRegul = priceListRightRegulBuilder.getRegulPriceList();
     }
 
+
     /**
      * Vytvoří ceník s regulovanou cenou na levé straně
      */
@@ -336,6 +357,7 @@ public class PriceListCompareFragment extends Fragment {
         priceListLeftRegulBuilder = new PriceListRegulBuilder(priceListLeftNERegul);
         priceListLeftRegul = priceListLeftRegulBuilder.getRegulPriceList();
     }
+
 
     /**
      * Nastaví regulovaný nebo neregulovaný ceník
@@ -352,6 +374,7 @@ public class PriceListCompareFragment extends Fragment {
             return prNERegul;
     }
 
+
     /**
      * Zobrazí/skryje switch na levé straně
      *
@@ -367,6 +390,7 @@ public class PriceListCompareFragment extends Fragment {
         }
     }
 
+
     /**
      * Zobrazí/skryje switch na pravé straně
      *
@@ -381,6 +405,7 @@ public class PriceListCompareFragment extends Fragment {
             swRight.setVisibility(GONE);
         }
     }
+
 
     private void comparePriceList() {
         if (priceListRight != null) {

@@ -21,6 +21,7 @@ import java.util.Calendar;
 import static cz.xlisto.odecty.shp.ShPAddEditMonthlyReading.ARG_SHOW_ADD_PAYMENT_MONTHLY_READING;
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.ADD_BACKUP_NEW_READING;
 
+
 /**
  * Fragment pro přidání měsíčního odečtu.
  */
@@ -131,6 +132,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         cbAddPayment.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_ADD_PAYMENT_MONTHLY_READING, false));
         cbAddBackup.setChecked(shPAddEditMonthlyReading.get(ADD_BACKUP_NEW_READING, false));
         setDatePayment();
+
     }
 
 
