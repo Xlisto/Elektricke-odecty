@@ -2,6 +2,9 @@ package cz.xlisto.odecty.models;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+
+
 /**
  * Model měsíčního odečtu
  */
@@ -108,16 +111,31 @@ public class MonthlyReadingModel {
     /**
      * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
      */
-    //TODO: sleva na DPH za měsíce listopad a prosinec v roce 2021 v měsíčních odečtech
     public double getDifferenceDPH() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
         if(year == 2021 && month >=10) {
-            //return (sum / 121 * 21);
             return (payment * 0.21);
         }
         return 0.0;
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "MonthlyReadingModel{" +
+                "id=" + id +
+                ", date=" + date +
+                ", vt=" + vt +
+                ", nt=" + nt +
+                ", \npayment=" + payment +
+                ", description='" + description + '\'' +
+                ", otherServices=" + otherServices +
+                ", first=" + first +
+                ", priceListId=" + priceListId +
+                '}';
     }
 }
