@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -24,6 +26,7 @@ import static android.text.InputType.TYPE_CLASS_NUMBER;
 import static android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL;
 import static android.text.InputType.TYPE_NUMBER_FLAG_SIGNED;
 import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+
 
 /**
  * Sloučený View TextView s EditTextem.
@@ -73,7 +76,7 @@ public class LabelEditText extends RelativeLayout {
         textView = findViewById(R.id.tvLabelEdit);
         RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-        relativeLayoutParams.addRule(RelativeLayout.END_OF,textView.getId());
+        relativeLayoutParams.addRule(RelativeLayout.END_OF, textView.getId());
 
         //vytvoření EditTextu a přidání do layoutu
         editText = new EditText(context);
@@ -229,6 +232,7 @@ public class LabelEditText extends RelativeLayout {
 
     /**
      * Povolí/zakáže widget podle parametru v XML
+     *
      * @param attributeSet parametry z xml
      */
     public void setEnabled(AttributeSet attributeSet) {
@@ -241,6 +245,7 @@ public class LabelEditText extends RelativeLayout {
 
     /**
      * Povolí/zakáže widget programově
+     *
      * @param b true = povolit, false = zakázat
      */
     public void setEnabled(boolean b) {
@@ -259,9 +264,11 @@ public class LabelEditText extends RelativeLayout {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -324,7 +331,8 @@ public class LabelEditText extends RelativeLayout {
 
             double value = 0.0;
             try {
-                value = Double.parseDouble(s);
+                BigDecimal bd = BigDecimal.valueOf(Double.parseDouble(s)).setScale(2, RoundingMode.HALF_UP);
+                value = bd.doubleValue();
             } catch (Exception e) {
                 e.printStackTrace();
                 //return;

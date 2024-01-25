@@ -18,6 +18,7 @@ import cz.xlisto.odecty.utils.Keyboard;
 import static cz.xlisto.odecty.format.DecimalFormatHelper.*;
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.ADD_BACKUP_EDT_READING;
 
+
 /**
  * Fragment pro editaci měsíčního odečtu.
  */
@@ -41,8 +42,8 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param tableO      Jméno databáze měsíčních odečtů (O).
-     * @param itemId      Id odečtu v databázi.
+     * @param tableO Jméno databáze měsíčních odečtů (O).
+     * @param itemId Id odečtu v databázi.
      * @return A new instance of fragment MonthlyReadingEditFragment.
      */
     public static MonthlyReadingEditFragment newInstance(String tableO, long itemId) {
@@ -73,8 +74,8 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
             loadMonthlyReading();
 
             btnDate.setText(ViewHelper.convertLongToDate(monthlyReading.getDate()));
-            labVT.setDefaultText(df1.format(monthlyReading.getVt()));
-            labNT.setDefaultText(df1.format(monthlyReading.getNt()));
+            labVT.setDefaultText(df2.format(monthlyReading.getVt()));
+            labNT.setDefaultText(df2.format(monthlyReading.getNt()));
             labPayment.setDefaultText(df2.format(monthlyReading.getPayment()));
             labDescription.setDefaultText(monthlyReading.getDescription());
             labOtherServices.setDefaultText(df2.format(monthlyReading.getOtherServices()));
@@ -132,7 +133,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     private void loadMonthlyReading() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
-        monthlyReading = dataSubscriptionPointSource.loadMonthlyReading(tableO, itemId,0,Long.MAX_VALUE);
+        monthlyReading = dataSubscriptionPointSource.loadMonthlyReading(tableO, itemId, 0, Long.MAX_VALUE);
         dataSubscriptionPointSource.close();
     }
 
@@ -150,6 +151,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
 
     /**
      * Uloží upravený měsíční odečet do databáze.
+     *
      * @param itemId long id měsíčního odečtu v databázi.
      */
     private void updateMonthlyReading(long itemId) {
@@ -163,7 +165,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
         dataMonthlyReadingSource.close();
         //kontrola, zda-li je upravovaný měsíční odečet posledním odečtem
-        if(lastMonthlyReading.getId() == itemId){
+        if (lastMonthlyReading.getId() == itemId) {
             //úprava posledního záznamu v období bez faktury
             updateLastItemInvoice();
         }
