@@ -31,18 +31,17 @@
             android:layout_alignParentEnd="false"
             android:layout_alignParentStart="false"
             android:layout_toEndOf="@id/rbPriceList"
-            android:layout_toStartOf="@id/tvPlatnostKonec"
             android:gravity="start"
             android:text="@string/sazba_distribuce"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/tvPlatnostKonec"
+            android:id="@+id/tvPlatnostCeniku"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tvProdukt"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentTop="false"
+            android:layout_below="@id/tvProdukt"
             android:text="@string/platnost_cenik" />
 
         <TextView
@@ -50,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="false"
-            android:layout_below="@id/tvProdukt"
+            android:layout_below="@id/tvPlatnostCeniku"
             android:layout_marginTop="10dp"
             android:text="@string/sazba_distribuce" />
 
@@ -58,7 +57,7 @@
             android:id="@+id/tvFirma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvProdukt"
+            android:layout_below="@id/tvPlatnostCeniku"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/tvSazba"

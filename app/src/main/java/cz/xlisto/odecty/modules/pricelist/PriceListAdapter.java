@@ -37,24 +37,23 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
     public static final String TAG = "PriceListAdapter";
-    public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST = "dialogFragmentDeletePriceList";
+    public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
     private final boolean showSelectItem;
     private int selectedItem = -1;
     private long idSelectedPriceList;
-    private final Context context;
     private final ArrayList<PriceListModel> items;
     private final SubscriptionPointModel subscriptionPoint;
     private int showButtons = -1;
     private final RecyclerView recyclerView;
-    private final ShPPriceList shPPriceList;
+    private ShPPriceList shPPriceList;
     private long selectedItemId;
     private int selectedPosition;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout relativeLayout;
-        TextView tvFrom, tvUntil, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
+        TextView tvFrom, tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
                 tvNote, tvPriceVTRegul, tvPriceNTRegul, tvPriceMonthRegul;
         RadioButton rbSelectItem;
         LinearLayout lnRegulPrice, lnButtons;
@@ -67,16 +66,15 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     //konstruktor
-    public PriceListAdapter(Context context, ArrayList<PriceListModel> items, SubscriptionPointModel subscriptionPoint, boolean selectItem, long idSelectedPriceList,
+    public PriceListAdapter(ArrayList<PriceListModel> items, SubscriptionPointModel subscriptionPoint, boolean selectItem, long idSelectedPriceList,
                             OnClickItemListener onClickItemListener, RecyclerView recyclerView) {
-        this.context = context;
         this.items = items;
         this.showSelectItem = selectItem;
         this.onClickItemListener = onClickItemListener;
         this.idSelectedPriceList = idSelectedPriceList;
         this.subscriptionPoint = subscriptionPoint;
         this.recyclerView = recyclerView;
-        shPPriceList = new ShPPriceList(context);
+
     }
 
 
@@ -93,7 +91,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         // Získání referencí na jednotlivé komponenty zobrazené seznam
         vh.rbSelectItem = v.findViewById(R.id.rbPriceList);
         vh.tvFrom = v.findViewById(R.id.tvPlatnostZacatek);
-        vh.tvUntil = v.findViewById(R.id.tvPlatnostKonec);
+        vh.tvValidityDate = v.findViewById(R.id.tvPlatnostCeniku);
         vh.tvSeries = v.findViewById(R.id.tvProduktovaRada);
         vh.tvProduct = v.findViewById(R.id.tvProdukt);
         vh.tvRate = v.findViewById(R.id.tvSazba);
@@ -111,7 +109,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         vh.btnDelete = v.findViewById(R.id.btnDeletePriceListItem);
         vh.btnDetail = v.findViewById(R.id.btnDetailPriceListItem);
 
-
+        Context context = vh.tvFrom.getContext();
+        shPPriceList = new ShPPriceList(context);
         showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1);
         return vh;
     }
@@ -121,6 +120,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final PriceListModel priceList = items.get(position);
+        Context context = holder.tvFrom.getContext();
+
         double[] ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint);
         String cenaVT = "1kWh VT: " + (df2.format(Round.round(ceny[0]))) + " Kč";
         String cenaNT = "NT: " + (df2.format(Round.round(ceny[1]))) + " Kč";
@@ -196,7 +197,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                 selectedItemId = priceList.getId();
                 selectedPosition = position;
                 YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST,
+                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST,
                         priceList.getRada() + " "
                                 + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
                                 + ViewHelper.convertLongToDate(priceList.getPlatnostOD()) + " - "
@@ -210,7 +211,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
         String distUzemi = context.getResources().getString(R.string.dist_uzemi,priceList.getFirma(), priceList.getDistribuce());
         holder.tvFrom.setText(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
-        holder.tvUntil.setText(ViewHelper.convertLongToDate(priceList.getPlatnostDO()));
+        holder.tvValidityDate.setText(context.getResources().getString(R.string.validity_price_list_date, ViewHelper.convertLongToDate(priceList.getPlatnostOD()),ViewHelper.convertLongToDate(priceList.getPlatnostDO())));
         holder.tvSeries.setText(priceList.getRada());
         holder.tvProduct.setText(priceList.getProdukt());
         holder.tvRate.setText(priceList.getSazba());
@@ -296,8 +297,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * Smaže vybraný ceník
      */
-    public void deleteItemPrice() {
-        deleteItemPrice(selectedItemId, selectedPosition);
+    public void deleteItemPrice(Context context) {
+        deleteItemPrice(selectedItemId, selectedPosition, context);
         setShowPositionItem(-1);
         setShowIdItem(-1);
     }
@@ -339,7 +340,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      *
      * @param itemId long id ceníku
      */
-    private void deleteItemPrice(long itemId, int position) {
+    private void deleteItemPrice(long itemId, int position, Context context) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         //seznam odběrných míst
@@ -356,7 +357,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         dataSubscriptionPointSource.close();
 
         if (pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
-            showWarningDialog(pricesTED, pricesFAK, pricesMON);
+            showWarningDialog(pricesTED, pricesFAK, pricesMON, context);
             return;
         }
 
@@ -375,7 +376,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech
      */
-    private void showWarningDialog(int ted, int fak, int mon) {
+    private void showWarningDialog(int ted, int fak, int mon, Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Smazání ceníku");
         builder.setMessage("Ceník nelze smazat, protože je použit v těchto záznamech:\n\n" +

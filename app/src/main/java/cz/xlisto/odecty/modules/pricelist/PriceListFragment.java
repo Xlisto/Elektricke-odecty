@@ -184,10 +184,10 @@ public class PriceListFragment extends Fragment {
                 }));
 
         //listener při potvrzení smazání ceníku
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICELIST, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                        priceListAdapter.deleteItemPrice();
+                        priceListAdapter.deleteItemPrice(requireContext());
                         onLoadData();
                         priceListAdapter.setHideButtons();
                         idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku
@@ -279,7 +279,7 @@ public class PriceListFragment extends Fragment {
      * Nastaví adapter pro zobrazení ceníků
      */
     private void setAdapter() {
-        priceListAdapter = new PriceListAdapter(requireActivity(), priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
+        priceListAdapter = new PriceListAdapter(priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
                 priceList -> {
                     selectedPrice = priceList;
                     idSelectedPriceList = -1L;

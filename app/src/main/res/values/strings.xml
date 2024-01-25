@@ -62,6 +62,7 @@
 
     <string name="description_date_from">Platnost od</string>
     <string name="description_date_until">Platnost do</string>
+    <string name="validity_price_list_date">Platnost ceníku: %s - %s</string>
 
     <string name="sp_produktova_rada">Produktová řada</string>
     <string name="sp_datum_platnosti">Datum platnosti</string>

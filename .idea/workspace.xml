@@ -34,6 +34,12 @@
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty.NoActionBar</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_yes_no_dialog_recycler_view.xml">
         <config>
           <state>Landscape</state>
@@ -246,12 +252,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána do MonthlyReadingModel metoda toString.&#10;Pro lepší diagnostiku a výpis v logu.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -261,7 +265,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -959,7 +963,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <option name="localTasksCounter" value="161" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1033,8 +1037,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
-    <MESSAGE value="Deaktivace tlačítka na změnu čísla faktury u období bez faktury" />
     <MESSAGE value="Do DashBoardu přidán celkový soupis faktur s grafickým zobrazením spotřeby" />
     <MESSAGE value="Vytvořen widget pro zobazení celkové spotřeby s celkem zapalacenými zálohami&#10;Přidán do DashBoard" />
     <MESSAGE value="Vytvořen widget pro zobazení celkové spotřeby s celkem zapalcenými zálohami&#10;Přidán do DashBoard" />
@@ -1058,6 +1060,8 @@
     <MESSAGE value="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)" />
     <MESSAGE value="Přidání zobrazení datumového intervalu do hlavičky měsíčních odečtů&#10;Pro lepší přehlednost, aby bylo vidět, že den záznamu není započítán do výpočtu." />
     <MESSAGE value="Přidána do MonthlyReadingModel metoda toString.&#10;Pro lepší diagnostiku a výpis v logu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidána do MonthlyReadingModel metoda toString.&#10;Pro lepší diagnostiku a výpis v logu." />
+    <MESSAGE value="Změna v MonthlyReadingEditFragment v zobrazení měsičního odečtu VT a NT na dvě desetinná místa.&#10;&#10;Záznamy měsíčníh odečtů mohou být na dvě desetinná místa. V případě editace mesíčního záznamu se tato dvě desetinná místa neezobrazovala - byl použit formát řetězce se zaokrouhlením na 1 desetinné místo." />
+    <MESSAGE value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
+    <option name="LAST_COMMIT_MESSAGE" value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
   </component>
 </project>
