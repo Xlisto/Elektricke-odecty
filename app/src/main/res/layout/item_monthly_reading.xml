@@ -307,6 +307,21 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/tvDateDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvDate"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_toStartOf="@id/imageViewWarningMonthlyReading"
+        android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
     <ImageView
         android:id="@+id/imageViewWarningMonthlyReading"
         android:layout_width="wrap_content"
@@ -314,7 +329,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="-3dp"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:srcCompat="@drawable/ic_warning" />
 
 </RelativeLayout>

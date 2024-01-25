@@ -246,14 +246,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListCompareFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,7 +261,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -961,7 +959,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <option name="localTasksCounter" value="156" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1035,7 +1033,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidána podmínka pro zvýraznění výstrahy při větším počátečním datumu oproti koncovému datumu v záznamu faktury." />
     <MESSAGE value="Odstraněné tlačítko pro výběr složky ve fragmentu pro import ceníků. Nahrazeno položkou menu. Stejné menu doplněno do fragmentu pro export ceníků." />
     <MESSAGE value="Přidán fragment Dashboard a vytvořen MyBottomNavigationView, jež rozšiřuje BottomNavigationView na celkem 6 položek, aby bylo možné použít 6. skryté položky. Kvůli tomu, že BottomNavigationView nejde odoznačit všechny položky." />
     <MESSAGE value="Vytvořena nová třída DataInvoiceSource.&#10;Obsahuje veškeré metody, které byly obsaženy v DataSubscriptionPointSource pro manipulaci s fakturami." />
@@ -1060,6 +1057,7 @@
     <MESSAGE value="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny.&#10;&#10;Do PriceListFilterDialogFragment odebrán listener a nahrazen novým listeneem pro fragmenty: getParentFragmentManager().setFragmentResult(FLAG_RESULT_FILTER_DIALOG_FRAGMENT, bundle);&#10;Posluchač je v PriceListFragment v metodě v onViewCreate." />
     <MESSAGE value="Oprava chyby vybraného ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny." />
     <MESSAGE value="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny." />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny." />
+    <MESSAGE value="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)" />
+    <option name="LAST_COMMIT_MESSAGE" value="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)" />
   </component>
 </project>

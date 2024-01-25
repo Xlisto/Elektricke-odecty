@@ -45,7 +45,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     private static final String TAG = "MonthlyReadingAdapter";
     public static final String FLAG_DELETE_MONTHLY_READING = "flagDeleteMonthlyReading";
     private static int showButtons = -1;
-    private final Context context;
     private final ArrayList<MonthlyReadingModel> items;
     private boolean simplyView, showRegulPrice;
     private final SubscriptionPointModel subscriptionPoint;
@@ -57,7 +56,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout rootRelativeLayout, rl3;
         LinearLayout lnButtons;
-        TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth,
+        TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth, tvDateDetail,
                 tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNtDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice;
         ImageView ivIconResult, ivWarning;
         Button btnEdit, btnDelete;
@@ -70,8 +69,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     //konstruktor
-    public MonthlyReadingAdapter(Context context, ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
-        this.context = context;
+    public MonthlyReadingAdapter(ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
         this.items = items;
         this.simplyView = simplyView;
         this.subscriptionPoint = subscriptionPoint;
@@ -91,6 +89,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         vh.lnButtons = v.findViewById(R.id.lnButtonsMonthlyItem);
         vh.rl3 = v.findViewById(R.id.rl3);
         vh.tvDate = v.findViewById(R.id.tvDate);
+        vh.tvDateDetail = v.findViewById(R.id.tvDateDetail);
         vh.tvPriceList = v.findViewById(R.id.tvTarif);
         vh.tvVt = v.findViewById(R.id.tvVT);
         vh.tvNt = v.findViewById(R.id.tvNT);
@@ -122,6 +121,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final MonthlyReadingModel monthlyReading = items.get(position);
         MonthlyReadingModel monthlyReadingPrevious;
+        Context context = holder.rootRelativeLayout.getContext();
 
         DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
         dataPriceListSource.open();
@@ -152,7 +152,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             monthlyReadingPrevious = items.get(position + 1);
             month = Calculation.differentMonth(ViewHelper.convertLongToDate(items.get(position + 1).getDate()), holder.tvDate.getText().toString(), DifferenceDate.TypeDate.MONTH);
             if (priceList != null) {
-                holder.ivWarning.setVisibility(View.GONE);
+                holder.ivWarning.setVisibility(View.INVISIBLE);
                 if (showRegulPrice) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(monthlyReading.getDate());
@@ -172,6 +172,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     calendarEnd.add(Calendar.DAY_OF_MONTH, -1);
                     long dateStart = items.get(position + 1).getDate();
                     long dateEnd = calendarEnd.getTimeInMillis();
+                    holder.tvDateDetail.setText(context.getResources().getString(R.string.period, ViewHelper.convertLongToDate(dateStart), ViewHelper.convertLongToDate(dateEnd)));
 
                     boolean overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
                     boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
@@ -181,10 +182,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                         holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
                         if (!overDatePriceList) {
                             holder.tvAlertRegulPrice.setText(context.getResources().getString(R.string.alert_date_price_list));
-                            holder.tvAlertRegulPrice.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+                            holder.tvAlertRegulPrice.setTextColor(holder.tvAlertRegulPrice.getContext().getResources().getColor(R.color.color_red_alert));
                         }
                     } else {
-                        holder.ivWarning.setVisibility(View.GONE);
+                        holder.ivWarning.setVisibility(View.INVISIBLE);
                         holder.tvAlertRegulPrice.setVisibility(View.GONE);
                     }
 
@@ -215,9 +216,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvPozePrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[3] * (vtDiff + ntDiff))));
             holder.tvNextServicesPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(items.get(position).getOtherServices())));
             holder.tvMonth.setText(Html.fromHtml(context.getResources().getString(R.string.count_months_html, (DecimalFormatHelper.df3.format(month)))));
-            holder.tvMonthPrice.setText(context.getResources().getString(R.string.string_price,DecimalFormatHelper.df2.format(monthPrice)));
+            holder.tvMonthPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(monthPrice)));
             holder.tvTotalPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_price_html, DecimalFormatHelper.df2.format(total), differenceDescription)));
-            holder.tvDifferentPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_different_html,color, DecimalFormatHelper.df2.format(different))));
+            holder.tvDifferentPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_different_html, color, DecimalFormatHelper.df2.format(different))));
         }
 
         holder.rootRelativeLayout.setOnClickListener(v -> {
@@ -262,9 +263,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvMonthPrice.setVisibility(View.GONE);
             holder.ivIconResult.setVisibility(View.GONE);
             holder.tvAlertRegulPrice.setVisibility(View.GONE);
-            holder.tvMonth.setText("První odečet. \nPoužití při prvním záznamu nebo výměně elektroměru.");
+            holder.tvMonth.setText(context.getResources().getString(R.string.first_reading));
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_gray, null));
-            holder.ivWarning.setVisibility(View.GONE);
+            holder.ivWarning.setVisibility(View.INVISIBLE);
             if (simplyView) {
 
                 holder.tvMonth.setVisibility(View.GONE);
@@ -406,8 +407,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     /**
      * smaže záznam měsíčního odečtu
      */
-    public void deleteMonthlyReading() {
-        deleteMonthlyReading(selectedMonthlyReadingId, selectedPosition);
+    public void deleteMonthlyReading(Context context) {
+        deleteMonthlyReading(selectedMonthlyReadingId, selectedPosition, context);
     }
 
 
@@ -417,7 +418,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * @param itemId   long id záznamu
      * @param position int pozice v RecyclerAdapteru
      */
-    private void deleteMonthlyReading(long itemId, int position) {
+    private void deleteMonthlyReading(long itemId, int position, Context context) {
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
         dataMonthlyReadingSource.open();
         dataMonthlyReadingSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());

@@ -392,6 +392,8 @@
     <string name="low_tariff">NT</string>
 
     <string name="kwh">kWh</string>
+    <string name="period">Pro období: %s - %s</string>
+    <string name="first_reading">První odečet.\nPoužití při prvním záznamu nebo výměně elektroměru.</string>
 
 
 </resources>

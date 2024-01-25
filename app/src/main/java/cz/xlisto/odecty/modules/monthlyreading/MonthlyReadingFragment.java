@@ -37,6 +37,7 @@ import static cz.xlisto.odecty.shp.ShPMonthlyReading.REGUL_PRICE;
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.SHORT_LIST;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * Fragment pro zobrazení měsíčních odečtů.
  */
@@ -74,7 +75,7 @@ public class MonthlyReadingFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
                 (requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT))
-                        monthlyReadingAdapter.deleteMonthlyReading();
+                        monthlyReadingAdapter.deleteMonthlyReading(getContext());
                 });
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingFilterDialogFragment.MONTHLY_READING_FILTER, this,
@@ -84,7 +85,7 @@ public class MonthlyReadingFragment extends Fragment {
                     from = from + ViewHelper.getOffsetTimeZones(from);
                     tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
                     tvMonthlyReadingFilter.setText(getResources().getString(R.string.show_period, ViewHelper.convertLongToDate(from), ViewHelper.convertLongToDate(to)));
-                    if(from == 0 && to == Long.MAX_VALUE){
+                    if (from == 0 && to == Long.MAX_VALUE) {
                         tvMonthlyReadingFilter.setVisibility(View.GONE);
                     } else {
                         tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
@@ -104,7 +105,7 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             from = savedInstanceState.getLong(FROM);
             to = savedInstanceState.getLong(TO);
         }
@@ -168,7 +169,7 @@ public class MonthlyReadingFragment extends Fragment {
         outState.putLong(FROM, from);
         outState.putLong(TO, to);
     }
-    
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -180,7 +181,7 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_filter_monthly_reading) {
-            MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from,to);
+            MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from, to);
             monthlyReadingFilterDialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
         }
         return super.onOptionsItemSelected(item);
@@ -207,8 +208,7 @@ public class MonthlyReadingFragment extends Fragment {
                 dataInvoiceSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataInvoiceSource.close();
 
-            monthlyReadingAdapter = new MonthlyReadingAdapter(getActivity(), monthlyReadings,
-                    subscriptionPoint,
+            monthlyReadingAdapter = new MonthlyReadingAdapter(monthlyReadings, subscriptionPoint,
                     swSimplyView.isChecked(), swRegulPrice.isChecked(), rv);
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             rv.setAdapter(monthlyReadingAdapter);
