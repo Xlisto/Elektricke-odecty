@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +32,7 @@ import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
+import static cz.xlisto.odecty.modules.pricelist.PriceListDetailFragment.PRICE_LIST_DETAIL_FRAGMENT;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
@@ -44,13 +46,14 @@ public class PriceListFragment extends Fragment {
     public static final String FLAG_RESULT_PRICE_LIST_FRAGMENT = "flagResultPriceListFragment";
     public static final String FLAG_PRICE_LIST_FRAGMENT = "flagPriceListFragment";
     public static final String FLAG_SIDE = "flagSide";
-    private PriceListModel selectedPrice;
+    private static final String BTN_BACK_TEXT = "btnBackText";
+    private static PriceListModel selectedPrice;
     private ShPFilter shpFilter;
     private static final String SHOW_SELECT_ITEM = "param1";
     private static final String ID_SELECTED_PRICE_LIST = "param2";
     private static final String ARG_ID_FRAGMENT = "idFragment";
     private boolean showSelectItem; //true = zobrazí radiobutton pro výběr ceníku
-    private long idSelectedPriceList;
+    private static long idSelectedPriceList;
     private RecyclerView rv;
     private Fragment priceListAddFragment;
     private TextView tvCountPriceItem;
@@ -180,6 +183,7 @@ public class PriceListFragment extends Fragment {
                         setAdapter();
                         priceListAdapter.setHideButtons();
                         showDetailPriceFragment(false);
+
                     }
                 }));
 
@@ -210,11 +214,19 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
-
-
         onLoadData();
         setAdapter();
         showDetailPriceFragment(true);
+        if(savedInstanceState != null){
+            btnBack.setText(savedInstanceState.getString(BTN_BACK_TEXT));
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
 
@@ -225,6 +237,7 @@ public class PriceListFragment extends Fragment {
         outState.putBoolean(SHOW_SELECT_ITEM, showSelectItem);
         outState.putInt(ARG_ID_FRAGMENT, idFragment);
         outState.putSerializable(FLAG_SIDE, side);
+        outState.putString(BTN_BACK_TEXT, btnBack.getText().toString());
     }
 
 
@@ -283,9 +296,15 @@ public class PriceListFragment extends Fragment {
                 priceList -> {
                     selectedPrice = priceList;
                     idSelectedPriceList = -1L;
+                    Log.w(TAG, "setAdapter: " + idSelectedPriceList);
                     if (priceList != null) {
                         btnBack.setText(getResources().getString(R.string.vybrat));
                         idSelectedPriceList = priceList.getId();
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(PriceListDetailFragment.PRICE_LIST_ID, idSelectedPriceList);
+                        getParentFragmentManager().setFragmentResult(PRICE_LIST_DETAIL_FRAGMENT, bundle);
+
+                        showDetailPriceFragment(false);
                     }
                 }, rv);
         rv.setAdapter(priceListAdapter);
@@ -338,7 +357,7 @@ public class PriceListFragment extends Fragment {
     /**
      * Strana, pro kterou se vybírá ceník pro porovnání ceníků
      */
-    enum  Side {
+    enum Side {
         LEFT, RIGHT
     }
 }

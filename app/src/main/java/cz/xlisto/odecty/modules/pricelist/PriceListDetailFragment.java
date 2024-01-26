@@ -28,6 +28,8 @@ import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
  */
 public class PriceListDetailFragment extends Fragment {
     private final static String TAG = "PriceListDetailFragment";
+    public final static String PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment";
+    public final static String PRICE_LIST_ID = "price_list_id";
     private LabelPriceDetail ldnDatum;
     private LabelPriceDetail ldnRada, ldnProdukt, ldnSazba, ldnDodavatel, ldnUzemi;
     private LabelPriceDetail ldnVTDodavka, ldnNTDodavka, ldnMesPlat;
@@ -132,6 +134,11 @@ public class PriceListDetailFragment extends Fragment {
         ldnDPH = v.findViewById(R.id.ldn_DPH);
 
         loadPrice(price_id);
+
+        getParentFragmentManager().setFragmentResultListener(PRICE_LIST_DETAIL_FRAGMENT, this, (requestKey, result) -> {
+            long priceId = result.getLong(PRICE_LIST_ID);
+            loadPrice(priceId);
+        });
 
         return v;
     }
@@ -262,8 +269,9 @@ public class PriceListDetailFragment extends Fragment {
 
     /**
      * Nastaví poznámku do textview
+     *
      * @param tv textview
-     * @param s poznámka
+     * @param s  poznámka
      */
     private void setPoznamka(TextView tv, String s) {
         if (s != null) {
