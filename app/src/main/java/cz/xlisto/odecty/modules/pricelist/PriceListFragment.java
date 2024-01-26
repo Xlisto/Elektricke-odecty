@@ -191,7 +191,7 @@ public class PriceListFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                        priceListAdapter.deleteItemPrice(requireContext());
+                        priceListAdapter.deleteItemPrice();
                         onLoadData();
                         priceListAdapter.setHideButtons();
                         idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku

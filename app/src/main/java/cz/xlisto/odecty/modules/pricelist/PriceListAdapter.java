@@ -46,7 +46,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     private final SubscriptionPointModel subscriptionPoint;
     private int showButtons = -1;
     private final RecyclerView recyclerView;
-    private ShPPriceList shPPriceList;
+    private final ShPPriceList shPPriceList;
+    private final Context context;
     private long selectedItemId;
     private int selectedPosition;
 
@@ -74,7 +75,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         this.idSelectedPriceList = idSelectedPriceList;
         this.subscriptionPoint = subscriptionPoint;
         this.recyclerView = recyclerView;
-
+        context = recyclerView.getContext();
+        shPPriceList = new ShPPriceList(context);
     }
 
 
@@ -109,9 +111,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         vh.btnDelete = v.findViewById(R.id.btnDeletePriceListItem);
         vh.btnDetail = v.findViewById(R.id.btnDetailPriceListItem);
 
-        Context context = vh.tvFrom.getContext();
-        shPPriceList = new ShPPriceList(context);
-        showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1);
         return vh;
     }
 
@@ -120,7 +119,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final PriceListModel priceList = items.get(position);
-        Context context = holder.tvFrom.getContext();
+
+        showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1);
 
         double[] ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint);
         String cenaVT = "1kWh VT: " + (df2.format(Round.round(ceny[0]))) + " Kč";
@@ -297,8 +297,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * Smaže vybraný ceník
      */
-    public void deleteItemPrice(Context context) {
-        deleteItemPrice(selectedItemId, selectedPosition, context);
+    public void deleteItemPrice() {
+        deleteItemPrice(selectedItemId, selectedPosition);
         setShowPositionItem(-1);
         setShowIdItem(-1);
     }
@@ -340,7 +340,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      *
      * @param itemId long id ceníku
      */
-    private void deleteItemPrice(long itemId, int position, Context context) {
+    private void deleteItemPrice(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         //seznam odběrných míst

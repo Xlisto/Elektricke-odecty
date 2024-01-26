@@ -252,10 +252,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněný listener v PriceListDetailFragment pro změnu ceníku.&#10;V land režimu, když se zobrazuje současně seznam ceníků a detail ceníku se neměnil obsah detailu ceníku při změně ceníku v seznamu.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListDetailFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -963,7 +961,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="162" />
+    <option name="localTasksCounter" value="163" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1037,7 +1035,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Do DashBoardu přidán celkový soupis faktur s grafickým zobrazením spotřeby" />
     <MESSAGE value="Vytvořen widget pro zobazení celkové spotřeby s celkem zapalacenými zálohami&#10;Přidán do DashBoard" />
     <MESSAGE value="Vytvořen widget pro zobazení celkové spotřeby s celkem zapalcenými zálohami&#10;Přidán do DashBoard" />
     <MESSAGE value="Vytvořen widget pro zobazení časů HDO pro aktuální den" />
@@ -1062,6 +1059,7 @@
     <MESSAGE value="Přidána do MonthlyReadingModel metoda toString.&#10;Pro lepší diagnostiku a výpis v logu." />
     <MESSAGE value="Změna v MonthlyReadingEditFragment v zobrazení měsičního odečtu VT a NT na dvě desetinná místa.&#10;&#10;Záznamy měsíčníh odečtů mohou být na dvě desetinná místa. V případě editace mesíčního záznamu se tato dvě desetinná místa neezobrazovala - byl použit formát řetězce se zaokrouhlením na 1 desetinné místo." />
     <MESSAGE value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
-    <option name="LAST_COMMIT_MESSAGE" value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
+    <MESSAGE value="Doplněný listener v PriceListDetailFragment pro změnu ceníku.&#10;V land režimu, když se zobrazuje současně seznam ceníků a detail ceníku se neměnil obsah detailu ceníku při změně ceníku v seznamu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněný listener v PriceListDetailFragment pro změnu ceníku.&#10;V land režimu, když se zobrazuje současně seznam ceníků a detail ceníku se neměnil obsah detailu ceníku při změně ceníku v seznamu." />
   </component>
 </project>
