@@ -20,6 +20,7 @@
             android:id="@+id/rbPriceList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvProdukt"
             android:clickable="false"
             android:focusable="false" />
 
@@ -27,9 +28,9 @@
             android:id="@+id/tvProdukt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/rbPriceList"
             android:layout_alignParentEnd="false"
             android:layout_alignParentStart="false"
+            android:layout_below="@id/tvPlatnostCeniku"
             android:layout_toEndOf="@id/rbPriceList"
             android:gravity="start"
             android:text="@string/sazba_distribuce"
@@ -39,9 +40,8 @@
             android:id="@+id/tvPlatnostCeniku"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="false"
-            android:layout_below="@id/tvProdukt"
+            android:layout_alignParentEnd="false"
+            android:layout_centerHorizontal="true"
             android:text="@string/platnost_cenik" />
 
         <TextView
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="false"
-            android:layout_below="@id/tvPlatnostCeniku"
+            android:layout_below="@id/tvProdukt"
             android:layout_marginTop="10dp"
             android:text="@string/sazba_distribuce" />
 
@@ -57,7 +57,7 @@
             android:id="@+id/tvFirma"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvPlatnostCeniku"
+            android:layout_below="@id/tvProdukt"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_toEndOf="@id/tvSazba"
