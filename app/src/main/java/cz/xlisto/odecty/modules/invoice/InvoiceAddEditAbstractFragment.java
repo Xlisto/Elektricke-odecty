@@ -120,6 +120,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             if (selectedPriceList != null) {
                 deactivateNT(selectedPriceList.getSazba().equals(InvoiceAbstract.D01) || selectedPriceList.getSazba().equals(InvoiceAbstract.D02));
                 btnSelectPriceList.setText(selectedPriceList.getName());
+                selectedIdPrice = selectedPriceList.getId();
             }
 
         });
@@ -136,13 +137,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             selectedIdInvoice = savedInstanceState.getLong(SELECTED_ID_INVOICE, -1L);
             chIsChangedElectricMeter.setChecked(savedInstanceState.getBoolean(IS_CHANGED_ELECTROMETER, false));
         }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 
 
