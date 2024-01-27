@@ -153,6 +153,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             month = Calculation.differentMonth(ViewHelper.convertLongToDate(items.get(position + 1).getDate()), holder.tvDate.getText().toString(), DifferenceDate.TypeDate.MONTH);
             if (priceList != null) {
                 holder.ivWarning.setVisibility(View.INVISIBLE);
+                boolean overDateRegulPrice = false;
+                Calendar calendarEnd = Calendar.getInstance();
+                calendarEnd.setTimeInMillis(items.get(position).getDate());
+                calendarEnd.add(Calendar.DAY_OF_MONTH, -1);
+                long dateStart = items.get(position + 1).getDate();
+                long dateEnd = calendarEnd.getTimeInMillis();
+                holder.tvDateDetail.setText(context.getResources().getString(R.string.period, ViewHelper.convertLongToDate(dateStart), ViewHelper.convertLongToDate(dateEnd)));
+
                 if (showRegulPrice) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(monthlyReading.getDate());
@@ -167,29 +175,26 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
                     priceList = priceListRegulBuilder.getRegulPriceList();
 
-                    Calendar calendarEnd = Calendar.getInstance();
-                    calendarEnd.setTimeInMillis(items.get(position).getDate());
-                    calendarEnd.add(Calendar.DAY_OF_MONTH, -1);
-                    long dateStart = items.get(position + 1).getDate();
-                    long dateEnd = calendarEnd.getTimeInMillis();
-                    holder.tvDateDetail.setText(context.getResources().getString(R.string.period, ViewHelper.convertLongToDate(dateStart), ViewHelper.convertLongToDate(dateEnd)));
 
-                    boolean overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
-                    boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
 
-                    if (overDateRegulPrice || !overDatePriceList) {
-                        holder.ivWarning.setVisibility(View.VISIBLE);
-                        holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
-                        if (!overDatePriceList) {
-                            holder.tvAlertRegulPrice.setText(context.getResources().getString(R.string.alert_date_price_list));
-                            holder.tvAlertRegulPrice.setTextColor(holder.tvAlertRegulPrice.getContext().getResources().getColor(R.color.color_red_alert));
-                        }
-                    } else {
-                        holder.ivWarning.setVisibility(View.INVISIBLE);
-                        holder.tvAlertRegulPrice.setVisibility(View.GONE);
-                    }
+                    overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
 
                 }
+
+                boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
+
+                if (overDateRegulPrice || !overDatePriceList) {
+                    holder.ivWarning.setVisibility(View.VISIBLE);
+                    holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
+                    if (!overDatePriceList) {
+                        holder.tvAlertRegulPrice.setText(context.getResources().getString(R.string.alert_date_price_list));
+                        holder.tvAlertRegulPrice.setTextColor(holder.tvAlertRegulPrice.getContext().getResources().getColor(R.color.color_red_alert));
+                    }
+                } else {
+                    holder.ivWarning.setVisibility(View.INVISIBLE);
+                    holder.tvAlertRegulPrice.setVisibility(View.GONE);
+                }
+
                 prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);//vt, nt, stPlat, poze
                 monthPrice = month * prices[2];
                 total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();
