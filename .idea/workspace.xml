@@ -252,9 +252,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit.">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -962,7 +961,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="170" />
+    <option name="localTasksCounter" value="172" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1036,8 +1035,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opraveno překrytí textview v položce zálohové platby." />
-    <MESSAGE value="Opraveny pády aplikace v DashBoard, HdoSiteFragment, pokud nebylo nastasveno odběrné místo." />
     <MESSAGE value="Doplněna detekce dne u widgetu zobrazující čas HDO v DashBoard a doplněna náhrada času 23.59 za 0:00." />
     <MESSAGE value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
     <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
@@ -1061,6 +1058,8 @@
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdInvoice.&#10;Odstraněna prázdná metoda onResume." />
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdPrice.&#10;Odstraněna prázdná metoda onResume." />
     <MESSAGE value="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou." />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou." />
+    <MESSAGE value="Upravený výpočet datumů při rozdělování záznamu v nezfakturovaném období. &#10;Potřeba nastavovat data od prvního a do posledního dne." />
+    <MESSAGE value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
+    <option name="LAST_COMMIT_MESSAGE" value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
   </component>
 </project>

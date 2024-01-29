@@ -440,16 +440,17 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             //zobrazení varovného vykřičníku
             holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
             holder.imgAlert.setVisibility(View.VISIBLE);
-            if (isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
-                //zobrazení varovného textu na období státních regulací
+            if (isOverDateRegulPrice(priceListRegulBuilder, invoice) ||
+                    (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo())) {
+                //zobrazení varovného textu na období státních regulací nebo na období platnosti ceníku
                 holder.tvAlert.setVisibility(View.VISIBLE);
+                if (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo()) {
+                    holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
+                }
             } else {
                 holder.tvAlert.setVisibility(View.GONE);
             }
-            if (priceList.getPlatnostDO() >= invoice.getDateTo() || priceList.getPlatnostOD() <= invoice.getDateFrom()) {
-                holder.tvAlert.setVisibility(View.VISIBLE);
-                holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
-            }
+
         }
     }
 
