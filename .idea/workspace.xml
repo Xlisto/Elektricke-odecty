@@ -252,9 +252,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdPrice.&#10;Odstraněna prázdná metoda onResume.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +264,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -962,7 +962,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="169" />
+    <option name="localTasksCounter" value="170" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1036,7 +1036,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Upravený načítání časů HDO. &#10;Použit ViewModel pro zachování dat při rotaci obrazovky" />
     <MESSAGE value="Opraveno překrytí textview v položce zálohové platby." />
     <MESSAGE value="Opraveny pády aplikace v DashBoard, HdoSiteFragment, pokud nebylo nastasveno odběrné místo." />
     <MESSAGE value="Doplněna detekce dne u widgetu zobrazující čas HDO v DashBoard a doplněna náhrada času 23.59 za 0:00." />
@@ -1061,6 +1060,7 @@
     <MESSAGE value="Upraveno rozložení položky měsíčního odečtu.&#10;Posunutý oproti výstražnému trojuhelníku o 5dp." />
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdInvoice.&#10;Odstraněna prázdná metoda onResume." />
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdPrice.&#10;Odstraněna prázdná metoda onResume." />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdPrice.&#10;Odstraněna prázdná metoda onResume." />
+    <MESSAGE value="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou." />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou." />
   </component>
 </project>

@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.google.android.material.slider.Slider;
 
+import java.util.Calendar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -21,6 +23,7 @@ import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.ownview.ViewHelper;
+
 
 /**
  * DialogFragment pro rozdělení záznamu v období bez faktury
@@ -44,8 +47,8 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private Context context;
     private double maxVT, minVT, maxNT, minNT, otherServices;
     private long minDate, maxDate, idPriceList, id;
+    private long dateDayStart, dateDayEnd; //konce prvního záznamu a začátek druhého záznamu
     private boolean showNT;
-    private final int million = 1000000;
     private LabelEditText labVT, labNT;
     private Slider sliderVT, sliderNT, sliderDate;
     private Button btnDate;
@@ -78,6 +81,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         super.onAttach(context);
         this.context = context;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,10 +130,12 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 setSlider(sliderVT, s, minVT, maxVT);
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -143,10 +149,12 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 setSlider(sliderNT, s, minNT, maxNT);
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -155,7 +163,8 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         });
 
         sliderDate.addOnChangeListener((slider, value, fromUser) -> {
-            btnDate.setText(ViewHelper.convertLongToDate(((long) value) * million));
+            long selectedDate = (long) (value * (maxDate - minDate)) + minDate;
+            btnDate.setText(ViewHelper.convertLongToDate(selectedDate));
             setTextView();
         });
 
@@ -187,6 +196,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+
     /**
      * Nastavuje posuvníky a popisky pro hodnoty VT (Vysoký tarif) a NT (Nízský tarif) a pro datum.
      * Vypočítává polohu středové hodnoty pro každý posuvník pomocí minimální a maximální hodnoty.
@@ -195,17 +205,15 @@ public class InvoiceCutDialogFragment extends DialogFragment {
      * Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
      */
     private void settingSlidersLabs() {
-        long differenceDate = maxDate - minDate;
-        //převádím rozpůlený long na datum ve stringu a potom zpět na long, abych získal celou hodnotu dne v 00:00 hodin
-        long halfDate = minDate + (differenceDate / 2);
         double differenceVT = maxVT - minVT;
         double halfVT = minVT + (differenceVT / 2);
         double differenceNT = maxNT - minNT;
         double halfNT = minNT + (differenceNT / 2);
 
-        sliderDate.setValueFrom((float) (minDate + (25 * 60 * 60 * 1000)) / million);
-        sliderDate.setValueTo((float) (maxDate) / million);
-        sliderDate.setValue((float) halfDate / million);
+        sliderDate.setValueFrom(0);
+        float dateMax = (float) ((maxDate - minDate) / (double) (maxDate - minDate));
+        sliderDate.setValueTo(dateMax);
+        sliderDate.setValue(dateMax / 2);
 
         sliderVT.setValueFrom((float) minVT);
         sliderVT.setValueTo((float) maxVT);
@@ -227,10 +235,18 @@ public class InvoiceCutDialogFragment extends DialogFragment {
                 ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(maxDate)));
 
         // Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
-        sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToDate(((long) value) * million));
+        sliderDate.setLabelFormatter(value -> ViewHelper.convertLongToDate(((long) (value * (maxDate - minDate)) + minDate)));
     }
 
 
+    /**
+     * Nastavuje posuvník na základě textového řetězce.
+     *
+     * @param sl  posuvník
+     * @param s   textový řetězec
+     * @param min minimální hodnota
+     * @param max maximální hodnota
+     */
     private void setSlider(Slider sl, CharSequence s, double min, double max) {
 
         try {
@@ -249,10 +265,24 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Nastavuje textový řetězec pro popisky VT, NT a datum.
+     */
     private void setTextView() {
+        dateDayEnd = (long) (sliderDate.getValue() * (maxDate - minDate)) + minDate;
+        dateDayStart = addDay((long) (sliderDate.getValue() * (maxDate - minDate)) + minDate);//přidávám 1 den
+        dateDayEnd = dateDayEnd / 100000 * 100000;//zaokrouhlení
+        dateDayStart = dateDayStart / 100000 * 100000;
+        if (dateDayStart > maxDate) {
+            dateDayStart = maxDate;
+        }
+
+        if (dateDayStart <= dateDayEnd) {
+            dateDayEnd = subDay(dateDayEnd);
+        }
         tvDate.setText(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
-                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate((((long) sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000)),
-                ViewHelper.convertLongToDate(((long) sliderDate.getValue()) * million), ViewHelper.convertLongToDate(maxDate)));
+                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(dateDayEnd),
+                ViewHelper.convertLongToDate(dateDayStart), ViewHelper.convertLongToDate(maxDate)));
 
         labVT.setLabel(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
                 DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(sliderVT.getValue()),
@@ -266,13 +296,41 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
     //todo: doplnit detekci výměny elektroměru
     private void cut(long idPriceList, long id, double otherServices) {
-        InvoiceModel firstInvoice = new InvoiceModel(id, minDate, ((long) (sliderDate.getValue()) * million) - (23 * 60 * 60 * 1000),
+        InvoiceModel firstInvoice = new InvoiceModel(id, minDate, dateDayEnd,
                 minVT, sliderVT.getValue(), minNT, sliderNT.getValue(), -1L,
                 idPriceList, otherServices, "", false);
-        InvoiceModel secondInvoice = new InvoiceModel(((long) sliderDate.getValue()) * million, maxDate,
+        InvoiceModel secondInvoice = new InvoiceModel(dateDayStart, maxDate,
                 sliderVT.getValue(), maxVT, sliderNT.getValue(), maxNT, -1L,
                 idPriceList, otherServices, "", false);
 
-        WithOutInvoiceService.cutInvoice(getActivity(), firstInvoice, secondInvoice);
+        WithOutInvoiceService.cutInvoice(requireContext(), firstInvoice, secondInvoice);
+    }
+
+
+    /**
+     * Přidá jeden den k datumu.
+     *
+     * @param date datum
+     * @return datum zvýšený o 1 den
+     */
+    private long addDay(long date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTimeInMillis();
+    }
+
+
+    /**
+     * Odečte jeden den od data.
+     *
+     * @param date datum
+     * @return datum snížený o 1 den
+     */
+    private long subDay(long date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        return calendar.getTimeInMillis();
     }
 }
