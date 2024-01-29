@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,6 +158,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.dateStart.setText(dateStart);
         holder.dateEnd.setText(dateEnd);
         holder.dateDifference.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
+
+        holder.btnCut.setEnabled(!dateStart.equals(dateEnd));
+
 
         holder.vtStart.setText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
         holder.ntStart.setText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
@@ -436,15 +438,15 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.tvAlert.setVisibility(View.GONE);
         } else {
             //zobrazení varovného vykřičníku
+            holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
             holder.imgAlert.setVisibility(View.VISIBLE);
             if (isOverDateRegulPrice(priceListRegulBuilder, invoice)) {
                 //zobrazení varovného textu na období státních regulací
                 holder.tvAlert.setVisibility(View.VISIBLE);
-                holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
             } else {
                 holder.tvAlert.setVisibility(View.GONE);
             }
-            if(priceList.getPlatnostDO() >= invoice.getDateTo() || priceList.getPlatnostOD() <= invoice.getDateFrom()){
+            if (priceList.getPlatnostDO() >= invoice.getDateTo() || priceList.getPlatnostOD() <= invoice.getDateFrom()) {
                 holder.tvAlert.setVisibility(View.VISIBLE);
                 holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
             }
