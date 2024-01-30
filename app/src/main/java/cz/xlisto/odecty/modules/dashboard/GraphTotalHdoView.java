@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.dashboard;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -31,6 +32,7 @@ public class GraphTotalHdoView extends View {
     private int centerX;
     private int centerY;
     private int radius;
+    private int currentTime, lastTime, showTime;
     private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pClock, pLegend;
     private ArrayList<HdoModel> models;
     private long timeShift;
@@ -116,7 +118,10 @@ public class GraphTotalHdoView extends View {
         pClock.setStyle(Paint.Style.STROKE);
         pClock.setStrokeWidth(dpToPx(getContext(), 2));
 
-        invalidate();
+        lastTime = 0;
+        getCurrentTime();
+
+        animateTick();
     }
 
 
@@ -132,7 +137,7 @@ public class GraphTotalHdoView extends View {
 
         drawTime(canvas);
         drawNumbers(canvas);
-        drawTicks(canvas);
+        drawTick(canvas);
         drawClock(canvas);
         drawLegend(canvas);
     }
@@ -144,9 +149,6 @@ public class GraphTotalHdoView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
-       /* if (DetectScreenMode.isLandscape(getContext()))
-            setMeasuredDimension(width/2, size);
-        else*/
         setMeasuredDimension(size, size / 2);
     }
 
@@ -270,13 +272,10 @@ public class GraphTotalHdoView extends View {
      *
      * @param canvas plátno
      */
-    private void drawTicks(Canvas canvas) {
+    private void drawTick(Canvas canvas) {
         // ručička
-        // Předpokládejme, že 'hours' je hodina ve formátu 0 až 23
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
-        int hours = calendar.get(Calendar.HOUR_OF_DAY); // Aktuální hodina dne
-        double minutes = calendar.get(Calendar.MINUTE); // Aktuální minuta
+        int hours = showTime / 60;// Aktuální hodina dne
+        double minutes = showTime % 60;// Aktuální minuta
 
         // Výpočet úhlu pro hodinovou ručičku
         double hourAngle = 270 + hours * 15 + minutes * 0.25f;
@@ -315,9 +314,6 @@ public class GraphTotalHdoView extends View {
             canvas.drawLine(startX, startY, endX, endY, pClock);
         }
 
-        //if (DetectScreenMode.isLandscape(getContext()))
-        //    canvas.drawArc(padding, padding, size - padding, size - padding, 0, 360, false, pClock);
-        //else
         canvas.drawArc(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding, 0, 360, false, pClock);
     }
 
@@ -397,6 +393,35 @@ public class GraphTotalHdoView extends View {
     public void setHdoModels(ArrayList<HdoModel> models, long timeShift) {
         this.models = models;
         this.timeShift = timeShift;
-        invalidate();
+        getCurrentTime();
+        animateTick();
+        lastTime = currentTime;
+    }
+
+
+    /**
+     * Nastaví aktuální čas hodinové ručičky
+     */
+    private void getCurrentTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
+        currentTime = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
+    }
+
+
+    /**
+     * Animace hodinové ručičky
+     */
+    private void animateTick() {
+        int startTime = lastTime;
+        int endTime = currentTime;
+
+        ValueAnimator va = ValueAnimator.ofInt(startTime, endTime);
+        va.setDuration(1000);
+        va.addUpdateListener(animation -> {
+            showTime = (int) animation.getAnimatedValue();
+            invalidate();
+        });
+        va.start();
     }
 }

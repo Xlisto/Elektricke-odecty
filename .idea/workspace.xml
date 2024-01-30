@@ -252,8 +252,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit.">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -961,7 +962,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="172" />
+    <option name="localTasksCounter" value="173" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1035,7 +1036,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněna detekce dne u widgetu zobrazující čas HDO v DashBoard a doplněna náhrada času 23.59 za 0:00." />
     <MESSAGE value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
     <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
     <MESSAGE value="Doplněný tmavší orámování do sloupcového grafu." />
@@ -1060,6 +1060,7 @@
     <MESSAGE value="Oprava zobrazení výstražného trojuhélníku při použití ceníku mimo datum platnosti.&#10;Výstraha se zobrazovala pouze při zapnutém přepínači pro zobrazení regulovaných cen. &#10;Logika pro vyhodnocení dat platnosti přesunuta mimo část pracující s regulovanou cenou." />
     <MESSAGE value="Upravený výpočet datumů při rozdělování záznamu v nezfakturovaném období. &#10;Potřeba nastavovat data od prvního a do posledního dne." />
     <MESSAGE value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
-    <option name="LAST_COMMIT_MESSAGE" value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
+    <MESSAGE value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
+    <option name="LAST_COMMIT_MESSAGE" value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
   </component>
 </project>
