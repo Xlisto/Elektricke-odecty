@@ -252,8 +252,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zavedena animace hodinové ručičky v GraphTotalHdoView.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -264,7 +266,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -962,7 +964,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="173" />
+    <option name="localTasksCounter" value="174" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1036,7 +1038,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena editace záznamů HDO o možnost editovat načtené časy z internetu.&#10;kontrétně doplněny operace s daty platnosti a hodnotou rele." />
     <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
     <MESSAGE value="Doplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Dplněný tmavší orámování do sloupcového grafu." />
@@ -1061,6 +1062,7 @@
     <MESSAGE value="Upravený výpočet datumů při rozdělování záznamu v nezfakturovaném období. &#10;Potřeba nastavovat data od prvního a do posledního dne." />
     <MESSAGE value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
     <MESSAGE value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
-    <option name="LAST_COMMIT_MESSAGE" value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
+    <MESSAGE value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
+    <option name="LAST_COMMIT_MESSAGE" value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
   </component>
 </project>
