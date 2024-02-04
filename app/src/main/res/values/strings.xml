@@ -326,6 +326,8 @@
     <string name="consuption">Sp.: %s kWh</string>
     <string name="string_price">%s Kč</string>
     <string name="float_price">%.2f Kč</string>
+    <string name="deposits">Zálohy:</string>
+    <string name="consuption_price">Spotřeba:</string>
     <string name="fixed_salary">St. plat, jist. a op. trhu: %.2f Kč</string>
     <string name="poze">POZE (OZE): %.2f Kč</string>
     <string name="string_with_kc">%s Kč</string>
@@ -395,6 +397,8 @@
     <string name="kwh">kWh</string>
     <string name="period">Pro období: %s - %s</string>
     <string name="first_reading">První odečet.\nPoužití při prvním záznamu nebo výměně elektroměru.</string>
+    <string name="overpayment">Přeplatek:</string>
+    <string name="underpayment">Nedoplatek:</string>
 
 
 </resources>

@@ -1,5 +1,7 @@
 package cz.xlisto.odecty.modules.dashboard;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -30,20 +32,26 @@ import static java.lang.String.format;
  */
 public class GraphTotalConsuptionView extends View {
     private static final String TAG = "GraphTotalConsuptionView";
-    private int size, colorText, paymentAngle = 170;
+    private int size;
+    private int paymentAngle = 170;
     private final int colorStart = Color.parseColor("#808080"); // Šedá barva
     private final int colorPaymentEnd = Color.parseColor("#05b2fa"); // Modrá barva
     private double maxConsuption = 35000, consuption = 0, payment = 45000,
-            previousConsuption = 0, previousPayment = 1000,
+            previousConsuption = 0, previousPayment = 1000, currentPayment = 0, currentConsuption = 0,
             previousMax;
     private final Paint pPayment = new Paint();
     private final Paint pPaymentBorder = new Paint();
     private final Paint pPaymentBackground = new Paint();
     private final Paint pLine = new Paint();
+    private final Paint pBorder = new Paint();
     private final Paint pTextPayment = new Paint();
     private final Paint pTextConsuption = new Paint();
     private final Paint pTextResult = new Paint();
-    private double consuptionAngle;
+    private double consuptionAngle, difference;
+    private String textPrice = "0";
+    private String textDeposit = "0";
+    private String textConsuption = "0";
+    private String result = "0";
 
 
     public GraphTotalConsuptionView(Context context) {
@@ -72,16 +80,10 @@ public class GraphTotalConsuptionView extends View {
     private void init(AttributeSet attrs) {
         setSaveEnabled(true);
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.GraphTotalConsuptionView);
-        colorText = a.getColor(R.styleable.GraphTotalConsuptionView_colorText, Color.BLACK);
+        int colorText = a.getColor(R.styleable.GraphTotalConsuptionView_colorText, Color.BLACK);
         setMax();
         a.recycle();
-        startAnimated();
-    }
 
-
-    @Override
-    protected void onDraw(@NonNull Canvas canvas) {
-        super.onDraw(canvas);
         pPayment.setColor(colorPaymentEnd);
         pPayment.setStyle(Paint.Style.STROKE);
         pPayment.setStrokeWidth(dpToPx(getContext(), 14));
@@ -98,13 +100,25 @@ public class GraphTotalConsuptionView extends View {
         pLine.setColor(Color.RED);
         pLine.setStrokeCap(Paint.Cap.ROUND);
 
+        pBorder.setStrokeWidth(dpToPx(getContext(), 2));
+        pBorder.setColor(colorText);
+        pBorder.setStrokeCap(Paint.Cap.ROUND);
+
         pTextPayment.setColor(colorText);
-        pTextPayment.setTextSize(dpToPx(getContext(), 12));
+        pTextPayment.setTextSize(dpToPx(getContext(), 14));
 
         pTextConsuption.setColor(colorText);
-        pTextConsuption.setTextSize(dpToPx(getContext(), 12));
+        pTextConsuption.setTextSize(dpToPx(getContext(), 14));
 
-        pTextResult.setTextSize(dpToPx(getContext(), 12));
+        pTextResult.setTextSize(dpToPx(getContext(), 14));
+
+        startAnimated();
+    }
+
+
+    @Override
+    protected void onDraw(@NonNull Canvas canvas) {
+        super.onDraw(canvas);
 
 
         drawPayment(canvas);
@@ -173,21 +187,23 @@ public class GraphTotalConsuptionView extends View {
         int x = size / 2;
         int y = size / 2;
         int r = size / 2 - dpToPx(getContext(), 20);
+        int paddingLine = dpToPx(getContext(), 15);
 
         // Výpočet koncového bodu úsečky
-        //double angle = 80; // úhel ve stupních
         double radians = Math.toRadians(consuptionAngle);
         int xEnd = (int) (x + r * Math.cos(radians));
         int yEnd = (int) (y - r * Math.sin(radians));
 
         // Kreslení úsečky
-        canvas.drawLine(x, y - getPaddingBottom() * 2 - 4, xEnd, yEnd, pLine);
+        canvas.drawLine(x, y - getPaddingBottom() * 2, xEnd, yEnd, pLine);
         //canvas.drawCircle(x, y - getPaddingBottom(), dpToPx(getContext(), 5), pLine);
         float radius = dpToPx(getContext(), 5);
-        float centerY = y - getPaddingBottom() - 1;
+        float centerY = y - getPaddingBottom();
         RectF rect = new RectF((float) x - radius, centerY - radius, (float) x + radius, centerY + radius);
 
         canvas.drawArc(rect, 180, 180, false, pLine);
+        //oddělovací čára
+        canvas.drawLine(getPaddingStart() + paddingLine, y - 2, size - getPaddingEnd() - paddingLine, y - 2, pBorder);
     }
 
 
@@ -198,35 +214,28 @@ public class GraphTotalConsuptionView extends View {
      */
     private void drawTexts(Canvas canvas) {
         // Kreslení textu
-        String text = getContext().getResources().getString(R.string.float_price);
-        int textXPayment = dpToPx(getContext(), 5);
-        int textYPayment = dpToPx(getContext(), 13);
 
-        int widthTextConsuption = (int) pTextConsuption.measureText(format(Locale.getDefault(), text, consuption));
-        int textXConsuption = size - (widthTextConsuption) - dpToPx(getContext(), 5);
-        int textYConsuption = dpToPx(getContext(), 13);
+        int textPadding = dpToPx(getContext(), 15);
+        int textX = getPaddingStart() + textPadding;
 
-        double difference = (payment - consuption);
-        String result;
-        if (payment > consuption) {
-            result = "Přeplatek";
-            pTextResult.setColor(Color.parseColor("#2b9e42"));
-        } else {
-            result = "Nedoplatek";
-            pTextResult.setColor(Color.parseColor("#9d0505"));
-        }
-
-
-        int widthTextResult = (int) pTextPayment.measureText(result);
-        int textYResult = dpToPx(getContext(), 55);
-
-        int widthTextDifference = (int) pTextPayment.measureText(format(Locale.getDefault(), text, difference));
-        int textYDifference = dpToPx(getContext(), 70);
-
-        canvas.drawText(format(Locale.getDefault(), text, payment), textXPayment, textYPayment, pTextPayment);
-        canvas.drawText(format(Locale.getDefault(), text, consuption), textXConsuption, textYConsuption, pTextConsuption);
-        canvas.drawText(result, (float) size / 2 - (float) (widthTextResult / 2), textYResult, pTextResult);
-        canvas.drawText(format(Locale.getDefault(), text, difference), (float) size / 2 - (float) (widthTextDifference / 2), textYDifference, pTextResult);
+        //Zálohy
+        int textY = size / 2 + dpToPx(getContext(), 17);
+        canvas.drawText(textDeposit, textX, textY, pTextPayment);
+        int wideTextDeposit = (int) pTextPayment.measureText(format(Locale.getDefault(), textPrice, currentPayment));
+        int textXPayment = size - getPaddingEnd() - wideTextDeposit - textPadding;
+        canvas.drawText(format(Locale.getDefault(), textPrice, currentPayment), textXPayment, textY, pTextPayment);
+        //spotřeba
+        textY += dpToPx(getContext(), 17);
+        canvas.drawText(textConsuption, textX, textY, pTextConsuption);
+        int wideTextConsuption = (int) pTextConsuption.measureText(format(Locale.getDefault(), textPrice, currentConsuption));
+        int textXConsuption = size - getPaddingEnd() - wideTextConsuption - textPadding;
+        canvas.drawText(format(Locale.getDefault(), textPrice, currentConsuption), textXConsuption, textY, pTextConsuption);
+        //výsledek
+        textY += dpToPx(getContext(), 17);
+        canvas.drawText(result, textX, textY, pTextResult);
+        int wideTextResult = (int) pTextResult.measureText(format(Locale.getDefault(), textPrice, difference));
+        int textXResult = size - getPaddingEnd() - wideTextResult - textPadding;
+        canvas.drawText(format(Locale.getDefault(), textPrice, difference), textXResult, textY, pTextResult);
     }
 
 
@@ -252,7 +261,7 @@ public class GraphTotalConsuptionView extends View {
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
 
-        setMeasuredDimension(size, size / 2);
+        setMeasuredDimension(size, size / 2 + dpToPx(getContext(), 60));
     }
 
 
@@ -287,6 +296,7 @@ public class GraphTotalConsuptionView extends View {
     private void startAnimated() {
         animatedPayment();
         animatedConsuption();
+        animatedOutText();
     }
 
 
@@ -328,6 +338,72 @@ public class GraphTotalConsuptionView extends View {
             invalidate();
         });
         va.start();
+    }
+
+
+    /**
+     * Animace zmizení textu
+     */
+    private void animatedOutText() {
+        //nastavuji původní text
+        currentConsuption = previousConsuption;
+        currentPayment = previousPayment;
+        ValueAnimator fadeOutAnimator = ValueAnimator.ofInt(255, 0);
+        fadeOutAnimator.setDuration(300);
+        fadeOutAnimator.addUpdateListener(animation -> {
+            pTextConsuption.setAlpha((Integer) animation.getAnimatedValue());
+            pTextPayment.setAlpha((Integer) animation.getAnimatedValue());
+            pTextResult.setAlpha((Integer) animation.getAnimatedValue());
+            invalidate();
+        });
+        fadeOutAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //spouští další animaci
+                animateTextAppearance();
+            }
+        });
+        fadeOutAnimator.start();
+    }
+
+
+    /**
+     * Animace zobrazení textu
+     */
+    private void animateTextAppearance() {
+        //nastavuji nový text
+        currentConsuption = consuption;
+        currentPayment = payment;
+        setTexts();
+
+        ValueAnimator fadeInAnimator = ValueAnimator.ofInt(0, 255);
+        fadeInAnimator.setDuration(300);
+        fadeInAnimator.addUpdateListener(animation -> {
+            pTextConsuption.setAlpha((Integer) animation.getAnimatedValue());
+            pTextPayment.setAlpha((Integer) animation.getAnimatedValue());
+            pTextResult.setAlpha((Integer) animation.getAnimatedValue());
+            invalidate();
+        });
+        fadeInAnimator.start();
+    }
+
+
+    /**
+     * Nastaví texty pro Zálohy, Spotřebu a Výsledek
+     */
+    private void setTexts() {
+        textPrice = getContext().getResources().getString(R.string.float_price);
+        textDeposit = getContext().getResources().getString(R.string.deposits);
+        textConsuption = getContext().getResources().getString(R.string.consuption_price);
+
+        difference = (payment - consuption);
+        if (payment > consuption) {
+            result = getContext().getResources().getString(R.string.overpayment);
+            pTextResult.setColor(Color.parseColor("#2b9e42"));
+        } else {
+            result = getContext().getResources().getString(R.string.underpayment);
+            pTextResult.setColor(Color.parseColor("#9d0505"));
+        }
     }
 }
 

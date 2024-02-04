@@ -252,11 +252,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Zavedena animace hodinové ručičky v GraphTotalHdoView.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -964,7 +964,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="174" />
+    <option name="localTasksCounter" value="176" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1038,7 +1038,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Do DashBoardu doplněný widget zobrazující poslední stav měřidel každého odběrného místa." />
     <MESSAGE value="Doplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Dplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
@@ -1063,6 +1062,7 @@
     <MESSAGE value="Zablokováno tlačítko pro dělení jednodenního záznamu v nezfakturovaném období.&#10;Tento záznam nelze (není potřeba) dále dělit." />
     <MESSAGE value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
     <MESSAGE value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
-    <option name="LAST_COMMIT_MESSAGE" value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
+    <MESSAGE value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
+    <option name="LAST_COMMIT_MESSAGE" value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
   </component>
 </project>
