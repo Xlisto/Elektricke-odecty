@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.HdoModel;
+import cz.xlisto.odecty.utils.BuilderHDOStack;
 import cz.xlisto.odecty.utils.DetectScreenMode;
 
 import static cz.xlisto.odecty.utils.DensityUtils.*;
@@ -35,8 +36,8 @@ public class GraphTotalHdoView extends View {
     private int radius;
     private int currentTime, lastTime, showTime;
     private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pClock, pLegend, pTimeLeft;
-    private ArrayList<HdoModel> models;
-    private ArrayList<HdoModel> modelsTodayAndTomorrow;
+    private ArrayList<HdoModel> modelsFromDatabase;
+    private ArrayList<HdoModel> modelsForAllWeek;
     private long timeShift;
     private boolean showTAR, showPV, showTUV;
     private final Handler handler = new Handler();
@@ -169,7 +170,7 @@ public class GraphTotalHdoView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
-        setMeasuredDimension(size, size / 2 + 65);
+        setMeasuredDimension(size, size / 2 + dpToPx(getContext(), 60));//stačí na 20
     }
 
 
@@ -188,11 +189,12 @@ public class GraphTotalHdoView extends View {
     private void drawTime(Canvas canvas) {
         //vykreslení výseče času
 
-        if (modelsTodayAndTomorrow == null) return;
+        if (modelsForAllWeek == null) return;
 
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
 
-        for (HdoModel model : modelsTodayAndTomorrow) {
+        for (HdoModel model : modelsForAllWeek) {
             // Přeskočí modely, které nejsou pro dnešní den
             if (model.getCalendarStart().get(Calendar.DAY_OF_MONTH) != calendar.get(Calendar.DAY_OF_MONTH))
                 continue;
@@ -377,9 +379,9 @@ public class GraphTotalHdoView extends View {
         int x = 0;
         int textPadding = dpToPx(getContext(), 5);
         x += textPadding;
-        int y = size / 2 + 40;
+        int y = size / 2 + dpToPx(getContext(), 17);
 
-        if (modelsTodayAndTomorrow == null || modelsTodayAndTomorrow.isEmpty()) {
+        if (modelsForAllWeek == null || modelsForAllWeek.isEmpty()) {
             canvas.drawText("Nenalezen žádný čas HDO", x, y, pTimeLeft);
             return;
         }
@@ -389,30 +391,25 @@ public class GraphTotalHdoView extends View {
         calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
         int startNT = Integer.MAX_VALUE;
         int endNT = Integer.MAX_VALUE;
-        for (int i = 0; i < modelsTodayAndTomorrow.size(); i++) {
-            if (i == modelsTodayAndTomorrow.size() - 1)
+        for (int i = 0; i < modelsForAllWeek.size(); i++) {
+            if (i == modelsForAllWeek.size() - 1)
                 break;
-            HdoModel hdoModelCurrent = modelsTodayAndTomorrow.get(i);
-            HdoModel hdoModelNext = modelsTodayAndTomorrow.get(i + 1);
+            HdoModel hdoModelCurrent = modelsForAllWeek.get(i);
 
-            if (!(hdoModelCurrent.getRele().contains("TAR") || hdoModelCurrent.getRele().contains("PV")) && !(hdoModelNext.getRele().contains("TAR") || hdoModelNext.getRele().contains("PV"))) {
+            if (!(hdoModelCurrent.getRele().contains("TAR") || hdoModelCurrent.getRele().contains("PV"))) {
                 long startCurrent = hdoModelCurrent.getCalendarStart().getTimeInMillis() / 1000 / 60; //začátek NT v minutách
                 long endCurrent = hdoModelCurrent.getCalendarEnd().getTimeInMillis() / 1000 / 60; //konec NT v minutách
-                long startNext = hdoModelNext.getCalendarStart().getTimeInMillis() / 1000 / 60; //začátek následujícího NT v minutách
                 long timeCurrent = calendar.getTimeInMillis() / 1000 / 60; //aktuální čas v minutách
 
-                if (startCurrent < timeCurrent && timeCurrent < endCurrent) {
-                    int minutes = (int) (endCurrent - timeCurrent);
-                    endNT = Math.min(endNT, minutes);
-                }
-                int minutes;
-                if (startCurrent > timeCurrent) {
-                    minutes = (int) (startCurrent - timeCurrent);
-                } else {
-                    minutes = (int) (startNext - timeCurrent);
-                }
-                if (minutes >= 0)
-                    startNT = Math.min(startNT, minutes);
+                //nastavení minut do konce platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
+                int minutesEnd = (int) (endCurrent - timeCurrent);
+                if (minutesEnd > 0)
+                    endNT = Math.min(endNT, minutesEnd);
+
+                //nastavení minut do začátku platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
+                int minutesStart = (int) (startCurrent - timeCurrent);
+                if (minutesStart > 0)
+                    startNT = Math.min(startNT, minutesStart);
             }
         }
 
@@ -493,12 +490,14 @@ public class GraphTotalHdoView extends View {
      * @param timeShift posun hodinové ručičky
      */
     public void setHdoModels(ArrayList<HdoModel> models, long timeShift) {
-        this.models = models;
+        this.modelsFromDatabase = models;
         this.timeShift = timeShift;
         builderHDOLists();
         getCurrentTime();
         animateTick();
         lastTime = currentTime;
+
+
     }
 
 
@@ -516,71 +515,11 @@ public class GraphTotalHdoView extends View {
      * Vytvoří seznam modelů pro dnešní a zítřejší den
      */
     private void builderHDOLists() {
-        if (models == null) return;
+        if (modelsFromDatabase == null) return;
 
-        //detekce dnešního dne
-        Calendar calendarToday = Calendar.getInstance();
-        Calendar calendarTomorrow = Calendar.getInstance();
-        calendarToday.setTimeInMillis(System.currentTimeMillis() + timeShift);
-        calendarTomorrow.setTimeInMillis(System.currentTimeMillis() + timeShift);
-        calendarTomorrow.add(Calendar.DATE, 1);
-        int today = calendarToday.get(Calendar.DAY_OF_WEEK);
-        int tomorrow = calendarTomorrow.get(Calendar.DAY_OF_WEEK);
-        modelsTodayAndTomorrow = new ArrayList<>();
-        modelsTodayAndTomorrow.addAll(createHDOLists(today, calendarToday));
-        modelsTodayAndTomorrow.addAll(createHDOLists(tomorrow, calendarTomorrow));
+        modelsForAllWeek = new ArrayList<>();
+        modelsForAllWeek.addAll(BuilderHDOStack.build(modelsFromDatabase, timeShift));
 
-    }
-
-
-    /**
-     * Vytvoří seznam modelů
-     */
-    private ArrayList<HdoModel> createHDOLists(int day, Calendar calendar) {
-        ArrayList<HdoModel> hdoModels = new ArrayList<>();
-        for (HdoModel model : models) {
-            // Procházení seznamu a kreslení výsečí
-            switch (day) {
-                case Calendar.MONDAY:
-                    if (model.getMon() == 0)
-                        continue;
-                    break;
-                case Calendar.TUESDAY:
-                    if (model.getTue() == 0)
-                        continue;
-                    break;
-                case Calendar.WEDNESDAY:
-                    if (model.getWed() == 0)
-                        continue;
-                    break;
-                case Calendar.THURSDAY:
-                    if (model.getThu() == 0)
-                        continue;
-                    break;
-                case Calendar.FRIDAY:
-                    if (model.getFri() == 0)
-                        continue;
-                    break;
-                case Calendar.SATURDAY:
-                    if (model.getSat() == 0)
-                        continue;
-                    break;
-                case Calendar.SUNDAY:
-                    if (model.getSun() == 0)
-                        continue;
-                    break;
-            }
-
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            //klonuji model a nastavuji mu datum. Z důvodu, i když je jeden záznam tak s platným datem musí být dva záznamy
-            HdoModel newHdoModel = model.clone();
-            newHdoModel.setCalendar(calendar);
-            hdoModels.add(newHdoModel);
-        }
-        return hdoModels;
     }
 
 
