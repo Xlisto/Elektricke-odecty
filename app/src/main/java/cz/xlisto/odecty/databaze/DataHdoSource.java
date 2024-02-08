@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.odecty.models.HdoModel;
 
+
 /**
  * Třída pro přístup k datum HDO
  * Xlisto 26.05.2023 18:52
@@ -20,6 +21,7 @@ public class DataHdoSource extends DataSource {
         super.context = context;
         dbHelper = new DbHelper(context);
     }
+
 
     /**
      * Načte hdo data z databáze a vyfiltruje je podle sloupce datumOd nebo po,ut,st,ct,pa,so,ne
@@ -86,9 +88,9 @@ public class DataHdoSource extends DataSource {
         ArrayList<String> selectionArgsList = new ArrayList<>();
         //vyhledávání podle datumu - používá PRE
         //if (distributionArea != null && distributionArea.equals("PRE") && datumOd != null) {
-            //deaktivováno z důvodu potřeby načítat celý seznam HDO pro výpočet do začátku platnosti dalšího HDO ve GraphTotalHdoView
-            //selection += DbHelper.COLUMN_DATE_FROM + " = ?";
-            //selectionArgsList.add(datumOd);
+        //deaktivováno z důvodu potřeby načítat celý seznam HDO pro výpočet do začátku platnosti dalšího HDO ve GraphTotalHdoView
+        //selection += DbHelper.COLUMN_DATE_FROM + " = ?";
+        //selectionArgsList.add(datumOd);
         //}
         //vyhledávání podle dne v týdnu
         if (distributionArea == null && dayOfWeek != null) {
@@ -110,7 +112,11 @@ public class DataHdoSource extends DataSource {
                 selectionArgs,
                 null,
                 null,
-                null);
+                "CASE " +
+                        "WHEN rele LIKE '%TUV%' THEN 1 " +
+                        "WHEN rele LIKE '%TAR%' THEN 2 " +
+                        "WHEN rele LIKE '%PV%' THEN 3 " +
+                        "ELSE 4 END, rele ASC");
 
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
@@ -153,7 +159,7 @@ public class DataHdoSource extends DataSource {
                 null,
                 "1");
 
-        if(cursor.getCount() == 0) return null;
+        if (cursor.getCount() == 0) return null;
         cursor.moveToFirst();
         distributionArea = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA));
         cursor.close();
