@@ -85,10 +85,11 @@ public class DataHdoSource extends DataSource {
 
         ArrayList<String> selectionArgsList = new ArrayList<>();
         //vyhledávání podle datumu - používá PRE
-        if (distributionArea != null && distributionArea.equals("PRE") && datumOd != null) {
-            selection += DbHelper.COLUMN_DATE_FROM + " = ?";
-            selectionArgsList.add(datumOd);
-        }
+        //if (distributionArea != null && distributionArea.equals("PRE") && datumOd != null) {
+            //deaktivováno z důvodu potřeby načítat celý seznam HDO pro výpočet do začátku platnosti dalšího HDO ve GraphTotalHdoView
+            //selection += DbHelper.COLUMN_DATE_FROM + " = ?";
+            //selectionArgsList.add(datumOd);
+        //}
         //vyhledávání podle dne v týdnu
         if (distributionArea == null && dayOfWeek != null) {
             selection += selectionDayOfWeek + " = ? ";

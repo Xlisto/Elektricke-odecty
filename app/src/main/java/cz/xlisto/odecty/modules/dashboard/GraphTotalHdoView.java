@@ -199,7 +199,7 @@ public class GraphTotalHdoView extends View {
             if (model.getCalendarStart().get(Calendar.DAY_OF_MONTH) != calendar.get(Calendar.DAY_OF_MONTH))
                 continue;
 
-            // Převod času na úhly
+            // Převod času na úhly, úhly se vykreslují podle textové hodnoty timeFrom a timeUntil. Pokud zasahuje do druhého dne, bude výseč překrytá
             float startAngle = convertTimeToAngle(model.getTimeFrom()); // Převod času začátku na úhel
             float endAngle = convertTimeToAngle(model.getTimeUntil()); // Převod času konce na úhel
 
@@ -377,7 +377,7 @@ public class GraphTotalHdoView extends View {
     private void drawTimeLeft(Canvas canvas) {
         //vykreslení výseče času
         int x = 0;
-        int textPadding = dpToPx(getContext(), 5);
+        int textPadding = dpToPx(getContext(), 10);
         x += textPadding;
         int y = size / 2 + dpToPx(getContext(), 17);
 
@@ -389,38 +389,90 @@ public class GraphTotalHdoView extends View {
         //detekce dnešního dne
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
-        int startNT = Integer.MAX_VALUE;
-        int endNT = Integer.MAX_VALUE;
+        TimeHdo timeHdoNT = new TimeHdo();
+        TimeHdo timeHdoTUV = new TimeHdo();
+        TimeHdo timeHdoTAR = new TimeHdo();
+        TimeHdo timeHdoPV = new TimeHdo();
         for (int i = 0; i < modelsForAllWeek.size(); i++) {
             if (i == modelsForAllWeek.size() - 1)
                 break;
             HdoModel hdoModelCurrent = modelsForAllWeek.get(i);
 
-            if (!(hdoModelCurrent.getRele().contains("TAR") || hdoModelCurrent.getRele().contains("PV"))) {
-                long startCurrent = hdoModelCurrent.getCalendarStart().getTimeInMillis() / 1000 / 60; //začátek NT v minutách
-                long endCurrent = hdoModelCurrent.getCalendarEnd().getTimeInMillis() / 1000 / 60; //konec NT v minutách
-                long timeCurrent = calendar.getTimeInMillis() / 1000 / 60; //aktuální čas v minutách
+            if (!(hdoModelCurrent.getRele().contains("TUV") || !(hdoModelCurrent.getRele().contains("TAR") || !(hdoModelCurrent.getRele().contains("PV")))))
+                compareTime(hdoModelCurrent, calendar, timeHdoNT);
 
-                //nastavení minut do konce platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
-                int minutesEnd = (int) (endCurrent - timeCurrent);
-                if (minutesEnd > 0)
-                    endNT = Math.min(endNT, minutesEnd);
+            if (hdoModelCurrent.getRele().contains("TUV"))
+                compareTime(hdoModelCurrent, calendar, timeHdoTUV);
 
-                //nastavení minut do začátku platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
-                int minutesStart = (int) (startCurrent - timeCurrent);
-                if (minutesStart > 0)
-                    startNT = Math.min(startNT, minutesStart);
-            }
+            if ((hdoModelCurrent.getRele().contains("TAR")))
+                compareTime(hdoModelCurrent, calendar, timeHdoTAR);
+
+
+            if ((hdoModelCurrent.getRele().contains("PV")))
+                compareTime(hdoModelCurrent, calendar, timeHdoPV);
+
         }
 
-        String textNt;
-        if (startNT < endNT) {
-            textNt = "NT začíná za: " + builderStringTimeLeft(startNT);
-            autoSizeTextAndDraw(textNt, getWidth() - padding - textPadding, canvas, x, y, pTimeLeft);
+        if (showTUV)
+            drawHdoState(canvas, x, y + dpToPx(getContext(), 0), timeHdoTUV, textPadding, "TUV");
+        else
+            drawHdoState(canvas, x, y + dpToPx(getContext(), 0), timeHdoNT, textPadding, "NT");
+
+
+        if (showTAR)
+            drawHdoState(canvas, x, y + dpToPx(getContext(), 17), timeHdoTAR, textPadding, "TAR");
+
+
+        if (showPV)
+            drawHdoState(canvas, x, y + dpToPx(getContext(), 34), timeHdoPV, textPadding, "PV  ");
+    }
+
+
+    /**
+     * Porovnává začátek a konec časů HDO s aktuálním časem. Pokud je větší než 0 a menší než předchozí, tak se uloží.
+     *
+     * @param hdoModel model HDO
+     * @param calendar aktuální čas
+     * @param timeHdo  kontejner pro čas začátku a konce HDO
+     */
+    private void compareTime(HdoModel hdoModel, Calendar calendar, TimeHdo timeHdo) {
+        long startCurrent = hdoModel.getCalendarStart().getTimeInMillis() / 1000 / 60; //začátek NT v minutách
+        long endCurrent = hdoModel.getCalendarEnd().getTimeInMillis() / 1000 / 60; //konec NT v minutách
+        long timeCurrent = calendar.getTimeInMillis() / 1000 / 60; //aktuální čas v minutách
+
+        //nastavení minut do konce platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
+        int minutesEnd = (int) (endCurrent - timeCurrent);
+        if (minutesEnd > 0) {
+            timeHdo.end = Math.min(timeHdo.end, minutesEnd);
+        }
+
+        //nastavení minut do začátku platnosti HDO, pokud je větší než 0 a menší než předchozí, tak se uloží
+        int minutesStart = (int) (startCurrent - timeCurrent);
+        if (minutesStart > 0) {
+            timeHdo.start = Math.min(timeHdo.start, minutesStart);
+        }
+        //Log.w(TAG, "Compare "+minutesStart+" "+minutesEnd);
+    }
+
+
+    /**
+     * Vykreslí odpočet konce/začátku HDO
+     *
+     * @param canvas  plátno
+     * @param x       x-ová souřadnice
+     * @param y       y-ová souřadnice
+     * @param timeHdo kontejner pro čas začátku a konce HDO
+     * @param textPadding   odsazení textu
+     * @param label   popisek typu HDO
+     */
+    private void drawHdoState(Canvas canvas, int x, int y, TimeHdo timeHdo, int textPadding, String label) {
+        String text;
+        if (timeHdo.start < timeHdo.end) {
+            text = label + " začíná za: " + builderStringTimeLeft(timeHdo.start);
         } else {
-            textNt = "NT končí za: " + builderStringTimeLeft(endNT);
-            autoSizeTextAndDraw(textNt, getWidth() - padding - textPadding, canvas, x, y, pTimeLeft);
+            text = label + " končí za: " + builderStringTimeLeft(timeHdo.end);
         }
+        autoSizeTextAndDraw(text, getWidth()-2*textPadding, canvas, x, y, pTimeLeft);
     }
 
 
@@ -496,8 +548,6 @@ public class GraphTotalHdoView extends View {
         getCurrentTime();
         animateTick();
         lastTime = currentTime;
-
-
     }
 
 
@@ -512,7 +562,7 @@ public class GraphTotalHdoView extends View {
 
 
     /**
-     * Vytvoří seznam modelů pro dnešní a zítřejší den
+     * Vytvoří seznam modelů pro celý týden, počínaje včerejším dnem
      */
     private void builderHDOLists() {
         if (modelsFromDatabase == null) return;
@@ -537,5 +587,18 @@ public class GraphTotalHdoView extends View {
             invalidate();
         });
         va.start();
+    }
+
+
+    /**
+     * Kontejner pro čas začátku a konce HDO
+     */
+    static class TimeHdo {
+        int start, end;
+
+        TimeHdo() {
+            start = Integer.MAX_VALUE;
+            end = Integer.MAX_VALUE;
+        }
     }
 }

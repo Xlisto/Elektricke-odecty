@@ -2,6 +2,7 @@ package cz.xlisto.odecty.utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 
 import cz.xlisto.odecty.models.HdoModel;
 
@@ -36,6 +37,23 @@ public class BuilderHDOStack {
                 today = 1;
             }
         }
+
+        for (HdoModel model : modelsWithDate) {
+            if (model.getTimeFrom().equals("00:00")) {
+                for (HdoModel model2 : modelsWithDate) {
+                    if (model.getCalendarStart().getTimeInMillis() == model2.getCalendarEnd().getTimeInMillis() && model.getRele().equals(model2.getRele())) {
+                        model.setCalendarStart(model2.getCalendarStart().getTimeInMillis());
+                        model2.setCalendarEnd(model.getCalendarEnd().getTimeInMillis());
+                    }
+                }
+
+            }
+        }
+
+        //odstranění duplicit převodem do LinkedHashSet (HdoModel musí mít implementovaný equals a hashCode, podle kterých se hodnotí duplicita)
+        LinkedHashSet<HdoModel> uniqueModels = new LinkedHashSet<>(modelsWithDate);
+
+        modelsWithDate = new ArrayList<>(uniqueModels);
         return modelsWithDate;
     }
 

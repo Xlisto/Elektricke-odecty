@@ -252,12 +252,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BuilderHDOStack.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BuilderHDOStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BuilderHDOStack.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -965,7 +966,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="177" />
+    <option name="localTasksCounter" value="178" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1039,7 +1040,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Dplněný tmavší orámování do sloupcového grafu." />
     <MESSAGE value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
     <MESSAGE value="Doplnění posluchače pro načtení regulovaných cen při tvorbě/úpravě ceníku.&#10; při změně data platnosti." />
     <MESSAGE value="Oprava chyby při zobrazování poznámky k cenovému stropu. Při výběru sazby D01 nebo D02 se zobrazovala poznámka patřící k nízkému tarifu." />
@@ -1064,6 +1064,7 @@
     <MESSAGE value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
     <MESSAGE value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
     <MESSAGE value="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu." />
+    <MESSAGE value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
   </component>
 </project>

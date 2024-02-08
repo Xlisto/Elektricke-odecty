@@ -2,6 +2,7 @@ package cz.xlisto.odecty.models;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 
@@ -15,8 +16,8 @@ public class HdoModel implements Cloneable {
     private static final String TAG = "HdoModel";
     private long id;
     private final String rele;
-    private final String timeFrom;
-    private final String timeUntil;
+    private String timeFrom;
+    private String timeUntil;
     private final String dateFrom;
     private final String dateUntil;
     private final String distributionArea;
@@ -24,7 +25,7 @@ public class HdoModel implements Cloneable {
     private Calendar calendarEnd;
 
 
-    private final int mon, tue, wed, thu, fri, sat, sun;
+    private int mon, tue, wed, thu, fri, sat, sun;
 
 
     public HdoModel(long id, String rele, String dateFrom, String dateUntil, String timeFrom, String timeUntil, int mon, int tue, int wed, int thu, int fri, int sat, int sun, String distributionArea) {
@@ -42,6 +43,7 @@ public class HdoModel implements Cloneable {
         this.sat = sat;
         this.sun = sun;
         this.distributionArea = distributionArea;
+        setDayOfWeekPRE();
     }
 
 
@@ -81,7 +83,7 @@ public class HdoModel implements Cloneable {
 
 
     public String getTimeUntil() {
-        if (timeUntil.equals("23:59"))
+        if (timeUntil.equals("23:59") || timeUntil.equals("24:00"))
             return "0:00";
         return timeUntil;
     }
@@ -161,11 +163,43 @@ public class HdoModel implements Cloneable {
     }
 
 
+    /**
+     * Nastaví datum a čas začátku HDO
+     *
+     * @param time datum a čas v milisekundách
+     */
+    public void setCalendarStart(long time) {
+        calendarStart.setTimeInMillis(time);
+        timeFrom = calendarStart.get(Calendar.HOUR_OF_DAY) + ":" + calendarStart.get(Calendar.MINUTE);
+    }
+
+
+    /**
+     * Nastaví datum a čas konce HDO
+     *
+     * @param time datum a čas v milisekundách
+     */
+    public void setCalendarEnd(long time) {
+        calendarEnd.setTimeInMillis(time);
+        timeUntil = calendarEnd.get(Calendar.HOUR_OF_DAY) + ":" + calendarEnd.get(Calendar.MINUTE);
+    }
+
+
+    /**
+     * Vrátí datum a čas začátku HDO
+     *
+     * @return datum a čas začátku HDO
+     */
     public Calendar getCalendarStart() {
         return calendarStart;
     }
 
 
+    /**
+     * Vrátí datum a čas konce HDO
+     *
+     * @return datum a čas konce HDO
+     */
     public Calendar getCalendarEnd() {
         return calendarEnd;
     }
@@ -225,5 +259,58 @@ public class HdoModel implements Cloneable {
         int minuteEnd = calendarEnd.get(Calendar.MINUTE);
         String formatString = "%02d.%02d.%d %02d:%02d - %02d.%02d.%d %02d:%02d";
         return String.format(Locale.getDefault(), formatString, dayStart, monthStart, yearStart, hourStart, minuteStart, dayEnd, monthEnd, yearEnd, hourEnd, minuteEnd);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HdoModel hdoModel = (HdoModel) o;
+        return calendarStart.getTimeInMillis() == hdoModel.calendarStart.getTimeInMillis() &&
+                calendarEnd.getTimeInMillis() == hdoModel.calendarEnd.getTimeInMillis() &&
+                rele.equals(hdoModel.rele);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(calendarStart.getTimeInMillis(), calendarEnd.getTimeInMillis(), rele);
+    }
+
+
+    private void setDayOfWeekPRE() {
+        if (distributionArea.equals("PRE")) {
+            int dayOfMonth = Integer.parseInt(dateFrom.split("\\.")[0]);
+            int month = Integer.parseInt(dateFrom.split("\\.")[1]);
+            int year = Integer.parseInt(dateFrom.split("\\.")[2]);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(year, month - 1, dayOfMonth);
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+            switch (dayOfWeek) {
+                case Calendar.MONDAY:
+                    mon = 1;
+                    break;
+                case Calendar.TUESDAY:
+                    tue = 1;
+                    break;
+                case Calendar.WEDNESDAY:
+                    wed = 1;
+                    break;
+                case Calendar.THURSDAY:
+                    thu = 1;
+                    break;
+                case Calendar.FRIDAY:
+                    fri = 1;
+                    break;
+                case Calendar.SATURDAY:
+                    sat = 1;
+                    break;
+                case Calendar.SUNDAY:
+                    sun = 1;
+                    break;
+            }
+        }
     }
 }
