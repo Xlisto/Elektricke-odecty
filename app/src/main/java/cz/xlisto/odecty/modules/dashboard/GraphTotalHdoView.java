@@ -1,5 +1,7 @@
 package cz.xlisto.odecty.modules.dashboard;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -35,10 +37,14 @@ public class GraphTotalHdoView extends View {
     private int centerY;
     private int radius;
     private int currentTime, lastTime, showTime;
-    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pClock, pLegend, pTimeLeft;
+    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pClock, pLegend, pTimeLeft, pTextTime;
     private ArrayList<HdoModel> modelsFromDatabase;
     private ArrayList<HdoModel> modelsForAllWeek;
     private long timeShift;
+    private TimeHdo timeHdoNT;
+    private TimeHdo timeHdoTUV;
+    private TimeHdo timeHdoTAR;
+    private TimeHdo timeHdoPV;
     private boolean showTAR, showPV, showTUV;
     private final Handler handler = new Handler();
     private final Runnable runnable = new Runnable() {
@@ -110,7 +116,7 @@ public class GraphTotalHdoView extends View {
         pNumbers.setColor(colorClock);
         pNumbers.setStyle(Paint.Style.FILL);
         pNumbers.setStrokeWidth(dpToPx(getContext(), 1));
-        pNumbers.setTextSize(dpToPx(getContext(), 8)); // Nastavení velikosti textu
+        pNumbers.setTextSize(dpToPx(getContext(), 12)); // Nastavení velikosti textu
         pNumbers.setTextAlign(Paint.Align.CENTER); // Zarovnání textu na střed
 
         pLegend = new Paint();
@@ -118,14 +124,21 @@ public class GraphTotalHdoView extends View {
         pLegend.setStyle(Paint.Style.FILL);
         pLegend.setStrokeWidth(dpToPx(getContext(), 1));
         pLegend.setTextSize(dpToPx(getContext(), 10)); // Nastavení velikosti textu
-        pLegend.setTextAlign(Paint.Align.LEFT); // Zarovnání textu na střed
+        pLegend.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
 
         pTimeLeft = new Paint();
         pTimeLeft.setColor(colorClock);
         pTimeLeft.setStyle(Paint.Style.FILL);
         pTimeLeft.setStrokeWidth(dpToPx(getContext(), 1));
-        pTimeLeft.setTextSize(dpToPx(getContext(), 14)); // Nastavení velikosti textu
-        pTimeLeft.setTextAlign(Paint.Align.LEFT); // Zarovnání textu na střed
+        pTimeLeft.setTextSize(dpToPx(getContext(), 24)); // Nastavení velikosti textu
+        pTimeLeft.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
+
+        pTextTime = new Paint();
+        pTextTime.setColor(colorClock);
+        pTextTime.setStyle(Paint.Style.FILL);
+        pTextTime.setStrokeWidth(dpToPx(getContext(), 1));
+        pTextTime.setTextSize(dpToPx(getContext(), 14)); // Nastavení velikosti textu
+        pTextTime.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
 
         pTick = new Paint();
         pTick.setColor(Color.RED);
@@ -142,6 +155,8 @@ public class GraphTotalHdoView extends View {
         getCurrentTime();
 
         animateTick();
+        animatedOutText();
+
     }
 
 
@@ -154,6 +169,7 @@ public class GraphTotalHdoView extends View {
         centerX = size / 4; // Střed kruhu
         centerY = size / 4;
         radius = size / 4 - padding; // Poloměr kruhu
+
 
         drawTime(canvas);
         drawNumbers(canvas);
@@ -248,7 +264,7 @@ public class GraphTotalHdoView extends View {
     private void drawNumbers(Canvas canvas) {
         //vykreslení čísel
         // Poloměr pro umístění textu (mírně menší než poloměr ciferníku)
-        int textRadius = radius - 30; // Můžete upravit podle potřeby
+        int textRadius = radius - dpToPx(getContext(), 12); // Rádius pro umístění číslic ciferníku
 
         // Čísla a jejich odpovídající hodiny
         int[] hoursToShow = {0, 3, 6, 9, 12, 15, 18, 21};
@@ -379,20 +395,41 @@ public class GraphTotalHdoView extends View {
         int x = 0;
         int textPadding = dpToPx(getContext(), 10);
         x += textPadding;
-        int y = size / 2 + dpToPx(getContext(), 17);
+        int line = dpToPx(getContext(), 17);
+        int y = size / 2 + line;
+
 
         if (modelsForAllWeek == null || modelsForAllWeek.isEmpty()) {
             canvas.drawText("Nenalezen žádný čas HDO", x, y, pTimeLeft);
             return;
         }
 
+        String text;
+        if (showTUV)
+            text = buildTextHdoState(timeHdoTUV, "TUV");
+        else
+            text = buildTextHdoState(timeHdoNT, "NT");
+        autoSizeTextAndDraw(text, getWidth() - 2 * textPadding, canvas, x, y, pTextTime);
+
+        if (showTAR)
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoTAR, "TAR"), getWidth() - 2 * textPadding, canvas, x, y + line, pTextTime);
+
+        if (showPV)
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoPV, "PV  "), getWidth() - 2 * textPadding, canvas, x, y + line * 2, pTextTime);
+    }
+
+
+    /**
+     * Provede výpočet doby časů začátku a konce časů k současnému času
+     */
+    private void buildTimeHDO() {
         //detekce dnešního dne
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
-        TimeHdo timeHdoNT = new TimeHdo();
-        TimeHdo timeHdoTUV = new TimeHdo();
-        TimeHdo timeHdoTAR = new TimeHdo();
-        TimeHdo timeHdoPV = new TimeHdo();
+        timeHdoNT = new TimeHdo();
+        timeHdoTUV = new TimeHdo();
+        timeHdoTAR = new TimeHdo();
+        timeHdoPV = new TimeHdo();
         for (int i = 0; i < modelsForAllWeek.size(); i++) {
             if (i == modelsForAllWeek.size() - 1)
                 break;
@@ -407,24 +444,9 @@ public class GraphTotalHdoView extends View {
             if ((hdoModelCurrent.getRele().contains("TAR")))
                 compareTime(hdoModelCurrent, calendar, timeHdoTAR);
 
-
             if ((hdoModelCurrent.getRele().contains("PV")))
                 compareTime(hdoModelCurrent, calendar, timeHdoPV);
-
         }
-
-        if (showTUV)
-            drawHdoState(canvas, x, y + dpToPx(getContext(), 0), timeHdoTUV, textPadding, "TUV");
-        else
-            drawHdoState(canvas, x, y + dpToPx(getContext(), 0), timeHdoNT, textPadding, "NT");
-
-
-        if (showTAR)
-            drawHdoState(canvas, x, y + dpToPx(getContext(), 17), timeHdoTAR, textPadding, "TAR");
-
-
-        if (showPV)
-            drawHdoState(canvas, x, y + dpToPx(getContext(), 34), timeHdoPV, textPadding, "PV  ");
     }
 
 
@@ -451,28 +473,23 @@ public class GraphTotalHdoView extends View {
         if (minutesStart > 0) {
             timeHdo.start = Math.min(timeHdo.start, minutesStart);
         }
-        //Log.w(TAG, "Compare "+minutesStart+" "+minutesEnd);
     }
 
 
     /**
-     * Vykreslí odpočet konce/začátku HDO
+     * Sestaví texty odpočtů konce/začátku HDO
      *
-     * @param canvas  plátno
-     * @param x       x-ová souřadnice
-     * @param y       y-ová souřadnice
      * @param timeHdo kontejner pro čas začátku a konce HDO
-     * @param textPadding   odsazení textu
      * @param label   popisek typu HDO
      */
-    private void drawHdoState(Canvas canvas, int x, int y, TimeHdo timeHdo, int textPadding, String label) {
+    private String buildTextHdoState(TimeHdo timeHdo, String label) {
         String text;
         if (timeHdo.start < timeHdo.end) {
             text = label + " začíná za: " + builderStringTimeLeft(timeHdo.start);
         } else {
             text = label + " končí za: " + builderStringTimeLeft(timeHdo.end);
         }
-        autoSizeTextAndDraw(text, getWidth()-2*textPadding, canvas, x, y, pTimeLeft);
+        return text;
     }
 
 
@@ -544,9 +561,9 @@ public class GraphTotalHdoView extends View {
     public void setHdoModels(ArrayList<HdoModel> models, long timeShift) {
         this.modelsFromDatabase = models;
         this.timeShift = timeShift;
-        builderHDOLists();
         getCurrentTime();
         animateTick();
+        animatedOutText();
         lastTime = currentTime;
     }
 
@@ -569,7 +586,7 @@ public class GraphTotalHdoView extends View {
 
         modelsForAllWeek = new ArrayList<>();
         modelsForAllWeek.addAll(BuilderHDOStack.build(modelsFromDatabase, timeShift));
-
+        buildTimeHDO();
     }
 
 
@@ -591,10 +608,49 @@ public class GraphTotalHdoView extends View {
 
 
     /**
+     * Animace zmizení textu
+     */
+    private void animatedOutText() {
+        //nastavuji původní text
+        ValueAnimator fadeOutAnimator = ValueAnimator.ofInt(255, 0);
+        fadeOutAnimator.setDuration(300);
+        fadeOutAnimator.addUpdateListener(animation -> {
+            pTextTime.setAlpha((Integer) animation.getAnimatedValue());
+            invalidate();
+        });
+        fadeOutAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //spouští další animaci
+                animateTextAppearance();
+            }
+        });
+        fadeOutAnimator.start();
+    }
+
+
+    /**
+     * Animace zobrazení textu
+     */
+    private void animateTextAppearance() {
+        //nastavuji nový text
+        builderHDOLists();
+        ValueAnimator fadeInAnimator = ValueAnimator.ofInt(0, 255);
+        fadeInAnimator.setDuration(300);
+        fadeInAnimator.addUpdateListener(animation -> {
+            pTextTime.setAlpha((Integer) animation.getAnimatedValue());
+            invalidate();
+        });
+        fadeInAnimator.start();
+    }
+
+
+    /**
      * Kontejner pro čas začátku a konce HDO
      */
     static class TimeHdo {
         int start, end;
+
 
         TimeHdo() {
             start = Integer.MAX_VALUE;

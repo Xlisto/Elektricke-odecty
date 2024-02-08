@@ -43,7 +43,8 @@ public class HdoModel implements Cloneable {
         this.sat = sat;
         this.sun = sun;
         this.distributionArea = distributionArea;
-        setDayOfWeekPRE();
+        if (distributionArea != null)
+            setDayOfWeekPRE();
     }
 
 

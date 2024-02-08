@@ -56,6 +56,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_fragment_graph_color.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -252,13 +257,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Nalezena chyba v nefunkčním odpočítávání do konce/začátku nízského tarifu.&#10;Aktualizace souborů Java&#10;&#10;1. V souboru `BuilderHDOStack.java`:&#10;   - Byla přidána metoda pro vytváření týdenního seznamu HDO modelů.&#10;   - Bylo optimalizováno odstraňování duplicitních modelů.&#10;   - Byla přidána podpora pro posunutí času.&#10;&#10;2. V souboru `DataHdoSource.java`:&#10;   - Byly provedeny změny v metodách pro načítání, ukládání, aktualizaci a mazání HDO modelů.&#10;&#10;3. V souborech `GraphTotalHdoView.java` a `DashBoardFragment.java`:&#10;   - Byly provedeny menší úpravy.&#10;&#10;Tyto změny byly provedeny za účelem zlepšení funkčnosti a efektivity aplikace.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataHdoSource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/HdoModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BuilderHDOStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/BuilderHDOStack.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -966,7 +970,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="178" />
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1040,7 +1044,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Změna výpočtu nastavení velikosti widgetu pro GraphTotalConsuptionView a GraphTotalHdoView." />
     <MESSAGE value="Doplnění posluchače pro načtení regulovaných cen při tvorbě/úpravě ceníku.&#10; při změně data platnosti." />
     <MESSAGE value="Oprava chyby při zobrazování poznámky k cenovému stropu. Při výběru sazby D01 nebo D02 se zobrazovala poznámka patřící k nízkému tarifu." />
     <MESSAGE value="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny.&#10;&#10;Do PriceListFilterDialogFragment odebrán listener a nahrazen novým listeneem pro fragmenty: getParentFragmentManager().setFragmentResult(FLAG_RESULT_FILTER_DIALOG_FRAGMENT, bundle);&#10;Posluchač je v PriceListFragment v metodě v onViewCreate." />
@@ -1065,6 +1068,7 @@
     <MESSAGE value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
     <MESSAGE value="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu." />
     <MESSAGE value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
+    <MESSAGE value="Nalezena chyba v nefunkčním odpočítávání do konce/začátku nízského tarifu.&#10;Aktualizace souborů Java&#10;&#10;1. V souboru `BuilderHDOStack.java`:&#10;   - Byla přidána metoda pro vytváření týdenního seznamu HDO modelů.&#10;   - Bylo optimalizováno odstraňování duplicitních modelů.&#10;   - Byla přidána podpora pro posunutí času.&#10;&#10;2. V souboru `DataHdoSource.java`:&#10;   - Byly provedeny změny v metodách pro načítání, ukládání, aktualizaci a mazání HDO modelů.&#10;&#10;3. V souborech `GraphTotalHdoView.java` a `DashBoardFragment.java`:&#10;   - Byly provedeny menší úpravy.&#10;&#10;Tyto změny byly provedeny za účelem zlepšení funkčnosti a efektivity aplikace." />
+    <option name="LAST_COMMIT_MESSAGE" value="Nalezena chyba v nefunkčním odpočítávání do konce/začátku nízského tarifu.&#10;Aktualizace souborů Java&#10;&#10;1. V souboru `BuilderHDOStack.java`:&#10;   - Byla přidána metoda pro vytváření týdenního seznamu HDO modelů.&#10;   - Bylo optimalizováno odstraňování duplicitních modelů.&#10;   - Byla přidána podpora pro posunutí času.&#10;&#10;2. V souboru `DataHdoSource.java`:&#10;   - Byly provedeny změny v metodách pro načítání, ukládání, aktualizaci a mazání HDO modelů.&#10;&#10;3. V souborech `GraphTotalHdoView.java` a `DashBoardFragment.java`:&#10;   - Byly provedeny menší úpravy.&#10;&#10;Tyto změny byly provedeny za účelem zlepšení funkčnosti a efektivity aplikace." />
   </component>
 </project>
