@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.utils.BuilderHDOStack;
-import cz.xlisto.odecty.utils.DetectScreenMode;
 
 import static cz.xlisto.odecty.utils.DensityUtils.*;
 
@@ -101,23 +100,28 @@ public class GraphTotalHdoView extends View {
         pTimeTUV.setColor(colorTimeTUV);
         pTimeTUV.setStyle(Paint.Style.FILL);
         pTimeTUV.setStrokeWidth(dpToPx(getContext(), 1));
+        boolean antiAliasing = true;
+        pTimeTUV.setAntiAlias(antiAliasing);
 
         pTimeTAR = new Paint();
         pTimeTAR.setColor(colorTimeTAR);
         pTimeTAR.setStyle(Paint.Style.FILL);
         pTimeTAR.setStrokeWidth(dpToPx(getContext(), 1));
+        pTimeTAR.setAntiAlias(antiAliasing);
 
         pTimePV = new Paint();
         pTimePV.setColor(colorTimePV);
         pTimePV.setStyle(Paint.Style.FILL);
         pTimePV.setStrokeWidth(dpToPx(getContext(), 1));
+        pTimePV.setAntiAlias(antiAliasing);
 
         pNumbers = new Paint();
         pNumbers.setColor(colorClock);
         pNumbers.setStyle(Paint.Style.FILL);
         pNumbers.setStrokeWidth(dpToPx(getContext(), 1));
-        pNumbers.setTextSize(dpToPx(getContext(), 12)); // Nastavení velikosti textu
+        pNumbers.setTextSize(dpToPx(getContext(), 10)); // Nastavení velikosti textu
         pNumbers.setTextAlign(Paint.Align.CENTER); // Zarovnání textu na střed
+        pNumbers.setAntiAlias(antiAliasing);
 
         pLegend = new Paint();
         pLegend.setColor(colorClock);
@@ -125,13 +129,15 @@ public class GraphTotalHdoView extends View {
         pLegend.setStrokeWidth(dpToPx(getContext(), 1));
         pLegend.setTextSize(dpToPx(getContext(), 10)); // Nastavení velikosti textu
         pLegend.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
+        pLegend.setAntiAlias(antiAliasing);
 
         pTimeLeft = new Paint();
         pTimeLeft.setColor(colorClock);
         pTimeLeft.setStyle(Paint.Style.FILL);
         pTimeLeft.setStrokeWidth(dpToPx(getContext(), 1));
-        pTimeLeft.setTextSize(dpToPx(getContext(), 24)); // Nastavení velikosti textu
+        pTimeLeft.setTextSize(dpToPx(getContext(), 14)); // Nastavení velikosti textu
         pTimeLeft.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
+        pTimeLeft.setAntiAlias(antiAliasing);
 
         pTextTime = new Paint();
         pTextTime.setColor(colorClock);
@@ -139,17 +145,20 @@ public class GraphTotalHdoView extends View {
         pTextTime.setStrokeWidth(dpToPx(getContext(), 1));
         pTextTime.setTextSize(dpToPx(getContext(), 14)); // Nastavení velikosti textu
         pTextTime.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
+        pTextTime.setAntiAlias(antiAliasing);
 
         pTick = new Paint();
         pTick.setColor(Color.RED);
         pTick.setStyle(Paint.Style.FILL);
         pTick.setStrokeWidth(dpToPx(getContext(), 2));
         pTick.setStrokeCap(Paint.Cap.ROUND);
+        pTick.setAntiAlias(antiAliasing);
 
         pClock = new Paint();
         pClock.setColor(colorClock);
         pClock.setStyle(Paint.Style.STROKE);
-        pClock.setStrokeWidth(dpToPx(getContext(), 2));
+        pClock.setStrokeWidth(dpToPx(getContext(), 1));
+        pClock.setAntiAlias(antiAliasing);
 
         lastTime = 0;
         getCurrentTime();
@@ -222,9 +231,7 @@ public class GraphTotalHdoView extends View {
             // Výpočet rozpětí úhlů pro výseč
             float sweepAngle = endAngle - startAngle;
             if (sweepAngle < 0) sweepAngle += 360; // Korekce pro přesah přes půlnoc
-            int smaller = dpToPx(getContext(), 13);
-            if (DetectScreenMode.isLandscape(getContext()))
-                smaller = dpToPx(getContext(), 16);
+            int smaller = (int) (radius * 0.3);
 
             if (model.getRele().contains("TUV") || !model.getRele().contains("TAR") && !model.getRele().contains("PV")) {
                 // Vykreslení výseče
@@ -264,8 +271,8 @@ public class GraphTotalHdoView extends View {
     private void drawNumbers(Canvas canvas) {
         //vykreslení čísel
         // Poloměr pro umístění textu (mírně menší než poloměr ciferníku)
-        int textRadius = radius - dpToPx(getContext(), 12); // Rádius pro umístění číslic ciferníku
-
+        int textRadius = radius - dpToPx(getContext(), (float) size / 50); // Rádius pro umístění číslic ciferníku
+        pNumbers.setTextSize(dpToPx(getContext(), (float) size / 50)); // Nastavení velikosti textu
         // Čísla a jejich odpovídající hodiny
         int[] hoursToShow = {0, 3, 6, 9, 12, 15, 18, 21};
         String[] numbersToShow = {"0", "3", "6", "9", "12", "15", "18", "21"};
@@ -340,23 +347,33 @@ public class GraphTotalHdoView extends View {
      */
     private void drawLegend(Canvas canvas) {
         // Legenda
-        int legendSize = dpToPx(getContext(), 11);
+        int legendSize = radius / 6;
         int legendPadding = dpToPx(getContext(), 8);
-        int legendTextPadding = dpToPx(getContext(), 7);
+        int legendTextPadding = dpToPx(getContext(), 6);
 
-        int legendX = size / 2 + padding;
-        int legendY = padding;
+        int legendX = (radius+padding) * 2;
+        int legendY = (int) (1.5 * padding);
+
+        float sizeText = pLegend.getTextSize();
+        int maxSizeLegend = getWidth() - getPaddingEnd() - padding - legendX - legendSize - legendTextPadding;
+        while (pLegend.measureText("Aktuální čas") > maxSizeLegend) {
+            sizeText--;
+            pLegend.setTextSize(sizeText);
+        }
+
 
         // Vykreslení legendy
         RectF oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
         canvas.drawArc(oval, 0, 360, true, pClock);
         canvas.drawText("Čas VT", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
 
+
         legendY += legendSize + legendPadding;
 
         oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
         canvas.drawArc(oval, 0, 360, true, pTick);
         canvas.drawText("Aktuální čas", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
+
 
         legendY += legendSize + legendPadding;
 
@@ -534,7 +551,7 @@ public class GraphTotalHdoView extends View {
         if (hours == 0)
             return minutes + " min.";
         else
-            return hours + " hod. a " + minutes + " min.";
+            return hours + ":" + minutes + " hod.";
     }
 
 

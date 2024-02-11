@@ -49,7 +49,7 @@ public class GraphTotalConsuptionView extends View {
     private final Paint pTextResult = new Paint();
     private double consuptionAngle, difference;
     private String textPrice = "0";
-    private String textDeposit = "0";
+    private String textPayment = "0";
     private String textConsuption = "0";
     private String result = "0";
 
@@ -87,30 +87,39 @@ public class GraphTotalConsuptionView extends View {
         pPayment.setColor(colorPaymentEnd);
         pPayment.setStyle(Paint.Style.STROKE);
         pPayment.setStrokeWidth(dpToPx(getContext(), 14));
+        boolean antiAliasing = true;
+        pPayment.setAntiAlias(antiAliasing);
 
         pPaymentBackground.setColor(lighterColor(colorPaymentEnd));
         pPaymentBackground.setStyle(Paint.Style.STROKE);
         pPaymentBackground.setStrokeWidth(dpToPx(getContext(), 14));
+        pPaymentBackground.setAntiAlias(antiAliasing);
 
         pPaymentBorder.setStyle(Paint.Style.STROKE);
         pPaymentBorder.setColor(darkerColor(colorPaymentEnd));
         pPaymentBorder.setStrokeWidth(dpToPx(getContext(), 2));
+        pPaymentBorder.setAntiAlias(antiAliasing);
 
         pLine.setStrokeWidth(dpToPx(getContext(), 2));
         pLine.setColor(Color.RED);
         pLine.setStrokeCap(Paint.Cap.ROUND);
+        pLine.setAntiAlias(antiAliasing);
 
         pBorder.setStrokeWidth(dpToPx(getContext(), 2));
         pBorder.setColor(colorText);
         pBorder.setStrokeCap(Paint.Cap.ROUND);
+        pBorder.setAntiAlias(antiAliasing);
 
         pTextPayment.setColor(colorText);
-        pTextPayment.setTextSize(dpToPx(getContext(), 14));
+        pTextPayment.setTextSize(dpToPx(getContext(), 15));
+        pTextPayment.setAntiAlias(antiAliasing);
 
         pTextConsuption.setColor(colorText);
-        pTextConsuption.setTextSize(dpToPx(getContext(), 14));
+        pTextConsuption.setTextSize(dpToPx(getContext(), 15));
+        pTextConsuption.setAntiAlias(antiAliasing);
 
-        pTextResult.setTextSize(dpToPx(getContext(), 14));
+        pTextResult.setTextSize(dpToPx(getContext(), 15));
+        pTextResult.setAntiAlias(antiAliasing);
 
         startAnimated();
     }
@@ -119,8 +128,6 @@ public class GraphTotalConsuptionView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-
-
         drawPayment(canvas);
         drawTexts(canvas);
         drawConsuption(canvas);
@@ -187,7 +194,7 @@ public class GraphTotalConsuptionView extends View {
         int x = size / 2;
         int y = size / 2;
         int r = size / 2 - dpToPx(getContext(), 20);
-        int paddingLine = dpToPx(getContext(), 15);
+        int paddingLine = dpToPx(getContext(), 10);
 
         // Výpočet koncového bodu úsečky
         double radians = Math.toRadians(consuptionAngle);
@@ -208,34 +215,18 @@ public class GraphTotalConsuptionView extends View {
 
 
     /**
-     * Kreslení textů
+     * Kreslení textů s odečtem časů
      *
      * @param canvas plátno
      */
     private void drawTexts(Canvas canvas) {
         // Kreslení textu
-
-        int textPadding = dpToPx(getContext(), 15);
-        int textX = getPaddingStart() + textPadding;
-
-        //Zálohy
-        int textY = size / 2 + dpToPx(getContext(), 17);
-        canvas.drawText(textDeposit, textX, textY, pTextPayment);
-        int wideTextDeposit = (int) pTextPayment.measureText(format(Locale.getDefault(), textPrice, currentPayment));
-        int textXPayment = size - getPaddingEnd() - wideTextDeposit - textPadding;
-        canvas.drawText(format(Locale.getDefault(), textPrice, currentPayment), textXPayment, textY, pTextPayment);
-        //spotřeba
-        textY += dpToPx(getContext(), 17);
-        canvas.drawText(textConsuption, textX, textY, pTextConsuption);
-        int wideTextConsuption = (int) pTextConsuption.measureText(format(Locale.getDefault(), textPrice, currentConsuption));
-        int textXConsuption = size - getPaddingEnd() - wideTextConsuption - textPadding;
-        canvas.drawText(format(Locale.getDefault(), textPrice, currentConsuption), textXConsuption, textY, pTextConsuption);
-        //výsledek
-        textY += dpToPx(getContext(), 17);
-        canvas.drawText(result, textX, textY, pTextResult);
-        int wideTextResult = (int) pTextResult.measureText(format(Locale.getDefault(), textPrice, difference));
-        int textXResult = size - getPaddingEnd() - wideTextResult - textPadding;
-        canvas.drawText(format(Locale.getDefault(), textPrice, difference), textXResult, textY, pTextResult);
+        autoSizeText(textPayment, format(Locale.getDefault(), textPrice, currentPayment),
+                canvas, size, 1, pTextPayment);
+        autoSizeText(textConsuption, format(Locale.getDefault(), textPrice, currentConsuption),
+                canvas, size, 2, pTextConsuption);
+        autoSizeText(result, format(Locale.getDefault(), textPrice, difference),
+                canvas, size, 3, pTextResult);
     }
 
 
@@ -260,7 +251,6 @@ public class GraphTotalConsuptionView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
         size = Math.min(width, height);
-
         setMeasuredDimension(size, size / 2 + dpToPx(getContext(), 60));
     }
 
@@ -393,7 +383,7 @@ public class GraphTotalConsuptionView extends View {
      */
     private void setTexts() {
         textPrice = getContext().getResources().getString(R.string.float_price);
-        textDeposit = getContext().getResources().getString(R.string.deposits);
+        textPayment = getContext().getResources().getString(R.string.deposits);
         textConsuption = getContext().getResources().getString(R.string.consuption_price);
 
         difference = (payment - consuption);
@@ -404,6 +394,48 @@ public class GraphTotalConsuptionView extends View {
             result = getContext().getResources().getString(R.string.underpayment);
             pTextResult.setColor(Color.parseColor("#9d0505"));
         }
+
+    }
+
+
+    /**
+     * Automaticky upraví velikost textu, aby se vešel do dané šířky a vykreslí jej
+     *
+     * @param text1        text na levý straně
+     * @param text2        text na pravé straně
+     * @param maxTextWidth maximální šířka textu
+     * @param line         řádek
+     * @param canvas       plátno
+     * @param paint        barva a styl textu
+     */
+    private void autoSizeText(String text1, String text2, Canvas canvas, float maxTextWidth, int line, Paint paint) {
+        int textPadding = dpToPx(getContext(), 10);
+        maxTextWidth -= getPaddingStart() + getPaddingEnd() + 2 * textPadding;
+
+        float textSize = paint.getTextSize();
+        float originalTextSize = textSize;
+        float textWidth1 = paint.measureText(text1);
+        float textWidth2 = paint.measureText(text2);
+        float maxTextWidthNeeded = textWidth1 + textWidth2;
+
+        // Pokud je text širší než dostupný prostor, snižuje velikost textu
+        while (maxTextWidthNeeded > maxTextWidth && textSize > 0) {
+            textSize--;
+            paint.setTextSize(textSize);
+            textWidth1 = paint.measureText(text1);
+            textWidth2 = paint.measureText(text2);
+            maxTextWidthNeeded = textWidth1 + textWidth2;
+        }
+
+        int textY = size / 2 + (dpToPx(getContext(), 17) * line);
+        int textX1 = getPaddingStart() + textPadding;
+        int textX2 = (int) (size - getPaddingEnd() - textWidth2 - textPadding); // Vypočítá X pozici pro text2 tak, aby byl zarovnán doprava
+
+        // Kreslí text s upravenou velikostí
+        canvas.drawText(text1, textX1, textY, paint);
+        canvas.drawText(text2, textX2, textY, paint);
+
+        paint.setTextSize(originalTextSize); // Vrátí velikost textu na původní hodnotu, pokud je potřeba
     }
 }
 

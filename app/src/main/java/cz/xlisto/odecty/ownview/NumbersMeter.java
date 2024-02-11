@@ -78,8 +78,8 @@ public class NumbersMeter extends View {
 
         digits = new int[countNumber];
 
-        space = DensityUtils.dpToPx(getContext(), 3);
-        padding = DensityUtils.dpToPx(getContext(), 10);
+        space = DensityUtils.dpToPx(getContext(), 2);
+        padding = DensityUtils.dpToPx(getContext(), 5);
     }
 
 
@@ -175,15 +175,16 @@ public class NumbersMeter extends View {
      */
     private void drawBackgroundNumbers(Canvas canvas, int scaledWidth, int scaledHeight) {
 
-        int borderBackground = DensityUtils.dpToPx(getContext(), 4);
+        int borderBackground = DensityUtils.dpToPx(getContext(), 3);
         RectF rectFWhole = new RectF(padding - borderBackground, padding - borderBackground, (scaledWidth + space) * countNumber + borderBackground + padding - space, padding + scaledHeight + borderBackground);
         RectF rectFDecimal = new RectF((scaledWidth + space) * (countNumber - 1) + padding - space, padding - borderBackground, (scaledWidth + space) * countNumber + borderBackground + padding - space, padding + scaledHeight + borderBackground);
         pBackgroundNumberWhole.setColor(getResources().getColor(R.color.color_yes));
         pBackgroundNumberDecimal.setColor(getResources().getColor(R.color.color_red_alert));
         pBackgroundNumberWhole.setStyle(Paint.Style.FILL);
         pBackgroundNumberDecimal.setStyle(Paint.Style.FILL);
-        pBackgroundNumberWhole.setAntiAlias(true);
-        pBackgroundNumberDecimal.setAntiAlias(true);
+        boolean antiAliasing = true;
+        pBackgroundNumberWhole.setAntiAlias(antiAliasing);
+        pBackgroundNumberDecimal.setAntiAlias(antiAliasing);
         canvas.drawRoundRect(rectFWhole, 10, 10, pBackgroundNumberWhole);
         canvas.drawRoundRect(rectFDecimal, 10, 10, pBackgroundNumberDecimal);
     }

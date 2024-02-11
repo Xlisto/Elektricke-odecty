@@ -3,7 +3,7 @@
     <color name="color_red_alert">#F63030</color>
     <color name="color_axis">#B8B7B7</color>
     <color name="color_graph_background">#121212</color>
-    <color name="color_hdo_time_TUV">#8F3604</color>
-    <color name="color_hdo_time_TAR">#62B33B</color>
-    <color name="color_hdo_time_PV">#345A87</color>
+    <color name="color_hdo_time_TUV">#7C2E03</color>
+    <color name="color_hdo_time_TAR">#417727</color>
+    <color name="color_hdo_time_PV">#2D4E75</color>
 </resources>

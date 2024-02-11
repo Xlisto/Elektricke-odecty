@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp">
@@ -34,21 +35,12 @@
             app:colorTimePV="@color/color_hdo_time_PV"
             app:colorTimeTAR="@color/color_hdo_time_TAR"
             app:colorTimeTUV="@color/color_hdo_time_TUV" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/llMeter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/llGraphTotalConsuptionMetersSum"
-        android:layout_marginBottom="2dp"
-        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="1dp"
+            android:layout_marginStart="2dp"
             android:layout_weight="1"
             android:background="@drawable/shape_border"
             android:orientation="vertical">
@@ -58,10 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/numbersMeterVT"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="2dp"
                 android:text="@string/high_tariff"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tvNTTariff"
@@ -69,11 +62,12 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/numbersMeterNT"
                 android:layout_below="@id/numbersMeterVT"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="2dp"
 
                 android:text="@string/low_tariff"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tvVTTariffKwh"
@@ -81,10 +75,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/numbersMeterVT"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="2dp"
                 android:text="@string/kwh"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
 
             <TextView
                 android:id="@+id/tvNTTariffKwh"
@@ -92,15 +87,17 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/numbersMeterNT"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="2dp"
                 android:text="@string/kwh"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
 
             <cz.xlisto.odecty.ownview.NumbersMeter
                 android:id="@+id/numbersMeterVT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@id/numbersMeterNT"
                 android:layout_toEndOf="@id/tvVTTariff"
                 android:layout_toStartOf="@id/tvVTTariffKwh" />
 
@@ -112,13 +109,6 @@
                 android:layout_toEndOf="@id/tvNTTariff"
                 android:layout_toStartOf="@id/tvNTTariffKwh" />
         </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-
     </LinearLayout>
 
 
@@ -166,7 +156,7 @@
         android:id="@+id/rlGraphTotalConsuptionInvoicesSum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/llMeter"
+        android:layout_below="@id/llGraphTotalConsuptionMetersSum"
         android:background="@drawable/shape_border">
 
         <TextView
