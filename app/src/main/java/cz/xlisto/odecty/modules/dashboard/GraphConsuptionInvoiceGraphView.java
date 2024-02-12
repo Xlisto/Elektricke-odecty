@@ -70,6 +70,20 @@ public class GraphConsuptionInvoiceGraphView extends View {
         pGraph = new Paint();
         pGraphBorder = new Paint();
         pGraphBackground = new Paint();
+
+        boolean antiAliasing = true;
+
+        pGraphBorder.setStyle(Paint.Style.STROKE);
+        pGraphBorder.setStrokeWidth(dpToPx(getContext(), 1));
+        pGraphBorder.setAntiAlias(antiAliasing);
+
+        pText.setTextSize(dpToPx(getContext(), 11));
+        pText.setAntiAlias(antiAliasing);
+
+        pGraph.setAntiAlias(antiAliasing);
+
+        pGraphBackground.setAntiAlias(antiAliasing);
+
         invalidate();
     }
 
@@ -82,16 +96,10 @@ public class GraphConsuptionInvoiceGraphView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-
-        pGraphBorder.setStyle(Paint.Style.STROKE);
-        pGraphBorder.setStrokeWidth(dpToPx(getContext(), 1));
-
         pText.setColor(colorGraph);
-        pText.setTextSize(dpToPx(getContext(), 11));
-
         pGraph.setColor(colorGraph);
-        pGraphBorder.setColor(darkerColor(colorGraph));
         pGraphBackground.setColor(lighterColor(colorGraph));
+        pGraphBorder.setColor(darkerColor(colorGraph));
 
         float widthGraph = (int) (consuption * (width / (float) consuptionMax));
         float round = dpToPx(getContext(), 3);
