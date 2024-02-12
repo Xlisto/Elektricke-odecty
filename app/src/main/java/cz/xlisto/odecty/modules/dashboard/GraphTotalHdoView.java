@@ -36,7 +36,7 @@ public class GraphTotalHdoView extends View {
     private int centerY;
     private int radius;
     private int currentTime, lastTime, showTime;
-    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pClock, pLegend, pTimeLeft, pTextTime;
+    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pTickLegend, pClock, pClockLegend, pLegend, pTimeLeft, pTextTime;
     private ArrayList<HdoModel> modelsFromDatabase;
     private ArrayList<HdoModel> modelsForAllWeek;
     private long timeShift;
@@ -96,11 +96,12 @@ public class GraphTotalHdoView extends View {
         int colorTimePV = a.getColor(R.styleable.GraphTotalHdoView_colorTimePV, Color.CYAN);
         a.recycle();
 
+        boolean antiAliasing = true;
+
         pTimeTUV = new Paint();
         pTimeTUV.setColor(colorTimeTUV);
         pTimeTUV.setStyle(Paint.Style.FILL);
         pTimeTUV.setStrokeWidth(dpToPx(getContext(), 1));
-        boolean antiAliasing = true;
         pTimeTUV.setAntiAlias(antiAliasing);
 
         pTimeTAR = new Paint();
@@ -131,6 +132,13 @@ public class GraphTotalHdoView extends View {
         pLegend.setTextAlign(Paint.Align.LEFT); // Zarovnání textu doleva
         pLegend.setAntiAlias(antiAliasing);
 
+        pTickLegend = new Paint();
+        pTickLegend.setColor(Color.RED);
+        pTickLegend.setStyle(Paint.Style.FILL);
+        pTickLegend.setStrokeWidth(dpToPx(getContext(), 2));
+        pTickLegend.setStrokeCap(Paint.Cap.ROUND);
+        pTickLegend.setAntiAlias(antiAliasing);
+
         pTimeLeft = new Paint();
         pTimeLeft.setColor(colorClock);
         pTimeLeft.setStyle(Paint.Style.FILL);
@@ -159,6 +167,12 @@ public class GraphTotalHdoView extends View {
         pClock.setStyle(Paint.Style.STROKE);
         pClock.setStrokeWidth(dpToPx(getContext(), 1));
         pClock.setAntiAlias(antiAliasing);
+
+        pClockLegend = new Paint();
+        pClockLegend.setColor(colorClock);
+        pClockLegend.setStyle(Paint.Style.STROKE);
+        pClockLegend.setStrokeWidth(dpToPx(getContext(), 1));
+        pClockLegend.setAntiAlias(antiAliasing);
 
         lastTime = 0;
         getCurrentTime();
@@ -364,14 +378,14 @@ public class GraphTotalHdoView extends View {
 
         // Vykreslení legendy
         RectF oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
-        canvas.drawArc(oval, 0, 360, true, pClock);
+        canvas.drawArc(oval, 0, 360, true, pClockLegend);
         canvas.drawText("Čas VT", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
 
 
         legendY += legendSize + legendPadding;
 
         oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
-        canvas.drawArc(oval, 0, 360, true, pTick);
+        canvas.drawArc(oval, 0, 360, true, pTickLegend);
         canvas.drawText("Aktuální čas", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
 
 
@@ -633,6 +647,13 @@ public class GraphTotalHdoView extends View {
         fadeOutAnimator.setDuration(300);
         fadeOutAnimator.addUpdateListener(animation -> {
             pTextTime.setAlpha((Integer) animation.getAnimatedValue());
+            pTimeTAR.setAlpha((Integer) animation.getAnimatedValue());
+            pTimeTUV.setAlpha((Integer) animation.getAnimatedValue());
+            pTimePV.setAlpha((Integer) animation.getAnimatedValue());
+            pLegend.setAlpha((Integer) animation.getAnimatedValue());
+            pTickLegend.setAlpha((Integer) animation.getAnimatedValue());
+            pClockLegend.setAlpha((Integer) animation.getAnimatedValue());
+
             invalidate();
         });
         fadeOutAnimator.addListener(new AnimatorListenerAdapter() {
@@ -656,6 +677,12 @@ public class GraphTotalHdoView extends View {
         fadeInAnimator.setDuration(300);
         fadeInAnimator.addUpdateListener(animation -> {
             pTextTime.setAlpha((Integer) animation.getAnimatedValue());
+            pTimeTAR.setAlpha((Integer) animation.getAnimatedValue());
+            pTimeTUV.setAlpha((Integer) animation.getAnimatedValue());
+            pTimePV.setAlpha((Integer) animation.getAnimatedValue());
+            pLegend.setAlpha((Integer) animation.getAnimatedValue());
+            pTickLegend.setAlpha((Integer) animation.getAnimatedValue());
+            pClockLegend.setAlpha((Integer) animation.getAnimatedValue());
             invalidate();
         });
         fadeInAnimator.start();
