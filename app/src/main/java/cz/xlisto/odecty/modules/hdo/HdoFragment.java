@@ -57,7 +57,7 @@ public class HdoFragment extends Fragment {
     private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo;
     private ImageView imageViewIconNT;
     private SwitchMaterial swHdoService;
-    private Spinner spRele, spReleSettings;
+    private Spinner spReleSettings;
     private RecyclerView rvHdo;
     private long idSubscriptionPoint, timeDifferent;
     private ArrayList<HdoModel> hdoModels = new ArrayList<>();
@@ -93,7 +93,6 @@ public class HdoFragment extends Fragment {
         tvDateHdo = view.findViewById(R.id.tvHdoDate);
         rvHdo = view.findViewById(cz.xlisto.odecty.R.id.rvHdo);
         swHdoService = view.findViewById(R.id.swHdoService);
-        spRele = view.findViewById(R.id.spRele);
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         FloatingActionButton fabAddHdo = view.findViewById(cz.xlisto.odecty.R.id.fabHdo);
@@ -128,7 +127,7 @@ public class HdoFragment extends Fragment {
                 stopService();
             }
 
-            if (reles.size() > 1 && swHdoService.isChecked())
+            if (reles.size() > 1)
                 spReleSettings.setVisibility(View.VISIBLE);
             else
                 spReleSettings.setVisibility(View.GONE);
@@ -137,27 +136,10 @@ public class HdoFragment extends Fragment {
             shPHdo.set(ShPHdo.ARG_RUNNING_SERVICE, isChecked);
         });
 
-        spRele.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadData(spRele.getAdapter().getItem(position).toString());
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                /*ShPHdo shPHdo = new ShPHdo(requireContext());
-                String idSbp = Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getTableHDO();
-                shPHdo.set(ShPHdo.ARG_RELE + idSbp, spReleSettings.getAdapter().getItem(position).toString());
-                HdoData.loadHdoData(requireActivity());*/
-                loadData(spRele.getAdapter().getItem(position).toString());
+                loadData(spReleSettings.getAdapter().getItem(position).toString());
             }
 
 
@@ -360,14 +342,12 @@ public class HdoFragment extends Fragment {
         reles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
         dataHdoSource.close();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, reles);
-        spRele.setAdapter(adapter);
+
         spReleSettings.setAdapter(adapter);
         if (reles.size() > 1)
-            spRele.setVisibility(View.VISIBLE);
-
-        spRele.setVisibility(View.GONE);
-
-
+            spReleSettings.setVisibility(View.VISIBLE);
+        else
+            spReleSettings.setVisibility(View.GONE);
     }
 
 
