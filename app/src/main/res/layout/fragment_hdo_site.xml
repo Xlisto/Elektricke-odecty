@@ -15,15 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:minHeight="48dp"
-            android:entries="@array/distribucni_uzemi_kratke" />
+            android:entries="@array/distribucni_uzemi_kratke"
+            android:minHeight="48dp" />
 
         <Spinner
             android:id="@+id/spDistrict"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -40,10 +40,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.00"
-            android:inputType="text"
-            android:minHeight="48dp"
             android:autofillHints="@string/code_example"
-            android:hint="@string/hint_hdo_code" />
+            android:hint="@string/hint_hdo_code"
+            android:inputType="text"
+            android:minHeight="48dp" />
 
         <TextView
             android:id="@+id/tvHDOKod"
@@ -60,6 +60,30 @@
         android:layout_below="@+id/lnDistributionArea"
         android:orientation="horizontal">
 
+        <Spinner
+            android:id="@+id/spA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/textView45"
+            android:minHeight="48dp" />
+
+        <Spinner
+            android:id="@+id/spB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/textView46"
+            android:minHeight="48dp" />
+
+        <Spinner
+            android:id="@+id/spPB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/textView47"
+            android:minHeight="48dp" />
+
         <TextView
             android:id="@+id/textView45"
             android:layout_width="wrap_content"
@@ -67,41 +91,17 @@
             android:labelFor="@+id/spA"
             android:text="@string/a" />
 
-        <Spinner
-            android:id="@+id/spA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
-            android:labelFor="@id/textView45" />
-
-        <TextView
-            android:id="@+id/textView47"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/b" />
-
-        <Spinner
-            android:id="@+id/spB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
-            android:labelFor="@id/textView46" />
-
         <TextView
             android:id="@+id/textView46"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dp" />
 
-        <Spinner
-            android:id="@+id/spPB"
+        <TextView
+            android:id="@+id/textView47"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp"
-            android:labelFor="@id/textView47" />
+            android:text="@string/b" />
 
     </LinearLayout>
 
@@ -173,7 +173,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lnHdoButtons1"
-        android:minHeight="48dp"/>
+        android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/tvAlertHdoSite"
@@ -203,7 +203,7 @@
         android:id="@+id/rvHdoSite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
-        android:layout_below="@id/tvValidityDate"/>
+        android:layout_below="@id/tvValidityDate"
+        android:layoutAnimation="@anim/layout_animation_fall_down" />
 
 </RelativeLayout>

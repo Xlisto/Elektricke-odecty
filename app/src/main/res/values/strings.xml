@@ -225,8 +225,8 @@
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
-    <string name="write_hdo">Napiště HDO kód a \nstiskněte tlačítko NAČTI ČASY</string>
-    <string name="select_hdo">Vyberte povel přijímače a \nstiskněte tlačítko NAČTI</string>
+    <string name="write_hdo">Vyberte distribuci, napiště HDO kód a \nstiskněte NAČTI HDO</string>
+    <string name="select_hdo">Vyberte distribuci, povel přijímače a \nstiskněte NAČTI HDO</string>
 
     <string name="select_codes">Vyberte skupinu kódů</string>
     <string name="save_hdo">Uložit načtené časy HDO do paměti?</string>
@@ -266,8 +266,8 @@
 
 
     <string name="load_www">Zobraz www</string>
-    <string name="load_time">Načti časy</string>
-    <string name="save_time">Ulož HDO časy</string>
+    <string name="load_time">Načti HDO</string>
+    <string name="save_time">Ulož HDO</string>
     <string name="save_to_clipboard">Ulož do schránky</string>
     <string name="code_example">a1b1dp2</string>
     <string name="hdo_code">HDO kód:</string>

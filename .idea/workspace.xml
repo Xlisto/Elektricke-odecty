@@ -3,6 +3,7 @@
   <component name="AndroidLayouts">
     <shared>
       <config>
+        <device id="_android_virtual_device_id_Pixel_5_API_30" />
         <device id="_android_virtual_device_id_Small_Phone_API_24" />
         <device id="pixel_4_xl" />
         <device id="_device_class_tablet" />
@@ -26,6 +27,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml">
         <config>
+          <state>Landscape</state>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -258,8 +260,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna animace textu zobrazující čas dokonece/začátku následující platnosti HDO. Doplněna variabilní velikost hodin podle proměnné radius a doplněn antialiasing.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Odstraněný přebytečný spinner z fagment_hdo. &#10;Odstraněny všechny vazby na odstraněný spinner z HDOFragmet.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_site.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -269,7 +274,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -967,7 +972,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="182" />
+    <option name="localTasksCounter" value="183" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1041,7 +1046,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Oprava chyby vybraného ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny." />
     <MESSAGE value="Oprava chyby vybraneého ceníku při volbě ceníku v měsíčním odečtu nebo faktuře. Pokud byl filtr nastaven tak, že nezobrazoval aktuálně vybraný ceník, Všechny zobrazené ceníky byly nevybrané. Potom, když se nastavil filtr tak, aby zobrazil vybraný ceník v seznamu. Aktuálně vybraný ceník nebyl označen zatrženým radiobuttonem.&#10;&#10;Problém je řešen odstraněním nastavením proměnné idSelectedPriceList = -1; v PriceListFragment, v posluchači výběru menu na řádku 218. Negativní chování zobrazení vyfiltrovaných ceníků v PriceListFragment zatím nenalezeny." />
     <MESSAGE value="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)" />
     <MESSAGE value="Přidání zobrazení datumového intervalu do hlavičky měsíčních odečtů&#10;Pro lepší přehlednost, aby bylo vidět, že den záznamu není započítán do výpočtu." />
@@ -1066,6 +1070,7 @@
     <MESSAGE value="Přidána animace zobrazení odpočtů do začátku/konce NT při změně odběrného místa." />
     <MESSAGE value="Doplněné řazení načtených časů HDO podle typu relé.&#10;Potřeba postupného vykreslování ve widgetu zobrazující časy HDO." />
     <MESSAGE value="Doplněna animace textu zobrazující čas dokonece/začátku následující platnosti HDO. Doplněna variabilní velikost hodin podle proměnné radius a doplněn antialiasing." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněna animace textu zobrazující čas dokonece/začátku následující platnosti HDO. Doplněna variabilní velikost hodin podle proměnné radius a doplněn antialiasing." />
+    <MESSAGE value="Odstraněný přebytečný spinner z fagment_hdo. &#10;Odstraněny všechny vazby na odstraněný spinner z HDOFragmet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Odstraněný přebytečný spinner z fagment_hdo. &#10;Odstraněny všechny vazby na odstraněný spinner z HDOFragmet." />
   </component>
 </project>

@@ -238,7 +238,6 @@
             android:id="@+id/rvHdoSite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             android:visibility="visible" />
     </RelativeLayout>
