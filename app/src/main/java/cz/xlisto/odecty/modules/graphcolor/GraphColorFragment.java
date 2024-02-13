@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.graphcolor;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataGraphColor;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 
 import static cz.xlisto.odecty.R.menu.menu_graph_color;
 
@@ -41,11 +41,16 @@ public class GraphColorFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        //načtení historie barev
-        DataGraphColor dataGraphColor = new DataGraphColor(getContext());
-        dataGraphColor.open();
-        colorsHistory = dataGraphColor.loadColorsHistory();
-        dataGraphColor.close();
+
+        //posluchač na změnu odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
+                this,
+                (requestKey, result) -> {
+                    loadHistoryColors();
+                    loadColors();
+                }
+        );
     }
 
 
@@ -75,15 +80,7 @@ public class GraphColorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DataGraphColor dataGraphColor = new DataGraphColor(requireContext());
-        dataGraphColor.open();
-        int[] colors = dataGraphColor.loadColors();
-        dataGraphColor.close();
-        //nastavení barev do GraphColorView
-        graphColorView.setColors(colors);
-        //nastavení aktuálních barev do proměnných
-        vtColor = graphColorView.getColorVTHTML();
-        ntColor = graphColorView.getColorNTHTML();
+
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 GraphColorDialogFragment.RESULT_GRAPH_COLOR_DIALOG_FRAGMENT,
@@ -94,6 +91,14 @@ public class GraphColorFragment extends Fragment {
                     graphColorView.setColorsHTML(vtColor, ntColor);
                 }
         );
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadHistoryColors();
+        loadColors();
     }
 
 
@@ -121,7 +126,6 @@ public class GraphColorFragment extends Fragment {
      * @param ntColor barva NT
      */
     private void addAndSaveColorHistory(String vtColor, String ntColor) {
-        Log.w(TAG, "addAndSaveColorHistory: " + vtColor + ";" + ntColor);
         colorsHistory.add(vtColor + ";" + ntColor);
         colorsHistory.remove(0);
         //uloží historii barev
@@ -129,5 +133,33 @@ public class GraphColorFragment extends Fragment {
         dataGraphColor.open();
         dataGraphColor.saveColorsHistory(colorsHistory);
         dataGraphColor.close();
+    }
+
+
+    /**
+     * Načte historii barev.
+     */
+    private void loadHistoryColors() {
+        //načtení historie barev
+        DataGraphColor dataGraphColor = new DataGraphColor(requireContext());
+        dataGraphColor.open();
+        colorsHistory = dataGraphColor.loadColorsHistory();
+        dataGraphColor.close();
+    }
+
+
+    /**
+     * Načte barvy z databáze.
+     */
+    private void loadColors() {
+        DataGraphColor dataGraphColor = new DataGraphColor(requireContext());
+        dataGraphColor.open();
+        int[] colors = dataGraphColor.loadColors();
+        dataGraphColor.close();
+        //nastavení barev do GraphColorView
+        graphColorView.setColors(colors);
+        //nastavení aktuálních barev do proměnných
+        vtColor = graphColorView.getColorVTHTML();
+        ntColor = graphColorView.getColorNTHTML();
     }
 }

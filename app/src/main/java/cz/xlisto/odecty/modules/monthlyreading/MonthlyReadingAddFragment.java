@@ -70,6 +70,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
         if (isFirstLoad)
             btnDate.setText(ViewHelper.getTodayDate());
 

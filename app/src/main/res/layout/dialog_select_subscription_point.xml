@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <Button
+        android:id="@+id/btn1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvSpinnerLabel"
+        android:contentDescription="@string/button_subscription_point_1" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn1"
+        android:contentDescription="@string/button_subscription_point_2" />
+
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn2"
+        android:contentDescription="@string/button_subscription_point_3" />
+
+    <Button
+        android:id="@+id/btn4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn3"
+        android:contentDescription="@string/button_subscription_point_4" />
+
+    <Spinner
+        android:id="@+id/spSubscriptionPoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn4"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:id="@+id/tvSpinnerLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_subscription_point" />
+
+</RelativeLayout>

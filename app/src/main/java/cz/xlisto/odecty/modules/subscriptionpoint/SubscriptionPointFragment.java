@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
@@ -34,6 +35,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +79,7 @@ public class SubscriptionPointFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
         FloatingActionButton fab = view.findViewById(R.id.fab);
         spSubscriptionPoint = view.findViewById(R.id.spSubscriptionPoints);
         tvDescription = view.findViewById(R.id.tvDescription);
@@ -108,6 +111,13 @@ public class SubscriptionPointFragment extends Fragment {
                         deleteItemSubscriptionPoint();
                     }
                 });
+
+        //posluchač na změnu odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
+                this,
+                (requestKey, result) -> onResume()
+        );
     }
 
 

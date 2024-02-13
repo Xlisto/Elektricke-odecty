@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
@@ -60,13 +61,21 @@ public class InvoiceListFragment extends Fragment {
             dataInvoiceSource.close();
             onResume();
         });
+
+
         getParentFragmentManager().setFragmentResultListener(INVOICE_NUMBER_ADD_LISTENER, this, (requestKey, bundle) -> {
             String numberInvoice = bundle.getString(NUMBER_INVOICE);
             long idSubscriptionPoint = bundle.getLong(ID_SUBSCRIPTIONPOINT);
-            DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+            DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
             dataInvoiceSource.open();
             dataInvoiceSource.insertInvoiceList(numberInvoice,idSubscriptionPoint);
             dataInvoiceSource.close();
+            onResume();
+        });
+
+        //změna odběrného místa
+        getParentFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this, (requestKey, bundle) -> {
+            readIdSubscriptionPoint();
             onResume();
         });
     }
@@ -105,7 +114,7 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
         dataSubscriptionPointSource.close();
@@ -124,7 +133,7 @@ public class InvoiceListFragment extends Fragment {
 
 
     private void readIdSubscriptionPoint(){
-        ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
+        ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(requireActivity());
         idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT,-1L);
     }
 }

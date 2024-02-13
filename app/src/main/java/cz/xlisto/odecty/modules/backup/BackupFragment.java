@@ -155,6 +155,8 @@ public class BackupFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
+
         shPBackup = new ShPBackup(requireContext());
         btnBackup = view.findViewById(R.id.btnZalohuj);
         Button btnSelectDir = view.findViewById(R.id.btnVyberSlozkuBackup);

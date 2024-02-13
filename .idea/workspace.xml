@@ -64,6 +64,16 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_select_hdo_category.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_select_subscription_point.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -260,9 +270,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravené texty ve fragment_hdo_site.">
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java" afterDir="false" />
-    </list>
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -393,6 +401,7 @@
     &quot;ApkExportedModule&quot;: &quot;ElOdecet.app&quot;,
     &quot;ExportApk.ApkPathForElOdecet.app&quot;: &quot;C:\\Users\\Xlisto\\AndroidStudioProjects\\ElOdecet\\app&quot;,
     &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
@@ -421,6 +430,7 @@
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED&quot;: &quot;ViewGroup&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
+    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AbsSpinner.java_SELECTED&quot;: &quot;AbsSpinner&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AdapterView.java_SELECTED&quot;: &quot;AdapterView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED&quot;: &quot;Button&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Spinner.java_SELECTED&quot;: &quot;Spinner&quot;,
@@ -969,7 +979,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="184" />
+    <option name="localTasksCounter" value="189" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1043,10 +1053,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="oprava chyby při výběru ceníku z Úpravy/Vytvoření měsíčního odečtu nebo záznamu faktury. Případně výběru ceníku pro porovnání. Chyba nastávala při rotaci obrazovky.&#10;Řešeno odstaraněním vlastních listenerů a nahrazením posluchači pro komunikaci mezi fragmenty (getParentFragmentManager().setFragmentResult... a  getParentFragmentManager().setFragmentResultListener)" />
-    <MESSAGE value="Přidání zobrazení datumového intervalu do hlavičky měsíčních odečtů&#10;Pro lepší přehlednost, aby bylo vidět, že den záznamu není započítán do výpočtu." />
-    <MESSAGE value="Přidána do MonthlyReadingModel metoda toString.&#10;Pro lepší diagnostiku a výpis v logu." />
-    <MESSAGE value="Změna v MonthlyReadingEditFragment v zobrazení měsičního odečtu VT a NT na dvě desetinná místa.&#10;&#10;Záznamy měsíčníh odečtů mohou být na dvě desetinná místa. V případě editace mesíčního záznamu se tato dvě desetinná místa neezobrazovala - byl použit formát řetězce se zaokrouhlením na 1 desetinné místo." />
     <MESSAGE value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
     <MESSAGE value="Doplněný listener v PriceListDetailFragment pro změnu ceníku.&#10;V land režimu, když se zobrazuje současně seznam ceníků a detail ceníku se neměnil obsah detailu ceníku při změně ceníku v seznamu." />
     <MESSAGE value="Opraven pád aplikace při zavření filtru ceníků.&#10;Pád zapříčiněn neinicializovanou proměnnou shPPriceList. Inicializuje se nově v konstruktoru." />
@@ -1068,6 +1074,10 @@
     <MESSAGE value="Doplněna animace textu zobrazující čas dokonece/začátku následující platnosti HDO. Doplněna variabilní velikost hodin podle proměnné radius a doplněn antialiasing." />
     <MESSAGE value="Odstraněný přebytečný spinner z fagment_hdo. &#10;Odstraněny všechny vazby na odstraněný spinner z HDOFragmet." />
     <MESSAGE value="Opravené texty ve fragment_hdo_site." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravené texty ve fragment_hdo_site." />
+    <MESSAGE value="Doplněná animace zbývajících textů legendy v GraphTotalHdoView." />
+    <MESSAGE value="Povolený antialiasing v GraphConsuptionInvoiceGraphView." />
+    <MESSAGE value="Povolený antialisng v GraphConsuptionInvoiceGraphView." />
+    <MESSAGE value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
   </component>
 </project>

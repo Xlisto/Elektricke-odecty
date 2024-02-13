@@ -13,6 +13,9 @@
         <item name="android:statusBarColor">@color/color_bar</item>
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">@color/color_bar</item>
+        <item name="android:itemBackground">@color/menuBackgroundColor</item>
+        <item name="android:dividerHeight">1dp</item>
+
 
     </style>
 
@@ -24,5 +27,7 @@
     <style name="Theme.Odecty.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Odecty.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
 
 </resources>

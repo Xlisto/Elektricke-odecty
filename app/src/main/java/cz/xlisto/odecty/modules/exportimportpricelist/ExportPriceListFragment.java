@@ -79,6 +79,8 @@ public class ExportPriceListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
+
         recyclerView = view.findViewById(R.id.recyclerViewExport);
 
         //posluchač dialogu pro vytvoření zálohy

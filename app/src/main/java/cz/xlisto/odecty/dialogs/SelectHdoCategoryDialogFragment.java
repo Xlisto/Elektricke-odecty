@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,7 +23,7 @@ import cz.xlisto.odecty.R;
  * dialogové okno se spinnerem pro výběr kódu
  * Xlisto 11.07.2023 5:31
  */
-public class SpinnerDialogFragment extends DialogFragment {
+public class SelectHdoCategoryDialogFragment extends DialogFragment {
     private static final String TAG = "SpinnerDialogFragment";
     public static final String ARG_TITLE = "title";
     public static final String ARG_CODE = "code";
@@ -54,18 +53,17 @@ public class SpinnerDialogFragment extends DialogFragment {
     private boolean isExceptionArea = false;
 
 
-    public static SpinnerDialogFragment newInstance(String title, ArrayList<String> codes, ArrayList<String> codesException, ArrayList<String[]> groupsList, ArrayList<String[]> groupExceptionList, String area, String exceptionArea, String flagResultDialogFragment) {
-        SpinnerDialogFragment spinnerDialogFragment = new SpinnerDialogFragment();
-        spinnerDialogFragment.title = title;
-        spinnerDialogFragment.codes = codes;
-        spinnerDialogFragment.groupsList = groupsList;
-        spinnerDialogFragment.codesException = codesException;
-        spinnerDialogFragment.groupExceptionList = groupExceptionList;
-        spinnerDialogFragment.exceptionArea = exceptionArea;
-        spinnerDialogFragment.area = area;
-        spinnerDialogFragment.flagResultDialogFragment = flagResultDialogFragment;
-        Log.w(TAG, "newInstance: " + codes.size() + " " + codesException.size() + " " + groupsList.size() + " " + groupExceptionList.size() + " " + area + " " + exceptionArea);
-        return spinnerDialogFragment;
+    public static SelectHdoCategoryDialogFragment newInstance(String title, ArrayList<String> codes, ArrayList<String> codesException, ArrayList<String[]> groupsList, ArrayList<String[]> groupExceptionList, String area, String exceptionArea, String flagResultDialogFragment) {
+        SelectHdoCategoryDialogFragment selectHdoCategoryDialogFragment = new SelectHdoCategoryDialogFragment();
+        selectHdoCategoryDialogFragment.title = title;
+        selectHdoCategoryDialogFragment.codes = codes;
+        selectHdoCategoryDialogFragment.groupsList = groupsList;
+        selectHdoCategoryDialogFragment.codesException = codesException;
+        selectHdoCategoryDialogFragment.groupExceptionList = groupExceptionList;
+        selectHdoCategoryDialogFragment.exceptionArea = exceptionArea;
+        selectHdoCategoryDialogFragment.area = area;
+        selectHdoCategoryDialogFragment.flagResultDialogFragment = flagResultDialogFragment;
+        return selectHdoCategoryDialogFragment;
     }
 
 
@@ -74,7 +72,7 @@ public class SpinnerDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(title);
-        View view = View.inflate(requireContext(), R.layout.dialog_spinner, null);
+        View view = View.inflate(requireContext(), R.layout.dialog_select_hdo_category, null);
         spinner = view.findViewById(R.id.spCodes);
         swExceptionArea = view.findViewById(R.id.swExceptionArea);
         TextView tvExceptionArea = view.findViewById(R.id.tvExceptionArea);

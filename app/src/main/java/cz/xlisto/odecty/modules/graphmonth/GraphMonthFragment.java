@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.graphmonth;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataGraphMonth;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.shp.ShPGraphMonth;
 
 /**
@@ -39,6 +41,15 @@ public class GraphMonthFragment extends Fragment {
     }
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //posluchač změny odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this, (requestKey, result) -> graphMonthView.setConsuption(new DataGraphMonth(requireContext()).loadConsuptions()));
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,7 +62,7 @@ public class GraphMonthFragment extends Fragment {
         btnLeft = view.findViewById(R.id.imgBtnLeft);
         btnRight = view.findViewById(R.id.imgBtnRight);
 
-        shPGraphMonth = new ShPGraphMonth(getContext());
+        shPGraphMonth = new ShPGraphMonth(requireContext());
 
 
         btnShowVT.setOnClickListener(v -> {
@@ -131,11 +142,15 @@ public class GraphMonthFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        DataGraphMonth dataGraphMonth = new DataGraphMonth(getContext());
+        requireActivity().invalidateOptionsMenu();
+
+        DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
         ConsuptionContainer consuptionContainer = dataGraphMonth.loadConsuptions();
         graphMonthView.setConsuption(consuptionContainer);
+        Log.w(TAG, "onResume: " + showPeriod + " " + showVT + " " + showNT + " " + showTypeGraph + " " + compareMonth);
+        Log.w(TAG, "onResume: "+consuptionContainer.getYearConsuption().size());
 
-        DataSettingsSource dataSettingsSource = new DataSettingsSource(getContext());
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
         dataSettingsSource.open();
         int[] graphColors = dataSettingsSource.loadColorVTNT();
         dataSettingsSource.close();

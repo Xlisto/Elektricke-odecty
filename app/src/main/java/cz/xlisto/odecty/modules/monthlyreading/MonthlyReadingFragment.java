@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -78,6 +79,7 @@ public class MonthlyReadingFragment extends Fragment {
                         monthlyReadingAdapter.deleteMonthlyReading(getContext());
                 });
 
+        //posluchač změny filtru
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingFilterDialogFragment.MONTHLY_READING_FILTER, this,
                 (requestKey, result) -> {
                     to = result.getLong(MonthlyReadingFilterDialogFragment.TO);
@@ -91,6 +93,13 @@ public class MonthlyReadingFragment extends Fragment {
                         tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
                     }
                     loadDataFromDatabase();
+                });
+
+        //posluchač změny odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
+                (requestKey, result) -> {
+                    loadDataFromDatabase();
+                    showFab();
                 });
     }
 

@@ -120,6 +120,8 @@ public class ImportPriceListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
+
         shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);

@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataHdoSource;
-import cz.xlisto.odecty.dialogs.SpinnerDialogFragment;
+import cz.xlisto.odecty.dialogs.SelectHdoCategoryDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.HdoModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -109,7 +109,7 @@ public class HdoSiteFragment extends Fragment {
 
         viewModel.shouldShowDialog().observe(this, shouldShowDialog -> {
             if (shouldShowDialog) {
-                SpinnerDialogFragment.newInstance(getResources().getString(R.string.select), codes, codesException, groupsList, groupsExceptionList, resultArea, exceptionArea, FLAG_RESULT_SPINNER_DIALOG_FRAGMENT)
+                SelectHdoCategoryDialogFragment.newInstance(getResources().getString(R.string.select), codes, codesException, groupsList, groupsExceptionList, resultArea, exceptionArea, FLAG_RESULT_SPINNER_DIALOG_FRAGMENT)
                         .show(getChildFragmentManager(), "spinnerDialog");
             }
             viewModel.hideDialog();
@@ -201,9 +201,9 @@ public class HdoSiteFragment extends Fragment {
 
         //posluchač pro zavření dialogového okna s dotazem na výběr skupiny a kategorie
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_SPINNER_DIALOG_FRAGMENT, this, (requestKey, result) -> {
-            String group = result.getString(SpinnerDialogFragment.ARG_GROUP);
-            String category = result.getString(SpinnerDialogFragment.ARG_CATEGORY);
-            boolean isYes = result.getBoolean(SpinnerDialogFragment.RESULT);
+            String group = result.getString(SelectHdoCategoryDialogFragment.ARG_GROUP);
+            String category = result.getString(SelectHdoCategoryDialogFragment.ARG_CATEGORY);
+            boolean isYes = result.getBoolean(SelectHdoCategoryDialogFragment.RESULT);
 
             if (isYes) {
                 String code = etHdoCode.getText().toString();

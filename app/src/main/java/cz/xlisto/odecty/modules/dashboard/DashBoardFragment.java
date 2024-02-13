@@ -69,6 +69,7 @@ public class DashBoardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
         rv = view.findViewById(R.id.rvInvoiceSum);
         btnLeftShowInvoiceSum = view.findViewById(R.id.imgBtnLeftDashBoard);
         btnRightShowInvoiceSum = view.findViewById(R.id.imgBtnRightDashBoard);

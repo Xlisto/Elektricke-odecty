@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataHdoSource;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.SimpleDateFormatHelper;
 import cz.xlisto.odecty.models.HdoModel;
@@ -85,6 +86,8 @@ public class HdoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requireActivity().invalidateOptionsMenu();
+
         hdoServiceIntent = new Intent(requireActivity(), HdoService.class);
 
         tvTimeHdo = view.findViewById(cz.xlisto.odecty.R.id.tvTimeHdo);
@@ -149,11 +152,19 @@ public class HdoFragment extends Fragment {
             }
         });
 
+        //posluchač na smazání HDO
         requireActivity().getSupportFragmentManager().setFragmentResultListener(HdoAdapter.FLAG_HDO_ADAPTER_DELETE, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 deleteHdo();
             }
         });
+
+        //posluchač pro změnu odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener
+                (SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
+                        this,
+                        (requestKey, result) -> onResume()
+                );
     }
 
 

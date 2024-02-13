@@ -146,6 +146,7 @@ public class PriceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        requireActivity().invalidateOptionsMenu();
         FloatingActionButton fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.rv_price_list);
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist);

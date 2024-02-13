@@ -25,4 +25,6 @@
     <color name="color_hdo_time_TAR">#96D777</color>
     <color name="color_hdo_time_PV">#607EA3</color>
 
+    <color name="menuBackgroundColor">#FFFFFFFF</color>
+
 </resources>

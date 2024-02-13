@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.activity.OnBackPressedCallback;
@@ -22,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
 import cz.xlisto.odecty.modules.dashboard.DashBoardFragment;
 import cz.xlisto.odecty.modules.exportimportpricelist.ExportPriceListFragment;
@@ -42,6 +46,7 @@ import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.utils.FragmentChange;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
+
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
@@ -271,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 }
+                invalidateOptionsMenu();
             }
         });
 
@@ -291,8 +297,47 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(getResources().getString(R.string.subscription_point));
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == 0) {
+            SubscriptionPointDialogFragment.newInstance()
+                    .show(getSupportFragmentManager(), SubscriptionPointDialogFragment.class.getSimpleName());
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    //pro skrytí položky menu
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Seznam fragmentů
+        List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
+                "DashBoardFragment","ExportPriceListFragment","ImportPriceListFragment","MonthlyReadingFragment",
+                "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
+                "SubscriptionPointFragment", "GraphColorFragment");
+
+       //kontrola, zda-li je některý fragment zobrazen
+        boolean isFragmentVisible = false;
+        for(String tag : visibleFragmentsTags){
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+            if(fragment != null && fragment.isVisible()){
+                isFragmentVisible = true;
+                break;
+            }
+        }
+
+        //zobrazí položku menu, pokud je některý fragment zobrazen
+        MenuItem item = menu.findItem(0);
+        item.setVisible(isFragmentVisible);
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
 

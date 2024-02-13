@@ -12,6 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/color_bar</item>
         <!-- Customize your theme here. -->
+        <item name="android:itemBackground">@color/menuBackgroundColor</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="background">@color/color_bar</item>
+
 
     </style>
 

@@ -400,5 +400,11 @@
     <string name="overpayment">Přeplatek:\u0020</string>
     <string name="underpayment">Nedoplatek:\u0020</string>
 
-
+    <string name="select_subscription_point">Vyberte odběrné místo</string>
+    <string name="selecting_subscription_point">Výběr odběrného místa</string>
+    <string name="subscription_point">Odběrné místo</string>
+    <string name="button_subscription_point_1">Vybere první odběrné místo</string>
+    <string name="button_subscription_point_2">Vybere druhé odběrné místo</string>
+    <string name="button_subscription_point_3">Vybere třetí odběrné místo</string>
+    <string name="button_subscription_point_4">Vybere čtvrté odběrné místo</string>
 </resources>

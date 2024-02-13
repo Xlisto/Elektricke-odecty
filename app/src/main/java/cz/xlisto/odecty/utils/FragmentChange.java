@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import cz.xlisto.odecty.R;
 
+
 /**
  * Vymění fragmenty
  */
@@ -45,13 +46,16 @@ public class FragmentChange {
         }
 
         if (fragment != null)
-            fragmentTransaction.replace(R.id.fragmentContainerView, fragment);
+            fragmentTransaction.replace(R.id.fragmentContainerView, fragment, fragment.getClass().getSimpleName());
 
-        if (add)
+        if (add) {
             fragmentTransaction.addToBackStack(null);
-
+        }
         fragmentTransaction.commit();
+
+        fa.invalidateOptionsMenu();
     }
+
 
     public enum Transaction {
         MOVE,
