@@ -62,6 +62,9 @@ public class GraphMonthFragment extends Fragment {
         btnLeft = view.findViewById(R.id.imgBtnLeft);
         btnRight = view.findViewById(R.id.imgBtnRight);
 
+        //zakázání hardwarové akcelerace - kvůli vykreslování čárkováné osy
+        //graphMonthView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
         shPGraphMonth = new ShPGraphMonth(requireContext());
 
 

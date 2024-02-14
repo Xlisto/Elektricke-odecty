@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.ConsuptionModel;
-import cz.xlisto.odecty.utils.ColorHelper;
 import cz.xlisto.odecty.utils.ColorUtils;
 import cz.xlisto.odecty.utils.DensityUtils;
 
@@ -118,10 +117,9 @@ public class GraphMonthView extends View {
         setAxisHorizontalDescription(canvas);//první vykleslení je pro získání šířky
         setAxisHorizontal(canvas);
         drawLineVTNT(canvas);
-        setAxisHorizontalDescription(canvas);
         setMaxMoveGraph();
         setAxisVerticalDescription(canvas);
-
+        setAxisHorizontalDescription(canvas);
     }
 
 
@@ -332,10 +330,10 @@ public class GraphMonthView extends View {
         Paint background = new Paint();
 
         text.setColor(getResources().getColor(R.color.color_axis));
+
         text.setTextSize(dipToPx(10));
 
         background.setColor(getResources().getColor(R.color.color_graph_background));
-
         ArrayList<ConsuptionModel> consuption = new ArrayList<>();
         int xMoveGraph = 0;
         switch (period) {
@@ -397,7 +395,7 @@ public class GraphMonthView extends View {
         line.setColor(getResources().getColor(R.color.color_axis));
         lineVT.setStrokeWidth(strokeWidth);
         lineNT.setStrokeWidth(strokeWidth);
-        int borderGraph=DensityUtils.dpToPx(getContext(), 1);
+        int borderGraph = DensityUtils.dpToPx(getContext(), 1);
         lineVTBorder.setStrokeWidth(borderGraph);
         lineNTBorder.setStrokeWidth(borderGraph);
         line.setStrokeWidth(1);
@@ -406,8 +404,7 @@ public class GraphMonthView extends View {
         line.setStyle(style);
         lineVTBorder.setStyle(Paint.Style.STROKE);
         lineNTBorder.setStyle(Paint.Style.STROKE);
-        line.setPathEffect(new DashPathEffect(new float[]{10f, 20f}, 0f));
-
+        line.setPathEffect(new DashPathEffect(new float[]{15f, 30f}, 0f));
 
         ArrayList<ConsuptionModel> consuption = new ArrayList<>();
         int xMoveGraph = 0;
@@ -453,8 +450,11 @@ public class GraphMonthView extends View {
                     drawLine(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), stopX, heightGraph - (int) (stopVTEnd * steep / multipleSteep));
                     drawCircle(canvas, lineVT, startX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
                 } else {
-                    drawRect(canvas, lineVT, startX, heightGraph, stopX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
-                    drawRect(canvas, lineVTBorder, startX, heightGraph, stopX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                    int left = stopX - dipToPx(12) + borderGraph;
+                    int bottom = heightGraph;
+                    int top = heightGraph - (int) (stopVTStart * steep / multipleSteep);
+                    drawRect(canvas, lineVT, left, top, startX, bottom);
+                    drawRect(canvas, lineVTBorder, left, top, startX, bottom);
                 }
             }
             if (showNT) {
@@ -463,21 +463,27 @@ public class GraphMonthView extends View {
                     drawCircle(canvas, lineNT, startX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
 
                 } else {
-
-                    drawRect(canvas, lineNT, startX+borderGraph, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
-                    drawRect(canvas, lineNTBorder, startX+borderGraph, heightGraph, stopX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                    int left = startX + borderGraph;
+                    int bottom = heightGraph;
+                    int right = stopX + dipToPx(12);
+                    int top = heightGraph - (int) (stopNTStart * steep / multipleSteep);
+                    drawRect(canvas, lineNT, left, top, right, bottom);
+                    drawRect(canvas, lineNTBorder, left, top, right, bottom);
                 }
             }
             int minConsuption = Math.min(stopVTStart, stopNTStart);
             if (!showNT) minConsuption = stopVTStart;
             if (!showVT) minConsuption = stopNTStart;
 
-            if (graphType)
+            if (graphType) {
                 //vykreslení pomocných svislých os
-                drawLine(canvas, line, startX, heightGraph - dipToPx(10), startX, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
-            else
+                int startY = heightGraph - dipToPx(10);
+                int stopY = heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10);
+                if (startY > stopY)
+                    drawLine(canvas, line, startX, startY, startX, stopY);
+            } else
                 //vykreslení spotřeby ve spodní části sloupců
-                drawConsuption(canvas, startX+borderGraph/2, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
+                drawConsuption(canvas, startX + borderGraph / 2, consuption.get(i).getConsuptionVT(), consuption.get(i).getConsuptionNT());
         }
 
         //poslední záznam
@@ -489,16 +495,24 @@ public class GraphMonthView extends View {
                 if (graphType)
                     drawCircle(canvas, lineVT, lastX, heightGraph - (int) (stopVTStart * steep / multipleSteep), dipToPx(3));
                 else {
-                    drawRect(canvas, lineVT, lastX, heightGraph, lastX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
-                    drawRect(canvas, lineVTBorder, lastX, heightGraph, lastX - dipToPx(12)+borderGraph, heightGraph - (int) (stopVTStart * steep / multipleSteep));
+                    int bottom = heightGraph;
+                    int left = lastX - dipToPx(12) + borderGraph;
+                    int top = heightGraph - (int) (stopVTStart * steep / multipleSteep);
+                    drawRect(canvas, lineVT, left, top, lastX, bottom);
+                    drawRect(canvas, lineVTBorder, left, top, lastX, bottom);
+
                 }
             }
             if (showNT) {
                 if (graphType)
                     drawCircle(canvas, lineNT, lastX, heightGraph - (int) (stopNTStart * steep / multipleSteep), dipToPx(3));
                 else {
-                    drawRect(canvas, lineNT, lastX+borderGraph, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
-                    drawRect(canvas, lineNTBorder, lastX+borderGraph, heightGraph, lastX + dipToPx(12), heightGraph - (int) (stopNTStart * steep / multipleSteep));
+                    int left = lastX + borderGraph;
+                    int right = lastX + dipToPx(12);
+                    int bottom = heightGraph;
+                    int top = heightGraph - (int) (stopNTStart * steep / multipleSteep);
+                    drawRect(canvas, lineNT, left, top, right, bottom);
+                    drawRect(canvas, lineNTBorder, left, top, right, bottom);
                 }
             }
             //vykreslení spotřeby ve spodní části sloupců
@@ -509,7 +523,10 @@ public class GraphMonthView extends View {
             int minConsuption = Math.min(stopVTStart, stopNTStart);
             if (!showNT) minConsuption = stopVTStart;
             if (!showVT) minConsuption = stopNTStart;
-            drawLine(canvas, line, lastX, heightGraph - dipToPx(10), lastX, heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10));
+            int startY = heightGraph - dipToPx(10);
+            int stopY = heightGraph - (int) (minConsuption * steep / multipleSteep) + dipToPx(10);
+            if (startY > stopY && graphType)
+                drawLine(canvas, line, lastX, startY, lastX, stopY);
 
             drawLegend(canvas, lineVT, lineNT);
         }
@@ -645,20 +662,28 @@ public class GraphMonthView extends View {
         int textMeasure = Math.max(textMeasureVT, textMeasureNT);
         if (x > width + 50)
             moveConsuption = 0;//deaktivuje animaci u spotřeby ve spodním části sloupcového grafu
+
+        //vykreslení spotřeby ve spodní části sloupce
+        int round = dipToPx(4);
         //VT
         if (showVT) {
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), background);
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y - dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y - dipToPx(11), dipToPx(4), dipToPx(4), border);
+            int left = x - dipToPx(1) - moveConsuption;
+            int right = x + textMeasure + dipToPx(5) - moveConsuption;
+            int top = y - dipToPx(1);
+            int bottom = y - dipToPx(11);
+            canvas.drawRoundRect(left, bottom, right, top, round, round, background);
+            canvas.drawRoundRect(left, bottom, right, top, round, round, border);
             canvas.drawText("VT: " + DecimalFormatHelper.df2.format(vt), x + dipToPx(2) - moveConsuption, y - dipToPx(3), text);
-
-
         }
         //NT
         if (showNT) {
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y + dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y + dipToPx(11), dipToPx(4), dipToPx(4), background);
-            canvas.drawRoundRect(x - dipToPx(1) - moveConsuption, y + dipToPx(1), x + textMeasure + dipToPx(5) - moveConsuption, y + dipToPx(11), dipToPx(4), dipToPx(4), border);
+            int left = x - dipToPx(1) - moveConsuption;
+            int right = x + textMeasure + dipToPx(5) - moveConsuption;
+            int top = y + dipToPx(1);
+            int bottom = y + dipToPx(11);
+            canvas.drawRoundRect(left, top, right, bottom, dipToPx(4), dipToPx(4), background);
+            canvas.drawRoundRect(left, top, right, bottom, dipToPx(4), dipToPx(4), border);
             canvas.drawText("NT: " + DecimalFormatHelper.df2.format(nt), x + dipToPx(2) - moveConsuption, y + dipToPx(9), text);
-
         }
         canvas.rotate(90, x, y);
 

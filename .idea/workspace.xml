@@ -270,7 +270,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -279,7 +284,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-RF8MA155T3J-v4PXFC._adb-tls-connect._tcp]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -440,7 +445,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/01.07.2023  20.09.26 ElektroDroid.zip&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -979,7 +984,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="189" />
+    <option name="localTasksCounter" value="190" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
