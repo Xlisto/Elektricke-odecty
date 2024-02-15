@@ -3,13 +3,16 @@
   <component name="AndroidLayouts">
     <shared>
       <config>
+        <device id="_android_virtual_device_id_Medium_Phone_API_24" />
+        <device id="pixel_2_xl" />
+        <device id="_device_class_phone" />
+        <device id="_android_virtual_device_id_Pixel_2_API_21" />
         <device id="_android_virtual_device_id_Pixel_5_API_30" />
         <device id="_android_virtual_device_id_Small_Phone_API_24" />
         <device id="pixel_4_xl" />
         <device id="_device_class_tablet" />
         <device id="_device_class_desktop" />
         <device id="2.7in QVGA" />
-        <device id="_device_class_phone" />
       </config>
     </shared>
     <layouts>
@@ -270,11 +273,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravené vykreslení sloupcového grafu.&#10;Upravené vykreslování sloupcového grafu, aby se vykresloval zleva doprava a ze zhora dolu. Na starších Androidech je nutné dodržet toto pořadí, jinak se nevykreslí.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/TextSizeAdjuster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/shape_montly_reading_yes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/shape_monthly_reading_yes.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,7 +290,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[adb-RF8MA155T3J-v4PXFC._adb-tls-connect._tcp]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Medium_Phone_API_24.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -342,8 +348,8 @@
         <option value="Interface" />
         <option value="resourceFile" />
         <option value="valueResourceFile" />
-        <option value="Class" />
         <option value="layoutResourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -984,7 +990,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="190" />
+    <option name="localTasksCounter" value="191" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1058,7 +1064,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Do položky v seznamu ceníku doplněna celková platnost ceníku.&#10;Původní počátek platnosti ceníku a konec platnosti ceníku vedle názvu sazby byl nepřehledný. A klamal tím, že konec platnosti bylo možno zaměnit za počátek platnosti ceníku. &#10;Nově je zobrazena platnost ceníku celá." />
     <MESSAGE value="Doplněný listener v PriceListDetailFragment pro změnu ceníku.&#10;V land režimu, když se zobrazuje současně seznam ceníků a detail ceníku se neměnil obsah detailu ceníku při změně ceníku v seznamu." />
     <MESSAGE value="Opraven pád aplikace při zavření filtru ceníků.&#10;Pád zapříčiněn neinicializovanou proměnnou shPPriceList. Inicializuje se nově v konstruktoru." />
     <MESSAGE value="Upraveno rozložení položky ceníku. &#10;Změněna vzájemná pozice textview platnosti ceníku a pojmenování sazby." />
@@ -1083,6 +1088,7 @@
     <MESSAGE value="Povolený antialiasing v GraphConsuptionInvoiceGraphView." />
     <MESSAGE value="Povolený antialisng v GraphConsuptionInvoiceGraphView." />
     <MESSAGE value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
+    <MESSAGE value="Opravené vykreslení sloupcového grafu.&#10;Upravené vykreslování sloupcového grafu, aby se vykresloval zleva doprava a ze zhora dolu. Na starších Androidech je nutné dodržet toto pořadí, jinak se nevykreslí." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opravené vykreslení sloupcového grafu.&#10;Upravené vykreslování sloupcového grafu, aby se vykresloval zleva doprava a ze zhora dolu. Na starších Androidech je nutné dodržet toto pořadí, jinak se nevykreslí." />
   </component>
 </project>

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
     android:animateLayoutChanges="false"
-    android:background="@drawable/shape_montly_reading_yes">
+    android:background="@drawable/shape_monthly_reading_yes">
 
     <RelativeLayout
         android:id="@+id/rl1"
@@ -27,7 +27,8 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/icon_monthly_result" />
 
         <RelativeLayout
             android:id="@+id/rl2"
@@ -75,18 +76,20 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvVTrozdil"
+                    android:id="@+id/tvVtRozdil"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
                     android:gravity="end"
                     android:text="@string/nuly"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:id="@+id/tvNTrozdil"
+                    android:id="@+id/tvNtRozdil"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
                     android:layout_marginStart="15dp"
                     android:gravity="end"
                     android:text="@string/nuly"
@@ -115,11 +118,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@id/lnDifferences"
                 android:gravity="end"
                 android:text="@string/nuly"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="RelativeOverlap" />
 
             <TextView
                 android:id="@+id/tvItemNTPrice"
@@ -127,7 +130,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_below="@+id/tvItemVTPrice"
-                android:layout_toEndOf="@id/lnDifferences"
                 android:gravity="end"
                 android:text="@string/nuly"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -315,10 +317,11 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/tvDate"
         android:layout_toStartOf="@id/imageViewWarningMonthlyReading"
-        android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical"
+        android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical|end"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="10sp"
+        android:textSize="11sp"
         android:textStyle="bold" />
 
     <ImageView
@@ -329,6 +332,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="-3dp"
         android:visibility="invisible"
-        app:srcCompat="@drawable/ic_warning" />
+        app:srcCompat="@drawable/ic_warning"
+        android:contentDescription="@string/icon_monthly_alert" />
 
 </RelativeLayout>

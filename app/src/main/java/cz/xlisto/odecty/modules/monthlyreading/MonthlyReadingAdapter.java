@@ -14,7 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -34,6 +36,7 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.TextSizeAdjuster;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
@@ -54,10 +57,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
-        RelativeLayout rootRelativeLayout, rl3;
+        RelativeLayout rootRelativeLayout, rl2, rl3;
         LinearLayout lnButtons;
         TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth, tvDateDetail,
-                tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNtDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice;
+                tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice,
+                tvVtDescription, tvNtDescription;
         ImageView ivIconResult, ivWarning;
         Button btnEdit, btnDelete;
 
@@ -87,14 +91,16 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         MyViewHolder vh = new MyViewHolder(v);
         vh.rootRelativeLayout = v.findViewById(R.id.rlItemMonthlyReading);
         vh.lnButtons = v.findViewById(R.id.lnButtonsMonthlyItem);
+        vh.rl2 = v.findViewById(R.id.rl2);
         vh.rl3 = v.findViewById(R.id.rl3);
         vh.tvDate = v.findViewById(R.id.tvDate);
         vh.tvDateDetail = v.findViewById(R.id.tvDateDetail);
         vh.tvPriceList = v.findViewById(R.id.tvTarif);
         vh.tvVt = v.findViewById(R.id.tvVT);
         vh.tvNt = v.findViewById(R.id.tvNT);
-        vh.tvVtDif = v.findViewById(R.id.tvVTrozdil);
-        vh.tvNtDif = v.findViewById(R.id.tvNTrozdil);
+        vh.tvVtDif = v.findViewById(R.id.tvVtRozdil);
+        vh.tvNtDif = v.findViewById(R.id.tvNtRozdil);
+        vh.tvVtDescription = v.findViewById(R.id.tvVTDescription);
         vh.tvNtDescription = v.findViewById(R.id.tvNTDescription);
         vh.tvPozePrice = v.findViewById(R.id.tvPozePrice);
         vh.tvPayment = v.findViewById(R.id.tvPaymentPrice);
@@ -176,7 +182,6 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     priceList = priceListRegulBuilder.getRegulPriceList();
 
 
-
                     overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
 
                 }
@@ -209,7 +214,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             int imageResource = R.mipmap.ic_ne;
             if (different >= 0) {
                 color = "#008000";
-                holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_montly_reading_yes, null));
+                holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_yes, null));
                 imageResource = R.mipmap.ic_ano;
             }
 
@@ -224,6 +229,13 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvMonthPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(monthPrice)));
             holder.tvTotalPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_price_html, DecimalFormatHelper.df2.format(total), differenceDescription)));
             holder.tvDifferentPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_different_html, color, DecimalFormatHelper.df2.format(different))));
+
+            List<TextView> textViewsVt = Arrays.asList(holder.tvVtDescription, holder.tvVt, holder.tvVtDif, holder.tvVtPrice);
+            List<TextView> textViewsNt = Arrays.asList(holder.tvNtDescription, holder.tvNt, holder.tvNtDif, holder.tvNtPrice);
+
+            TextSizeAdjuster.adjustTextSize(holder.rl3, textViewsVt, context);
+            TextSizeAdjuster.adjustTextSize(holder.rl3, textViewsNt, context);
+
         }
 
         holder.rootRelativeLayout.setOnClickListener(v -> {
