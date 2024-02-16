@@ -30,10 +30,11 @@ import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_SUBSCRIPTION_POINT;
 import static cz.xlisto.odecty.databaze.DbHelper.VT;
 import static cz.xlisto.odecty.databaze.DbHelper.ZAPLACENO;
 
+
 /**
  * Přístup k databázi odběrných míst, měsíčních odečtů atd.
  */
-public class DataSubscriptionPointSource extends DataSource{
+public class DataSubscriptionPointSource extends DataSource {
     private static final String TAG = "DataSubscriptionPointSource";
 
 
@@ -49,7 +50,7 @@ public class DataSubscriptionPointSource extends DataSource{
     }
 
 
-    public void insertMonthlyReading(String tableName,MonthlyReadingModel monthlyReading) {
+    public void insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
         database.insert(tableName, null, createContentValue(monthlyReading));
     }
 
@@ -147,12 +148,14 @@ public class DataSubscriptionPointSource extends DataSource{
     }
 
 
-    /** Sečte platby jedné faktury
+    /**
+     * Sečte platby jedné faktury
+     *
      * @param idFak id faktury
      * @param table jméno tabulky
      * @return součet plateb
      */
-    public double loadSumPayment(long idFak, String table){
+    public double loadSumPayment(long idFak, String table) {
         String selection = "id_fak=?";
         String[] args = new String[]{String.valueOf(idFak)};
         Cursor cursor = database.query(table, new String[]{"SUM(castka)"}, selection, args, null, null, null);
@@ -321,7 +324,7 @@ public class DataSubscriptionPointSource extends DataSource{
      *
      * @return id odběrného místa
      */
-    public long loadFirstIdSubscriptionPoint(){
+    public long loadFirstIdSubscriptionPoint() {
         Cursor cursor = database.query(TABLE_NAME_SUBSCRIPTION_POINT,
                 new String[]{"_id"},
                 null,
@@ -329,13 +332,14 @@ public class DataSubscriptionPointSource extends DataSource{
                 null,
                 null,
                 null);
-        if(cursor.getCount() == 0)
+        if (cursor.getCount() == 0)
             return -1;
         cursor.moveToFirst();
         long id = cursor.getLong(0);
         cursor.close();
         return id;
     }
+
 
     /**
      * Načte arraylist odběrných míst podle argumentů a setřídí podle názvu odběrného místa
@@ -383,6 +387,20 @@ public class DataSubscriptionPointSource extends DataSource{
         int itemsCount = cursor.getInt(0);
         cursor.close();
         return itemsCount;
+    }
+
+
+    /**
+     * Sečte počet odběrných míst
+     *
+     * @return počet odběrných míst
+     */
+    public int countSubscriptionPoints() {
+        Cursor cursor = database.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME_SUBSCRIPTION_POINT, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
     }
 
 

@@ -7,6 +7,7 @@ import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -16,6 +17,11 @@ import java.util.List;
  */
 public class TextSizeAdjuster {
     private static final String TAG = "TextSizeAdjuster";
+
+    public static void adjustTextSize(ViewGroup parentView, TextView textView, Context context) {
+        List<TextView> textViews = Collections.singletonList(textView);
+        adjustTextSize(parentView, textViews, context);
+    }
 
 
     public static void adjustTextSize(ViewGroup parentView, List<TextView> textViews, Context context) {
@@ -42,6 +48,12 @@ public class TextSizeAdjuster {
                     // Získání marginů pro každý TextView
                     ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
                     totalTextWidth += lp.leftMargin + lp.rightMargin; // Přidání marginů vlevo a v pravo
+
+                    // Přidání paddingu vlevo a v pravo rodičovského view
+                    totalTextWidth += parentView.getPaddingStart()+parentView.getPaddingEnd();
+
+                    // Přidání paddingu vlevo a v pravo TextView
+                    totalTextWidth += textView.getPaddingStart()+textView.getPaddingEnd();
                 }
 
                 if (totalTextWidth > widthParent && textSize > minTextSize) {

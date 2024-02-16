@@ -44,6 +44,7 @@ import cz.xlisto.odecty.services.HdoService;
 import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
@@ -298,7 +299,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(getResources().getString(R.string.subscription_point));
+        int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
+        if (countSubscriptionPoints > 1)
+            menu.add(getResources().getString(R.string.subscription_point));
         return true;
     }
 
@@ -319,23 +322,26 @@ public class MainActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         //Seznam fragmentů
         List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
-                "DashBoardFragment","ExportPriceListFragment","ImportPriceListFragment","MonthlyReadingFragment",
+                "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
                 "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
                 "SubscriptionPointFragment", "GraphColorFragment");
 
-       //kontrola, zda-li je některý fragment zobrazen
+        //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
-        for(String tag : visibleFragmentsTags){
+        for (String tag : visibleFragmentsTags) {
             Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-            if(fragment != null && fragment.isVisible()){
+            if (fragment != null && fragment.isVisible()) {
                 isFragmentVisible = true;
                 break;
             }
         }
 
         //zobrazí položku menu, pokud je některý fragment zobrazen
-        MenuItem item = menu.findItem(0);
-        item.setVisible(isFragmentVisible);
+        int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
+        if (countSubscriptionPoints > 1) {
+            MenuItem item = menu.findItem(0);
+            item.setVisible(isFragmentVisible);
+        }
 
         return super.onPrepareOptionsMenu(menu);
     }

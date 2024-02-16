@@ -14,10 +14,103 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/rlItem2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_monthly_reading_gray">
+
+            <RelativeLayout
+                android:id="@+id/rlItem2In"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvDateItem2"
+                android:background="@drawable/shape_item">
+
+                <TextView
+                    android:id="@+id/tvVTItem2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvNTItem2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvVTItem2"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvDateItem2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:gravity="start"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlItem1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_monthly_reading_gray">
+
+            <RelativeLayout
+                android:id="@+id/rlItem1In"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvDateItem1"
+                android:background="@drawable/shape_item">
+
+                <TextView
+                    android:id="@+id/tvVTItem1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvNTItem1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvVTItem1"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:maxLines="1"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvDateItem1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                android:gravity="start"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
             android:id="@+id/rlDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp">
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btnDate"
@@ -26,18 +119,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:contentDescription="@string/btn_description_date_cut" />
-
-            <TextView
-                android:id="@+id/tvDateInvoices"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@id/btnDate"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@id/btnDate"
-                android:gravity="end" />
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/sliderDate"
@@ -57,14 +138,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tvVTtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp"
-                android:text="@string/vt" />
-
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/sliderVT"
@@ -82,7 +155,6 @@
                 android:id="@+id/labVT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvVTtitle"
                 android:ems="6"
                 android:gravity="end"
                 android:inputType="numberDecimal"
@@ -97,14 +169,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-            <TextView
-                android:id="@+id/tvNTtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp"
-                android:text="@string/nt" />
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/sliderNT"
@@ -122,7 +186,6 @@
                 android:id="@+id/labNT"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvNTtitle"
                 android:ems="6"
                 android:gravity="end"
                 android:inputType="numberDecimal"

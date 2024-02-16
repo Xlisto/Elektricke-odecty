@@ -11,12 +11,12 @@ import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
+import cz.xlisto.odecty.shp.ShPDashBoard;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.MainActivityHelper;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,7 +201,6 @@ public class SubscriptionPointFragment extends Fragment {
     private void deleteItemSubscriptionPoint() {
         DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
         dataSettingsSource.open();
-        Log.w("TAG", "deleteItemSubscriptionPoint: " + Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
         dataSettingsSource.deleteTimeShift(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
         dataSettingsSource.close();
 
@@ -209,6 +208,10 @@ public class SubscriptionPointFragment extends Fragment {
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);
         dataSubscriptionPointSource.close();
+
+        //nastavení prvního odběrného místa v DashBoardu
+        ShPDashBoard shp = new ShPDashBoard(requireContext());
+        shp.set(ShPDashBoard.SHOW_INVOICE_SUM, 0);
 
         onResume();
     }

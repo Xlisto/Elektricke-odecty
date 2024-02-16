@@ -8,6 +8,7 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 
 import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT;
 
+
 public class SubscriptionPoint {
     /**
      * Načte odběrné místo podle id mista uloženého ve sharedpreferences
@@ -28,5 +29,20 @@ public class SubscriptionPoint {
             return subscriptionPoint;
         }
         return null;
+    }
+
+
+    /**
+     * Načte počet odběrných míst v databázi
+     *
+     * @param context Kontext aplikace
+     * @return int - počet odběrných míst v databázi
+     */
+    static public int count(Context context) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        int count = dataSubscriptionPointSource.countSubscriptionPoints();
+        dataSubscriptionPointSource.close();
+        return count;
     }
 }

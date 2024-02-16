@@ -11,8 +11,10 @@
     <string name="nuly">000.0</string>
     <string name="nt">NT</string>
     <string name="nt2">NT:</string>
+    <string name="nt3">NÍZSKÝ TARIF</string>
     <string name="vt">VT</string>
     <string name="vt2">VT:</string>
+    <string name="vt3">VYSOKÝ TARIF</string>
     <string name="mesicni_plat">Plat:</string>
     <string name="other_services">Ostatní služby(+)/slevy(-) v ceníku nezahrnuté:</string>
     <string name="cena_za_dodavku">Cena za dodávku elektřiny (neregulovaná)</string>
@@ -335,6 +337,7 @@
     <string name="total">"Celkem: %s Kč bez DPH"</string>
     <string name="total_with_tax">%s Kč s DPH</string>
     <string name="string_dash_string">%s - %s</string>
+    <string name="string_dash_string_kwh">%s kWh - %s kWh, Sp.: %s kWh</string>
     <string name="string_dash_string_enter_string_dash_string">%s - %s\n%s + %s</string>
     <string name="advances">Zálohy: %d</string>
     <string name="records">Záznamy: %d</string>

@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ public class DashBoardFragment extends Fragment {
         rv = view.findViewById(R.id.rvInvoiceSum);
         btnLeftShowInvoiceSum = view.findViewById(R.id.imgBtnLeftDashBoard);
         btnRightShowInvoiceSum = view.findViewById(R.id.imgBtnRightDashBoard);
+        RelativeLayout rlGraphTotalConsuptionButtons = view.findViewById(R.id.rlGraphTotalConsuptionButtons);
         tvName = view.findViewById(R.id.tvNameDashBoard);
         SwitchCompat swShowTotalConsuption = view.findViewById(R.id.swShowTotalConsuption);
         tvNoInvoices = view.findViewById(R.id.tvNoInvoices);
@@ -91,10 +93,20 @@ public class DashBoardFragment extends Fragment {
             return;
         }
 
+        //při jednom odběrném místě se skryje tlačítka pro změnu odběrného místa
+        int count = SubscriptionPoint.count(requireContext());
+        if (count <= 1)
+            rlGraphTotalConsuptionButtons.setVisibility(View.GONE);
+        else
+            rlGraphTotalConsuptionButtons.setVisibility(View.VISIBLE);
+
 
         ShPDashBoard shPDashBoard = new ShPDashBoard(requireActivity());
         shPDashBoard.get(ShPDashBoard.IS_SHOW_TOTAL, false);
-        showInvoiceSum = shPDashBoard.get(ShPDashBoard.SHOW_INVOICE_SUM, 0);
+        showInvoiceSum =shPDashBoard.get(ShPDashBoard.SHOW_INVOICE_SUM, 0);
+        //pro případ, kdyby ve sharedprefences byl uložený větší index odběrného místa než je počet
+        if(showInvoiceSum > count-1)
+            showInvoiceSum = 0;
 
         loadData();
 
@@ -298,9 +310,10 @@ public class DashBoardFragment extends Fragment {
         graphTotalHdoView.setHdoModels(hdoModels, timeShift);
     }
 
-    private void setNumbersMeter(){
-        int VT = (int) (invoiceListSumModel.getMeterValuesVT(showInvoiceSum)*10);
-        int NT = (int) (invoiceListSumModel.getMeterValuesNT(showInvoiceSum)*10);
+
+    private void setNumbersMeter() {
+        int VT = (int) (invoiceListSumModel.getMeterValuesVT(showInvoiceSum) * 10);
+        int NT = (int) (invoiceListSumModel.getMeterValuesNT(showInvoiceSum) * 10);
         numbersMeterVT.setCurrentNumber(VT);
         numbersMeterNT.setCurrentNumber(NT);
     }

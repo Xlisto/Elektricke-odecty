@@ -77,6 +77,7 @@ public class InvoiceListSumModel {
      * @return maximální hodnota celkem VT + NT
      */
     public double getMaxValueTotal(int index) {
+        if (maxValues.size() == 0) return 0;
         return maxValues.get(index)[0] + maxValues.get(index)[1];
     }
 

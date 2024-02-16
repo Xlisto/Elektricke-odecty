@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -23,6 +24,7 @@ import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.utils.TextSizeAdjuster;
 
 
 /**
@@ -52,7 +54,8 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private LabelEditText labVT, labNT;
     private Slider sliderVT, sliderNT, sliderDate;
     private Button btnDate;
-    private TextView tvDate;
+    private TextView tvDateItem1, tvDateItem2, tvVTItem1, tvVTItem2, tvNTItem1, tvNTItem2;
+    private RelativeLayout rlItem1In, rlItem2In;
 
 
     public static InvoiceCutDialogFragment newInstance(long minDate, long maxDate, double minVT, double maxVT, double minNT, double maxNT,
@@ -105,10 +108,17 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_cut, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_invoice_cut, null);
 
         btnDate = dialogView.findViewById(R.id.btnDate);
-        tvDate = dialogView.findViewById(R.id.tvDateInvoices);
+        tvDateItem1 = dialogView.findViewById(R.id.tvDateItem1);
+        tvDateItem2 = dialogView.findViewById(R.id.tvDateItem2);
+        tvVTItem1 = dialogView.findViewById(R.id.tvVTItem1);
+        tvVTItem2 = dialogView.findViewById(R.id.tvVTItem2);
+        tvNTItem1 = dialogView.findViewById(R.id.tvNTItem1);
+        tvNTItem2 = dialogView.findViewById(R.id.tvNTItem2);
+        rlItem1In = dialogView.findViewById(R.id.rlItem1In);
+        rlItem2In = dialogView.findViewById(R.id.rlItem2In);
         labVT = dialogView.findViewById(R.id.labVT);
         labNT = dialogView.findViewById(R.id.labNT);
         sliderDate = dialogView.findViewById(R.id.sliderDate);
@@ -193,6 +203,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         builder.setTitle(getResources().getString(R.string.cut_record));
         settingSlidersLabs();
         setTextView();
+
         return builder.create();
     }
 
@@ -231,7 +242,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
                 DecimalFormatHelper.df2.format(minNT), DecimalFormatHelper.df2.format(maxNT)));
         labNT.setDefaultText(DecimalFormatHelper.df2.format(halfNT));
 
-        tvDate.setText(context.getResources().getString(R.string.string_dash_string,
+        tvDateItem1.setText(context.getResources().getString(R.string.string_dash_string,
                 ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(maxDate)));
 
         // Nastavuje formát popisků pro datum na textový řetězec ve formátu HH:mm:ss.
@@ -280,17 +291,54 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         if (dateDayStart <= dateDayEnd) {
             dateDayEnd = subDay(dateDayEnd);
         }
-        tvDate.setText(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
-                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(dateDayEnd),
+        //datum
+        tvDateItem1.setText(context.getResources().getString(R.string.string_dash_string,
+                ViewHelper.convertLongToDate(minDate), ViewHelper.convertLongToDate(dateDayEnd)));
+        tvDateItem2.setText(context.getResources().getString(R.string.string_dash_string,
                 ViewHelper.convertLongToDate(dateDayStart), ViewHelper.convertLongToDate(maxDate)));
 
-        labVT.setLabel(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
-                DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(sliderVT.getValue()),
-                DecimalFormatHelper.df2.format(sliderVT.getValue()), DecimalFormatHelper.df2.format(maxVT)));
 
-        labNT.setLabel(context.getResources().getString(R.string.string_dash_string_enter_string_dash_string,
+
+
+        //VT
+        labVT.setLabel(getResources().getString(R.string.vt3));
+        String vtItem1 = context.getResources().getString(R.string.string_dash_string_kwh,
+                DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(sliderVT.getValue()),
+                DecimalFormatHelper.df2.format(sliderVT.getValue() - minVT));
+        String vtItem2 = context.getResources().getString(R.string.string_dash_string_kwh,
+                DecimalFormatHelper.df2.format(sliderVT.getValue()), DecimalFormatHelper.df2.format(maxVT),
+                DecimalFormatHelper.df2.format(maxVT - sliderVT.getValue()));
+        tvVTItem1.setText(vtItem1);
+        tvVTItem2.setText(vtItem2);
+
+        //NT
+        labNT.setLabel(getResources().getString(R.string.nt3));
+        String ntItem1 = context.getResources().getString(R.string.string_dash_string_kwh,
                 DecimalFormatHelper.df2.format(minNT), DecimalFormatHelper.df2.format(sliderNT.getValue()),
-                DecimalFormatHelper.df2.format(sliderNT.getValue()), DecimalFormatHelper.df2.format(maxNT)));
+                DecimalFormatHelper.df2.format(sliderNT.getValue() - minNT));
+        String ntItem2 = context.getResources().getString(R.string.string_dash_string_kwh,
+                DecimalFormatHelper.df2.format(sliderNT.getValue()), DecimalFormatHelper.df2.format(maxNT),
+                DecimalFormatHelper.df2.format(maxNT - sliderNT.getValue()));
+        tvNTItem1.setText(ntItem1);
+        tvNTItem2.setText(ntItem2);
+        TextSizeAdjuster.adjustTextSize(rlItem1In, tvVTItem1, requireContext());
+        TextSizeAdjuster.adjustTextSize(rlItem2In, tvVTItem2, requireContext());
+        TextSizeAdjuster.adjustTextSize(rlItem1In, tvNTItem1, requireContext());
+        TextSizeAdjuster.adjustTextSize(rlItem2In, tvNTItem2, requireContext());
+
+        float sizeVtItem1 = tvVTItem1.getTextSize();
+        float sizeVtItem2 = tvVTItem2.getTextSize();
+        float sizeNtItem1 = tvNTItem1.getTextSize();
+        float sizeNtItem2 = tvNTItem2.getTextSize();
+
+        float minVTSize = Math.min(sizeVtItem1, sizeVtItem2);
+        float minNTSize = Math.min(sizeNtItem1, sizeNtItem2);
+        float minSize = Math.min(minVTSize, minNTSize);
+
+        tvVTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
+        tvVTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
+        tvNTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
+        tvNTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
     }
 
 

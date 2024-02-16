@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="10dp"
+    android:paddingStart="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlItem2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlItem2In"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvDateItem2"
+                    android:background="@drawable/shape_item">
+
+                    <TextView
+                        android:id="@+id/tvVTItem2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:maxLines="1"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvNTItem2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvVTItem2"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="16sp"
+                        android:maxLines="1" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvDateItem2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginStart="15dp"
+                    android:gravity="start"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlItem1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_monthly_reading_gray">
+
+                <RelativeLayout
+                    android:id="@+id/rlItem1In"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvDateItem1"
+                    android:background="@drawable/shape_item">
+
+                    <TextView
+                        android:id="@+id/tvVTItem1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:maxLines="1"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvNTItem1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tvVTItem1"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
+                        android:maxLines="1"
+                        android:textSize="16sp" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tvDateItem1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginStart="15dp"
+                    android:gravity="start"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/rlButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:minWidth="640dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:maxWidth="320dp"
+                    android:text="@string/zrusit" />
+
+                <Button
+                    android:id="@+id/btnCut"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:maxWidth="320dp"
+                    android:text="@string/cut" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp">
+
+                <Button
+                    android:id="@+id/btnDate"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="@string/btn_description_date_cut" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/btnDate"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="30dp"
+                    android:contentDescription="@string/slider_description_date_cut"
+                    android:paddingEnd="30dp"
+                    android:paddingStart="30dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlVT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderVT"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/labVT"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="30dp"
+                    android:contentDescription="@string/slider_description_vt_cut"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp" />
+
+
+                <cz.xlisto.odecty.ownview.LabelEditText
+                    android:id="@+id/labVT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="6"
+                    android:gravity="end"
+                    android:inputType="numberDecimal"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
+                    app:defaultText="@string/_0" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlNT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderNT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/labNT"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="30dp"
+                    android:contentDescription="@string/slider_description_nt_cut"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp" />
+
+
+                <cz.xlisto.odecty.ownview.LabelEditText
+                    android:id="@+id/labNT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="6"
+                    android:gravity="end"
+                    android:inputType="numberDecimal"
+                    android:paddingEnd="15dp"
+                    android:paddingStart="15dp"
+                    app:defaultText="@string/_0" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+</ScrollView>
