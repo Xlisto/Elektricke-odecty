@@ -280,12 +280,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněno skrývání přepínačů v DashBoardFragment.&#10;Současně doplněno skrývání položky menu pro výběr odběrných míst. Pokud je jen jedno odběrné místo. Z důvodu úspory místa na obrazovce.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/dialog_invoice_cut.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceCutDialogFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/TextSizeAdjuster.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/utils/TextSizeAdjuster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_cut.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_invoice_cut.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/InvoiceSumAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/dashboard/InvoiceSumAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -296,7 +294,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Medium_Phone_API_24.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -996,7 +994,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="193" />
+    <option name="localTasksCounter" value="195" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1070,7 +1068,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Upraveno rozložení položky ceníku. &#10;Změněna vzájemná pozice textview platnosti ceníku a pojmenování sazby." />
     <MESSAGE value="Upraveno rozložení položky měsíčního odečtu.&#10;Posunutý oproti výstražnému trojuhelníku o 5dp." />
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdInvoice.&#10;Odstraněna prázdná metoda onResume." />
     <MESSAGE value="Oprava neukládání se změny ceníku ve fakturách.&#10;Při změnách listeneru v PriceListFragment opomenuta v posluchači InvoiceAddEditAbstractFragment změna proměnné selectedIdPrice.&#10;Odstraněna prázdná metoda onResume." />
@@ -1094,6 +1091,7 @@
     <MESSAGE value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
     <MESSAGE value="Opravené vykreslení sloupcového grafu.&#10;Upravené vykreslování sloupcového grafu, aby se vykresloval zleva doprava a ze zhora dolu. Na starších Androidech je nutné dodržet toto pořadí, jinak se nevykreslí." />
     <MESSAGE value="Doplněna třída TextSizeAdjuster pro zmenšení písma pro skupinu TextView.&#10;Při zobrazení na menších obrazovkách je tímto řešen problém s přetékajícími TextView. Zde je použita na položku měsíčního odečtu." />
+    <MESSAGE value="Doplněny grafické zobrazení při dělení záznamu v období bez faktury.&#10;Nyní se zobrazuji 2 pole, které nově představují nově rozdělené položky." />
     <MESSAGE value="Doplněno skrývání přepínačů v DashBoardFragment.&#10;Současně doplněno skrývání položky menu pro výběr odběrných míst. Pokud je jen jedno odběrné místo. Z důvodu úspory místa na obrazovce." />
     <option name="LAST_COMMIT_MESSAGE" value="Doplněno skrývání přepínačů v DashBoardFragment.&#10;Současně doplněno skrývání položky menu pro výběr odběrných míst. Pokud je jen jedno odběrné místo. Z důvodu úspory místa na obrazovce." />
   </component>

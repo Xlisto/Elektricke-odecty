@@ -359,6 +359,7 @@
     <string name="text_amount">%.3f %s</string>
     <string name="text_price_unit">%.2f Kč/%s</string>
     <string name="number_sum_invoce">Faktura: %d</string>
+    <string name="number_sum_no_invoce">Bez faktury</string>
     <string name="date_sum_invoce">%s - %s</string>
     <string name="power">%d x %d A</string>
     <string name="count_months_html">Počet měsíců:  &lt;b&gt;%s&lt;/b&gt;</string>

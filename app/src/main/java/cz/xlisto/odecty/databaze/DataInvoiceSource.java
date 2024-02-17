@@ -39,6 +39,7 @@ import static cz.xlisto.odecty.databaze.DbHelper.VT_KON;
 public class DataInvoiceSource extends DataSource {
     private static final String TAG = "DataInvoiceSource";
 
+
     public DataInvoiceSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
@@ -451,9 +452,9 @@ public class DataInvoiceSource extends DataSource {
             double VT = dataMonthlyReadingSource.loadLastVtNt(subscriptionPointModel.getTableO())[0];
             double NT = dataMonthlyReadingSource.loadLastVtNt(subscriptionPointModel.getTableO())[1];
             dataMonthlyReadingSource.close();
-            invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK()),
+            invoiceListSumModel.addInvoiceSumModel(getSumInvoices(subscriptionPointModel.getTableFAK(), subscriptionPointModel.getTableTED()),
                     hdoModels, timeShift, subscriptionPointModel.getName(), maxVTNT, sumPayment, totalPrice,
-                    VT,NT);
+                    VT, NT);
 
         }
         dataSettingsSource.close();
@@ -466,28 +467,48 @@ public class DataInvoiceSource extends DataSource {
     /**
      * Provede součet záznamů ve fakturách s seřadí je podle datumu od
      *
-     * @param table jméno tabulky
+     * @param tableFak jméno tabulky
      * @return ArrayList<InvoiceSumModel> seznam součtu spotřeby faktur
      */
-    public ArrayList<InvoiceSumModel> getSumInvoices(String table) {
-        String sql = "SELECT F." + ID_FAK + ",K." + CISLO_FAK + ", MIN(F." + COLUMN_DATE_FROM + "),MAX(F." + COLUMN_DATE_UNTIL
-                + "),SUM(F." + VT_KON + "-F." + VT + ") as total_vt, SUM(F." + NT_KON + "-F." + NT + ") as total_nt " +
-                "FROM " + table + " F " +
-                "JOIN faktury K ON F." + ID_FAK + " = K." + COLUMN_ID + " " +
-                "GROUP BY " + ID_FAK + " " +
-                "ORDER BY MIN(F." + COLUMN_DATE_FROM + ") DESC";
-        Cursor cursor = database.rawQuery(sql, null);
+    public ArrayList<InvoiceSumModel> getSumInvoices(String tableFak, String tableNow) {
         ArrayList<InvoiceSumModel> sumInvoices = new ArrayList<>();
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-            sumInvoices.add(new InvoiceSumModel(cursor.getLong(0), //id faktury
-                    cursor.getLong(1), //číslo faktury
-                    cursor.getLong(2), //datum od
-                    cursor.getLong(3), //datum do
-                    cursor.getDouble(4), //součet VT
-                    cursor.getDouble(5)));//součet NT
+
+        for (int i = 0; i < 2; i++) {
+            String sql;
+            if (i == 0) {
+                //pro období bez faktury
+                sql = "SELECT " + COLUMN_ID + ", " + ID_FAK + ", " +
+                        "MIN(" + COLUMN_DATE_FROM + ") AS min_datumOd, " +
+                        "MAX(" + COLUMN_DATE_UNTIL + ") AS max_datumDo, " +
+                        "SUM(CAST(" + VT_KON + " AS REAL) - CAST(" + VT + " AS REAL)) AS total_vt, " +
+                        "SUM(CAST(" + NT_KON + " AS REAL) - CAST(" + NT + " AS REAL)) AS total_nt " +
+                        "FROM " + tableNow + " " +
+                        "GROUP BY " + ID_FAK + " " +
+                        "ORDER BY MIN(" + COLUMN_DATE_FROM + ") DESC;";
+            } else {
+                //pro období s fakturami
+                sql = "SELECT F." + ID_FAK + ",K." + CISLO_FAK + ", MIN(F." + COLUMN_DATE_FROM + "),MAX(F." + COLUMN_DATE_UNTIL
+                        + "),SUM(F." + VT_KON + "-F." + VT + ") as total_vt, SUM(F." + NT_KON + "-F." + NT + ") as total_nt " +
+                        "FROM " + tableFak + " F " +
+                        "JOIN faktury K ON F." + ID_FAK + " = K." + COLUMN_ID + " " +
+                        "GROUP BY " + ID_FAK + " " +
+                        "ORDER BY MIN(F." + COLUMN_DATE_FROM + ") DESC";
+            }
+
+            Cursor cursor = database.rawQuery(sql, null);
+            for (int j = 0; j < cursor.getCount(); j++) {
+                cursor.moveToPosition(j);
+                sumInvoices.add(new InvoiceSumModel(cursor.getLong(0), //id faktury
+                        cursor.getLong(1), //číslo faktury
+                        cursor.getLong(2), //datum od
+                        cursor.getLong(3), //datum do
+                        cursor.getDouble(4), //součet VT
+                        cursor.getDouble(5)));//součet NT
+            }
+            cursor.close();
         }
-        cursor.close();
+
+
         return sumInvoices;
     }
 

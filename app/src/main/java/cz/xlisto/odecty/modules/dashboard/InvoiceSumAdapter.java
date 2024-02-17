@@ -70,6 +70,8 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
     public void onBindViewHolder(@NonNull InvoiceSumAdapter.MyViewHolder holder, int position) {
         InvoiceSumModel is = items.get(position);
         holder.tvSum.setText(context.getResources().getString(R.string.number_sum_invoce, is.getNumber()));
+        if(is.getNumber() == -1)
+            holder.tvSum.setText(context.getResources().getString(R.string.number_sum_no_invoce));
         holder.tvDate.setText(context.getResources().getString(R.string.date_sum_invoce,
                 ViewHelper.convertLongToDate(is.getDateStart()), ViewHelper.convertLongToDate(is.getDateEnd())));
 
