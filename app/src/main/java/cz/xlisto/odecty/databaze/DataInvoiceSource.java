@@ -51,9 +51,10 @@ public class DataInvoiceSource extends DataSource {
      *
      * @param numberInvoiceList   číslo faktury
      * @param idSubscriptionPoint id odběrného místa
+     * @return long id faktury
      */
-    public void insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
-        database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
+    public long insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
+        return database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
     }
 
 
@@ -332,7 +333,7 @@ public class DataInvoiceSource extends DataSource {
      * @param itemId id záznamu
      * @param table  název tabulky
      */
-    public void deleteInvoice(long itemId, String table) {
+    public void deleteInvoice(String table,long itemId) {
         database.delete(table, "_id=?",
                 new String[]{String.valueOf(itemId)});
     }

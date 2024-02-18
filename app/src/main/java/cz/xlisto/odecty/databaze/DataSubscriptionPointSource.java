@@ -6,6 +6,7 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 
+import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -163,6 +164,21 @@ public class DataSubscriptionPointSource extends DataSource {
         double sum = cursor.getDouble(0);
         cursor.close();
         return sum;
+    }
+
+
+    /**
+     * Přeřadí platby z období bez faktury ke konkrétní faktuře
+     *
+     * @param newIdFak id ke ketré se záznamy přidávají
+     * @param table   jméno tabulky s faktury příslušící konkrétnímu odběrnému místu
+     * @param invoice záznam faktury
+     */
+    public void changeInvoicePayment(long newIdFak, String table, InvoiceModel invoice) {
+        long timeFrom = invoice.getDateFrom();
+        long timeTo = invoice.getDateTo();
+        String sql = "UPDATE " + table + " SET id_fak = ? WHERE id_fak = '-1' AND datum BETWEEN ? AND ?";
+        database.execSQL(sql, new Object[]{newIdFak, timeFrom, timeTo});
     }
 
 

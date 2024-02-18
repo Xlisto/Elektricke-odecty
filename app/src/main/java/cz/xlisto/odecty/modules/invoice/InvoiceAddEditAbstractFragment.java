@@ -117,10 +117,12 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
             selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            btnSave.setEnabled(false);
             if (selectedPriceList != null) {
                 deactivateNT(selectedPriceList.getSazba().equals(InvoiceAbstract.D01) || selectedPriceList.getSazba().equals(InvoiceAbstract.D02));
                 btnSelectPriceList.setText(selectedPriceList.getName());
                 selectedIdPrice = selectedPriceList.getId();
+                btnSave.setEnabled(true);
             }
 
         });

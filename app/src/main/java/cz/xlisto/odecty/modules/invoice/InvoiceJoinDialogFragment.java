@@ -115,7 +115,7 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
             DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
             dataInvoiceSource.open();
             dataInvoiceSource.updateInvoice(invoiceJoined.getId(), table, invoiceJoined);
-            dataInvoiceSource.deleteInvoice(invoiceSecond.getId(), table);
+            dataInvoiceSource.deleteInvoice(table,invoiceSecond.getId());
             dataInvoiceSource.close();
 
             Bundle bundle = new Bundle();

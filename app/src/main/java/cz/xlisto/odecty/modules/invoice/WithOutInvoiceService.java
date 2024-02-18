@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
  */
 public class WithOutInvoiceService {
     private static final String TAG = "WithOutInvoiceService";
+
 
     /**
      * Rozdělí záznam ve faktuře (jen období bez faktury)
@@ -116,10 +118,11 @@ public class WithOutInvoiceService {
         dataInvoiceSource.open();
         InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
         InvoiceModel itemLastInvoice = dataInvoiceSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
+        Log.w(TAG, "editFirstItemInInvoice: " + itemFirstWithoutInvoice);
         if (itemLastInvoice != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(itemLastInvoice.getDateTo());
-            calendar.add(Calendar.DATE,1);
+            calendar.add(Calendar.DATE, 1);
             itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
             itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
             itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
@@ -138,7 +141,7 @@ public class WithOutInvoiceService {
      */
     public static boolean checkDateFirstItemInvoice(Context context, InvoiceModel itemEditedInvoice) {
         //když upravuji záznam bezfaktury - tuto podmínku vyřazuji
-        if(itemEditedInvoice.getIdInvoice() == -1L)
+        if (itemEditedInvoice.getIdInvoice() == -1L)
             return true;
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();

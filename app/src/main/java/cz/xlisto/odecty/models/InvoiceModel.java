@@ -21,11 +21,12 @@ public class InvoiceModel {
     private double ntStart;
     private double ntEnd;
     private long idPriceList;
-    private final long idInvoice;
+    private long idInvoice;
     private final double otherServices;
     private final String numberInvoice;
     private final boolean isChangedElectricMeter;
     private TypePoze typePoze;
+    private boolean isSelected;
 
 
     public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
@@ -46,6 +47,7 @@ public class InvoiceModel {
         this.otherServices = otherServices;
         this.numberInvoice = numberInvoice;
         this.isChangedElectricMeter = isChangedElectricMeter;
+        isSelected = false;
     }
 
 
@@ -118,6 +120,8 @@ public class InvoiceModel {
         this.idPriceList = idPriceList;
     }
 
+    public void setIdInvoice(long idInvoice) {this.idInvoice = idInvoice;}
+
 
     /**
      * Spotřeba vysokého tarifu
@@ -162,6 +166,16 @@ public class InvoiceModel {
 
 
     /**
+     * Vrátí, zda-li je vybraný záznam
+     *
+     * @return true pokud je vybraný záznam
+     */
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+
+    /**
      * Zda byl změněn elektroměr
      *
      * @return true pokud byl změněn elektroměr
@@ -201,6 +215,16 @@ public class InvoiceModel {
     }
 
 
+    /**
+     * Nastaví, zda-li je vybraný záznam
+     *
+     * @param selected true pokud je vybraný záznam
+     */
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+
     @NonNull
     @Override
     public String toString() {
@@ -218,6 +242,7 @@ public class InvoiceModel {
                 ", numberInvoice='" + numberInvoice + '\'' +
                 ", isChangedElectricMeter=" + isChangedElectricMeter +
                 ", typePoze=" + typePoze +
+                ", isSelected=" + isSelected +
                 '}';
     }
 

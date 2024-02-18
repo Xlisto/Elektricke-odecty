@@ -126,6 +126,7 @@
     <string name="new_meter">Byla provedena výměna elektroměru</string>
     <string name="alert">Varování nekonzistence dat</string>
     <string name="alert_date_price_list">Pro období je použitý neplatný ceník</string>
+    <string name="insert_to_new_invoice">Vložit do nové faktury</string>
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
     <string name="prvniOdecet">Prvni odečet</string>
@@ -186,6 +187,9 @@
     <string name="plus">+</string>
     <string name="add_payment">Přidat platbu</string>
     <string name="add_invoice">Přidat fakturu</string>
+    <string name="create_invoice">Vytvořit fakturu</string>
+    <string name="create_new_invoice">Vytvořit novou fakturu</string>
+    <string name="select_invoice">Vybrat záznamy</string>
     <string name="discount">Sleva</string>
     <string name="supplement">Doplatek</string>
     <string name="payment">Záloha</string>
@@ -343,6 +347,7 @@
     <string name="records">Záznamy: %d</string>
     <string name="no_records">Faktura neobsahuje žádné záznamy</string>
     <string name="add_records">Přidat záznamy</string>
+    <string name="add_record">Přidat záznam</string>
     <string name="show_period">Zobrazené období: %s - %s</string>
     <string name="total_vt">Celkem spotřeba VT: %.3f MWh</string>
     <string name="total_nt">Celkem spotřeba NT: %.3f MWh</string>
@@ -414,4 +419,7 @@
 
     <string name="icon_monthly_result">Zobrazí ikonu podle toho, zda-li je záloha dostatečná či nikoliv.</string>
     <string name="icon_monthly_alert">Zvýraznění záznamu, ve kterém se nachází nějaká chyba.</string>
+
+    <string name="number_new_invoice">Číslo nově vytvářené faktury</string>
+    <string name="create">Vytvoř</string>
 </resources>

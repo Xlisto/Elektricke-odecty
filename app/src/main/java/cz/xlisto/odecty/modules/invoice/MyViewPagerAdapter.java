@@ -15,9 +15,9 @@ public class MyViewPagerAdapter extends FragmentStateAdapter {
     private final PaymentFragment paymentFragment;
 
 
-    public MyViewPagerAdapter(@NonNull Fragment fragment, String tableFak, String tableNow,String tablePay, long idFak, int positionList) {
+    public MyViewPagerAdapter(@NonNull Fragment fragment, String tableFak, String tableNow,String tablePay,String tableRead,long idFak, int positionList) {
         super(fragment);
-        invoiceFragment = InvoiceFragment.newInstance(tableFak, tableNow,tablePay, idFak, positionList);
+        invoiceFragment = InvoiceFragment.newInstance(tableFak, tableNow,tablePay, tableRead,idFak, positionList);
         invoiceDetailFragment = InvoiceDetailFragment.newInstance(tableFak, tableNow,tablePay, idFak, positionList);
         paymentFragment = PaymentFragment.newInstance(idFak, positionList);
     }

@@ -30,6 +30,13 @@
         android:background="@drawable/shape_item"
         android:gravity="start">
 
+        <CheckBox
+            android:id="@+id/chSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/insert_to_new_invoice"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/lnMeters"
             android:layout_width="match_parent"
@@ -246,6 +253,7 @@
             android:id="@+id/tvAlertInvoice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/chSelected"
             android:text="@string/regul_alert" />
 
         <TextView

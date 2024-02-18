@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -34,6 +35,7 @@ import cz.xlisto.odecty.utils.FragmentChange;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
+
 /**
  * Seznam faktur
  * Xlisto 01.02.2023 19:28
@@ -43,7 +45,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private final Context context;
     private final ArrayList<InvoiceListModel> items;
     private final RecyclerView recyclerView;
-    private String tableFak, tableNow, tablePay;
+    private String tableFak, tableNow, tablePay, tableRead;
     private ColorStateList originalTextViewColors;
     private int showButtons = -1;
     private ShPInvoiceList shPInvoiceList;
@@ -59,6 +61,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         ImageView imgAlert;
 
         long id;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -148,7 +151,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             InvoiceAdapter.resetShowButtons();
             PaymentAdapter.resetShowButtons();
 
-            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
+            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
 
@@ -158,7 +161,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             InvoiceAdapter.resetShowButtons();
             PaymentAdapter.resetShowButtons();
 
-            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
+            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
         long minDate = invoice.getMinDate();
@@ -192,10 +195,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         showButtons(holder, position);
 
-        if(invoice.getIdFak() == -1)
-            holder.btnNumberInvoice.setEnabled(false);
-        else
-            holder.btnNumberInvoice.setEnabled(true);
+        holder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
     }
 
 
@@ -210,11 +210,14 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private void checkDate(int position, MyViewHolder holder) {
         InvoiceListModel nextInvoiceList, lastInvoiceList, invoiceList;
         String dateOf, dateTo, prevDate, nextDate;
+        long prevDateLong, nextDateLong;
         double vtMin, ntMin, vtMax, ntMax, prevVt, prevNt, nextVt, nextNt;
 
         invoiceList = items.get(position);
         dateOf = ViewHelper.convertLongToDate(invoiceList.getMinDate());
         dateTo = ViewHelper.convertLongToDate(invoiceList.getMaxDate());
+        prevDateLong = invoiceList.getMinDate();
+        nextDateLong = invoiceList.getMaxDate();
         vtMin = invoiceList.getMinVT();
         vtMax = invoiceList.getMaxVT();
         ntMin = invoiceList.getMinNT();
@@ -222,7 +225,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         if (position > 0) {
             nextInvoiceList = items.get(position - 1);
-            nextDate = ViewHelper.convertLongToDate(nextInvoiceList.getMinDate() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(nextInvoiceList.getMinDate());
+            calendar.add(Calendar.DATE, -1);
+            //nextDate = ViewHelper.convertLongToDate(nextInvoiceList.getMinDate() - (23 * 60 * 60 * 1000));//odečítám pouze 23 hodin - kvůli přechodu letního/zimního času
+            nextDate = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
+            nextDateLong = calendar.getTimeInMillis();
             nextVt = nextInvoiceList.getMinVT();
             nextNt = nextInvoiceList.getMinNT();
         } else {
@@ -232,7 +240,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         }
         if (position < items.size() - 1) {
             lastInvoiceList = items.get(position + 1);
-            prevDate = ViewHelper.convertLongToDate(lastInvoiceList.getMaxDate() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(lastInvoiceList.getMaxDate());
+            calendar.add(Calendar.DATE, 1);
+            //prevDate = ViewHelper.convertLongToDate(lastInvoiceList.getMaxDate() + (25 * 60 * 60 * 1000));//přičítám 25 hodin - kvůli přechodu letního/zimního času
+            prevDate = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
+            prevDateLong = calendar.getTimeInMillis();
             prevVt = lastInvoiceList.getMaxVT();
             prevNt = lastInvoiceList.getMaxNT();
         } else {
@@ -243,24 +256,28 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
         setTextAlertColor(holder.tvDateTo, dateTo.equals(nextDate));
         setTextAlertColor(holder.tvDateOf, dateOf.equals(prevDate));
+        setTextAlertColor(holder.tvDateTo, nextDateLong >= prevDateLong);
+        setTextAlertColor(holder.tvDateOf, nextDateLong >= prevDateLong);
         setTextAlertColor(holder.tvVTmin, vtMin == prevVt);
         setTextAlertColor(holder.tvVTmax, vtMax == nextVt);
         setTextAlertColor(holder.tvNTmin, ntMin == prevNt);
         setTextAlertColor(holder.tvNTmax, ntMax == nextNt);
-
         //zobrazení ikony alertu
-        if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && vtMin == prevVt && vtMax == nextVt && ntMin == prevNt && ntMax == nextNt)
+        if (dateOf.equals(prevDate) && dateTo.equals(nextDate) &&
+                vtMin == prevVt && vtMax == nextVt && ntMin == prevNt && ntMax == nextNt &&
+                nextDateLong >= prevDateLong) {
             holder.imgAlert.setVisibility(View.GONE);
-        else {
+            //zobrazení ikony alertu, když je datum na 0
+            if (dateOf.equals("01.01.1970") || dateTo.equals("01.01.1970"))
+                holder.imgAlert.setVisibility(View.VISIBLE);
+            else
+                holder.imgAlert.setVisibility(View.GONE);
+        } else {
             holder.imgAlert.setVisibility(View.VISIBLE);
             Toast.makeText(context, "Zvýrazněné záznamy na sebe nenavazují", Toast.LENGTH_LONG).show();
         }
 
-        //zobrazení ikony alertu, když je datum na 0
-        if (dateOf.equals("01.01.1970") || dateTo.equals("01.01.1970"))
-            holder.imgAlert.setVisibility(View.VISIBLE);
-        else
-            holder.imgAlert.setVisibility(View.GONE);
+
     }
 
 
@@ -284,6 +301,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         tableFak = subscriptionPoint.getTableFAK();
         tableNow = subscriptionPoint.getTableTED();
         tablePay = subscriptionPoint.getTablePLATBY();
+        tableRead = subscriptionPoint.getTableO();
         dataSubscriptionPointSource.close();
     }
 

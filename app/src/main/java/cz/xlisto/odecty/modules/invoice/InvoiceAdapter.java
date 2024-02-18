@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -56,6 +58,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private final boolean showNT = true;
     private PriceListModel priceList;
     private InvoiceJoinDialogFragment invoiceJoinDialogFragment;
+    private boolean showCheckBoxSelect = false;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -67,6 +70,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         RelativeLayout itemInvoice;
         LinearLayout lnButtons, lnButtons2;
         ImageView imgAlert;
+        CheckBox chSelected;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -120,6 +124,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         vh.tvAlert = v.findViewById(R.id.tvAlertInvoice);
         vh.tvNewMeter = v.findViewById(R.id.tvAlertNewMeter);
         vh.tvDash = v.findViewById(R.id.tvDash);
+        vh.chSelected = v.findViewById(R.id.chSelected);
         originalTextViewColors = vh.vtStart.getTextColors();
         return vh;
     }
@@ -190,6 +195,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
         holder.itemInvoice.setOnClickListener(v -> {
+            if (showCheckBoxSelect) return;
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
                 if (viewHolder != null) {
@@ -263,6 +269,30 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         }
 
         showButtons(holder, invoice, position);
+
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, List<Object> payloads) {
+        InvoiceModel invoice = items.get(position);
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads); // Plné překreslení, pokud nejsou žádné payloads
+        } else {
+            for (Object payload : payloads) {
+                if ("showCheckBoxSelect".equals(payload)) {
+                    // Aktualizuj pouze widget, ne celou položku
+                    if (showCheckBoxSelect) {
+                        holder.chSelected.setVisibility(View.VISIBLE);
+                        holder.chSelected.setOnCheckedChangeListener((buttonView, isChecked) -> invoice.setSelected(isChecked));
+                        showButtons = -1;
+                        showButtons(holder, items.get(position), position);
+                    } else {
+                        holder.chSelected.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -316,6 +346,20 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
     /**
+     * Nastaví zobrazení checkboxu pro výběr položek
+     *
+     * @param showCheckBoxSelect true pokud se má zobrazit checkbox
+     */
+    public void setShowCheckBoxSelect(boolean showCheckBoxSelect) {
+        this.showCheckBoxSelect = showCheckBoxSelect;
+        TransitionManager.beginDelayedTransition(recyclerView);
+        for (int i = 0; i < getItemCount(); i++) {
+            notifyItemChanged(i, "showCheckBoxSelect");
+        }
+    }
+
+
+    /**
      * Aktualizuje data v adaptéru při změně dat - přidání položky
      *
      * @param items    ArrayList položek
@@ -323,7 +367,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      */
     public void setUpdateCut(ArrayList<InvoiceModel> items, int position) {
         this.items = items;
-        showButtons = -1;
+        resetShowButtons();
         notifyItemInserted(position);
         notifyItemRangeChanged(position, getItemCount());
     }
@@ -334,12 +378,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      *
      * @param id ID položky, kterou chceme smazat z databáze
      */
-    private void deleteItem(long id, int position) {
+    public void deleteItem(long id, int position) {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
-        dataInvoiceSource.deleteInvoice(id, table);
+        dataInvoiceSource.deleteInvoice(table,id);
         dataInvoiceSource.close();
-        showButtons = -1;
+        resetShowButtons();
         items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position - 1, getItemCount());

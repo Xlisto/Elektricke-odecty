@@ -24,12 +24,14 @@ public class InvoiceTabFragment extends Fragment {
     private static final String TABLE_FAK = "tableFak";
     private static final String TABLE_NOW = "tableNow";
     private static final String TABLE_PAY = "tablePay";
+    private static final String TABLE_READ = "tableRead";
     private static final String ID_FAK = "idFak";
     private static final String POSITION_ITEM = "positionItem";
     private static final String TYPE_TAB = "typeTab";
     private String tableFak;
     private String tableNow;
     private String tablePay;
+    private String tableRead;
     private long idFak;
     private int positionItem;
     private MyViewPagerAdapter.TypeTabs typeTabs;
@@ -41,12 +43,13 @@ public class InvoiceTabFragment extends Fragment {
     }
 
 
-    public static InvoiceTabFragment newInstance(String tableFak, String tableNow,String tablePay, long idFak, int positionItem, MyViewPagerAdapter.TypeTabs typeTabs) {
+    public static InvoiceTabFragment newInstance(String tableFak, String tableNow,String tablePay, String tableRead,long idFak, int positionItem, MyViewPagerAdapter.TypeTabs typeTabs) {
         InvoiceTabFragment fragment = new InvoiceTabFragment();
         Bundle args = new Bundle();
         args.putString(TABLE_FAK, tableFak);
         args.putString(TABLE_NOW, tableNow);
         args.putString(TABLE_PAY, tablePay);
+        args.putString(TABLE_READ, tableRead);
         args.putLong(ID_FAK, idFak);
         args.putInt(POSITION_ITEM, positionItem);
         args.putSerializable(TYPE_TAB, typeTabs);
@@ -62,6 +65,7 @@ public class InvoiceTabFragment extends Fragment {
             tableFak = getArguments().getString(TABLE_FAK);
             tableNow = getArguments().getString(TABLE_NOW);
             tablePay = getArguments().getString(TABLE_PAY);
+            tableRead = getArguments().getString(TABLE_READ);
             idFak = getArguments().getLong(ID_FAK);
             positionItem = getArguments().getInt(POSITION_ITEM);
             typeTabs = (MyViewPagerAdapter.TypeTabs) getArguments().get(TYPE_TAB);
@@ -81,7 +85,7 @@ public class InvoiceTabFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager2 = view.findViewById(R.id.viewPager);
-        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(this, tableFak, tableNow, tablePay, idFak, positionItem);
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(this, tableFak, tableNow, tablePay, tableRead,idFak, positionItem);
         viewPager2.setAdapter(myViewPagerAdapter);
 
 
