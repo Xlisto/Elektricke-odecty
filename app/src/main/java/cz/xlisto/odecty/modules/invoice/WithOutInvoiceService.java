@@ -1,12 +1,14 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Objects;
 
+import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
+import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
+import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -105,6 +107,9 @@ public class WithOutInvoiceService {
         invoice.setNtEnd(monthlyReading.getNt());
         dataInvoiceSource.updateInvoice(invoice.getId(), table, invoice);
         dataInvoiceSource.close();
+        if(invoice.getDateFrom() > monthlyReading.getDate()) {
+            showAlertDialog(context);
+        }
     }
 
 
@@ -114,20 +119,28 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editFirstItemInInvoice(Context context) {
+        String tableO = Objects.requireNonNull(SubscriptionPoint.load(context)).getTableO();
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
         dataInvoiceSource.open();
+        dataMonthlyReadingSource.open();
         InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
-        InvoiceModel itemLastInvoice = dataInvoiceSource.lastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
-        Log.w(TAG, "editFirstItemInInvoice: " + itemFirstWithoutInvoice);
-        if (itemLastInvoice != null) {
+        InvoiceModel itemLastInvoice = dataInvoiceSource.loadLastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
+        MonthlyReadingModel monthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
+
+        if (itemLastInvoice != null && monthlyReading != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(itemLastInvoice.getDateTo());
             calendar.add(Calendar.DATE, 1);
             itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
             itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
             itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
+            if(calendar.getTimeInMillis() > monthlyReading.getDate()) {
+                showAlertDialog(context);
+            }
         }
         dataInvoiceSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
+        dataMonthlyReadingSource.close();
         dataInvoiceSource.close();
     }
 
@@ -148,5 +161,10 @@ public class WithOutInvoiceService {
         InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
         dataInvoiceSource.close();
         return itemEditedInvoice.getDateTo() < itemFirstWithoutInvoice.getDateTo();
+    }
+
+    private static void showAlertDialog(Context context){
+        OwnAlertDialog.show(context,context.getResources().getString(R.string.error),
+                context.getResources().getString(R.string.dates_is_not_correct));
     }
 }

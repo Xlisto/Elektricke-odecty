@@ -5,11 +5,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
-import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.models.InvoiceModel;
-import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
 /**
@@ -40,7 +37,7 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
             InvoiceModel createdInvoice = createInvoice();
 
             //kontrola zda datum nepřekročí první záznam v období bez faktury
-            if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)){
+            //if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)){
                 DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
                 dataInvoiceSource.open();
                 dataInvoiceSource.insertInvoice(table, createdInvoice);
@@ -49,13 +46,10 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
                 WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
                 Keyboard.hide(requireActivity());
                 getParentFragmentManager().popBackStack();
-            } else {
+            /*} else {
                 OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
                         requireContext().getResources().getString(R.string.date_is_not_correct, ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
-            }
-
-
-
+            }*/
         });
     }
 }

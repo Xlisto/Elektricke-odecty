@@ -205,7 +205,7 @@ public class DataInvoiceSource extends DataSource {
      * @param table jméno tabulky
      * @return faktura
      */
-    public InvoiceModel lastInvoiceByDateFromAll(String table) {
+    public InvoiceModel loadLastInvoiceByDateFromAll(String table) {
         String sql = "SELECT * " +
                 "FROM " + table +
                 " ORDER BY " + COLUMN_DATE_UNTIL + " DESC" +

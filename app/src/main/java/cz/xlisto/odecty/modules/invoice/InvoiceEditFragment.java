@@ -5,10 +5,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
-import cz.xlisto.odecty.dialogs.OwnAlertDialog;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
@@ -99,7 +97,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
             InvoiceModel createdInvoice = createInvoice(id,selectedIdPrice);
 
             //kontrola zda datum nepřekročí první záznam v období bez faktury
-            if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)) {
+            //if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)) {
                 DataInvoiceSource dataInvoiceSource1 = new DataInvoiceSource(requireActivity());
                 dataInvoiceSource1.open();
                 dataInvoiceSource1.updateInvoice(id, table, createdInvoice);
@@ -110,10 +108,10 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
                 WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
                 loadFromDatabase = true;
                 getParentFragmentManager().popBackStack();
-            } else {
+            /*} else {
                 OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
                         requireContext().getResources().getString(R.string.date_is_not_correct,ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
-            }
+            }*/
         });
 
         oldDateStart = btnDateStart.getText().toString();
