@@ -174,6 +174,7 @@
     <string name="cut_record">Rozděl období</string>
     <string name="join_record">Sluč tato období</string>
     <string name="delete">Smaž</string>
+    <string name="change_invoice">Změň fakturu</string>
     <string name="join_previous">Spoj s předchozím</string>
     <string name="please_wait">Chvilku strpení…</string>
     <string name="backup">Vytvoř zálohu</string>
@@ -423,4 +424,9 @@
 
     <string name="number_new_invoice">Číslo nově vytvářené faktury</string>
     <string name="create">Vytvoř</string>
+
+    <string name="change_invoice_dialog_title">Změna přiřazení platby</string>
+    <string name="change_invoice_dialog_message">Vyberte fakturu, ke které chcete platbu přiřadit.</string>
+    <string name="btn_move_payment">Přesuň</string>
+    <string name="remove_record_payment">Odstranit záznam platby</string>
 </resources>

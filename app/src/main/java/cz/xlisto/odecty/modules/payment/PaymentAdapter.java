@@ -24,6 +24,7 @@ import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.FragmentChange;
 
+
 /**
  * Xlisto 17.02.2023 20:57
  */
@@ -44,7 +45,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         TextView tvDate, tvPayment, tvType, tvDescription;
         LinearLayout lnButtons;
         RelativeLayout rlPaymentOut;
-        Button btnEdit, btnDelete;
+        Button btnEdit, btnDelete, btnChangeInvoice;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +68,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         MyViewHolder vh = new MyViewHolder(v);
         vh.rlPaymentOut = v.findViewById(R.id.rlPaymentOut);
         vh.lnButtons = v.findViewById(R.id.lnButtonsPayment);
+        vh.btnChangeInvoice = v.findViewById(R.id.btnChangeInvoice);
         vh.tvDate = v.findViewById(R.id.tvCislo0);
         vh.tvPayment = v.findViewById(R.id.tvPlatba);
         vh.tvType = v.findViewById(R.id.tvDruhPlatby);
@@ -110,7 +113,14 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
             selectedId = payment.getId();
             selectedPosition = position;
             selectedTable = table;
-            YesNoDialogFragment.newInstance("Odstranit záznam platby", FLAG_PAYMENT_ADAPTER_DELETE).show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
+            YesNoDialogFragment.newInstance(context.getResources().getString(R.string.remove_record_payment),
+                    FLAG_PAYMENT_ADAPTER_DELETE).show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
+        });
+
+        holder.btnChangeInvoice.setOnClickListener(v -> {
+            selectedTable = table;
+            selectedPosition = position;
+            PaymentChangeInvoiceDialogFragment.newInstance(payment.getIdFak(), payment.getId()).show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
         showButtons(holder, position);
@@ -162,6 +172,9 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     }
 
 
+    /**
+     * Vymaže pozici pozici zobrazených tlačítek - skryje je
+     */
     public static void resetShowButtons() {
         showButtons = -1;
     }

@@ -170,8 +170,8 @@ public class DataSubscriptionPointSource extends DataSource {
     /**
      * Přeřadí platby z období bez faktury ke konkrétní faktuře
      *
-     * @param newIdFak id ke ketré se záznamy přidávají
-     * @param table   jméno tabulky s faktury příslušící konkrétnímu odběrnému místu
+     * @param newIdFak id ke které se záznamy přidají
+     * @param table   jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
      * @param invoice záznam faktury
      */
     public void changeInvoicePayment(long newIdFak, String table, InvoiceModel invoice) {
@@ -179,6 +179,18 @@ public class DataSubscriptionPointSource extends DataSource {
         long timeTo = invoice.getDateTo();
         String sql = "UPDATE " + table + " SET id_fak = ? WHERE id_fak = '-1' AND datum BETWEEN ? AND ?";
         database.execSQL(sql, new Object[]{newIdFak, timeFrom, timeTo});
+    }
+
+
+    /**
+     * Přeřadí platby k jiné faktuře
+     * @param newIdFak id ke které se záznamy přidají
+     * @param table jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
+     * @param idPayment id původní faktury
+     */
+    public void changeInvoicePayment(long newIdFak, String table, long idPayment){
+        String sql = "UPDATE " + table + " SET id_fak = ? WHERE _id = ?";
+        database.execSQL(sql, new Object[]{newIdFak, idPayment});
     }
 
 

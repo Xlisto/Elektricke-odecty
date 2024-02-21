@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rlRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <RadioButton
+        android:id="@+id/rbSelectedInvoicePayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false" />
+
+    <TextView
+        android:id="@+id/tvDateInvoicePayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNumberInvoicePayment"
+        android:layout_toEndOf="@id/rbSelectedInvoicePayment" />
+
+    <TextView
+        android:id="@+id/tvNumberInvoicePayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/rbSelectedInvoicePayment"
+        android:textSize="20sp" />
+</RelativeLayout>

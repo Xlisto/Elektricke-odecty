@@ -26,6 +26,7 @@ import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
 
+
 /**
  * Fragment zobrazující zálohové platby
  */
@@ -105,6 +106,29 @@ public class PaymentFragment extends Fragment {
                     setTotal();
                     setRecyclerView();
                 });
+
+        //Posluchač PaymentChangeInvoiceDialogFragment na změnu faktury
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentChangeInvoiceDialogFragment.FLAG_PAYMENT_ADAPTER_CHANGE_INVOICE, this,
+                (requestKey, result) -> {
+                    long selectedIdInvoiceNew = result.getLong(PaymentChangeInvoiceDialogFragment.ARG_SELECTED_ID_INVOICE);
+                    long idPayment = result.getLong(PaymentChangeInvoiceDialogFragment.ARG_ID_PAYMENT);
+                    long previousIdInvoice = result.getLong(PaymentChangeInvoiceDialogFragment.ARG_PREVIOUS_ID_INVOICE);
+                    boolean resultChangeInvoice = result.getBoolean(PaymentChangeInvoiceDialogFragment.ARG_RESULT);
+
+                    if (resultChangeInvoice) {
+                        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
+                        dataSubscriptionPointSource.open();
+                        dataSubscriptionPointSource.changeInvoicePayment(selectedIdInvoiceNew, table, idPayment);
+                        dataSubscriptionPointSource.close();
+                    }
+                    loadPayments();
+                    setTotal();
+                    if(selectedIdInvoiceNew != previousIdInvoice) {
+                        //paymentAdapter.notifyItemRemoved(paymentAdapter.getSelectedPosition());
+                        paymentAdapter.deleteItem();
+                        PaymentAdapter.resetShowButtons();
+                    }
+                });
     }
 
 
@@ -179,6 +203,6 @@ public class PaymentFragment extends Fragment {
         dataInvoiceSource.close();
 
         PaymentModel.getDiscountDPHText(discountPayment, tvDiscount);
-        tvTotal.setText(getResources().getString(R.string.sum,total));
+        tvTotal.setText(getResources().getString(R.string.sum, total));
     }
 }
