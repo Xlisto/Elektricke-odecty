@@ -191,7 +191,7 @@
     <string name="create_invoice">Vytvořit fakturu</string>
     <string name="create_new_invoice">Vytvořit novou fakturu</string>
     <string name="select_invoice">Vybrat záznamy</string>
-    <string name="discount">Sleva</string>
+    <string name="discount">Sleva bez DPH</string>
     <string name="supplement">Doplatek</string>
     <string name="payment">Záloha</string>
     <string name="support">Jednorázová podpora státu (2000 nebo 3500)</string>
@@ -429,4 +429,6 @@
     <string name="change_invoice_dialog_message">Vyberte fakturu, ke které chcete platbu přiřadit.</string>
     <string name="btn_move_payment">Přesuň</string>
     <string name="remove_record_payment">Odstranit záznam platby</string>
+    <string name="discount_number">Sleva na DPH ve výši %s Kč</string>
+    <string name="alert_discount_description">Sleva bez DPH je při výpočtu navýšena o DPH. Proto je nutné správně uvést datum započtení slevy, ke které části faktury se sleva váže. Jinak se nezapočítá. </string>
 </resources>

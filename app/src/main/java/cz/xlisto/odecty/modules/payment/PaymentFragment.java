@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.payment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,9 +199,11 @@ public class PaymentFragment extends Fragment {
     private void setTotal() {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getContext());
         dataInvoiceSource.open();
-        double discountPayment = dataInvoiceSource.sumDiscount(idFak, table);
+        double discountPayment = dataInvoiceSource.sumDiscountWithTax(idFak, table);
         double total = dataInvoiceSource.sumPayment(idFak, table);
         dataInvoiceSource.close();
+
+        Log.w(TAG, "setTotal: " + discountPayment+" "+total);
 
         PaymentModel.getDiscountDPHText(discountPayment, tvDiscount);
         tvTotal.setText(getResources().getString(R.string.sum, total));

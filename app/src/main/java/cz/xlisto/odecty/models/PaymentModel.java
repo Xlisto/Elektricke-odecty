@@ -59,7 +59,7 @@ public class PaymentModel {
     public String getTypePaymentString() {
         if (typePayment == 1) return "Doplatek";
         if (typePayment == 2) return "Automatická";
-        if (typePayment == 3) return "Sleva";
+        if (typePayment == 3) return "Sleva bez DPH";
         if (typePayment == 4) return "Podpora státu (2000 nebo 3500)";
         return "Měsíční záloha";
     }
@@ -91,14 +91,14 @@ public class PaymentModel {
 
 
     /**
-     * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
+     * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021 a zobrazení TextView
      *
      * @param discount sleva na DPH
      * @param tv       TextView pro zobrazení slevy na DPH
      */
     public static void getDiscountDPHText(double discount, TextView tv) {
         if (discount > 0) {
-            tv.setText("Sleva na DPH ve výši " + DecimalFormatHelper.df2.format(discount) + " Kč");
+            tv.setText(tv.getContext().getResources().getString(cz.xlisto.odecty.R.string.discount_number, DecimalFormatHelper.df2.format(discount)));
             tv.setVisibility(View.VISIBLE);
         } else
             tv.setVisibility(View.GONE);

@@ -21,6 +21,7 @@ import static cz.xlisto.odecty.databaze.DbHelper.CISLO_FAK;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_FROM;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_DATE_UNTIL;
 import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_ID;
+import static cz.xlisto.odecty.databaze.DbHelper.DATUM;
 import static cz.xlisto.odecty.databaze.DbHelper.DATUM_PLATBY;
 import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
 import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
@@ -316,7 +317,7 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      * @return součet slevy DPH
      */
-    public double sumDiscount(long idFak, String table) {
+    public double sumDiscountWithTax(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
                         "IFNULL((SELECT sum(castka*0.21) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3 AND datum >= 1635721200000 AND datum <= 1640908800000),0))",
                 new String[]{String.valueOf(idFak)});
@@ -333,7 +334,7 @@ public class DataInvoiceSource extends DataSource {
      * @param itemId id záznamu
      * @param table  název tabulky
      */
-    public void deleteInvoice(String table,long itemId) {
+    public void deleteInvoice(String table, long itemId) {
         database.delete(table, "_id=?",
                 new String[]{String.valueOf(itemId)});
     }
@@ -346,10 +347,41 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      */
     public double sumPayment(long idFak, String table) {
-        Cursor cursor = database.rawQuery("SELECT (" +
-                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3),0)  - " +
-                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna=3),0)) as total " +
-                "GROUP BY total", new String[]{String.valueOf(idFak), String.valueOf(idFak)});
+        String sql = "SELECT (" +
+                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3),0)) as total " +
+                "GROUP BY total";
+        String[] args = new String[]{String.valueOf(idFak)};
+        return getDoubleSum(sql, args);
+    }
+
+
+    /**
+     * Provede součet zálohových plateb ve faktuře bez DPH
+     *
+     * @param idFak id faktury
+     * @param table název tabulky
+     * @return součet slev bez DPH
+     */
+    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo,long idInvoice) {
+
+        String sql = "SELECT " +
+                "(IFNULL((SELECT sum(castka) FROM " + table +
+                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND "+ID_FAK+" = ?),0)) as total " +
+                "GROUP BY total";
+        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
+        return getDoubleSum(sql, args);
+    }
+
+
+    /**
+     * Provede součet položek v tabulce
+     *
+     * @param sql  sql dotaz
+     * @param args argumenty dotazu
+     */
+    private double getDoubleSum(String sql, String[] args) {
+        Cursor cursor = database.rawQuery(sql, args);
+        if (cursor.getCount() == 0) return 0;
         cursor.moveToFirst();
         double result = cursor.getDouble(0);
         cursor.close();

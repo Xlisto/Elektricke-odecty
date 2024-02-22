@@ -61,7 +61,7 @@ public class InvoiceFragment extends Fragment {
     public int showTypeTotalPrice = 0;
     private int position;
     private double[] totalPrice;
-    private double discount;
+    private double discountWithTax;
     private ShPInvoice shPInvoice;
     private SubscriptionPointModel subscriptionPoint;
     private ArrayList<InvoiceModel> invoices;
@@ -247,12 +247,12 @@ public class InvoiceFragment extends Fragment {
         checkInvoiceItem(dataInvoiceSource);
 
         invoices = dataInvoiceSource.loadInvoices(idFak, table);
-        discount = dataInvoiceSource.sumDiscount(idFak, tablePAY);
+        discountWithTax = dataInvoiceSource.sumDiscountWithTax(idFak, tablePAY);
         dataInvoiceSource.close();
 
         poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), getActivity());
         totalPrice = calculationTotalInvoice(invoices, subscriptionPoint, poze);
-        PaymentModel.getDiscountDPHText(discount, tvDiscount);
+        PaymentModel.getDiscountDPHText(discountWithTax, tvDiscount);
     }
 
 
@@ -345,8 +345,9 @@ public class InvoiceFragment extends Fragment {
     private double[] calculationTotalInvoice(ArrayList<InvoiceModel> invoices, SubscriptionPointModel subscriptionPoint, PozeModel poze) {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
-        double payment = dataInvoiceSource.sumPayment(idFak, tablePAY);
-        dataInvoiceSource.close();
+        double payment = dataInvoiceSource.sumPayment(idFak, tablePAY); //platby
+
+        //dataInvoiceSource.close();
 
         double[] priceTotal = new double[4];
         double total = 0, totalDPH = 0;
@@ -398,9 +399,16 @@ public class InvoiceFragment extends Fragment {
                 total += price[j];
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
-            total += totalOtherServices;
-            totalDPH += totalOtherServices + (totalOtherServices * priceList.getDph() / 100);
+            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY,invoice.getDateFrom(),invoice.getDateTo(),invoice.getIdInvoice());//sleva bez DPH
+            Log.w(TAG, "calculationTotalInvoice: discountWithoutTax " + discountWithoutTax);
+            total += totalOtherServices-discountWithoutTax;
+            totalDPH += totalOtherServices-discountWithoutTax + ((totalOtherServices-discountWithoutTax) * priceList.getDph() / 100);
         }
+        dataInvoiceSource.close();
+
+        //započtení slevy
+        //total -= discountWithoutTax;
+        //totalDPH -= discountWithoutTax-(discountWithoutTax * priceList.getDph() / 100);
 
         totalPriceVt = priceTotal[0];
         totalPriceNt = priceTotal[1];
@@ -408,7 +416,7 @@ public class InvoiceFragment extends Fragment {
         totalPoze = priceTotal[3];
 
         return new double[]{totalVt, totalNT, (totalNT + totalVt), totalPriceVt, totalPriceNt,
-                totalPayment, totalPoze, totalOtherServices, total, totalDPH - discount, payment, payment - totalDPH + discount};
+                totalPayment, totalPoze, totalOtherServices, total, totalDPH - discountWithTax, payment, payment - totalDPH + discountWithTax};
     }
 
 
