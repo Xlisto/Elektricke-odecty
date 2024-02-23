@@ -2,6 +2,7 @@ package cz.xlisto.odecty.databaze;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,7 +40,7 @@ public class DataGraphMonth extends DataSource {
         String table = (Objects.requireNonNull(SubscriptionPoint.load(context))).getTableO();
         if (table == null) return null;
         String orderBy = DbHelper.DATUM + " ASC, " + DbHelper.PRVNI_ODECET + " ASC";
-        boolean add = false;
+        boolean add;
         int firstReader;
         open();
         //Cursor cursor = database.rawQuery("SELECT _ID, vt, nt, datum, prvni_odecet " + "FROM '" + table + "' ORDER BY datum", null);
@@ -54,36 +55,38 @@ public class DataGraphMonth extends DataSource {
 
         monthlyConsuptions.clear();
 
-        for (int i = 0; i < cursor.getCount(); i++) {
-            if (i == 0) {
+        for (int i = 0; i < cursor.getCount()-1; i++) {
+            if (i == cursor.getCount()-1) {
                 cursor.moveToPosition(i);
             } else {
-                cursor.moveToPosition(i - 1);
+                cursor.moveToPosition(i);
                 double previousVT = cursor.getDouble(1);
                 double previousNT = cursor.getDouble(2);
                 long previousDate = removeMonth(cursor.getLong(3));
-                cursor.moveToPosition(i);
+                cursor.moveToPosition(i+1);
                 double actualVT = cursor.getDouble(1);
                 double actualNT = cursor.getDouble(2);
                 long actualDate = removeMonth(cursor.getLong(3));
                 firstReader = cursor.getInt(4);
                 if (firstReader == 1) continue;
 
+                //sčítat záznam odečtu je potřeba o jeden pozadu, proto je kontrola po načtení a až při dalším cyklu se uplatňuje
+                Log.w(TAG, "prevDate: " + SimpleDateFormatHelper.dateAndTime.format(actualDate)+" "+SimpleDateFormatHelper.dateAndTime.format(previousDate));
+                add = SimpleDateFormatHelper.month.format(actualDate).equals(SimpleDateFormatHelper.month.format(previousDate));
 
+                //Log.w(TAG, "index: "+i);
                 //přidat nový záznam do měsíční spotřeby
-                if (add) {
-                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).addConsuptionVT(actualVT - previousVT);
-                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).addConsuptionNT(actualNT - previousNT);
-                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).setDates(actualDate);
-                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).setFirstReader(firstReader);
+                if (add && i>0) {
+                    monthlyConsuptions.get(monthlyConsuptions.size()-1).addConsuptionVT(actualVT - previousVT);
+                    monthlyConsuptions.get(monthlyConsuptions.size()-1).addConsuptionNT(actualNT - previousNT);
+                    monthlyConsuptions.get(monthlyConsuptions.size()-1).setDates(actualDate);
+                    monthlyConsuptions.get(monthlyConsuptions.size()-1).setFirstReader(firstReader);
                 } else {
                     //proč potřebuji předchozí datum v modelu spotřeby?
                     monthlyConsuptions.add(new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate, firstReader));
                 }
 
-                //sčítat záznam odečtu je potřeba o jeden pozadu, proto je kontrola po načtení a až při dalším cyklu se uplatňuje
-                add = SimpleDateFormatHelper.month.format(actualDate).equals(SimpleDateFormatHelper.month.format(previousDate));
-            }
+               }
         }
         cursor.close();
         close();
@@ -158,7 +161,7 @@ public class DataGraphMonth extends DataSource {
     private long removeMonth(long date) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(date);
-        cal.add(Calendar.MONTH, -1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         date = cal.getTimeInMillis();
         return date;
     }
