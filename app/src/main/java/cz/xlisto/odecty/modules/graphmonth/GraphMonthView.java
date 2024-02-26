@@ -424,7 +424,7 @@ public class GraphMonthView extends View {
                 break;
         }
 
-        int startX, stopX, lastX = 0;
+        int startX, stopX, lastX = dipToPx(30)*consuption.size()+left;
         for (int i = 0; i < consuption.size() - 1; i++) {
             startX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
             stopX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
@@ -487,7 +487,7 @@ public class GraphMonthView extends View {
         }
 
         //poslední záznam
-        if (consuption.size() > 1) {
+        if (consuption.size() > 0) {
             ConsuptionModel lastMonthlyConsuption = consuption.get(consuption.size() - 1);
             int stopVTStart = lastMonthlyConsuption.getConsuptionVTAnimace();
             int stopNTStart = lastMonthlyConsuption.getConsuptionNTAnimace();

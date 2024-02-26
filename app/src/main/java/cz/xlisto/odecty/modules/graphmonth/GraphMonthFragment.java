@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.graphmonth;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +61,7 @@ public class GraphMonthFragment extends Fragment {
         btnLeft = view.findViewById(R.id.imgBtnLeft);
         btnRight = view.findViewById(R.id.imgBtnRight);
 
-        //zakázání hardwarové akcelerace - kvůli vykreslování čárkováné osy
+        //zákaz hardwarové akcelerace - kvůli vykreslování čárkováné osy
         //graphMonthView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         shPGraphMonth = new ShPGraphMonth(requireContext());
@@ -150,8 +149,6 @@ public class GraphMonthFragment extends Fragment {
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
         ConsuptionContainer consuptionContainer = dataGraphMonth.loadConsuptions();
         graphMonthView.setConsuption(consuptionContainer);
-        Log.w(TAG, "onResume: " + showPeriod + " " + showVT + " " + showNT + " " + showTypeGraph + " " + compareMonth);
-        Log.w(TAG, "onResume: "+consuptionContainer.getYearConsuption().size());
 
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
         dataSettingsSource.open();
