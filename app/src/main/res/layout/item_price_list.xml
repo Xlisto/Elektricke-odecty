@@ -12,57 +12,9 @@
         android:id="@+id/item_price_list_cell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvPlatnostZacatek"
+        android:layout_below="@id/tvProduktovaRada"
         android:background="@drawable/shape_item"
         android:gravity="start">
-
-        <RadioButton
-            android:id="@+id/rbPriceList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tvProdukt"
-            android:clickable="false"
-            android:focusable="false" />
-
-        <TextView
-            android:id="@+id/tvProdukt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentStart="false"
-            android:layout_below="@id/tvPlatnostCeniku"
-            android:layout_toEndOf="@id/rbPriceList"
-            android:gravity="start"
-            android:text="@string/sazba_distribuce"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/tvPlatnostCeniku"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_centerHorizontal="true"
-            android:text="@string/platnost_cenik" />
-
-        <TextView
-            android:id="@+id/tvSazba"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_below="@id/tvProdukt"
-            android:layout_marginTop="10dp"
-            android:text="@string/sazba_distribuce" />
-
-        <TextView
-            android:id="@+id/tvFirma"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvProdukt"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/tvSazba"
-            android:singleLine="false"
-            android:text="@string/dodavatel" />
 
         <LinearLayout
             android:id="@+id/ln_item_price_list"
@@ -142,13 +94,6 @@
                 android:text="@string/jednotkova_cena" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvPoznamkaItemPriceList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ln_item_price_list_regul"
-            android:layout_marginTop="2dp" />
-
         <LinearLayout
             android:id="@+id/lnButtonsPriceListItem"
             android:layout_width="match_parent"
@@ -184,25 +129,71 @@
                 android:layout_weight="1"
                 android:text="@string/delete" />
         </LinearLayout>
+
+        <RadioButton
+            android:id="@+id/rbPriceList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvProdukt"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <TextView
+            android:id="@+id/tvFirma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvProdukt"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/tvSazba"
+            android:singleLine="false"
+            android:text="@string/dodavatel" />
+
+        <TextView
+            android:id="@+id/tvProdukt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="false"
+            android:layout_below="@id/tvPlatnostCeniku"
+            android:layout_toEndOf="@id/rbPriceList"
+            android:gravity="start"
+            android:text="@string/sazba_distribuce"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/tvPlatnostCeniku"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_centerHorizontal="true"
+            android:text="@string/platnost_cenik" />
+
+        <TextView
+            android:id="@+id/tvPoznamkaItemPriceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ln_item_price_list_regul"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/tvSazba"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@id/tvProdukt"
+            android:layout_marginTop="10dp"
+            android:text="@string/sazba_distribuce" />
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/tvPlatnostZacatek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"
-        android:text="@string/platnost_cenik"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
         android:id="@+id/tvProduktovaRada"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
-        android:layout_toStartOf="@id/tvPlatnostZacatek"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/produktova_rada"

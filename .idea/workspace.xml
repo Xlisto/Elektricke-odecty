@@ -305,12 +305,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_ano_smile.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_ne_smile.png" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna ikony v měsíčních odečtech pro zobrazení kladného nebo záporného hodnocení spotřeby.&#10;Ikona zatržítka a křížku nahrazena ikonou smějícího a zamračeného smajlíku. Zvětšena na 50x60dp.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_price_list.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1020,7 +1018,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="206" />
+    <option name="localTasksCounter" value="207" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1094,7 +1092,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Upravena podmínka pro zobrazení upozornění o regulovaných cenách a platnosti ceníku." />
     <MESSAGE value="Zavedena animace hodinové ručičky v GraphTotalHdoView." />
     <MESSAGE value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
     <MESSAGE value="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu." />
@@ -1119,7 +1116,8 @@
     <MESSAGE value="Doplněna možnost změny faktury u zálohové platby.&#10;Řešeno dialogovým oknem PaymentChangeInvoiceDialogFragment." />
     <MESSAGE value="Opraven výpočet jednorázových slev.&#10;Chyba byla, že se sleva zahrnovala jako snížení součtu plateb. Nyní se odečítá od celkového součtu ceny spotřebované elektřiny. Záznam slevy se datumově váže k platnosti faktury. Pokud je mimo datumové rozpětí, nezapočítá se. To je nutné, pokud by byla změna výše DPH, aby se sleva počítala se správnou výší DPH." />
     <MESSAGE value="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí." />
+    <MESSAGE value="Změna ikony v měsíčních odečtech pro zobrazení kladného nebo záporného hodnocení spotřeby.&#10;Ikona zatržítka a křížku nahrazena ikonou smějícího a zamračeného smajlíku. Zvětšena na 50x60dp." />
+    <option name="LAST_COMMIT_MESSAGE" value="Změna ikony v měsíčních odečtech pro zobrazení kladného nebo záporného hodnocení spotřeby.&#10;Ikona zatržítka a křížku nahrazena ikonou smějícího a zamračeného smajlíku. Zvětšena na 50x60dp." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

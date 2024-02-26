@@ -54,7 +54,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout relativeLayout;
-        TextView tvFrom, tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
+        TextView tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
                 tvNote, tvPriceVTRegul, tvPriceNTRegul, tvPriceMonthRegul;
         RadioButton rbSelectItem;
         LinearLayout lnRegulPrice, lnButtons;
@@ -86,13 +86,10 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Získání objektu View položky seznamu z jejího XML návrhu
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_price_list, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         vh.relativeLayout = v.findViewById(R.id.item_price_list);
-        // Získání referencí na jednotlivé komponenty zobrazené seznam
         vh.rbSelectItem = v.findViewById(R.id.rbPriceList);
-        vh.tvFrom = v.findViewById(R.id.tvPlatnostZacatek);
         vh.tvValidityDate = v.findViewById(R.id.tvPlatnostCeniku);
         vh.tvSeries = v.findViewById(R.id.tvProduktovaRada);
         vh.tvProduct = v.findViewById(R.id.tvProdukt);
@@ -210,7 +207,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         }
 
         String distUzemi = context.getResources().getString(R.string.dist_uzemi,priceList.getFirma(), priceList.getDistribuce());
-        holder.tvFrom.setText(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
         holder.tvValidityDate.setText(context.getResources().getString(R.string.validity_price_list_date, ViewHelper.convertLongToDate(priceList.getPlatnostOD()),ViewHelper.convertLongToDate(priceList.getPlatnostDO())));
         holder.tvSeries.setText(priceList.getRada());
         holder.tvProduct.setText(priceList.getProdukt());
