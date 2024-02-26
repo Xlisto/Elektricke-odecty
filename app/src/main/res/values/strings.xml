@@ -426,6 +426,7 @@
     <string name="create">Vytvoř</string>
 
     <string name="change_invoice_dialog_title">Změna přiřazení platby</string>
+    <string name="reload_prices">Načíst regulované platby</string>
     <string name="change_invoice_dialog_message">Vyberte fakturu, ke které chcete platbu přiřadit.</string>
     <string name="btn_move_payment">Přesuň</string>
     <string name="remove_record_payment">Odstranit záznam platby</string>

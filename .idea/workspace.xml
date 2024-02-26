@@ -58,6 +58,12 @@
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_yes_no_dialog_recycler_view.xml">
         <config>
           <state>Landscape</state>
@@ -189,6 +195,11 @@
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -305,10 +316,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraveno nezobrazování grafu při jednom záznamu.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,7 +332,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[RF8MA155T3J]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1018,7 +1032,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="208" />
+    <option name="localTasksCounter" value="209" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1092,7 +1106,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Do vlastního view GraphTotalHdoView doplněna textová informace o začátku/konci sazby NT.&#10;Pro zlepšení přehlednosti o aktuální platnosti sazby." />
     <MESSAGE value="Do vlastního view GraphTotalConsuptionView jsou přidány texty zobrazující zaplacené zálohy, spotřebu a celkovou bilanci. Doplněné o animaci při změně odběrného místa.&#10;Pro zlepšení čitelnosti a zjištění aktuálního stavu." />
     <MESSAGE value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
     <MESSAGE value="Nalezena chyba v nefunkčním odpočítávání do konce/začátku nízského tarifu.&#10;Aktualizace souborů Java&#10;&#10;1. V souboru `BuilderHDOStack.java`:&#10;   - Byla přidána metoda pro vytváření týdenního seznamu HDO modelů.&#10;   - Bylo optimalizováno odstraňování duplicitních modelů.&#10;   - Byla přidána podpora pro posunutí času.&#10;&#10;2. V souboru `DataHdoSource.java`:&#10;   - Byly provedeny změny v metodách pro načítání, ukládání, aktualizaci a mazání HDO modelů.&#10;&#10;3. V souborech `GraphTotalHdoView.java` a `DashBoardFragment.java`:&#10;   - Byly provedeny menší úpravy.&#10;&#10;Tyto změny byly provedeny za účelem zlepšení funkčnosti a efektivity aplikace." />
@@ -1117,7 +1130,8 @@
     <MESSAGE value="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí." />
     <MESSAGE value="Změna ikony v měsíčních odečtech pro zobrazení kladného nebo záporného hodnocení spotřeby.&#10;Ikona zatržítka a křížku nahrazena ikonou smějícího a zamračeného smajlíku. Zvětšena na 50x60dp." />
     <MESSAGE value="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný." />
-    <option name="LAST_COMMIT_MESSAGE" value="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný." />
+    <MESSAGE value="Opraveno nezobrazování grafu při jednom záznamu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opraveno nezobrazování grafu při jednom záznamu." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

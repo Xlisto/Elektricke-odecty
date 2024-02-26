@@ -76,7 +76,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     boolean isFirstLoad = true;
     boolean closedDialog = false;
 
-    Button btnFrom, btnUntil, btnBack, btnSave;
+    Button btnFrom, btnUntil, btnBack, btnSave, btnReloadRegulPriceList;
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
     LabelEditText ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14;
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
@@ -100,6 +100,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         btnUntil = view.findViewById(R.id.btnPlatnostDO);
         btnBack = view.findViewById(R.id.btnZpet);
         btnSave = view.findViewById(R.id.btnUloz);
+        btnReloadRegulPriceList = view.findViewById(R.id.btnReloadRegulPriceList);
         ivRada = view.findViewById(R.id.ivRada);
         ivProdukt = view.findViewById(R.id.ivProdukt);
         ivDodavatel = view.findViewById(R.id.ivDodavatel);
@@ -186,6 +187,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
             }
         });
+
+        btnReloadRegulPriceList.setOnClickListener(v -> setRegulPrice());
 
         if (savedInstanceState != null) {
             //Restore the fragment's state here

@@ -146,6 +146,14 @@
                         android:labelFor="@+id/spSazbaSeznam"
                         android:text="@string/sazba_distribuce" />
 
+                    <Button
+                        android:id="@+id/btnReloadRegulPriceList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/spSazbaSeznam"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/reload_prices" />
+
                 </RelativeLayout>
 
                 <cz.xlisto.odecty.ownview.LabelEditText

@@ -218,7 +218,7 @@ public class PriceListFragment extends Fragment {
         onLoadData();
         setAdapter();
         showDetailPriceFragment(true);
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             btnBack.setText(savedInstanceState.getString(BTN_BACK_TEXT));
         }
     }
@@ -238,7 +238,8 @@ public class PriceListFragment extends Fragment {
         outState.putBoolean(SHOW_SELECT_ITEM, showSelectItem);
         outState.putInt(ARG_ID_FRAGMENT, idFragment);
         outState.putSerializable(FLAG_SIDE, side);
-        outState.putString(BTN_BACK_TEXT, btnBack.getText().toString());
+        if (btnBack != null)
+            outState.putString(BTN_BACK_TEXT, btnBack.getText().toString());
     }
 
 
