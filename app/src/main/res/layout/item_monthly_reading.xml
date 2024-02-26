@@ -24,15 +24,17 @@
 
         <ImageView
             android:id="@+id/imageViewMonthlyReading"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
             android:contentDescription="@string/icon_monthly_result" />
 
         <RelativeLayout
             android:id="@+id/rl2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
@@ -261,8 +263,6 @@
             android:id="@+id/tvTarif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/imageViewMonthlyReading"
-            android:layout_alignBottom="@id/imageViewMonthlyReading"
             android:layout_alignParentBottom="false"
             android:layout_alignParentEnd="false"
             android:layout_alignParentStart="true"
@@ -280,7 +280,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/imageViewMonthlyReading"
+            android:layout_below="@id/tvTarif"
             android:text="@string/pomlcky"
             android:textSize="18sp" />
 
@@ -289,8 +289,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/tvDays"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/imageViewMonthlyReading"
+            android:layout_alignParentEnd="false"
+            android:layout_toStartOf="@id/imageViewMonthlyReading"
             android:text="@string/pomlcky"
             android:textSize="18sp" />
 

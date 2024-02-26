@@ -211,11 +211,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
             String color = "red";
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_montly_reading_no, null));
-            int imageResource = R.mipmap.ic_ne;
+            int imageResource = R.drawable.ic_ne_smile;
             if (different >= 0) {
                 color = "#008000";
                 holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_yes, null));
-                imageResource = R.mipmap.ic_ano;
+                imageResource = R.drawable.ic_ano_smile;
             }
 
             holder.ivIconResult.setImageResource(imageResource);
@@ -233,8 +233,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             List<TextView> textViewsVt = Arrays.asList(holder.tvVtDescription, holder.tvVt, holder.tvVtDif, holder.tvVtPrice);
             List<TextView> textViewsNt = Arrays.asList(holder.tvNtDescription, holder.tvNt, holder.tvNtDif, holder.tvNtPrice);
 
-            TextSizeAdjuster.adjustTextSize(holder.rl3, textViewsVt, context);
-            TextSizeAdjuster.adjustTextSize(holder.rl3, textViewsNt, context);
+            TextSizeAdjuster.adjustTextSize(holder.rl2, textViewsVt, context);
+            TextSizeAdjuster.adjustTextSize(holder.rl2, textViewsNt, context);
 
         }
 
@@ -292,6 +292,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
 
         } else {
+
             //poslední položka v seznamu
             holder.tvPriceList.setVisibility(View.VISIBLE);
             holder.tvPayment.setVisibility(View.VISIBLE);
@@ -320,10 +321,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.ivIconResult.setVisibility(View.GONE);
                 holder.tvPriceList.setVisibility(View.GONE);
 
-                RelativeLayout.LayoutParams paramsTvDays = (RelativeLayout.LayoutParams) holder.tvMonth.getLayoutParams();
-                paramsTvDays.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-                paramsTvDays.addRule(RelativeLayout.BELOW, R.id.tvAlertRegulPrice);
-                holder.tvMonth.setLayoutParams(paramsTvDays);
+                RelativeLayout.LayoutParams paramsTvMonthPrice = (RelativeLayout.LayoutParams) holder.tvMonthPrice.getLayoutParams();
+                paramsTvMonthPrice.removeRule(RelativeLayout.START_OF);
+                paramsTvMonthPrice.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.tvDays);
+                holder.tvMonthPrice.setLayoutParams(paramsTvMonthPrice);
 
             } else {
                 holder.tvPayment.setVisibility(View.VISIBLE);
@@ -331,10 +332,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.ivIconResult.setVisibility(View.VISIBLE);
                 holder.tvPriceList.setVisibility(View.VISIBLE);
 
-                RelativeLayout.LayoutParams paramsTvDays = (RelativeLayout.LayoutParams) holder.tvMonth.getLayoutParams();
-                paramsTvDays.addRule(RelativeLayout.BELOW, R.id.imageViewMonthlyReading);
-                holder.tvMonth.setLayoutParams(paramsTvDays);
-
+                RelativeLayout.LayoutParams paramsTvMonthPrice = (RelativeLayout.LayoutParams) holder.tvMonthPrice.getLayoutParams();
+                paramsTvMonthPrice.addRule(RelativeLayout.START_OF,R.id.imageViewMonthlyReading);
+                paramsTvMonthPrice.removeRule(RelativeLayout.ALIGN_PARENT_END);
+                holder.tvMonthPrice.setLayoutParams(paramsTvMonthPrice);
             }
 
             if (items.get(position).getOtherServices() > 0) {
