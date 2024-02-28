@@ -27,4 +27,6 @@
 
     <color name="menuBackgroundColor">#FFFFFFFF</color>
 
+    <color name="labelEditBackgroundEditText">#1AF71919</color>
+
 </resources>

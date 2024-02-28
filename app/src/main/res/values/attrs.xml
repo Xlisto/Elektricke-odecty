@@ -15,6 +15,7 @@
         <attr name="android:maxEms"/>
         <attr name="android:ems"/>
         <attr name="android:gravity"/>
+        <attr name="changedBackgroundEditText" format="color"/>
 
     </declare-styleable>
 

@@ -420,31 +420,28 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
             PriceListModel priceListModel = readRawJSON.read(year, spDistribucniUzemi.getSelectedItem().toString(),
                     spSazba.getSelectedItem().toString());
-            ivVT1.setDefaultText(df2.format(priceListModel.getDistVT()));
-            ivNT1.setDefaultText(df2.format(priceListModel.getDistNT()));
+            double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(),
+                    priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(),
+                    priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(),
+                    priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(),
+                    priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(),
+                    priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(),
+                    priceListModel.getDph()
+            };
+            LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1,
+                    ivJ0, ivJ1, ivJ2, ivJ3,
+                    ivJ4, ivJ5, ivJ6, ivJ7,
+                    ivJ8, ivJ9, ivJ10, ivJ11,
+                    ivJ12, ivJ13, ivJ14, ivSystemSluzby,
+                    ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan,
+                    ivDPH};
 
-            ivJ0.setDefaultText(df2.format(priceListModel.getJ0()));
-            ivJ1.setDefaultText(df2.format(priceListModel.getJ1()));
-            ivJ2.setDefaultText(df2.format(priceListModel.getJ2()));
-            ivJ3.setDefaultText(df2.format(priceListModel.getJ3()));
-            ivJ4.setDefaultText(df2.format(priceListModel.getJ4()));
-            ivJ5.setDefaultText(df2.format(priceListModel.getJ5()));
-            ivJ6.setDefaultText(df2.format(priceListModel.getJ6()));
-            ivJ7.setDefaultText(df2.format(priceListModel.getJ7()));
-            ivJ8.setDefaultText(df2.format(priceListModel.getJ8()));
-            ivJ9.setDefaultText(df2.format(priceListModel.getJ9()));
-            ivJ10.setDefaultText(df2.format(priceListModel.getJ10()));
-            ivJ11.setDefaultText(df2.format(priceListModel.getJ11()));
-            ivJ12.setDefaultText(df2.format(priceListModel.getJ12()));
-            ivJ13.setDefaultText(df2.format(priceListModel.getJ13()));
-            ivJ14.setDefaultText(df2.format(priceListModel.getJ14()));
-
-            ivSystemSluzby.setDefaultText(df2.format(priceListModel.getSystemSluzby()));
-            ivCinnostOperatora.setDefaultText(df2.format(priceListModel.getCinnost()));
-            ivPOZE1.setDefaultText(df2.format(priceListModel.getPoze1()));
-            ivPOZE2.setDefaultText(df2.format(priceListModel.getPoze2()));
-            ivDan.setDefaultText(df2.format(priceListModel.getDan()));
-            ivDPH.setDefaultText(df2.format(priceListModel.getDph()));
+            for (int i = 0; i < regulPrice.length; i++) {
+                labelEditTexts[i].setAllowChangeBackgroundColor(false);
+                labelEditTexts[i].setChangedBackgroundEditText(getResources().getColor(R.color.labelEditBackgroundEditText));
+                labelEditTexts[i].setDefaultText(df2.format(regulPrice[i]));
+                labelEditTexts[i].setAllowChangeBackgroundColor(true);
+            }
 
             switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) ||
                     (priceListModel.getJ12() != 0) || (priceListModel.getJ12() != 0));

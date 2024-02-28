@@ -295,7 +295,7 @@
                     android:inputType="numberDecimal"
                     android:maxEms="4"
                     app:hintText="@string/nuly"
-                    app:label="@string/vt2" />
+                    app:label="@string/vt2"/>
 
             </RelativeLayout>
 

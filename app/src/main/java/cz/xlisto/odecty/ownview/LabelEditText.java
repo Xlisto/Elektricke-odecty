@@ -3,10 +3,12 @@ package cz.xlisto.odecty.ownview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -36,6 +38,8 @@ import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 public class LabelEditText extends RelativeLayout {
     private TextView textView;
     private EditText editText;
+    private int changedBackgroundEditText;
+    private boolean allowChangeColor = false;
 
 
     public LabelEditText(Context context) {
@@ -89,6 +93,7 @@ public class LabelEditText extends RelativeLayout {
         editText.setId(View.generateViewId());
         relativeLayout.addView(editText);
 
+        setChangedBackgroundEditText(attributeSet);
         setTexts(attributeSet);
         setMaxEms(attributeSet);
         setEms(attributeSet);
@@ -136,6 +141,19 @@ public class LabelEditText extends RelativeLayout {
         }
         textView.setLayoutParams(paramsTextView);
         editText.setLayoutParams(paramsEditText);
+        ta.recycle();
+    }
+
+
+    /**
+     * Nastaví barvu pozadí EditTextu z XML
+     *
+     * @param attributeSet parametry z xml
+     */
+    private void setChangedBackgroundEditText(AttributeSet attributeSet) {
+        TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
+        changedBackgroundEditText = ta.getColor(R.styleable.LabelEditText_changedBackgroundEditText, Color.TRANSPARENT);
+        Log.w("TAG", "changedBackgroundEditText " + changedBackgroundEditText);
         ta.recycle();
     }
 
@@ -254,6 +272,16 @@ public class LabelEditText extends RelativeLayout {
 
 
     /**
+     * Nastaví barvu pozadí EditTextu
+     *
+     * @param color barva pozadí
+     */
+    public void setTextColor(int color) {
+        editText.setTextColor(color);
+    }
+
+
+    /**
      * Kontroluje desetinný oddělovač. Pokud je oddělovač desetinná čárka, napsaný oddělovač jako tečka jej zamění za čárku.
      * Zároveň kontroluje počet desetinných oddělovačů.
      */
@@ -267,6 +295,7 @@ public class LabelEditText extends RelativeLayout {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
 
@@ -292,6 +321,11 @@ public class LabelEditText extends RelativeLayout {
                         editText.setText(str);
                         editText.setSelection(str.length());
                     }
+                }
+                //změna barvy pozadí EditTextu
+                if (allowChangeColor) {
+                    //editText.setBackgroundColor(Color.parseColor("#caf0f8"));
+                    editText.setBackgroundColor(changedBackgroundEditText);
                 }
             }
         });
@@ -368,8 +402,35 @@ public class LabelEditText extends RelativeLayout {
     }
 
 
+    /**
+     * Nastaví hint u TextEditu
+     *
+     * @param hintText hint
+     */
     public void setHintText(String hintText) {
         editText.setHint(hintText);
+    }
+
+
+    /**
+     * Povolí/zakáže změnu barvy pozadí EditTextu
+     *
+     * @param allowChangeColor true = povolit, false = zakázat
+     */
+    public void setAllowChangeBackgroundColor(boolean allowChangeColor) {
+        this.allowChangeColor = allowChangeColor;
+        if (!allowChangeColor)
+            editText.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+
+    /**
+     * Nastaví barvu pozadí EditTextu při změně obsahu
+     *
+     * @param color barva pozadí
+     */
+    public void setChangedBackgroundEditText(int color) {
+        changedBackgroundEditText = color;
     }
 
 
