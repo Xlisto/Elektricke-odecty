@@ -278,9 +278,10 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@id/tvCenaZaDistribuci"
+                    android:ems="5"
                     android:gravity="end"
                     android:inputType="numberDecimal"
-                    android:maxEms="5"
+                    android:maxEms="6"
                     app:hintText="@string/nuly"
                     app:label="@string/nt2" />
 
@@ -290,12 +291,12 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tvCenaZaDistribuci"
                     android:layout_marginStart="5dp"
-                    android:ems="4"
+                    android:ems="5"
                     android:gravity="end"
                     android:inputType="numberDecimal"
-                    android:maxEms="4"
+                    android:maxEms="6"
                     app:hintText="@string/nuly"
-                    app:label="@string/vt2"/>
+                    app:label="@string/vt2" />
 
             </RelativeLayout>
 
@@ -321,9 +322,10 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_do_10" />
 
@@ -333,9 +335,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_10" />
 
@@ -345,9 +348,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_16" />
 
@@ -357,9 +361,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_20" />
 
@@ -369,9 +374,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25" />
 
@@ -381,9 +387,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_32" />
 
@@ -393,9 +400,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_40" />
 
@@ -405,9 +413,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_50" />
 
@@ -417,9 +426,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63" />
 
@@ -429,9 +439,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_80" />
 
@@ -441,9 +452,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_100" />
 
@@ -453,9 +465,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_125" />
 
@@ -465,9 +478,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_160" />
 
@@ -477,9 +491,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63_za_A" />
 
@@ -489,9 +504,10 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="6"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25_za_A" />
                 </LinearLayout>

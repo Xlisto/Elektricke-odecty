@@ -4,11 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -39,6 +39,7 @@ public class LabelEditText extends RelativeLayout {
     private TextView textView;
     private EditText editText;
     private int changedBackgroundEditText;
+    private Drawable originalBackgroundDrawable;
     private boolean allowChangeColor = false;
 
 
@@ -92,6 +93,7 @@ public class LabelEditText extends RelativeLayout {
         editText.setMinWidth(48);
         editText.setId(View.generateViewId());
         relativeLayout.addView(editText);
+        originalBackgroundDrawable = editText.getBackground();
 
         setChangedBackgroundEditText(attributeSet);
         setTexts(attributeSet);
@@ -153,7 +155,6 @@ public class LabelEditText extends RelativeLayout {
     private void setChangedBackgroundEditText(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
         changedBackgroundEditText = ta.getColor(R.styleable.LabelEditText_changedBackgroundEditText, Color.TRANSPARENT);
-        Log.w("TAG", "changedBackgroundEditText " + changedBackgroundEditText);
         ta.recycle();
     }
 
@@ -324,7 +325,6 @@ public class LabelEditText extends RelativeLayout {
                 }
                 //změna barvy pozadí EditTextu
                 if (allowChangeColor) {
-                    //editText.setBackgroundColor(Color.parseColor("#caf0f8"));
                     editText.setBackgroundColor(changedBackgroundEditText);
                 }
             }
@@ -419,7 +419,7 @@ public class LabelEditText extends RelativeLayout {
     public void setAllowChangeBackgroundColor(boolean allowChangeColor) {
         this.allowChangeColor = allowChangeColor;
         if (!allowChangeColor)
-            editText.setBackgroundColor(Color.TRANSPARENT);
+            editText.setBackground(originalBackgroundDrawable);
     }
 
 
