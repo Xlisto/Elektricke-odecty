@@ -438,7 +438,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
             for (int i = 0; i < regulPrice.length; i++) {
                 labelEditTexts[i].setAllowChangeBackgroundColor(false);
-                labelEditTexts[i].setChangedBackgroundEditText(getResources().getColor(R.color.labelEditBackgroundEditText));
+                labelEditTexts[i].setChangedBackgroundEditText(R.drawable.error_edittext_background);
                 labelEditTexts[i].setDefaultText(df2.format(regulPrice[i]));
                 labelEditTexts[i].setAllowChangeBackgroundColor(true);
             }

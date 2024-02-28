@@ -326,10 +326,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opraven pád aplikace při načítání regulovaných cen, pokud povodní obsah EditTextu byl delší.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu (verze 2).&#10;Změněn způsob obnovení původní barvy pozadí EditTextu použitím objektu Drawable.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/error_edittext_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/layer_list_default_edittext_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/layer_list_selected_edittext_background.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -395,10 +400,10 @@
         <option value="xml" />
         <option value="Enum" />
         <option value="Interface" />
-        <option value="resourceFile" />
         <option value="valueResourceFile" />
         <option value="Class" />
         <option value="layoutResourceFile" />
+        <option value="resourceFile" />
       </list>
     </option>
   </component>
@@ -456,74 +461,74 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ApkExportedModule&quot;: &quot;ElOdecet.app&quot;,
-    &quot;ExportApk.ApkPathForElOdecet.app&quot;: &quot;C:\\Users\\Xlisto\\AndroidStudioProjects\\ElOdecet\\app&quot;,
-    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
-    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphConsuptionInvoiceGraphView.java_SELECTED&quot;: &quot;GraphConsuptionInvoiceGraphView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphDashBoardView.java_SELECTED&quot;: &quot;GraphDashBoardView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java_SELECTED&quot;: &quot;GraphTotalConsuptionView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java_SELECTED&quot;: &quot;GraphTotalHdoView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java_SELECTED&quot;: &quot;GraphColorView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/NastavBarvuView.java_SELECTED&quot;: &quot;GraphColorView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED&quot;: &quot;GraphMonthView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED&quot;: &quot;ContextMenuRecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED&quot;: &quot;LabelEditText&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED&quot;: &quot;LabelPriceDetail&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/MyBottomNavigationView.java_SELECTED&quot;: &quot;MyBottomNavigationView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java_SELECTED&quot;: &quot;NumbersMeter&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED&quot;: &quot;SwitchCompat&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.10.0/93873f2a41da69e38213dbe9ed91a0402a903c88/material-1.10.0-sources.jar!/com/google/android/material/bottomnavigation/BottomNavigationView.java_SELECTED&quot;: &quot;BottomNavigationView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.10.0/93873f2a41da69e38213dbe9ed91a0402a903c88/material-1.10.0-sources.jar!/com/google/android/material/navigation/NavigationBarView.java_SELECTED&quot;: &quot;NavigationBarView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED&quot;: &quot;MaterialButton&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED&quot;: &quot;View&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED&quot;: &quot;ViewGroup&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/webkit/WebView.java_SELECTED&quot;: &quot;WebView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AbsSpinner.java_SELECTED&quot;: &quot;AbsSpinner&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AdapterView.java_SELECTED&quot;: &quot;AdapterView&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED&quot;: &quot;Button&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Spinner.java_SELECTED&quot;: &quot;Spinner&quot;,
-    &quot;android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED&quot;: &quot;TextView&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit3&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ApkExportedModule": "ElOdecet.app",
+    "ExportApk.ApkPathForElOdecet.app": "C:\\Users\\Xlisto\\AndroidStudioProjects\\ElOdecet\\app",
+    "PROJECT_TRUSTED_KEY": "true",
+    "ResourceManagerPrefKey.ResourceType": "MIPMAP",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphConsuptionInvoiceGraphView.java_SELECTED": "GraphConsuptionInvoiceGraphView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphDashBoardView.java_SELECTED": "GraphDashBoardView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java_SELECTED": "GraphTotalConsuptionView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java_SELECTED": "GraphTotalHdoView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/GraphColorView.java_SELECTED": "GraphColorView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphcolor/NastavBarvuView.java_SELECTED": "GraphColorView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/graphmonth/GraphMonthView.java_SELECTED": "GraphMonthView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/ContextMenuRecyclerView.java_SELECTED": "ContextMenuRecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java_SELECTED": "LabelEditText",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/LabelPriceDetail.java_SELECTED": "LabelPriceDetail",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/MyBottomNavigationView.java_SELECTED": "MyBottomNavigationView",
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java_SELECTED": "NumbersMeter",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.appcompat/appcompat/1.6.1/ace9a78b961165396147e8691faa18c1b0e48e20/appcompat-1.6.1-sources.jar!/androidx/appcompat/widget/SwitchCompat.java_SELECTED": "SwitchCompat",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.0/f4de7876e10ff121102f131b26d4a98b1613a012/recyclerview-1.3.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.10.0/93873f2a41da69e38213dbe9ed91a0402a903c88/material-1.10.0-sources.jar!/com/google/android/material/bottomnavigation/BottomNavigationView.java_SELECTED": "BottomNavigationView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.10.0/93873f2a41da69e38213dbe9ed91a0402a903c88/material-1.10.0-sources.jar!/com/google/android/material/navigation/NavigationBarView.java_SELECTED": "NavigationBarView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED": "MaterialButton",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/view/View.java_SELECTED": "View",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-33/android/webkit/WebView.java_SELECTED": "WebView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/View.java_SELECTED": "View",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/view/ViewGroup.java_SELECTED": "ViewGroup",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/webkit/WebView.java_SELECTED": "WebView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AbsSpinner.java_SELECTED": "AbsSpinner",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/AdapterView.java_SELECTED": "AdapterView",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Button.java_SELECTED": "Button",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/Spinner.java_SELECTED": "Spinner",
+    "android-custom-viewC:/Users/Xlisto/AppData/Local/Android/Sdk/sources/android-34/android/widget/TextView.java_SELECTED": "TextView",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ExportApk.BuildVariants&quot;: [
-      &quot;release&quot;
+  "keyToStringList": {
+    "ExportApk.BuildVariants": [
+      "release"
     ],
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java_GraphTotalConsuptionView_DIMENSIONS&quot;: [
-      &quot;1080&quot;,
-      &quot;1920&quot;
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalConsuptionView.java_GraphTotalConsuptionView_DIMENSIONS": [
+      "1080",
+      "1920"
     ],
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java_GraphTotalHdoView_DIMENSIONS&quot;: [
-      &quot;1080&quot;,
-      &quot;1920&quot;
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphTotalHdoView.java_GraphTotalHdoView_DIMENSIONS": [
+      "1080",
+      "1920"
     ],
-    &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java_NumbersMeter_DIMENSIONS&quot;: [
-      &quot;1080&quot;,
-      &quot;1920&quot;
+    "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java_NumbersMeter_DIMENSIONS": [
+      "1080",
+      "1920"
     ]
   }
-}</component>
+}]]></component>
   <component name="PsdUISettings">
     <option name="MODULE_TAB" value="Default Config" />
     <option name="BUILD_VARIANTS_TAB" value="Build Types" />
@@ -1039,7 +1044,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="213" />
+    <option name="localTasksCounter" value="214" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1113,7 +1118,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidána animace zobrazení odpočtů do začátku/konce NT při změně odběrného místa." />
     <MESSAGE value="Doplněné řazení načtených časů HDO podle typu relé.&#10;Potřeba postupného vykreslování ve widgetu zobrazující časy HDO." />
     <MESSAGE value="Doplněna animace textu zobrazující čas dokonece/začátku následující platnosti HDO. Doplněna variabilní velikost hodin podle proměnné radius a doplněn antialiasing." />
     <MESSAGE value="Odstraněný přebytečný spinner z fagment_hdo. &#10;Odstraněny všechny vazby na odstraněný spinner z HDOFragmet." />
@@ -1138,7 +1142,8 @@
     <MESSAGE value="Přidaný tlačítko pro znovunačtení regulovaných cen ve fragmentu pro přidání/editaci ceníku." />
     <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu." />
     <MESSAGE value="Opraven pád aplikace při načítání regulovaných cen, pokud povodní obsah EditTextu byl delší." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opraven pád aplikace při načítání regulovaných cen, pokud povodní obsah EditTextu byl delší." />
+    <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu (verze 2).&#10;Změněn způsob obnovení původní barvy pozadí EditTextu použitím objektu Drawable." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu (verze 2).&#10;Změněn způsob obnovení původní barvy pozadí EditTextu použitím objektu Drawable." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

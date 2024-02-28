@@ -3,7 +3,6 @@ package cz.xlisto.odecty.ownview;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputType;
@@ -154,7 +153,7 @@ public class LabelEditText extends RelativeLayout {
      */
     private void setChangedBackgroundEditText(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
-        changedBackgroundEditText = ta.getColor(R.styleable.LabelEditText_changedBackgroundEditText, Color.TRANSPARENT);
+        changedBackgroundEditText = R.styleable.LabelEditText_changedBackgroundEditText;
         ta.recycle();
     }
 
@@ -305,7 +304,6 @@ public class LabelEditText extends RelativeLayout {
                 DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
                 DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
                 char decimalSeparator = symbols.getDecimalSeparator();
-                //Log.w("TAG", "decimal separator " + decimalSeparator);
                 int countCharSeparator = 0;
                 char[] chars = s.toString().toCharArray();
                 for (char ch : chars) {
@@ -324,9 +322,8 @@ public class LabelEditText extends RelativeLayout {
                     }
                 }
                 //změna barvy pozadí EditTextu
-                if (allowChangeColor) {
-                    editText.setBackgroundColor(changedBackgroundEditText);
-                }
+                if (allowChangeColor)
+                    editText.setBackground(getResources().getDrawable(changedBackgroundEditText));
             }
         });
     }
@@ -369,7 +366,6 @@ public class LabelEditText extends RelativeLayout {
                 value = bd.doubleValue();
             } catch (Exception e) {
                 e.printStackTrace();
-                //return;
             }
 
             changeChar();
