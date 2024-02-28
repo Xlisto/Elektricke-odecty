@@ -275,6 +275,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/label_edittext_view.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/my_toast.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -286,6 +291,11 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/test.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -316,15 +326,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidaný tlačítko pro znovunačtení regulovaných cen ve fragmentu pro přidání/editaci ceníku.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/TestFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/TestFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/ownview/LabelEditText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/test.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/test.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/attrs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -334,7 +342,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Medium_Phone_API_24.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_4_API_27.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1034,7 +1042,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="210" />
+    <option name="localTasksCounter" value="212" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1108,7 +1116,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opraven výpočet doby platnosti trvání platnosti NT a odpočet do začátku NT.&#10;V některých případech se vyskytoval nesmyslný výpočet z důvodu nesprávně datovaných časů HDO. Pro tento účel je vytvořena nová třída BuilderHDOStack. Statická metoda vytvoří týdenní seznam s nastaveným atributy calendarStart a calendarEnd potřebné pro výpočty." />
     <MESSAGE value="Nalezena chyba v nefunkčním odpočítávání do konce/začátku nízského tarifu.&#10;Aktualizace souborů Java&#10;&#10;1. V souboru `BuilderHDOStack.java`:&#10;   - Byla přidána metoda pro vytváření týdenního seznamu HDO modelů.&#10;   - Bylo optimalizováno odstraňování duplicitních modelů.&#10;   - Byla přidána podpora pro posunutí času.&#10;&#10;2. V souboru `DataHdoSource.java`:&#10;   - Byly provedeny změny v metodách pro načítání, ukládání, aktualizaci a mazání HDO modelů.&#10;&#10;3. V souborech `GraphTotalHdoView.java` a `DashBoardFragment.java`:&#10;   - Byly provedeny menší úpravy.&#10;&#10;Tyto změny byly provedeny za účelem zlepšení funkčnosti a efektivity aplikace." />
     <MESSAGE value="Přidána animace zobrazení odpočtů do začátku/konce NT při změně odběrného místa." />
     <MESSAGE value="Doplněné řazení načtených časů HDO podle typu relé.&#10;Potřeba postupného vykreslování ve widgetu zobrazující časy HDO." />
@@ -1133,7 +1140,8 @@
     <MESSAGE value="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný." />
     <MESSAGE value="Opraveno nezobrazování grafu při jednom záznamu." />
     <MESSAGE value="Přidaný tlačítko pro znovunačtení regulovaných cen ve fragmentu pro přidání/editaci ceníku." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidaný tlačítko pro znovunačtení regulovaných cen ve fragmentu pro přidání/editaci ceníku." />
+    <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

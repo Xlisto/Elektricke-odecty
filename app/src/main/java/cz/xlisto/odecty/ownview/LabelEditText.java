@@ -396,9 +396,8 @@ public class LabelEditText extends RelativeLayout {
      * @param defaultText přednastavený text
      */
     public void setDefaultText(String defaultText) {
-        int position = editText.getSelectionStart();
         editText.setText(defaultText);
-        editText.setSelection(position);
+        editText.setSelection(editText.getSelectionEnd());
     }
 
 
