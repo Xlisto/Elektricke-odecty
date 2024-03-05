@@ -15,6 +15,7 @@ import static cz.xlisto.odecty.databaze.DbHelper.CASTKA;
 import static cz.xlisto.odecty.databaze.DbHelper.CENIK_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_ELE;
 import static cz.xlisto.odecty.databaze.DbHelper.CISLO_MISTA;
+import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_ID;
 import static cz.xlisto.odecty.databaze.DbHelper.DATUM;
 import static cz.xlisto.odecty.databaze.DbHelper.FAZE;
 import static cz.xlisto.odecty.databaze.DbHelper.GARANCE;
@@ -91,7 +92,7 @@ public class DataSubscriptionPointSource extends DataSource {
         database.execSQL("DROP TABLE IF EXISTS " + "FAK" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "TED" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "PLATBY" + milins);
-        database.delete(TABLE_NAME_SUBSCRIPTION_POINT, "_id=?",
+        database.delete(TABLE_NAME_SUBSCRIPTION_POINT, COLUMN_ID+"=?",
                 new String[]{String.valueOf(itemId)});
     }
 
@@ -103,8 +104,19 @@ public class DataSubscriptionPointSource extends DataSource {
      * @param table     název tabulky
      */
     public void deletePayment(long paymentId, String table) {
-        database.delete(table, "_id=?",
+        database.delete(table, COLUMN_ID+"=?",
                 new String[]{String.valueOf(paymentId)});
+    }
+
+
+    /**
+     * Smaže měsíční zálohy u konkrétní faktury
+     * @param idFak id faktury
+     * @param table název tabulky
+     */
+    public void deletePayments(long idFak, String table) {
+        database.delete(table, ID_FAK+"=?",
+                new String[]{String.valueOf(idFak)});
     }
 
 
@@ -259,7 +271,7 @@ public class DataSubscriptionPointSource extends DataSource {
         String selection = "_id=?";
         String[] args = new String[]{String.valueOf(id)};
         ArrayList<SubscriptionPointModel> subscriptionPoints = readSubscriptionPoints(selection, args);
-        if (subscriptionPoints.size() > 0)
+        if (!subscriptionPoints.isEmpty())
             return subscriptionPoints.get(0);
         else
             return null;
@@ -275,7 +287,7 @@ public class DataSubscriptionPointSource extends DataSource {
      */
     public MonthlyReadingModel loadMonthlyReading(String table, long itemId, long from, long to) {
         ArrayList<MonthlyReadingModel> monthlyReadings = loadMonthlyReadings(table, itemId, from, to, null);
-        if (monthlyReadings.size() > 0) {
+        if (!monthlyReadings.isEmpty()) {
             return monthlyReadings.get(0);
         }
         return null;

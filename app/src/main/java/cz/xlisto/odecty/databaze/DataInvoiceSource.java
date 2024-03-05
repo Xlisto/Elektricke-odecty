@@ -341,6 +341,20 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
+     * Smaže všechny záznamy ve faktuře
+     *
+     * @param table název tabulky
+     * @param idFak    id faktury
+     */
+    public void deleteInvoiceList(String table, long idFak) {
+        database.delete(table, ID_FAK + "=?",
+                new String[]{String.valueOf(idFak)});
+        database.delete(TABLE_NAME_INVOICES, COLUMN_ID+"=?",
+                new String[]{String.valueOf(idFak)});
+    }
+
+
+    /**
      * Provede součet zálohových plateb ve faktuře
      *
      * @param idFak id faktury
@@ -362,11 +376,11 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      * @return součet slev bez DPH
      */
-    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo,long idInvoice) {
+    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo, long idInvoice) {
 
         String sql = "SELECT " +
                 "(IFNULL((SELECT sum(castka) FROM " + table +
-                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND "+ID_FAK+" = ?),0)) as total " +
+                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND " + ID_FAK + " = ?),0)) as total " +
                 "GROUP BY total";
         String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
         return getDoubleSum(sql, args);

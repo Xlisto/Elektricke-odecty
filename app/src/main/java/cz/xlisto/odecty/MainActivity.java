@@ -35,7 +35,6 @@ import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareBoxFragment;
-import cz.xlisto.odecty.modules.pricelist.PriceListCompareDetailFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.ownview.MyBottomNavigationView;

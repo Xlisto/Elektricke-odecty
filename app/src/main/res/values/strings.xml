@@ -446,4 +446,5 @@
     <string name="remove_record_payment">Odstranit záznam platby</string>
     <string name="discount_number">Sleva na DPH ve výši %s Kč</string>
     <string name="alert_discount_description">Sleva bez DPH je při výpočtu navýšena o DPH. Proto je nutné správně uvést datum započtení slevy, ke které části faktury se sleva váže. Jinak se nezapočítá. </string>
+    <string name="alert_delete_invoice">Chystáte se smazat celou fakturu</string>
 </resources>

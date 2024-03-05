@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -33,6 +34,7 @@ import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
 
+import static cz.xlisto.odecty.modules.invoice.InvoiceListFragment.INVOICE_DELETE_LISTENER;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
@@ -49,6 +51,9 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private ColorStateList originalTextViewColors;
     private int showButtons = -1;
     private ShPInvoiceList shPInvoiceList;
+    private long selectedIdFak;
+
+
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -164,6 +169,15 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
+
+        holder.btnDeleteInvoice.setOnClickListener(v -> {
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.alert_delete_invoice), INVOICE_DELETE_LISTENER);
+            yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
+
+
+
+        });
+
         long minDate = invoice.getMinDate();
         long maxDate = invoice.getMaxDate();
         long payments = invoice.getPayments();
@@ -310,10 +324,29 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         if (position == showButtons) {
             holder.lnButtons1.setVisibility(View.VISIBLE);
             holder.lnButtons2.setVisibility(View.VISIBLE);
+            selectedIdFak = holder.id;
         } else {
             holder.lnButtons1.setVisibility(View.GONE);
             holder.lnButtons2.setVisibility(View.GONE);
         }
     }
+
+
+    /**
+     * Vrátí id vybrané faktury
+     * @return id faktury
+     */
+    public long getSelectedIdFak() {
+        return selectedIdFak;
+    }
+
+    public void removeItem() {
+        items.remove(showButtons);
+        notifyItemRemoved(showButtons);
+        selectedIdFak = -1;
+        showButtons = -1;
+        notifyItemChanged(0, getItemCount());
+    }
+
 
 }
