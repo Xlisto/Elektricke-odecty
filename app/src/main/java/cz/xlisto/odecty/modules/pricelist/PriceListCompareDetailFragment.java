@@ -2,12 +2,8 @@ package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,17 +20,19 @@ import cz.xlisto.odecty.ownview.OwnPriceListCompare;
 import cz.xlisto.odecty.ownview.OwnPriceListCompare.Type;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.Calculation;
-import cz.xlisto.odecty.utils.FragmentChange;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.*;
-import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
-public class PriceListCompareFragment extends Fragment {
-    private static final String TAG = "PriceListCompareFragment";
+/**
+ * Fragment pro porovnání ceníků detailní pohled
+ */
+
+public class PriceListCompareDetailFragment extends Fragment implements SelectedPriceListsInterface {
+    private static final String TAG = "PriceListCompareDetailFragment";
     private static final String KC_MWH = " Kč/MWh";
     private static final String KC = " Kč";
     private static final String KC_MONTH = " Kč/měsíc";
@@ -49,7 +47,6 @@ public class PriceListCompareFragment extends Fragment {
     private static final String SERVICES_R = "services_l";
 
     private double vt = 1, nt = 1, month = 1, phaze = 3, power = 25, servicesL = 0, servicesR = 0;
-    private Button btnLeft, btnRight;
 
     private OwnPriceListCompare ownprcRada, ownprcProdukt, ownprcSazba, ownprcDodavatel, ownprcUzemi;
 
@@ -75,8 +72,8 @@ public class PriceListCompareFragment extends Fragment {
     private double totalPozeLeft, totalPozeRight, totalRight, totalLeft;
 
 
-    public static PriceListCompareFragment newInstance() {
-        return new PriceListCompareFragment();
+    public static PriceListCompareDetailFragment newInstance() {
+        return new PriceListCompareDetailFragment();
     }
 
 
@@ -98,7 +95,7 @@ public class PriceListCompareFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_price_list_compare, container, false);
+        return inflater.inflate(R.layout.fragment_price_list_compare_detail, container, false);
 
     }
 
@@ -106,8 +103,6 @@ public class PriceListCompareFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btnLeft = view.findViewById(R.id.btnLeft);
-        btnRight = view.findViewById(R.id.btnRight);
 
         ownprcRada = view.findViewById(R.id.ownprcTitle);
         ownprcProdukt = view.findViewById(R.id.ownprcProdukt);
@@ -159,16 +154,6 @@ public class PriceListCompareFragment extends Fragment {
         swLeft = view.findViewById(R.id.swLeft);
         swRight = view.findViewById(R.id.swRight);
         tvShowRegulPriceLabel = view.findViewById(R.id.tvShowRegulPriceTitle);
-
-        btnLeft.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListLeft, PriceListFragment.Side.LEFT);
-            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
-        });
-
-        btnRight.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListRight, PriceListFragment.Side.RIGHT);
-            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
-        });
 
         swLeft.setOnCheckedChangeListener((buttonView, isChecked) -> onResume());
 
@@ -249,35 +234,6 @@ public class PriceListCompareFragment extends Fragment {
         outState.putDouble(POWER, power);
         outState.putDouble(SERVICES_L, servicesL);
         outState.putDouble(SERVICES_R, servicesR);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        requireActivity().getMenuInflater().inflate(R.menu.menu_price_list_compare, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.menu_values) {
-            PriceListAddParametersDialogFragment.newInstance((vt, nt, month, phaze, power, servicesL, servicesR) -> {
-                        PriceListCompareFragment.this.vt = vt;
-                        PriceListCompareFragment.this.nt = nt;
-                        PriceListCompareFragment.this.month = month;
-                        PriceListCompareFragment.this.phaze = phaze;
-                        PriceListCompareFragment.this.power = power;
-                        PriceListCompareFragment.this.servicesL = servicesL;
-                        PriceListCompareFragment.this.servicesR = servicesR;
-                        onResume();
-                    }
-                    , vt, nt, month, servicesL, servicesR
-            ).show(requireActivity().getSupportFragmentManager(), TAG);
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 
@@ -408,10 +364,9 @@ public class PriceListCompareFragment extends Fragment {
 
 
     private void comparePriceList() {
+        //if (priceListRight != null) {
         if (priceListRight != null) {
             showSwRight(priceListRightRegulBuilder.isRegulPrice());
-
-            btnRight.setText(priceListRight.getName());
 
             ownprcRada.setRight(priceListRight.getRada());
             ownprcProdukt.setRight(priceListRight.getProdukt());
@@ -485,8 +440,6 @@ public class PriceListCompareFragment extends Fragment {
 
         if (priceListLeft != null) {
             showSwLeft(priceListLeftRegulBuilder.isRegulPrice());
-
-            btnLeft.setText(priceListLeft.getName());
 
             ownprcRada.setLeft(priceListLeft.getRada());
             ownprcProdukt.setLeft(priceListLeft.getProdukt());
@@ -683,7 +636,30 @@ public class PriceListCompareFragment extends Fragment {
                 setHideNotUsedItem(ownprcJ13, priceListLeft.getJ13(), priceListRight.getJ13());
                 setHideNotUsedItem(ownprcJ14, priceListLeft.getJ14(), priceListRight.getJ14());
             }
+        }
+    }
+
+
+    @Override
+    public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, PriceListCompareBoxFragment.ConsuptionContainer container) {
+
+        if (priceListLeft != null) {
+            this.priceListLeftNERegul = priceListLeft;
+            this.priceListLeftRegulBuilder = new PriceListRegulBuilder(priceListLeftNERegul);
 
         }
+        if (priceListRight != null) {
+            this.priceListRightNERegul = priceListRight;
+            this.priceListRightRegulBuilder = new PriceListRegulBuilder(priceListRightNERegul);
+
+        }
+        this.vt = container.vt;
+        this.nt = container.nt;
+        this.month = container.month;
+        this.phaze = container.phaze;
+        this.power = container.power;
+        this.servicesL = container.servicesL;
+        this.servicesR = container.servicesR;
+        onResume();
     }
 }

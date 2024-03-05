@@ -277,7 +277,7 @@ public class PriceListFragment extends Fragment {
         String dodavatel = shpFilter.get(ShPFilter.DODAVATEL, ShPFilter.DEFAULT);
         String uzemi = shpFilter.get(ShPFilter.UZEMI, ShPFilter.DEFAULT);
         String datum = "%";
-        if (!shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).equals(""))
+        if (!shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).isEmpty())
             datum = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT)).getTimeInMillis());
 
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
@@ -338,6 +338,7 @@ public class PriceListFragment extends Fragment {
                     idFragment = fragment.getId();
                 } else {
                     fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
+                    //TODO: při rotaci vzniká chyba, že fragment je null
                     assert fragment != null;
                     fragment.loadPrice(idSelectedPriceList);
                 }

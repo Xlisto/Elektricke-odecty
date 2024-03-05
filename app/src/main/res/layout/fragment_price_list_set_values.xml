@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/lnServices"
             android:layout_centerInParent="true"
-            android:text="@string/nastavení_vychozich_hodnot" />
+            android:text="@string/reset_all_forms" />
 
 
     </RelativeLayout>

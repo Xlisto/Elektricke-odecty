@@ -34,7 +34,8 @@ import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
-import cz.xlisto.odecty.modules.pricelist.PriceListCompareFragment;
+import cz.xlisto.odecty.modules.pricelist.PriceListCompareBoxFragment;
+import cz.xlisto.odecty.modules.pricelist.PriceListCompareDetailFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.odecty.ownview.MyBottomNavigationView;
@@ -157,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
             }
             if (itemId == R.id.menu_compare_price_list) {
                 uncheckedBottomNavigation();
-                actualFragment = PriceListCompareFragment.newInstance();
+                //actualFragment = PriceListCompareDetailFragment.newInstance();
+                actualFragment = PriceListCompareBoxFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.compare_price_list));
                 b = true;
             }

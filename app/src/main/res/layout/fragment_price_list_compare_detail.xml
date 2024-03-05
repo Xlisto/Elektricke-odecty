@@ -4,39 +4,11 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
-    <!-- TODO: Update blank fragment layout -->
-
-
-    <LinearLayout
-        android:id="@+id/llButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnLeft"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/vyberteCenik"
-            android:textColor="#D81B60" />
-
-        <Button
-            android:id="@+id/btnRight"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/vyberteCenik"
-            android:textColor="#D81B60" />
-    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/llButtons">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/llButon1"
@@ -57,56 +29,13 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/shape_item">
 
-                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:title="@string/produktova_rada" />
-
-                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcProdukt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcTitle"
-                        app:title="@string/produkt" />
-
-                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcSazba"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcProdukt"
-                        app:title="@string/sazba_distribuce" />
-
-
-                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcDodavatel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcSazba"
-                        app:title="@string/dodavatel" />
-
-                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcUzemi"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcDodavatel"
-                        app:title="@string/distribucni_uzemi"/>
-
-                    <TextView
-                        android:id="@+id/tvShowRegulPriceTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcUzemi"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="@string/zobrazit_regulovan_ceny" />
-
                     <LinearLayout
                         android:id="@+id/lnShowRegulPrice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvShowRegulPriceTitle"
-                        android:orientation="horizontal"
-                        android:baselineAligned="false">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:id="@+id/viewLeft"
@@ -144,10 +73,50 @@
                         </LinearLayout>
 
 
-
-
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/tvShowRegulPriceTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcUzemi"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:text="@string/zobrazit_regulovan_ceny" />
+
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcSazba"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcProdukt"
+                        app:title="@string/sazba_distribuce" />
+
+
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcDodavatel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcSazba"
+                        app:title="@string/dodavatel" />
+
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcUzemi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcDodavatel"
+                        app:title="@string/distribucni_uzemi" />
+
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="@string/produktova_rada" />
+
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcProdukt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTitle"
+                        app:title="@string/produkt" />
 
 
                 </RelativeLayout>
@@ -185,8 +154,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcNT"
-                        app:title="@string/mesicni_plat"
-                        app:separator="false"/>
+                        app:separator="false"
+                        app:title="@string/mesicni_plat" />
 
 
                 </RelativeLayout>
@@ -219,120 +188,120 @@
                         android:id="@+id/ownprcVTRegul"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:title="@string/vt"/>
+                        app:title="@string/vt" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcNTRegul"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcVTRegul"
-                        app:title="@string/nt"/>
+                        app:title="@string/nt" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ0"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcNTRegul"
-                        app:title="@string/jistic_do_10"/>
+                        app:title="@string/jistic_do_10" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ0"
-                        app:title="@string/jistic_nad_10"/>
+                        app:title="@string/jistic_nad_10" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ1"
-                        app:title="@string/jistic_nad_16"/>
+                        app:title="@string/jistic_nad_16" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ2"
-                        app:title="@string/jistic_nad_20"/>
+                        app:title="@string/jistic_nad_20" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ3"
-                        app:title="@string/jistic_nad_25"/>
+                        app:title="@string/jistic_nad_25" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ4"
-                        app:title="@string/jistic_nad_32"/>
+                        app:title="@string/jistic_nad_32" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ5"
-                        app:title="@string/jistic_nad_40"/>
+                        app:title="@string/jistic_nad_40" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ6"
-                        app:title="@string/jistic_nad_50"/>
+                        app:title="@string/jistic_nad_50" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ7"
-                        app:title="@string/jistic_nad_63"/>
+                        app:title="@string/jistic_nad_63" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ11"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ10"
-                        app:title="@string/jistic_nad_80"/>
+                        app:title="@string/jistic_nad_80" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ12"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ11"
-                        app:title="@string/jistic_nad_100"/>
+                        app:title="@string/jistic_nad_100" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ13"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ12"
-                        app:title="@string/jistic_nad_125"/>
+                        app:title="@string/jistic_nad_125" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ13"
-                        app:title="@string/jistic_nad_63_za_A"/>
+                        app:title="@string/jistic_nad_63_za_A" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ14"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ8"
-                        app:title="@string/jistic_nad_160"/>
+                        app:title="@string/jistic_nad_160" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcJ9"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcJ14"
-                        app:title="@string/jistic_nad_25_za_A"
-                        app:separator="false"/>
+                        app:separator="false"
+                        app:title="@string/jistic_nad_25_za_A" />
 
 
                 </RelativeLayout>
@@ -365,21 +334,21 @@
                         android:id="@+id/ownprcSystem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:title="@string/systemove_sluzby"/>
+                        app:title="@string/systemove_sluzby" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcOTE"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcSystem"
-                        app:title="@string/cinnost_ote"/>
+                        app:title="@string/cinnost_ote" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcPOZE1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcOTE"
-                        app:title="@string/poze_dle_jistice"/>
+                        app:title="@string/poze_dle_jistice" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcPOZE2"
@@ -387,11 +356,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcPOZE1"
                         app:separator="false"
-                        app:title="@string/poze_dle_spotreby"/>
-
-
-
-
+                        app:title="@string/poze_dle_spotreby" />
 
 
                 </RelativeLayout>
@@ -424,7 +389,7 @@
                         android:id="@+id/ownprcTaxation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:title="@string/dan_z_elektriny"/>
+                        app:title="@string/dan_z_elektriny" />
 
                     <cz.xlisto.odecty.ownview.OwnPriceListCompare
                         android:id="@+id/ownprcDPH"
@@ -432,8 +397,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcTaxation"
                         app:separator="false"
-                        app:title="@string/dph"/>
-
+                        app:title="@string/dph" />
 
 
                 </RelativeLayout>
@@ -454,43 +418,43 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/shape_monthly_reading_gray">
 
-            <RelativeLayout
-                android:id="@+id/rlResultsIn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_below="@id/tvResultsDescription"
-                android:background="@drawable/shape_item">
+                <RelativeLayout
+                    android:id="@+id/rlResultsIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvResultsDescription"
+                    android:background="@drawable/shape_item">
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalVT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Celkem VT"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalVT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="Celkem VT" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalNT"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalVT"
-                    app:title="Celkem NT"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalNT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalVT"
+                        app:title="Celkem NT" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalPayment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalNT"
-                    app:title="Celkem stálý plat"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalNT"
+                        app:title="Celkem stálý plat" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalPoze"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalPayment"
-                    app:title="Celkem POZE"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalPoze"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalPayment"
+                        app:title="Celkem POZE" />
 
 
+                </RelativeLayout>
 
-            </RelativeLayout>
                 <TextView
                     android:id="@+id/tvResultsDescription"
                     android:layout_width="match_parent"
@@ -507,49 +471,50 @@
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/shape_monthly_reading_gray">
 
-            <RelativeLayout
-                android:id="@+id/rlResultsDPHIn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_below="@id/tvResultsDPHDescription"
-                android:background="@drawable/shape_item">
+                <RelativeLayout
+                    android:id="@+id/rlResultsDPHIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tvResultsDPHDescription"
+                    android:background="@drawable/shape_item">
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalVTDPH"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Celkem VT s DPH"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalVTDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:title="Celkem VT s DPH" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalNTDPH"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalVTDPH"
-                    app:title="Celkem NT s DPH"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalNTDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalVTDPH"
+                        app:title="Celkem NT s DPH" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalPaymentDPH"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalNTDPH"
-                    app:title="Celkem stálý plat s DPH"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalPaymentDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalNTDPH"
+                        app:title="Celkem stálý plat s DPH" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalPozeDPH"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalPaymentDPH"
-                    app:title="Celkem POZE s DPH"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalPozeDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalPaymentDPH"
+                        app:title="Celkem POZE s DPH" />
 
-                <cz.xlisto.odecty.ownview.OwnPriceListCompare
-                    android:id="@+id/ownprcTotalDPH"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/ownprcTotalPozeDPH"
-                    app:separator="false"
-                    app:title="Celkem s DPH"/>
+                    <cz.xlisto.odecty.ownview.OwnPriceListCompare
+                        android:id="@+id/ownprcTotalDPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/ownprcTotalPozeDPH"
+                        app:separator="false"
+                        app:title="Celkem s DPH" />
 
-            </RelativeLayout>
+                </RelativeLayout>
+
                 <TextView
                     android:id="@+id/tvResultsDPHDescription"
                     android:layout_width="match_parent"

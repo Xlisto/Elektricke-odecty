@@ -10,12 +10,19 @@
     <string name="produktova_rada">Produktová řada</string>
     <string name="nuly">000.0</string>
     <string name="nt">NT</string>
+    <string name="neregul_nt">Neregulovaná cena NT</string>
+    <string name="regul_nt">Regulovaná cena NT</string>
     <string name="nt2">NT:</string>
     <string name="nt3">NÍZSKÝ TARIF</string>
     <string name="vt">VT</string>
+    <string name="neregul_vt">Neregulovaná cena VT</string>
+    <string name="regul_vt">Regulovaná cena VT</string>
     <string name="vt2">VT:</string>
     <string name="vt3">VYSOKÝ TARIF</string>
     <string name="mesicni_plat">Plat:</string>
+    <string name="mesicni_plat2">Stálý měsíční plat</string>
+    <string name="dan_elektriny">Daň z elektřiny</string>
+    <string name="rozdil">Rozdíl</string>
     <string name="other_services">Ostatní služby(+)/slevy(-) v ceníku nezahrnuté:</string>
     <string name="cena_za_dodavku">Cena za dodávku elektřiny (neregulovaná)</string>
     <string name="cena_za_distribuci">Cena za zajištění distribuce elektřiny (regulovaná)</string>
@@ -50,6 +57,13 @@
     <string name="zobrazeno_mene">Zobrazeno méně hodnot jističů</string>
     <string name="zobrazeno_vice">Zobrazeno více hodnot jističů</string>
     <string name="dane">Daně</string>
+    <string name="celkem_vt">Celková cena VT</string>
+    <string name="celkem_nt">Celková cena NT</string>
+    <string name="mesicni_platy">Měsíční platy</string>
+    <string name="celkem_bez_dph">CELKEM (bez DPH)</string>
+    <string name="celkem_s_dph">CELKEM (s DPH)</string>
+
+
 
     <string name="ulozit">Uložit</string>
     <string name="zpet">Zpět</string>
@@ -157,7 +171,7 @@
     <string name="pocet_mesicu">Počet měsíců:</string>
     <string name="dalsi_sluzby_neuvedene">Další služby/slevy v ceníku neuvedené:</string>
     <string name="nastaveni_parametru">Nastavení parametrů pro porovnání</string>
-    <string name="nastavení_vychozich_hodnot">Nastavení výchozích hodnot</string>
+    <string name="reset_all_forms">Vymaž všechna pole</string>
     <string name="souhrn">Souhrn</string>
     <string name="zobrazit_regulovan_ceny">Zobrazit regulované ceny</string>
     <string name="cislo">Číslo:</string>
