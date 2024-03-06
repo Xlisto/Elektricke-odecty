@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -282,6 +283,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvAlertRegulPrice.setVisibility(View.GONE);
             holder.tvMonth.setText(context.getResources().getString(R.string.first_reading));
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_gray, null));
+            holder.tvDateDetail.setVisibility(View.GONE);
             holder.ivWarning.setVisibility(View.INVISIBLE);
             if (simplyView) {
 
@@ -364,7 +366,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         try {
             itemId = items.get(position).getId();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "getItemId: " + e.getMessage());
         }
 
         return itemId;
