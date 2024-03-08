@@ -15,6 +15,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -262,7 +263,7 @@ public class GraphTotalHdoView extends View {
                 canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
             }
 
-            if (model.getRele().equals("")) {
+            if (model.getRele().isEmpty()) {
                 showTUV = false;
                 showTAR = false;
                 showPV = false;
@@ -365,7 +366,7 @@ public class GraphTotalHdoView extends View {
         int legendPadding = dpToPx(getContext(), 8);
         int legendTextPadding = dpToPx(getContext(), 6);
 
-        int legendX = (radius+padding) * 2;
+        int legendX = (radius + padding) * 2;
         int legendY = (int) (1.5 * padding);
 
         float sizeText = pLegend.getTextSize();
@@ -563,9 +564,9 @@ public class GraphTotalHdoView extends View {
         int hours = minutes / 60;
         minutes = minutes % 60;
         if (hours == 0)
-            return minutes + " min.";
+            return String.format(Locale.GERMANY,"%d min.", minutes);
         else
-            return hours + ":" + minutes + " hod.";
+            return String.format(Locale.GERMANY,"%d:%02d hod.", hours, minutes);
     }
 
 
