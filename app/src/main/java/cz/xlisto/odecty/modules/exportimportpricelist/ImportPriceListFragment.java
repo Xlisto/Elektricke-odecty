@@ -41,12 +41,12 @@ import cz.xlisto.odecty.shp.ShPMainActivity;
 import cz.xlisto.odecty.utils.FragmentChange;
 
 import static cz.xlisto.odecty.dialogs.YesNoDialogRecyclerViewFragment.SELECTED_ARRAYLIST;
-import static cz.xlisto.odecty.shp.ShPFilter.DATUM;
-import static cz.xlisto.odecty.shp.ShPFilter.DODAVATEL;
+import static cz.xlisto.odecty.shp.ShPFilter.DATE_START;
+import static cz.xlisto.odecty.shp.ShPFilter.COMPANY;
 import static cz.xlisto.odecty.shp.ShPFilter.PRODUKT;
 import static cz.xlisto.odecty.shp.ShPFilter.RADA;
 import static cz.xlisto.odecty.shp.ShPFilter.SAZBA;
-import static cz.xlisto.odecty.shp.ShPFilter.UZEMI;
+import static cz.xlisto.odecty.shp.ShPFilter.AREA;
 import static cz.xlisto.odecty.shp.ShPMainActivity.ACTUAL_FRAGMENT;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
@@ -179,9 +179,9 @@ public class ImportPriceListFragment extends Fragment {
                         shpFilter.set(RADA, doublePriceList.getRada());
                         shpFilter.set(PRODUKT, doublePriceList.getProdukt());
                         shpFilter.set(SAZBA, doublePriceList.getSazba());
-                        shpFilter.set(DODAVATEL, doublePriceList.getFirma());
-                        shpFilter.set(UZEMI, doublePriceList.getDistribuce());
-                        shpFilter.set(DATUM, ViewHelper.convertLongToDate(doublePriceList.getPlatnostOD()));//tady je potřeba převádět long číslo na datum ve stringu, jinak při načítání následuje pád aplikace
+                        shpFilter.set(COMPANY, doublePriceList.getFirma());
+                        shpFilter.set(AREA, doublePriceList.getDistribuce());
+                        shpFilter.set(DATE_START, ViewHelper.convertLongToDate(doublePriceList.getPlatnostOD()));//tady je potřeba převádět long číslo na datum ve stringu, jinak při načítání následuje pád aplikace
                         Fragment priceListFragment = PriceListFragment.newInstance(false, -1L);
                         FragmentChange.replace(requireActivity(), priceListFragment, ALPHA);
                     }

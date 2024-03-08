@@ -93,7 +93,7 @@ public class ExportPriceListFragment extends Fragment {
                 DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
                 dataPriceListSource.open();
                 ArrayList<PriceListModel> priceListModels = dataPriceListSource.readPriceList(priceListSumModel.getRada(), "%", "%",
-                        priceListSumModel.getFirma(), priceListSumModel.getArea(), String.valueOf(priceListSumModel.getDatum()));
+                        priceListSumModel.getFirma(), priceListSumModel.getArea(), String.valueOf(priceListSumModel.getDatum()), "%");
                 dataPriceListSource.close();
 
                 JSONPriceList jsonPriceList = new JSONPriceList();

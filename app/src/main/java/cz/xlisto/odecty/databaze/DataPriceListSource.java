@@ -7,6 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Logger;
 
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.models.PriceListSumModel;
@@ -53,6 +55,7 @@ import static cz.xlisto.odecty.databaze.DBHelperPriceList.SAZBA;
 import static cz.xlisto.odecty.databaze.DBHelperPriceList.SYSTEM_SLUZBY;
 import static cz.xlisto.odecty.databaze.DBHelperPriceList.TABLE_NAME_PRICE;
 
+
 public class DataPriceListSource {
     private final String TAG = getClass().getName() + " ";
     public static final String VSE = "[VŠE]";
@@ -80,11 +83,11 @@ public class DataPriceListSource {
         try {
             database = dbHelperPriceList.getWritableDatabase();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Logger.getLogger(TAG).severe("Nepodařilo se otevřít databázi\n" + e);
             dbHelperPriceList = new DBHelperPriceList(context);
             database = dbHelperPriceList.getWritableDatabase();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(TAG).severe("Nepodařilo se otevřít databázi\n" + e);
         }
     }
 
@@ -228,7 +231,7 @@ public class DataPriceListSource {
      * @return ArrayList<PriceListModel> seznam ceníků
      */
     public ArrayList<PriceListModel> readPriceList() {
-        return readPriceList("%", "%", "%", "%", "%", "%");
+        return readPriceList("%", "%", "%", "%", "%", "%", "%");
     }
 
 
@@ -282,12 +285,21 @@ public class DataPriceListSource {
      * @param sazba     filtr pro sazbu
      * @param dodavatel filtr pro název dodavatele
      * @param uzemi     filtr pro název území
-     * @param datum     filtr pro datum platnosti
+     * @param dateStart filtr pro datum platnosti
      * @return ArrayList<PriceListModel> seznam ceníků
      */
-    public ArrayList<PriceListModel> readPriceList(String rada, String produkt, String sazba, String dodavatel, String uzemi, String datum) {
-        String selection = "rada LIKE ? AND produkt LIKE ? AND sazba LIKE ? AND firma LIKE ? AND distribuce LIKE ? AND platnost_od LIKE ?";
-        String[] args = new String[]{rada, produkt, sazba, dodavatel, uzemi, datum};
+    public ArrayList<PriceListModel> readPriceList(String rada, String produkt, String sazba, String dodavatel, String uzemi, String dateStart, String dateEnd) {
+        String selection = "rada LIKE ? AND produkt LIKE ? AND sazba LIKE ? AND firma LIKE ? AND distribuce LIKE ?";
+        if (!dateEnd.equals("%"))
+            selection += " AND platnost_od >= ? AND platnost_do <= ?";
+        else
+            selection += " AND platnost_od LIKE ?";
+
+        ArrayList<String> argsList = new ArrayList<>(Arrays.asList(rada, produkt, sazba, dodavatel, uzemi, dateStart));
+        if (!dateEnd.equals("%"))
+            argsList.add(dateEnd);
+        String[] args = new String[argsList.size()];
+        args = argsList.toArray(args);
         return readPriceList(selection, args);
     }
 
@@ -302,7 +314,7 @@ public class DataPriceListSource {
         String selection = "_id=?";
         String[] argsSelection = new String[]{String.valueOf(id)};
         ArrayList<PriceListModel> priceListModels = readPriceList(selection, argsSelection);
-        if (priceListModels.size() > 0)
+        if (!priceListModels.isEmpty())
             return priceListModels.get(0);
         else
             return new PriceListModel();
@@ -355,13 +367,13 @@ public class DataPriceListSource {
      * @return ArrayList<PriceListSumModel> seznam souhrnu ceníků
      */
     public ArrayList<PriceListSumModel> readSumPriceList() {
-        Cursor cursor = database.query(TABLE_NAME_PRICE, new String[]{"rada", "distribuce", "platnost_od", "firma","count(*)"}, null, null,
+        Cursor cursor = database.query(TABLE_NAME_PRICE, new String[]{"rada", "distribuce", "platnost_od", "firma", "count(*)"}, null, null,
                 "rada, platnost_od", null, null);
         ArrayList<PriceListSumModel> priceListSumModels = new ArrayList<>();
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
             PriceListSumModel priceListSumModel = new PriceListSumModel(cursor.getString(0),
-                    cursor.getString(1), cursor.getLong(2), cursor.getString(3),cursor.getInt(4));
+                    cursor.getString(1), cursor.getLong(2), cursor.getString(3), cursor.getInt(4));
             priceListSumModels.add(priceListSumModel);
         }
         cursor.close();
@@ -388,7 +400,7 @@ public class DataPriceListSource {
                 null);
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
-            if (column.equals(PLATNOST_OD)) {
+            if (column.equals(PLATNOST_OD) || column.equals(PLATNOST_DO)) {
                 arrayList.add(ViewHelper.convertLongToDate(cursor.getLong(0)));
             } else {
                 arrayList.add(cursor.getString(0));

@@ -110,21 +110,9 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         cbShowDescription.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION, false));
         cbFirstReading.setChecked(shPAddEditMonthlyReading.get(ARG_FIRST_READING_MONTHLY_READING, false));
 
+        hideItemsForFirstReading(cbFirstReading.isChecked());
 
-        if (cbFirstReading.isChecked())
-            cbAddPayment.setEnabled(false);
-
-        cbFirstReading.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            labPayment.setEnabled(!isChecked);
-            labOtherServices.setEnabled(!isChecked);
-            cbAddPayment.setEnabled(!isChecked);
-            if (isChecked)
-                btnSelectPriceList.setVisibility(View.GONE);
-            else
-                btnSelectPriceList.setVisibility(View.VISIBLE);
-            cbAddPayment.setChecked(false);
-            shPAddEditMonthlyReading.set(ARG_FIRST_READING_MONTHLY_READING, cbFirstReading.isChecked());
-        });
+        cbFirstReading.setOnCheckedChangeListener((buttonView, isChecked) -> hideItemsForFirstReading(isChecked));
 
         cbShowDescription.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPAddEditMonthlyReading.set(ARG_SHOW_DESCRIPTION, cbShowDescription.isChecked());
@@ -309,6 +297,24 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
      */
     void backupMonthlyReading() {
         SaveDataToBackupFile.saveToZip(requireActivity(), null);
+    }
+
+
+    /**
+     * Skryje/zobrazí widgety pro první odečet
+     *
+     * @param isChecked Zaškrtnutí checkboxu "První odečet"
+     */
+    void hideItemsForFirstReading(boolean isChecked) {
+        labPayment.setEnabled(!isChecked);
+        labOtherServices.setEnabled(!isChecked);
+        cbAddPayment.setEnabled(!isChecked);
+        if (isChecked)
+            btnSelectPriceList.setVisibility(View.GONE);
+        else
+            btnSelectPriceList.setVisibility(View.VISIBLE);
+        cbAddPayment.setChecked(false);
+        shPAddEditMonthlyReading.set(ARG_FIRST_READING_MONTHLY_READING, cbFirstReading.isChecked());
     }
 
 

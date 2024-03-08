@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.pricelist;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -274,15 +273,20 @@ public class PriceListFragment extends Fragment {
         String rada = shpFilter.get(ShPFilter.RADA, ShPFilter.DEFAULT);
         String produkt = shpFilter.get(ShPFilter.PRODUKT, ShPFilter.DEFAULT);
         String sazba = shpFilter.get(ShPFilter.SAZBA, ShPFilter.DEFAULT);
-        String dodavatel = shpFilter.get(ShPFilter.DODAVATEL, ShPFilter.DEFAULT);
-        String uzemi = shpFilter.get(ShPFilter.UZEMI, ShPFilter.DEFAULT);
-        String datum = "%";
-        if (!shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT).isEmpty())
-            datum = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATUM, ShPFilter.DEFAULT)).getTimeInMillis());
+        String company = shpFilter.get(ShPFilter.COMPANY, ShPFilter.DEFAULT);
+        String area = shpFilter.get(ShPFilter.AREA, ShPFilter.DEFAULT);
+        String dateStart = "%";
+        String dateEnd = "%";
 
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        if (!shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).isEmpty())
+            dateStart = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT)).getTimeInMillis());
+
+        if (!shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).isEmpty())
+            dateEnd = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT)).getTimeInMillis());
+
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
-        priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, dodavatel, uzemi, datum);
+        priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, company, area, dateStart,dateEnd);
         int totalCountPriceList = dataPriceListSource.countPriceItems();
         dataPriceListSource.close();
 
@@ -298,7 +302,6 @@ public class PriceListFragment extends Fragment {
                 priceList -> {
                     selectedPrice = priceList;
                     idSelectedPriceList = -1L;
-                    Log.w(TAG, "setAdapter: " + idSelectedPriceList);
                     if (priceList != null) {
                         btnBack.setText(getResources().getString(R.string.vybrat));
                         idSelectedPriceList = priceList.getId();

@@ -215,6 +215,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_filter.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_set_values.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -346,8 +351,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Do kompaktního porovnání ceníků přidána volba přepínače pro zobrazení zastropované ceny">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -521,7 +527,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/07.03.2024  10.37.10 El odecet.zip",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -1060,7 +1066,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="226" />
+    <option name="localTasksCounter" value="230" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1134,8 +1140,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Povolený antialisng v GraphConsuptionInvoiceGraphView." />
-    <MESSAGE value="Doplněné dialogové okno pro rychlý výběr odběrného místa.&#10;Položka menu se zobrazuje pouze při zobrazených fragmentech: &quot;BackupFragment&quot;, &quot;ExportPriceListFragment&quot;,&quot;DashBoardFragment&quot;,&quot;ExportPriceListFragment&quot;,&quot;ImportPriceListFragment&quot;,&quot;MonthlyReadingFragment&quot;,&#10; &quot;GraphColorFragment&quot;, &quot;GraphMonthFragment&quot;, &quot;HdoFragment&quot;, &quot;InvoiceListFragment&quot;, &quot;SubscriptionPointFragment&quot;, &quot;GraphColorFragment&quot;." />
     <MESSAGE value="Opravené vykreslení sloupcového grafu.&#10;Upravené vykreslování sloupcového grafu, aby se vykresloval zleva doprava a ze zhora dolu. Na starších Androidech je nutné dodržet toto pořadí, jinak se nevykreslí." />
     <MESSAGE value="Doplněna třída TextSizeAdjuster pro zmenšení písma pro skupinu TextView.&#10;Při zobrazení na menších obrazovkách je tímto řešen problém s přetékajícími TextView. Zde je použita na položku měsíčního odečtu." />
     <MESSAGE value="Doplněny grafické zobrazení při dělení záznamu v období bez faktury.&#10;Nyní se zobrazuji 2 pole, které nově představují nově rozdělené položky." />
@@ -1159,7 +1163,9 @@
     <MESSAGE value="Doplněno mazání kompletní celé faktury." />
     <MESSAGE value="Doplněné skrývání datumového rozpětí v měsíčních odečtech při prvním záznamu." />
     <MESSAGE value="Do kompaktního porovnání ceníků přidána volba přepínače pro zobrazení zastropované ceny" />
-    <option name="LAST_COMMIT_MESSAGE" value="Do kompaktního porovnání ceníků přidána volba přepínače pro zobrazení zastropované ceny" />
+    <MESSAGE value="Úprava zobrazení času ve widgetu zobrazující začátek a konec nízského tarifu." />
+    <MESSAGE value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -19,12 +19,13 @@ import cz.xlisto.odecty.shp.ShPFilter;
 import cz.xlisto.odecty.databaze.DBHelperPriceList;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 
-import static cz.xlisto.odecty.shp.ShPFilter.DATUM;
-import static cz.xlisto.odecty.shp.ShPFilter.DODAVATEL;
+import static cz.xlisto.odecty.shp.ShPFilter.DATE_END;
+import static cz.xlisto.odecty.shp.ShPFilter.DATE_START;
+import static cz.xlisto.odecty.shp.ShPFilter.COMPANY;
 import static cz.xlisto.odecty.shp.ShPFilter.PRODUKT;
 import static cz.xlisto.odecty.shp.ShPFilter.RADA;
 import static cz.xlisto.odecty.shp.ShPFilter.SAZBA;
-import static cz.xlisto.odecty.shp.ShPFilter.UZEMI;
+import static cz.xlisto.odecty.shp.ShPFilter.AREA;
 import static cz.xlisto.odecty.databaze.DataPriceListSource.VSE;
 
 
@@ -32,8 +33,8 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     private final static String TAG = PriceListFilterDialogFragment.class.getSimpleName();
     public static final String FLAG_RESULT_FILTER_DIALOG_FRAGMENT = "flagPriceListFilterDialogFragment";
     public static final String RESULT = "result";
-    private Spinner spRada, spProdukt, spSazba, spDodavatel, spUzemi, spDatum;
-    private String rada, produkt, sazba, dodavatel, uzemi, datum = "";
+    private Spinner spRada, spProdukt, spSazba, spCompany, spArea, spDateStart, spDateEnd;
+    private String rada, produkt, sazba, dodavatel, uzemi, dateStart = "", dateEnd = "";
 
     private ShPFilter shpFilter;
 
@@ -58,9 +59,10 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         spRada = dialogView.findViewById(R.id.spRada);
         spProdukt = dialogView.findViewById(R.id.spProdukt);
         spSazba = dialogView.findViewById(R.id.spSazba);
-        spDodavatel = dialogView.findViewById(R.id.spDodavatel);
-        spUzemi = dialogView.findViewById(R.id.spUzemi);
-        spDatum = dialogView.findViewById(R.id.spDatum);
+        spCompany = dialogView.findViewById(R.id.spCompany);
+        spArea = dialogView.findViewById(R.id.spArea);
+        spDateStart = dialogView.findViewById(R.id.spDatumStart);
+        spDateEnd = dialogView.findViewById(R.id.spDatumEnd);
         Button btnResetFilter = dialogView.findViewById(R.id.btnResetFilter);
 
         btnResetFilter.setOnClickListener(v -> setItemSpinnerAll());
@@ -86,35 +88,56 @@ public class PriceListFilterDialogFragment extends DialogFragment {
      * Načte seznam ceníků podle RADA, PRODUKT, SAZBA, FIRMA, DISTRIBUCE, PLATNOST_OD a nastaví data do příslušných spinnerů
      */
     private void setDataFromDatabase() {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getContext());
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
         ArrayList<String> arrayListRada = dataPriceListSource.readPriceListCount(DBHelperPriceList.RADA);
         ArrayList<String> arrayListProdukt = dataPriceListSource.readPriceListCount(DBHelperPriceList.PRODUKT);
         ArrayList<String> arrayListSazba = dataPriceListSource.readPriceListCount(DBHelperPriceList.SAZBA);
         ArrayList<String> arrayListDodavatel = dataPriceListSource.readPriceListCount(DBHelperPriceList.FIRMA);
         ArrayList<String> arrayListUzemi = dataPriceListSource.readPriceListCount(DBHelperPriceList.DISTRIBUCE);
-        ArrayList<String> arrayListDatum = dataPriceListSource.readPriceListCount(DBHelperPriceList.PLATNOST_OD);
+        ArrayList<String> arrayListDateStart = dataPriceListSource.readPriceListCount(DBHelperPriceList.PLATNOST_OD);
+        ArrayList<String> arrayListDateEnd = dataPriceListSource.readPriceListCount(DBHelperPriceList.PLATNOST_DO);
         dataPriceListSource.close();
 
 
         spRada.setAdapter(setStringAdapter(arrayListRada));
         spProdukt.setAdapter(setStringAdapter(arrayListProdukt));
         spSazba.setAdapter(setStringAdapter(arrayListSazba));
-        spDodavatel.setAdapter(setStringAdapter(arrayListDodavatel));
-        spUzemi.setAdapter(setStringAdapter(arrayListUzemi));
-        spDatum.setAdapter(setStringAdapter(arrayListDatum));
+        spCompany.setAdapter(setStringAdapter(arrayListDodavatel));
+        spArea.setAdapter(setStringAdapter(arrayListUzemi));
+        spDateStart.setAdapter(setStringAdapter(arrayListDateStart));
+        spDateEnd.setAdapter(setStringAdapter(arrayListDateEnd));
 
         setItemSpinner(arrayListRada, spRada, rada);
         setItemSpinner(arrayListProdukt, spProdukt, produkt);
         setItemSpinner(arrayListSazba, spSazba, sazba);
-        setItemSpinner(arrayListDodavatel, spDodavatel, dodavatel);
-        setItemSpinner(arrayListUzemi, spUzemi, uzemi);
-        setItemSpinner(arrayListDatum, spDatum, datum);
+        setItemSpinner(arrayListDodavatel, spCompany, dodavatel);
+        setItemSpinner(arrayListUzemi, spArea, uzemi);
+        setItemSpinner(arrayListDateStart, spDateStart, dateStart);
+        setItemSpinner(arrayListDateEnd, spDateEnd, dateEnd);
 
         spRada.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spDateStart.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position==0) {
+                    spDateEnd.setSelection(0);
+                    spDateEnd.setEnabled(false);
+                } else {
+                    spDateEnd.setEnabled(true);
+                }
             }
 
 
@@ -144,9 +167,10 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         rada = spRada.getSelectedItem().toString();
         produkt = spProdukt.getSelectedItem().toString();
         sazba = spSazba.getSelectedItem().toString();
-        dodavatel = spDodavatel.getSelectedItem().toString();
-        uzemi = spUzemi.getSelectedItem().toString();
-        datum = spDatum.getSelectedItem().toString();
+        dodavatel = spCompany.getSelectedItem().toString();
+        uzemi = spArea.getSelectedItem().toString();
+        dateStart = spDateStart.getSelectedItem().toString();
+        dateEnd = spDateEnd.getSelectedItem().toString();
         if (rada.equals(VSE))
             rada = "%";
         if (produkt.equals(VSE))
@@ -157,34 +181,38 @@ public class PriceListFilterDialogFragment extends DialogFragment {
             dodavatel = "%";
         if (uzemi.equals(VSE))
             uzemi = "%";
-        if (datum.equals(VSE))
-            datum = "%";
+        if (dateStart.equals(VSE))
+            dateStart = "%";
+        if (dateEnd.equals(VSE))
+            dateEnd = "%";
 
         shpFilter.set(RADA, rada);
         shpFilter.set(PRODUKT, produkt);
         shpFilter.set(SAZBA, sazba);
-        shpFilter.set(DODAVATEL, dodavatel);
-        shpFilter.set(UZEMI, uzemi);
-        shpFilter.set(DATUM, datum);
+        shpFilter.set(COMPANY, dodavatel);
+        shpFilter.set(AREA, uzemi);
+        shpFilter.set(DATE_START, dateStart);
+        shpFilter.set(DATE_END, dateEnd);
     }
 
 
     /**
-     * Načte hodnoty ze sharedpreference, které se mají nastavit na spinnerech
+     * Načte hodnoty ze sharedpreferences, které se mají nastavit na spinnerech
      */
     private void loadPreferences() {
         rada = shpFilter.get(RADA, VSE);
         produkt = shpFilter.get(PRODUKT, VSE);
         sazba = shpFilter.get(SAZBA, VSE);
-        dodavatel = shpFilter.get(DODAVATEL, VSE);
-        uzemi = shpFilter.get(UZEMI, VSE);
-        datum = shpFilter.get(DATUM, VSE);
+        dodavatel = shpFilter.get(COMPANY, VSE);
+        uzemi = shpFilter.get(AREA, VSE);
+        dateStart = shpFilter.get(DATE_START, VSE);
+        dateEnd = shpFilter.get(DATE_END, VSE);
     }
 
 
     /**
      * Zjistí index a arraylistu vybrané položky ve spinneru, pokud nenalezne,
-     * bude nastaven na první položku [VŠE ]
+     * bude nastaven na první položku [VŠE]
      *
      * @param arrayList - arraylist
      * @param sp        - spinner
@@ -201,10 +229,11 @@ public class PriceListFilterDialogFragment extends DialogFragment {
 
     private void setItemSpinnerAll() {
         spRada.setSelection(0);
-        spDatum.setSelection(0);
+        spDateStart.setSelection(0);
+        spDateEnd.setSelection(0);
         spSazba.setSelection(0);
         spProdukt.setSelection(0);
-        spDodavatel.setSelection(0);
-        spUzemi.setSelection(0);
+        spCompany.setSelection(0);
+        spArea.setSelection(0);
     }
 }
