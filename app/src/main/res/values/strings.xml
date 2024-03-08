@@ -162,6 +162,7 @@
 
     <string name="zjednodusene_zobrazeni">Zjednodušené zobrazení</string>
     <string name="regulovane_ceny">Regulované ceny</string>
+    <string name="strop_ceny">Zastropované ceny</string>
 
     <string name="logo">LOGO</string>
     <string name="elektrodroid">ElektroDroid</string>
