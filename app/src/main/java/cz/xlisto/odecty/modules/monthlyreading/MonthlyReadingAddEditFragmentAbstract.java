@@ -287,8 +287,17 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     /**
      * Upraví poslední záznam v období bez faktury, navazující na měsíční odečet
      */
-    void updateLastItemInvoice() {
-        WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), createMonthlyReading());
+    void updateLastItemInvoice(MonthlyReadingModel lastMonthlyReading, MonthlyReadingModel newMonthlyReading) {
+        if (newMonthlyReading.isFirst()) {
+            boolean isExist = WithOutInvoiceService.isExistItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading.getId());
+            if (isExist)
+                WithOutInvoiceService.updateItemInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
+            else
+                WithOutInvoiceService.insertNewItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
+        } else {
+            WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
+        }
+        WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), lastMonthlyReading);
     }
 
 

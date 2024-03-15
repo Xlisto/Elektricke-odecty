@@ -450,6 +450,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position - 1, getItemCount());
+        //smaže záznam v období bez faktury pokud je vázaný k prvnímu odečtu nebo výměně elektroměru
+        WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(context, subscriptionPoint.getTableTED(), itemId);
         //upraví poslední záznam bez faktury podle posledního měsíčního záznamu
         WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
     }

@@ -1,6 +1,7 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -94,11 +95,13 @@ public class WithOutInvoiceService {
 
 
     /**
-     * Upraví poslední záznam (koncová data) v období bezfaktury podle měsíčního odečtu
+     * Upraví poslední záznam (koncová data) v období bezfaktury podle posledního měsíčního odečtu. Pokud se jedná o první záznam, vloží nový záznam.
      *
      * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
+        Log.w(TAG, "editLastItemInInvoice: " + monthlyReading.getId());
+
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
         InvoiceModel invoice = dataInvoiceSource.lastInvoiceByDate(-1L, table);
@@ -107,9 +110,91 @@ public class WithOutInvoiceService {
         invoice.setNtEnd(monthlyReading.getNt());
         dataInvoiceSource.updateInvoice(invoice.getId(), table, invoice);
         dataInvoiceSource.close();
-        if(invoice.getDateFrom() > monthlyReading.getDate()) {
+
+        if (invoice.getDateFrom() > monthlyReading.getDate())
             showAlertDialog(context);
-        }
+    }
+
+
+    /**
+     * Vloží nový záznam v období bezfaktury podle měsíčního odečtu s nastaveným parametrem: Výměna elektroměru
+     *
+     * @param context        kontext aplikace
+     * @param monthlyReading měsíční odečet
+     */
+    public static void insertNewItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel invoice = new InvoiceModel(monthlyReading.getDate(), monthlyReading.getDate(),
+                monthlyReading.getVt(), monthlyReading.getVt(), monthlyReading.getNt(), monthlyReading.getNt(),
+                -1L, -1L, 0, "0", true);
+        invoice.setIdMonthlyReading(monthlyReading.getId());
+
+        dataInvoiceSource.insertInvoice(table, invoice);
+        dataInvoiceSource.close();
+    }
+
+
+    /**
+     * Upraví záznam v období bezfaktury podle měsíčního odečtu
+     *
+     * @param context kontext aplikace
+     * @param table   název tabulky
+     * @param monthlyReading faktura
+     */
+    public static void updateItemInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        InvoiceModel invoice = dataInvoiceSource.loadInvoiceByMonthlyReading(monthlyReading.getId(), table);
+        invoice.setDateFrom(monthlyReading.getDate());
+        invoice.setVtStart(monthlyReading.getVt());
+        invoice.setNtStart(monthlyReading.getNt());
+        dataInvoiceSource.updateInvoice(invoice.getId(), table, invoice);
+        dataInvoiceSource.close();
+    }
+
+
+    /**
+     * Zkontroluje, zda-li existuje záznam v období bezfaktury podle id měsíčního odečtu (záznam o výměně elektroměru)
+     *
+     * @param context          kontext aplikace
+     * @param table            název tabulky
+     * @param idMonthlyReading id měsíčního odečtu
+     * @return boolean true - záznam existuje, false - záznam neexistuje
+     */
+    public static boolean isExistItemInInvoice(Context context, String table, long idMonthlyReading) {
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        boolean exist = dataInvoiceSource.isInvoiceItemExistsByMonthlyReading(table, idMonthlyReading);
+        dataInvoiceSource.close();
+        return exist;
+    }
+
+
+    /**
+     * Smaže záznam v období bezfaktury podle měsíčního odečtu
+     *
+     * @param context        kontext aplikace
+     * @param table          název tabulky
+     * @param monthlyReading měsíční odečet
+     */
+    public static void deleteItemInInvoiceByIdMonthlyReading(Context context, String table, MonthlyReadingModel monthlyReading) {
+        deleteItemInInvoiceByIdMonthlyReading(context, table, monthlyReading.getId());
+    }
+
+
+    /**
+     * Smaže záznam v období bezfaktury podle id měsíčního odečtu
+     *
+     * @param context kontext aplikace
+     * @param table   název tabulky
+     * @param id      id měsíčního odečeto
+     */
+    public static void deleteItemInInvoiceByIdMonthlyReading(Context context, String table, long id) {
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        dataInvoiceSource.deleteInvoiceByIdMonthlyReading(table, id);
+        dataInvoiceSource.close();
     }
 
 
@@ -135,7 +220,7 @@ public class WithOutInvoiceService {
             itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
             itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
             itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
-            if(calendar.getTimeInMillis() > monthlyReading.getDate()) {
+            if (calendar.getTimeInMillis() > monthlyReading.getDate()) {
                 showAlertDialog(context);
             }
         }
@@ -163,8 +248,9 @@ public class WithOutInvoiceService {
         return itemEditedInvoice.getDateTo() < itemFirstWithoutInvoice.getDateTo();
     }
 
-    private static void showAlertDialog(Context context){
-        OwnAlertDialog.show(context,context.getResources().getString(R.string.error),
+
+    private static void showAlertDialog(Context context) {
+        OwnAlertDialog.show(context, context.getResources().getString(R.string.error),
                 context.getResources().getString(R.string.dates_is_not_correct));
     }
 

@@ -79,21 +79,26 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
                 dataSubscriptionPointSource.open();
                 MonthlyReadingModel newMonthlyReading = createMonthlyReading();
-                dataSubscriptionPointSource.insertMonthlyReading(tableO, newMonthlyReading);
+                //získávám id nově uloženého měsíčního záznamu
+                long id = dataSubscriptionPointSource.insertMonthlyReading(tableO, newMonthlyReading);
+                //nastavuji id záznamu
+                newMonthlyReading.setId(id);
                 //přidat platbu: true; první odečet: false
                 if (cbAddPayment.isChecked() && !cbFirstReading.isChecked()) {
                     dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));
                 }
                 dataSubscriptionPointSource.close();
 
+                //načítám poslední měsíční odečet
                 DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getContext());
                 dataMonthlyReadingSource.open();
                 MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
                 dataMonthlyReadingSource.close();
-                if(lastMonthlyReading.getDate() <= newMonthlyReading.getDate()){
+                //if(lastMonthlyReading.getDate() <= newMonthlyReading.getDate()){
+                //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
                     //úprava posledního záznamu v období bez faktury
-                    updateLastItemInvoice();
-                }
+                    updateLastItemInvoice(lastMonthlyReading, newMonthlyReading);
+                //}
 
 
                 if (cbAddBackup.isChecked()) {

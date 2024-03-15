@@ -155,9 +155,12 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
      * @param itemId long id měsíčního odečtu v databázi.
      */
     private void updateMonthlyReading(long itemId) {
+        MonthlyReadingModel newMonthlyReading = createMonthlyReading();
+        newMonthlyReading.setId(itemId);
+
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.updateMonthlyReading(createMonthlyReading(), itemId, tableO);
+        dataSubscriptionPointSource.updateMonthlyReading(newMonthlyReading, itemId, tableO);
         dataSubscriptionPointSource.close();
 
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getActivity());
@@ -165,9 +168,10 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
         dataMonthlyReadingSource.close();
         //kontrola, zda-li je upravovaný měsíční odečet posledním odečtem
-        if (lastMonthlyReading.getId() == itemId) {
-            //úprava posledního záznamu v období bez faktury
-            updateLastItemInvoice();
-        }
+        //if (lastMonthlyReading.getId() == itemId) {
+        //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
+        //úprava posledního záznamu v období bez faktury
+        updateLastItemInvoice(lastMonthlyReading, newMonthlyReading);
+        //}
     }
 }

@@ -27,6 +27,7 @@ public class InvoiceModel {
     private final boolean isChangedElectricMeter;
     private TypePoze typePoze;
     private boolean isSelected;
+    private long idMonthlyReading = -1L;
 
 
     public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
@@ -111,6 +112,14 @@ public class InvoiceModel {
     }
 
 
+    /**
+     * Vrátí id měsíčního odečtu, který je nastaven jako "První odečet"
+     *
+     * @return
+     */
+    public long getIdMonthlyReading() {return idMonthlyReading;}
+
+
     public void setId(long id) {
         this.id = id;
     }
@@ -120,7 +129,10 @@ public class InvoiceModel {
         this.idPriceList = idPriceList;
     }
 
-    public void setIdInvoice(long idInvoice) {this.idInvoice = idInvoice;}
+
+    public void setIdInvoice(long idInvoice) {
+        this.idInvoice = idInvoice;
+    }
 
 
     /**
@@ -222,6 +234,16 @@ public class InvoiceModel {
      */
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+
+    /**
+     * Nastaví id na měsíční odečet, který je nastaven jako "První odečet"
+     *
+     * @param idMonthlyReading id měsíčního odečtu
+     */
+    public void setIdMonthlyReading(long idMonthlyReading) {
+        this.idMonthlyReading = idMonthlyReading;
     }
 
 

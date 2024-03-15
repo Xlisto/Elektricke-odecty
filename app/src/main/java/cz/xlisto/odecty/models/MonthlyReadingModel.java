@@ -80,8 +80,8 @@ public class MonthlyReadingModel {
         return description;
     }
 
-    public void set_id(long _id) {
-        this.id = _id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setDate(long date) {

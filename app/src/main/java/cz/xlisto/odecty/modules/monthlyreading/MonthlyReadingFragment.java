@@ -75,8 +75,9 @@ public class MonthlyReadingFragment extends Fragment {
         //posluchač potvrzení smazání záznamu
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
                 (requestKey, result) -> {
-                    if (result.getBoolean(YesNoDialogFragment.RESULT))
-                        monthlyReadingAdapter.deleteMonthlyReading(getContext());
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        monthlyReadingAdapter.deleteMonthlyReading(requireContext());
+                    }
                 });
 
         //posluchač změny filtru
@@ -223,13 +224,10 @@ public class MonthlyReadingFragment extends Fragment {
             rv.setAdapter(monthlyReadingAdapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            if (monthlyReadings.size() > 0) {
-
+            if (!monthlyReadings.isEmpty())
                 tvAlert.setVisibility(View.GONE);
-            } else {
-
+            else
                 tvAlert.setText(getResources().getString(R.string.pridejte_mesicni_odecty));
-            }
         } else {
             tvAlert.setText(getResources().getString(R.string.create_place));
         }

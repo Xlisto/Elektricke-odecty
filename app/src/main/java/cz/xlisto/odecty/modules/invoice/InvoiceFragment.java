@@ -263,7 +263,7 @@ public class InvoiceFragment extends Fragment {
         Log.w(TAG, "createInvoice: vytvoření nové faktury ");
 
         //vytvoří nový záznam v seznamu faktur
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataInvoiceSource.open();
         dataSubscriptionPointSource.open();

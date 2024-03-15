@@ -52,8 +52,15 @@ public class DataSubscriptionPointSource extends DataSource {
     }
 
 
-    public void insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
-        database.insert(tableName, null, createContentValue(monthlyReading));
+    /**
+     * Vloží měsíční odečet do databáze
+     *
+     * @param tableName      název tabulky
+     * @param monthlyReading měsíční odečet
+     * @return id záznamu
+     */
+    public long insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
+        return database.insert(tableName, null, createContentValue(monthlyReading));
     }
 
 
@@ -64,20 +71,20 @@ public class DataSubscriptionPointSource extends DataSource {
 
     public void updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
         database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContentValue(subscriptionPointModel),
-                "_id=?", new String[]{String.valueOf(itemId)});
+                COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
     }
 
 
     public void updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
         database.update(tableName, createContentValue(monthlyReading),
-                "_id=?", new String[]{String.valueOf(itemId)});
+                COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
 
     }
 
 
     public void updatePayment(long id, String table, PaymentModel payment) {
         database.update(table, createContentValue(payment),
-                "_id=?", new String[]{String.valueOf(id)});
+                COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 
 
@@ -92,7 +99,7 @@ public class DataSubscriptionPointSource extends DataSource {
         database.execSQL("DROP TABLE IF EXISTS " + "FAK" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "TED" + milins);
         database.execSQL("DROP TABLE IF EXISTS " + "PLATBY" + milins);
-        database.delete(TABLE_NAME_SUBSCRIPTION_POINT, COLUMN_ID+"=?",
+        database.delete(TABLE_NAME_SUBSCRIPTION_POINT, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
     }
 
@@ -104,18 +111,19 @@ public class DataSubscriptionPointSource extends DataSource {
      * @param table     název tabulky
      */
     public void deletePayment(long paymentId, String table) {
-        database.delete(table, COLUMN_ID+"=?",
+        database.delete(table, COLUMN_ID + "=?",
                 new String[]{String.valueOf(paymentId)});
     }
 
 
     /**
      * Smaže měsíční zálohy u konkrétní faktury
+     *
      * @param idFak id faktury
      * @param table název tabulky
      */
     public void deletePayments(long idFak, String table) {
-        database.delete(table, ID_FAK+"=?",
+        database.delete(table, ID_FAK + "=?",
                 new String[]{String.valueOf(idFak)});
     }
 
@@ -183,8 +191,8 @@ public class DataSubscriptionPointSource extends DataSource {
      * Přeřadí platby z období bez faktury ke konkrétní faktuře
      *
      * @param newIdFak id ke které se záznamy přidají
-     * @param table   jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
-     * @param invoice záznam faktury
+     * @param table    jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
+     * @param invoice  záznam faktury
      */
     public void changeInvoicePayment(long newIdFak, String table, InvoiceModel invoice) {
         long timeFrom = invoice.getDateFrom();
@@ -196,11 +204,12 @@ public class DataSubscriptionPointSource extends DataSource {
 
     /**
      * Přeřadí platby k jiné faktuře
-     * @param newIdFak id ke které se záznamy přidají
-     * @param table jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
+     *
+     * @param newIdFak  id ke které se záznamy přidají
+     * @param table     jméno tabulky s faktury přísluší konkrétnímu odběrnému místu
      * @param idPayment id původní faktury
      */
-    public void changeInvoicePayment(long newIdFak, String table, long idPayment){
+    public void changeInvoicePayment(long newIdFak, String table, long idPayment) {
         String sql = "UPDATE " + table + " SET id_fak = ? WHERE _id = ?";
         database.execSQL(sql, new Object[]{newIdFak, idPayment});
     }
