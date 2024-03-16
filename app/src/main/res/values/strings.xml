@@ -143,8 +143,8 @@
     <string name="insert_to_new_invoice">Vložit do nové faktury</string>
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
-    <string name="prvniOdecet">Prvni odečet</string>
-    <string name="addBackup">Vytvořit záložní zip soubor</string>
+    <string name="prvniOdecet">Výměna elektroměru</string>
+    <string name="addBackup">Vytvořit záložní zip soubor při uložení odečtu</string>
     <string name="datumOdectu">Datum odečtu: </string>
     <string name="stavNt">Stav počitadla nízského tarifu: </string>
     <string name="stavVt">Stav počitadla vysokého tarifu: </string>

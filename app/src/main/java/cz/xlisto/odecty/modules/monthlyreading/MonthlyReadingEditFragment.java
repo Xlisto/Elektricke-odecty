@@ -116,7 +116,12 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     public void onResume() {
         super.onResume();
         loadPriceList();
-        btnSave.setEnabled(!priceList.isEmpty());
+        if (countMonthlyReading == 1) {
+            btnSelectPriceList.setVisibility(View.GONE);
+            cbFirstReading.setVisibility(View.GONE);
+            labPayment.setEnabled(false);
+        } else
+            btnSave.setEnabled(!priceList.isEmpty());
     }
 
 

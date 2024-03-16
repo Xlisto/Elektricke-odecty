@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -70,6 +71,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     private final String ARG_BTN_PRICE_LIST = "btnPriceList";
     private static boolean restoreSharedPreferences = false;
     private boolean isShowFragment;
+    int countMonthlyReading;
 
 
     @Override
@@ -157,6 +159,16 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
             labOtherServices.setDefaultText(savedInstanceState.getString(ARG_OTHER_SERVICE, ""));
             selectedIdPriceList = savedInstanceState.getLong(ARG_SELECTED_ID_PRICE_LIST);
             btnSelectPriceList.setText(savedInstanceState.getString(ARG_BTN_PRICE_LIST));
+        }
+
+        //zjistí počet záznamů v měsíčním odečtu
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(requireContext());
+        dataMonthlyReadingSource.open();
+        countMonthlyReading = dataMonthlyReadingSource.getCount(subscriptionPoint.getTableO());
+        dataMonthlyReadingSource.close();
+        hideItemsForFirstReading(countMonthlyReading == 0);
+        if(countMonthlyReading == 0) {
+            cbFirstReading.setVisibility(View.GONE);
         }
     }
 

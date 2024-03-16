@@ -351,10 +351,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Odstraněna chyba pádu aplikace při smazání jediného měsíčního odečtu.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1067,7 +1070,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="232" />
+    <option name="localTasksCounter" value="233" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1141,7 +1144,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněny grafické zobrazení při dělení záznamu v období bez faktury.&#10;Nyní se zobrazuji 2 pole, které nově představují nově rozdělené položky." />
     <MESSAGE value="Doplněno skrývání přepínačů v DashBoardFragment.&#10;Současně doplněno skrývání položky menu pro výběr odběrných míst. Pokud je jen jedno odběrné místo. Z důvodu úspory místa na obrazovce." />
     <MESSAGE value="Do seznamu faktur v dashboardu bylo doplněno zobrazení současného období bez faktury." />
     <MESSAGE value="Přidána funkce pro převod záznamů z Období bez faktury do nové faktury." />
@@ -1166,7 +1168,8 @@
     <MESSAGE value="Opravena chyba. Při opakovaném zadání měsíčního odečtu, pokud byla zaškrtnuta volba První odečet. &#10;Skrytí a zneaktivnění widgetů, které mají být neaktivní při zaškrtnuté volbě První odečet ihned po zobrazení pridání" />
     <MESSAGE value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
     <MESSAGE value="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru." />
-    <option name="LAST_COMMIT_MESSAGE" value="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru." />
+    <MESSAGE value="Odstraněna chyba pádu aplikace při smazání jediného měsíčního odečtu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Odstraněna chyba pádu aplikace při smazání jediného měsíčního odečtu." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

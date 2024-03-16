@@ -75,16 +75,16 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
             btnDate.setText(ViewHelper.getTodayDate());
 
         btnSave.setOnClickListener(v -> {
-            if (selectedIdPriceList > 0 || cbFirstReading.isChecked()) {
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
+            if (selectedIdPriceList > 0 || cbFirstReading.isChecked() || countMonthlyReading == 0) {
+                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
                 dataSubscriptionPointSource.open();
                 MonthlyReadingModel newMonthlyReading = createMonthlyReading();
-                //získávám id nově uloženého měsíčního záznamu
+                //získává id nově uloženého měsíčního záznamu
                 long id = dataSubscriptionPointSource.insertMonthlyReading(tableO, newMonthlyReading);
                 //nastavuji id záznamu
                 newMonthlyReading.setId(id);
                 //přidat platbu: true; první odečet: false
-                if (cbAddPayment.isChecked() && !cbFirstReading.isChecked()) {
+                if (cbAddPayment.isChecked() && !cbFirstReading.isChecked() && countMonthlyReading != 0) {
                     dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));
                 }
                 dataSubscriptionPointSource.close();
@@ -96,8 +96,8 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 dataMonthlyReadingSource.close();
                 //if(lastMonthlyReading.getDate() <= newMonthlyReading.getDate()){
                 //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
-                    //úprava posledního záznamu v období bez faktury
-                    updateLastItemInvoice(lastMonthlyReading, newMonthlyReading);
+                //úprava posledního záznamu v období bez faktury
+                updateLastItemInvoice(lastMonthlyReading, newMonthlyReading);
                 //}
 
 
@@ -124,10 +124,12 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 setDatePayment();
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 setDatePayment();
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {

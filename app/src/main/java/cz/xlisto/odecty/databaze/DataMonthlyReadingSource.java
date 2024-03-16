@@ -88,6 +88,52 @@ public class DataMonthlyReadingSource extends DataSource {
 
 
     /**
+     * Zjistí jestli zadaný měsíční odečet je první nebo nikoliv
+     *
+     * @param table          název tabulky
+     * @param monthlyReading porovnávaný měsíční odečet
+     */
+    public boolean isMonthlyReadingFirst(String table, MonthlyReadingModel monthlyReading) {
+        String orderBy = DbHelper.DATUM + " ASC LIMIT 1";
+
+        Cursor cursor = database.query(table,
+                new String[]{DbHelper.DATUM},
+                null,
+                null,
+                null,
+                null,
+                orderBy);
+        if (cursor.getCount() == 0) return false;
+        cursor.moveToFirst();
+        long firstDate = cursor.getLong(0);
+        cursor.close();
+        return firstDate == monthlyReading.getDate();
+    }
+
+
+    /**
+     * Zjistí počet záznamů v tabulce s měsíčními odečty
+     *
+     * @param table název tabulky
+     * @return počet záznamů
+     */
+    public int getCount(String table) {
+        String[] columns = {"count(*)"};
+        Cursor cursor = database.query(table,
+                columns,
+                null,
+                null,
+                null,
+                null,
+                null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
+    }
+
+
+    /**
      * Načte poslední měsíční odečet podle data
      *
      * @param table databázová tabulka s měsíčními odečty
