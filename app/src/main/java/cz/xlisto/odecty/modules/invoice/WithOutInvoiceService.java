@@ -1,7 +1,6 @@
 package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -100,8 +99,9 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
-        Log.w(TAG, "editLastItemInInvoice: " + monthlyReading.getId());
-
+        if(monthlyReading == null) {
+            monthlyReading = new MonthlyReadingModel(0, 0, 0, 0, 0, "", 0, 0, false);
+        }
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
         InvoiceModel invoice = dataInvoiceSource.lastInvoiceByDate(-1L, table);
@@ -188,7 +188,7 @@ public class WithOutInvoiceService {
      *
      * @param context kontext aplikace
      * @param table   název tabulky
-     * @param id      id měsíčního odečeto
+     * @param id      id měsíčního odečtu
      */
     public static void deleteItemInInvoiceByIdMonthlyReading(Context context, String table, long id) {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);

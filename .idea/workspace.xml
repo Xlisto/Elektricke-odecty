@@ -351,20 +351,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do.">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataSubscriptionPointSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/InvoiceModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/MonthlyReadingModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/MonthlyReadingModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1077,7 +1067,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="231" />
+    <option name="localTasksCounter" value="232" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1151,7 +1141,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněna třída TextSizeAdjuster pro zmenšení písma pro skupinu TextView.&#10;Při zobrazení na menších obrazovkách je tímto řešen problém s přetékajícími TextView. Zde je použita na položku měsíčního odečtu." />
     <MESSAGE value="Doplněny grafické zobrazení při dělení záznamu v období bez faktury.&#10;Nyní se zobrazuji 2 pole, které nově představují nově rozdělené položky." />
     <MESSAGE value="Doplněno skrývání přepínačů v DashBoardFragment.&#10;Současně doplněno skrývání položky menu pro výběr odběrných míst. Pokud je jen jedno odběrné místo. Z důvodu úspory místa na obrazovce." />
     <MESSAGE value="Do seznamu faktur v dashboardu bylo doplněno zobrazení současného období bez faktury." />
@@ -1176,7 +1165,8 @@
     <MESSAGE value="Úprava zobrazení času ve widgetu zobrazující začátek a konec nízského tarifu." />
     <MESSAGE value="Opravena chyba. Při opakovaném zadání měsíčního odečtu, pokud byla zaškrtnuta volba První odečet. &#10;Skrytí a zneaktivnění widgetů, které mají být neaktivní při zaškrtnuté volbě První odečet ihned po zobrazení pridání" />
     <MESSAGE value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
+    <MESSAGE value="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru." />
+    <option name="LAST_COMMIT_MESSAGE" value="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

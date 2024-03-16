@@ -9,6 +9,8 @@ import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
+import static cz.xlisto.odecty.databaze.DbHelper.COLUMN_ID;
+
 
 /**
  * Přístup k databázi měsíčních odečtů
@@ -80,6 +82,7 @@ public class DataMonthlyReadingSource extends DataSource {
         cursor.moveToFirst();
         double vt = cursor.getDouble(0);
         double nt = cursor.getDouble(1);
+        cursor.close();
         return new double[]{vt, nt};
     }
 
@@ -101,7 +104,7 @@ public class DataMonthlyReadingSource extends DataSource {
                 null,
                 orderBy);
 
-
+        if (cursor.getCount() == 0) return null;
         cursor.moveToFirst();
         MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
         cursor.close();
@@ -116,7 +119,7 @@ public class DataMonthlyReadingSource extends DataSource {
      * @param table  název tabulky
      */
     public void deleteMonthlyReading(long itemId, String table) {
-        database.delete(table, "_id=?",
+        database.delete(table, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
     }
 
