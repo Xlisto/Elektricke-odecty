@@ -286,8 +286,8 @@ public class GraphTotalHdoView extends View {
     private void drawNumbers(Canvas canvas) {
         //vykreslení čísel
         // Poloměr pro umístění textu (mírně menší než poloměr ciferníku)
-        int textRadius = radius - dpToPx(getContext(), (float) size / 50); // Rádius pro umístění číslic ciferníku
-        pNumbers.setTextSize(dpToPx(getContext(), (float) size / 50)); // Nastavení velikosti textu
+        int textRadius = radius - dpToPx(getContext(), 9); // Rádius pro umístění číslic ciferníku
+        pNumbers.setTextSize(dpToPx(getContext(), 10));// Nastavení velikosti textu číslic ciferníku
         // Čísla a jejich odpovídající hodiny
         int[] hoursToShow = {0, 3, 6, 9, 12, 15, 18, 21};
         String[] numbersToShow = {"0", "3", "6", "9", "12", "15", "18", "21"};
@@ -564,9 +564,9 @@ public class GraphTotalHdoView extends View {
         int hours = minutes / 60;
         minutes = minutes % 60;
         if (hours == 0)
-            return String.format(Locale.GERMANY,"%d min.", minutes);
+            return String.format(Locale.GERMANY, "%d min.", minutes);
         else
-            return String.format(Locale.GERMANY,"%d:%02d hod.", hours, minutes);
+            return String.format(Locale.GERMANY, "%d:%02d hod.", hours, minutes);
     }
 
 
