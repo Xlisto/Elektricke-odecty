@@ -29,6 +29,7 @@
     <string name="sazba_distribuce">Sazba dist.</string>
     <string name="d01">D01</string>
     <string name="mesicni_plat_za_prikon">Měsíční plat v Kč za příkon dle hodnoty hlavního jističe</string>
+    <string name="mesicni_plat_za_jistic">Měsíční plat za jistič</string>
     <string name="jistic_do_10">Jistič do 3x10A a do 1x25A včetně</string>
     <string name="jistic_nad_10">Jistič nad 3x10A a do 3x16A včetně</string>
     <string name="jistic_nad_16">Jistič nad 3x16A a do 3x20A včetně</string>
@@ -62,6 +63,8 @@
     <string name="mesicni_platy">Měsíční platy</string>
     <string name="celkem_bez_dph">CELKEM (bez DPH)</string>
     <string name="celkem_s_dph">CELKEM (s DPH)</string>
+    <string name="celkem">Celkem</string>
+    <string name="meric">Měřič</string>
 
 
 
@@ -184,6 +187,7 @@
     <string name="add_permissions">Vyber složku a povol zápis</string>
 
     <string name="edit">Uprav</string>
+    <string name="detail">Detail</string>
     <string name="cut">Rozděl</string>
     <string name="join">Spoj</string>
     <string name="cut_record">Rozděl období</string>
@@ -396,6 +400,7 @@
     <string name="date_is_not_correct">Datum (%s) nesmí překročit datum v prvním záznamu v období bez faktury</string>
     <string name="dates_is_not_correct">Koncové datum záznamu faktury je dřívější než datum posledního měsíčního záznamu.\nV případě nefakturovaného období bude výpočet vykazovat zápornou hodnotu.\n\nUpravte poslední záznam faktury nebo doplňte aktuální záznam do měsíčních odečtů.</string>
     <string name="show_total_consuption">Celková spotřeba</string>
+    <string name="consuption2">%.2f kWh</string>
     <string name="vt_consuption">VT: %.2f kWh</string>
     <string name="vt_text_consuption">VT: %.2f kWh, průměrně: %.2f kWh/měsíc</string>
     <string name="nt_consuption">NT: %.2f kWh</string>

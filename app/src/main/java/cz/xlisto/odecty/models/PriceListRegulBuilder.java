@@ -2,55 +2,105 @@ package cz.xlisto.odecty.models;
 
 import android.content.Context;
 
+import java.util.Calendar;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.ownview.ViewHelper;
 
 import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
 
+
 /**
- * Nastaví regulovaní ceny do objektu PriceList
+ * Nastaví regulovaný ceny do objektu PriceList
  * Zobrazí informační texty o regulovaných cenách
  */
 public class PriceListRegulBuilder extends PriceListModel {
     private PriceListModel priceList;
     private boolean isRegulPrice = false;
     private int year = -1;
-    private int month = -1;
-    private int day = -1;
-    private String STROP = "Cenový strop: ";
-    private String POZE_2022 = "Zrušení poplatku POZE od října 2022: ";
-    private String POZE_2023 = "Zrušení poplatku POZE: ";
-    private double MAX_VT_2023 = 5000d;
-    private double MAX_NT_2023 = 5000d;
-    private double MAX_PLAT_2023 = 130d;
+    private final String STROP = "Cenový strop: ";
+    private final double MAX_VT_2023 = 5000d;
+    private final double MAX_NT_2023 = 5000d;
+    private final double MAX_PLAT_2023 = 130d;
+
 
     /**
-     * Nastaví regulované ceny v ceníku dodaný v parametru. Rok platnosti použuje z vlastního data platnosti
-     * @param priceList
+     * Nastaví regulované ceny v ceníku dodaný v parametru. Rok platnosti použije z vlastního data platnosti
+     *
+     * @param priceList ceník
      */
     public PriceListRegulBuilder(PriceListModel priceList) {
         this(priceList, priceList.getRokPlatnost());
     }
 
+
     /**
-     * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od prvního ledna až do dokonce roku
-     * @param priceList
-     * @param year
+     * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od prvního ledna až do do konce roku
+     *
+     * @param priceList ceník
+     * @param year      rok
      */
     public PriceListRegulBuilder(PriceListModel priceList, int year) {
-        this(priceList, year, -1, 1);
+        initialize(priceList, year, -1);
     }
+
 
     /**
      * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od zadaného data až do konce roku
-     * @param priceList
-     * @param year
-     * @param month
-     * @param day
+     *
+     * @param priceList      ceník
+     * @param monthlyReading měsíční odečet
      */
-    public PriceListRegulBuilder(PriceListModel priceList, int year, int month, int day) {
-        this.month = month;
-        this.day = day;
+    public PriceListRegulBuilder(PriceListModel priceList, MonthlyReadingModel monthlyReading) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(monthlyReading.getDate());
+        int[] date = ViewHelper.parseIntsFromCalendar(calendar);//převedení data na pole
+//TODO: zobrazený období za měsíc nemusí odpovídat skutečnosti
+        //odečtení jednoho měsíce/ protože zobrazuji data za měsíc zpět
+        date[1]--;//odečítám jeden měsíc
+        if (date[1] < 0) {//pokud je měsíc menší než 0(leden)
+            date[2]--;//odečítám jeden rok
+            date[1] = 11;//měsíc nastavuji na prosinec (11)
+        }
+        initialize(priceList, date[2], date[1]);
+    }
+
+
+    /**
+     * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od zadaného data až do konce roku
+     *
+     * @param priceList ceník
+     * @param invoice   faktura
+     */
+    public PriceListRegulBuilder(PriceListModel priceList, InvoiceModel invoice) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(invoice.getDateFrom());
+        int[] date = ViewHelper.parseIntsFromCalendar(calendar);
+
+        initialize(priceList, date[2], date[1]);
+    }
+
+
+    /**
+     * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od zadaného data až do konce roku
+     *
+     * @param priceList ceník
+     * @param year      rok
+     * @param month     měsíc
+     */
+    public PriceListRegulBuilder(PriceListModel priceList, int year, int month) {
+        initialize(priceList, year, month);
+    }
+
+
+    /**
+     * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od zadaného data až do konce roku
+     *
+     * @param priceList ceník
+     * @param year      rok
+     * @param month     měsíc
+     */
+    private void initialize(PriceListModel priceList, int year, int month) {
         this.year = year;
         isRegulPrice = false;
         this.priceList = new PriceListModel(priceList.getId(), priceList.getRada(), priceList.getProdukt(), priceList.getFirma(), priceList.getCenaVT(),
@@ -79,6 +129,7 @@ public class PriceListRegulBuilder extends PriceListModel {
         }
     }
 
+
     /**
      * Nastaví v ceníku zrušení poplatku POZE
      */
@@ -86,6 +137,7 @@ public class PriceListRegulBuilder extends PriceListModel {
         priceList.setPoze1(0d);
         priceList.setPoze2(0d);
     }
+
 
     /**
      * Nastaví v ceníku zastropovanou cenu VT
@@ -95,6 +147,7 @@ public class PriceListRegulBuilder extends PriceListModel {
             priceList.setCenaVT(MAX_VT_2023);
     }
 
+
     /**
      * Nastaví v ceníku zastropovanou cenu NT
      */
@@ -102,6 +155,7 @@ public class PriceListRegulBuilder extends PriceListModel {
         if (priceList.getCenaNT() > MAX_NT_2023)
             priceList.setCenaNT(MAX_NT_2023);
     }
+
 
     /**
      * Nastaví v ceníku zastropovanou cenu měsíčního platu
@@ -111,10 +165,11 @@ public class PriceListRegulBuilder extends PriceListModel {
             priceList.setMesicniPlat(MAX_PLAT_2023);
     }
 
+
     /**
      * Vrátí zastropovanou cenu VT
      *
-     * @return
+     * @return zastropovaná cena VT
      */
     public String getMaxVT() {
         if (year == 2023)
@@ -122,10 +177,11 @@ public class PriceListRegulBuilder extends PriceListModel {
         return null;
     }
 
+
     /**
      * Vrátí zastropovanou cenu NT
      *
-     * @return
+     * @return zastropovaná cena NT
      */
     public String getMaxNT() {
         if (year == 2023)
@@ -133,10 +189,11 @@ public class PriceListRegulBuilder extends PriceListModel {
         return null;
     }
 
+
     /**
      * Vrátí max možný měsíční plat s popisem
      *
-     * @return
+     * @return max měsíční plat
      */
     public String getMaxPlat() {
         if (year == 2023)
@@ -144,28 +201,33 @@ public class PriceListRegulBuilder extends PriceListModel {
         return null;
     }
 
+
     /**
      * Vrátí max cenu POZE pro daný rok s popisem
      *
-     * @return
+     * @return max cena POZE
      */
     public String getMaxPOZE() {
+        String POZE_2022 = "Zrušení poplatku POZE od října 2022: ";
         if (year == 2022)
             return POZE_2022 + df2.format(0.0);
+        String POZE_2023 = "Zrušení poplatku POZE: ";
         if (year == 2023)
             return POZE_2023 + df2.format(0.0);
         return null;
     }
 
+
     public PriceListModel getRegulPriceList() {
         return priceList;
     }
 
+
     /**
-     * Zobrazí text upozornující na poznámky k ceníku
+     * Zobrazí text upozorňující na poznámky k ceníku
      *
-     * @param context
-     * @return
+     * @param context kontext aplikace
+     * @return text poznámky
      */
     public String getNotes(Context context) {
         isRegulPrice = false;
@@ -180,38 +242,41 @@ public class PriceListRegulBuilder extends PriceListModel {
         return "";
     }
 
+
     /**
      * Vrátí, zdali se je dostupná regulovaná cena
      *
-     * @return
+     * @return true, pokud je regulovaná cena
      */
     public boolean isRegulPrice() {
         return isRegulPrice;
     }
 
+
     /**
      * Vrátí aktuální datum začátku platnosti regulace pro daný rok
      *
-     * @return
+     * @return datum začátku platnosti regulace
      */
     public long getDateStart() {
         if (year == 2022)
             return ViewHelper.parseCalendarFromString("1.10.2022").getTimeInMillis();
         if (year == 2023)
             return ViewHelper.parseCalendarFromString("1.1.2023").getTimeInMillis();
-        return ViewHelper.parseCalendarFromString("1.1."+year).getTimeInMillis();
+        return ViewHelper.parseCalendarFromString("1.1." + year).getTimeInMillis();
     }
+
 
     /**
      * Vrátí aktuální datum konce platnosti regulace pro daný rok
      *
-     * @return
+     * @return datum konce platnosti regulace
      */
     public long getDateEnd() {
         if (year == 2022)
             return ViewHelper.parseCalendarFromString("31.12.2022").getTimeInMillis();
         if (year == 2023)
             return ViewHelper.parseCalendarFromString("31.12.2023").getTimeInMillis();
-        return ViewHelper.parseCalendarFromString("31.12."+year).getTimeInMillis();
+        return ViewHelper.parseCalendarFromString("31.12." + year).getTimeInMillis();
     }
 }

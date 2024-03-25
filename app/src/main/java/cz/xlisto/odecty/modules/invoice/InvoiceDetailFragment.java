@@ -18,7 +18,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Objects;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -249,10 +248,7 @@ public class InvoiceDetailFragment extends Fragment {
 
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(invoice.getDateFrom());
-            PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(getPriceList(invoice),
-                    calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(getPriceList(invoice), invoice);
             PriceListModel priceList = priceListRegulBuilder.getRegulPriceList();
             double priceBreaker = Calculation.calculatePriceBreaker(priceList, countPhaze, phaze);
             if (!hiddenNT) {

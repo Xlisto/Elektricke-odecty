@@ -31,6 +31,7 @@ import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPMonthlyReading;
+import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
@@ -46,6 +47,8 @@ public class MonthlyReadingFragment extends Fragment {
     private final String TAG = "MonthlyReadingFragment";
     private final String TO = "to";
     private final String FROM = "from";
+    private final String ID_CURRENTLY_READING = "idCurrentlyReading";
+    private final String ID_PREVIOUS_READING = "idPreviousReading";
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
     private TextView tvAlert, tvMonthlyReadingFilter;
@@ -55,6 +58,8 @@ public class MonthlyReadingFragment extends Fragment {
     private MonthlyReadingAdapter monthlyReadingAdapter;
     private long from = 0;
     private long to = Long.MAX_VALUE;
+    private long idCurrentlyReading = -1, idPreviousReading = -1;
+    private MonthlyReadingAdapter.OnClickItemListener onClickItemListener;
 
 
     public MonthlyReadingFragment() {
@@ -102,6 +107,13 @@ public class MonthlyReadingFragment extends Fragment {
                     loadDataFromDatabase();
                     showFab();
                 });
+
+        //posluchač změny měsíčního odečtu - zobrazení detailu v land režimu
+        onClickItemListener = (idCurrentlyReading, idPreviousReading) -> {
+            this.idCurrentlyReading = idCurrentlyReading;
+            this.idPreviousReading = idPreviousReading;
+            showDetailFragment(idCurrentlyReading, idPreviousReading);
+        };
     }
 
 
@@ -118,6 +130,8 @@ public class MonthlyReadingFragment extends Fragment {
         if (savedInstanceState != null) {
             from = savedInstanceState.getLong(FROM);
             to = savedInstanceState.getLong(TO);
+            idCurrentlyReading = savedInstanceState.getLong(ID_CURRENTLY_READING);
+            idPreviousReading = savedInstanceState.getLong(ID_PREVIOUS_READING);
         }
 
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
@@ -155,6 +169,8 @@ public class MonthlyReadingFragment extends Fragment {
                     .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
             FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
         });
+
+        showDetailFragment(idCurrentlyReading, idPreviousReading);
     }
 
 
@@ -178,6 +194,8 @@ public class MonthlyReadingFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putLong(FROM, from);
         outState.putLong(TO, to);
+        outState.putLong(ID_CURRENTLY_READING, idCurrentlyReading);
+        outState.putLong(ID_PREVIOUS_READING, idPreviousReading);
     }
 
 
@@ -221,6 +239,7 @@ public class MonthlyReadingFragment extends Fragment {
             monthlyReadingAdapter = new MonthlyReadingAdapter(monthlyReadings, subscriptionPoint,
                     swSimplyView.isChecked(), swRegulPrice.isChecked(), rv);
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+            monthlyReadingAdapter.setOnClickItemListener(onClickItemListener);
             rv.setAdapter(monthlyReadingAdapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -230,6 +249,21 @@ public class MonthlyReadingFragment extends Fragment {
                 tvAlert.setText(getResources().getString(R.string.pridejte_mesicni_odecty));
         } else {
             tvAlert.setText(getResources().getString(R.string.create_place));
+        }
+    }
+
+    private void showDetailFragment(long idCurrentlyReading, long idPreviousReading) {
+        if (DetectScreenMode.isLandscape(requireActivity())) {
+            MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
+            if (idCurrentlyReading >= 0 && idPreviousReading >= 0)
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment)
+                        .addToBackStack(null).commit();
+            else {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerViewDetail, new Fragment())
+                        .addToBackStack(null).commit();
+            }
         }
     }
 

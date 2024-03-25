@@ -145,13 +145,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
         hideNt(holder, priceList.getSazba().equals(InvoiceAbstract.D01) || priceList.getSazba().equals(InvoiceAbstract.D02));
 
-        //nastavení datumu odečtu
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(invoice.getDateFrom());
-        int[] date = ViewHelper.parseIntsFromCalendar(calendar);
-
         //nastavení regulovaného ceníku
-        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
+        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, invoice);
         priceList = priceListRegulBuilder.getRegulPriceList();
 
         checkDate(position, holder, priceListRegulBuilder);
@@ -227,7 +222,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             if (invoice.getNtStart() > invoice.getNtEnd()) {
                 message = context.getResources().getString(R.string.alert_message_nt);
             }
-            if (!message.equals("")) {
+            if (!message.isEmpty()) {
                 message += context.getResources().getString(R.string.alert_message_edit_last_record);
                 OwnAlertDialog.show(context, context.getResources().getString(R.string.alert_title), message);
                 return;
@@ -281,7 +276,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         } else {
             for (Object payload : payloads) {
                 if ("showCheckBoxSelect".equals(payload)) {
-                    // Aktualizuj pouze widget, ne celou položku
+                    // Aktualizuji pouze widget, ne celou položku
                     if (showCheckBoxSelect) {
                         holder.chSelected.setVisibility(View.VISIBLE);
                         holder.chSelected.setOnCheckedChangeListener((buttonView, isChecked) -> invoice.setSelected(isChecked));

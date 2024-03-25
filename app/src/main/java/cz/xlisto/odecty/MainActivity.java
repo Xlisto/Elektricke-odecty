@@ -43,6 +43,7 @@ import cz.xlisto.odecty.services.HdoNotice;
 import cz.xlisto.odecty.services.HdoService;
 import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.shp.ShPMainActivity;
+import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
@@ -284,6 +285,12 @@ public class MainActivity extends AppCompatActivity {
 
         setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
         setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
+
+        //při rotaci se skryje detail měsíčního odečtu a zobrazí se seznam
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("MonthlyReadingDetailFragment");
+        if (fragment != null && DetectScreenMode.isLandscape(getApplicationContext())) {
+            getSupportFragmentManager().popBackStack();
+        }
     }
 
 

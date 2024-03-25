@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/rlRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:context=".modules.monthlyreading.MonthlyReadingFragment">
+
+
+        <TextView
+            android:id="@+id/tvMonthlyReadingFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvAlertMonthlyReading"
+            style="@style/AlertNoSubscriptionPoint" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:contentDescription="@string/add_nem_monthly_reading"
+            android:focusable="true"
+            android:src="@drawable/ic_content_add" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swRegulPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvMonthlyReadingFilter"
+            android:layout_marginStart="5dp"
+            android:elegantTextHeight="false"
+            android:foregroundGravity="left"
+            android:freezesText="false"
+            android:minHeight="48dp"
+            android:text="@string/regulovane_ceny"
+            android:textAlignment="center" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swSimplyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvMonthlyReadingFilter"
+            android:layout_marginEnd="5dp"
+            android:minHeight="48dp"
+            android:text="@string/zjednodusene_zobrazeni" />
+
+        <cz.xlisto.odecty.ownview.ContextMenuRecyclerView
+            android:id="@+id/rvMonthlyReading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/swSimplyView"
+            android:layoutAnimation="@anim/layout_animation_fall_down"
+            android:padding="5dp" />
+    </RelativeLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerViewDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>
+

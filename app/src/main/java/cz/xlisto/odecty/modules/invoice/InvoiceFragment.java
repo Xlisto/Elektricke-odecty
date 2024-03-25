@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -359,13 +358,9 @@ public class InvoiceFragment extends Fragment {
             if (priceList == null) {
                 priceList = new PriceListModel();
             }
-            //nastavení datumu odečtu
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(invoice.getDateFrom());
-            int[] date = ViewHelper.parseIntsFromCalendar(calendar);
 
             //nastavení regulovaného ceníku
-            PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, date[2], date[1], date[0]);
+            PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, invoice);
             PriceListModel regulPriceList = priceListRegulBuilder.getRegulPriceList();
             String dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
             String dateTo = ViewHelper.convertLongToDate(invoice.getDateTo());
@@ -405,10 +400,6 @@ public class InvoiceFragment extends Fragment {
             totalDPH += totalOtherServices-discountWithoutTax + ((totalOtherServices-discountWithoutTax) * priceList.getDph() / 100);
         }
         dataInvoiceSource.close();
-
-        //započtení slevy
-        //total -= discountWithoutTax;
-        //totalDPH -= discountWithoutTax-(discountWithoutTax * priceList.getDph() / 100);
 
         totalPriceVt = priceTotal[0];
         totalPriceNt = priceTotal[1];

@@ -88,6 +88,25 @@ public class DataMonthlyReadingSource extends DataSource {
 
 
     /**
+     * Načte měsíční záznam podle ID
+     */
+    public MonthlyReadingModel loadMonthlyReadingById(String table, long id) {
+        Cursor cursor = database.query(table,
+                null,
+                COLUMN_ID + "=?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null);
+        if (cursor.getCount() == 0) return null;
+        cursor.moveToFirst();
+        MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
+        cursor.close();
+        return monthlyReadingModel;
+    }
+
+
+    /**
      * Zjistí jestli zadaný měsíční odečet je první nebo nikoliv
      *
      * @param table          název tabulky
