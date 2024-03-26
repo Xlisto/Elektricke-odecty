@@ -251,7 +251,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
             priceList = priceListSource.readPrice(monthlyReadingCurrently.getPriceListId());
 
             if (showRegulPrice)
-                priceList = new PriceListRegulBuilder(priceList, monthlyReadingCurrently).getRegulPriceList();
+                priceList = new PriceListRegulBuilder(priceList, monthlyReadingPrevious).getRegulPriceList();
 
             viewModel.setPriceList(priceList);
             priceListSource.close();

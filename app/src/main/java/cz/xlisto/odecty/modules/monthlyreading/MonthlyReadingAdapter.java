@@ -172,7 +172,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.tvDateDetail.setText(context.getResources().getString(R.string.period, ViewHelper.convertLongToDate(dateStart), ViewHelper.convertLongToDate(dateEnd)));
 
                 if (showRegulPrice) {
-                    PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, monthlyReading);
+                    PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, monthlyReadingPrevious);
                     priceList = priceListRegulBuilder.getRegulPriceList();
 
                     overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
