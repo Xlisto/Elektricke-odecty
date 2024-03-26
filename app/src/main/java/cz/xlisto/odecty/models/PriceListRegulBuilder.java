@@ -49,19 +49,13 @@ public class PriceListRegulBuilder extends PriceListModel {
      * Nastaví regulované ceny v ceníku dodaný v parametru. Regulované ceny začínají od zadaného data až do konce roku
      *
      * @param priceList      ceník
-     * @param monthlyReading měsíční odečet
+     * @param monthlyReading  předchozí!! měsíční odečet
      */
     public PriceListRegulBuilder(PriceListModel priceList, MonthlyReadingModel monthlyReading) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(monthlyReading.getDate());
         int[] date = ViewHelper.parseIntsFromCalendar(calendar);//převedení data na pole
-//TODO: zobrazený období za měsíc nemusí odpovídat skutečnosti
-        //odečtení jednoho měsíce/ protože zobrazuji data za měsíc zpět
-        date[1]--;//odečítám jeden měsíc
-        if (date[1] < 0) {//pokud je měsíc menší než 0(leden)
-            date[2]--;//odečítám jeden rok
-            date[1] = 11;//měsíc nastavuji na prosinec (11)
-        }
+
         initialize(priceList, date[2], date[1]);
     }
 
