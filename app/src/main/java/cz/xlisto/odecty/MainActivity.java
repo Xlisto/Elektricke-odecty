@@ -33,6 +33,7 @@ import cz.xlisto.odecty.modules.exportimportpricelist.ImportPriceListFragment;
 import cz.xlisto.odecty.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.odecty.modules.hdo.HdoFragment;
 import cz.xlisto.odecty.modules.invoice.InvoiceListFragment;
+import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingDetailFragment;
 import cz.xlisto.odecty.modules.monthlyreading.MonthlyReadingFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListCompareBoxFragment;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
@@ -50,7 +51,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MonthlyReadingFragment.OnShowRegulPriceListener{
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
@@ -443,5 +444,20 @@ public class MainActivity extends AppCompatActivity {
     public void setToolbarSubtitle(String subtitle) {
         shPMainActivity.set(ShPMainActivity.SECONDARY_TITLE, subtitle);
         toolbarSubtitle.setText(subtitle);
+    }
+
+
+    /**
+     * Nastaví zobrazení při změně ne/regulované ceny
+     *
+     * @param showRegulPrice zobrazení regulované ceny
+     */
+    @Override
+    public void onShowRegulPrice(boolean showRegulPrice) {
+        MonthlyReadingDetailFragment monthlyReadingDetailFragment = (MonthlyReadingDetailFragment) getSupportFragmentManager().findFragmentByTag(MonthlyReadingDetailFragment.TAG);
+        if (monthlyReadingDetailFragment != null) {
+            monthlyReadingDetailFragment.setShowRegulPrice(showRegulPrice);
+        }
+
     }
 }

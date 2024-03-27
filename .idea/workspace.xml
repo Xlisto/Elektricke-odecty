@@ -362,12 +362,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna výpočtu velikosti a umístění číslic ciferníku.&#10;Nyní se počítá s jednotkou DP, oproti předchozímu výpočtu je zhohledněna hustota obrazovky">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna zadávání počátečního data, ze kterého se detekuje platnost ceníku pro zjištění, zda-li se jedná o regulované období.&#10;Nyní se datum určuje z data předchozího měsíčního odečtu. Předchozí způsob - odečtení jednoho měsíce byl nepřesný. Protože měsíční zápisy mohou mít různě dlouhá období.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListRegulBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/PriceListRegulBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingDetailFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingDetailFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1080,7 +1079,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="238" />
+    <option name="localTasksCounter" value="240" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1154,7 +1153,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněna výstraha, pokud poslední záznam faktury překročí poslední datum měsíčního odečtu.&#10;Odstraněna kontrola(blokace) tlačítka na ukládání nové/editované faktury." />
     <MESSAGE value="Doplněna možnost změny faktury u zálohové platby.&#10;Řešeno dialogovým oknem PaymentChangeInvoiceDialogFragment." />
     <MESSAGE value="Opraven výpočet jednorázových slev.&#10;Chyba byla, že se sleva zahrnovala jako snížení součtu plateb. Nyní se odečítá od celkového součtu ceny spotřebované elektřiny. Záznam slevy se datumově váže k platnosti faktury. Pokud je mimo datumové rozpětí, nezapočítá se. To je nutné, pokud by byla změna výše DPH, aby se sleva počítala se správnou výší DPH." />
     <MESSAGE value="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí." />
@@ -1179,7 +1177,8 @@
     <MESSAGE value="Upravena detekce prvního měsíčního záznamu a zadávání prvního měsíčního odečtu.&#10;Skrytí položek checkboxu pro První záznam, tlačítko pro výběr ceníku zablokována kontrola nevybraného ceníku.&#10;Nově se první záznam detekuje automaticky a chceckbox je změněn pouze na výměnu elektroměru." />
     <MESSAGE value="Přidán fragment zobrazující detail měsíčního odečtu.&#10;- pozměněna detekce regulovaného ceníku - odstraněn repetivní kod" />
     <MESSAGE value="Změna výpočtu velikosti a umístění číslic ciferníku.&#10;Nyní se počítá s jednotkou DP, oproti předchozímu výpočtu je zhohledněna hustota obrazovky" />
-    <option name="LAST_COMMIT_MESSAGE" value="Změna výpočtu velikosti a umístění číslic ciferníku.&#10;Nyní se počítá s jednotkou DP, oproti předchozímu výpočtu je zhohledněna hustota obrazovky" />
+    <MESSAGE value="Změna zadávání počátečního data, ze kterého se detekuje platnost ceníku pro zjištění, zda-li se jedná o regulované období.&#10;Nyní se datum určuje z data předchozího měsíčního odečtu. Předchozí způsob - odečtení jednoho měsíce byl nepřesný. Protože měsíční zápisy mohou mít různě dlouhá období." />
+    <option name="LAST_COMMIT_MESSAGE" value="Změna zadávání počátečního data, ze kterého se detekuje platnost ceníku pro zjištění, zda-li se jedná o regulované období.&#10;Nyní se datum určuje z data předchozího měsíčního odečtu. Předchozí způsob - odečtení jednoho měsíce byl nepřesný. Protože měsíční zápisy mohou mít různě dlouhá období." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

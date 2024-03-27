@@ -41,7 +41,7 @@ import static androidx.annotation.Dimension.DP;
  * Xlisto 17.03.2024 18:34
  */
 public class MonthlyReadingDetailFragment extends Fragment {
-    private static final String TAG = "MonthlyReadingDetailFragment";
+    public static final String TAG = "MonthlyReadingDetailFragment";
     private static final String ARG_ID_CURRENT = "id_current";
     private static final String ARG_ID_PREVIOUS = "id_previous";
     private static final String ARG_SHOW_REGUL_PRICE = "showRegulPrice";
@@ -64,8 +64,12 @@ public class MonthlyReadingDetailFragment extends Fragment {
     private final TextView[][] tvsConsuption = new TextView[2][5];
     private TextView[][] tvsVt = new TextView[14][3];
     private String[] tableVt;
-    private double[] priceVt;
+    private double[] priceArray;
     private boolean showRegulPrice;
+    private double month;
+    private double consuptionVt;
+    private double consuptionNt;
+    private int marginInPx;
 
 
     public static MonthlyReadingDetailFragment newInstance(long idCurrent, long idPrevious, boolean showRegulPrice) {
@@ -121,26 +125,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
         };
 
-        double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
-        double cinnost = Math.max(priceList.getCinnost(), priceList.getOte());
+        setPriceArray();
 
-        priceVt = new double[]{
-                priceList.getCenaVT(),
-                priceList.getDistVT(),
-                priceList.getDan(),
-                priceList.getSystemSluzby(),
-                priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby(),
-                priceList.getCenaNT(),
-                priceList.getDistNT(),
-                priceList.getDan(),
-                priceList.getSystemSluzby(),
-                priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby(),
-                priceList.getMesicniPlat(),
-                jistic,
-                cinnost,
-                priceList.getMesicniPlat() + jistic + cinnost,
-                priceList.getPoze2()
-        };
     }
 
 
@@ -204,7 +190,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         String dateFrom = ViewHelper.convertLongToDate(monthlyReadingPrevious.getDate());
         String dateTo = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
-        double month = Calculation.differentMonth(monthlyReadingPrevious.getDate(), monthlyReadingCurrently.getDate(), DifferenceDate.TypeDate.MONTH);
+        month = Calculation.differentMonth(monthlyReadingPrevious.getDate(), monthlyReadingCurrently.getDate(), DifferenceDate.TypeDate.MONTH);
 
 
         tvDate.setText(String.valueOf(ViewHelper.convertLongToDate(monthlyReadingCurrently.getDate())));
@@ -217,16 +203,16 @@ public class MonthlyReadingDetailFragment extends Fragment {
         tvVTMetersEnd.setText(String.format(getResources().getString(R.string.consuption2), monthlyReadingCurrently.getVt()));
         tvNTMetersEnd.setText(String.format(getResources().getString(R.string.consuption2), monthlyReadingCurrently.getNt()));
 
-        double consuptionVt = monthlyReadingCurrently.getVt() - monthlyReadingPrevious.getVt();
-        double consuptionNt = monthlyReadingCurrently.getNt() - monthlyReadingPrevious.getNt();
+        consuptionVt = monthlyReadingCurrently.getVt() - monthlyReadingPrevious.getVt();
+        consuptionNt = monthlyReadingCurrently.getNt() - monthlyReadingPrevious.getNt();
 
         tvVTConsuption.setText(String.format(getResources().getString(R.string.consuption2), consuptionVt));
         tvNTConsuption.setText(String.format(getResources().getString(R.string.consuption2), consuptionNt));
 
-        int marginInPx = DensityUtils.dpToPx(requireContext(), 5);
+        marginInPx = DensityUtils.dpToPx(requireContext(), 5);
 
         if (tlVt.getChildCount() == 0)
-            tvsVt = createTable(tlVt, tableVt, priceVt, marginInPx, consuptionVt, consuptionNt, month);
+            tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
     }
 
 
@@ -256,6 +242,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
             viewModel.setPriceList(priceList);
             priceListSource.close();
         }
+        setPriceArray();
     }
 
 
@@ -397,5 +384,48 @@ public class MonthlyReadingDetailFragment extends Fragment {
             }
         }
         return tvs;
+    }
+
+
+    /**
+     * Nastaví pole cen
+     */
+    private void setPriceArray() {
+        double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
+        double cinnost = Math.max(priceList.getCinnost(), priceList.getOte());
+
+        priceArray = new double[]{
+                priceList.getCenaVT(),
+                priceList.getDistVT(),
+                priceList.getDan(),
+                priceList.getSystemSluzby(),
+                priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby(),
+                priceList.getCenaNT(),
+                priceList.getDistNT(),
+                priceList.getDan(),
+                priceList.getSystemSluzby(),
+                priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby(),
+                priceList.getMesicniPlat(),
+                jistic,
+                cinnost,
+                priceList.getMesicniPlat() + jistic + cinnost,
+                priceList.getPoze2()
+        };
+    }
+
+
+    /**
+     * Nastaví zobrazení při změně ne/regulované ceny
+     *
+     * @param showRegulPrice boolean s hodnotou zobrazení regulované ceny
+     */
+    public void setShowRegulPrice(boolean showRegulPrice) {
+        viewModel.setShowRegulPrice(showRegulPrice);
+        this.showRegulPrice = showRegulPrice;
+        tlVt.removeAllViews();
+        loadMonthlyReading();
+
+        tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
+        resizeTextViews();
     }
 }

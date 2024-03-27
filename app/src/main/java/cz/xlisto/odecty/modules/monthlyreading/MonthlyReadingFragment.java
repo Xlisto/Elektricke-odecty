@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.monthlyreading;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.transition.TransitionManager;
@@ -44,7 +45,7 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  * Fragment pro zobrazení měsíčních odečtů.
  */
 public class MonthlyReadingFragment extends Fragment {
-    private final String TAG = "MonthlyReadingFragment";
+    public final String TAG = "MonthlyReadingFragment";
     private final String TO = "to";
     private final String FROM = "from";
     private final String ID_CURRENTLY_READING = "idCurrentlyReading";
@@ -60,6 +61,7 @@ public class MonthlyReadingFragment extends Fragment {
     private long to = Long.MAX_VALUE;
     private long idCurrentlyReading = -1, idPreviousReading = -1;
     private MonthlyReadingAdapter.OnClickItemListener onClickItemListener;
+    private OnShowRegulPriceListener onShowRegulPriceListener;
 
 
     public MonthlyReadingFragment() {
@@ -161,6 +163,7 @@ public class MonthlyReadingFragment extends Fragment {
 
                 monthlyReadingAdapter.setShowRegulPrice(isChecked);
                 rv.getLayoutManager().onRestoreInstanceState(out);
+                setOnShowRegulPriceListener(isChecked);
             }
         });
 
@@ -257,7 +260,7 @@ public class MonthlyReadingFragment extends Fragment {
             MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
             if (idCurrentlyReading >= 0 && idPreviousReading >= 0)
                 requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment)
+                        .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment,MonthlyReadingDetailFragment.TAG)
                         .addToBackStack(null).commit();
             else {
                 requireActivity().getSupportFragmentManager().beginTransaction()
@@ -279,4 +282,23 @@ public class MonthlyReadingFragment extends Fragment {
         }
     }
 
+    public interface OnShowRegulPriceListener {
+        void onShowRegulPrice(boolean showRegulPrice);
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            onShowRegulPriceListener = (OnShowRegulPriceListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context + " must implement OnShowRegulPriceListener");
+        }
+    }
+
+
+    public void setOnShowRegulPriceListener(boolean isChecked) {
+        this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
+    }
 }
