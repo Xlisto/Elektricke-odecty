@@ -116,11 +116,13 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     public void onResume() {
         super.onResume();
         loadPriceList();
-        if (countMonthlyReading == 1) {
+        if (countMonthlyReading == 1) {//pokud je první záznam v měsíčním odečtu
             btnSelectPriceList.setVisibility(View.GONE);
             cbFirstReading.setVisibility(View.GONE);
             labPayment.setEnabled(false);
-        } else
+        } else if (cbFirstReading.isChecked()) {//pokud je výměna elektroměru
+            btnSelectPriceList.setVisibility(View.GONE);
+        } else //ostatní záznamy, pokud není nastaven ceník
             btnSave.setEnabled(!priceList.isEmpty());
     }
 

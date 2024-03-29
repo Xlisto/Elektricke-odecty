@@ -71,7 +71,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     private final String ARG_BTN_PRICE_LIST = "btnPriceList";
     private static boolean restoreSharedPreferences = false;
     private boolean isShowFragment;
-    int countMonthlyReading;
+    int countMonthlyReading = 0;
 
 
     @Override
@@ -111,8 +111,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
 
         cbShowDescription.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION, false));
         cbFirstReading.setChecked(shPAddEditMonthlyReading.get(ARG_FIRST_READING_MONTHLY_READING, false));
-
-        hideItemsForFirstReading(cbFirstReading.isChecked());
 
         cbFirstReading.setOnCheckedChangeListener((buttonView, isChecked) -> hideItemsForFirstReading(isChecked));
 
@@ -167,9 +165,11 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         countMonthlyReading = dataMonthlyReadingSource.getCount(subscriptionPoint.getTableO());
         dataMonthlyReadingSource.close();
         hideItemsForFirstReading(countMonthlyReading == 0);
-        if(countMonthlyReading == 0) {
+        if (countMonthlyReading == 0) {
             cbFirstReading.setVisibility(View.GONE);
         }
+
+        hideItemsForFirstReading(cbFirstReading.isChecked());
     }
 
 
