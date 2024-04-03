@@ -6,6 +6,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.widget.Toast;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,12 +28,14 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPBackup;
 import cz.xlisto.odecty.utils.MyToast;
 
+
 /**
  * Uloží databáze do ZIPu
  * Xlisto 06.12.2023 17:04
  */
 public class SaveDataToBackupFile extends RecoverData {
     private static final String TAG = "SaveBackup";
+    private static final Logger LOGGER = LoggerFactory.getLogger(SaveDataToBackupFile.class.getName());
 
 
     /**
@@ -54,7 +59,7 @@ public class SaveDataToBackupFile extends RecoverData {
             outputStreamWriter.write(s);
             outputStreamWriter.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error while writing to file info.txt", e);
         }
 
         //uložení zálohovaných souborů do ZIPu
@@ -103,9 +108,10 @@ public class SaveDataToBackupFile extends RecoverData {
                 //smazání dočasného souboru info.txt
                 f3.delete();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error while writing to file", e);
             }
-            handler.sendMessage(handler.obtainMessage(1, f));
+            if (handler != null)
+                handler.sendMessage(handler.obtainMessage(1, f));
         }
     }
 
