@@ -10,10 +10,10 @@ import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
-import cz.xlisto.odecty.utils.Keyboard;
 
 import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D01;
 import static cz.xlisto.odecty.modules.invoice.InvoiceAbstract.D02;
+
 
 /**
  * Fragment pro editaci faktury
@@ -31,6 +31,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         invoiceEditFragment.setArguments(bundle);
         return invoiceEditFragment;
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -77,42 +78,20 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         boolean first = WithOutInvoiceService.firstRecordInvoice(requireActivity(), -1L, id);
         boolean last = WithOutInvoiceService.lastRecordInvoice(requireActivity(), -1L, id);
         //zobrazení první záznamu - zneaktivnění vstupních polí pouze u
-        if (first && invoice.getIdInvoice()==-1L) {
+        if (first && invoice.getIdInvoice() == -1L) {
             letNTStart.setEnabled(false);
             letVTStart.setEnabled(false);
             btnDateStart.setEnabled(false);
         }
 
         //zobrazení posledního záznamu - zneaktivnění vstupních polí
-        if (last && invoice.getIdInvoice()==-1L) {
+        if (last && invoice.getIdInvoice() == -1L) {
             letNTEnd.setEnabled(false);
             letVTEnd.setEnabled(false);
             btnDateEnd.setEnabled(false);
         }
 
-        btnSave.setOnClickListener(v -> {
-            if (checkData())
-                return;
-
-            InvoiceModel createdInvoice = createInvoice(id,selectedIdPrice);
-
-            //kontrola zda datum nepřekročí první záznam v období bez faktury
-            //if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)) {
-                DataInvoiceSource dataInvoiceSource1 = new DataInvoiceSource(requireActivity());
-                dataInvoiceSource1.open();
-                dataInvoiceSource1.updateInvoice(id, table, createdInvoice);
-                dataInvoiceSource1.close();
-
-                Keyboard.hide(requireActivity());
-
-                WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
-                loadFromDatabase = true;
-                getParentFragmentManager().popBackStack();
-            /*} else {
-                OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
-                        requireContext().getResources().getString(R.string.date_is_not_correct,ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
-            }*/
-        });
+        btnSave.setOnClickListener(v -> saveData(TypeSave.EDIT));
 
         oldDateStart = btnDateStart.getText().toString();
         oldDateEnd = btnDateEnd.getText().toString();

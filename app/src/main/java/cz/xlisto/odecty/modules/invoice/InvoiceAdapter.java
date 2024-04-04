@@ -33,6 +33,7 @@ import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.models.PriceListRegulBuilder;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
+import cz.xlisto.odecty.shp.ShPInvoice;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
@@ -190,6 +191,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
 
         holder.itemInvoice.setOnClickListener(v -> {
+            ShPInvoice shPInvoice = new ShPInvoice(context);
+            if(shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true) && invoice.getIdInvoice() == -1L){
+                showButtons = -1;
+                showButtons(holder, invoice, position);
+                return;
+            }
+
+
             if (showCheckBoxSelect) return;
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
@@ -286,6 +295,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                         holder.chSelected.setVisibility(View.GONE);
                     }
                 }
+                if ("showButtons".equals(payload)) {
+                    showButtons(holder, invoice, position);
+                }
             }
         }
     }
@@ -376,7 +388,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     public void deleteItem(long id, int position) {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
-        dataInvoiceSource.deleteInvoice(table,id);
+        dataInvoiceSource.deleteInvoice(table, id);
         dataInvoiceSource.close();
         resetShowButtons();
         items.remove(position);
@@ -471,8 +483,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
                 || (ntEnd != nextNt && isChangedElectricMeterNext)//výměna elektroměru
                 || (vtEnd != nextVt && isChangedElectricMeterNext)//výměna elektroměru
-
-        )) {
+        ) && invoice.getIdPriceList() != -1) {
             holder.imgAlert.setVisibility(View.GONE);
             holder.tvAlert.setVisibility(View.GONE);
         } else {
@@ -485,6 +496,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 holder.tvAlert.setVisibility(View.VISIBLE);
                 if (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo()) {
                     holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
+                }
+                if (invoice.getIdPriceList() == -1) {
+                    holder.tvAlert.setText(context.getResources().getString(R.string.alert_no_price_list));
                 }
             } else {
                 holder.tvAlert.setVisibility(View.GONE);
@@ -560,6 +574,22 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
 
+    /**
+     * Resetuje zobrazení tlačítek/ v žádné položce nebudou zobrazeny tlačítka
+     */
+    public void resetButtons(){
+        showButtons = -1;
+        TransitionManager.beginDelayedTransition(recyclerView);
+        for (int i = 0; i < getItemCount(); i++) {
+            notifyItemChanged(i, "showButtons");
+        }
+
+    }
+
+
+    /**
+     * Resetuje zobrazení tlačítek/ v žádné položce nebudou zobrazeny tlačítka
+     */
     public static void resetShowButtons() {
         showButtons = -1;
     }

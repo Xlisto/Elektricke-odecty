@@ -453,4 +453,11 @@
     <string name="discount_number">Sleva na DPH ve výši %s Kč</string>
     <string name="alert_discount_description">Sleva bez DPH je při výpočtu navýšena o DPH. Proto je nutné správně uvést datum započtení slevy, ke které části faktury se sleva váže. Jinak se nezapočítá. </string>
     <string name="alert_delete_invoice">Chystáte se smazat celou fakturu</string>
+    <string name="alert_no_price_list">Pro období není nastaven ceník</string>
+    <string name="settings">Nastavení</string>
+    <string name="autogenerate">Automatický režim generování období bez faktury</string>
+    <string name="autogenerate_title">Nastavení generování</string>
+    <string name="autogenerate_no">Pro období bez faktury se bude generovat pouze počáteční a konečný záznam měřidel. Ostatní změny jsou potřeba dělat ručně, jako jsou přiřazení ceníku, rozdělení nebo sloučení jednotlivých záznamů.</string>
+    <string name="autogenerate_yes">Pro období bez faktury se budou generovat všechny údaje podle měsíčních záznamů. Použije se rozdělení podle ceníků, výměny elektroměru atd. Ruční manipulace se záznamy v období bez faktury je zákazána.</string>
+    <string name="no_monthly_records">Nejsou zapsány žádné měsíční záznamy. Nelze vytvořit záznam v období bez faktury.</string>
 </resources>

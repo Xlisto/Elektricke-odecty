@@ -68,7 +68,7 @@ public class SummaryInvoiceModel {
 
     public enum Unit {
         MWH("MWh"),
-        MONTH("Měsíc");
+        MONTH("měsíc");
 
         private final String text;
         Unit(final String text){

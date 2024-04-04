@@ -178,7 +178,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         //if (lastMonthlyReading.getId() == itemId) {
         //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
         //úprava posledního záznamu v období bez faktury
-        updateLastItemInvoice(lastMonthlyReading, newMonthlyReading);
+        updateItemInvoice(lastMonthlyReading);
         //}
     }
 }

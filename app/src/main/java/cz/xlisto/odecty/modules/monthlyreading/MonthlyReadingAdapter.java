@@ -451,7 +451,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
         dataMonthlyReadingSource.open();
         dataMonthlyReadingSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
-        MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(subscriptionPoint.getTableO());
+        //MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(subscriptionPoint.getTableO());
         dataMonthlyReadingSource.close();
 
         //odebere položku z adapter a přepočítá pozice, vynuluje showButtons jež ukazuje na rozbalenou položku
@@ -460,9 +460,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         notifyItemRemoved(position);
         notifyItemRangeChanged(position - 1, getItemCount());
         //smaže záznam v období bez faktury pokud je vázaný k prvnímu odečtu nebo výměně elektroměru
-        WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(context, subscriptionPoint.getTableTED(), itemId);
+        //WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(context, subscriptionPoint.getTableTED(), itemId);
         //upraví poslední záznam bez faktury podle posledního měsíčního záznamu
-        WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
+        //WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
+        WithOutInvoiceService.updateAllItemsInvoice(context,subscriptionPoint.getTableTED(),subscriptionPoint.getTableFAK(),subscriptionPoint.getTableO());
     }
 
 

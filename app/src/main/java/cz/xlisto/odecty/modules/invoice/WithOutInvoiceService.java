@@ -2,6 +2,7 @@ package cz.xlisto.odecty.modules.invoice;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -99,7 +100,7 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
-        if(monthlyReading == null) {
+        if (monthlyReading == null) {
             monthlyReading = new MonthlyReadingModel(0, 0, 0, 0, 0, "", 0, 0, false);
         }
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
@@ -117,83 +118,89 @@ public class WithOutInvoiceService {
 
 
     /**
-     * Vloží nový záznam v období bezfaktury podle měsíčního odečtu s nastaveným parametrem: Výměna elektroměru
+     * Vloží všechny záznamy v období bezfaktury
      *
-     * @param context        kontext aplikace
-     * @param monthlyReading měsíční odečet
+     * @param context  kontext aplikace
+     * @param tableTED název tabulky se záznamy pro období bez faktury
+     * @param tableFAK název tabulky se záznamy pro faktury
+     * @param tableO   název tabulky s měsíčními odečty
      */
-    public static void insertNewItemInInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
+    public static void updateAllItemsInvoice(Context context, String tableTED, String tableFAK, String tableO) {
+        //poslední záznam vydané faktury
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
-        InvoiceModel invoice = new InvoiceModel(monthlyReading.getDate(), monthlyReading.getDate(),
-                monthlyReading.getVt(), monthlyReading.getVt(), monthlyReading.getNt(), monthlyReading.getNt(),
-                -1L, -1L, 0, "0", true);
-        invoice.setIdMonthlyReading(monthlyReading.getId());
-
-        dataInvoiceSource.insertInvoice(table, invoice);
+        InvoiceModel lastInvoice = dataInvoiceSource.loadLastInvoiceByDateFromAll(tableFAK);
         dataInvoiceSource.close();
-    }
+        //seznam měsíčních odečtů zadaných od posledního data vydané faktury
+        ArrayList<MonthlyReadingModel> monthlyReadingModels;
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
+        dataMonthlyReadingSource.open();
+        long lastInvoiceDateTo = 0L;
+        double lastInvoiceVtEnd = 0;
+        double lastInvoiceNtEnd = 0;
+        if (lastInvoice != null) {
+            lastInvoiceDateTo = lastInvoice.getDateTo();
+            lastInvoiceVtEnd = lastInvoice.getVtEnd();
+            lastInvoiceNtEnd = lastInvoice.getNtEnd();
+        }
 
+        monthlyReadingModels = dataMonthlyReadingSource.loadMonthlyReading(tableO, lastInvoiceDateTo);
+        dataMonthlyReadingSource.close();
 
-    /**
-     * Upraví záznam v období bezfaktury podle měsíčního odečtu
-     *
-     * @param context kontext aplikace
-     * @param table   název tabulky
-     * @param monthlyReading faktura
-     */
-    public static void updateItemInvoice(Context context, String table, MonthlyReadingModel monthlyReading) {
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        InvoiceModel newInvoice = null;
+        long prevPriceListId = -1L;
+        ArrayList<InvoiceModel> invoicesModels = new ArrayList<>();
+
+        if (monthlyReadingModels.isEmpty()) {//zobrazení chyby, pokud není žádný měsíční záznam - nelze generovat záznam
+            String title = context.getResources().getString(R.string.error);
+            String message = context.getResources().getString(R.string.no_monthly_records);
+            OwnAlertDialog.show(context, title, message);
+        }
+        //procházím seznam měsíčních odečtů a vytvářím záznamy faktur. Pokud je výměna elektroměru nebo jiný ceník, vytvoří se nový záznam
+        for (int i = 0; i < monthlyReadingModels.size(); i++) {
+            MonthlyReadingModel monthlyReadingModel = monthlyReadingModels.get(i);
+            if (monthlyReadingModel.isFirst()) {//nový záznam pro období bez faktury, pokud je vyměněn elektroměr
+                newInvoice = new InvoiceModel(monthlyReadingModel.getDate(), monthlyReadingModel.getDate(),
+                        monthlyReadingModel.getVt(), monthlyReadingModel.getVt(), monthlyReadingModel.getNt(), monthlyReadingModel.getNt(),
+                        -1L, -1L, 0, "0", monthlyReadingModel.isFirst());
+                invoicesModels.add(newInvoice);
+            } else if (i == 0) {//nový záznam pro období bez faktury, údaje jsou s nejstarším měsíčním odečtem
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(lastInvoiceDateTo);
+                if (lastInvoiceDateTo > 0)//pokud je datum na 1.1.1970, tak se nic nepřičítá
+                    calendar.add(Calendar.DAY_OF_MONTH, 1);
+                newInvoice = new InvoiceModel(calendar.getTimeInMillis(), monthlyReadingModel.getDate(),
+                        lastInvoiceVtEnd, monthlyReadingModel.getVt(), lastInvoiceNtEnd, monthlyReadingModel.getNt(),
+                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
+                invoicesModels.add(newInvoice);
+            } else if (prevPriceListId != monthlyReadingModel.getPriceListId()) {//další záznam pro období bez faktury, pokud je jiný ceník
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(newInvoice.getDateTo());
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                newInvoice.setDateTo(calendar.getTimeInMillis());
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                long date = calendar.getTimeInMillis();
+                double vt = newInvoice.getVtEnd();
+                double nt = newInvoice.getNtEnd();
+                newInvoice = new InvoiceModel(date, monthlyReadingModel.getDate(),
+                        vt, monthlyReadingModel.getVt(), nt, monthlyReadingModel.getNt(),
+                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
+                invoicesModels.add(newInvoice);
+            } else {//úprava stávajícího záznamu faktury
+                newInvoice.setDateTo(monthlyReadingModel.getDate());
+                newInvoice.setVtEnd(monthlyReadingModel.getVt());
+                newInvoice.setNtEnd(monthlyReadingModel.getNt());
+                newInvoice.setIdPriceList(monthlyReadingModel.getPriceListId());
+
+            }
+            prevPriceListId = monthlyReadingModel.getPriceListId();
+        }
+
+        //smazání původních záznamů, vložení nových záznamů, reset autoincrement
+        dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
-        InvoiceModel invoice = dataInvoiceSource.loadInvoiceByMonthlyReading(monthlyReading.getId(), table);
-        invoice.setDateFrom(monthlyReading.getDate());
-        invoice.setVtStart(monthlyReading.getVt());
-        invoice.setNtStart(monthlyReading.getNt());
-        dataInvoiceSource.updateInvoice(invoice.getId(), table, invoice);
-        dataInvoiceSource.close();
-    }
-
-
-    /**
-     * Zkontroluje, zda-li existuje záznam v období bezfaktury podle id měsíčního odečtu (záznam o výměně elektroměru)
-     *
-     * @param context          kontext aplikace
-     * @param table            název tabulky
-     * @param idMonthlyReading id měsíčního odečtu
-     * @return boolean true - záznam existuje, false - záznam neexistuje
-     */
-    public static boolean isExistItemInInvoice(Context context, String table, long idMonthlyReading) {
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
-        dataInvoiceSource.open();
-        boolean exist = dataInvoiceSource.isInvoiceItemExistsByMonthlyReading(table, idMonthlyReading);
-        dataInvoiceSource.close();
-        return exist;
-    }
-
-
-    /**
-     * Smaže záznam v období bezfaktury podle měsíčního odečtu
-     *
-     * @param context        kontext aplikace
-     * @param table          název tabulky
-     * @param monthlyReading měsíční odečet
-     */
-    public static void deleteItemInInvoiceByIdMonthlyReading(Context context, String table, MonthlyReadingModel monthlyReading) {
-        deleteItemInInvoiceByIdMonthlyReading(context, table, monthlyReading.getId());
-    }
-
-
-    /**
-     * Smaže záznam v období bezfaktury podle id měsíčního odečtu
-     *
-     * @param context kontext aplikace
-     * @param table   název tabulky
-     * @param id      id měsíčního odečtu
-     */
-    public static void deleteItemInInvoiceByIdMonthlyReading(Context context, String table, long id) {
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
-        dataInvoiceSource.open();
-        dataInvoiceSource.deleteInvoiceByIdMonthlyReading(table, id);
+        dataInvoiceSource.deleteAllInvoices(tableTED);
+        dataInvoiceSource.insertAllInvoices(tableTED, invoicesModels);
         dataInvoiceSource.close();
     }
 
@@ -212,6 +219,8 @@ public class WithOutInvoiceService {
         InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
         InvoiceModel itemLastInvoice = dataInvoiceSource.loadLastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
         MonthlyReadingModel monthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
+        if (monthlyReading == null)
+            OwnAlertDialog.show(context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_monthly_records));
 
         if (itemLastInvoice != null && monthlyReading != null) {
             Calendar calendar = Calendar.getInstance();
@@ -227,25 +236,6 @@ public class WithOutInvoiceService {
         dataInvoiceSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
         dataMonthlyReadingSource.close();
         dataInvoiceSource.close();
-    }
-
-
-    /**
-     * Zkontroluje datum prvního záznamu (koncová data) v období bezfaktury podle, aby nepřesáhly koncový datum prvního záznamu
-     *
-     * @param context           kontext aplikace
-     * @param itemEditedInvoice upravovaný záznam
-     * @return boolean true - datum je v pořádku (menší), false - datum je chybné (větší)
-     */
-    public static boolean checkDateFirstItemInvoice(Context context, InvoiceModel itemEditedInvoice) {
-        //když upravuji záznam bezfaktury - tuto podmínku vyřazuji
-        if (itemEditedInvoice.getIdInvoice() == -1L)
-            return true;
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
-        dataInvoiceSource.open();
-        InvoiceModel itemFirstWithoutInvoice = dataInvoiceSource.firstInvoiceByDate(-1L, Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
-        dataInvoiceSource.close();
-        return itemEditedInvoice.getDateTo() < itemFirstWithoutInvoice.getDateTo();
     }
 
 

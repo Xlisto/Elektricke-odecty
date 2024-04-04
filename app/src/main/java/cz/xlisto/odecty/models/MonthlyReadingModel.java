@@ -48,6 +48,7 @@ public class MonthlyReadingModel {
     }
 
     public long getPriceListId() {
+
         return priceListId;
     }
 

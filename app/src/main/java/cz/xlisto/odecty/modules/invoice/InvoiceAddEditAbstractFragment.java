@@ -15,15 +15,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import cz.xlisto.odecty.R;
+import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.ownview.OwnDatePicker;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPAddEditInvoice;
+import cz.xlisto.odecty.shp.ShPInvoice;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.Keyboard;
+import cz.xlisto.odecty.utils.SubscriptionPoint;
 
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
@@ -58,6 +62,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     CheckBox chIsChangedElectricMeter;
     String oldDateStart = "1.1.2023";
     String oldDateEnd = "31.12.2023";
+    String tableO, tableFAK, tableTED;
+    boolean autogenerate;
     private boolean isShowFragment;
 
 
@@ -72,6 +78,14 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         oldDateStart = "1.1." + calendar.get(Calendar.YEAR);
         oldDateEnd = "31.12." + calendar.get(Calendar.YEAR);
+
+        //new SubscriptionPoint();
+        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireContext());
+        if (subscriptionPoint != null) {
+            tableFAK = subscriptionPoint.getTableFAK();
+            tableO = subscriptionPoint.getTableO();
+            tableTED = subscriptionPoint.getTableTED();
+        }
     }
 
 
@@ -139,6 +153,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             selectedIdInvoice = savedInstanceState.getLong(SELECTED_ID_INVOICE, -1L);
             chIsChangedElectricMeter.setChecked(savedInstanceState.getBoolean(IS_CHANGED_ELECTROMETER, false));
         }
+
+        autogenerate = new ShPInvoice(requireActivity()).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
     }
 
 
@@ -187,21 +203,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
                 letOtherServices.getDouble(), numberInvoice,
                 chIsChangedElectricMeter.isChecked()
         );
-    }
-
-
-    /**
-     * Vytvoří objekt InvoiceModel - záznam faktury. Nastaví id a idPriceList - používá se při editaci
-     *
-     * @param id          long id faktury
-     * @param idPriceList long id ceníku
-     * @return InvoiceModel - jeden záznam faktury
-     */
-    InvoiceModel createInvoice(long id, long idPriceList) {
-        InvoiceModel invoice = createInvoice();
-        invoice.setId(id);
-        invoice.setIdPriceList(idPriceList);
-        return invoice;
     }
 
 
@@ -292,9 +293,44 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Uloží data do databáze. Upraví data v databázi, pokud se jedná o editaci.
+     *
+     * @param typeSave Typ uložení - ADD nebo EDIT
+     */
+    void saveData(TypeSave typeSave) {
+        if (checkData())
+            return;
+
+        InvoiceModel createdInvoice = createInvoice();
+
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        dataInvoiceSource.open();
+        if (typeSave == TypeSave.ADD)
+            dataInvoiceSource.insertInvoice(table, createdInvoice);
+        if (typeSave == TypeSave.EDIT) {
+            dataInvoiceSource.updateInvoice(id, table, createdInvoice);
+            loadFromDatabase = true;
+        }
+        dataInvoiceSource.close();
+
+        if (autogenerate)
+            WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), tableTED, tableFAK, tableO);
+        else
+            WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
+        Keyboard.hide(requireActivity());
+        getParentFragmentManager().popBackStack();
+    }
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         isShowFragment = false;
+    }
+
+
+    enum TypeSave {
+        ADD, EDIT
     }
 }

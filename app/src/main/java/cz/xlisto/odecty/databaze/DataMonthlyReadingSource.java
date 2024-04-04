@@ -107,30 +107,6 @@ public class DataMonthlyReadingSource extends DataSource {
 
 
     /**
-     * Zjistí jestli zadaný měsíční odečet je první nebo nikoliv
-     *
-     * @param table          název tabulky
-     * @param monthlyReading porovnávaný měsíční odečet
-     */
-    public boolean isMonthlyReadingFirst(String table, MonthlyReadingModel monthlyReading) {
-        String orderBy = DbHelper.DATUM + " ASC LIMIT 1";
-
-        Cursor cursor = database.query(table,
-                new String[]{DbHelper.DATUM},
-                null,
-                null,
-                null,
-                null,
-                orderBy);
-        if (cursor.getCount() == 0) return false;
-        cursor.moveToFirst();
-        long firstDate = cursor.getLong(0);
-        cursor.close();
-        return firstDate == monthlyReading.getDate();
-    }
-
-
-    /**
      * Zjistí počet záznamů v tabulce s měsíčními odečty
      *
      * @param table název tabulky
@@ -174,6 +150,33 @@ public class DataMonthlyReadingSource extends DataSource {
         MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
         cursor.close();
         return monthlyReadingModel;
+    }
+
+
+    /**
+     * Načte měsíční odečty v období od poslední faktury do konce měsíce
+     *
+     * @param table název tabulky s měsíčními odečty
+     * @return seznam měsíčních odečtů
+     */
+    public ArrayList<MonthlyReadingModel> loadMonthlyReading(String table, long date) {
+        String orderBy = DbHelper.DATUM + " ASC";
+        ArrayList<MonthlyReadingModel> monthlyReadingModels = new ArrayList<>();
+        Cursor cursor = database.query(table,
+                null,
+                DbHelper.DATUM + " > ?",
+                new String[]{String.valueOf(date)},
+                null,
+                null,
+                orderBy);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
+            monthlyReadingModels.add(monthlyReadingModel);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return monthlyReadingModels;
     }
 
 

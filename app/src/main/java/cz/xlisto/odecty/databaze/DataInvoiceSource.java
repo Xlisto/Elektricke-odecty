@@ -3,7 +3,6 @@ package cz.xlisto.odecty.databaze;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +28,6 @@ import static cz.xlisto.odecty.databaze.DbHelper.ID_FAK;
 import static cz.xlisto.odecty.databaze.DbHelper.NT;
 import static cz.xlisto.odecty.databaze.DbHelper.NT_KON;
 import static cz.xlisto.odecty.databaze.DbHelper.ODBER_ID;
-import static cz.xlisto.odecty.databaze.DbHelper.STALA_PLATBA;
 import static cz.xlisto.odecty.databaze.DbHelper.TABLE_NAME_INVOICES;
 import static cz.xlisto.odecty.databaze.DbHelper.VT;
 import static cz.xlisto.odecty.databaze.DbHelper.VT_KON;
@@ -73,6 +71,16 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
+     * Vloží všechny záznamy do faktury
+     */
+    public void insertAllInvoices(String table,ArrayList<InvoiceModel> invoices) {
+        for (InvoiceModel invoice : invoices) {
+            insertInvoice(table, invoice);
+        }
+    }
+
+
+    /**
      * Aktualizuje číslo faktury
      *
      * @param number číslo faktury
@@ -81,23 +89,6 @@ public class DataInvoiceSource extends DataSource {
     public void updateInvoiceList(String number, long id) {
         database.update(TABLE_NAME_INVOICES, createContentValue(number),
                 COLUMN_ID + "=?", new String[]{String.valueOf(id)});
-    }
-
-
-    /**
-     * Zjistí, zda existuje záznam faktury s přiřazeným id měsíčního odečtu (záznam o výměně elektroměru)
-     *
-     * @param table            název tabulky
-     * @param idMonthlyReading id měsíčního odečtu
-     * @return true - existuje, false - neexistuje
-     */
-    public boolean isInvoiceItemExistsByMonthlyReading(String table, long idMonthlyReading) {
-        String selection = STALA_PLATBA + "=?";
-        String[] args = new String[]{String.valueOf(idMonthlyReading)};
-        Cursor cursor = database.query(table, null, selection, args, null, null, null);
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
     }
 
 
@@ -191,28 +182,6 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
-     * Načte seznam záznamů faktury podle id měsíčního odečtu
-     *
-     * @param idMonthlyReading id měsíčního odečtu
-     * @param table            jméno tabulky
-     * @return záznam faktury
-     */
-    public InvoiceModel loadInvoiceByMonthlyReading(long idMonthlyReading, String table) {
-        InvoiceModel invoice = null;
-        String selection = STALA_PLATBA + "=?";
-        String[] args = new String[]{String.valueOf(idMonthlyReading)};
-
-        Cursor cursor = database.query(table, null, selection, args, null, null, null);
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            invoice = createInvoice(cursor);
-        }
-        cursor.close();
-        return invoice;
-    }
-
-
-    /**
      * Aktualizuje záznam faktury
      *
      * @param id      id záznamu
@@ -221,7 +190,7 @@ public class DataInvoiceSource extends DataSource {
      */
     public void updateInvoice(long id, String table, InvoiceModel invoice) {
         database.update(table, createContentValue(invoice),
-                COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                COLUMN_ID + " = ? ", new String[]{String.valueOf(id)});
     }
 
 
@@ -235,7 +204,7 @@ public class DataInvoiceSource extends DataSource {
         String[] args = new String[]{String.valueOf(idFak)};
         String sql = "SELECT * " +
                 "FROM " + table +
-                " WHERE " + ID_FAK + "=? " +
+                " WHERE " + ID_FAK + " = ? " +
                 "ORDER BY " + COLUMN_DATE_FROM + " DESC";
         return oneInvoice(args, sql);
     }
@@ -305,13 +274,6 @@ public class DataInvoiceSource extends DataSource {
             values.put(DATUM_PLATBY, invoice.isChangedElectricMeter());
         else
             values.put(DATUM_PLATBY, "");
-        //TODO: přejmenovat název sloupce v databázi/ teď se zde nachází údaj o výměně elektroměru s párovaný is id měsíčního odečtu
-        //přikaždé úpravě musím prohledávat sloupec stala_platba pro kontrolu jestli existuje id měsíčního odečtu
-        Log.w(TAG, "createContentValue: " + invoice.getIdMonthlyReading());
-        if (invoice.getIdMonthlyReading() != -1L)
-            values.put(STALA_PLATBA, invoice.getIdMonthlyReading());
-        /*else
-            values.put(STALA_PLATBA, "");*/
         return values;
     }
 
@@ -392,19 +354,6 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
-     * Smaže záznam ve faktuře podle id měsíčního odečtu.
-     * Aplikováno na záznamy bez faktury.
-     *
-     * @param table            název tabulky
-     * @param idMonthlyReading id měsíčního odečtu
-     */
-    public void deleteInvoiceByIdMonthlyReading(String table, long idMonthlyReading) {
-        database.delete(table, STALA_PLATBA + "=?",
-                new String[]{String.valueOf(idMonthlyReading)});
-    }
-
-
-    /**
      * Smaže všechny záznamy ve faktuře
      *
      * @param table název tabulky
@@ -415,6 +364,14 @@ public class DataInvoiceSource extends DataSource {
                 new String[]{String.valueOf(idFak)});
         database.delete(TABLE_NAME_INVOICES, COLUMN_ID + "=?",
                 new String[]{String.valueOf(idFak)});
+    }
+
+    /**
+     * Smaže všechny záznamy ve faktuře a resetuje autoincrement
+     */
+    public void deleteAllInvoices(String table) {
+        database.delete(table, null, null);
+        database.execSQL("DELETE FROM sqlite_sequence WHERE name='" + table + "';");
     }
 
 

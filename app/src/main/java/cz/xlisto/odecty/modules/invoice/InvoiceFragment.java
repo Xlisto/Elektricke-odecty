@@ -3,6 +3,9 @@ package cz.xlisto.odecty.modules.invoice;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,6 +26,7 @@ import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SettingsInvoiceDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.InvoiceModel;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -88,6 +92,7 @@ public class InvoiceFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             tableFAK = getArguments().getString(TABLE_FAK);
             tableNOW = getArguments().getString(TABLE_NOW);
@@ -199,6 +204,16 @@ public class InvoiceFragment extends Fragment {
                         createInvoice(result.getString(InvoiceCreateDialogFragment.NUMBER, "0"));
                     }
                 });
+
+        //posluchač na změnu nastavení automatického generování faktury
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                SettingsInvoiceDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(SettingsInvoiceDialogFragment.RESULT) && invoiceAdapter != null) {
+                        invoiceAdapter.resetButtons();
+                    }
+                });
     }
 
 
@@ -231,6 +246,24 @@ public class InvoiceFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putLong(ID_FAK, idFak);
         outState.putInt(POSITION, position);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        if (idFak == -1L)
+            inflater.inflate(R.menu.menu_invoice, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_invoice_item_settings) {
+            SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -394,10 +427,10 @@ public class InvoiceFragment extends Fragment {
                 total += price[j];
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
-            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY,invoice.getDateFrom(),invoice.getDateTo(),invoice.getIdInvoice());//sleva bez DPH
+            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva bez DPH
             Log.w(TAG, "calculationTotalInvoice: discountWithoutTax " + discountWithoutTax);
-            total += totalOtherServices-discountWithoutTax;
-            totalDPH += totalOtherServices-discountWithoutTax + ((totalOtherServices-discountWithoutTax) * priceList.getDph() / 100);
+            total += totalOtherServices - discountWithoutTax;
+            totalDPH += totalOtherServices - discountWithoutTax + ((totalOtherServices - discountWithoutTax) * priceList.getDph() / 100);
         }
         dataInvoiceSource.close();
 

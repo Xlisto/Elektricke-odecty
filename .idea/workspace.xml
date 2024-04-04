@@ -373,19 +373,20 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J">
       <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/SettingsInvoiceDialogFragment.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_settings_invoice.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_invoice.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataInvoiceSource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/OwnAlertDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/dialogs/OwnAlertDialog.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/MonthlyReadingModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/MonthlyReadingModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/models/SummaryInvoiceModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/SaveDataToBackupFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/backup/SaveDataToBackupFile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceAddFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/InvoiceListFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
@@ -395,7 +396,6 @@
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/shp/ShPInvoice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -569,7 +569,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/01.04.2024  20.19.21 ElektroDroid.zip",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Dependencies",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -1108,7 +1108,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="243" />
+    <option name="localTasksCounter" value="244" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1182,7 +1182,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opraven mechanizmus přípravy dat pro zobrazení měsíčního grafu.&#10;Změněn způsob výpočtu a slučování záznamů pro stejný měsíc. Nově se vyhodnocuje následující záznam a pak se případně sloučí." />
     <MESSAGE value="Změna ikony v měsíčních odečtech pro zobrazení kladného nebo záporného hodnocení spotřeby.&#10;Ikona zatržítka a křížku nahrazena ikonou smějícího a zamračeného smajlíku. Zvětšena na 50x60dp." />
     <MESSAGE value="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný." />
     <MESSAGE value="Opraveno nezobrazování grafu při jednom záznamu." />
@@ -1207,7 +1206,8 @@
     <MESSAGE value="Změna zadávání počátečního data, ze kterého se detekuje platnost ceníku pro zjištění, zda-li se jedná o regulované období.&#10;Nyní se datum určuje z data předchozího měsíčního odečtu. Předchozí způsob - odečtení jednoho měsíce byl nepřesný. Protože měsíční zápisy mohou mít různě dlouhá období." />
     <MESSAGE value="Doplněný posluchač na změnu zobrazení regulované ceny v měsíčních odečtech.&#10;Změna přepínače zobrazení regulovaných cen nepřepočítávala detail záznamu v land režimu." />
     <MESSAGE value="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné." />
+    <MESSAGE value="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J" />
+    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

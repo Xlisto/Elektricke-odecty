@@ -27,6 +27,7 @@ import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.shp.ShPAddEditMonthlyReading;
+import cz.xlisto.odecty.shp.ShPInvoice;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.Keyboard;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
@@ -297,19 +298,16 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
 
 
     /**
-     * Upraví poslední záznam v období bez faktury, navazující na měsíční odečet
+     * Upraví poslední záznam v období bez faktury, navazující na měsíční odečet. Vloží další záznam do faktury při výměně elektroměru.
+     *
+     * @param lastMonthlyReading - poslední záznam měsíčního odečtu podle data
      */
-    void updateLastItemInvoice(MonthlyReadingModel lastMonthlyReading, MonthlyReadingModel newMonthlyReading) {
-        if (newMonthlyReading.isFirst()) {
-            boolean isExist = WithOutInvoiceService.isExistItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading.getId());
-            if (isExist)
-                WithOutInvoiceService.updateItemInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
-            else
-                WithOutInvoiceService.insertNewItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
-        } else {
-            WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(requireActivity(), subscriptionPoint.getTableTED(), newMonthlyReading);
-        }
-        WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), lastMonthlyReading);
+    void updateItemInvoice(MonthlyReadingModel lastMonthlyReading) {
+        ShPInvoice shPInvoice = new ShPInvoice(requireActivity());
+        if (shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true))
+            WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
+        else
+            WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), lastMonthlyReading);
     }
 
 

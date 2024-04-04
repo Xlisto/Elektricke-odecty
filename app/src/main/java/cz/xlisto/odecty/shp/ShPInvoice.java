@@ -7,6 +7,7 @@ import android.content.Context;
  */
 public class ShPInvoice extends ShP{
     public static final String SHOW_TYPE_TOTAL_PRICE = "showTypeTotalPrice";
+    public static final String AUTO_GENERATE_INVOICE = "autoGenerateInvoice";
 
 
     public ShPInvoice(Context context) {

@@ -5,9 +5,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import cz.xlisto.odecty.databaze.DataInvoiceSource;
-import cz.xlisto.odecty.models.InvoiceModel;
-import cz.xlisto.odecty.utils.Keyboard;
+
 
 /**
  * Fragment pro přidání nového záznamu ve faktuře
@@ -20,8 +18,8 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
     public static InvoiceAddFragment newInstance(String table, long id_fak) {
         InvoiceAddFragment invoiceAddFragment = new InvoiceAddFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(TABLE,table);
-        bundle.putLong(ID_FAK,id_fak);
+        bundle.putString(TABLE, table);
+        bundle.putLong(ID_FAK, id_fak);
         invoiceAddFragment.setArguments(bundle);
         return invoiceAddFragment;
     }
@@ -30,26 +28,6 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        btnSave.setOnClickListener(v -> {
-            if(checkData())
-                return;
-
-            InvoiceModel createdInvoice = createInvoice();
-
-            //kontrola zda datum nepřekročí první záznam v období bez faktury
-            //if(WithOutInvoiceService.checkDateFirstItemInvoice(requireActivity(),createdInvoice)){
-                DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
-                dataInvoiceSource.open();
-                dataInvoiceSource.insertInvoice(table, createdInvoice);
-                dataInvoiceSource.close();
-
-                WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
-                Keyboard.hide(requireActivity());
-                getParentFragmentManager().popBackStack();
-            /*} else {
-                OwnAlertDialog.show(requireActivity(), requireContext().getResources().getString(R.string.error),
-                        requireContext().getResources().getString(R.string.date_is_not_correct, ViewHelper.convertLongToDate(createdInvoice.getDateTo())));
-            }*/
-        });
+        btnSave.setOnClickListener(v -> saveData(TypeSave.ADD));
     }
 }
