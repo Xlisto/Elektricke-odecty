@@ -52,10 +52,14 @@ public class DataMonthlyReadingSource extends DataSource {
 
             //načtení posledního měsíčního odečtu
             MonthlyReadingModel monthlyReading = loadLastMonthlyReadingByDate(table);
-            sb.append("Datum: ").append(ViewHelper.convertLongToDate(monthlyReading.getDate())).append("   VT: ")
-                    .append(monthlyReading.getVt()).append("   NT: ").append(monthlyReading.getNt()).append("\n")
-                    .append("\n")
-                    .append("=============================================================================\n");
+            if(monthlyReading == null) {
+                sb.append("Není zapsán žádný měsíční odečet\n");
+            } else {
+                sb.append("Datum: ").append(ViewHelper.convertLongToDate(monthlyReading.getDate())).append("   VT: ")
+                        .append(monthlyReading.getVt()).append("   NT: ").append(monthlyReading.getNt()).append("\n")
+                        .append("\n");
+            }
+            sb.append("=============================================================================\n");
         }
 
         return sb.toString();
