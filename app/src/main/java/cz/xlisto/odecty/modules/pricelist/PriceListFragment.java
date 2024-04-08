@@ -144,7 +144,6 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         requireActivity().invalidateOptionsMenu();
         FloatingActionButton fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.rv_price_list);
@@ -220,13 +219,14 @@ public class PriceListFragment extends Fragment {
         if (savedInstanceState != null) {
             btnBack.setText(savedInstanceState.getString(BTN_BACK_TEXT));
         }
+
+
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
 
@@ -286,7 +286,7 @@ public class PriceListFragment extends Fragment {
 
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
-        priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, company, area, dateStart,dateEnd);
+        priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, company, area, dateStart, dateEnd);
         int totalCountPriceList = dataPriceListSource.countPriceItems();
         dataPriceListSource.close();
 

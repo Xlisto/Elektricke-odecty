@@ -12,6 +12,7 @@ import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
 import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
@@ -69,7 +70,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if (savedInstanceState == null) {
             loadMonthlyReading();
 
@@ -109,6 +109,16 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         });
 
         cbAddBackup.setChecked(shPAddEditMonthlyReading.get(ADD_BACKUP_EDT_READING, false));
+
+        //listener pro výběr ceníku
+        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
+            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+
+            if (selectedPriceList != null) {
+                selectedIdPriceList = selectedPriceList.getId();
+                btnSelectPriceList.setText(selectedPriceList.getName());
+            }
+        });
     }
 
 
@@ -124,6 +134,8 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
             btnSelectPriceList.setVisibility(View.GONE);
         } else //ostatní záznamy, pokud není nastaven ceník
             btnSave.setEnabled(!priceList.isEmpty());
+        //nastavení textu tlačítka pr výběr ceníku; zejména pro nastavení při návratu z ceníku
+        btnSelectPriceList.setText(priceList.getName());
     }
 
 

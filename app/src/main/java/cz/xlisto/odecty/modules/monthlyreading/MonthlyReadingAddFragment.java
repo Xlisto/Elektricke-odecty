@@ -8,6 +8,8 @@ import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
+import cz.xlisto.odecty.models.PriceListModel;
+import cz.xlisto.odecty.modules.pricelist.PriceListFragment;
 import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 
@@ -141,6 +143,27 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         cbAddBackup.setChecked(shPAddEditMonthlyReading.get(ADD_BACKUP_NEW_READING, false));
         setDatePayment();
 
+        //listener pro výběr ceníku
+        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
+            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            if (selectedPriceList != null) {
+                selectedIdPriceList = selectedPriceList.getId();
+                btnSelectPriceList.setText(selectedPriceList.getName());
+            } else {
+                selectedIdPriceList = -1L;
+                btnSelectPriceList.setText(getResources().getString(R.string.vyberCenik));
+            }
+        });
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (selectedPriceList != null) {
+            btnSelectPriceList.setText(selectedPriceList.getName());
+            selectedIdPriceList = selectedPriceList.getId();
+        }
     }
 
 

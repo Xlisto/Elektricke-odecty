@@ -373,9 +373,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/databaze/DataMonthlyReadingSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingAddFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/monthlyreading/MonthlyReadingEditFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1088,7 +1092,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="246" />
+    <option name="localTasksCounter" value="247" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1162,7 +1166,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Odstranění datumu platnosti z hlavičky položky ceníku.&#10;Při zobrazení kompletní platnosti v buňce je tento udaj zbytečný." />
     <MESSAGE value="Opraveno nezobrazování grafu při jednom záznamu." />
     <MESSAGE value="Přidaný tlačítko pro znovunačtení regulovaných cen ve fragmentu pro přidání/editaci ceníku." />
     <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu." />
@@ -1187,7 +1190,8 @@
     <MESSAGE value="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné." />
     <MESSAGE value="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J" />
     <MESSAGE value="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů." />
+    <MESSAGE value="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru." />
+    <option name="LAST_COMMIT_MESSAGE" value="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

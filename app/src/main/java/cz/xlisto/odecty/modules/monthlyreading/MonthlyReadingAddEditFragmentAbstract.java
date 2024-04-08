@@ -139,14 +139,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
             getParentFragmentManager().popBackStack();
         });
 
-        //listener pro výběr ceníku
-        getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
-            if (selectedPriceList != null) {
-                selectedIdPriceList = selectedPriceList.getId();
-                btnSelectPriceList.setText(selectedPriceList.getName());
-            }
-        });
 
         if (savedInstanceState != null) {
             isFirstLoad = savedInstanceState.getBoolean(ARG_IS_FIRST_LOAD);
@@ -178,10 +170,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (selectedPriceList != null) {
-            btnSelectPriceList.setText(selectedPriceList.getName());
-            selectedIdPriceList = selectedPriceList.getId();
-        }
         if (isFirstLoad) {
             isFirstLoad = false;
         }
@@ -247,6 +235,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         shPAddEditMonthlyReading.set(ARG_PAYMENT_MONTHLY_READING, labPayment.getText());
         shPAddEditMonthlyReading.set(ARG_OTHER_MONTHLY_READING, labOtherServices.getText());
         shPAddEditMonthlyReading.set(ARG_DATE_MONTHLY_READING, btnDate.getText().toString());
+        //shPAddEditMonthlyReading.set(ARG_BTN_PRICE_LIST, btnSelectPriceList.getText().toString());
         restoreSharedPreferences = true;
     }
 
@@ -261,6 +250,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         labPayment.setDefaultText(shPAddEditMonthlyReading.get(ARG_PAYMENT_MONTHLY_READING, ""));
         labOtherServices.setDefaultText(shPAddEditMonthlyReading.get(ARG_OTHER_MONTHLY_READING, ""));
         btnDate.setText(shPAddEditMonthlyReading.get(ARG_DATE_MONTHLY_READING, ""));
+        //btnSelectPriceList.setText(shPAddEditMonthlyReading.get(ARG_BTN_PRICE_LIST, ""));
         restoreSharedPreferences = false;
     }
 
