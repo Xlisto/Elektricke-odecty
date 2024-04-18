@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
@@ -64,12 +65,13 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         LinearLayout lnButtons;
         TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth, tvDateDetail,
                 tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice,
-                tvVtDescription, tvNtDescription;
+                tvVtDescription, tvNtDescription, tvDescription;
         ImageView ivIconResult, ivWarning;
         Button btnEdit, btnDetail, btnDelete;
 
 
         public MyViewHolder(@NonNull View itemView) {
+
             super(itemView);
         }
     }
@@ -77,6 +79,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
     //konstruktor
     public MonthlyReadingAdapter(ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
+
         this.items = items;
         this.simplyView = simplyView;
         this.subscriptionPoint = subscriptionPoint;
@@ -90,6 +93,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_monthly_reading, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         vh.rootRelativeLayout = v.findViewById(R.id.rlItemMonthlyReading);
@@ -122,6 +126,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         vh.btnEdit = v.findViewById(R.id.btnEditMonthlyItem);
         vh.btnDetail = v.findViewById(R.id.btnDetailMonthlyItem);
         vh.btnDelete = v.findViewById(R.id.btnDeleteMonthlyItem);
+        vh.tvDescription = v.findViewById(R.id.tvDescription);
         return vh;
     }
 
@@ -129,6 +134,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+
         final MonthlyReadingModel monthlyReading = items.get(position);
         MonthlyReadingModel monthlyReadingPrevious;
         Context context = holder.rootRelativeLayout.getContext();
@@ -262,14 +268,13 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
         holder.btnDetail.setOnClickListener(v -> {
             if (monthlyReadingPrevious != null) {
-                MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(monthlyReading.getId(), monthlyReadingPrevious.getId(),showRegulPrice);
+                MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(monthlyReading.getId(), monthlyReadingPrevious.getId(), showRegulPrice);
                 FragmentChange.replace((FragmentActivity) context, monthlyReadingDetailFragment, MOVE, true);
             }
         });
 
-        if(DetectScreenMode.isLandscape(context))
+        if (DetectScreenMode.isLandscape(context))
             holder.btnDetail.setVisibility(View.GONE);
-
 
         holder.btnDelete.setOnClickListener(v -> {
             selectedMonthlyReadingId = monthlyReading.getId();
@@ -295,10 +300,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.btnDetail.setVisibility(View.GONE);
             holder.ivWarning.setVisibility(View.INVISIBLE);
             if (simplyView) {
-
                 holder.tvMonth.setVisibility(View.GONE);
             } else {
-
                 holder.tvMonth.setVisibility(View.VISIBLE);
             }
 
@@ -356,6 +359,13 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.tvNextServicesDescription.setVisibility(View.GONE);
                 holder.tvNextServicesPrice.setVisibility(View.GONE);
             }
+
+            if(monthlyReading.getDescription().isEmpty()){
+                holder.tvDescription.setVisibility(View.GONE);
+            } else {
+                holder.tvDescription.setVisibility(View.VISIBLE);
+                holder.tvDescription.setText(monthlyReading.getDescription());
+            }
         }
 
         showButtons(holder, position);
@@ -364,6 +374,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
     @Override
     public int getItemCount() {
+
         if (items == null) return 0;
         return items.size();
     }
@@ -371,6 +382,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
     @Override
     public long getItemId(int position) {
+
         long itemId = -1L;
         try {
             itemId = items.get(position).getId();
@@ -383,11 +395,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Zkontroluje období, zdali neobsahuje současně regulovanou a neregulovanou cenu
+     * Zkontroluje období, zda-li neobsahuje současně regulovanou a neregulovanou cenu
      *
      * @return boolean true - obsahuje, false - neobsahuje
      */
     private boolean isOverDateRegulPrice(PriceListRegulBuilder priceListRegulBuilder, MonthlyReadingModel monthlyReading, MonthlyReadingModel monthlyReadingPrevious) {
+
         long startRegulPrice = priceListRegulBuilder.getDateStart();
         long endRegulPrice = priceListRegulBuilder.getDateEnd();
         long dateStartMonthlyReading = monthlyReadingPrevious.getDate();
@@ -419,6 +432,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * Nastaví boolean pro zobrazení/skrytí rozšířených dat
      */
     public void showSimpleView(boolean b) {
+
         this.simplyView = b;
         notifyItemRangeChanged(0, getItemCount());
     }
@@ -428,6 +442,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * Nastaví boolean pro zobrazení/skrytí regulovaných cen
      */
     public void setShowRegulPrice(boolean b) {
+
         this.showRegulPrice = b;
         notifyItemRangeChanged(0, getItemCount());
     }
@@ -437,6 +452,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * smaže záznam měsíčního odečtu
      */
     public void deleteMonthlyReading(Context context) {
+
         deleteMonthlyReading(selectedMonthlyReadingId, selectedPosition, context);
     }
 
@@ -448,6 +464,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * @param position int pozice v RecyclerAdapteru
      */
     private void deleteMonthlyReading(long itemId, int position, Context context) {
+
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
         dataMonthlyReadingSource.open();
         dataMonthlyReadingSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
@@ -463,15 +480,17 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         //WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(context, subscriptionPoint.getTableTED(), itemId);
         //upraví poslední záznam bez faktury podle posledního měsíčního záznamu
         //WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
-        WithOutInvoiceService.updateAllItemsInvoice(context,subscriptionPoint.getTableTED(),subscriptionPoint.getTableFAK(),subscriptionPoint.getTableO());
+        WithOutInvoiceService.updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
     }
 
 
     /**
      * Nastaví listener pro kliknutí na položku
+     *
      * @param onClickItemListener OnClickItemListener
      */
     public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
+
         this.onClickItemListener = onClickItemListener;
     }
 

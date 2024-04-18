@@ -159,6 +159,13 @@
                 android:text="@string/dalsi_sluzby2" />
 
             <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNextServicesDescription"
+                android:text="@string/poznamka" />
+
+            <TextView
                 android:id="@+id/tvPozePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -181,8 +188,8 @@
                 android:id="@+id/tvPaymentPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tvDescription"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/tvNextServicesPrice"
                 android:gravity="end"
                 android:text="@string/pomlcky"
                 android:textColor="@color/color_primary"
@@ -202,7 +209,7 @@
                 android:id="@+id/tvPaymentDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvNextServicesDescription"
+                android:layout_below="@id/tvDescription"
                 android:text="@string/zalohy"
                 android:textColor="@color/color_primary" />
 
