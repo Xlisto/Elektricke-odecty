@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
@@ -75,6 +76,7 @@ public class InvoiceFragment extends Fragment {
 
 
     public static InvoiceFragment newInstance(String tableFak, String tableNow, String tablePay, String tableRead, long idFak, int position) {
+
         InvoiceFragment invoiceFragment = new InvoiceFragment();
         Bundle bundle = new Bundle();
         bundle.putLong(ID_FAK, idFak);
@@ -91,6 +93,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (getArguments() != null) {
@@ -115,14 +118,15 @@ public class InvoiceFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_invoice, container, false);
     }
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
+        super.onViewCreated(view, savedInstanceState);
 
         rv = view.findViewById(R.id.recycleViewInvoice);
         Button btnAdd = view.findViewById(R.id.btnAddPayment);
@@ -219,6 +223,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public void onResume() {
+
         super.onResume();
         rv.setAdapter(null);
         shPInvoice = new ShPInvoice(requireContext());
@@ -232,6 +237,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public void onPause() {
+
         super.onPause();
         rv.setAdapter(null);
         //skrytí checkboxů, skrytí tlačítka pro vytvoření faktury
@@ -243,6 +249,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+
         super.onSaveInstanceState(outState);
         outState.putLong(ID_FAK, idFak);
         outState.putInt(POSITION, position);
@@ -251,6 +258,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+
         super.onCreateOptionsMenu(menu, inflater);
         if (idFak == -1L)
             inflater.inflate(R.menu.menu_invoice, menu);
@@ -259,6 +267,7 @@ public class InvoiceFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
         if (item.getItemId() == R.id.menu_invoice_item_settings) {
             SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
             return true;
@@ -271,6 +280,7 @@ public class InvoiceFragment extends Fragment {
      * Načte záznamy ve faktuře
      */
     private void loadInvoice() {
+
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
         dataInvoiceSource.open();
         subscriptionPoint = SubscriptionPoint.load(getActivity());
@@ -292,6 +302,7 @@ public class InvoiceFragment extends Fragment {
      * Vytvoří novou fakturu z vybraných záznamů v období bez faktury
      */
     private void createInvoice(String number) {
+
         Log.w(TAG, "createInvoice: vytvoření nové faktury ");
 
         //vytvoří nový záznam v seznamu faktur
@@ -300,7 +311,6 @@ public class InvoiceFragment extends Fragment {
         dataInvoiceSource.open();
         dataSubscriptionPointSource.open();
         long idFak = dataInvoiceSource.insertInvoiceList(number, subscriptionPoint.getId());
-
 
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
@@ -334,6 +344,7 @@ public class InvoiceFragment extends Fragment {
      * @param datasource DataInvoiceSource
      */
     private void checkInvoiceItem(DataInvoiceSource datasource) {
+
         boolean exists = datasource.checkInvoiceExists(tableNOW);
         if (!exists) {
             datasource.insertFirstRecordWithoutInvoice(tableNOW);
@@ -345,6 +356,7 @@ public class InvoiceFragment extends Fragment {
      * Nastaví na RecyclerView adaptér, zajistí animaci při vytváření
      */
     public void setRecyclerView() {
+
         invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
 
         rv.setAdapter(invoiceAdapter);
@@ -352,6 +364,7 @@ public class InvoiceFragment extends Fragment {
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
+
                 rv.getViewTreeObserver().removeOnPreDrawListener(this);
                 rv.getMeasuredHeight();
 
@@ -375,6 +388,7 @@ public class InvoiceFragment extends Fragment {
      * @param subscriptionPoint nastavení odběrného místa
      */
     private double[] calculationTotalInvoice(ArrayList<InvoiceModel> invoices, SubscriptionPointModel subscriptionPoint, PozeModel poze) {
+
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
         double payment = dataInvoiceSource.sumPayment(idFak, tablePAY); //platby
@@ -420,7 +434,8 @@ public class InvoiceFragment extends Fragment {
                 price[3] = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentDate * regulPriceList.getPoze1();//poze dle jističe
             }
 
-            totalOtherServices = (invoice.getOtherServices() * differentDate);
+            double otherServices = (invoice.getOtherServices() * differentDate);
+            totalOtherServices += otherServices;
 
             for (int j = 0; j < priceTotal.length; j++) {
                 priceTotal[j] += price[j];
@@ -428,9 +443,9 @@ public class InvoiceFragment extends Fragment {
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
             double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva bez DPH
-            Log.w(TAG, "calculationTotalInvoice: discountWithoutTax " + discountWithoutTax);
-            total += totalOtherServices - discountWithoutTax;
-            totalDPH += totalOtherServices - discountWithoutTax + ((totalOtherServices - discountWithoutTax) * priceList.getDph() / 100);
+
+            total += otherServices - discountWithoutTax;
+            totalDPH += otherServices - discountWithoutTax + ((otherServices - discountWithoutTax) * priceList.getDph() / 100);
         }
         dataInvoiceSource.close();
 
@@ -451,6 +466,7 @@ public class InvoiceFragment extends Fragment {
      * @return Objekt ceníku
      */
     private PriceListModel getPriceList(InvoiceModel invoice) {
+
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
         PriceListModel priceList = dataPriceListSource.readPrice(invoice.getIdPriceList());
@@ -520,6 +536,7 @@ public class InvoiceFragment extends Fragment {
      * Připočítává typ zobrazení celkového součtu
      */
     private void addOneShowTypeTotalPrice() {
+
         shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
         showTypeTotalPrice++;
         if (showTypeTotalPrice > totalPrice.length - 1) {
