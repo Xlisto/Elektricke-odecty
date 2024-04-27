@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
@@ -35,7 +37,7 @@ public class ViewHelper {
 
     /**
      * Vrátí instanci SimpleDateFormat s výchozím petternem dd.MM.yyyy  HH.mm.ss
-     * znak : je zakázaný pro unix systémy, proto je použita tečka
+     * znak : je zakázaný pro unix systémy, proto je použitá tečka
      * @return SimpleDateFormat s patternem dd.MM.yyyy  HH.mm.ss
      */
     public static SimpleDateFormat getSimpleDateTimeFormatForFiles() {
@@ -150,6 +152,21 @@ public class ViewHelper {
     public static String convertLongToTime(long l) {
         long offset = getOffsetTimeZones(l);
         return getSimpleTimeFormat().format(l+offset);
+    }
+
+
+    /**
+     * Převede textové datum ve formátu ISO s časovým posunem na datum dd.MM.yyyy
+     * @param isoDateTime datum ve formátu ISO s časovým posunem
+     * @return String datum ve formátu dd.MM.yyyy
+     */
+    public static String convertFormat(String isoDateTime) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+        LocalDateTime dateTime = LocalDateTime.parse(isoDateTime, inputFormatter);
+
+        return dateTime.format(outputFormatter);
     }
 
 

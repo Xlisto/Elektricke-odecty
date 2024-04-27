@@ -1,5 +1,7 @@
 package cz.xlisto.odecty.modules.hdo;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,9 +37,10 @@ public class BuildCEZ {
             JSONArray jsonRoot = new JSONArray(jsonData);
             for (int i = 0; i < jsonRoot.length(); i++) {
                 JSONObject jsonHdo = jsonRoot.getJSONObject(i);
-                String validFrom = ViewHelper.convertLongToDate(jsonHdo.getLong(VALID_FROM));
-                String validTo = ViewHelper.convertLongToDate(jsonHdo.getLong(VALID_TO));
-                //setTvValidityDate(validFrom + " - " + validTo);
+
+                String validFrom = ViewHelper.convertFormat(jsonHdo.getString(VALID_FROM));
+                String validTo = ViewHelper.convertFormat(jsonHdo.getString(VALID_TO));
+
                 String day = jsonHdo.getString(PLATNOST);
                 String sazba = jsonHdo.getString(SAZBA);
                 String info = jsonHdo.getString(INFO)
