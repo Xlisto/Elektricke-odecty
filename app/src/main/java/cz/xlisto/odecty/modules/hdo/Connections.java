@@ -294,10 +294,11 @@ public class Connections {
     private void parseEGD(InputStream in, String code, Context context, String districtName, int districtIndex, LinearLayout root) {
         String readerStream = readerStream(in);
 
-        String apiToken, apiAuthBasic;
+        String apiToken;
 
         org.jsoup.nodes.Document doc = Jsoup.parse(readerStream);//tagy www
         Elements scripts = doc.getElementsByTag("script");//vyhledá všechny tagy scripty
+
         for (int i = 0; i < scripts.size(); i++) {
             if (scripts.get(i).data().contains("\"api_token\"")) {
                 try {
@@ -306,8 +307,8 @@ public class Connections {
                     JSONObject jsonHDO = jsonEon.getJSONObject("HDO");
                     //apiUrl = jsonHDO.get("api_url").toString();
                     apiToken = jsonHDO.get("api_token").toString();
-                    apiAuthBasic = jsonHDO.get("api_authbasic").toString();
-                    onLoadToken(apiToken, apiAuthBasic, code, context, districtName, districtIndex, root);
+
+                    onLoadToken(apiToken, code, context, districtName, districtIndex, root);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -320,14 +321,13 @@ public class Connections {
      * Zobrazení html stránky s javascripty pro načtení tokenu
      *
      * @param apiToken      token pro přístup k datům
-     * @param apiAuthBasic  nevyužito
      * @param code          kód povelu HDO
      * @param context       kontext aplikace
      * @param districtName  název okresu
      * @param districtIndex index okresu
      * @param root          kořenový layout pro zobrazení webview
      */
-    private void onLoadToken(String apiToken, String apiAuthBasic, String code, Context context, String districtName, int districtIndex, LinearLayout root) {
+    private void onLoadToken(String apiToken, String code, Context context, String districtName, int districtIndex, LinearLayout root) {
 
         String page = CodeWeb.htmlPage.replace("***12345***", apiToken);
 
