@@ -16,9 +16,9 @@ Měsíční záznamy jsou srdcem aplikace. Zde se porovnává cena měsíční s
 ### Záznam faktur
 Záznam faktur je podobný měsíčním záznamům. Faktura se zobrazuje ve třech záložkách. **První záložka „Faktura“ obsahuje vlastní záznamy odečtů (minimálně jeden). Každý záznam má přidělený svůj ceník, podle kterého se počítá cena spotřebované elektrické energie. Pokud je záznamů více, celkový součet faktury se zobrazuje v dolní liště. Kliknutím na lištu se změní zobrazovaný součet. Součty se zobrazují v tomto pořadí**: Celková spotřeba VT → Celková spotřeba NT → Celková spotřeba VT a NT → Cena VT bez DPH → Cena NT bez DPH → Cena stálých platů bez DPH → Cena na podporu obnovitelných zdrojů (POZE) → Celková cena bez DPH → Celková cena s DPH → Zaplacené zálohy → Bilance (rozdíl mezi celkovou cenou a zaplacenými zálohami). Druhá záložka „Detaily“ zobrazuje dílčí záznamy výpočtů faktury. Tato část se může využít pro kontrolu s obdrženou fakturou od vašeho dodavatele. Zde lze nalézt, v jakých částech se nachází případná odchylka. Třetí záložka „Platby“ zaznamenává všechny zaplacené zálohy (případně slevy).
 <p align="center">
-  <img src="/fak_1.png" width="300" />
-  <img src="/fak_2.png" width="300" /> 
-  <img src="/fak_3.png" width="300" /> 
+  <img src="/fak_1.png" width="200" />
+  <img src="/fak_2.png" width="200" /> 
+  <img src="/fak_3.png" width="200" /> 
 </p>
 
 V seznamu faktur se jako první záznam nachází „Období bez faktury“. Tato část automaticky vypočítává cenu spotřebované elektrické energie mezi posledním záznamem poslední faktury a posledním měsíčním odečtem. 
@@ -30,9 +30,9 @@ V seznamu faktur se jako první záznam nachází „Období bez faktury“. Tat
 ### Ceník
 Ceník je důležitou součástí výpočtu v aplikaci. Špatně nastavený ceník může vytvořit velkou chybu ve výpočtech. Proto je vytváření ceníku co nejvíce zautomatizováno. V aplikaci jsou nastaveny regulované ceny od roku 2021. Uživatel zadává pouze neregulovanou cenu, kterou stanovuje jeho dodavatel. Dále se zadává platnost ceníku, zpravidla od 1. ledna do 31. prosince. Datum platnosti je důležité pro použití při hledání ceníku ve výběru. Platnost ceníku se kontroluje s datem měsíčního záznamu a záznamu ve faktuře. Nalezené chyby se zobrazí žlutým vykřičníkem v záhlaví záznamu v měsíčním odečtu nebo faktury. Dalším důležitým parametrem je výběr distribučního území a sazby. Po nastavení těchto dvou údajů a platnosti ceníku se automaticky doplní regulované části ceníku. Případně lze použít tlačítko pro znovu nastavení regulovaných cen. Filtr Postupem času v aplikaci bude velké množství ceníků. K zobrazení pouze relevantních ceníků slouží filtr. Lze ceníky filtrovat podle názvu celého ceníku, názvu jednotlivých sazeb ceníku, sazby, dodavatele, distribučního území a data platnosti. U data platnosti, pokud je vybráno pouze počáteční datum, zobrazí se jen ty ceníky, které přesně odpovídají zvolenému datu. Pokud je vybrán i druhý datum platnosti, zobrazí se všechny ceníky, které odpovídají datu platnosti od a do. Tímto parametrem lze docílit zobrazení ceníku s platností přes dva a více let. Pro snadné hledání ceníků lze aplikovat filtr podle jednotlivých parametrů.
 <p align="center">
-  <img src="/cena_1.png" width="300" />
-  <img src="/cena_2.png" width="300" /> 
-  <img src="/cena_3.png" width="300" /> 
+  <img src="/cena_1.png" width="200" />
+  <img src="/cena_2.png" width="200" /> 
+  <img src="/cena_3.png" width="200" /> 
 </p>
 
 ### Porovnání ceníků
@@ -44,9 +44,9 @@ Výhodnost jednotlivých ceníků nemusí být vždy na první pohled zřejmá. 
 ### Čas HDO
 V aplikaci lze snadno uložit časy NT. Pokud je elektroměr vybaven spínačem HDO, lze podle kodu načíst jednotlivé časy NT a uložit je v aplikaci. V horní části je čas elektroměru. Pokud elektroměr není vybaven přijímačem HDO je možné pomocí tlačítek pod ním čas upravit, aby se shodoval s časem nastaveným na elektroměru. V seznamu se nachází jednotlivé časové intervaly.  Pokud elektroměr disponuje přijímačem HDO je možné podle kódu najít příslušné časy NT. Nalezené seznamy časů je možné uložit do paměti. Touto akcí se přepíší původní uložené časy. Nebo seznam časů uložit v textové podobě do schránky např. pro uložení v některé textové aplikaci.
 <p align="center">
-  <img src="/hdo_1.jpg" width="300" />
-  <img src="/hdo_2.jpg" width="300" /> 
-  <img src="/hdo_3.jpg" width="300" /> 
+  <img src="/hdo_1.jpg" width="200" />
+  <img src="/hdo_2.jpg" width="200" /> 
+  <img src="/hdo_3.jpg" width="200" /> 
 </p>
 
 ### Statistika spotřeby
