@@ -369,9 +369,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba parsování JSON výsledku z načítání HDO u ČEZu.&#10;Změněn formát datumu z long čísla na formát isoDateTime.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu.">
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/Connections.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/hdo/Connections.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -381,7 +384,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -511,6 +514,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED": "RecyclerView",
     "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphConsuptionInvoiceGraphView.java_SELECTED": "GraphConsuptionInvoiceGraphView",
@@ -546,7 +550,8 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit3",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/NarokNaSlevu",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Dependencies",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -1114,7 +1119,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="251" />
+    <option name="localTasksCounter" value="252" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1188,7 +1193,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opraven pád aplikace při načítání regulovaných cen, pokud povodní obsah EditTextu byl delší." />
     <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu (verze 2).&#10;Změněn způsob obnovení původní barvy pozadí EditTextu použitím objektu Drawable." />
     <MESSAGE value="Doplněna možnost změnit pozadí EditText ve vlastním zobrazení (LabelEditText) při změně obsahu EditTextu (verze 3).&#10;Změněn způsob obnovení původní barvy pozadí EditTextu použitím objektu Drawable." />
     <MESSAGE value="Aktualizace AGP na 8.3" />
@@ -1213,7 +1217,8 @@
     <MESSAGE value="Doplněno zobrazení poznámky v seznamu měsíčních odečtů." />
     <MESSAGE value="Opraven celkový součet za ostatní služby v ceníku nezahrnuté.&#10;Chyba byla, že se zobrazoval jen poslední. V celkovém součtu ceny byl součet v pořádku." />
     <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u ČEZu.&#10;Změněn formát datumu z long čísla na formát isoDateTime." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba parsování JSON výsledku z načítání HDO u ČEZu.&#10;Změněn formát datumu z long čísla na formát isoDateTime." />
+    <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
