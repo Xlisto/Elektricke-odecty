@@ -61,5 +61,5 @@ Záloha dat je nedílnou a důležitou součástí každé aplikace. V této č�
 ### Přehled
 Zde najdeme celkový výpočet ceny spotřeby, zaplacených záloh a rozdílu mezi těmito částkami. Údaje o času NT a aktuální poslední záznam stavu elektroměru jsou rovněž k dispozici. Pomocí šipek je možné přepínat mezi jednotlivými odběrnými místy. Dolní seznam zobrazuje historickou spotřebu ve formě již obdržených faktur.
 <p align="center">
-  <img src="/prehled_1.jpg" width="300" />> 
+  <img src="/prehled_1.jpg" width="300" />
 </p>
