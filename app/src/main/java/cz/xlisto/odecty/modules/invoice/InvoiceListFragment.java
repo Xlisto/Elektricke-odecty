@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.invoice;
 
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,16 +20,21 @@ import java.util.ArrayList;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.SettingsInvoiceDialogFragment;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.InvoiceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+import cz.xlisto.odecty.utils.UIHelper;
 
 
 /**
@@ -37,6 +43,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
  * create an instance of this fragment.
  */
 public class InvoiceListFragment extends Fragment {
+
     private final String TAG = "InvoiceFragment";
     public static final String INVOICE_NUMBER_EDIT_LISTENER = "invoice_number_edit_listener";
     public static final String INVOICE_NUMBER_ADD_LISTENER = "invoice_number_add_listener";
@@ -49,6 +56,8 @@ public class InvoiceListFragment extends Fragment {
     private InvoiceListAdapter invoiceAdapter;
     private String tablePay;
     private String tableFak;
+    private Button btnAddInvoice;
+    private FloatingActionButton fab;
 
 
     public static InvoiceListFragment newInstance() {
@@ -60,7 +69,6 @@ public class InvoiceListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         //https://developer.android.com/guide/fragments/communicate#fragment-result
         //posluchač pro změnu čísla faktury
         getParentFragmentManager().setFragmentResultListener(INVOICE_NUMBER_EDIT_LISTENER, this, (requestKey, bundle) -> {
@@ -72,8 +80,6 @@ public class InvoiceListFragment extends Fragment {
             dataInvoiceSource.close();
             onResume();
         });
-
-
         getParentFragmentManager().setFragmentResultListener(INVOICE_NUMBER_ADD_LISTENER, this, (requestKey, bundle) -> {
             String numberInvoice = bundle.getString(NUMBER_INVOICE);
             long idSubscriptionPoint = bundle.getLong(ID_SUBSCRIPTIONPOINT);
@@ -83,33 +89,32 @@ public class InvoiceListFragment extends Fragment {
             dataInvoiceSource.close();
             onResume();
         });
-
         //posluchač změny odběrného místa
         getParentFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this, (requestKey, bundle) -> {
             readIdSubscriptionPoint();
             onResume();
         });
-
         //posluchač pro smazání faktury
         getParentFragmentManager().setFragmentResultListener(INVOICE_DELETE_LISTENER, this, (requestKey, bundle) -> {
             boolean b = bundle.getBoolean(YesNoDialogFragment.RESULT);
             long idFak = invoiceAdapter.getSelectedIdFak();
-
             if (b) {
                 DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
                 dataSubscriptionPointSource.open();
                 dataSubscriptionPointSource.deletePayments(idFak, tablePay);
                 dataSubscriptionPointSource.close();
-
                 DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
                 dataInvoiceSource.open();
                 dataInvoiceSource.deleteInvoiceList(tableFak, idFak);
                 dataInvoiceSource.close();
-
                 invoiceAdapter.removeItem();
             }
-
         });
+        //posluchač zavření dialogová okna nastavení
+        getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                (requestKey, bundle) ->
+                        UIHelper.showButtons(btnAddInvoice, fab, requireActivity())
+        );
     }
 
 
@@ -125,20 +130,17 @@ public class InvoiceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         readIdSubscriptionPoint();
-        Button addInvoice = view.findViewById(R.id.btnAddPayment);
+        btnAddInvoice = view.findViewById(R.id.btnAddPayment);
+        fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.recycleViewInvoiceList);
         TextView tvNoInvoice = view.findViewById(R.id.tvAlertInvoiceList);
-
-        addInvoice.setOnClickListener(v -> {
-            InvoiceListAddDialogFragment invoiceAddDialogFragment = InvoiceListAddDialogFragment.newInstance(idSubscriptionPoint);
-            invoiceAddDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
-        });
-
+        btnAddInvoice.setOnClickListener(v -> showAddInvoiceDialog());
+        fab.setOnClickListener(v -> showAddInvoiceDialog());
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint == null) {
             tvNoInvoice.setVisibility(View.VISIBLE);
             rv.setVisibility(View.INVISIBLE);
-            addInvoice.setEnabled(false);
+            btnAddInvoice.setEnabled(false);
         }
     }
 
@@ -152,15 +154,14 @@ public class InvoiceListFragment extends Fragment {
         tablePay = subscriptionPoint.getTablePLATBY();
         tableFak = subscriptionPoint.getTableFAK();
         dataSubscriptionPointSource.close();
-
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
         dataInvoiceSource.open();
         ArrayList<InvoiceListModel> invoices = dataInvoiceSource.loadInvoiceLists(subscriptionPoint);
         dataInvoiceSource.close();
-
         invoiceAdapter = new InvoiceListAdapter(getContext(), invoices, rv);
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        UIHelper.showButtons(btnAddInvoice, fab, requireActivity());
     }
 
 
@@ -185,4 +186,14 @@ public class InvoiceListFragment extends Fragment {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(requireActivity());
         idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
     }
+
+
+    /**
+     * Zobrazí fragment pro přidání faktury
+     */
+    private void showAddInvoiceDialog() {
+        InvoiceListAddDialogFragment invoiceAddDialogFragment = InvoiceListAddDialogFragment.newInstance(idSubscriptionPoint);
+        invoiceAddDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
+    }
+
 }

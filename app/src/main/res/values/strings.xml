@@ -438,6 +438,7 @@
     <string name="button_subscription_point_2">Vybere druhé odběrné místo</string>
     <string name="button_subscription_point_3">Vybere třetí odběrné místo</string>
     <string name="button_subscription_point_4">Vybere čtvrté odběrné místo</string>
+    <string name="settings_view">Nastavení zobrazení</string>
 
     <string name="icon_monthly_result">Zobrazí ikonu podle toho, zda-li je záloha dostatečná či nikoliv.</string>
     <string name="icon_monthly_alert">Zvýraznění záznamu, ve kterém se nachází nějaká chyba.</string>
@@ -460,4 +461,10 @@
     <string name="autogenerate_no">Pro období bez faktury se bude generovat pouze počáteční a konečný záznam měřidel. Ostatní změny jsou potřeba dělat ručně, jako jsou přiřazení ceníku, rozdělení nebo sloučení jednotlivých záznamů.</string>
     <string name="autogenerate_yes">Pro období bez faktury se budou generovat všechny údaje podle měsíčních záznamů. Použije se rozdělení podle ceníků, výměny elektroměru atd. Ruční manipulace se záznamy v období bez faktury je zákazána.</string>
     <string name="no_monthly_records">Nejsou zapsány žádné měsíční záznamy. Nelze vytvořit záznam v období bez faktury.</string>
+
+    <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
+    <string name="add_monthly_reading">Přidat odečet</string>
+    <string name="add_monthly_price_list">Přidat ceník</string>
+    <string name="add_subscriptionpoint">Přidat odběrné místo</string>
+    <string name="add_hdo">Přidat čas HDO</string>
 </resources>

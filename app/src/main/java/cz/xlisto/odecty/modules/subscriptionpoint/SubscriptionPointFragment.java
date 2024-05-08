@@ -1,13 +1,16 @@
 package cz.xlisto.odecty.modules.subscriptionpoint;
 
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -16,6 +19,7 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.MainActivityHelper;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+import cz.xlisto.odecty.utils.UIHelper;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,14 +48,16 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  * create an instance of this fragment.
  */
 public class SubscriptionPointFragment extends Fragment {
+
     private static final String TAG = "SubscriptionPointFragment";
     private static final String FLAG_DELETE_SUBSCRIPTION_POINT = "flagDeleteSubscriptionPoint";
     private Spinner spSubscriptionPoint;
     private TextView tvDescription, tvPhaze, tvNumberElectricMeter, tvNumberSubscriptionPoint, tvNewSubscriptionPoint;
     private LinearLayout lnSpinner, lnDescription, lnPhaze, lnNumberElectricMeter, lnNumberSubscriptionPoint;
-    private Button btnEdit, btnDelete;
+    private Button btnEdit, btnDelete, btnAddSubscriptionPoint;
+    private FloatingActionButton fab;
+    private ScrollView sc;
     private long itemId, milins;
-
     //TODO: Doplnit další detaily o počtu údaju odběrného místa a ukládat id odběrného místa do sharedprefences
 
 
@@ -63,7 +70,6 @@ public class SubscriptionPointFragment extends Fragment {
      *
      * @return Nová instance fragmentu SubscriptionPointFragment.
      */
-
     public static SubscriptionPointFragment newInstance() {
         return new SubscriptionPointFragment();
     }
@@ -80,7 +86,7 @@ public class SubscriptionPointFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab = view.findViewById(R.id.fab);
         spSubscriptionPoint = view.findViewById(R.id.spSubscriptionPoints);
         tvDescription = view.findViewById(R.id.tvDescription);
         tvPhaze = view.findViewById(R.id.tvPhaze);
@@ -89,21 +95,17 @@ public class SubscriptionPointFragment extends Fragment {
         tvNewSubscriptionPoint = view.findViewById(R.id.tvCreateNewSubscriptionPoint);
         btnEdit = view.findViewById(R.id.btnEdit);
         btnDelete = view.findViewById(R.id.btnDelete);
+        btnAddSubscriptionPoint = view.findViewById(R.id.btnAddSubscriptionPoint);
         lnSpinner = view.findViewById(R.id.lnSpinner);
         lnDescription = view.findViewById(R.id.lnDescription);
         lnPhaze = view.findViewById(R.id.lnPhaze);
         lnNumberElectricMeter = view.findViewById(R.id.lnNumberElectrometer);
         lnNumberSubscriptionPoint = view.findViewById(R.id.lnNumberSubscriptionPoint);
-
-
-        fab.setOnClickListener(v -> {
-            SubscriptionPointAddFragment subscriptionPointAddFragment = new SubscriptionPointAddFragment();
-            FragmentChange.replace(requireActivity(), subscriptionPointAddFragment, MOVE, true);
-        });
-
+        sc = view.findViewById(R.id.scrollView);
+        fab.setOnClickListener(v -> addSubcsriptionPoint());
+        btnAddSubscriptionPoint.setOnClickListener(v -> addSubcsriptionPoint());
         btnEdit.setOnClickListener(v -> edit());
         btnDelete.setOnClickListener(v -> showDeleteDialog());
-
         //posluchač na odstranění odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DELETE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
@@ -111,12 +113,13 @@ public class SubscriptionPointFragment extends Fragment {
                         deleteItemSubscriptionPoint();
                     }
                 });
-
         //posluchač na změnu odběrného místa
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(
-                SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
-                this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> onResume()
+        );
+        //posluchač na zavření dialogového okna s nastavením
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                (requestKey, result) -> UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc)
         );
     }
 
@@ -125,29 +128,25 @@ public class SubscriptionPointFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ShPSubscriptionPoint shp = new ShPSubscriptionPoint(getActivity());
-
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         ArrayList<SubscriptionPointModel> subscriptionPoints = dataSubscriptionPointSource.loadSubscriptionPoints();
         dataSubscriptionPointSource.close();
-
         spSubscriptionPoint.setAdapter(new MySpinnerSubscriptionPointAdapter(requireActivity(), android.R.layout.simple_list_item_1, subscriptionPoints));
         spSubscriptionPoint.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setText(subscriptionPoints.get(position));
                 shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoints.get(position).getId());
-
                 MainActivityHelper.updateToolbarAndLoadData(requireActivity());
             }
 
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-        if (subscriptionPoints.size() > 0) {
+        if (!subscriptionPoints.isEmpty()) {
             setText(subscriptionPoints.get(spSubscriptionPoint.getSelectedItemPosition()));
             hideAlert(false);
         } else {
@@ -160,6 +159,7 @@ public class SubscriptionPointFragment extends Fragment {
                 break;
             }
         }
+        UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc);
     }
 
 
@@ -203,17 +203,23 @@ public class SubscriptionPointFragment extends Fragment {
         dataSettingsSource.open();
         dataSettingsSource.deleteTimeShift(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
         dataSettingsSource.close();
-
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);
         dataSubscriptionPointSource.close();
-
-        //nastavení prvního odběrného místa v DashBoardu
+        //nastavení prvního odběrného místa v Přehledu
         ShPDashBoard shp = new ShPDashBoard(requireContext());
         shp.set(ShPDashBoard.SHOW_INVOICE_SUM, 0);
-
         onResume();
+    }
+
+
+    /**
+     * Zobrazí fragment pro přidání odběrného místa
+     */
+    private void addSubcsriptionPoint() {
+        SubscriptionPointAddFragment subscriptionPointAddFragment = new SubscriptionPointAddFragment();
+        FragmentChange.replace(requireActivity(), subscriptionPointAddFragment, MOVE, true);
     }
 
 
@@ -243,4 +249,5 @@ public class SubscriptionPointFragment extends Fragment {
             tvNewSubscriptionPoint.setVisibility(View.GONE);
         }
     }
+
 }

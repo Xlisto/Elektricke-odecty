@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.pricelist;
 
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,8 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -30,6 +33,7 @@ import cz.xlisto.odecty.shp.ShPFilter;
 import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+import cz.xlisto.odecty.utils.UIHelper;
 
 import static cz.xlisto.odecty.modules.pricelist.PriceListDetailFragment.PRICE_LIST_DETAIL_FRAGMENT;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
@@ -41,6 +45,7 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  * create an instance of this fragment.
  */
 public class PriceListFragment extends Fragment {
+
     private static final String TAG = "PriceListFragment";
     public static final String FLAG_RESULT_PRICE_LIST_FRAGMENT = "flagResultPriceListFragment";
     public static final String FLAG_PRICE_LIST_FRAGMENT = "flagPriceListFragment";
@@ -54,9 +59,9 @@ public class PriceListFragment extends Fragment {
     private boolean showSelectItem; //true = zobrazí radiobutton pro výběr ceníku
     private static long idSelectedPriceList;
     private RecyclerView rv;
-    private Fragment priceListAddFragment;
     private TextView tvCountPriceItem;
-    private Button btnBack;
+    private Button btnBack, btnAddPriceList;
+    private FloatingActionButton fab;
     private SubscriptionPointModel subscriptionPoint;
     private PriceListAdapter priceListAdapter;
     private ArrayList<PriceListModel> priceListModels;
@@ -118,13 +123,11 @@ public class PriceListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         shpFilter = new ShPFilter(getActivity());
-
         if (getArguments() != null) {
             showSelectItem = getArguments().getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = getArguments().getLong(ID_SELECTED_PRICE_LIST);
             side = (Side) getArguments().getSerializable(FLAG_SIDE);
         }
-
         if (savedInstanceState != null) {
             showSelectItem = savedInstanceState.getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = savedInstanceState.getLong(ID_SELECTED_PRICE_LIST);
@@ -145,16 +148,13 @@ public class PriceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.rv_price_list);
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist);
         btnBack = view.findViewById(R.id.btnBack);
-
-        fab.setOnClickListener(v -> {
-            priceListAddFragment = PriceListAddFragment.newInstance();
-            FragmentChange.replace(requireActivity(), priceListAddFragment, MOVE, true);
-        });
-
+        btnAddPriceList = view.findViewById(R.id.btnAddPriceList);
+        fab.setOnClickListener(v -> addNewPriceList());
+        btnAddPriceList.setOnClickListener(v -> addNewPriceList());
         btnBack.setOnClickListener(v -> {
             ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(getContext());
             shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, idSelectedPriceList);
@@ -164,16 +164,6 @@ public class PriceListFragment extends Fragment {
             getParentFragmentManager().setFragmentResult(FLAG_PRICE_LIST_FRAGMENT, bundle);
             getParentFragmentManager().popBackStack();
         });
-
-
-        if (showSelectItem) {
-            fab.setVisibility(View.GONE);
-            btnBack.setVisibility(View.VISIBLE);
-        } else {
-            fab.setVisibility(View.VISIBLE);
-            btnBack.setVisibility(View.GONE);
-        }
-
         //listener při potvrzení filtru ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListFilterDialogFragment.FLAG_RESULT_FILTER_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
@@ -182,10 +172,8 @@ public class PriceListFragment extends Fragment {
                         setAdapter();
                         priceListAdapter.setHideButtons();
                         showDetailPriceFragment(false);
-
                     }
                 }));
-
         //listener při potvrzení smazání ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST, this,
                 ((requestKey, result) -> {
@@ -197,7 +185,6 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
-
         //listener při potvrzení smazání nevyužitých ceníků
         requireActivity().getSupportFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
@@ -213,20 +200,23 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
+        //listener při zavření dialogového okna nastavení
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                ((requestKey, result) -> UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv)));
         onLoadData();
         setAdapter();
         showDetailPriceFragment(true);
         if (savedInstanceState != null) {
             btnBack.setText(savedInstanceState.getString(BTN_BACK_TEXT));
         }
-
-
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv);
+        btnShowBack();
     }
 
 
@@ -254,7 +244,6 @@ public class PriceListFragment extends Fragment {
         if (id == R.id.menu_filter_pricelist) {
             PriceListFilterDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), TAG);
         }
-
         if (id == R.id.menu_delete_unused_pricelist) {
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.delete_unused_pricelist),
                     YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, getResources().getString(R.string.delete_unused_pricelist_content));
@@ -277,19 +266,15 @@ public class PriceListFragment extends Fragment {
         String area = shpFilter.get(ShPFilter.AREA, ShPFilter.DEFAULT);
         String dateStart = "%";
         String dateEnd = "%";
-
         if (!shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).isEmpty())
             dateStart = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT)).getTimeInMillis());
-
         if (!shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).isEmpty())
             dateEnd = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT)).getTimeInMillis());
-
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
         priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, company, area, dateStart, dateEnd);
         int totalCountPriceList = dataPriceListSource.countPriceItems();
         dataPriceListSource.close();
-
         tvCountPriceItem.setText(getResources().getString(R.string.pocet_ceniku, totalCountPriceList, priceListModels.size()));
     }
 
@@ -308,7 +293,6 @@ public class PriceListFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putLong(PriceListDetailFragment.PRICE_LIST_ID, idSelectedPriceList);
                         getParentFragmentManager().setFragmentResult(PRICE_LIST_DETAIL_FRAGMENT, bundle);
-
                         showDetailPriceFragment(false);
                     }
                 }, rv);
@@ -345,8 +329,6 @@ public class PriceListFragment extends Fragment {
                     assert fragment != null;
                     fragment.loadPrice(idSelectedPriceList);
                 }
-
-
             } else {
                 if (idFragment != 0) {
                     fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
@@ -361,9 +343,33 @@ public class PriceListFragment extends Fragment {
 
 
     /**
+     * Zobrazí tlačítka pro přidání nového ceníku podle zvoleného režimu zobrazení
+     */
+    private void btnShowBack() {
+        if (showSelectItem) {
+            //zobrazení tlačítek ve výběru ceníku
+            btnBack.setVisibility(View.VISIBLE);
+        } else {
+            //zobrazení tlačítek v seznamu ceníků
+            btnBack.setVisibility(View.GONE);
+        }
+    }
+
+
+    /**
+     * Zobrazí fragment pro přidání nového ceníku
+     */
+    private void addNewPriceList() {
+        Fragment priceListAddFragment = PriceListAddFragment.newInstance();
+        FragmentChange.replace(requireActivity(), priceListAddFragment, MOVE, true);
+    }
+
+
+    /**
      * Strana, pro kterou se vybírá ceník pro porovnání ceníků
      */
     enum Side {
         LEFT, RIGHT
     }
+
 }

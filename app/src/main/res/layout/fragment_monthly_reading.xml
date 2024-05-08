@@ -58,7 +58,19 @@
         android:id="@+id/rvMonthlyReading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/btnAddMonthlyReading"
         android:layout_below="@id/swSimplyView"
         android:layoutAnimation="@anim/layout_animation_fall_down"
-        android:padding="5dp" />
+        android:padding="5dp">
+
+    </cz.xlisto.odecty.ownview.ContextMenuRecyclerView>
+
+    <Button
+        android:id="@+id/btnAddMonthlyReading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="@string/add_monthly_reading" />
 </RelativeLayout>

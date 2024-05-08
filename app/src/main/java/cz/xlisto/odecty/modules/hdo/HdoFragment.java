@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.hdo;
 
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,9 +30,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataHdoSource;
 import cz.xlisto.odecty.databaze.DataSettingsSource;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.format.SimpleDateFormatHelper;
@@ -44,6 +46,7 @@ import cz.xlisto.odecty.shp.ShPHdo;
 import cz.xlisto.odecty.utils.DetectNightMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+import cz.xlisto.odecty.utils.UIHelper;
 
 
 /**
@@ -51,6 +54,7 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
  * Xlisto 26.05.2023 10:35
  */
 public class HdoFragment extends Fragment {
+
     private static final String TAG = "HdoFragment";
     private static final long minute = 60000;
     private Timer timer;
@@ -65,8 +69,8 @@ public class HdoFragment extends Fragment {
     private ArrayList<String> reles = new ArrayList<>();
     private HdoAdapter hdoAdapter;
     private Intent hdoServiceIntent;
-    private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour;
-
+    private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour, btnAddHdo;
+    private FloatingActionButton fab;
     //překreslení gui
     private final Runnable timerTick = this::setTime;
 
@@ -87,9 +91,7 @@ public class HdoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
-
         hdoServiceIntent = new Intent(requireActivity(), HdoService.class);
-
         tvTimeHdo = view.findViewById(cz.xlisto.odecty.R.id.tvTimeHdo);
         tvTimeDifference = view.findViewById(cz.xlisto.odecty.R.id.tvTimeDifference);
         tvAlertHdo = view.findViewById(cz.xlisto.odecty.R.id.tvAlertHdo);
@@ -98,47 +100,38 @@ public class HdoFragment extends Fragment {
         swHdoService = view.findViewById(R.id.swHdoService);
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
-        FloatingActionButton fabAddHdo = view.findViewById(cz.xlisto.odecty.R.id.fabHdo);
-
+        fab = view.findViewById(cz.xlisto.odecty.R.id.fabHdo);
+        btnAddHdo = view.findViewById(cz.xlisto.odecty.R.id.btnAddHdo);
         btnAddHour = view.findViewById(cz.xlisto.odecty.R.id.btnAddHour);
         btnRemoveHour = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveHour);
         btnAddMinute = view.findViewById(cz.xlisto.odecty.R.id.btnAddMinute);
         btnRemoveMinute = view.findViewById(cz.xlisto.odecty.R.id.btnRemoveMinute);
         Button btnHdoLoad = view.findViewById(cz.xlisto.odecty.R.id.btnHdoLoad);
-
+        btnAddHdo = view.findViewById(cz.xlisto.odecty.R.id.btnAddHdo);
         btnAddMinute.setOnClickListener(v -> changeTimeShift(timeDifferent += minute));
         btnRemoveMinute.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute));
         btnAddHour.setOnClickListener(v -> changeTimeShift(timeDifferent += minute * 60));
         btnRemoveHour.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute * 60));
-
-        fabAddHdo.setOnClickListener(v -> {
-            HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
-            FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
-        });
-
+        fab.setOnClickListener(v -> showAddDialog());
+        btnAddHdo.setOnClickListener(v -> showAddDialog());
         btnHdoLoad.setOnClickListener(v -> {
             HdoSiteFragment hdoSite = new HdoSiteFragment();
             FragmentChange.replace(requireActivity(), hdoSite, FragmentChange.Transaction.MOVE, true);
         });
-
         swHdoService.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
             if (isChecked) {
                 HdoData.loadHdoData(requireActivity());
                 startService();
             } else {
                 stopService();
             }
-
             if (reles.size() > 1)
                 spReleSettings.setVisibility(View.VISIBLE);
             else
                 spReleSettings.setVisibility(View.GONE);
-
             ShPHdo shPHdo = new ShPHdo(requireContext());
             shPHdo.set(ShPHdo.ARG_RUNNING_SERVICE, isChecked);
         });
-
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -148,23 +141,23 @@ public class HdoFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-
         //posluchač na smazání HDO
         requireActivity().getSupportFragmentManager().setFragmentResultListener(HdoAdapter.FLAG_HDO_ADAPTER_DELETE, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 deleteHdo();
             }
         });
-
         //posluchač pro změnu odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener
                 (SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
                         this,
                         (requestKey, result) -> onResume()
                 );
+        //posluchač při zavření dialogového okna nastavení
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity())));
     }
 
 
@@ -181,7 +174,6 @@ public class HdoFragment extends Fragment {
             btnAddHour.setEnabled(false);
             btnRemoveHour.setEnabled(false);
             imageViewIconNT.setVisibility(View.GONE);
-
             return;
         }
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
@@ -193,10 +185,10 @@ public class HdoFragment extends Fragment {
         showAlert();
         loadData();
         loadReles();
-
         swHdoService.setChecked(HdoService.isRunningService());
         HdoService.setHdoModels(hdoModels);
         HdoService.setDifferentTime(timeDifferent);
+        UIHelper.showButtons(btnAddHdo, fab, requireActivity());
     }
 
 
@@ -236,12 +228,10 @@ public class HdoFragment extends Fragment {
         String hours = "hodin";
         if (timeDifferent / 3600000 == 1) hours = "hodina";
         if ((timeDifferent / 3600000 >= 2) && (timeDifferent / 3600000) <= 4) hours = "hodiny";
-
         String minutes = "minut";
         if (((timeDifferent % 3600000) / 60000) == 1) minutes = "minuta";
         if ((((timeDifferent % 3600000) / 60000) >= 2) && (((timeDifferent % 3600000) / 60000) <= 4))
             minutes = "minuty";
-
         tvTimeDifference.setText(String.format(Locale.GERMANY, "Rozdíl %01d %s a %02d %s ", timeDifferent / 3600000, hours, (timeDifferent % 3600000) / 60000, minutes));
         setTime();
     }
@@ -255,8 +245,7 @@ public class HdoFragment extends Fragment {
         calendar.setTimeInMillis(calendar.getTimeInMillis() + timeDifferent);//nastavení kalendáře na aktuální čas + časový posun
         long miliseconds = calendar.getTimeInMillis();//aktuální čas v milisekundách s časovým posunem
         tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
-        if (hdoModels.size() == 0) return;
-
+        if (hdoModels.isEmpty()) return;
         setTextHdoColor(HdoTime.checkHdo(hdoModels, calendar));
     }
 
@@ -306,7 +295,6 @@ public class HdoFragment extends Fragment {
      * @param rele - rele, které se má načíst
      */
     private void loadData(String rele) {
-
         DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
         hdoModels.clear();
         dataHdoSource.open();
@@ -315,7 +303,6 @@ public class HdoFragment extends Fragment {
         else
             hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO());
         dataHdoSource.close();
-
         String date = "";
         String distributionArea = "";
         for (int i = 0; i < hdoModels.size(); i++) {
@@ -323,23 +310,19 @@ public class HdoFragment extends Fragment {
             if (i == 0)
                 date = hdoModels.get(i).getDateFrom();
             if (i == hdoModels.size() - 1) {
-
                 if (hdoModels.get(i).getDistributionArea().equals(DistributionArea.PRE.toString()))
                     date = date + " - " + hdoModels.get(i).getDateFrom();
                 else
                     date = date + " - " + hdoModels.get(i).getDateUntil();
             }
-
         }
-
         setAdapter();
-        if (distributionArea.equals("")) {
+        if (distributionArea.isEmpty()) {
             tvDateHdo.setVisibility(View.GONE);
         } else {
             tvDateHdo.setVisibility(View.VISIBLE);
             tvDateHdo.setText(date);
         }
-
     }
 
 
@@ -353,7 +336,6 @@ public class HdoFragment extends Fragment {
         reles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
         dataHdoSource.close();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, reles);
-
         spReleSettings.setAdapter(adapter);
         if (reles.size() > 1)
             spReleSettings.setVisibility(View.VISIBLE);
@@ -387,16 +369,13 @@ public class HdoFragment extends Fragment {
         HdoService.setHdoModels(hdoModels);
         if (subscriptionPoint == null) return;
         HdoService.setTitle(getResources().getString(R.string.app_name) + " - " + subscriptionPoint.getName());
-
         //myIntent.putExtra(HdoService.NOTIFICATION_HDO_SERVICE, isLowHdo);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireActivity().startForegroundService(hdoServiceIntent);
         } else {
             requireActivity().startService(hdoServiceIntent);
         }
-
         setDifferentTimeService();
-
     }
 
 
@@ -429,4 +408,14 @@ public class HdoFragment extends Fragment {
         setTimeDifferent();
         setDifferentTimeService();
     }
+
+
+    /**
+     * Zobrazí dialog pro přidání HDO
+     */
+    private void showAddDialog() {
+        HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
+        FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
+    }
+
 }

@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.monthlyreading;
 
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,9 +25,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.MonthlyReadingModel;
@@ -35,6 +39,7 @@ import cz.xlisto.odecty.shp.ShPMonthlyReading;
 import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
+import cz.xlisto.odecty.utils.UIHelper;
 
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.REGUL_PRICE;
 import static cz.xlisto.odecty.shp.ShPMonthlyReading.SHORT_LIST;
@@ -45,6 +50,7 @@ import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
  * Fragment pro zobrazení měsíčních odečtů.
  */
 public class MonthlyReadingFragment extends Fragment {
+
     public final String TAG = "MonthlyReadingFragment";
     private final String TO = "to";
     private final String FROM = "from";
@@ -52,6 +58,7 @@ public class MonthlyReadingFragment extends Fragment {
     private final String ID_PREVIOUS_READING = "idPreviousReading";
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
+    private Button btnAddMonthlyReading;
     private TextView tvAlert, tvMonthlyReadingFilter;
     private RecyclerView rv;
     private SwitchMaterial swSimplyView, swRegulPrice;
@@ -78,7 +85,6 @@ public class MonthlyReadingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         //posluchač potvrzení smazání záznamu
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
                 (requestKey, result) -> {
@@ -86,7 +92,6 @@ public class MonthlyReadingFragment extends Fragment {
                         monthlyReadingAdapter.deleteMonthlyReading(requireContext());
                     }
                 });
-
         //posluchač změny filtru
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingFilterDialogFragment.MONTHLY_READING_FILTER, this,
                 (requestKey, result) -> {
@@ -102,20 +107,21 @@ public class MonthlyReadingFragment extends Fragment {
                     }
                     loadDataFromDatabase();
                 });
-
         //posluchač změny odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
                     loadDataFromDatabase();
-                    showFab();
+                    UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity());
                 });
-
         //posluchač změny měsíčního odečtu - zobrazení detailu v land režimu
         onClickItemListener = (idCurrentlyReading, idPreviousReading) -> {
             this.idCurrentlyReading = idCurrentlyReading;
             this.idPreviousReading = idPreviousReading;
             showDetailFragment(idCurrentlyReading, idPreviousReading);
         };
+        //posluchač na zavření dialogového kna s nastavením
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                (requestKey, result) -> UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity()));
     }
 
 
@@ -135,16 +141,14 @@ public class MonthlyReadingFragment extends Fragment {
             idCurrentlyReading = savedInstanceState.getLong(ID_CURRENTLY_READING);
             idPreviousReading = savedInstanceState.getLong(ID_PREVIOUS_READING);
         }
-
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
-
         fab = view.findViewById(R.id.fab);
+        btnAddMonthlyReading = view.findViewById(R.id.btnAddMonthlyReading);
         swSimplyView = view.findViewById(R.id.swSimplyView);
         swRegulPrice = view.findViewById(R.id.swRegulPrice);
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
-
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
         swSimplyView.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -152,27 +156,19 @@ public class MonthlyReadingFragment extends Fragment {
             Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
             shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
             monthlyReadingAdapter.showSimpleView(isChecked);
-
             rv.getLayoutManager().onRestoreInstanceState(out);
         });
-
         swRegulPrice.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (rv != null) {
                 Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
                 shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
-
                 monthlyReadingAdapter.setShowRegulPrice(isChecked);
                 rv.getLayoutManager().onRestoreInstanceState(out);
                 setOnShowRegulPriceListener(isChecked);
             }
         });
-
-        fab.setOnClickListener(v -> {
-            MonthlyReadingAddFragment monthlyReadingAddFragment = MonthlyReadingAddFragment
-                    .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
-            FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
-        });
-
+        fab.setOnClickListener(v -> addMonthlyReading());
+        btnAddMonthlyReading.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
     }
 
@@ -181,14 +177,13 @@ public class MonthlyReadingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadDataFromDatabase();
-        showFab();
+        UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity());
     }
 
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-
     }
 
 
@@ -225,27 +220,23 @@ public class MonthlyReadingFragment extends Fragment {
     private void loadDataFromDatabase() {
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         tvAlert.setVisibility(View.VISIBLE);
-
         ArrayList<MonthlyReadingModel> monthlyReadings;
         if (subscriptionPoint != null) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
             dataSubscriptionPointSource.open();
             monthlyReadings = dataSubscriptionPointSource.loadMonthlyReadings(subscriptionPoint.getTableO(), from, to);
             dataSubscriptionPointSource.close();
-
             DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
             dataInvoiceSource.open();
             if (!dataInvoiceSource.checkInvoiceExists(subscriptionPoint.getTableTED()))
                 dataInvoiceSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataInvoiceSource.close();
-
             monthlyReadingAdapter = new MonthlyReadingAdapter(monthlyReadings, subscriptionPoint,
                     swSimplyView.isChecked(), swRegulPrice.isChecked(), rv);
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             monthlyReadingAdapter.setOnClickItemListener(onClickItemListener);
             rv.setAdapter(monthlyReadingAdapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
-
             if (!monthlyReadings.isEmpty())
                 tvAlert.setVisibility(View.GONE);
             else
@@ -255,12 +246,13 @@ public class MonthlyReadingFragment extends Fragment {
         }
     }
 
+
     private void showDetailFragment(long idCurrentlyReading, long idPreviousReading) {
         if (DetectScreenMode.isLandscape(requireActivity())) {
             MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
             if (idCurrentlyReading >= 0 && idPreviousReading >= 0)
                 requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment,MonthlyReadingDetailFragment.TAG)
+                        .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment, MonthlyReadingDetailFragment.TAG)
                         .addToBackStack(null).commit();
             else {
                 requireActivity().getSupportFragmentManager().beginTransaction()
@@ -272,18 +264,19 @@ public class MonthlyReadingFragment extends Fragment {
 
 
     /**
-     * Zobrazí/skryje tlačítko pro přidání měsíčního odečtu. Podle, zda-li je vybráno odběrné místo.
+     * Zobrazí fragment pro přidání měsíčního odečtu.
      */
-    private void showFab() {
-        if (subscriptionPoint != null) {
-            fab.setVisibility(View.VISIBLE);
-        } else {
-            fab.setVisibility(View.GONE);
-        }
+    private void addMonthlyReading() {
+        MonthlyReadingAddFragment monthlyReadingAddFragment = MonthlyReadingAddFragment
+                .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
+        FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
     }
 
+
     public interface OnShowRegulPriceListener {
+
         void onShowRegulPrice(boolean showRegulPrice);
+
     }
 
 
@@ -301,4 +294,5 @@ public class MonthlyReadingFragment extends Fragment {
     public void setOnShowRegulPriceListener(boolean isChecked) {
         this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
     }
+
 }

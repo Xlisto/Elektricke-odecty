@@ -46,4 +46,20 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:paddingTop="5dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvTotal"
+        android:layout_alignEnd="@id/tvTotal"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="false"
+        android:layout_gravity="end"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:contentDescription="@string/add"
+        android:src="@drawable/ic_content_add" />
 </RelativeLayout>

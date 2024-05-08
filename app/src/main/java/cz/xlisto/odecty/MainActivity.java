@@ -1,10 +1,12 @@
 package cz.xlisto.odecty;
 
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.odecty.modules.backup.BackupFragment;
 import cz.xlisto.odecty.modules.dashboard.DashBoardFragment;
@@ -51,7 +55,8 @@ import cz.xlisto.odecty.utils.SubscriptionPoint;
 import static cz.xlisto.odecty.utils.FragmentChange.Transaction.ALPHA;
 
 
-public class MainActivity extends AppCompatActivity implements MonthlyReadingFragment.OnShowRegulPriceListener{
+public class MainActivity extends AppCompatActivity implements MonthlyReadingFragment.OnShowRegulPriceListener {
+
     private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private Fragment actualFragment;
@@ -66,20 +71,15 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setConfiguration(getResources().getConfiguration());
-
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         NavigationView navigationView = findViewById(R.id.nav_view);
-
         shPMainActivity = new ShPMainActivity(getApplicationContext());
-
         //Horní toolbar + zobrazení tlačítka
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitle = toolbar.findViewById(R.id.toolbar_subtitle);
-
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
                 drawer, toolbar,
@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         drawer.addDrawerListener(toggle);
         //drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-
         //spodní lišta
         myBottomNavigationView.setOnItemSelectedListener(item -> {
             long itemId = item.getItemId();
@@ -101,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.dashboard));
                 return true;
             }
-
             if (itemId == R.id.meni_prices) {
                 navigationView.setCheckedItem(R.id.menu_price_list);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
@@ -110,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.price_lists));
                 return true;
             }
-
             if (itemId == R.id.meni_monthly_readings) {
                 navigationView.setCheckedItem(R.id.menu_monthly_reads);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
@@ -119,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.month_reads));
                 return true;
             }
-
             if (itemId == R.id.meni_subscription_points) {
                 navigationView.setCheckedItem(R.id.menu_subscription_points);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_subscription_points);
@@ -128,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.subscription_points));
                 return true;
             }
-
             if (itemId == R.id.meni_invoice) {
                 navigationView.setCheckedItem(R.id.menu_invoices);
                 shPMainActivity.set(ACTUAL_FRAGMENT, -1);
@@ -137,10 +131,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.invoices));
                 return true;
             }
-
             return itemId == R.id.meni_nothing;
         });
-
         //levý drawer
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
@@ -164,76 +156,65 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.compare_price_list));
                 b = true;
             }
-
             if (itemId == R.id.menu_monthly_reads) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.month_reads));
                 b = true;
             }
-
             if (itemId == R.id.menu_subscription_points) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_subscription_points);
                 actualFragment = SubscriptionPointFragment.newInstance();
                 b = true;
             }
-
             if (itemId == R.id.menu_invoices) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
                 actualFragment = InvoiceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.invoices));
                 b = true;
             }
-
             if (itemId == R.id.menu_hdo) {
                 uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.hdo_times));
                 b = true;
             }
-
             if (itemId == R.id.menu_backup) {
                 uncheckedBottomNavigation();
                 actualFragment = BackupFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.backup1));
                 b = true;
             }
-
             if (itemId == R.id.menu_graph_month) {
                 uncheckedBottomNavigation();
                 actualFragment = GraphMonthFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.graph_month));
                 b = true;
             }
-
             if (itemId == R.id.menu_graph_color) {
                 uncheckedBottomNavigation();
                 actualFragment = cz.xlisto.odecty.modules.graphcolor.GraphColorFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.graph_color));
                 b = true;
             }
-
             if (itemId == R.id.menu_import_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ImportPriceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.import_price_list));
                 b = true;
             }
-
             if (itemId == R.id.menu_export_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ExportPriceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.export_price_list));
                 b = true;
             }
-
             if (actualFragment != null)
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
             drawer.closeDrawer(GravityCompat.START, true);
             return b;
         });
         Intent intent = getIntent();
-
         if (intent.getStringExtra(HdoNotice.ARGS_FRAGMENT) != null) {
             //nastavení fragmentu při kliknutí z notifikace
             if ((Objects.requireNonNull(intent.getStringExtra(HdoNotice.ARGS_FRAGMENT))).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
@@ -252,7 +233,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
-
         startHdoService();
         setVisibilityBottomNavigation();
 
@@ -283,10 +263,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 invalidateOptionsMenu();
             }
         });
-
         setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
         setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
-
         //při rotaci se skryje detail měsíčního odečtu a zobrazí se seznam
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("MonthlyReadingDetailFragment");
         if (fragment != null && DetectScreenMode.isLandscape(getApplicationContext())) {
@@ -298,11 +276,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         //Save the fragment's instance
         if (actualFragment != null && actualFragment.isAdded() && !actualFragment.isDetached())
             getSupportFragmentManager().putFragment(outState, ACTUAL_FRAGMENT, actualFragment);
-
     }
 
 
@@ -310,16 +286,23 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     public boolean onCreateOptionsMenu(Menu menu) {
         int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
         if (countSubscriptionPoints > 1)
-            menu.add(getResources().getString(R.string.subscription_point));
+            menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_view));
         return true;
     }
 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.w(TAG, "onOptionsItemSelected " + item.getItemId());
         if (item.getItemId() == 0) {
             SubscriptionPointDialogFragment.newInstance()
                     .show(getSupportFragmentManager(), SubscriptionPointDialogFragment.class.getSimpleName());
+            return true;
+        }
+        if (item.getItemId() == 1) {
+            SettingsViewDialogFragment.newInstance()
+                    .show(getSupportFragmentManager(), SettingsViewDialogFragment.class.getSimpleName());
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -334,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
                 "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
                 "SubscriptionPointFragment", "GraphColorFragment");
-
         //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
         for (String tag : visibleFragmentsTags) {
@@ -344,14 +326,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 break;
             }
         }
-
         //zobrazí položku menu, pokud je některý fragment zobrazen
         int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
         if (countSubscriptionPoints > 1) {
             MenuItem item = menu.findItem(0);
             item.setVisible(isFragmentVisible);
         }
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -458,6 +438,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (monthlyReadingDetailFragment != null) {
             monthlyReadingDetailFragment.setShowRegulPrice(showRegulPrice);
         }
-
     }
+
 }

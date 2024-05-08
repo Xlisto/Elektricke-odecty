@@ -5,10 +5,19 @@
     android:layout_height="wrap_content"
     tools:context=".modules.subscriptionpoint.SubscriptionPointFragment">
 
+    <Button
+        android:id="@+id/btnAddSubscriptionPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvPocetMist"
+        android:text="@string/add_subscriptionpoint" />
+
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tvPocetMist">
+        android:layout_above="@id/tvPocetMist"
+        android:layout_alignParentTop="true">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -36,9 +45,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lnSpinner"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
@@ -46,16 +55,16 @@
                     android:id="@+id/tvDescriptionLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/popis" />
 
                 <TextView
                     android:id="@+id/tvDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
             </LinearLayout>
 
@@ -64,9 +73,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lnDescription"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/shape_item"
                 android:orientation="horizontal">
 
@@ -74,16 +83,16 @@
                     android:id="@+id/tvFazeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/faze_x_prikon" />
 
                 <TextView
                     android:id="@+id/tvPhaze"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -93,9 +102,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lnPhaze"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
@@ -103,16 +112,16 @@
                     android:id="@+id/tvNumberElectrometerLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/cislo_elektromeru" />
 
                 <TextView
                     android:id="@+id/tvNumberElectrometer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -122,9 +131,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/lnNumberElectrometer"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
@@ -132,16 +141,16 @@
                     android:id="@+id/tvNumberSubscriptionPointLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:text="@string/cislo_odberneho_místa" />
 
                 <TextView
                     android:id="@+id/tvNumberSubscriptionPoint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -155,25 +164,25 @@
 
                 <Button
                     android:id="@+id/btnEdit"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:text="@string/upravit_odberne_misto"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:maxWidth="100dp"/>
+                    android:maxWidth="100dp"
+                    android:text="@string/upravit_odberne_misto" />
 
                 <Button
                     android:id="@+id/btnDelete"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:text="@string/smazat_odberne_misto"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:maxWidth="100dp"/>
+                    android:maxWidth="100dp"
+                    android:text="@string/smazat_odberne_misto" />
             </LinearLayout>
 
         </RelativeLayout>

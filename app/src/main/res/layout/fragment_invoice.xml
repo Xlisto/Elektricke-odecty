@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,11 +39,27 @@
     </LinearLayout>
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvTotal"
+        android:layout_alignEnd="@id/tvTotal"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="false"
+        android:layout_gravity="end"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:contentDescription="@string/add"
+        android:src="@drawable/ic_content_add" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoice"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btnAddPayment"
+        android:layout_above="@id/btnAddItemInvoice"
         android:layout_below="@id/lnOutSp"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingBottom="5dp"
@@ -51,7 +68,7 @@
         android:paddingTop="5dp" />
 
     <Button
-        android:id="@+id/btnAddPayment"
+        android:id="@+id/btnAddItemInvoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/tvDiscountInvoice"

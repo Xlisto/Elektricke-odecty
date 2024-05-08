@@ -1,5 +1,6 @@
 package cz.xlisto.odecty.modules.payment;
 
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,20 +19,26 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
+import cz.xlisto.odecty.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
 import cz.xlisto.odecty.models.PaymentModel;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.FragmentChange;
+import cz.xlisto.odecty.utils.UIHelper;
 
 
 /**
  * Fragment zobrazující zálohové platby
  */
 public class PaymentFragment extends Fragment {
+
     private static final String TAG = "PaymentFragment";
     private static final String ID_FAK = "idFak";
     private static final String POSITION = "position";
@@ -43,6 +50,8 @@ public class PaymentFragment extends Fragment {
     private long idSubscriptionPoint;
     private ArrayList<PaymentModel> payments;
     private PaymentAdapter paymentAdapter;
+    private Button btnAddPayment;
+    private FloatingActionButton fab;
 
 
     public static PaymentFragment newInstance(long idFak, int position) {
@@ -89,9 +98,10 @@ public class PaymentFragment extends Fragment {
         rv = view.findViewById(R.id.recycleViewPayment);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountFragment);
-        Button btnAddPayment = view.findViewById(R.id.btnAddPayment);
-        btnAddPayment.setOnClickListener(v -> FragmentChange.replace(requireActivity(), PaymentAddFragment.newInstance(idFak, table), FragmentChange.Transaction.MOVE, true));
-
+        btnAddPayment = view.findViewById(R.id.btnAddPayment);
+        fab = view.findViewById(R.id.fab);
+        btnAddPayment.setOnClickListener(v -> showAddPaymentDialog());
+        fab.setOnClickListener(v -> showAddPaymentDialog());
         // Posluchač dialogového okna na smazání platby
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentAdapter.FLAG_PAYMENT_ADAPTER_DELETE, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -99,7 +109,6 @@ public class PaymentFragment extends Fragment {
                 setTotal();
             }
         });
-
         // Posluchač PaymentEditFragment na změnu platby
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentAddEditFragmentAbstract.FLAG_RESULT_PAYMENT_FRAGMENT, this,
                 (requestKey, result) -> {
@@ -107,7 +116,6 @@ public class PaymentFragment extends Fragment {
                     setTotal();
                     setRecyclerView();
                 });
-
         //Posluchač PaymentChangeInvoiceDialogFragment na změnu faktury
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentChangeInvoiceDialogFragment.FLAG_PAYMENT_ADAPTER_CHANGE_INVOICE, this,
                 (requestKey, result) -> {
@@ -115,7 +123,6 @@ public class PaymentFragment extends Fragment {
                     long idPayment = result.getLong(PaymentChangeInvoiceDialogFragment.ARG_ID_PAYMENT);
                     long previousIdInvoice = result.getLong(PaymentChangeInvoiceDialogFragment.ARG_PREVIOUS_ID_INVOICE);
                     boolean resultChangeInvoice = result.getBoolean(PaymentChangeInvoiceDialogFragment.ARG_RESULT);
-
                     if (resultChangeInvoice) {
                         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
                         dataSubscriptionPointSource.open();
@@ -124,12 +131,17 @@ public class PaymentFragment extends Fragment {
                     }
                     loadPayments();
                     setTotal();
-                    if(selectedIdInvoiceNew != previousIdInvoice) {
+                    if (selectedIdInvoiceNew != previousIdInvoice) {
                         //paymentAdapter.notifyItemRemoved(paymentAdapter.getSelectedPosition());
                         paymentAdapter.deleteItem();
                         PaymentAdapter.resetShowButtons();
                     }
                 });
+        //posluchač zavření dialogová okna nastavení
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+                (requestKey, bundle) ->
+                        UIHelper.showButtons(btnAddPayment, fab, requireActivity())
+        );
     }
 
 
@@ -138,6 +150,7 @@ public class PaymentFragment extends Fragment {
         super.onResume();
         setTotal();
         setRecyclerView();
+        UIHelper.showButtons(btnAddPayment, fab, requireActivity());
     }
 
 
@@ -181,7 +194,6 @@ public class PaymentFragment extends Fragment {
             @Override
             public boolean onPreDraw() {
                 rv.getViewTreeObserver().removeOnPreDrawListener(this);
-
                 for (int i = 0; i < rv.getChildCount(); i++) {
                     View v = rv.getChildAt(i);
                     Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_animation_fall_down);
@@ -202,10 +214,17 @@ public class PaymentFragment extends Fragment {
         double discountPayment = dataInvoiceSource.sumDiscountWithTax(idFak, table);
         double total = dataInvoiceSource.sumPayment(idFak, table);
         dataInvoiceSource.close();
-
-        Log.w(TAG, "setTotal: " + discountPayment+" "+total);
-
+        Log.w(TAG, "setTotal: " + discountPayment + " " + total);
         PaymentModel.getDiscountDPHText(discountPayment, tvDiscount);
         tvTotal.setText(getResources().getString(R.string.sum, total));
     }
+
+
+    /**
+     * Zobrazí dialogové okno pro přidání platby
+     */
+    private void showAddPaymentDialog() {
+        FragmentChange.replace(requireActivity(), PaymentAddFragment.newInstance(idFak, table), FragmentChange.Transaction.MOVE, true);
+    }
+
 }
