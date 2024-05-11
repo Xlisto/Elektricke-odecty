@@ -1,5 +1,11 @@
 package cz.xlisto.odecty.modules.pricelist;
 
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
+import static cz.xlisto.odecty.ownview.OwnDatePicker.showDialog;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -8,13 +14,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
-
-import java.util.Calendar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+
+import java.util.Calendar;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.models.PriceListModel;
 import cz.xlisto.odecty.ownview.LabelEditText;
@@ -22,13 +30,9 @@ import cz.xlisto.odecty.ownview.ViewHelper;
 import cz.xlisto.odecty.utils.Keyboard;
 import cz.xlisto.odecty.utils.ReadRawJSON;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
-import static cz.xlisto.odecty.ownview.OwnDatePicker.showDialog;
-
 
 public abstract class PriceListAddEditAbstract extends Fragment {
+
     public static String TAG = "PriceListAddEditAbstract";
     static final String BTN_FROM = "btnFrom";
     static final String BTN_UNTIL = "btnUntil";
@@ -42,7 +46,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String MESICNI_PLAT = "ivMesicniPlat";
     static final String VT_REGUL = "ivVT1";
     static final String NT_REGUL = "ivNT1";
-
     static final String JISTIC0 = "ivJistic0";
     static final String JISTIC1 = "ivJistic1";
     static final String JISTIC2 = "ivJistic2";
@@ -69,7 +72,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String JISTIC = "swJistic";
     static final String LAST_YEAR = "lastYear";
 
-
     String[] arrayDistUzemi;
     String[] arraySazba;
     int year, lastYear, selectionDistUzemi, selectionSazba;
@@ -82,7 +84,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
     SwitchCompat switchJistic;
     Spinner spSazba, spDistribucniUzemi;
-
+    TextView tvNoPriceListDescription;
     MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;
 
 
@@ -135,6 +137,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         switchJistic = view.findViewById(R.id.swJistic);
         spDistribucniUzemi = view.findViewById(R.id.spDistribucniUzemiSeznam);
         spSazba = view.findViewById(R.id.spSazbaSeznam);
+        tvNoPriceListDescription = view.findViewById(R.id.tvNoPriceListDescription);
 
         btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
             closedDialog = true;
@@ -144,6 +147,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             getYearBtnStart();
             onResume();
             setRegulPrice();
+            showBtnReloadRegulPriceList();
         }, btnFrom.getText().toString()));
 
         btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> {
@@ -238,6 +242,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         //nastavení adaptéru, výběr první položky, která reprezentuje nápovědu
         setSazbaAdapter();
         setDistribucniUzemiAdapter();
+        showBtnReloadRegulPriceList();
     }
 
 
@@ -368,7 +373,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             ivJ8.setVisibility(VISIBLE);
         }
 
-
         if (year >= 2016) {//když je větší než toto etDatum (nad 2016 rok)
             ivOZE.setVisibility(View.GONE);
             ivOTE.setVisibility(View.GONE);
@@ -450,4 +454,21 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         };
         handler.postDelayed(r, 1000);
     }
+
+
+    /**
+     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen
+     */
+    void showBtnReloadRegulPriceList() {
+        String startDate = btnFrom.getText().toString();
+        int year = ViewHelper.parseCalendarFromString(startDate).get(Calendar.YEAR);
+        if (year < 2021 || year > 2024) {
+            btnReloadRegulPriceList.setVisibility(View.GONE);
+            tvNoPriceListDescription.setVisibility(View.VISIBLE);
+        } else {
+            btnReloadRegulPriceList.setVisibility(View.VISIBLE);
+            tvNoPriceListDescription.setVisibility(View.GONE);
+        }
+    }
+
 }

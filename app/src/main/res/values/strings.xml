@@ -467,4 +467,6 @@
     <string name="add_monthly_price_list">Přidat ceník</string>
     <string name="add_subscriptionpoint">Přidat odběrné místo</string>
     <string name="add_hdo">Přidat čas HDO</string>
+
+    <string name="no_price_list">Pro tento rok není dostupná regulovaná cena</string>
 </resources>
