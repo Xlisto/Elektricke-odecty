@@ -149,6 +149,9 @@ public class InvoiceListFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        if (subscriptionPoint == null) {
+            return;
+        }
         tablePay = subscriptionPoint.getTablePLATBY();
         tableFak = subscriptionPoint.getTableFAK();
         dataSubscriptionPointSource.close();
