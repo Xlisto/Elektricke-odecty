@@ -130,7 +130,7 @@
     <string name="upravit_odberne_misto">Upravit odběrné místo</string>
     <string name="smazat_odberne_misto">Smazat odběrné místo</string>
     <string name="smazat_odberne_misto2">Smazat odběrné místo?</string>
-    <string name="create_place">Vytvořte nové odběrné místo</string>
+    <string name="create_place">Vytvořte nové odběrné místo \n nebo jej vyberte ze seznamu</string>
 
     <string name="kc">Kč</string>
     <string name="ok">OK</string>

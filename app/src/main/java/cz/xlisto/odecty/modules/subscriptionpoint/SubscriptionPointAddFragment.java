@@ -1,15 +1,16 @@
 package cz.xlisto.odecty.modules.subscriptionpoint;
 
+
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.Keyboard;
-
-import android.view.View;
 
 /**
  * Fragment vytvoření nového odběrného místa
@@ -35,7 +36,7 @@ public class SubscriptionPointAddFragment extends SubscriptionPointAddEditAbstra
 
             //uložení id do shared preferences pro nastavení právě zvoleného odběrného místa
             ShPSubscriptionPoint shpSubscriptionPoint = new ShPSubscriptionPoint(requireActivity());
-            shpSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, id);
+            shpSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, id);
 
             Keyboard.hide(requireActivity());
             getParentFragmentManager().popBackStack();

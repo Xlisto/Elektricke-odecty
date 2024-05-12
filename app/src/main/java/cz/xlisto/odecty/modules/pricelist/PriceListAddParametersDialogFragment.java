@@ -1,5 +1,8 @@
 package cz.xlisto.odecty.modules.pricelist;
 
+
+import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -9,14 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.format.DecimalFormatHelper;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.ownview.LabelEditText;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
-
-import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT;
 
 
 public class PriceListAddParametersDialogFragment extends DialogFragment {
@@ -134,7 +136,7 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
      */
     private void setPhaze() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
-        long idSubscriptionPoint = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT, -1L);
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT_LONG, -1L);
 
         if (idSubscriptionPoint > 0) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());

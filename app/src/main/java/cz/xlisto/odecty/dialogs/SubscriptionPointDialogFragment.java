@@ -1,5 +1,8 @@
 package cz.xlisto.odecty.dialogs;
 
+
+import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -13,11 +16,12 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import java.util.ArrayList;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
@@ -25,13 +29,12 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.MainActivityHelper;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 
-import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT;
-
 
 /**
  * Xlisto 12.02.2024 19:17
  */
 public class SubscriptionPointDialogFragment extends DialogFragment {
+
     private static final String TAG = "InvoiceDialogFragment";
     public static final String FLAG_UPDATE_SUBSCRIPTION_POINT = "invoiceDialogFragment";
     private final Button[] buttons = new Button[4];
@@ -63,7 +66,6 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
             builder.setPositiveButton(getResources().getString(R.string.ok), null);
         } else
             spinner.setVisibility(View.GONE);
-
 
         spinner.setAdapter(new Adapter(requireContext(), subscriptionPoints));
         builder.setView(view);
@@ -123,13 +125,14 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
 
     private void setSubscriptionPoint(SubscriptionPointModel subscriptionPoint) {
         ShPSubscriptionPoint shp = new ShPSubscriptionPoint(requireContext());
-        shp.set(ID_SUBSCRIPTION_POINT, subscriptionPoint.getId());
+        shp.set(ID_SUBSCRIPTION_POINT_LONG, subscriptionPoint.getId());
 
         MainActivityHelper.updateToolbarAndLoadData(requireActivity());
     }
 
 
     static class Adapter extends ArrayAdapter<SubscriptionPointModel> {
+
         public Adapter(Context context, ArrayList<SubscriptionPointModel> subscriptionPoints) {
             super(context, android.R.layout.simple_spinner_item, subscriptionPoints);
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -159,5 +162,7 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
             textView.setText(subscriptionPointModel.getName());
             return convertView;
         }
+
     }
+
 }

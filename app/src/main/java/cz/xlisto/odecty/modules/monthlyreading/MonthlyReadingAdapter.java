@@ -1,5 +1,8 @@
 package cz.xlisto.odecty.modules.monthlyreading;
 
+
+import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Html;
@@ -14,15 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataMonthlyReadingSource;
@@ -41,13 +44,12 @@ import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.TextSizeAdjuster;
 
-import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
-
 
 /**
  * Adapter pro zobrazení měsíčních odečtů, pro RecyclerView..
  */
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
+
     private static final String TAG = "MonthlyReadingAdapter";
     public static final String FLAG_DELETE_MONTHLY_READING = "flagDeleteMonthlyReading";
     private static int showButtons = -1;
@@ -61,6 +63,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
+
         RelativeLayout rootRelativeLayout, rl2, rl3;
         LinearLayout lnButtons;
         TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth, tvDateDetail,
@@ -74,6 +77,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
             super(itemView);
         }
+
     }
 
 
@@ -360,12 +364,15 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.tvNextServicesPrice.setVisibility(View.GONE);
             }
 
-            if(monthlyReading.getDescription().isEmpty()){
-                holder.tvDescription.setVisibility(View.GONE);
-            } else {
-                holder.tvDescription.setVisibility(View.VISIBLE);
-                holder.tvDescription.setText(monthlyReading.getDescription());
+            if (monthlyReading.getDescription() != null) {
+                if (monthlyReading.getDescription().isEmpty()) {
+                    holder.tvDescription.setVisibility(View.GONE);
+                } else {
+                    holder.tvDescription.setVisibility(View.VISIBLE);
+                    holder.tvDescription.setText(monthlyReading.getDescription());
+                }
             }
+
         }
 
         showButtons(holder, position);
@@ -496,6 +503,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     public interface OnClickItemListener {
+
         void setClickPriceListListener(long idCurrentlyReading, long idPreviousReading);
+
     }
+
 }

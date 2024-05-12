@@ -2,13 +2,13 @@
   <library name="Gradle: org.jsoup:jsoup:1.17.2" type="java-imported" external-system-id="GRADLE">
     <properties groupId="org.jsoup" artifactId="jsoup" version="1.17.2" />
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/1e75b08d7019546a954f1e359477f916f537a34d/jsoup-1.17.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/1e75b08d7019546a954f1e359477f916f537a34d/jsoup-1.17.2.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/bb97a306a51bf2b573d0c2fccaa70fa8be1bafbf/jsoup-1.17.2-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/bb97a306a51bf2b573d0c2fccaa70fa8be1bafbf/jsoup-1.17.2-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/40c83bbe7e07d1593facfac04b78775fa9368d24/jsoup-1.17.2-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.17.2/40c83bbe7e07d1593facfac04b78775fa9368d24/jsoup-1.17.2-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

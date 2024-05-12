@@ -1,5 +1,14 @@
 package cz.xlisto.odecty.modules.pricelist;
 
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
+import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.MONTH;
+import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.NT;
+import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.VT;
+import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.VT_NT;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
@@ -20,11 +30,6 @@ import cz.xlisto.odecty.ownview.OwnPriceListCompare;
 import cz.xlisto.odecty.ownview.OwnPriceListCompare.Type;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.Calculation;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static cz.xlisto.odecty.format.DecimalFormatHelper.df2;
-import static cz.xlisto.odecty.ownview.OwnPriceListCompare.Type.*;
 
 
 /**
@@ -82,7 +87,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
-        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
         if (idSubscriptionPoint != -1L) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();

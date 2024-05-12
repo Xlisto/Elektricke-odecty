@@ -5,12 +5,12 @@ plugins {
 android {
 
     defaultConfig {
-        applicationId "cz.xlisto.odecty"
+        applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
         compileSdk = 34
         targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.101"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

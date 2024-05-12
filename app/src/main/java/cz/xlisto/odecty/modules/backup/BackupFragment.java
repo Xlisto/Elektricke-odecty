@@ -1,5 +1,8 @@
 package cz.xlisto.odecty.modules.backup;
 
+
+import static cz.xlisto.odecty.permission.Permissions.REQUEST_WRITE_STORAGE;
+
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
@@ -15,10 +18,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -27,6 +26,11 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
@@ -34,8 +38,6 @@ import cz.xlisto.odecty.permission.Files;
 import cz.xlisto.odecty.shp.ShPBackup;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.MainActivityHelper;
-
-import static cz.xlisto.odecty.permission.Permissions.REQUEST_WRITE_STORAGE;
 
 
 /**
@@ -123,7 +125,7 @@ public class BackupFragment extends Fragment {
                 DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
                 dataSubscriptionPointSource.open();
                 dataSubscriptionPointSource.loadFirstIdSubscriptionPoint();
-                shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, dataSubscriptionPointSource.loadFirstIdSubscriptionPoint());
+                shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, dataSubscriptionPointSource.loadFirstIdSubscriptionPoint());
                 dataSubscriptionPointSource.close();
 
                 MainActivityHelper.updateToolbarAndLoadData(requireActivity());

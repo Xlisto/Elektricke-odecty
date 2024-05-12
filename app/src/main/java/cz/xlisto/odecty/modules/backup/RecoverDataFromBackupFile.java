@@ -1,9 +1,12 @@
 package cz.xlisto.odecty.modules.backup;
 
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +19,6 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import androidx.documentfile.provider.DocumentFile;
 import cz.xlisto.odecty.databaze.DataPriceListSource;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.shp.ShPBackup;
@@ -119,7 +121,7 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
             //new Databaze(getActivity()).getColorApp();//načtení barev z databáze a nastavení do sharedPreferences, otevírá si a zavírá databázy
             ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
-            shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
+            shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

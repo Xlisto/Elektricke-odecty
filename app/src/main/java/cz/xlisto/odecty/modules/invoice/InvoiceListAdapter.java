@@ -1,5 +1,9 @@
 package cz.xlisto.odecty.modules.invoice;
 
+
+import static cz.xlisto.odecty.modules.invoice.InvoiceListFragment.INVOICE_DELETE_LISTENER;
+import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -14,12 +18,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.dialogs.YesNoDialogFragment;
@@ -33,9 +38,6 @@ import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
 import cz.xlisto.odecty.utils.Calculation;
 import cz.xlisto.odecty.utils.DifferenceDate;
 import cz.xlisto.odecty.utils.FragmentChange;
-
-import static cz.xlisto.odecty.modules.invoice.InvoiceListFragment.INVOICE_DELETE_LISTENER;
-import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
 /**
@@ -306,7 +308,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
     private void loadTableName() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
-        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT, -1L);
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
         if (idSubscriptionPoint == -1L) return;
 
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);

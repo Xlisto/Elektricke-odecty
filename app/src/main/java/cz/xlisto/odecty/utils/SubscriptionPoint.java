@@ -1,12 +1,13 @@
 package cz.xlisto.odecty.utils;
 
+
+import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
+
 import android.content.Context;
 
 import cz.xlisto.odecty.databaze.DataSubscriptionPointSource;
 import cz.xlisto.odecty.models.SubscriptionPointModel;
 import cz.xlisto.odecty.shp.ShPSubscriptionPoint;
-
-import static cz.xlisto.odecty.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT;
 
 
 public class SubscriptionPoint {
@@ -19,7 +20,7 @@ public class SubscriptionPoint {
     static public SubscriptionPointModel load(Context context) {
         long id;
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
-        id = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT, -1L);
+        id = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT_LONG, -1L);
 
         if (id > 0) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
