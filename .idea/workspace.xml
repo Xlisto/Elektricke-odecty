@@ -385,13 +385,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Odstraněný zbytečný jmenný prostor.">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněný textový popisek při tvorbě/editaci ceníku, který upozorňuje na absenci regulovaných cen v aplikaci.&#10;&#10;Kontrola se provádí v PriceListAddEditAbstract, v metodě showBtnReloadRegulPriceList.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/odecty/modules/pricelist/PriceListAddEditAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -401,7 +397,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1139,7 +1135,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="261" />
+    <option name="localTasksCounter" value="262" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1213,7 +1209,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Úprava zobrazení času ve widgetu zobrazující začátek a konec nízského tarifu." />
     <MESSAGE value="Opravena chyba. Při opakovaném zadání měsíčního odečtu, pokud byla zaškrtnuta volba První odečet. &#10;Skrytí a zneaktivnění widgetů, které mají být neaktivní při zaškrtnuté volbě První odečet ihned po zobrazení pridání" />
     <MESSAGE value="Doplněné filtrování ceníku podle datumu a nebo podle rozpětí datumu od - do." />
     <MESSAGE value="Přidána základní mechanika pro sledování měsičního záznamu - výměna elektroměru." />
@@ -1238,7 +1233,10 @@
     <MESSAGE value="Přidána možnost volby umístění tlačítka pro přidání nových záznamů.&#10;Volba spočívá ve výběru plovoucího tlačítka nebo tlačítka ve spodní části obrazovky.&#10;Týká se těchto částí:&#10;- HdoFragment&#10;- InvoiceFragment&#10;- InvoiceListFragment1&#10;- MonthlyReadingFragment&#10;- PaymentFragment&#10;- PriceListFragment&#10;- SubscriptionPointFragment&#10;&#10;Pro zobrazení nastavených tlačítek se používá statická metoda showButtons v nové třídě UIHelper." />
     <MESSAGE value="Doplněné vodorovné rozvržení pro zobrazení informací o odběrním místě.&#10;Nový soubor rozvržení: fragment_subscription_point.xml" />
     <MESSAGE value="Odstraněný zbytečný jmenný prostor." />
-    <option name="LAST_COMMIT_MESSAGE" value="Odstraněný zbytečný jmenný prostor." />
+    <MESSAGE value="Doplněný textový popisek při tvorbě/editaci ceníku, který upozorňuje na absenci regulovaných cen v aplikaci.&#10;&#10;Kontrola se provádí v PriceListAddEditAbstract, v metodě showBtnReloadRegulPriceList." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněný textový popisek při tvorbě/editaci ceníku, který upozorňuje na absenci regulovaných cen v aplikaci.&#10;&#10;Kontrola se provádí v PriceListAddEditAbstract, v metodě showBtnReloadRegulPriceList." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
