@@ -30,17 +30,18 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Grafické zobrazení plateb období bez faktury
+ * Grafické zobrazení plateb a ceny elektřiny za období bez faktury
  * Xlisto 01.01.2024 14:09
  */
 public class GraphTotalConsuptionView extends View {
+
     private static final String TAG = "GraphTotalConsuptionView";
     private int size;
     private int paymentAngle = 170;
     private final int colorStart = Color.parseColor("#808080"); // Šedá barva
     private final int colorPaymentEnd = Color.parseColor("#05b2fa"); // Modrá barva
-    private double maxConsuption = 35000, consuption = 0, payment = 45000,
-            previousConsuption = 0, previousPayment = 1000, currentPayment = 0, currentConsuption = 0,
+    private double maxConsuption = 0, consuption = 0, payment = 0,
+            previousConsuption = 0, previousPayment = 0, currentPayment = 0, currentConsuption = 0,
             previousMax;
     private final Paint pPayment = new Paint();
     private final Paint pPaymentBorder = new Paint();
@@ -153,7 +154,6 @@ public class GraphTotalConsuptionView extends View {
         int startAngle = 190;
         int sweepAngleMax = 160;
 
-
         int y = (int) (rPayment.top + (rPayment.bottom - rPayment.top) / 2);
         LinearGradient lgPayment = new LinearGradient(rPayment.left, y, rPayment.right, y, colorStart, colorPaymentEnd, Shader.TileMode.CLAMP);
         LinearGradient lgPaymentBorder = new LinearGradient(rPayment.left, y, rPayment.right, y, darkerColor(colorStart), darkerColor(colorPaymentEnd), Shader.TileMode.CLAMP);
@@ -164,7 +164,6 @@ public class GraphTotalConsuptionView extends View {
         canvas.drawArc(rPayment, startAngle, paymentAngle, false, pPayment);
         canvas.drawArc(rPaymentBorderOut, startAngle, paymentAngle, false, pPaymentBorder);
         canvas.drawArc(rPaymentBorderIn, startAngle, paymentAngle, false, pPaymentBorder);
-
 
         // Výpočet středů pro oblouky
         //PointF centerPayment = new PointF((rPayment.left + rPayment.right) / 2, (rPayment.top + rPayment.bottom) / 2);
@@ -302,6 +301,9 @@ public class GraphTotalConsuptionView extends View {
         //při prvním zobrazení je startovní úhel 170
         if (previousMax == 0)
             startAngle = 170;
+        //pokud není žádná spotřeba, tak se úhel nastaví na 170
+        if (consuption == 0)
+            endAngle = 170;
         ValueAnimator va = ValueAnimator.ofInt(startAngle, endAngle);
         va.setDuration(1000); // doba trvání animace v milisekundách
         va.addUpdateListener(v ->
@@ -440,5 +442,6 @@ public class GraphTotalConsuptionView extends View {
 
         paint.setTextSize(originalTextSize); // Vrátí velikost textu na původní hodnotu, pokud je potřeba
     }
+
 }
 

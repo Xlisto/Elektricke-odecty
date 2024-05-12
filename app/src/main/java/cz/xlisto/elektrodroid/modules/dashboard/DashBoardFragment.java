@@ -215,7 +215,7 @@ public class DashBoardFragment extends Fragment {
 
         tvName.setText(invoiceListSumModel.getName(showInvoiceSum));
 
-        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).size() == 0)
+        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).isEmpty())
             tvNoInvoices.setVisibility(View.VISIBLE);
         else
             tvNoInvoices.setVisibility(View.GONE);

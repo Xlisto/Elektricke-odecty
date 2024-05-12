@@ -21,7 +21,7 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 
-/**
+/** Zobrazení stavu elektroměru pomocí obrázkových čísel
  * Xlisto 18.01.2024 8:58
  */
 public class NumbersMeter extends View {

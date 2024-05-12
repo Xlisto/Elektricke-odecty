@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.ownview;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,18 +15,26 @@ import java.text.DecimalFormat;
 
 import cz.xlisto.elektrodroid.R;
 
+
+/**
+ * Vlastní View pro porovnání ceníků
+ */
 public class OwnPriceListCompare extends RelativeLayout {
+
     private TextView tvTitle, tvLeft, tvRigth, tvDifferentLeft, tvDifferentRight;
     private View separator;
+
 
     public OwnPriceListCompare(Context context) {
         super(context);
     }
 
+
     public OwnPriceListCompare(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
+
 
     @SuppressLint("ResourceType")
     private void init(Context context, AttributeSet attrs) {
@@ -49,49 +58,57 @@ public class OwnPriceListCompare extends RelativeLayout {
         visibleDifferent(visibleDifferent);
     }
 
+
     /**
      * Nastaví titulek
-     * @param s
+     *
+     * @param s titulek
      */
     public void setTvTitle(String s) {
         if (s != null)
             tvTitle.setText(s);
     }
 
+
     /**
      * Nastaví text na levý textview s cenou
-     * @param s
+     *
+     * @param s text
      */
     public void setLeft(String s) {
         tvLeft.setText(s);
     }
 
+
     /**
      * Nastaví text na pravý textview s cenou
-     * @param s
+     *
+     * @param s text
      */
     public void setRight(String s) {
         tvRigth.setText(s);
     }
 
+
     /**
      * Sestaví výpočet rodízlu dílčí ceny podle množství kwh nebo měsíců a mnastaví jej na textview
-     * @param d
-     * @param df
-     * @param quantity
-     * @param type
+     *
+     * @param d        cena
+     * @param df       formát ceny
+     * @param quantity množství kwh nebo měsíců
+     * @param type     typ ceny
      */
     public void setDifferent(double d, DecimalFormat df, double quantity, Type type) {
         double nD = d * (-1);
         String left = df.format(d);
         String right = df.format(nD);
-        if (quantity != 1 && (!type.equals(Type.VT_NT)) ||  quantity != 2 && (type.equals(Type.VT_NT))) {
+        if (quantity != 1 && (!type.equals(Type.VT_NT)) || quantity != 2 && (type.equals(Type.VT_NT))) {
             left = df.format(d) + " * " + quantity + " = " + df.format(d * quantity);
             right = df.format(nD) + " * " + quantity + " = " + df.format(nD * quantity);
         }
 
         visibleDifferent(true);
-        if(d==0 || quantity==0)
+        if (d == 0 || quantity == 0)
             visibleDifferent(false);
         tvDifferentLeft.setText(left);
         tvDifferentRight.setText(right);
@@ -99,27 +116,30 @@ public class OwnPriceListCompare extends RelativeLayout {
         setColorDifferentView(d);
     }
 
+
     /**
      * Nastaví do textview rozdílnou cenu, pokud rozdíl není, textview skryje
-     * @param d
-     * @param df
+     *
+     * @param d  cena
+     * @param df formát ceny
      */
-    public void setDifferent(double d,DecimalFormat df) {
-        double dif1 = d;
+    public void setDifferent(double d, DecimalFormat df) {
         double dif2 = d * (-1);
         visibleDifferent(true);
-        if(d==0)
+        if (d == 0)
             visibleDifferent(false);
-        tvDifferentLeft.setText(df.format(dif1));
+        tvDifferentLeft.setText(df.format(d));
         tvDifferentRight.setText(df.format(dif2));
-        setColorDifferentView(dif1);
+        setColorDifferentView(d);
     }
+
 
     /**
      * Nastaví textview rozdílnou barvu podle kladné/záporné hodnoty
-     * @param d
+     *
+     * @param d cena
      */
-    private void setColorDifferentView(double d){
+    private void setColorDifferentView(double d) {
         String cRed = "#e20707";
         String cGreen = "#00961d";
         if (d > 0) {
@@ -131,9 +151,11 @@ public class OwnPriceListCompare extends RelativeLayout {
         }
     }
 
+
     /**
      * Zobrazí/skryje oddělovač obsažený na konci view
-     * @param b
+     *
+     * @param b true/false
      */
     public void visibleSeparator(boolean b) {
         if (b)
@@ -141,9 +163,11 @@ public class OwnPriceListCompare extends RelativeLayout {
         else separator.setVisibility(GONE);
     }
 
+
     /**
      * Zobrazí/skryje textview s rozdíly cen
-     * @param b
+     *
+     * @param b true/false
      */
     public void visibleDifferent(boolean b) {
         if (b) {
@@ -155,6 +179,7 @@ public class OwnPriceListCompare extends RelativeLayout {
         }
     }
 
+
     /**
      * Typ podle ceníkové jednotky
      */
@@ -164,4 +189,5 @@ public class OwnPriceListCompare extends RelativeLayout {
         VT_NT,
         MONTH
     }
+
 }
