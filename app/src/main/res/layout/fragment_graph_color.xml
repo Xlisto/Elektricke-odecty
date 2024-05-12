@@ -25,7 +25,7 @@
             android:textColor="#D81B60" />
     </LinearLayout>
 
-    <cz.xlisto.odecty.modules.graphcolor.GraphColorView
+    <cz.xlisto.elektrodroid.modules.graphcolor.GraphColorView
         android:id="@+id/graphColorView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

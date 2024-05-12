@@ -13,7 +13,7 @@
         android:layout_below="@id/rlGraphTotalConsuptionButtons"
         android:orientation="horizontal">
 
-        <cz.xlisto.odecty.modules.dashboard.GraphTotalConsuptionView
+        <cz.xlisto.elektrodroid.modules.dashboard.GraphTotalConsuptionView
             android:id="@+id/graphTotalConsuptionView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:background="@drawable/shape_border"
             app:colorText="@color/color_axis" />
 
-        <cz.xlisto.odecty.modules.dashboard.GraphTotalHdoView
+        <cz.xlisto.elektrodroid.modules.dashboard.GraphTotalHdoView
             android:id="@+id/graphTotalHdoView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                 android:textStyle="bold"
                 tools:ignore="SmallSp" />
 
-            <cz.xlisto.odecty.ownview.NumbersMeter
+            <cz.xlisto.elektrodroid.ownview.NumbersMeter
                 android:id="@+id/numbersMeterVT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                 android:layout_toEndOf="@id/tvVTTariff"
                 android:layout_toStartOf="@id/tvVTTariffKwh" />
 
-            <cz.xlisto.odecty.ownview.NumbersMeter
+            <cz.xlisto.elektrodroid.ownview.NumbersMeter
                 android:id="@+id/numbersMeterNT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

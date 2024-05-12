@@ -1,6 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -11,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <cz.xlisto.odecty.ownview.LabelEditText
+        <cz.xlisto.elektrodroid.ownview.LabelEditText
             android:id="@+id/letVT"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,9 +22,9 @@
             app:hintText="@string/_1"
             app:label="@string/spotreba_vysokeho_tarifu">
 
-        </cz.xlisto.odecty.ownview.LabelEditText>
+        </cz.xlisto.elektrodroid.ownview.LabelEditText>
 
-        <cz.xlisto.odecty.ownview.LabelEditText
+        <cz.xlisto.elektrodroid.ownview.LabelEditText
             android:id="@+id/letMonth"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -38,7 +37,7 @@
             app:hintText="@string/_1"
             app:label="@string/pocet_mesicu" />
 
-        <cz.xlisto.odecty.ownview.LabelEditText
+        <cz.xlisto.elektrodroid.ownview.LabelEditText
             android:id="@+id/letNT"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,7 +67,7 @@
             android:layout_below="@+id/tvFazePrikon"
             android:orientation="horizontal">
 
-            <cz.xlisto.odecty.ownview.LabelEditText
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letPhaze"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,7 +88,7 @@
                 android:text="@string/x" />
 
 
-            <cz.xlisto.odecty.ownview.LabelEditText
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letPower"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -120,7 +119,7 @@
             android:layout_below="@id/tvServices"
             android:orientation="horizontal">
 
-            <cz.xlisto.odecty.ownview.LabelEditText
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letServicesL"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -132,7 +131,7 @@
                 app:label=" "
                 android:layout_marginEnd="10dp" />
 
-            <cz.xlisto.odecty.ownview.LabelEditText
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letServicesR"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

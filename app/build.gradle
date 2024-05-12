@@ -9,8 +9,8 @@ android {
         minSdkVersion 21
         compileSdk = 34
         targetSdkVersion 34
-        versionCode 101
-        versionName "1.101"
+        versionCode 103
+        versionName "1.103"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -19,8 +19,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
     compileOptions {
@@ -29,7 +30,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion = '34.0.0'
-    namespace 'cz.xlisto.odecty'
+    namespace 'cz.xlisto.elektrodroid'
 }
 
 dependencies {

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:imeOptions="flagNoExtractUi"
     android:padding="10dp"
-    tools:context="cz.xlisto.odecty.MainActivity">
+    tools:context="cz.xlisto.elektrodroid.MainActivity">
 
     <LinearLayout
         android:id="@+id/lnButtonsMonthlyReading"
@@ -59,7 +59,7 @@
                     android:minHeight="48dp"
                     android:text="@string/other_items" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labDescription"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -69,7 +69,7 @@
 
                     app:label="@string/poznamka" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labOtherServices"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -182,7 +182,7 @@
                     android:layout_marginStart="5dp"
                     android:text="@string/datumOdectu" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labVT"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -194,7 +194,7 @@
                     app:hintText="@string/_0"
                     app:label="@string/stavVt" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labNT"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -206,7 +206,7 @@
                     app:label="@string/stavNt" />
 
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labPayment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

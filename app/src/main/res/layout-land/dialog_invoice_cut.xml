@@ -196,7 +196,7 @@
                     android:paddingStart="15dp" />
 
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labVT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                     android:paddingStart="15dp" />
 
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/labNT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

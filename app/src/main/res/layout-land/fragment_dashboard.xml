@@ -70,7 +70,7 @@
                 android:layout_marginTop="2dp"
                 android:background="@drawable/shape_border">
 
-                <cz.xlisto.odecty.modules.dashboard.GraphTotalConsuptionView
+                <cz.xlisto.elektrodroid.modules.dashboard.GraphTotalConsuptionView
                     android:id="@+id/graphTotalConsuptionView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/shape_border">
 
-                <cz.xlisto.odecty.modules.dashboard.GraphTotalHdoView
+                <cz.xlisto.elektrodroid.modules.dashboard.GraphTotalHdoView
                     android:id="@+id/graphTotalHdoView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -125,7 +125,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <cz.xlisto.odecty.ownview.NumbersMeter
+                <cz.xlisto.elektrodroid.ownview.NumbersMeter
                     android:id="@+id/numbersMeterVT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <cz.xlisto.odecty.ownview.NumbersMeter
+                <cz.xlisto.elektrodroid.ownview.NumbersMeter
                     android:id="@+id/numbersMeterNT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -70,7 +70,7 @@
             android:minHeight="48dp"
             android:text="@string/zjednodusene_zobrazeni" />
 
-        <cz.xlisto.odecty.ownview.ContextMenuRecyclerView
+        <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
             android:id="@+id/rvMonthlyReading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

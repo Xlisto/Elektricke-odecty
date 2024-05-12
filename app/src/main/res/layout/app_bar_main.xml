@@ -8,7 +8,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="cz.xlisto.odecty.modules.subscriptionpoint.SubscriptionPointFragment"
+        android:name="cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/myBottomNavigation"
@@ -33,7 +33,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-    <cz.xlisto.odecty.ownview.MyBottomNavigationView
+    <cz.xlisto.elektrodroid.ownview.MyBottomNavigationView
         android:id="@+id/myBottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

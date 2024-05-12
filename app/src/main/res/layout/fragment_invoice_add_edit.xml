@@ -85,7 +85,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/letVTStart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -95,7 +95,7 @@
                     app:hintText="@string/_0"
                     app:label="Počitadlo VT - začátek" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/letVTEnd"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -117,7 +117,7 @@
                 android:orientation="vertical">
 
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/letNTStart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -127,7 +127,7 @@
                     app:hintText="@string/_0"
                     app:label="Počitadlo NT - začátek" />
 
-                <cz.xlisto.odecty.ownview.LabelEditText
+                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/letNTEnd"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -139,7 +139,7 @@
             </LinearLayout>
 
 
-            <cz.xlisto.odecty.ownview.LabelEditText
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letOtherServices"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

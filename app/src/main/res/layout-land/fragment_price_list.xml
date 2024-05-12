@@ -5,7 +5,7 @@
     android:baselineAligned="false"
     android:orientation="horizontal"
     android:padding="10dp"
-    tools:context="cz.xlisto.odecty.MainActivity">
+    tools:context="cz.xlisto.elektrodroid.MainActivity">
 
 
     <RelativeLayout
@@ -57,7 +57,7 @@
             android:contentDescription="@string/add"
             android:src="@drawable/ic_content_add" />
 
-        <cz.xlisto.odecty.ownview.ContextMenuRecyclerView
+        <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
             android:id="@+id/rv_price_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

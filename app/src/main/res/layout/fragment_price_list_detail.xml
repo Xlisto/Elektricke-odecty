@@ -26,7 +26,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnPlatnost"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -49,7 +49,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnSazba"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -58,7 +58,7 @@
                     app:item="@string/empty"
                     app:label_price_item="@string/sazba_distribuce" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnDodavatel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -67,7 +67,7 @@
                     app:item="@string/empty"
                     app:label_price_item="@string/dodavatel" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnProdukt"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -76,7 +76,7 @@
                     app:label_price_item="@string/produkt"
                     app:item="@string/empty" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnUzemi"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -85,7 +85,7 @@
                     app:item="@string/empty"
                     app:label_price_item="@string/distribucni_uzemi" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnRada"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -95,7 +95,7 @@
                     app:label_price_item="@string/produktova_rada">
 
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
                 <TextView
                 android:id="@+id/tvPoznamkaDetail"
@@ -135,7 +135,7 @@
                 android:gravity="end"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_VT_dodavka"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -144,7 +144,7 @@
                     app:item="@string/kc_MWh"
                     app:label_price_item="@string/vt">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
                 <TextView
                     android:id="@+id/tvPoznamkaVT"
@@ -157,7 +157,7 @@
                     android:background="@drawable/shape_background_red"
                     android:gravity="end" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_NT_dodavka"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -177,7 +177,7 @@
                     android:background="@drawable/shape_background_red"
                     android:gravity="end" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_staly_plat"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -227,7 +227,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_VT_distribuce"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -236,7 +236,7 @@
                     app:item="@string/kc_MWh"
                     app:label_price_item="@string/vt2" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_NT_distribuce"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -245,7 +245,7 @@
                     app:item="@string/kc_MWh"
                     app:label_price_item="@string/nt2" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -254,7 +254,7 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_do_10" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -263,9 +263,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_10">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -274,9 +274,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_16">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -285,9 +285,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_20">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -296,9 +296,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_25">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J5"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -307,9 +307,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_32">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J6"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -318,9 +318,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_40">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J7"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -329,11 +329,10 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_50">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
 
-
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -342,9 +341,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_63">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J11"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -353,9 +352,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_80">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -364,9 +363,9 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_100">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J13"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -375,7 +374,7 @@
                     app:item="@string/kc_mesic"
                     app:label_price_item="@string/jistic_nad_125" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J14"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -384,7 +383,7 @@
                     app:item="@string/kc_1A"
                     app:label_price_item="@string/jistic_nad_160" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J8"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -393,9 +392,9 @@
                     app:item="@string/kc_1A"
                     app:label_price_item="@string/jistic_nad_63_za_A">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_J9"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -404,7 +403,7 @@
                     app:item="@string/kc_1A"
                     app:label_price_item="@string/jistic_nad_25_za_A">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
             </LinearLayout>
 
@@ -436,7 +435,7 @@
                 android:gravity="end"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_systemove_sluzby"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -445,9 +444,9 @@
                     app:item="@string/kc_MWh"
                     app:label_price_item="@string/systemove_sluzby" >
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_OTE"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -456,9 +455,9 @@
                     app:item="@string/kc_om"
                     app:label_price_item="@string/cinnost_operatora_trhu" >
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_POZE1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -478,7 +477,7 @@
                     android:background="@drawable/shape_background_red"
                     android:gravity="end" />
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_POZE2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -488,7 +487,7 @@
                     app:label_price_item="@string/poze_dle_spotreby">
 
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
                 <TextView
                     android:id="@+id/tvPoznamkaPOZE2"
@@ -530,7 +529,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_dan"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -539,9 +538,9 @@
                     app:item="@string/kc_MWh"
                     app:label_price_item="@string/dan_z_elektriny">
 
-                </cz.xlisto.odecty.ownview.LabelPriceDetail>
+                </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
-                <cz.xlisto.odecty.ownview.LabelPriceDetail
+                <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_DPH"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
