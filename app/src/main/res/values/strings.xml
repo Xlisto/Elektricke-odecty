@@ -251,6 +251,7 @@
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
+    <string name="no_found_hdo">Nenalezen žádný čas HDO</string>
     <string name="write_hdo">Vyberte distribuci, napiště HDO kód a \nstiskněte NAČTI HDO</string>
     <string name="select_hdo">Vyberte distribuci, povel přijímače a \nstiskněte NAČTI HDO</string>
 

@@ -434,7 +434,8 @@ public class GraphTotalHdoView extends View {
 
 
         if (modelsForAllWeek == null || modelsForAllWeek.isEmpty()) {
-            canvas.drawText("Nenalezen žádný čas HDO", x, y, pTimeLeft);
+            autoSizeTextAndDraw(getContext().getString(R.string.no_found_hdo), getWidth() - 2 * textPadding, canvas, x, y, pTimeLeft);
+
             return;
         }
 
