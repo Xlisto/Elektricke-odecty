@@ -1,6 +1,10 @@
 package cz.xlisto.odecty.modules.monthlyreading;
 
 
+import static cz.xlisto.odecty.shp.ShPMonthlyReading.REGUL_PRICE;
+import static cz.xlisto.odecty.shp.ShPMonthlyReading.SHORT_LIST;
+import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,17 +18,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import java.util.ArrayList;
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 import cz.xlisto.odecty.R;
 import cz.xlisto.odecty.databaze.DataInvoiceSource;
@@ -40,10 +44,6 @@ import cz.xlisto.odecty.utils.DetectScreenMode;
 import cz.xlisto.odecty.utils.FragmentChange;
 import cz.xlisto.odecty.utils.SubscriptionPoint;
 import cz.xlisto.odecty.utils.UIHelper;
-
-import static cz.xlisto.odecty.shp.ShPMonthlyReading.REGUL_PRICE;
-import static cz.xlisto.odecty.shp.ShPMonthlyReading.SHORT_LIST;
-import static cz.xlisto.odecty.utils.FragmentChange.Transaction.MOVE;
 
 
 /**
@@ -153,18 +153,23 @@ public class MonthlyReadingFragment extends Fragment {
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
         swSimplyView.setOnCheckedChangeListener((buttonView, isChecked) -> {
             TransitionManager.beginDelayedTransition(rv);
-            Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-            shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
-            monthlyReadingAdapter.showSimpleView(isChecked);
-            rv.getLayoutManager().onRestoreInstanceState(out);
+            if (rv.getLayoutManager() != null) {
+                Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+                shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
+                monthlyReadingAdapter.showSimpleView(isChecked);
+                rv.getLayoutManager().onRestoreInstanceState(out);
+            }
         });
         swRegulPrice.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (rv != null) {
-                Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-                shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
-                monthlyReadingAdapter.setShowRegulPrice(isChecked);
-                rv.getLayoutManager().onRestoreInstanceState(out);
-                setOnShowRegulPriceListener(isChecked);
+                TransitionManager.beginDelayedTransition(rv);
+                if (rv.getLayoutManager() != null) {
+                    Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+                    shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
+                    monthlyReadingAdapter.setShowRegulPrice(isChecked);
+                    rv.getLayoutManager().onRestoreInstanceState(out);
+                    setOnShowRegulPriceListener(isChecked);
+                }
             }
         });
         fab.setOnClickListener(v -> addMonthlyReading());
@@ -178,6 +183,13 @@ public class MonthlyReadingFragment extends Fragment {
         super.onResume();
         loadDataFromDatabase();
         UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity());
+        if (rv.getLayoutManager() == null) {
+            swRegulPrice.setEnabled(false);
+            swSimplyView.setEnabled(false);
+        } else {
+            swRegulPrice.setEnabled(true);
+            swSimplyView.setEnabled(true);
+        }
     }
 
 
