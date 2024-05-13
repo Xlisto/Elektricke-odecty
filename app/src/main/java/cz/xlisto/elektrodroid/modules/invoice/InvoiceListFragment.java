@@ -110,8 +110,7 @@ public class InvoiceListFragment extends Fragment {
         });
         //posluchač zavření dialogová okna nastavení
         getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                (requestKey, bundle) ->
-                        UIHelper.showButtons(btnAddInvoice, fab, requireActivity())
+                (requestKey, bundle) -> UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true)
         );
     }
 
@@ -146,6 +145,7 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true);
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
@@ -162,7 +162,6 @@ public class InvoiceListFragment extends Fragment {
         invoiceAdapter = new InvoiceListAdapter(getContext(), invoices, rv);
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        UIHelper.showButtons(btnAddInvoice, fab, requireActivity());
     }
 
 

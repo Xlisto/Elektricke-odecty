@@ -111,7 +111,7 @@ public class MonthlyReadingFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
                     loadDataFromDatabase();
-                    UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity());
+                    UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
                 });
         //posluchač změny měsíčního odečtu - zobrazení detailu v land režimu
         onClickItemListener = (idCurrentlyReading, idPreviousReading) -> {
@@ -119,9 +119,9 @@ public class MonthlyReadingFragment extends Fragment {
             this.idPreviousReading = idPreviousReading;
             showDetailFragment(idCurrentlyReading, idPreviousReading);
         };
-        //posluchač na zavření dialogového kna s nastavením
+        //posluchač na zavření dialogového okna s nastavením
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                (requestKey, result) -> UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity()));
+                (requestKey, result) -> UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true));
     }
 
 
@@ -182,7 +182,7 @@ public class MonthlyReadingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadDataFromDatabase();
-        UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity());
+        UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
         if (rv.getLayoutManager() == null) {
             swRegulPrice.setEnabled(false);
             swSimplyView.setEnabled(false);

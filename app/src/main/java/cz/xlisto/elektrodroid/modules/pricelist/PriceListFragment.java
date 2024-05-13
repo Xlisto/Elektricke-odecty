@@ -202,7 +202,12 @@ public class PriceListFragment extends Fragment {
                 }));
         //listener při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                ((requestKey, result) -> UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv)));
+                ((requestKey, result) -> {
+                    UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
+                    btnShowBack();
+                })
+        );
+
         onLoadData();
         setAdapter();
         showDetailPriceFragment(true);
@@ -215,7 +220,7 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv);
+        UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
         btnShowBack();
     }
 
@@ -349,6 +354,7 @@ public class PriceListFragment extends Fragment {
         if (showSelectItem) {
             //zobrazení tlačítek ve výběru ceníku
             btnBack.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.GONE);
         } else {
             //zobrazení tlačítek v seznamu ceníků
             btnBack.setVisibility(View.GONE);

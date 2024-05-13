@@ -199,8 +199,7 @@ public class InvoiceFragment extends Fragment {
                 });
         //posluchač zavření dialogová okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                (requestKey, bundle) ->
-                        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity())
+                (requestKey, bundle) -> UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true)
         );
     }
 
@@ -214,7 +213,7 @@ public class InvoiceFragment extends Fragment {
         loadInvoice();
         setRecyclerView();
         setTotalTextView();
-        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity());
+        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
     }
 
 

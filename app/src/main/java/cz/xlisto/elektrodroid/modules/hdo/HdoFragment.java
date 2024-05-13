@@ -157,13 +157,14 @@ public class HdoFragment extends Fragment {
                 );
         //posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity())));
+                ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true)));
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true);
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint != null)
             idSubscriptionPoint = subscriptionPoint.getId();
@@ -188,7 +189,6 @@ public class HdoFragment extends Fragment {
         swHdoService.setChecked(HdoService.isRunningService());
         HdoService.setHdoModels(hdoModels);
         HdoService.setDifferentTime(timeDifferent);
-        UIHelper.showButtons(btnAddHdo, fab, requireActivity());
     }
 
 

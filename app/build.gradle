@@ -7,10 +7,9 @@ android {
     defaultConfig {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
-        compileSdkVersion = 34
         targetSdkVersion 34
-        versionCode 104
-        versionName "1.104"
+        versionCode 105
+        versionName "1.105"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -29,8 +28,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = '34.0.0'
+    buildToolsVersion = '35.0.0 rc3'
     namespace 'cz.xlisto.elektrodroid'
+    compileSdk 34
 }
 
 dependencies {

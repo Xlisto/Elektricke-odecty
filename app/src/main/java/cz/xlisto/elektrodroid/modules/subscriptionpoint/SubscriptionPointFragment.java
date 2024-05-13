@@ -118,7 +118,7 @@ public class SubscriptionPointFragment extends Fragment {
         );
         //posluchač na zavření dialogového okna s nastavením
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                (requestKey, result) -> UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc)
+                (requestKey, result) -> UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc, false)
         );
     }
 
@@ -158,7 +158,7 @@ public class SubscriptionPointFragment extends Fragment {
                 break;
             }
         }
-        UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc);
+        UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc, false);
     }
 
 
