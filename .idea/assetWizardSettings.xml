@@ -378,7 +378,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$ANDROID_SDK_ROOT$/icons/material/materialicons/dashboard/baseline_dashboard_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/add/baseline_add_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -388,7 +388,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_dashboard" />
+                            <entry key="outputName" value="ic_content_add" />
                             <entry key="sourceFile" value="C:\Users\Xlisto\AndroidStudioProjects\Cenk" />
                           </map>
                         </option>

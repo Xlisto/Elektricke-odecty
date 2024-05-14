@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
     tools:context=".modules.invoice.InvoiceListFragment">
 
@@ -52,7 +53,9 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_content_add" />
+        android:src="@drawable/ic_content_add"
+        app:backgroundTint="@color/floatingButtonTint"
+        app:tint="@color/floatingButtonBackground" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoice"

@@ -8,8 +8,8 @@ android {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 106
-        versionName '1.106'
+        versionCode 107
+        versionName '1.107'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -49,7 +49,7 @@ dependencies {
     // For AGP 7.4+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     //implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.12'
-    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.12'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.13'
+    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.13'
 
 }

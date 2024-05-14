@@ -9,4 +9,10 @@
     <color name="menuBackgroundColor">#587598</color>
 
     <color name="labelEditBackgroundEditText">#33F60000</color>
+
+    <color name="floatingButtonTint">#FF03DAC5</color>
+    <color name="floatingButtonBackground">#000000</color>
+
+    <color name="color_no">#960101</color>
+    <color name="color_yes">#008000</color>
 </resources>
