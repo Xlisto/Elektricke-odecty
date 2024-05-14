@@ -348,6 +348,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/own_view_compare_price_list_item.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/test.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -385,18 +390,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0 a úprava textu, když není žádný HDO&#10;Povýšení na verzi 104. Doplnění několik komentářů.">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava absence tlačítka pro přidání prvního odběrného místa">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/hdo/HdoFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/hdo/HdoFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/monthlyreading/MonthlyReadingFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/monthlyreading/MonthlyReadingFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/payment/PaymentFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/payment/PaymentFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/pricelist/PriceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/pricelist/PriceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/utils/UIHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/utils/UIHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_create_new_invoice.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_create_new_invoice.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_filter.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_filter.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_set_values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_set_values.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1141,7 +1139,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="271" />
+    <option name="localTasksCounter" value="272" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1215,7 +1213,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněný posluchač na změnu zobrazení regulované ceny v měsíčních odečtech.&#10;Změna přepínače zobrazení regulovaných cen nepřepočítávala detail záznamu v land režimu." />
     <MESSAGE value="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné." />
     <MESSAGE value="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J" />
     <MESSAGE value="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů." />
@@ -1240,7 +1237,8 @@
     <MESSAGE value="Oprava pádu aplikace při přepnutí switche na regulované ceny nebo zjednodušené zobrazení při prázdném seznamu.&#10;Přidána kontrola na rv.getLayoutManager()==null a následně tyto switche jsou deaktivovány." />
     <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
     <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0 a úprava textu, když není žádný HDO&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0 a úprava textu, když není žádný HDO&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
+    <MESSAGE value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
