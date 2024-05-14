@@ -55,7 +55,7 @@ public class YesNoDialogFragment extends DialogFragment {
             message = savedInstanceState.getString(MESSAGE);
             flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT);
         }
-        builder = new AlertDialog.Builder(requireContext());
+        builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {

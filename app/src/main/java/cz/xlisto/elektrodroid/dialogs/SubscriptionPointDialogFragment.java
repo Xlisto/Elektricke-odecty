@@ -59,7 +59,7 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
         View view = View.inflate(requireContext(), R.layout.dialog_select_subscription_point, null);
         Spinner spinner = view.findViewById(R.id.spSubscriptionPoints);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.selecting_subscription_point));
 
         if (subscriptionPoints.size() > 4) {

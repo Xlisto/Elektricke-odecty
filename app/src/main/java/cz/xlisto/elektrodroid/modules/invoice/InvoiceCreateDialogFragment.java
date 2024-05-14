@@ -38,7 +38,7 @@ public class InvoiceCreateDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_create_new_invoice, null);
         EditText etNumber = dialogView.findViewById(R.id.etNumber);
         Button btnCancel = dialogView.findViewById(R.id.btnCancelInvoice);

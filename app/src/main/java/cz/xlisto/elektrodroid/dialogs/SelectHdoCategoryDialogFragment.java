@@ -22,7 +22,7 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * dialogové okno se spinnerem pro výběr kódu
+ * Dialogové okno se spinnerem pro výběr kódu
  * Xlisto 11.07.2023 5:31
  */
 public class SelectHdoCategoryDialogFragment extends DialogFragment {
@@ -72,7 +72,7 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
         View view = View.inflate(requireContext(), R.layout.dialog_select_hdo_category, null);
         spinner = view.findViewById(R.id.spCodes);

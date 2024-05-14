@@ -35,13 +35,14 @@ public class SettingsViewDialogFragment extends DialogFragment {
         ShPSettings shPSettings = new ShPSettings(requireContext());
         switchShowFab.setChecked(shPSettings.get(ShPSettings.SHOW_FAB, true));
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.settings_view));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {
             shPSettings.set(ShPSettings.SHOW_FAB, switchShowFab.isChecked());
             getParentFragmentManager().setFragmentResult(FLAG_UPDATE_SETTINGS, new Bundle());
         });
+
         return builder.create();
     }
 }

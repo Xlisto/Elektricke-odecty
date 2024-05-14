@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.dialogs;
 
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -40,7 +41,7 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
         TextView tvDescription = view.findViewById(R.id.tvAutogenerateSettingDescription);
         setDescription(switchAutoGenerate.isChecked(), tvDescription);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.autogenerate_title));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {
@@ -53,6 +54,7 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
             shPInvoice.set(ShPInvoice.AUTO_GENERATE_INVOICE, isChecked);
             setDescription(isChecked, tvDescription);
            });
+
         return builder.create();
     }
 

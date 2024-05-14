@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.modules.invoice;
 
+
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
@@ -61,7 +61,7 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_list_add_edit, null);
 
         letNumberInvoice = dialogView.findViewById(R.id.letNumberInvoice);
@@ -70,14 +70,11 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
 
         builder.setView(dialogView);
         builder.setTitle("Upravit novou fakturu");
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Bundle bundle = new Bundle();
-                bundle.putString(InvoiceListFragment.NUMBER_INVOICE,letNumberInvoice.getText());
-                bundle.putLong(InvoiceListFragment.ID_INVOICE,idInvoice);
-                getParentFragmentManager().setFragmentResult(InvoiceListFragment.INVOICE_NUMBER_EDIT_LISTENER,bundle);
-            }
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(InvoiceListFragment.NUMBER_INVOICE, letNumberInvoice.getText());
+            bundle.putLong(InvoiceListFragment.ID_INVOICE, idInvoice);
+            getParentFragmentManager().setFragmentResult(InvoiceListFragment.INVOICE_NUMBER_EDIT_LISTENER, bundle);
         });
         builder.setNegativeButton(R.string.zrusit, null);
 

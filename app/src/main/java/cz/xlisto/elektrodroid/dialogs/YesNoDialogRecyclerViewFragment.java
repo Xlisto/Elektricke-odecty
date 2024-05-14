@@ -52,7 +52,7 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         yesNoDialogRecyclerViewAdapter = new YesNoDialogRecyclerViewAdapter(priceLists);
         recyclerView.setAdapter(yesNoDialogRecyclerViewAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireActivity()));
-        if (priceLists.size() > 0)
+        if (!priceLists.isEmpty())
             builder.setMessage("Zatrhněte všechny sazby, které chcete nahrát.\nCeník: " + priceLists.get(0).getRada());
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {
@@ -71,6 +71,7 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
 
         return builder.create();
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

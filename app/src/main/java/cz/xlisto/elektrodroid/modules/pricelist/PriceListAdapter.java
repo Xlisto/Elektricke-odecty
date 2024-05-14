@@ -375,7 +375,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech
      */
     private void showWarningDialog(int ted, int fak, int mon, Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
         builder.setTitle("Smazání ceníku");
         builder.setMessage("Ceník nelze smazat, protože je použit v těchto záznamech:\n\n" +
                 "Období bez faktury " + ted + "x\n\nVe fakturách, " + fak + "x\n\nV měsíčních odečtech: " + mon + "x");

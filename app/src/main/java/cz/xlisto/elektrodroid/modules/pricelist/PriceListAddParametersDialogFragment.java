@@ -54,7 +54,7 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_set_values, null);
         letVT = dialogView.findViewById(R.id.letVT);
         letNT = dialogView.findViewById(R.id.letNT);

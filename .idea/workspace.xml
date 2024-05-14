@@ -30,6 +30,12 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_add_edit.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo_site.xml">
         <config>
           <state>Landscape</state>
@@ -44,7 +50,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading_add_edit.xml">
         <config>
-          <state>landscape</state>
+          <state>Landscape</state>
           <theme>@style/Theme.Odecty.NoActionBar</theme>
         </config>
       </layout>
@@ -138,12 +144,22 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_color.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_graph_month.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo_add_edit.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -227,7 +243,6 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml">
         <config>
-          <night>night</night>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -403,21 +418,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_simple_2_0_13.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_api_2_0_12.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_api_2_0_13.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_simple_2_0_12.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -532,7 +535,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="_Designer_Tab" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -595,12 +598,12 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/Elektricke-odecty/app/src/main/res/values&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;ExportApk.BuildVariants&quot;: [
@@ -628,21 +631,21 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\Elektricke-odecty\app\src\main\res\values" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\Elektricke-odecty\app\src\main\res\layout-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\libs" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable-night" />
-      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\drawable" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="junit.framework.TestCase" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Xlisto\AndroidStudioProjects\Elektricke-odecty\app\src\main\res\values-night" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\assets" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\mipmap" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-land" />
       <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w300dp-land" />
-      <recent name="C:\Users\Xlisto\AndroidStudioProjects\ElOdecet\app\src\main\res\layout-w1000dp-land" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="cz.xlisto.odecty" />
@@ -1164,7 +1167,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="276" />
+    <option name="localTasksCounter" value="281" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1238,8 +1241,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru." />
-    <MESSAGE value="Doplněno zobrazení poznámky v seznamu měsíčních odečtů." />
     <MESSAGE value="Opraven celkový součet za ostatní služby v ceníku nezahrnuté.&#10;Chyba byla, že se zobrazoval jen poslední. V celkovém součtu ceny byl součet v pořádku." />
     <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u ČEZu.&#10;Změněn formát datumu z long čísla na formát isoDateTime." />
     <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu." />
@@ -1263,7 +1264,9 @@
     <MESSAGE value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
     <MESSAGE value="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <option name="LAST_COMMIT_MESSAGE" value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <MESSAGE value="Úprava barev tlačítek bez pozadí a změna barvy textu v LabelEditText.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <MESSAGE value="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <option name="LAST_COMMIT_MESSAGE" value="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

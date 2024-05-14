@@ -55,7 +55,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         shpFilter = new ShPFilter(getContext());
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_filter, null);
 
         spRada = dialogView.findViewById(R.id.spRada);

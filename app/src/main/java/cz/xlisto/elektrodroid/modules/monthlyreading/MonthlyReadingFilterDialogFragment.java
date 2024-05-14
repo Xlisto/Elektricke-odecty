@@ -43,8 +43,7 @@ public class MonthlyReadingFilterDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         View view = requireActivity().getLayoutInflater().inflate(R.layout.fragment_monthly_reading_filter_dialog, null);
 
         Button btnFilter = view.findViewById(R.id.btnMonthlyReadingFilterReset);
