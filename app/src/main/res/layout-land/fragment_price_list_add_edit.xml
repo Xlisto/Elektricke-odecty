@@ -684,7 +684,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="200dp"
             android:text="@string/zpet"
-            android:textColor="#D81B60" />
+            android:textColor="@color/colorButtonText" />
 
         <Button
             android:id="@+id/btnUloz"
@@ -693,7 +693,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="200dp"
             android:text="@string/ulozit"
-            android:textColor="#D81B60" />
+            android:textColor="@color/colorButtonText" />
     </LinearLayout>
 
 

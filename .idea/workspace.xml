@@ -227,6 +227,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml">
         <config>
+          <night>night</night>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -402,23 +403,19 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
-      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_simple_2_0_13.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_api_2_0_12.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_api_2_0_13.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_slf4j_slf4j_simple_2_0_12.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_content_add.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_content_add.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_hdo.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_subscription_point.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_subscription_point.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hdo.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_payment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_payment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
@@ -535,7 +532,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="_Designer_Tab" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -561,6 +558,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;ScreenshotViewer.SavePath&quot;: &quot;C:/Users/Xlisto/Desktop&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.3.2/7bc0f04ccbe0159dc303408af769dc1bbb80d584/recyclerview-1.3.2-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
     &quot;android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/modules/dashboard/GraphConsuptionInvoiceGraphView.java_SELECTED&quot;: &quot;GraphConsuptionInvoiceGraphView&quot;,
@@ -601,6 +599,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -1165,7 +1164,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="275" />
+    <option name="localTasksCounter" value="276" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1239,7 +1238,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů." />
     <MESSAGE value="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru." />
     <MESSAGE value="Doplněno zobrazení poznámky v seznamu měsíčních odečtů." />
     <MESSAGE value="Opraven celkový součet za ostatní služby v ceníku nezahrnuté.&#10;Chyba byla, že se zobrazoval jen poslední. V celkovém součtu ceny byl součet v pořádku." />
@@ -1264,7 +1262,8 @@
     <MESSAGE value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
     <MESSAGE value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
     <MESSAGE value="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <option name="LAST_COMMIT_MESSAGE" value="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <MESSAGE value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <option name="LAST_COMMIT_MESSAGE" value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

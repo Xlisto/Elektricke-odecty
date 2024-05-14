@@ -32,4 +32,8 @@
     <color name="floatingButtonTint">#FF018786</color>
     <color name="floatingButtonBackground">#FFFFFF</color>
 
+    <color name="colorHint">#707070</color>
+    <color name="colorLabelEditText">#000000</color>
+    <color name="colorButtonText">#FFAF174F</color>
+
 </resources>

@@ -15,4 +15,8 @@
 
     <color name="color_no">#960101</color>
     <color name="color_yes">#008000</color>
+
+    <color name="colorHint">#B8B7B7</color>
+    <color name="colorLabelEditText">#FFFFFF</color>
+    <color name="colorButtonText">#FF2172</color>
 </resources>

@@ -78,6 +78,7 @@ public class LabelEditText extends RelativeLayout {
         RelativeLayout relativeLayout = findViewById(R.id.relative_layout);
 
         textView = findViewById(R.id.tvLabelEdit);
+        textView.setTextColor(getResources().getColor(R.color.colorLabelEditText));
         RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         relativeLayoutParams.addRule(RelativeLayout.END_OF, textView.getId());
@@ -96,6 +97,9 @@ public class LabelEditText extends RelativeLayout {
         editText.setMinHeight(heightInPx);
         editText.setMinWidth(widthInPx);
         editText.setId(View.generateViewId());
+        editText.setHintTextColor(getResources().getColor(R.color.colorHint));
+        editText.setTextColor(getResources().getColor(R.color.colorLabelEditText));
+
         relativeLayout.addView(editText);
         originalBackgroundDrawable = editText.getBackground();
 

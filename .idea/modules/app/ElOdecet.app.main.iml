@@ -91,6 +91,6 @@
     <orderEntry type="library" name="Gradle: androidx.resourceinspection:resourceinspection-annotation:1.0.1" level="project" />
     <orderEntry type="library" name="Gradle: androidx.collection:collection-ktx:1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jsoup:jsoup:1.17.2" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.13" level="project" />
   </component>
 </module>

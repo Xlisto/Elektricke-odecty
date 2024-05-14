@@ -216,7 +216,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/zpet"
-            android:textColor="#D81B60" />
+            android:textColor="@color/colorButtonText" />
 
         <Button
             android:id="@+id/btnAddEditHdoSave"
@@ -224,6 +224,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add"
-            android:textColor="#D81B60" />
+            android:textColor="@color/colorButtonText" />
     </LinearLayout>
 </RelativeLayout>

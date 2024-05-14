@@ -24,7 +24,8 @@
         android:elevation="6dp"
         android:gravity="center"
         android:padding="5dp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@color/black" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
