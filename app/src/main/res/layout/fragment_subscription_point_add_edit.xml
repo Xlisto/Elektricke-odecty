@@ -79,6 +79,7 @@
                 android:layout_below="@id/letName"
                 android:layout_marginBottom="5dp"
                 android:inputType="text"
+                android:minHeight="48dp"
                 app:direction="vertical"
                 app:label="@string/popis">
 
@@ -90,9 +91,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:inputType="text"
+                android:minHeight="48dp"
                 app:direction="vertical"
                 app:label="@string/jmeno_odberneho_mista">
 
@@ -105,6 +107,7 @@
                 android:layout_below="@id/rlFaze"
                 android:layout_marginBottom="5dp"
                 android:inputType="text"
+                android:minHeight="48dp"
                 app:direction="vertical"
                 app:label="@string/cislo_elektromeru" />
 
@@ -114,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/letElektrometer"
                 android:inputType="number"
+                android:minHeight="48dp"
                 app:direction="vertical"
                 app:label="@string/cislo_odberneho_místa" />
         </RelativeLayout>

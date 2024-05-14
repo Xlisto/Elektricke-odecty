@@ -82,14 +82,19 @@ public class LabelEditText extends RelativeLayout {
         relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         relativeLayoutParams.addRule(RelativeLayout.END_OF, textView.getId());
 
+        int heightInDp = 48;
+        int widthInDp = 80;
+        int heightInPx = (int) (heightInDp * getResources().getDisplayMetrics().density);
+        int widthInPx = (int) (widthInDp * getResources().getDisplayMetrics().density);
+
         //vytvoření EditTextu a přidání do layoutu
         editText = new EditText(context);
         editText.setLayoutParams(relativeLayoutParams);
         editText.setGravity(View.TEXT_ALIGNMENT_VIEW_END);
         editText.setHint("");
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setMinHeight(48);
-        editText.setMinWidth(48);
+        editText.setMinHeight(heightInPx);
+        editText.setMinWidth(widthInPx);
         editText.setId(View.generateViewId());
         relativeLayout.addView(editText);
         originalBackgroundDrawable = editText.getBackground();
@@ -354,7 +359,7 @@ public class LabelEditText extends RelativeLayout {
         int inputTypeValue = editText.getInputType();
         if (s == null)
             return "";
-        if (s.equals(""))
+        if (s.isEmpty())
             return s;
         if (InputType.TYPE_CLASS_NUMBER == inputTypeValue ||
                 (InputType.TYPE_NUMBER_FLAG_DECIMAL + InputType.TYPE_CLASS_NUMBER) == inputTypeValue ||

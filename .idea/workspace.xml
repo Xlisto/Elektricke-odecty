@@ -183,6 +183,11 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list_add_edit.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_tab.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
@@ -254,6 +259,11 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point_add_edit.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -390,11 +400,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava absence tlačítka pro přidání prvního odběrného místa">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_create_new_invoice.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_create_new_invoice.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_filter.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_filter.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_set_values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_set_values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point_add_edit.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -404,7 +416,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -509,7 +521,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -596,7 +608,7 @@
   }
 }</component>
   <component name="PsdUISettings">
-    <option name="MODULE_TAB" value="Properties" />
+    <option name="MODULE_TAB" value="Default Config" />
     <option name="BUILD_VARIANTS_TAB" value="Build Types" />
     <option name="LAST_EDITED_SIGNING_CONFIG" value="debug" />
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
@@ -1139,7 +1151,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="272" />
+    <option name="localTasksCounter" value="273" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1213,7 +1225,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena chyba se zobrazování tlačítka pro výběr ceníku v novém/upravovaném měsíčním odečtu.&#10;Při původně zatržené volbě &quot;Výměna elektroměru&quot; se současně při zobrazení fragmentu zobrazovalo tlačítko pro výběr ceníku. To při této variantě je zbytečné." />
     <MESSAGE value="Opravena chyba nullového handleru při vytvoření automatické zálohy při vložení/úpravě měsíčního odečtu.&#10;Zároveň odstraněno varování: Call to 'printStackTrace()' should probably be replaced with more robust logging in android&#10;Použita knihovna SFL4J" />
     <MESSAGE value="Doplněna funkce pro kompletní generování automatických záznamů pro období bez faktury.&#10;Nastavena možnost úpravy pouze prvního a posledního záznamu nebo kompletně všech záznamů podle měsíčních odečtů." />
     <MESSAGE value="Nalezena a opravena chyba při zálohování.&#10;Pokud odběrné místo neobsahovalo žádný měsíční odečet, který je potřeba při zapsání hodnot do záložního ZIP souboru." />
@@ -1238,7 +1249,8 @@
     <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
     <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0 a úprava textu, když není žádný HDO&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
     <MESSAGE value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
+    <MESSAGE value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

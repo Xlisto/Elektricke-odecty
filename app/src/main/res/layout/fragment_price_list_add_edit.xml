@@ -114,18 +114,18 @@
                         android:layout_below="@id/tvUzemiSeznam"
                         android:entries="@array/distribucni_uzemi"
 
-                        android:minHeight="48dp"
-                        android:minWidth="160dp" />
+                        android:minWidth="160dp"
+                        android:minHeight="48dp" />
 
                     <Spinner
                         android:id="@+id/spSazbaSeznam"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
                         android:layout_below="@id/tvUzemiSeznam"
+                        android:layout_alignParentEnd="true"
                         android:entries="@array/sazby"
-                        android:minHeight="48dp"
-                        android:minWidth="140dp" />
+                        android:minWidth="140dp"
+                        android:minHeight="48dp" />
 
                     <TextView
                         android:id="@+id/tvUzemiSeznam"
@@ -170,6 +170,7 @@
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivRada"
                     android:inputType="text"
+                    android:minHeight="48dp"
                     app:direction="vertical"
                     app:hintText="Produkt"
                     app:label="@string/produkt" />
@@ -180,6 +181,7 @@
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivProdukt"
                     android:inputType="text"
+                    android:minHeight="48dp"
                     app:direction="vertical"
                     app:hintText="E.ON"
                     app:label="@string/dodavatel" />
@@ -189,6 +191,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="text"
+                    android:minHeight="48dp"
                     app:direction="vertical"
                     app:hintText="Ceníková řada"
                     app:label="@string/produktova_rada" />
@@ -255,6 +258,7 @@
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="4"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/vt2" />
 
@@ -326,12 +330,13 @@
                         android:id="@+id/ivJ0"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_do_10" />
 
@@ -339,11 +344,12 @@
                         android:id="@+id/ivJ1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_10" />
 
@@ -363,11 +369,12 @@
                         android:id="@+id/ivJ3"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_20" />
 
@@ -375,11 +382,12 @@
                         android:id="@+id/ivJ4"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25" />
 
@@ -387,11 +395,12 @@
                         android:id="@+id/ivJ5"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_32" />
 
@@ -399,11 +408,12 @@
                         android:id="@+id/ivJ6"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_40" />
 
@@ -411,11 +421,12 @@
                         android:id="@+id/ivJ7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_50" />
 
@@ -423,11 +434,12 @@
                         android:id="@+id/ivJ10"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63" />
 
@@ -435,11 +447,12 @@
                         android:id="@+id/ivJ11"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_80" />
 
@@ -447,11 +460,12 @@
                         android:id="@+id/ivJ12"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_100" />
 
@@ -459,11 +473,12 @@
                         android:id="@+id/ivJ13"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_125" />
 
@@ -471,11 +486,12 @@
                         android:id="@+id/ivJ14"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_160" />
 
@@ -483,11 +499,12 @@
                         android:id="@+id/ivJ8"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63_za_A" />
 
@@ -495,11 +512,12 @@
                         android:id="@+id/ivJ9"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="4"
+                        android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25_za_A" />
                 </LinearLayout>
@@ -550,12 +568,13 @@
                     android:id="@+id/ivOTE"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/tvCenaZaOstatniSluzby"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginEnd="5dp"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/cinnost_ote" />
 
@@ -563,13 +582,14 @@
                     android:id="@+id/ivCinnostOperatoraTrhu"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/tvCenaZaOstatniSluzby"
-                    android:layout_marginEnd="5dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="16dp"
+                    android:layout_marginEnd="5dp"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/cinnost_operatora_trhu" />
 
@@ -578,11 +598,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivSystemoveSluzby"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz" />
 
@@ -595,6 +616,7 @@
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/poze_dle_jistice">
 
@@ -604,12 +626,13 @@
                     android:id="@+id/ivPOZE2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
                     android:layout_below="@id/ivOZE"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginEnd="5dp"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/poze_dle_spotreby" />
 
@@ -623,6 +646,7 @@
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/systemove_sluzby" />
 
@@ -643,6 +667,7 @@
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/dan_z_elektriny">
 
@@ -660,6 +685,7 @@
                     android:inputType="numberDecimal"
                     android:maxEms="3"
                     android:minWidth="48dp"
+                    android:minHeight="48dp"
                     app:hintText="@string/nuly"
                     app:label="@string/dph" />
 
