@@ -9,6 +9,8 @@
     <color name="color_hdo_time_PV">#2D4E75</color>
     <color name="menuBackgroundColor">#587598</color>
 
+    <color name="color_primary">#FFFFFF</color>
+
     <color name="labelEditBackgroundEditText">#33F60000</color>
 
     <color name="floatingButtonTint">#FF03DAC5</color>
@@ -20,4 +22,10 @@
     <color name="colorHint">#B8B7B7</color>
     <color name="colorLabelEditText">#FFFFFF</color>
     <color name="colorButtonText">#FF2172</color>
+
+    <color name="nav_menu_background">#FF222222</color> <!-- Background color -->
+    <color name="nav_menu_item_color">#FFFFFF</color> <!-- Item text color -->
+    <color name="nav_menu_item_color_checked">#80BB86FC</color> <!-- Item checked text color -->
+    <color name="nav_menu_item_selected_color">#FF0000</color> <!-- Selected item color -->
+
 </resources>

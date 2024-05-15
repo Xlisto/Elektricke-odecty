@@ -13,4 +13,18 @@
 -->
 
     </style>
+
+    <!-- Define a new style for NavigationView -->
+    <style name="MyNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextColor">@color/nav_menu_item_color</item>
+        <item name="itemIconTint">@color/nav_menu_item_color</item>
+        <item name="itemBackground">@color/nav_menu_background</item>
+        <item name="background">@color/color_hdo_time_TUV</item>
+        <item name="itemTextAppearance">@style/NavMenuItemTextAppearance</item>
+    </style>
+
+    <!-- Define text appearance for navigation menu items -->
+    <style name="NavMenuItemTextAppearance" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/nav_menu_item_color</item>
+    </style>
 </resources>
