@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#7D5AA8</color>
+    <color name="purple_200">#FFBB86FC</color>
     <color name="color_red_alert">#F63030</color>
     <color name="color_axis">#B8B7B7</color>
     <color name="color_graph_background">#121212</color>

@@ -126,6 +126,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml">
         <config>
+          <night>night</night>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -181,6 +182,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_add_edit.xml">
         <config>
+          <night>night</night>
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
@@ -419,8 +421,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
