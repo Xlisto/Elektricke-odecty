@@ -39,6 +39,7 @@ import cz.xlisto.elektrodroid.utils.Calculation;
  * Xlisto 26.12.2023 18:45
  */
 public class DataInvoiceSource extends DataSource {
+
     private static final String TAG = "DataInvoiceSource";
 
 
@@ -74,7 +75,7 @@ public class DataInvoiceSource extends DataSource {
     /**
      * Vloží všechny záznamy do faktury
      */
-    public void insertAllInvoices(String table,ArrayList<InvoiceModel> invoices) {
+    public void insertAllInvoices(String table, ArrayList<InvoiceModel> invoices) {
         for (InvoiceModel invoice : invoices) {
             insertInvoice(table, invoice);
         }
@@ -111,8 +112,8 @@ public class DataInvoiceSource extends DataSource {
         double maxNtNow = maxNTInvoice(-1L, subscriptionPoint.getTableTED());
         long countPaymentsNow = countItems(-1L, subscriptionPoint.getTablePLATBY());
         long countReadsNow = countItems(-1L, subscriptionPoint.getTableTED());
-
-        invoices.add(new InvoiceListModel(-1L, "Období bez faktury", minDateNow, maxDateNow, countPaymentsNow, countReadsNow, minVtNow, maxVtNow, minNtNow, maxNtNow));
+        if (minDateNow != 0 && maxDateNow != 0) //poked jsou data 0, záznam se nevloží
+            invoices.add(new InvoiceListModel(-1L, "Období bez faktury", minDateNow, maxDateNow, countPaymentsNow, countReadsNow, minVtNow, maxVtNow, minNtNow, maxNtNow));
 
         String sql = "select *,(SELECT min(" + COLUMN_DATE_FROM + ") from " + subscriptionPoint.getTableFAK() + " WHERE " + ID_FAK + "=faktury._id) as minDate from faktury " +
                 " WHERE odber_id=?" +
@@ -367,6 +368,7 @@ public class DataInvoiceSource extends DataSource {
                 new String[]{String.valueOf(idFak)});
     }
 
+
     /**
      * Smaže všechny záznamy ve faktuře a resetuje autoincrement
      */
@@ -577,7 +579,6 @@ public class DataInvoiceSource extends DataSource {
             cursor.close();
         }
 
-
         return sumInvoices;
     }
 
@@ -722,4 +723,5 @@ public class DataInvoiceSource extends DataSource {
         cursor.close();
         return date;
     }
+
 }

@@ -3,6 +3,7 @@
 
     <string name="datum_cislem">01.01.2022</string>
     <string name="pomlka">-</string>
+    <string name="no_date">XX.XX.XXXX</string>
     <string name="platnost_cenik">Platnost OD - DO</string>
     <string name="dodavatel">Dodavatel</string>
     <string name="produkt">Produkt</string>
@@ -462,6 +463,8 @@
     <string name="autogenerate_no">Pro období bez faktury se bude generovat pouze počáteční a konečný záznam měřidel. Ostatní změny jsou potřeba dělat ručně, jako jsou přiřazení ceníku, rozdělení nebo sloučení jednotlivých záznamů.</string>
     <string name="autogenerate_yes">Pro období bez faktury se budou generovat všechny údaje podle měsíčních záznamů. Použije se rozdělení podle ceníků, výměny elektroměru atd. Ruční manipulace se záznamy v období bez faktury je zákazána.</string>
     <string name="no_monthly_records">Nejsou zapsány žádné měsíční záznamy. Nelze vytvořit záznam v období bez faktury.</string>
+    <string name="no_invoice_records">Není zapsána poslední vyúčtovaná faktura. Nelze vytvořit záznam v období bez faktury.</string>
+    <string name="no_invoice">Není zapsána žádná faktura. Nelze počítat současnou spotřebu od posledního vyúčtování.</string>
 
     <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
     <string name="add_monthly_reading">Přidat odečet</string>

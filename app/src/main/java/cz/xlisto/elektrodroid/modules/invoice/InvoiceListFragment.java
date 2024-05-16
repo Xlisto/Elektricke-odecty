@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.SettingsInvoiceDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.shp.ShPInvoice;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.UIHelper;
@@ -54,6 +56,8 @@ public class InvoiceListFragment extends Fragment {
     private InvoiceListAdapter invoiceAdapter;
     private String tablePay;
     private String tableFak;
+    private String tableNow;
+    private String tableReading;
     private Button btnAddInvoice;
     private FloatingActionButton fab;
 
@@ -106,6 +110,14 @@ public class InvoiceListFragment extends Fragment {
                 dataInvoiceSource.deleteInvoiceList(tableFak, idFak);
                 dataInvoiceSource.close();
                 invoiceAdapter.removeItem();
+                ShPInvoice shPInvoice = new ShPInvoice(requireActivity());
+                if (shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true))
+                    WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), tableNow, tableFak, tableReading);
+                else
+                    WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
+
+                loadDataAndSetAdapter();
+                invoiceAdapter.notifyItemRangeChanged(0, invoiceAdapter.getItemCount());
             }
         });
         //posluchač zavření dialogová okna nastavení
@@ -146,6 +158,14 @@ public class InvoiceListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true);
+        loadDataAndSetAdapter();
+    }
+
+
+    /**
+     * Načte data a nastaví adaptér
+     */
+    private void loadDataAndSetAdapter() {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
@@ -154,14 +174,21 @@ public class InvoiceListFragment extends Fragment {
         }
         tablePay = subscriptionPoint.getTablePLATBY();
         tableFak = subscriptionPoint.getTableFAK();
+        tableNow = subscriptionPoint.getTableTED();
+        tableReading = subscriptionPoint.getTableO();
         dataSubscriptionPointSource.close();
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
         dataInvoiceSource.open();
         ArrayList<InvoiceListModel> invoices = dataInvoiceSource.loadInvoiceLists(subscriptionPoint);
         dataInvoiceSource.close();
-        invoiceAdapter = new InvoiceListAdapter(getContext(), invoices, rv);
+
+        if (invoices.isEmpty()) {
+            OwnAlertDialog.show(requireContext(), requireContext().getResources().getString(R.string.error), requireContext().getResources().getString(R.string.no_invoice));
+        }
+
+        invoiceAdapter = new InvoiceListAdapter(requireContext(), invoices, rv);
         rv.setAdapter(invoiceAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 
 

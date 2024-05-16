@@ -298,7 +298,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment {
         if (shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true))
             WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
         else
-            WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), lastMonthlyReading);
+            WithOutInvoiceService.editLastItemInInvoice(requireActivity(), subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), lastMonthlyReading);
     }
 
 

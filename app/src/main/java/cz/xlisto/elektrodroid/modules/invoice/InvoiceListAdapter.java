@@ -45,6 +45,7 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
  * Xlisto 01.02.2023 19:28
  */
 public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.MyViewHolder> {
+
     private static final String TAG = "InvoiceListAdapter";
     private final Context context;
     private final ArrayList<InvoiceListModel> items;
@@ -56,14 +57,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private long selectedIdFak;
 
 
-
-
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout relativeLayout;
         LinearLayout lnButtons1, lnButtons2;
         TextView tvNumberInvoice, tvDateOf, tvDateTo, tvDateDifferent, tvPayments, tvReads, tvNumberInvoiceDescription;
-        TextView tvVTmin, tvVTmax, tvNTmin, tvNTmax;
+        TextView tvVTmin, tvVTmax, tvNTmin, tvNTmax, tvVTDescription, tvNTDescription, tvInvoiceListVTDash, tvInvoiceListNTDash;
         Button btnNumberInvoice, btnShowInvoice, btnPayments, btnDeleteInvoice;
         ImageView imgAlert;
 
@@ -108,6 +107,10 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         vh.tvVTmax = v.findViewById(R.id.tvInvoiceListVTMax);
         vh.tvNTmin = v.findViewById(R.id.tvInvoiceListNTMin);
         vh.tvNTmax = v.findViewById(R.id.tvInvoiceListNTMax);
+        vh.tvVTDescription = v.findViewById(R.id.tvInvoiceListVTDescription);
+        vh.tvNTDescription = v.findViewById(R.id.tvInvoiceListNTDescription);
+        vh.tvInvoiceListVTDash = v.findViewById(R.id.tvInvoiceListVTDash);
+        vh.tvInvoiceListNTDash = v.findViewById(R.id.tvInvoiceListNTDash);
         originalTextViewColors = vh.tvDateOf.getTextColors();
 
         shPInvoiceList = new ShPInvoiceList(context);
@@ -120,7 +123,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final InvoiceListModel invoice = items.get(position);
-        checkDate(position, holder);
+
         holder.id = invoice.getIdFak();
         loadTableName();
         holder.relativeLayout.setOnClickListener(v -> {
@@ -152,7 +155,6 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             invoiceEditDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-
         holder.btnPayments.setOnClickListener(v -> {
             loadTableName();
             InvoiceAdapter.resetShowButtons();
@@ -161,7 +163,6 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
-
 
         holder.btnShowInvoice.setOnClickListener(v -> {
             loadTableName();
@@ -176,15 +177,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.alert_delete_invoice), INVOICE_DELETE_LISTENER);
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
 
-
-
         });
 
         long minDate = invoice.getMinDate();
         long maxDate = invoice.getMaxDate();
         long payments = invoice.getPayments();
         long reads = invoice.getReads();
-
 
         String startDate = ViewHelper.convertLongToDate(minDate);
         String endDate = ViewHelper.convertLongToDate(maxDate);
@@ -212,6 +210,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         showButtons(holder, position);
 
         holder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
+
+        checkDate(position, holder);
     }
 
 
@@ -284,15 +284,25 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
                 nextDateLong >= prevDateLong) {
             holder.imgAlert.setVisibility(View.GONE);
             //zobrazení ikony alertu, když je datum na 0
-            if (dateOf.equals("01.01.1970") || dateTo.equals("01.01.1970"))
+            if (dateOf.equals("01.01.1970") || dateTo.equals("01.01.1970")) {
                 holder.imgAlert.setVisibility(View.VISIBLE);
-            else
+                holder.tvDateOf.setText(context.getResources().getString(R.string.no_date));
+                holder.tvDateTo.setText(context.getResources().getString(R.string.no_date));
+                holder.tvDateDifferent.setText("");
+                holder.tvVTmin.setVisibility(View.GONE);
+                holder.tvVTmax.setVisibility(View.GONE);
+                holder.tvNTmin.setVisibility(View.GONE);
+                holder.tvNTmax.setVisibility(View.GONE);
+                holder.tvVTDescription.setVisibility(View.GONE);
+                holder.tvNTDescription.setVisibility(View.GONE);
+                holder.tvInvoiceListVTDash.setVisibility(View.GONE);
+                holder.tvInvoiceListNTDash.setVisibility(View.GONE);
+            } else
                 holder.imgAlert.setVisibility(View.GONE);
         } else {
             holder.imgAlert.setVisibility(View.VISIBLE);
             Toast.makeText(context, "Zvýrazněné záznamy na sebe nenavazují", Toast.LENGTH_LONG).show();
         }
-
 
     }
 
@@ -336,11 +346,13 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
 
     /**
      * Vrátí id vybrané faktury
+     *
      * @return id faktury
      */
     public long getSelectedIdFak() {
         return selectedIdFak;
     }
+
 
     public void removeItem() {
         items.remove(showButtons);
@@ -349,6 +361,5 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         showButtons = -1;
         notifyItemChanged(0, getItemCount());
     }
-
 
 }

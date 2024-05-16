@@ -300,7 +300,7 @@ public class InvoiceFragment extends Fragment {
         MonthlyReadingModel monthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableRead);
         dataMonthlyReadingSource.close();
         WithOutInvoiceService.editFirstItemInInvoice(requireContext());
-        WithOutInvoiceService.editLastItemInInvoice(requireContext(), tableNOW, monthlyReading);
+        WithOutInvoiceService.editLastItemInInvoice(requireContext(), tableNOW, tableFAK, monthlyReading);
         onResume();
     }
 
