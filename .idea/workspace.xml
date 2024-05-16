@@ -420,16 +420,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_text.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_text.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -607,7 +601,7 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/16.05.2024  11.59.24 El odecet.zip",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
@@ -1179,7 +1173,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="283" />
+    <option name="localTasksCounter" value="284" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1253,7 +1247,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu." />
     <MESSAGE value="Aktualizace Android Gradle plugin na verzi 8.4.0" />
     <MESSAGE value="Přidán README.md" />
     <MESSAGE value="Přidán README.md a screeny aplikace" />
@@ -1278,7 +1271,8 @@
     <MESSAGE value="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <option name="LAST_COMMIT_MESSAGE" value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <MESSAGE value="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <option name="LAST_COMMIT_MESSAGE" value="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
