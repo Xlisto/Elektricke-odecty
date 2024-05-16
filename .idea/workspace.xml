@@ -86,7 +86,7 @@
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
         <config>
-          <theme>@style/Theme.Odecty</theme>
+          <theme>@style/Theme.AppCompat.NoActionBar</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml">
@@ -420,17 +420,16 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_background.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_text.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_text.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/nav_item_text.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/themes.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -440,7 +439,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -498,8 +497,8 @@
         <option value="Interface" />
         <option value="layoutResourceFile" />
         <option value="Class" />
-        <option value="valueResourceFile" />
         <option value="resourceFile" />
+        <option value="valueResourceFile" />
       </list>
     </option>
   </component>
@@ -566,7 +565,7 @@
     "ExportApk.ApkPathForElOdecet.app": "C:\\Users\\Xlisto\\AndroidStudioProjects\\ElOdecet\\app",
     "ExportBundle.BundlePathForElOdecet.app": "C:\\Users\\Xlisto\\AndroidStudioProjects\\Elektricke-odecty\\app",
     "PROJECT_TRUSTED_KEY": "true",
-    "ResourceManagerPrefKey.ResourceType": "MIPMAP",
+    "ResourceManagerPrefKey.ResourceType": "DRAWABLE",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
@@ -608,12 +607,12 @@
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3": "junit.framework.TestCase",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Xlisto/AndroidStudioProjects/Elektricke-odecty/app/src/main/res/values",
+    "last_opened_file_path": "C:/Users/Xlisto/Desktop/database_kiss.db",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "settings.editor.selected.configurable": "Settings.Markdown"
   },
   "keyToStringList": {
     "ExportApk.BuildVariants": [
@@ -630,6 +629,9 @@
     "android-custom-viewC:/Users/Xlisto/AndroidStudioProjects/ElOdecet/app/src/main/java/cz/xlisto/odecty/ownview/NumbersMeter.java_NumbersMeter_DIMENSIONS": [
       "1080",
       "1920"
+    ],
+    "android.recentlyUsedThemes": [
+      "Theme.AppCompat"
     ]
   }
 }]]></component>
@@ -1177,7 +1179,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="282" />
+    <option name="localTasksCounter" value="283" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1251,7 +1253,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u ČEZu.&#10;Změněn formát datumu z long čísla na formát isoDateTime." />
     <MESSAGE value="Opravena chyba parsování JSON výsledku z načítání HDO u EGD.&#10;chyba byla způsobena absencí apiAuthBasic. Tento parametr byl odstraněn z načítaného webu." />
     <MESSAGE value="Aktualizace Android Gradle plugin na verzi 8.4.0" />
     <MESSAGE value="Přidán README.md" />
@@ -1276,7 +1277,8 @@
     <MESSAGE value="Úprava barev tlačítek bez pozadí a změna barvy textu v LabelEditText.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <option name="LAST_COMMIT_MESSAGE" value="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <MESSAGE value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
+    <option name="LAST_COMMIT_MESSAGE" value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

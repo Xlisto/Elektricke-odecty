@@ -36,11 +36,12 @@
     <color name="colorLabelEditText">#000000</color>
     <color name="colorButtonText">#FFAF174F</color>
 
+    <!-- NavigationView -->
     <color name="nav_menu_background">#FFFFFF</color> <!-- Background color -->
     <color name="nav_menu_item_color">#000000</color> <!-- Item text color -->
     <color name="nav_menu_item_color_checked">#E3CEFE</color> <!-- Item checked text color -->
+    <color name="nav_menu_item_color_pressed">#D5CCE1</color> <!-- Item presed background color -->
 
-    <color name="nav_menu_item_selected_color">#FF0000</color> <!-- Selected item color -->
 
 
 </resources>
