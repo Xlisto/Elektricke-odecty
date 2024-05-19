@@ -473,4 +473,13 @@
     <string name="add_hdo">Přidat čas HDO</string>
 
     <string name="no_price_list">Pro tento rok není dostupná regulovaná cena</string>
+
+    <!-- descriptions -->
+    <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
+    <string name="description_import">Seznam ceníku připravených k vložení do aplikace</string>
+    <string name="description_subscription_point_name">pojmenujte si odběrné místo</string>
+    <string name="description_subscription_point_description">Zapište si poznámky k odběrnému místu</string>
+    <string name="description_subscription_point_phaze">Zadejte počet fází (1 nebo 3)</string>
+    <string name="description_subscription_point_power">Zadejte příkon hlavního jističe</string>
+    <string name="description_price_list">Seznam ceníků</string>
 </resources>

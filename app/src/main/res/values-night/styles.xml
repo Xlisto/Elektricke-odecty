@@ -5,6 +5,7 @@
         <item name="android:background">#1c1c1c</item>
         <item name="colorOnPrimary">@color/colorButtonText</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundDimAmount">0.5</item>
         <!--<item name="colorPrimary">@color/colorButtonText</item>
         <item name="colorText">@color/colorButtonText</item>
         <item name="color">@color/colorButtonText</item>

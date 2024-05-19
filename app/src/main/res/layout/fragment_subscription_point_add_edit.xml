@@ -21,6 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/letDescription"
+                android:layout_alignEnd="@id/letName"
                 android:layout_marginBottom="5dp">
 
                 <EditText
@@ -30,8 +31,8 @@
                     android:layout_below="@id/tvFazeZadani"
                     android:autofillHints="@string/_3"
                     android:ems="4"
-                    android:hint="@string/_3"
                     android:inputType="numberSigned"
+                    android:maxWidth="200dp"
                     android:minHeight="48dp"
                     android:textColorHint="#757575" />
 
@@ -43,8 +44,8 @@
                     android:layout_toEndOf="@id/tvX"
                     android:autofillHints="@string/_25"
                     android:ems="4"
-                    android:hint="@string/_25"
                     android:inputType="numberSigned"
+                    android:maxWidth="200dp"
                     android:minHeight="48dp"
                     android:textColorHint="#757575" />
 
@@ -53,8 +54,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/etCountPhaze"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_toEndOf="@id/etCountPhaze"
                     android:text="@string/x" />
 
@@ -62,6 +63,7 @@
                     android:id="@+id/tvFazeZadani"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:labelFor="@+id/etCountPhaze"
                     android:text="@string/pocet_fazi" />
 
                 <TextView
@@ -69,6 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignStart="@id/etPhaze"
+                    android:labelFor="@+id/etPhaze"
                     android:text="@string/max_prikon" />
             </RelativeLayout>
 
@@ -81,6 +84,7 @@
                 android:inputType="text"
                 android:minHeight="48dp"
                 app:direction="vertical"
+                android:contentDescription="@string/description_subscription_point_description"
                 app:label="@string/popis">
 
             </cz.xlisto.elektrodroid.ownview.LabelEditText>
@@ -96,6 +100,7 @@
                 android:inputType="text"
                 android:minHeight="48dp"
                 app:direction="vertical"
+                android:contentDescription="@string/description_subscription_point_name"
                 app:label="@string/jmeno_odberneho_mista">
 
             </cz.xlisto.elektrodroid.ownview.LabelEditText>

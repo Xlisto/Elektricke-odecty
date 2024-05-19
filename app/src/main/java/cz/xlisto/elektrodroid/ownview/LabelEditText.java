@@ -40,6 +40,7 @@ public class LabelEditText extends RelativeLayout {
     private int changedBackgroundEditText;
     private Drawable originalBackgroundDrawable;
     private boolean allowChangeColor = false;
+    private static final int MAX_WIDTH_DP = 488;
 
 
     public LabelEditText(Context context) {
@@ -62,6 +63,21 @@ public class LabelEditText extends RelativeLayout {
     public LabelEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
+    }
+
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int maxWidthInPx = (int) (MAX_WIDTH_DP * getResources().getDisplayMetrics().density);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+
+        if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
+            widthSize = Math.min(widthSize, maxWidthInPx);
+        }
+
+        int newWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSize, widthMode);
+        super.onMeasure(newWidthMeasureSpec, heightMeasureSpec);
     }
 
 
