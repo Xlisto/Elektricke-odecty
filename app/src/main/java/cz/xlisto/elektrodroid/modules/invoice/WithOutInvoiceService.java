@@ -2,7 +2,6 @@ package cz.xlisto.elektrodroid.modules.invoice;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,7 +13,6 @@ import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
-import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -147,7 +145,6 @@ public class WithOutInvoiceService {
      * @param tableO   název tabulky s měsíčními odečty
      */
     public static void updateAllItemsInvoice(Context context, String tableTED, String tableFAK, String tableO) {
-        Log.w(TAG, "updateAllItemsInvoice: " + tableTED + " " + tableFAK + " " + tableO);
         //poslední záznam vydané faktury
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
         dataInvoiceSource.open();
@@ -155,7 +152,6 @@ public class WithOutInvoiceService {
         if (lastInvoice == null)
             dataInvoiceSource.deleteAllInvoices(tableTED);
         dataInvoiceSource.close();
-        Log.w(TAG, "updateAllItemsInvoice: lastInvoice:" + lastInvoice);
         //seznam měsíčních odečtů zadaných od posledního data vydané faktury
         ArrayList<MonthlyReadingModel> monthlyReadingModels;
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
@@ -181,7 +177,6 @@ public class WithOutInvoiceService {
         long prevPriceListId = -1L;
         ArrayList<InvoiceModel> invoicesModels = new ArrayList<>();
 
-        Log.w(TAG, "updateAllItemsInvoice: size:" + invoicesModels.size());
         if (lastInvoice == null) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
             String title = context.getResources().getString(R.string.error);
             String message = context.getResources().getString(R.string.no_invoice_records);
@@ -196,43 +191,33 @@ public class WithOutInvoiceService {
             return;
         }
 
-        for (MonthlyReadingModel mr : monthlyReadingModels) {
-            Log.w(TAG, "updateAllItemsInvoice: měsíční odečet:" + ViewHelper.convertLongToDate(mr.getDate()) + " " + mr.isFirst());
-        }
         //procházím seznam měsíčních odečtů a vytvářím záznamy faktur. Pokud je výměna elektroměru nebo jiný ceník, vytvoří se nový záznam
         for (int i = 0; i < monthlyReadingModels.size(); i++) {
             MonthlyReadingModel monthlyReadingModel = monthlyReadingModels.get(i);
-            Log.w(TAG, "updateAllItemsInvoice: " + monthlyReadingModel.getDate() + " " + monthlyReadingModel.isFirst());
             if (monthlyReadingModel.isFirst()) {//nový záznam pro období bez faktury, pokud je vyměněn elektroměr
-                Log.w(TAG, "updateAllItemsInvoice: isFirst " + monthlyReadingModel.getDate() + " " + monthlyReadingModel.isFirst());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(monthlyReadingModel.getDate());
-                calendar.add(Calendar.DAY_OF_MONTH, -1);
                 newInvoice = new InvoiceModel(calendar.getTimeInMillis(), calendar.getTimeInMillis(),
                         monthlyReadingModel.getVt(), monthlyReadingModel.getVt(), monthlyReadingModel.getNt(), monthlyReadingModel.getNt(),
                         -1L, -1L, 0, "0", monthlyReadingModel.isFirst());
                 invoicesModels.add(newInvoice);
             } else if (i == 0) {//nový záznam pro období bez faktury, údaje jsou s nejstarším měsíčním odečtem
-                Log.w(TAG, "updateAllItemsInvoice: i==0 " + monthlyReadingModel.getDate() + " " + monthlyReadingModel.isFirst());
-                //Calendar dateLastInvoice = Calendar.getInstance();
-                Calendar dateLastMonthlyReading = Calendar.getInstance();
                 dateLastInvoice.setTimeInMillis(lastInvoiceDateTo);
-                dateLastMonthlyReading.setTimeInMillis(monthlyReadingModel.getDate());
-                //dateLastMonthlyReading.add(Calendar.DAY_OF_MONTH, -1);
+                Calendar dateTo = Calendar.getInstance();
+                dateTo.setTimeInMillis(monthlyReadingModel.getDate());
+                dateTo.add(Calendar.DAY_OF_MONTH, -1);
                 if (lastInvoiceDateTo > 0)//pokud je datum na 1.1.1970, tak se nic nepřičítá
                     dateLastInvoice.add(Calendar.DAY_OF_MONTH, 1);
-                newInvoice = new InvoiceModel(dateLastInvoice.getTimeInMillis(), dateLastMonthlyReading.getTimeInMillis(),
+                newInvoice = new InvoiceModel(dateLastInvoice.getTimeInMillis(), dateTo.getTimeInMillis(),
                         lastInvoiceVtEnd, monthlyReadingModel.getVt(), lastInvoiceNtEnd, monthlyReadingModel.getNt(),
                         -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
                 invoicesModels.add(newInvoice);
             } else if (prevPriceListId != monthlyReadingModel.getPriceListId()) {//další záznam pro období bez faktury, pokud je jiný ceník
-                Log.w(TAG, "updateAllItemsInvoice: prevPriceListId != " + monthlyReadingModel.getDate() + " " + monthlyReadingModel.isFirst());
                 Calendar dateFrom = Calendar.getInstance();
                 Calendar dateTo = Calendar.getInstance();
                 dateTo.setTimeInMillis(monthlyReadingModel.getDate());
                 dateTo.add(Calendar.DAY_OF_MONTH, -1);
                 dateFrom.setTimeInMillis(newInvoice.getDateTo());
-                dateFrom.add(Calendar.DAY_OF_MONTH, -1);
                 newInvoice.setDateTo(dateFrom.getTimeInMillis());
                 dateFrom.add(Calendar.DAY_OF_MONTH, 1);
 
@@ -243,7 +228,6 @@ public class WithOutInvoiceService {
                         -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
                 invoicesModels.add(newInvoice);
             } else {//úprava stávajícího záznamu faktury
-                Log.w(TAG, "updateAllItemsInvoice: else " + monthlyReadingModel.getDate() + " " + monthlyReadingModel.isFirst());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(monthlyReadingModel.getDate());
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
