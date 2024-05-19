@@ -469,6 +469,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         setTextAlertColor(holder.ntStart, ntStart == prevNt || isChangedElectricMeter);
         setTextAlertColor(holder.ntEnd, ntEnd == nextNt || isChangedElectricMeterNext);
 
+        //zvýraznění pokud je spotřeba záporná
+        setTextAlertColor(holder.vTDif, vtStart <= vtEnd);
+        setTextAlertColor(holder.ntDif, ntStart <= ntEnd);
+
         //zobrazení textu o výměně elektroměru
         if (!isChangedElectricMeterNext && !isChangedElectricMeter) {
             holder.tvNewMeter.setVisibility(View.GONE);
