@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.models;
 
+
 import java.util.ArrayList;
 
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
  * Xlisto 28.12.2023 10:52
  */
 public class InvoiceListSumModel {
+
     private static final String TAG = "InvoiceListSumModel";
     private final ArrayList<String> names;
     private final ArrayList<double[]> maxValues;
@@ -167,4 +169,5 @@ public class InvoiceListSumModel {
     public double getInvoiceSumTotalPrices(int index) {
         return invoiceSumTotalPrices.get(index);
     }
+
 }

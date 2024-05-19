@@ -41,6 +41,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 26.12.2023 16:55
  */
 public class DashBoardFragment extends Fragment {
+
     private static final String TAG = "DashBoardFragment";
     private RecyclerView rv;
     private ImageButton btnLeftShowInvoiceSum, btnRightShowInvoiceSum;
@@ -102,12 +103,11 @@ public class DashBoardFragment extends Fragment {
         else
             rlGraphTotalConsuptionButtons.setVisibility(View.VISIBLE);
 
-
         ShPDashBoard shPDashBoard = new ShPDashBoard(requireActivity());
         shPDashBoard.get(ShPDashBoard.IS_SHOW_TOTAL, false);
-        showInvoiceSum =shPDashBoard.get(ShPDashBoard.SHOW_INVOICE_SUM, 0);
+        showInvoiceSum = shPDashBoard.get(ShPDashBoard.SHOW_INVOICE_SUM, 0);
         //pro případ, kdyby ve sharedprefences byl uložený větší index odběrného místa než je počet
-        if(showInvoiceSum > count-1)
+        if (showInvoiceSum > count - 1)
             showInvoiceSum = 0;
 
         loadData();
@@ -161,7 +161,6 @@ public class DashBoardFragment extends Fragment {
             }
         });
 
-
     }
 
 
@@ -197,7 +196,11 @@ public class DashBoardFragment extends Fragment {
 
         InvoiceSumAdapter invoiceSumAdapter = new InvoiceSumAdapter(requireContext(), invoiceListSumModel.getInvoiceSumModels(showInvoiceSum), colorVTNT,
                 max, isShowTotal);
-        rv.setAdapter(invoiceSumAdapter);
+        rv.setAdapter(null);
+        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateStart() > 0
+                && invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateEnd() > 0)
+            rv.setAdapter(invoiceSumAdapter);
+
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -215,7 +218,7 @@ public class DashBoardFragment extends Fragment {
 
         tvName.setText(invoiceListSumModel.getName(showInvoiceSum));
 
-        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).isEmpty())
+        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).isEmpty() || rv.getAdapter() == null)
             tvNoInvoices.setVisibility(View.VISIBLE);
         else
             tvNoInvoices.setVisibility(View.GONE);
@@ -349,4 +352,5 @@ public class DashBoardFragment extends Fragment {
             return displayName;
         }
     }
+
 }
