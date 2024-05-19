@@ -197,9 +197,12 @@ public class DashBoardFragment extends Fragment {
         InvoiceSumAdapter invoiceSumAdapter = new InvoiceSumAdapter(requireContext(), invoiceListSumModel.getInvoiceSumModels(showInvoiceSum), colorVTNT,
                 max, isShowTotal);
         rv.setAdapter(null);
-        if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateStart() > 0
-                && invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateEnd() > 0)
-            rv.setAdapter(invoiceSumAdapter);
+        if (!invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).isEmpty()) {
+            if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateStart() > 0
+                    && invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateEnd() > 0)
+                rv.setAdapter(invoiceSumAdapter);
+        }
+
 
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

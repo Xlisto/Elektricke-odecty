@@ -420,20 +420,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Nastaveno skrývání položky pro období &quot;Bez faktury&quot; v DashBoardFragment">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněný atribut contentDescription v souborech fragment_backup.xml, fragment_import_price_list.xml, fragment_price_list.xml a fragment_subscription_point_add_edit.xml. &#10;Podle doporučení varování z interního testování.&#10;&#10;Upraven stín na pozadí při zobrazení dialogového okna a navigačního menu.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_backup.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_import_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_import_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_price_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_subscription_point_add_edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values-night/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values-night/styles.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/dashboard/DashBoardFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/dashboard/DashBoardFragment.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -443,7 +434,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1183,7 +1174,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="293" />
+    <option name="localTasksCounter" value="294" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1257,7 +1248,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Aktualizace jmenného prostoru na původní aplikaci ElektroDroid.&#10;Doplněna konverze sharedpreferences z &quot;IDMistaPozice&quot; na IDMistaPoziceLong v souboru ShPSubscriptionPoint.&#10;- přejmenování konstanty ID_SUBSCRIPTION_POINT na ID_SUBSCRIPTION_POINT_INT a vytvoření nové ID_SUBSCRIPTION_POINT_LONG" />
     <MESSAGE value="Aktualizace jmenného prostoru na původní aplikaci ElektroDroid.&#10;Doplněna konverze sharedpreferences z &quot;IDMistaPozice&quot; na IDMistaPoziceLong v souboru ShPSubscriptionPoint.&#10;- přejmenování konstanty ID_SUBSCRIPTION_POINT na ID_SUBSCRIPTION_POINT_INT" />
     <MESSAGE value="Oprava pádu aplikace při zobrazení faktur a nevybraným odběrného místa." />
     <MESSAGE value="Oprava pádu aplikace při pokusu o smazání nevyužitých ceníků i když neexistují žádné adběrná místa.&#10;Doplněna kontrola seznamu odběrných míst a poked je prázdný, funkce se ukončí.&#10;Změny jsou v souboru DataPriceListSource.&#10;Současně je povýšení verze na 103." />
@@ -1282,7 +1272,8 @@
     <MESSAGE value="Červené zvýraznění záporné spotřeby." />
     <MESSAGE value="Opraven výpočet datumu při plně automatickém výpočtu faktury." />
     <MESSAGE value="Nastaveno skrývání položky pro období &quot;Bez faktury&quot; v DashBoardFragment" />
-    <option name="LAST_COMMIT_MESSAGE" value="Nastaveno skrývání položky pro období &quot;Bez faktury&quot; v DashBoardFragment" />
+    <MESSAGE value="Doplněný atribut contentDescription v souborech fragment_backup.xml, fragment_import_price_list.xml, fragment_price_list.xml a fragment_subscription_point_add_edit.xml. &#10;Podle doporučení varování z interního testování.&#10;&#10;Upraven stín na pozadí při zobrazení dialogového okna a navigačního menu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněný atribut contentDescription v souborech fragment_backup.xml, fragment_import_price_list.xml, fragment_price_list.xml a fragment_subscription_point_add_edit.xml. &#10;Podle doporučení varování z interního testování.&#10;&#10;Upraven stín na pozadí při zobrazení dialogového okna a navigačního menu." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
