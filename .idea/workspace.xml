@@ -420,7 +420,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba při výběru ceníku ve faktuře.&#10;Chyba: pokud se zvolil v záznamu faktury ceník, automaticky se použil v jiném záznamu." />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Upravený rozvržení pro přidání nového měsíčního záznamu v land režimu.&#10;Tlačítko pro výběr ceníku zakrývalo část textu.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/ownview/LabelEditText.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/fragment_monthly_reading_add_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading_add_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_monthly_reading_add_edit.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -534,7 +540,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="_Designer_Tab" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -1169,7 +1175,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="288" />
+    <option name="localTasksCounter" value="289" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1243,7 +1249,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidána možnost volby umístění tlačítka pro přidání nových záznamů.&#10;Volba spočívá ve výběru plovoucího tlačítka nebo tlačítka ve spodní části obrazovky.&#10;Týká se těchto částí:&#10;- HdoFragment&#10;- InvoiceFragment&#10;- InvoiceListFragment1&#10;- MonthlyReadingFragment&#10;- PaymentFragment&#10;- PriceListFragment&#10;- SubscriptionPointFragment&#10;&#10;Pro zobrazení nastavených tlačítek se používá statická metoda showButtons v nové třídě UIHelper." />
     <MESSAGE value="Doplněné vodorovné rozvržení pro zobrazení informací o odběrním místě.&#10;Nový soubor rozvržení: fragment_subscription_point.xml" />
     <MESSAGE value="Odstraněný zbytečný jmenný prostor." />
     <MESSAGE value="Doplněný textový popisek při tvorbě/editaci ceníku, který upozorňuje na absenci regulovaných cen v aplikaci.&#10;&#10;Kontrola se provádí v PriceListAddEditAbstract, v metodě showBtnReloadRegulPriceList." />
@@ -1268,7 +1273,8 @@
     <MESSAGE value="Doplnění barvy textu pro dialogové okno v světlém režimu&#10;Příčina: text měl bílou barvu jako pozadí." />
     <MESSAGE value="Oprava automatického počítání spotřeby za aktuální období.&#10;Doplněny reakce na stav, pokud neexistuje žádná zadaná faktura." />
     <MESSAGE value="Opravena chyba při výběru ceníku ve faktuře.&#10;Chyba: pokud se zvolil v záznamu faktury ceník, automaticky se použil v jiném záznamu." />
-    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba při výběru ceníku ve faktuře.&#10;Chyba: pokud se zvolil v záznamu faktury ceník, automaticky se použil v jiném záznamu." />
+    <MESSAGE value="Upravený rozvržení pro přidání nového měsíčního záznamu v land režimu.&#10;Tlačítko pro výběr ceníku zakrývalo část textu." />
+    <option name="LAST_COMMIT_MESSAGE" value="Upravený rozvržení pro přidání nového měsíčního záznamu v land režimu.&#10;Tlačítko pro výběr ceníku zakrývalo část textu." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

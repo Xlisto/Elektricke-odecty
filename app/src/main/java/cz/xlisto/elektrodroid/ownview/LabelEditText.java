@@ -85,8 +85,10 @@ public class LabelEditText extends RelativeLayout {
 
         int heightInDp = 48;
         int widthInDp = 80;
+        int maxWidthInDp = 480;
         int heightInPx = (int) (heightInDp * getResources().getDisplayMetrics().density);
         int widthInPx = (int) (widthInDp * getResources().getDisplayMetrics().density);
+        int maxWidthInPx = (int) (maxWidthInDp * getResources().getDisplayMetrics().density);
 
         //vytvoření EditTextu a přidání do layoutu
         editText = new EditText(context);
@@ -96,6 +98,7 @@ public class LabelEditText extends RelativeLayout {
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
         editText.setMinHeight(heightInPx);
         editText.setMinWidth(widthInPx);
+        editText.setMaxWidth(maxWidthInPx);
         editText.setId(View.generateViewId());
         editText.setHintTextColor(getResources().getColor(R.color.colorHint));
         editText.setTextColor(getResources().getColor(R.color.colorLabelEditText));

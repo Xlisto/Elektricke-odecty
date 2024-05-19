@@ -136,7 +136,8 @@
                     android:maxEms="4"
                     android:minEms="2"
                     android:minHeight="48dp"
-                    android:minWidth="48dp" />
+                    android:minWidth="48dp"
+                    android:maxWidth="488dp" />
 
                 <TextView
                     android:id="@+id/tvContentAddPayment"
