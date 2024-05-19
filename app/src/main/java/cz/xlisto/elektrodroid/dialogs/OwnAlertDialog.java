@@ -21,7 +21,7 @@ public class OwnAlertDialog {
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
 
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_warning_png)
                 .create()
                 .show());
     }
