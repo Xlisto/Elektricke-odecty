@@ -420,17 +420,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplnění barvy textu pro dialogové okno v světlém režimu&#10;Příčina: text měl bílou barvu jako pozadí.">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava automatického počítání spotřeby za aktuální období.&#10;Doplněny reakce na stav, pokud neexistuje žádná zadaná faktura.">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataInvoiceSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataInvoiceSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataMonthlyReadingSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataMonthlyReadingSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/monthlyreading/MonthlyReadingAddEditFragmentAbstract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceAddEditAbstractFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceAddEditAbstractFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceAddFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceAddFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceEditFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceEditFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/shp/ShPAddEditInvoice.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/shp/ShPAddEditInvoice.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -440,7 +436,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1180,7 +1176,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="286" />
+    <option name="localTasksCounter" value="287" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1254,7 +1250,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Přidán README.md a screeny aplikace" />
     <MESSAGE value="Doplněna sharedpreferences na položku produkt při přidávání nového ceníku" />
     <MESSAGE value="Přidána možnost volby umístění tlačítka pro přidání nových záznamů.&#10;Volba spočívá ve výběru plovoucího tlačítka nebo tlačítka ve spodní části obrazovky.&#10;Týká se těchto částí:&#10;- HdoFragment&#10;- InvoiceFragment&#10;- InvoiceListFragment1&#10;- MonthlyReadingFragment&#10;- PaymentFragment&#10;- PriceListFragment&#10;- SubscriptionPointFragment&#10;&#10;Pro zobrazení nastavených tlačítek se používá statická metoda showButtons v nové třídě UIHelper." />
     <MESSAGE value="Doplněné vodorovné rozvržení pro zobrazení informací o odběrním místě.&#10;Nový soubor rozvržení: fragment_subscription_point.xml" />
@@ -1279,7 +1274,8 @@
     <MESSAGE value="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna v obdodobí bez faktury - od data měsíčního odečtu se odečítá 1 den." />
     <MESSAGE value="Doplnění barvy textu pro dialogové okno v světlém režimu&#10;Příčina: text měl bílou barvu jako pozadí." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplnění barvy textu pro dialogové okno v světlém režimu&#10;Příčina: text měl bílou barvu jako pozadí." />
+    <MESSAGE value="Oprava automatického počítání spotřeby za aktuální období.&#10;Doplněny reakce na stav, pokud neexistuje žádná zadaná faktura." />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava automatického počítání spotřeby za aktuální období.&#10;Doplněny reakce na stav, pokud neexistuje žádná zadaná faktura." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

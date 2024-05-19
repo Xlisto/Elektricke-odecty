@@ -3,7 +3,7 @@ package cz.xlisto.elektrodroid.shp;
 import android.content.Context;
 
 /**
- * Třída pro ukládání nastavení přidání/)pravení faktury.
+ * Třída pro ukládání nastavení přidání/úprava faktury.
  * Xlisto 05.02.2023 9:32
  */
 public class ShPAddEditInvoice extends ShP {
@@ -18,6 +18,7 @@ public class ShPAddEditInvoice extends ShP {
     public static final String NT_END = "ntEnd";
     public static final String OTHER_SERVICES = "other";
     public static final String SELECTED_ID_PRICE = "selectedIdPrice";
+    public static final String SELECTED_TEXT_PRICE = "selectedTextPrice";
     public static final String SELECTED_ID_INVOICE = "selectedIdInvoice";
 
 

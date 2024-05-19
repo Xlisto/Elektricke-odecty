@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.modules.invoice;
 
+
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
  * Xlisto 04.02.2023 11:43
  */
 public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
+
     private static final String TAG = "InvoiceAddFragment";
 
 
@@ -30,4 +32,5 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
         super.onViewCreated(view, savedInstanceState);
         btnSave.setOnClickListener(v -> saveData(TypeSave.ADD));
     }
+
 }

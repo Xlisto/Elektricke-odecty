@@ -38,6 +38,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 04.02.2023 11:58
  */
 public abstract class InvoiceAddEditAbstractFragment extends Fragment {
+
     private static final String TAG = "InvoiceAddEditAbstractFragment";
     static final String TABLE = "table";
     static final String ID_FAK = "idFak";
@@ -51,21 +52,23 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     static final String OTHER_SERVICES = "other";
     static final String SELECTED_ID_PRICE = "selectedIdPrice";
     static final String SELECTED_ID_INVOICE = "selectedIdInvoice";
+    static final String SELECTED_TEXT_PRICE_LIST = "selectedTextPriceList";
     static final String IS_CHANGED_ELECTROMETER = "isChangedElectrometer";
     static boolean loadFromDatabase = true;
     private PriceListModel selectedPriceList;
     long selectedIdPrice = -1L;
     long selectedIdInvoice = -1L;
+    String selectedTextPrice = "";
     long id = -1L;
     Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
     LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     String numberInvoice, table;
     CheckBox chIsChangedElectricMeter;
-    String oldDateStart = "1.1.2023";
-    String oldDateEnd = "31.12.2023";
+    String oldDateStart = "1.1.2024";
+    String oldDateEnd = "31.12.2024";
     String tableO, tableFAK, tableTED;
     boolean autogenerate;
-    private boolean isShowFragment;
+    boolean isShowFragment;
 
 
     @Override
@@ -126,7 +129,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
 
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
-
         loadSharedPreferences();
 
         //listener pro výběr ceníku
@@ -153,6 +155,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             selectedIdPrice = savedInstanceState.getLong(SELECTED_ID_PRICE, -1L);
             selectedIdInvoice = savedInstanceState.getLong(SELECTED_ID_INVOICE, -1L);
             chIsChangedElectricMeter.setChecked(savedInstanceState.getBoolean(IS_CHANGED_ELECTROMETER, false));
+            btnSelectPriceList.setText(savedInstanceState.getString(SELECTED_TEXT_PRICE_LIST));
         }
 
         autogenerate = new ShPInvoice(requireActivity()).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
@@ -162,7 +165,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
+
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
         if (isShowFragment) {
             outState.putString(BTN_DATE_OF, btnDateStart.getText().toString());
@@ -173,6 +176,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             outState.putString(NT_END, letNTEnd.getText());
             outState.putString(OTHER_SERVICES, letOtherServices.getText());
             outState.putBoolean(IS_CHANGED_ELECTROMETER, chIsChangedElectricMeter.isChecked());
+            outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
+            outState.putString(SELECTED_TEXT_PRICE_LIST, btnSelectPriceList.getText().toString());
         }
     }
 
@@ -191,8 +196,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
      * @return InvoiceModel - jeden záznam faktury
      */
     InvoiceModel createInvoice() {
-        ShPAddEditInvoice shPAddEditInvoice = new ShPAddEditInvoice(requireContext());
-        selectedIdPrice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_ID_PRICE, -1L);
         long start = ViewHelper.parseCalendarFromString(btnDateStart.getText().toString()).getTimeInMillis();
         long end = ViewHelper.parseCalendarFromString(btnDateEnd.getText().toString()).getTimeInMillis();
         start -= ViewHelper.getOffsetTimeZones(start);
@@ -218,6 +221,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         shPAddEditInvoice.set(ShPAddEditInvoice.NT_END, letNTEnd.getText());
         shPAddEditInvoice.set(ShPAddEditInvoice.OTHER_SERVICES, letOtherServices.getText());
         shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, selectedIdPrice);
+        shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_TEXT_PRICE, selectedTextPrice);
         shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_INVOICE, selectedIdInvoice);
         shPAddEditInvoice.set(ShPAddEditInvoice.TABLE, table);
         shPAddEditInvoice.set(ShPAddEditInvoice.ID, id);
@@ -240,6 +244,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             letNTEnd.setDefaultText(shPAddEditInvoice.get(ShPAddEditInvoice.NT_END, "0"));
             letOtherServices.setDefaultText(shPAddEditInvoice.get(ShPAddEditInvoice.OTHER_SERVICES, "0"));
             selectedIdPrice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_ID_PRICE, -1L);
+            selectedTextPrice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_TEXT_PRICE, "XX");
             selectedIdInvoice = shPAddEditInvoice.get(ShPAddEditInvoice.SELECTED_ID_INVOICE, -1L);
             id = shPAddEditInvoice.get(ShPAddEditInvoice.ID, -1L);
             table = shPAddEditInvoice.get(ShPAddEditInvoice.TABLE, "");
@@ -304,7 +309,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             return;
 
         InvoiceModel createdInvoice = createInvoice();
-
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
         dataInvoiceSource.open();
         if (typeSave == TypeSave.ADD)
@@ -334,4 +338,5 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     enum TypeSave {
         ADD, EDIT
     }
+
 }

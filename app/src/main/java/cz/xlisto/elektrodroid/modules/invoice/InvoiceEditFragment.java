@@ -22,6 +22,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  * Xlisto 04.02.2023 21:20
  */
 public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
+
     private static final String TAG = "InvoiceEditFragment";
 
 
@@ -61,7 +62,6 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         }
 
         //načte informace o ceníku použité pro tlačítko výběru ceníku
-
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
         String priceListName = dataPriceListSource.readPrice(selectedIdPrice).getName();
@@ -79,6 +79,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         //zneaktivní tlačítka pokud je první nebo poslední záznam u záznamů bez faktury
         boolean first = WithOutInvoiceService.firstRecordInvoice(requireActivity(), -1L, id);
         boolean last = WithOutInvoiceService.lastRecordInvoice(requireActivity(), -1L, id);
+
         //zobrazení první záznamu - zneaktivnění vstupních polí pouze u
         if (first && invoice.getIdInvoice() == -1L) {
             letNTStart.setEnabled(false);
@@ -98,4 +99,5 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         oldDateStart = btnDateStart.getText().toString();
         oldDateEnd = btnDateEnd.getText().toString();
     }
+
 }
