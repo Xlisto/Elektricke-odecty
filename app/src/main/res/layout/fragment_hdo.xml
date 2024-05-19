@@ -149,8 +149,9 @@
         android:id="@+id/rvHdo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/tvHdoDate"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/description_hdo_list"
         android:layoutAnimation="@anim/layout_animation_fall_down" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -477,9 +477,19 @@
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
     <string name="description_import">Seznam ceníku připravených k vložení do aplikace</string>
+    <string name="description_invoice">Seznam faktur a aktuální spotřeba</string>
+    <string name="description_hdo_list">Seznam časů nízského tarifu</string>
+    <string name="description_price_list">Seznam ceníků</string>
+    <string name="description_monthly_reading">Seznam záznamů měsíčních odečtů</string>
     <string name="description_subscription_point_name">pojmenujte si odběrné místo</string>
     <string name="description_subscription_point_description">Zapište si poznámky k odběrnému místu</string>
     <string name="description_subscription_point_phaze">Zadejte počet fází (1 nebo 3)</string>
     <string name="description_subscription_point_power">Zadejte příkon hlavního jističe</string>
-    <string name="description_price_list">Seznam ceníků</string>
+    <string name="description_list_price_list">Seznam ceníků</string>
+    <string name="description_list_price_product">Seznam názvů sazeb</string>
+    <string name="description_list_price_sazba">Seznam sazeb</string>
+    <string name="description_list_price_company">Seznam dodavatelů</string>
+    <string name="description_list_price_area">Seznam distribučního území</string>
+    <string name="description_list_price_from">Začátek platnosti ceníku</string>
+    <string name="description_list_price_to">Konec platnosti ceníku</string>
 </resources>

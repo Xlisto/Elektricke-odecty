@@ -25,6 +25,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:animateLayoutChanges="false"
+        android:contentDescription="@string/description_invoice"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingStart="5dp"
         android:paddingTop="5dp"

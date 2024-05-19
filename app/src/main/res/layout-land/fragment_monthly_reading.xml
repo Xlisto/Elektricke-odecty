@@ -79,6 +79,7 @@
             android:layout_height="match_parent"
             android:layout_above="@id/btnAddMonthlyReading"
             android:layout_below="@id/swSimplyView"
+            android:contentDescription="@string/description_monthly_reading"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             android:padding="5dp" />
     </RelativeLayout>
