@@ -185,6 +185,7 @@
             android:id="@+id/spReleSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/description_rele"
             android:minHeight="48dp" />
 
         <TextView

@@ -66,22 +66,24 @@
             android:id="@+id/lnPhaze"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/tvFazePrikon"
+            android:layout_alignParentStart="true"
             android:orientation="horizontal">
 
-            <cz.xlisto.elektrodroid.ownview.LabelEditText
+            <EditText
                 android:id="@+id/letPhaze"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
+                android:hint="@string/_3"
+                android:importantForAutofill="no"
+                android:inputType="number|numberDecimal"
+                android:maxWidth="200dp"
                 android:minHeight="48dp"
                 app:direction="vertical"
-                app:hintText="@string/_3"
-                app:label=" " />
+                app:hintText="@string/_3" />
 
             <TextView
                 android:id="@+id/tvX"
@@ -92,18 +94,20 @@
                 android:text="@string/x" />
 
 
-            <cz.xlisto.elektrodroid.ownview.LabelEditText
+            <EditText
                 android:id="@+id/letPower"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
+                android:hint="@string/_25"
+                android:importantForAutofill="no"
                 android:inputType="numberDecimal"
+                android:maxWidth="200dp"
                 android:minHeight="48dp"
                 app:direction="vertical"
-                app:hintText="@string/_25"
-                app:label=" " />
+                app:hintText="@string/_25" />
 
         </LinearLayout>
 
@@ -124,31 +128,33 @@
             android:layout_below="@id/tvServices"
             android:orientation="horizontal">
 
-            <cz.xlisto.elektrodroid.ownview.LabelEditText
+            <EditText
                 android:id="@+id/letServicesL"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
+                android:autofillHints="@string/_0"
+                android:hint="@string/_0"
+                android:inputType="number|numberDecimal|numberSigned"
                 android:minHeight="48dp"
                 app:direction="vertical"
-                app:hintText="@string/_0"
-                app:label=" " />
+                app:hintText="@string/_0" />
 
-            <cz.xlisto.elektrodroid.ownview.LabelEditText
+            <EditText
                 android:id="@+id/letServicesR"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:inputType="numberDecimal"
+                android:autofillHints="@string/_0"
+                android:hint="@string/_0"
+                android:inputType="number|numberDecimal|numberSigned"
                 android:minHeight="48dp"
                 app:direction="vertical"
-                app:hintText="@string/_0"
-                app:label=" " />
+                app:hintText="@string/_0" />
 
 
         </LinearLayout>

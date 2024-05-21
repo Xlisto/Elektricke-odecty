@@ -12,19 +12,19 @@
         <Button
             android:id="@+id/btnLeft"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/vyberteCenik"
+            android:text="@string/vyberteCenikLevy"
             android:textColor="@color/colorButtonText" />
 
         <Button
             android:id="@+id/btnRight"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/vyberteCenik"
+            android:text="@string/vyberteCenikPravy"
             android:textColor="@color/colorButtonText" />
     </LinearLayout>
 

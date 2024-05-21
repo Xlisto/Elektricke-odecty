@@ -115,7 +115,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/swHdoService"
-        android:minHeight="48dp"/>
+        android:contentDescription="@string/description_rele"
+        android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/tvHdoDate"

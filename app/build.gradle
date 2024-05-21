@@ -8,8 +8,8 @@ android {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 116
-        versionName '1.116'
+        versionCode 119
+        versionName '1.119'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

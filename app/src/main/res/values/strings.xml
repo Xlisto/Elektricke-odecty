@@ -160,6 +160,8 @@
     <string name="result_date">Platba bude evidována k datu:&#160;</string>
 
     <string name="vyberteCenik">Vyberte ceník</string>
+    <string name="vyberteCenikLevy">Vyberte levý ceník</string>
+    <string name="vyberteCenikPravy">Vyberte pravý ceník</string>
     <string name="smazat_mesicni_odecet">Smazat měsíční odečet?</string>
     <string name="dalsi_sluzby2">Další doplňkové služby nebo slevy</string>
     <string name="podpora_obnovitelnych_zdroju">Podpora obnovitelných zdrojů</string>
@@ -492,4 +494,12 @@
     <string name="description_list_price_area">Seznam distribučního území</string>
     <string name="description_list_price_from">Začátek platnosti ceníku</string>
     <string name="description_list_price_to">Konec platnosti ceníku</string>
+    <string name="description_subscription_point">Informace o odběrném místě</string>
+    <string name="description_rele">Seznam spínaných relé</string>
+    <string name="description_dashboard_sort">Třídění seznamu</string>
+    <string name="description_phaze">Fáze</string>
+    <string name="description_power">Příkon</string>
+
+    <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
+    <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
 </resources>

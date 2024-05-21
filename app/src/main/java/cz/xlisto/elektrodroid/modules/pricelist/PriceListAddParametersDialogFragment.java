@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +32,8 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     private final String POWER = "power";
     private final String SERVICES_L = "ser_l";
     private final String SERVICES_R = "ser_r";
-    private LabelEditText letVT, letNT, letMonth, letPhaze, letPower, letServicesL, letServicesR;
+    private LabelEditText letVT, letNT, letMonth;
+    private EditText letPhaze, letPower, letServicesL, letServicesR;
 
 
     public static PriceListAddParametersDialogFragment newInstance(PriceListCompareBoxFragment.ConsuptionContainer container) {
@@ -69,8 +71,8 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             letVT.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(VT)));
             letNT.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(NT)));
             letMonth.setDefaultText(DecimalFormatHelper.df0.format(getArguments().getDouble(MONTH)));
-            letServicesL.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_L)));
-            letServicesR.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_R)));
+            letServicesL.setText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_L)));
+            letServicesR.setText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_R)));
         }
 
         builder.setView(dialogView);
@@ -82,10 +84,10 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             double vt = letVT.getDouble();
             double nt = letNT.getDouble();
             double month = letMonth.getDouble();
-            double phaze = letPhaze.getDouble();
-            double power = letPower.getDouble();
-            double servicesL = letServicesL.getDouble();
-            double servicesR = letServicesR.getDouble();
+            double phaze = letPhaze.getText().toString().isEmpty() ? 0 : Double.parseDouble(letPhaze.getText().toString().replace(",", "."));
+            double power = letPower.getText().toString().isEmpty() ? 0 : Double.parseDouble(letPower.getText().toString().replace(",", "."));
+            double servicesL = letServicesL.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesL.getText().toString().replace(",", "."));
+            double servicesR = letServicesR.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesR.getText().toString().replace(",", "."));
             PriceListCompareBoxFragment.ConsuptionContainer container = new PriceListCompareBoxFragment.ConsuptionContainer(vt, nt, month, phaze, power, servicesL, servicesR);
             Bundle bundle = new Bundle();
             bundle.putSerializable(CONSUPTION_CONTAINER, container);
@@ -96,10 +98,10 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             letVT.setDefaultText("");
             letNT.setDefaultText("");
             letMonth.setDefaultText("");
-            letPhaze.setDefaultText("");
-            letPower.setDefaultText("");
-            letServicesL.setDefaultText("");
-            letServicesR.setDefaultText("");
+            letPhaze.setText("");
+            letPower.setText("");
+            letServicesL.setText("");
+            letServicesR.setText("");
         });
 
         setPhaze();
@@ -108,10 +110,10 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             letVT.setDefaultText(savedInstanceState.getString(VT));
             letNT.setDefaultText(savedInstanceState.getString(NT));
             letMonth.setDefaultText(savedInstanceState.getString(MONTH));
-            letPhaze.setDefaultText(savedInstanceState.getString(PHAZE));
-            letPower.setDefaultText(savedInstanceState.getString(POWER));
-            letServicesL.setDefaultText(savedInstanceState.getString(SERVICES_L));
-            letServicesR.setDefaultText(savedInstanceState.getString(SERVICES_R));
+            letPhaze.setText(savedInstanceState.getString(PHAZE));
+            letPower.setText(savedInstanceState.getString(POWER));
+            letServicesL.setText(savedInstanceState.getString(SERVICES_L));
+            letServicesR.setText(savedInstanceState.getString(SERVICES_R));
         }
 
         return builder.create();
@@ -124,10 +126,10 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
         outState.putString(VT, letVT.getText());
         outState.putString(NT, letNT.getText());
         outState.putString(MONTH, letMonth.getText());
-        outState.putString(PHAZE, letPhaze.getText());
-        outState.putString(POWER, letPower.getText());
-        outState.putString(SERVICES_L, letServicesL.getText());
-        outState.putString(SERVICES_R, letServicesR.getText());
+        outState.putString(PHAZE, letPhaze.getText().toString());
+        outState.putString(POWER, letPower.getText().toString());
+        outState.putString(SERVICES_L, letServicesL.getText().toString());
+        outState.putString(SERVICES_R, letServicesR.getText().toString());
     }
 
 
@@ -142,10 +144,10 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();
             SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-            letPower.setHintText(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
-            letPower.setDefaultText(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
-            letPhaze.setHintText(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
-            letPhaze.setDefaultText(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
+            letPower.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
+            letPower.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
+            letPhaze.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
+            letPhaze.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
             dataSubscriptionPointSource.close();
         }
     }
