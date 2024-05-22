@@ -436,18 +436,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněny štítky obsahu do souborů fragment_dashboard.xml, fragment_hdo.xml, fragment_price_list_compare_box.xml, fragment_price_list_set_values.xml a fragment_subscription_point.xml">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_constraintlayout_constraintlayout_2_1_4_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_constraintlayout_constraintlayout_2_1_4_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_material_material_1_12_0_aar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_google_android_material_material_1_12_0_aar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_coroutines_android_1_7_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_coroutines_android_1_7_3.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_7_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm_1_7_3.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataGraphMonth.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataGraphMonth.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/models/MonthlyConsuptionModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/models/MonthlyConsuptionModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/models/YearConsuptionModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/models/YearConsuptionModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthView.java" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Opravena chyba při zobrazování grafu porovnávaných měsíců &#10;Pokud nebylo naplněno kompletně všech 12 záznamů pro každý měsíc, zobrazoval se prázdný graf nebo aplikace padala.">
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -457,7 +447,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1197,7 +1187,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="299" />
+    <option name="localTasksCounter" value="301" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1271,7 +1261,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
     <MESSAGE value="Oprava zobrazení widgetu zobrazující spotřebu. Pokud není vybrán žádné odběrné místo, rafička spotřeby je nastavena 0 a úprava textu, když není žádný HDO&#10;Povýšení na verzi 104. Doplnění několik komentářů." />
     <MESSAGE value="Oprava absence tlačítka pro přidání prvního odběrného místa" />
     <MESSAGE value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
@@ -1296,7 +1285,8 @@
     <MESSAGE value="Doplněn atribut contentDescription v souborech fragment_price_list.xml, fragment_dashboard.xml, fragment_hdo.xml, fragment_invoice_list.xml, fragment_monthly_reading.xml a fragment_price_list_filter.xml.&#10;Na záklaadě doporučetí interního testu na Google Play Console." />
     <MESSAGE value="Změněna ikona dialogového okna na vykřičník ve žlutém kolečku" />
     <MESSAGE value="Doplněny štítky obsahu do souborů fragment_dashboard.xml, fragment_hdo.xml, fragment_price_list_compare_box.xml, fragment_price_list_set_values.xml a fragment_subscription_point.xml" />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněny štítky obsahu do souborů fragment_dashboard.xml, fragment_hdo.xml, fragment_price_list_compare_box.xml, fragment_price_list_set_values.xml a fragment_subscription_point.xml" />
+    <MESSAGE value="Opravena chyba při zobrazování grafu porovnávaných měsíců &#10;Pokud nebylo naplněno kompletně všech 12 záznamů pro každý měsíc, zobrazoval se prázdný graf nebo aplikace padala." />
+    <option name="LAST_COMMIT_MESSAGE" value="Opravena chyba při zobrazování grafu porovnávaných měsíců &#10;Pokud nebylo naplněno kompletně všech 12 záznamů pro každý měsíc, zobrazoval se prázdný graf nebo aplikace padala." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
