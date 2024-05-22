@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.modules.hdo.HdoTime;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -24,6 +25,7 @@ import cz.xlisto.elektrodroid.utils.ScreenReceiver;
  * Xlisto 01.06.2023 21:40
  */
 public class HdoService extends Service {
+
     private static final String TAG = "HdoService";
     private final int ID = 10;
     private final Runnable timerTick = this::setNotice;
@@ -101,17 +103,19 @@ public class HdoService extends Service {
         long milins = calendar.getTimeInMillis();
         String time = ViewHelper.convertLongToTime(milins);
         boolean isHdo = HdoTime.checkHdo(hdoModels, calendar);
-        if(isHdo) {
+        if (isHdo) {
             time = time + "   ** Nízský tarif **";
         } else {
             time = time + "   ** Vysoký tarif **";
         }
-        HdoNotice.setNotice(HdoService.this, ID, title,time);
+        String noticeTitle = getResources().getString(R.string.hdo_service_name);
+        HdoNotice.setNotice(HdoService.this, ID, title, noticeTitle, time);
     }
 
 
     /**
      * Nastaví časový posun
+     *
      * @param time časový posun
      */
     public static void setDifferentTime(long time) {
@@ -121,6 +125,7 @@ public class HdoService extends Service {
 
     /**
      * Vrátí časový posun
+     *
      * @return časový posun
      */
     public static boolean isRunningService() {
@@ -130,6 +135,7 @@ public class HdoService extends Service {
 
     /**
      * Nastaví modely HDO
+     *
      * @param hdo modely HDO
      */
     public static void setHdoModels(ArrayList<HdoModel> hdo) {
@@ -139,9 +145,11 @@ public class HdoService extends Service {
 
     /**
      * Nastaví titulek
+     *
      * @param title titulek
      */
     public static void setTitle(String title) {
         HdoService.title = title;
     }
+
 }

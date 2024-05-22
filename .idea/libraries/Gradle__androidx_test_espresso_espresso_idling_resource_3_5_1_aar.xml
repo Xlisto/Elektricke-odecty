@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.test.espresso:espresso-idling-resource:3.5.1@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/191a3af89528870892bd249675b25f94/transformed/espresso-idling-resource-3.5.1/AndroidManifest.xml" />
-      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/191a3af89528870892bd249675b25f94/transformed/espresso-idling-resource-3.5.1/jars/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/8ab59d4ca4f7c7b5e86d857d7ab1b361/transformed/espresso-idling-resource-3.5.1/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/8ab59d4ca4f7c7b5e86d857d7ab1b361/transformed/espresso-idling-resource-3.5.1/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/modules-2/files-2.1/androidx.test.espresso/espresso-idling-resource/3.5.1/331f1323e408dc60d9a8bea1eb40a2aa569f8091/espresso-idling-resource-3.5.1-javadoc.jar!/" />

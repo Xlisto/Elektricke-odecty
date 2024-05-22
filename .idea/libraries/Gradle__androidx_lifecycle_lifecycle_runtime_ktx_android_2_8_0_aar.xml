@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.0@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/06a1b3f95fee963cf270f9645936b78e/transformed/lifecycle-runtime-ktx-release/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/06a1b3f95fee963cf270f9645936b78e/transformed/lifecycle-runtime-ktx-release/res" />
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/06a1b3f95fee963cf270f9645936b78e/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/0c2df8885b22413d75e755de1399a0ee/transformed/lifecycle-runtime-ktx-release/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/0c2df8885b22413d75e755de1399a0ee/transformed/lifecycle-runtime-ktx-release/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/0c2df8885b22413d75e755de1399a0ee/transformed/lifecycle-runtime-ktx-release/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">El. odečty</string>
+    <string name="hdo_service_name">Čas HDO</string>
 
     <string name="datum_cislem">01.01.2022</string>
     <string name="pomlka">-</string>
@@ -135,6 +136,7 @@
 
     <string name="kc">Kč</string>
     <string name="ok">OK</string>
+    <string name="to_settings">Přejít na nastavení</string>
     <string name="datum">Datum:</string>
     <string name="tarif">Tarif:</string>
     <string name="pomlcky">========</string>
@@ -475,6 +477,10 @@
     <string name="add_hdo">Přidat čas HDO</string>
 
     <string name="no_price_list">Pro tento rok není dostupná regulovaná cena</string>
+
+    <string name="allow_notification_title">Povolení oznámení</string>
+    <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>
+    <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
 
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>

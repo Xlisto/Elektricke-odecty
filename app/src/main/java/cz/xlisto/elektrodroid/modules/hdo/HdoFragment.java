@@ -1,10 +1,14 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -71,6 +76,8 @@ public class HdoFragment extends Fragment {
     private Intent hdoServiceIntent;
     private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour, btnAddHdo;
     private FloatingActionButton fab;
+    private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1;
+
     //překreslení gui
     private final Runnable timerTick = this::setTime;
 
@@ -368,6 +375,7 @@ public class HdoFragment extends Fragment {
     private void startService() {
         HdoService.setHdoModels(hdoModels);
         if (subscriptionPoint == null) return;
+        checkAndRequestNotificationPermission();
         HdoService.setTitle(getResources().getString(R.string.app_name) + " - " + subscriptionPoint.getName());
         //myIntent.putExtra(HdoService.NOTIFICATION_HDO_SERVICE, isLowHdo);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -416,6 +424,87 @@ public class HdoFragment extends Fragment {
     private void showAddDialog() {
         HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
         FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
+    }
+
+
+    /**
+     * Zkontroluje oprávnění na notifikace od Androidu 13 (SDK 33)
+     */
+
+    private void checkAndRequestNotificationPermission() {
+        // Zkontroluje a požádá o oprávnění pro zasílání oznámení
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // Zkontroluj, zda uživatel dříve oddment oprávnění
+                if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                    // Zobraz vysvětlující dialog
+                    showPermissionExplanationDialog();
+                } else {
+                    // Požádej o oprávnění přímo
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+                }
+            }
+        }
+
+    }
+
+
+    /**
+     * Zobrazí dialog s vysvětlením, proč je potřeba oprávnění
+     */
+    private void showPermissionExplanationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(requireContext().getResources().getString(R.string.allow_notification_title))
+                .setMessage(requireContext().getResources().getString(R.string.allow_notification_message))
+                .setPositiveButton(requireContext().getResources().getString(R.string.ok), (dialog, which) -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                        requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+
+                })
+                .setNegativeButton(requireContext().getResources().getString(R.string.zrusit), (dialog, which) -> swHdoService.setChecked(false))
+                .show();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Oprávnění bylo uděleno
+                return;
+            }
+
+            // Oprávnění nebylo uděleno
+            if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // Uživatel zvolil "Don't ask again"
+                showSettingsDialog();
+            }
+        }
+    }
+
+
+    /**
+     * Zobrazí dialog s odkazem na nastavení aplikace
+     */
+    private void showSettingsDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(requireContext().getResources().getString(R.string.allow_notification_title))
+                .setMessage(requireContext().getResources().getString(R.string.ask_notification_to_allow_notice))
+                .setPositiveButton(requireContext().getResources().getString(R.string.to_settings), (dialog, which) -> openAppSettings())
+                .setNegativeButton(requireContext().getResources().getString(R.string.zrusit), (dialog, which) -> swHdoService.setChecked(false))
+                .show();
+    }
+
+
+    /**
+     * Otevře nastavení aplikace
+     */
+    private void openAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
 }

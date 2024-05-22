@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.slidingpanelayout:slidingpanelayout:1.2.0@aar" external-system-id="GRADLE">
     <ANNOTATIONS>
-      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/24bef8d569e12d6c5ebd78f050bf9a4a/transformed/slidingpanelayout-1.2.0/annotations.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/3e6cc8d8de96d3d6e33df37d311be99e/transformed/slidingpanelayout-1.2.0/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/24bef8d569e12d6c5ebd78f050bf9a4a/transformed/slidingpanelayout-1.2.0/AndroidManifest.xml" />
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/24bef8d569e12d6c5ebd78f050bf9a4a/transformed/slidingpanelayout-1.2.0/res" />
-      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/24bef8d569e12d6c5ebd78f050bf9a4a/transformed/slidingpanelayout-1.2.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/3e6cc8d8de96d3d6e33df37d311be99e/transformed/slidingpanelayout-1.2.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/3e6cc8d8de96d3d6e33df37d311be99e/transformed/slidingpanelayout-1.2.0/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/3e6cc8d8de96d3d6e33df37d311be99e/transformed/slidingpanelayout-1.2.0/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

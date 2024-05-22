@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -16,10 +17,12 @@ import androidx.core.app.NotificationCompat;
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 
+
 /**
  * Xlisto 01.06.2023 22:58
  */
 public class HdoNotice {
+
     private static final String TAG = "HdoNotice";
     public static final String NOTIFICATION_CHANNEL_ID = "10001";
     public static final String NOTIFICATION_HDO_SERVICE = "HdoService";
@@ -27,7 +30,7 @@ public class HdoNotice {
     private final static String default_notification_channel_id = "default";
 
 
-    public static void setNotice(Service service, int id, String title, String contentText) {
+    public static void setNotice(Service service, int id, String title, String noticeTitle, String contentText) {
 
         Intent notificationIntent = new Intent(service, MainActivity.class);
         notificationIntent.putExtra(ARGS_FRAGMENT, NOTIFICATION_HDO_SERVICE);
@@ -46,10 +49,9 @@ public class HdoNotice {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "HdoService", importance);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, noticeTitle, importance);
             channel.setShowBadge(false);
             channel.setSound(null, null);
             builder.setChannelId(NOTIFICATION_CHANNEL_ID);
@@ -59,7 +61,10 @@ public class HdoNotice {
         }
         assert notificationManager != null;
         notificationManager.notify(id, builder.build());
-        service.startForeground(id, builder.build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            service.startForeground(id, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST);
+        else
+            service.startForeground(id, builder.build());
     }
 
 
@@ -67,4 +72,5 @@ public class HdoNotice {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
     }
+
 }

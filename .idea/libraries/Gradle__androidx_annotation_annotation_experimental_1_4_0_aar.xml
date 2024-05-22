@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.annotation:annotation-experimental:1.4.0@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/fda2f86d1f242bb25b10356ff977fba0/transformed/annotation-experimental-1.4.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/fda2f86d1f242bb25b10356ff977fba0/transformed/annotation-experimental-1.4.0/res" />
-      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/fda2f86d1f242bb25b10356ff977fba0/transformed/annotation-experimental-1.4.0/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/c5119f5c9926490edbc1ceace273b3fb/transformed/annotation-experimental-1.4.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/c5119f5c9926490edbc1ceace273b3fb/transformed/annotation-experimental-1.4.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../../Gradle/caches/transforms-4/c5119f5c9926490edbc1ceace273b3fb/transformed/annotation-experimental-1.4.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
