@@ -30,6 +30,7 @@ import cz.xlisto.elektrodroid.utils.DensityUtils;
  * Xlisto 20.08.2023 22:01
  */
 public class GraphMonthView extends View {
+
     private static final String TAG = "GraphMonthView";
     private final String ARG_X_MOVE_GRAPH_MONTH = "xMoveGraphMonth";
     private final String ARG_X_MOVE_GRAPH_YEAR = "xMoveGraphYear";
@@ -213,7 +214,6 @@ public class GraphMonthView extends View {
         double minMonthlyNT = Double.MAX_VALUE;
         maxMonthly = Double.MIN_VALUE;
 
-
         for (ConsuptionModel month : monthlyConsuption) {
             if (showVT) {
                 if (month.getConsuptionVT() > maxMonthlyVT)
@@ -373,7 +373,6 @@ public class GraphMonthView extends View {
             }
         }
 
-
     }
 
 
@@ -426,7 +425,7 @@ public class GraphMonthView extends View {
                 break;
         }
 
-        int startX, stopX, lastX = dipToPx(30)*consuption.size()+left;
+        int startX, stopX, lastX = dipToPx(30) * consuption.size() + left;
         for (int i = 0; i < consuption.size() - 1; i++) {
             startX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
             stopX = (dipToPx(30) * (i + 1)) + left + xMoveGraph;
@@ -445,7 +444,6 @@ public class GraphMonthView extends View {
                 stopNTStart = consuption.get(i).getConsuptionNT().intValue();
                 stopNTEnd = consuption.get(i + 1).getConsuptionNT().intValue();
             }
-
 
             if (showVT) {
                 if (graphType) {
@@ -489,7 +487,7 @@ public class GraphMonthView extends View {
         }
 
         //poslední záznam
-        if (consuption.size() > 0) {
+        if (!consuption.isEmpty()) {
             ConsuptionModel lastMonthlyConsuption = consuption.get(consuption.size() - 1);
             int stopVTStart = lastMonthlyConsuption.getConsuptionVTAnimace();
             int stopNTStart = lastMonthlyConsuption.getConsuptionNTAnimace();
@@ -634,8 +632,10 @@ public class GraphMonthView extends View {
 
         //vykreslení pro nadpisu pro porovnávací graf
         if (period == 2) {
-            canvas.drawText("Porovnávaný měsíc:", width - dipToPx(100), dipToPx(15), text);
-            canvas.drawText(monthlyConsuption.get(compareMonth).getDateMonthAsStringLong(), width - dipToPx(100), dipToPx(25), textBold);
+            if (!monthsConsuption.get(compareMonth).isEmpty()) {
+                canvas.drawText("Porovnávaný měsíc:", width - dipToPx(100), dipToPx(15), text);
+                canvas.drawText(monthsConsuption.get(compareMonth).get(0).getDateMonthAsStringLong(), width - dipToPx(100), dipToPx(25), textBold);
+            }
         }
     }
 
@@ -823,7 +823,7 @@ public class GraphMonthView extends View {
                 break;
             case 2:
                 //Při prvním průchodu cyklu po rotaci obrazovky je monthsConsuption.size() = 0
-                if (monthsConsuption.size() == 0) break;
+                if (monthsConsuption.isEmpty()) break;
                 sizeList = monthsConsuption.get(compareMonth).size();
                 sizeGraph = sizeGraphYear;
                 break;
@@ -923,7 +923,7 @@ public class GraphMonthView extends View {
                     break;
                 case 2:
                     //Při prvním průchodu cyklu po rotaci obrazovky je monthsConsuption.size() = 0
-                    if (monthsConsuption.size() == 0) break;
+                    if (monthsConsuption.isEmpty()) break;
                     for (int j = 0; j < monthsConsuption.get(compareMonth).size(); j++) {
                         monthsConsuption.get(compareMonth).get(j).setAnimate((int) valueAnimator1.getAnimatedValue(), count);
                     }
@@ -1003,4 +1003,5 @@ public class GraphMonthView extends View {
         final float scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
+
 }

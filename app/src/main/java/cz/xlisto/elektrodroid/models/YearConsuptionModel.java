@@ -1,11 +1,14 @@
 package cz.xlisto.elektrodroid.models;
 
+
 import androidx.annotation.NonNull;
+
 
 /**
  * Xlisto 24.08.2023 20:59
  */
-public class YearConsuptionModel implements ConsuptionModel{
+public class YearConsuptionModel implements ConsuptionModel {
+
     private static final String TAG = "YearConsuptionModel";
     private Double consuptionVT;
     private Double consuptionNT;
@@ -16,9 +19,10 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Konstruktor
+     *
      * @param consuptionVT spotřeba VT
      * @param consuptionNT spotřeba NT
-     * @param year rok
+     * @param year         rok
      */
     public YearConsuptionModel(Double consuptionVT, Double consuptionNT, int year) {
         this.consuptionVT = consuptionVT;
@@ -29,6 +33,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Vrátí spotřebu VT
+     *
      * @return spotřeba VT
      */
     public Double getConsuptionVT() {
@@ -38,6 +43,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Vrátí spotřebu NT
+     *
      * @return spotřeba NT
      */
     public Double getConsuptionNT() {
@@ -47,6 +53,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Vrátí rok
+     *
      * @return rok
      */
     public int getYearAsInt() {
@@ -56,6 +63,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Vrátí měsíc - v tomto případě null, protože je to roční spotřeba
+     *
      * @return null
      */
     @Override
@@ -66,6 +74,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Nastaví datum
+     *
      * @param dates datum v long
      */
     @Override
@@ -76,6 +85,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Nastaví příznak prvního odečtu
+     *
      * @param i 1 - první odečet; 0 - není první odečet
      */
     @Override
@@ -86,6 +96,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Vrátí rok jako String
+     *
      * @return rok jako String
      */
     public String getYearAsString() {
@@ -95,6 +106,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Přidá spotřebu VT
+     *
      * @param spotrebaVT spořeba jež se připočítá ke stávající spotřebě
      */
     public void addConsuptionVT(Double spotrebaVT) {
@@ -104,6 +116,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Přidá spotřebu NT
+     *
      * @param spotrebaNT spořeba jež se připočítá ke stávající spotřebě
      */
     public void addConsuptionNT(Double spotrebaNT) {
@@ -113,6 +126,7 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Nastaví rok
+     *
      * @param year rok
      */
     public void setYear(int year) {
@@ -122,26 +136,29 @@ public class YearConsuptionModel implements ConsuptionModel{
 
     /**
      * Animovaná spotřeba
+     *
      * @return hodnota roční spotřeby VT pro animaci
      */
     public Integer getConsuptionVTAnimace() {
-        return (int)(getConsuptionVT()/max*anim);
+        return (int) (getConsuptionVT() / max * anim);
     }
 
 
     /**
      * Animovaná spotřeba
+     *
      * @return hodnota roční spotřeby NT pro animaci
      */
     public Integer getConsuptionNTAnimace() {
-        return (int)(getConsuptionNT()/max*anim);
+        return (int) (getConsuptionNT() / max * anim);
     }
 
 
     /**
      * Nastaví parametrů animace
-     * @param anim
-     * @param max
+     *
+     * @param anim počet snímků animace
+     * @param max maximální hodnota
      */
     public void setAnimate(int anim, int max) {
         this.anim = anim;
@@ -152,7 +169,7 @@ public class YearConsuptionModel implements ConsuptionModel{
     @NonNull
     @Override
     public String toString() {
-        return "Roční spotřeba: "+ getYearAsInt()+" VT:"+getConsuptionVT()+" NT:"+getConsuptionNT();
+        return "Roční spotřeba: " + getYearAsInt() + " VT:" + getConsuptionVT() + " NT:" + getConsuptionNT();
     }
 
 
@@ -166,4 +183,5 @@ public class YearConsuptionModel implements ConsuptionModel{
     public String getDateMonthAsStringLong() {
         return "";
     }
+
 }

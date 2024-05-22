@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.modules.graphmonth;
 
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +17,12 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.shp.ShPGraphMonth;
 
+
 /**
  * Xlisto 20.08.2023 21:53
  */
 public class GraphMonthFragment extends Fragment {
+
     private static final String TAG = "GraphMonthFragment";
     private final String ARG_IS_SHOW_PERIOD = "isShowPeriod";
     private final String ARG_IS_SHOW_VT = "isShowVT";
@@ -34,6 +37,7 @@ public class GraphMonthFragment extends Fragment {
     private int compareMonth = 0;
     private boolean showTypeGraph = true;
     private ShPGraphMonth shPGraphMonth;
+    private ConsuptionContainer consuptionContainer;
 
 
     public static GraphMonthFragment newInstance() {
@@ -46,7 +50,14 @@ public class GraphMonthFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         //posluchač změny odběrného místa
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this, (requestKey, result) -> graphMonthView.setConsuption(new DataGraphMonth(requireContext()).loadConsuptions()));
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
+                this,
+                (requestKey, result) -> {
+                    consuptionContainer = new DataGraphMonth(requireContext()).loadConsuptions();
+                    graphMonthView.setConsuption(consuptionContainer);
+                    compareMonth = checkEmptyMonths(compareMonth, false);
+                    graphMonthView.setCompareMonth(compareMonth);
+                });
     }
 
 
@@ -66,7 +77,6 @@ public class GraphMonthFragment extends Fragment {
         //graphMonthView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         shPGraphMonth = new ShPGraphMonth(requireContext());
-
 
         btnShowVT.setOnClickListener(v -> {
             showVT = !showVT;
@@ -112,6 +122,9 @@ public class GraphMonthFragment extends Fragment {
             if (showPeriod == 2) {
                 compareMonth--;
                 if (compareMonth < 0) compareMonth = 11;
+
+                compareMonth = checkEmptyMonths(compareMonth, true);
+
                 graphMonthView.setCompareMonth(compareMonth);
                 shPGraphMonth.set(ShPGraphMonth.ARG_COMPARE_MONTH, compareMonth);
             } else {
@@ -123,6 +136,9 @@ public class GraphMonthFragment extends Fragment {
             if (showPeriod == 2) {
                 compareMonth++;
                 if (compareMonth > 11) compareMonth = 0;
+
+                compareMonth = checkEmptyMonths(compareMonth, false);
+
                 graphMonthView.setCompareMonth(compareMonth);
                 shPGraphMonth.set(ARG_COMPARE_MONTH, compareMonth);
             } else {
@@ -148,7 +164,8 @@ public class GraphMonthFragment extends Fragment {
         requireActivity().invalidateOptionsMenu();
 
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
-        ConsuptionContainer consuptionContainer = dataGraphMonth.loadConsuptions();
+        consuptionContainer = dataGraphMonth.loadConsuptions();
+
         graphMonthView.setConsuption(consuptionContainer);
 
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
@@ -164,6 +181,10 @@ public class GraphMonthFragment extends Fragment {
         showVT = shPGraphMonth.get(ARG_IS_SHOW_VT, true);
         showNT = shPGraphMonth.get(ARG_IS_SHOW_NT, true);
         compareMonth = shPGraphMonth.get(ARG_COMPARE_MONTH, 1);
+
+        compareMonth = checkEmptyMonths(compareMonth, true);
+
+        graphMonthView.setCompareMonth(compareMonth);
         setGraphMonthView();
     }
 
@@ -252,6 +273,9 @@ public class GraphMonthFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví ikonu podle druhu zobrazení grafu. Buď zoom nebo posun.
+     */
     private void setImageIconZoom() {
         if (showPeriod == 2) {
             btnLeft.setImageResource(R.mipmap.ic_graph_month_left_gray);
@@ -261,4 +285,36 @@ public class GraphMonthFragment extends Fragment {
             btnRight.setImageResource(R.mipmap.ic_graph_zoom_plus);
         }
     }
+
+
+    /**
+     * Zkontroluje, zda jsou všechny měsíce prázdné
+     *
+     * @param compareMonth měsíc, který se má porovnávat
+     * @param back         zda se má porovnávat zpět nebo dopředu
+     * @return následující měsíc, který není prázdný
+     */
+    private int checkEmptyMonths(int compareMonth, boolean back) {
+        boolean allEmpty = true;
+        for (int i = 0; i < consuptionContainer.getMonthsConsuptionsArray().size(); i++) {
+            if (!consuptionContainer.getMonthsConsuptionsArray().get(i).isEmpty()) {
+                allEmpty = false;
+                break;
+            }
+        }
+
+        if (!allEmpty) {
+            while (consuptionContainer.getMonthsConsuptionsArray().get(compareMonth).isEmpty()) {
+                if (back) {
+                    compareMonth--;
+                    if (compareMonth < 0) compareMonth = 11;
+                } else {
+                    compareMonth++;
+                    if (compareMonth > 11) compareMonth = 0;
+                }
+            }
+        }
+        return compareMonth;
+    }
+
 }

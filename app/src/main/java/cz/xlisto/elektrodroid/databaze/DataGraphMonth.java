@@ -1,8 +1,8 @@
 package cz.xlisto.elektrodroid.databaze;
 
+
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,14 +15,16 @@ import cz.xlisto.elektrodroid.models.YearConsuptionModel;
 import cz.xlisto.elektrodroid.modules.graphmonth.ConsuptionContainer;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
-/**
+
+/** Načte měsíční spotřebu z databáze a sestaví měsíční, roční spotřebu a seznam porovnání měsíční spotřeby
  * Xlisto 21.08.2023 3:35
  */
 public class DataGraphMonth extends DataSource {
+
     private static final String TAG = "DataGraphMonth";
-    ArrayList<ConsuptionModel> monthlyConsuptions = new ArrayList<>();
-    private final ArrayList<ConsuptionModel> yearConsuptions = new ArrayList<>();
-    private final ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray = new ArrayList<>();
+    private final ArrayList<ConsuptionModel> monthlyConsuptions = new ArrayList<>();//seznam měsíčních spotřeb
+    private final ArrayList<ConsuptionModel> yearConsuptions = new ArrayList<>();//seznam ročních spotřeb
+    private final ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray = new ArrayList<>();//seznam seřazený podle měsíců
 
 
     public DataGraphMonth(Context context) {
@@ -30,20 +32,21 @@ public class DataGraphMonth extends DataSource {
         dbHelper = new DbHelper(context);
     }
 
+
     /**
      * Z databáze s měsíčními odečty sestaví ArrayList s celkovou měsíční spotřebou
      *
      * @return ArrayList sestavený z objektů SpotrebaFaktura, který reprezentuje celkovou měsíční spotřebu
      */
     public ConsuptionContainer loadConsuptions() {
-        if(SubscriptionPoint.load(context) == null) return null;
+        if (SubscriptionPoint.load(context) == null) return null;
         String table = (Objects.requireNonNull(SubscriptionPoint.load(context))).getTableO();
         if (table == null) return null;
         String orderBy = DbHelper.DATUM + " ASC, " + DbHelper.PRVNI_ODECET + " ASC";
         boolean add;
         int firstReader;
         open();
-        //Cursor cursor = database.rawQuery("SELECT _ID, vt, nt, datum, prvni_odecet " + "FROM '" + table + "' ORDER BY datum", null);
+
         Cursor cursor = database.query(table,
                 new String[]{DbHelper.COLUMN_ID, DbHelper.VT, DbHelper.NT, DbHelper.DATUM, DbHelper.PRVNI_ODECET},
                 null,
@@ -51,19 +54,18 @@ public class DataGraphMonth extends DataSource {
                 null,
                 null,
                 orderBy);
-        //Log.w(TAG, "loadConsuption: " + cursor.getCount());
 
         monthlyConsuptions.clear();
 
-        for (int i = 0; i < cursor.getCount()-1; i++) {
-            if (i == cursor.getCount()-1) {
+        for (int i = 0; i < cursor.getCount() - 1; i++) {
+            if (i == cursor.getCount() - 1) {
                 cursor.moveToPosition(i);
             } else {
                 cursor.moveToPosition(i);
                 double previousVT = cursor.getDouble(1);
                 double previousNT = cursor.getDouble(2);
                 long previousDate = removeMonth(cursor.getLong(3));
-                cursor.moveToPosition(i+1);
+                cursor.moveToPosition(i + 1);
                 double actualVT = cursor.getDouble(1);
                 double actualNT = cursor.getDouble(2);
                 long actualDate = removeMonth(cursor.getLong(3));
@@ -71,22 +73,19 @@ public class DataGraphMonth extends DataSource {
                 if (firstReader == 1) continue;
 
                 //sčítat záznam odečtu je potřeba o jeden pozadu, proto je kontrola po načtení a až při dalším cyklu se uplatňuje
-                Log.w(TAG, "prevDate: " + SimpleDateFormatHelper.dateAndTime.format(actualDate)+" "+SimpleDateFormatHelper.dateAndTime.format(previousDate));
                 add = SimpleDateFormatHelper.month.format(actualDate).equals(SimpleDateFormatHelper.month.format(previousDate));
 
-                //Log.w(TAG, "index: "+i);
                 //přidat nový záznam do měsíční spotřeby
-                if (add && i>0) {
-                    monthlyConsuptions.get(monthlyConsuptions.size()-1).addConsuptionVT(actualVT - previousVT);
-                    monthlyConsuptions.get(monthlyConsuptions.size()-1).addConsuptionNT(actualNT - previousNT);
-                    monthlyConsuptions.get(monthlyConsuptions.size()-1).setDates(actualDate);
-                    monthlyConsuptions.get(monthlyConsuptions.size()-1).setFirstReader(firstReader);
+                if (add && i > 0) {
+                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).addConsuptionVT(actualVT - previousVT);
+                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).addConsuptionNT(actualNT - previousNT);
+                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).setDates(actualDate);
+                    monthlyConsuptions.get(monthlyConsuptions.size() - 1).setFirstReader(firstReader);
                 } else {
                     //proč potřebuji předchozí datum v modelu spotřeby?
                     monthlyConsuptions.add(new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate, firstReader));
                 }
-
-               }
+            }
         }
         cursor.close();
         close();
@@ -165,4 +164,5 @@ public class DataGraphMonth extends DataSource {
         date = cal.getTimeInMillis();
         return date;
     }
+
 }

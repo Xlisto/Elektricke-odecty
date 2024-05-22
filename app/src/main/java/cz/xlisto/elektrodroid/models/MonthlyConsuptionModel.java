@@ -7,10 +7,12 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
+
 /**
  * Xlisto 21.08.2023 3:41
  */
 public class MonthlyConsuptionModel implements ConsuptionModel {
+
     private static final String TAG = "MonthlyConsuptionModel";
 
     private final ArrayList<Double> VT = new ArrayList<>();
@@ -21,6 +23,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
     private Double consuptionNT;
     private int anim;
     private int max;
+
 
     public MonthlyConsuptionModel(Double actualVT, Double actualNT, Double previousVT, Double previousNT, Long actualDate, int firstReading) {
         this.VT.add(actualVT);
@@ -34,6 +37,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí datum jako string
+     *
      * @return Čísla měsíců měsíční spotřeby
      */
     public String getDateMonth() {
@@ -82,6 +86,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Číslo měsíců v textové podobě
+     *
      * @return Čísla měsíců měsíční spotřeby jako text
      */
     public String getDateMonthAsStringLong() {
@@ -128,6 +133,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí datum jako string
+     *
      * @return Čísla roku měsíční spotřeby
      */
     public int getYearAsInt() {
@@ -137,6 +143,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu za každý měsíc
+     *
      * @return Množství spotřeby ve VT za každý měsíc
      */
     public Double getConsuptionVT() {
@@ -146,6 +153,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu za každý měsíc
+     *
      * @return Množství spotřeby NT za každý měsíc
      */
     public Double getConsuptionNT() {
@@ -170,14 +178,15 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      * @return spotřeba NT
      */
     public Integer getConsuptionNTAnimace() {
-        return (int)(getConsuptionNT() / max * anim);
+        return (int) (getConsuptionNT() / max * anim);
     }
 
 
     /**
      * Nastaví animaci
-     * @param anim
-     * @param max
+     *
+     * @param anim animace
+     * @param max  max
      */
     public void setAnimate(int anim, int max) {
         this.anim = anim;
@@ -227,6 +236,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu VT
+     *
      * @return spotřeba VT
      */
     public Double getVT() {
@@ -240,6 +250,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu NT
+     *
      * @return spotřeba NT
      */
     public Double getNT() {
@@ -253,6 +264,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí datum
+     *
      * @param i index
      * @return datum na indexu i
      */
@@ -263,6 +275,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu VT
+     *
      * @param i index
      * @return vrátí spotřebu na indexu i
      */
@@ -273,6 +286,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Vrátí spotřebu NT
+     *
      * @param i index
      * @return vrátí spotřebu na indexu i
      */
@@ -283,6 +297,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Přidá spořebu VT
+     *
      * @param spotrebaVT spořeba jež se připočítá ke stávající spotřebě
      */
     public void addConsuptionVT(Double spotrebaVT) {
@@ -292,6 +307,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
     /**
      * Přidá spořebu NT
+     *
      * @param spotrebaNT spořeba jež se připočítá ke stávající spotřebě
      */
     public void addConsuptionNT(Double spotrebaNT) {
@@ -304,4 +320,5 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
     public String toString() {
         return "Spotřeba: " + getDateMonth() + "/" + getYearAsInt() + " VT:" + getConsuptionVT() + " NT:" + getConsuptionNT();
     }
+
 }
