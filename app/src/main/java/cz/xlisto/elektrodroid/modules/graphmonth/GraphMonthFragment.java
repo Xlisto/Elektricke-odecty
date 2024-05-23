@@ -295,6 +295,7 @@ public class GraphMonthFragment extends Fragment {
      * @return následující měsíc, který není prázdný
      */
     private int checkEmptyMonths(int compareMonth, boolean back) {
+        if (consuptionContainer == null) return 0;
         boolean allEmpty = true;
         for (int i = 0; i < consuptionContainer.getMonthsConsuptionsArray().size(); i++) {
             if (!consuptionContainer.getMonthsConsuptionsArray().get(i).isEmpty()) {
