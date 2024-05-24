@@ -436,11 +436,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava pádu aplikace při zobrazení notifikace na Androidu 14 (SDK 34)">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/graphmonth/GraphMonthFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_warning_png.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_warning_png.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -450,7 +450,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Medium_Phone_API_34.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1195,7 +1195,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="307" />
+    <option name="localTasksCounter" value="308" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1269,7 +1269,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Oprava LabelEditů na minimální výšku 48dp v soborech fragment_invoice_list_add_edit.xml a fragment_price_list_set_values.xml" />
     <MESSAGE value="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Úprava barev tlačítek bez pozadí a změna barvy textu v LabelEditText.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
@@ -1294,7 +1293,8 @@
     <MESSAGE value="Opravena chyba při zobrazování grafu porovnávaných měsíců &#10;Pokud nebylo naplněno kompletně všech 12 záznamů pro každý měsíc, zobrazoval se prázdný graf nebo aplikace padala." />
     <MESSAGE value="Upgrade AGP 8.4.1" />
     <MESSAGE value="Oprava pádu aplikace při zobrazení notifikace na Androidu 14 (SDK 34)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava pádu aplikace při zobrazení notifikace na Androidu 14 (SDK 34)" />
+    <MESSAGE value="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě" />
+    <option name="LAST_COMMIT_MESSAGE" value="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
