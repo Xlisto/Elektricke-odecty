@@ -34,6 +34,7 @@ import cz.xlisto.elektrodroid.utils.TextSizeAdjuster;
  * Xlisto 10.04.2023 17:47
  */
 public class InvoiceCutDialogFragment extends DialogFragment {
+
     public static final String TAG = "InvoiceCutDialogFragment";
     private final static String MIN_DATE = "minDate";
     private final static String MAX_DATE = "maxDate";
@@ -223,19 +224,31 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         double differenceNT = maxNT - minNT;
         double halfNT = minNT + (differenceNT / 2);
 
-        sliderDate.setValueFrom(0);
         float dateMax = (float) ((maxDate - minDate) / (double) (maxDate - minDate));
+        if (0 == dateMax) {
+            dateMax = 1;
+        }
+        sliderDate.setValueFrom(0);
         sliderDate.setValueTo(dateMax);
         sliderDate.setValue(dateMax / 2);
 
-        sliderVT.setValueFrom((float) minVT);
-        sliderVT.setValueTo((float) maxVT);
-        sliderVT.setValue((float) halfVT);
+        if (minVT < maxVT) {
+            sliderVT.setValueFrom((float) minVT);
+            sliderVT.setValueTo((float) maxVT);
+            sliderVT.setValue((float) halfVT);
+        } else {
+            sliderVT.setEnabled(false);
+            labVT.setEnabled(false);
+        }
 
-        sliderNT.setValueFrom((float) minNT);
-        sliderNT.setValueTo((float) maxNT);
-        sliderNT.setValue((float) halfNT);
-
+        if (minNT < maxNT) {
+            sliderNT.setValueFrom((float) minNT);
+            sliderNT.setValueTo((float) maxNT);
+            sliderNT.setValue((float) halfNT);
+        } else {
+            sliderNT.setEnabled(false);
+            labNT.setEnabled(false);
+        }
         labVT.setLabel(context.getResources().getString(R.string.string_dash_string,
                 DecimalFormatHelper.df2.format(minVT), DecimalFormatHelper.df2.format(maxVT)));
         labVT.setDefaultText(DecimalFormatHelper.df2.format(halfVT));
@@ -299,9 +312,6 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         tvDateItem2.setText(context.getResources().getString(R.string.string_dash_string,
                 ViewHelper.convertLongToDate(dateDayStart), ViewHelper.convertLongToDate(maxDate)));
 
-
-
-
         //VT
         labVT.setLabel(getResources().getString(R.string.vt3));
         String vtItem1 = context.getResources().getString(R.string.string_dash_string_kwh,
@@ -337,10 +347,10 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         float minNTSize = Math.min(sizeNtItem1, sizeNtItem2);
         float minSize = Math.min(minVTSize, minNTSize);
 
-        tvVTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
-        tvVTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
-        tvNTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
-        tvNTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX,minSize);
+        tvVTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX, minSize);
+        tvVTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX, minSize);
+        tvNTItem1.setTextSize(TypedValue.COMPLEX_UNIT_PX, minSize);
+        tvNTItem2.setTextSize(TypedValue.COMPLEX_UNIT_PX, minSize);
     }
 
 
@@ -383,4 +393,5 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         return calendar.getTimeInMillis();
     }
+
 }
