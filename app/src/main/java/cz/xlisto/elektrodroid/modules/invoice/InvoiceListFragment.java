@@ -2,6 +2,7 @@ package cz.xlisto.elektrodroid.modules.invoice;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,22 +10,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
-import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
+import cz.xlisto.elektrodroid.dialogs.SetDefaultMetersDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsInvoiceDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
@@ -60,6 +65,8 @@ public class InvoiceListFragment extends Fragment {
     private String tableReading;
     private Button btnAddInvoice;
     private FloatingActionButton fab;
+    private LinearLayout llAlertNoInvoice;
+    private InvoiceListViewModel invoiceListViewModel;
 
 
     public static InvoiceListFragment newInstance() {
@@ -71,7 +78,12 @@ public class InvoiceListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        invoiceListViewModel = new ViewModelProvider(this).get(InvoiceListViewModel.class);
+        //invoiceListViewModel.setShovedDialog(false);
+
         //https://developer.android.com/guide/fragments/communicate#fragment-result
+
         //posluchač pro změnu čísla faktury
         getParentFragmentManager().setFragmentResultListener(INVOICE_NUMBER_EDIT_LISTENER, this, (requestKey, bundle) -> {
             String numberInvoice = bundle.getString(NUMBER_INVOICE);
@@ -82,6 +94,8 @@ public class InvoiceListFragment extends Fragment {
             dataInvoiceSource.close();
             onResume();
         });
+
+        //posluchač pro přidání faktury
         getParentFragmentManager().setFragmentResultListener(INVOICE_NUMBER_ADD_LISTENER, this, (requestKey, bundle) -> {
             String numberInvoice = bundle.getString(NUMBER_INVOICE);
             long idSubscriptionPoint = bundle.getLong(ID_SUBSCRIPTIONPOINT);
@@ -91,11 +105,13 @@ public class InvoiceListFragment extends Fragment {
             dataInvoiceSource.close();
             onResume();
         });
+
         //posluchač změny odběrného místa
         getParentFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this, (requestKey, bundle) -> {
             readIdSubscriptionPoint();
             onResume();
         });
+
         //posluchač pro smazání faktury
         getParentFragmentManager().setFragmentResultListener(INVOICE_DELETE_LISTENER, this, (requestKey, bundle) -> {
             boolean b = bundle.getBoolean(YesNoDialogFragment.RESULT);
@@ -120,9 +136,27 @@ public class InvoiceListFragment extends Fragment {
                 invoiceAdapter.notifyItemRangeChanged(0, invoiceAdapter.getItemCount());
             }
         });
+
         //posluchač zavření dialogová okna nastavení
         getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true)
+        );
+
+        //posluchač zavření dialogového okna pro nastavení výchozích stavů měřičů
+        getParentFragmentManager().setFragmentResultListener(SetDefaultMetersDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
+                (requestKey, bundle) -> {
+                    invoiceListViewModel.setShovedDialog(false);
+                    if (SubscriptionPoint.load(requireActivity()) == null || bundle.isEmpty())
+                        return;
+                    long idSubscriptionPoint = Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId();
+                    String result = bundle.getString(SetDefaultMetersDialogFragment.RESULT);
+                    DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+                    dataSettingsSource.open();
+                    dataSettingsSource.setFirstMeter(idSubscriptionPoint, result);
+                    dataSettingsSource.close();
+                    WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), tableNow, tableFak, tableReading);
+                    loadDataAndSetAdapter();
+                }
         );
     }
 
@@ -130,7 +164,6 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_invoice_list, container, false);
     }
 
@@ -140,10 +173,13 @@ public class InvoiceListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         readIdSubscriptionPoint();
         btnAddInvoice = view.findViewById(R.id.btnAddPayment);
+        Button btnSetFirstMeters = view.findViewById(R.id.btnSetFirstMeters);
+        llAlertNoInvoice = view.findViewById(R.id.lnAlertFirstMeters);
         fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.recycleViewInvoiceList);
         TextView tvNoInvoice = view.findViewById(R.id.tvAlertInvoiceList);
         btnAddInvoice.setOnClickListener(v -> showAddInvoiceDialog());
+        btnSetFirstMeters.setOnClickListener(v -> showAddFirstMetersDialog());
         fab.setOnClickListener(v -> showAddInvoiceDialog());
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint == null) {
@@ -170,6 +206,7 @@ public class InvoiceListFragment extends Fragment {
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
         if (subscriptionPoint == null) {
+            llAlertNoInvoice.setVisibility(View.GONE);
             return;
         }
         tablePay = subscriptionPoint.getTablePLATBY();
@@ -180,10 +217,16 @@ public class InvoiceListFragment extends Fragment {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
         dataInvoiceSource.open();
         ArrayList<InvoiceListModel> invoices = dataInvoiceSource.loadInvoiceLists(subscriptionPoint);
-        dataInvoiceSource.close();
+        boolean isExists = dataInvoiceSource.checkInvoiceExists(tableFak);
 
-        if (invoices.isEmpty()) {
-            OwnAlertDialog.show(requireContext(), requireContext().getResources().getString(R.string.error), requireContext().getResources().getString(R.string.no_invoice));
+        dataInvoiceSource.close();
+        Log.w(TAG, "IsShowedDialog: " + invoiceListViewModel.isShowingDialog().getValue());
+
+        //zobrazí upozornění, pokud neexistuje žádná faktura
+        if (!isExists) {
+            llAlertNoInvoice.setVisibility(View.VISIBLE);
+        } else {
+            llAlertNoInvoice.setVisibility(View.GONE);
         }
 
         invoiceAdapter = new InvoiceListAdapter(requireContext(), invoices, rv);
@@ -221,6 +264,20 @@ public class InvoiceListFragment extends Fragment {
     private void showAddInvoiceDialog() {
         InvoiceListAddDialogFragment invoiceAddDialogFragment = InvoiceListAddDialogFragment.newInstance(idSubscriptionPoint);
         invoiceAddDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
+    }
+
+
+    /**
+     * Zobrazí dialogové okno pro nastavení výchozích stavů měřičů
+     */
+    private void showAddFirstMetersDialog() {
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        String firstMeter = dataSettingsSource.loadFirstMeters(idSubscriptionPoint);
+        dataSettingsSource.close();
+        Log.w("FirstMeter", firstMeter);
+        invoiceListViewModel.setShovedDialog(true);
+        SetDefaultMetersDialogFragment.newInstance(firstMeter).show(requireActivity().getSupportFragmentManager(), SetDefaultMetersDialogFragment.class.getName());
     }
 
 }

@@ -18,6 +18,12 @@
           <theme>@style/Theme.Odecty</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/dialog_set_first_meters.xml">
+        <config>
+          <state>Landscape</state>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout-land/fragment_dashboard.xml">
         <config>
           <state>Landscape</state>
@@ -121,6 +127,11 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_select_subscription_point.xml">
+        <config>
+          <theme>@style/Theme.Odecty</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_set_first_meters.xml">
         <config>
           <theme>@style/Theme.Odecty</theme>
         </config>
@@ -436,11 +447,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě">
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX.">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/dialogs/SetDefaultMetersDialogFragment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListViewModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/shape_background_alert_first_meters.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/dialog_set_first_meters.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_set_first_meters.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/ic_warning_png.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_warning_png.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataSettingsSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataSettingsSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -506,10 +527,10 @@
         <option value="xml" />
         <option value="Enum" />
         <option value="Interface" />
-        <option value="layoutResourceFile" />
-        <option value="Class" />
-        <option value="resourceFile" />
         <option value="valueResourceFile" />
+        <option value="layoutResourceFile" />
+        <option value="resourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -619,7 +640,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3&quot;: &quot;junit.framework.TestCase&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/AndroidStudioProjects/Elektricke-odecty&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Xlisto/Desktop/database_kiss.db&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -1195,7 +1216,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="308" />
+    <option name="localTasksCounter" value="313" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1269,10 +1290,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="V LabelEditText nastavena minimální výchozí výška na 48dp.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <MESSAGE value="Úprava barev plovoucích tlačítek FloatingButton a úprava průhlednosti červené a zelené barvy pro ohraničení měsíčních odečtů.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <MESSAGE value="Úprava barev tlačítek bez pozadí a změna barvy textu v LabelEditText.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
-    <MESSAGE value="Úprava barev tlačítek bez pozadí na dialogových oknech.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním." />
@@ -1294,7 +1311,11 @@
     <MESSAGE value="Upgrade AGP 8.4.1" />
     <MESSAGE value="Oprava pádu aplikace při zobrazení notifikace na Androidu 14 (SDK 34)" />
     <MESSAGE value="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě" />
-    <option name="LAST_COMMIT_MESSAGE" value="Oprava pádu aplikace při zobrazení grafu a nevytvořeném odběrném místě" />
+    <MESSAGE value="Změna barevné ikony varování&#10;- černá pro světlý režim&#10;- původní žlutá pro tmavý režim" />
+    <MESSAGE value="Nastavený maximální limit (999999.9)čísla pro zobrazení měřice v přehledu." />
+    <MESSAGE value="Upravené podmínky pro nastavení posuvníků, pokud jsou jejich hodnoty stejné.&#10;Pokud jsou jejich mina max hodnoty stejné dochází k pádu aplikace." />
+    <MESSAGE value="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX." />
+    <option name="LAST_COMMIT_MESSAGE" value="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>

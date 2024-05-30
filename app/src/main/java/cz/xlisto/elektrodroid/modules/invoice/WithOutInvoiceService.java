@@ -10,6 +10,7 @@ import java.util.Objects;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
@@ -117,7 +118,9 @@ public class WithOutInvoiceService {
         dataInvoiceSource.open();
         InvoiceModel invoice = dataInvoiceSource.lastInvoiceByDate(-1L, tableTED);
         InvoiceModel lastInvoice = dataInvoiceSource.loadLastInvoiceByDateFromAll(tableFAK);
-        if (lastInvoice == null) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
+
+        String parameters = getFirstMeters(context);
+        if (lastInvoice == null && parameters.isEmpty()) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
             dataInvoiceSource.deleteAllInvoices(tableTED);
             dataInvoiceSource.close();
             String title = context.getResources().getString(R.string.error);
@@ -125,9 +128,13 @@ public class WithOutInvoiceService {
             OwnAlertDialog.show(context, title, message);
             return;
         }
+
         invoice.setDateTo(calendar.getTimeInMillis());
         invoice.setVtEnd(monthlyReading.getVt());
         invoice.setNtEnd(monthlyReading.getNt());
+        invoice.setDateFrom(parseParametersDate(parameters));
+        invoice.setVtStart(parseParametersVtNt(parameters)[0]);
+        invoice.setNtStart(parseParametersVtNt(parameters)[1]);
         dataInvoiceSource.updateInvoice(invoice.getId(), tableTED, invoice);
         dataInvoiceSource.close();
 
@@ -159,10 +166,30 @@ public class WithOutInvoiceService {
         long lastInvoiceDateTo = 0L;
         double lastInvoiceVtEnd = 0;
         double lastInvoiceNtEnd = 0;
-        if (lastInvoice != null) {
+        if (lastInvoice != null) {//pokud existuje poslední faktura, načtou se její údaje koncové údaje
             lastInvoiceDateTo = lastInvoice.getDateTo();
             lastInvoiceVtEnd = lastInvoice.getVtEnd();
             lastInvoiceNtEnd = lastInvoice.getNtEnd();
+        } else {//pokud neexistuje žádná faktura, načte se poslední záznam z nastavení, pokud existuje
+            String parameters = getFirstMeters(context);
+
+            if (!parameters.isEmpty()) {//načetly se údaje z nastavení
+                String[] params = parameters.split(";");
+                lastInvoiceDateTo = Long.parseLong(params[0]);
+                lastInvoiceVtEnd = Double.parseDouble(params[1]);
+                lastInvoiceNtEnd = Double.parseDouble(params[2]);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(lastInvoiceDateTo);
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                lastInvoiceDateTo = calendar.getTimeInMillis();
+            }
+            if (lastInvoiceDateTo == 0) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
+                String title = context.getResources().getString(R.string.error);
+                String message = context.getResources().getString(R.string.no_invoice_records);
+                OwnAlertDialog.show(context, title, message);
+                return;
+            }
+
         }
 
         Calendar dateLastInvoice = Calendar.getInstance();
@@ -176,13 +203,6 @@ public class WithOutInvoiceService {
         InvoiceModel newInvoice = null;
         long prevPriceListId = -1L;
         ArrayList<InvoiceModel> invoicesModels = new ArrayList<>();
-
-        if (lastInvoice == null) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
-            String title = context.getResources().getString(R.string.error);
-            String message = context.getResources().getString(R.string.no_invoice_records);
-            OwnAlertDialog.show(context, title, message);
-            return;
-        }
 
         if (monthlyReadingModels.isEmpty()) {//zobrazení chyby, pokud není žádný měsíční záznam od poslední faktury - nelze generovat záznam
             String title = context.getResources().getString(R.string.error);
@@ -271,7 +291,10 @@ public class WithOutInvoiceService {
             return;
         }
 
-        if (itemLastInvoice == null) {//pokud nejsou žádné faktury, zobrazí se chyba a smaže se stávající období bez faktury
+        String parameters = getFirstMeters(context);
+
+        //pokud je prázdná poslední faktura a prázdný parametr, zobrazí se chyba a smaže se stávající období bez faktury
+        if (itemLastInvoice == null && parameters.isEmpty()) {//pokud nejsou žádné faktury, zobrazí se chyba a smaže se stávající období bez faktury
             dataInvoiceSource.deleteAllInvoices(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
             dataMonthlyReadingSource.close();
             dataInvoiceSource.close();
@@ -280,11 +303,18 @@ public class WithOutInvoiceService {
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(itemLastInvoice.getDateTo());
-        calendar.add(Calendar.DATE, 1);
-        itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
-        itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
-        itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
+        if (itemLastInvoice != null) {//nastavení poslední faktury
+            calendar.setTimeInMillis(itemLastInvoice.getDateTo());
+            calendar.add(Calendar.DATE, 1);
+            itemFirstWithoutInvoice.setDateFrom(calendar.getTimeInMillis());
+            itemFirstWithoutInvoice.setVtStart(itemLastInvoice.getVtEnd());
+            itemFirstWithoutInvoice.setNtStart(itemLastInvoice.getNtEnd());
+        } else {//nastavení parametrů prvního odečtu
+            itemFirstWithoutInvoice.setDateFrom(Long.parseLong(parameters.split(";")[0]));
+            itemFirstWithoutInvoice.setVtStart(Double.parseDouble(parameters.split(";")[1]));
+            itemFirstWithoutInvoice.setNtStart(Double.parseDouble(parameters.split(";")[2]));
+        }
+
         if (calendar.getTimeInMillis() > monthlyReading.getDate()) {
             showAlertDialog(context);
         }
@@ -298,6 +328,52 @@ public class WithOutInvoiceService {
     private static void showAlertDialog(Context context) {
         OwnAlertDialog.show(context, context.getResources().getString(R.string.error),
                 context.getResources().getString(R.string.dates_is_not_correct));
+    }
+
+
+    /**
+     * Načte parametry prvního záznamu
+     *
+     * @param context kontext aplikace
+     * @return String parametry
+     */
+    private static String getFirstMeters(Context context) {
+        long idSubscription = Objects.requireNonNull(SubscriptionPoint.load(context)).getId();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(context);
+        dataSettingsSource.open();
+        String parameters = dataSettingsSource.loadFirstMeters(idSubscription);
+        dataSettingsSource.close();
+        return parameters;
+    }
+
+
+    /**
+     * Načte parametry prvního záznamu a vrátí datum
+     *
+     * @param parameters parametry
+     * @return long datum
+     */
+    private static long parseParametersDate(String parameters) {
+        if (!parameters.isEmpty()) {//načetly se údaje z nastavení
+            String[] params = parameters.split(";");
+            return Long.parseLong(params[0]);
+        }
+        return 0L;
+    }
+
+
+    /**
+     * Načte parametry prvního záznamu a vrátí pole s hodnotami VT a NT
+     *
+     * @param parameters parametry
+     * @return pole s hodnotami VT a NT
+     */
+    private static double[] parseParametersVtNt(String parameters) {
+        if (!parameters.isEmpty()) {//načetly se údaje z nastavení
+            String[] params = parameters.split(";");
+            return new double[]{Double.parseDouble(params[1]), Double.parseDouble(params[2])};
+        }
+        return new double[]{0.0, 0.0};
     }
 
 }

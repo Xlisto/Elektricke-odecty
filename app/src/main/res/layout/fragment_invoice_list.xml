@@ -7,6 +7,29 @@
     android:animateLayoutChanges="false"
     tools:context=".modules.invoice.InvoiceListFragment">
 
+    <LinearLayout
+        android:id="@+id/lnAlertFirstMeters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/shape_background_alert_first_meters"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvAlertFirstMeters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@string/no_invoice_alert" />
+
+        <Button
+            android:id="@+id/btnSetFirstMeters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnAddPayment"
         android:layout_width="wrap_content"
@@ -21,7 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/btnAddPayment"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/lnAlertFirstMeters"
+        android:layout_alignParentTop="false"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:animateLayoutChanges="false"
@@ -53,5 +77,6 @@
         android:id="@+id/tvAlertInvoiceList"
         style="@style/AlertNoSubscriptionPoint"
         android:visibility="gone" />
+
 </RelativeLayout>
 

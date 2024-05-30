@@ -2,7 +2,7 @@
     <string name="app_name">El. odečty</string>
     <string name="hdo_service_name">Čas HDO</string>
 
-    <string name="datum_cislem">01.01.2022</string>
+    <string name="datum_cislem">01.01.2024</string>
     <string name="pomlka">-</string>
     <string name="no_date">XX.XX.XXXX</string>
     <string name="platnost_cenik">Platnost OD - DO</string>
@@ -468,7 +468,8 @@
     <string name="autogenerate_yes">Pro období bez faktury se budou generovat všechny údaje podle měsíčních záznamů. Použije se rozdělení podle ceníků, výměny elektroměru atd. Ruční manipulace se záznamy v období bez faktury je zákazána.</string>
     <string name="no_monthly_records">Nejsou zapsány žádné měsíční záznamy. Nelze vytvořit záznam v období bez faktury.</string>
     <string name="no_invoice_records">Není zapsána poslední vyúčtovaná faktura. Nelze vytvořit záznam v období bez faktury.</string>
-    <string name="no_invoice">Není zapsána žádná faktura. Nelze počítat současnou spotřebu od posledního vyúčtování.</string>
+    <string name="no_invoice">Není zapsána žádná faktura. Nelze počítat současnou spotřebu od posledního vyúčtování.\n\nNastavte počáteční hodnoty měřičů a datum.</string>
+    <string name="no_invoice_alert">Není zadána poslední faktura. \nZobrazit dialog pro nastavení výchozích hodnot můžete stisknutím tlačítka nebo zadejte poslední fakturu.</string>
 
     <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
     <string name="add_monthly_reading">Přidat odečet</string>
@@ -481,6 +482,8 @@
     <string name="allow_notification_title">Povolení oznámení</string>
     <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>
     <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
+
+    <string name="set_first_meters_title">Výchozí hodnoty</string>
 
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
