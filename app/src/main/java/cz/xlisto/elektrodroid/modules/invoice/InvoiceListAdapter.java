@@ -191,6 +191,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         holder.tvDateTo.setText(endDate);
         holder.tvDateDifferent.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
 
+        if (minDate == 0 || maxDate == 0) {
+            holder.tvDateOf.setText(context.getResources().getString(R.string.no_date));
+            holder.tvDateTo.setText(context.getResources().getString(R.string.no_date));
+            holder.tvDateDifferent.setText("");
+        }
+
         if (payments > 0)
             holder.tvPayments.setText(context.getResources().getString(R.string.advances, payments));
 
@@ -210,6 +216,7 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         showButtons(holder, position);
 
         holder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
+        holder.btnDeleteInvoice.setEnabled(invoice.getIdFak() != -1);
 
         checkDate(position, holder);
     }
