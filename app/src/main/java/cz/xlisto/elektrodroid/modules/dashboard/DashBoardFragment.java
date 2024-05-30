@@ -320,8 +320,14 @@ public class DashBoardFragment extends Fragment {
 
 
     private void setNumbersMeter() {
+        int MAX = 9999999;
         int VT = (int) (invoiceListSumModel.getMeterValuesVT(showInvoiceSum) * 10);
         int NT = (int) (invoiceListSumModel.getMeterValuesNT(showInvoiceSum) * 10);
+        if (VT > MAX)
+            VT = MAX;
+        if (NT > MAX)
+            NT = MAX;
+
         numbersMeterVT.setCurrentNumber(VT);
         numbersMeterNT.setCurrentNumber(NT);
     }

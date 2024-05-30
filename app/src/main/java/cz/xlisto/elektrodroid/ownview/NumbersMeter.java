@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
@@ -93,6 +94,9 @@ public class NumbersMeter extends View {
 
         drawBackgroundNumbers(canvas, scaledSize[0], scaledSize[1]);
         tempNumber = currentNumber;
+        Log.w(TAG, "onDraw: " + currentNumber + " " + countNumber);
+        if (countNumber > 7)
+            countNumber = 7;
 
         for (int i = countNumber - 1; i >= 0; i--) {
             digits[i] = tempNumber % 10;
@@ -144,7 +148,7 @@ public class NumbersMeter extends View {
             case 9:
                 return numbers[9];
             default:
-                return null;
+                return numbers[0];
         }
     }
 
