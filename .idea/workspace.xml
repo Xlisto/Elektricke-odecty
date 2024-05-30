@@ -447,21 +447,8 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/dialogs/SetDefaultMetersDialogFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListViewModel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/shape_background_alert_first_meters.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/dialog_set_first_meters.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_set_first_meters.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna možnost nastavení výchozího stavu měřidel pro &quot;Období bez faktury&quot; pokud není zadána alespoň jedna faktura.">
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataSettingsSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/databaze/DataSettingsSource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/InvoiceListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/invoice/WithOutInvoiceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/modules/subscriptionpoint/SubscriptionPointFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_invoice_list.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1216,7 +1203,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="313" />
+    <option name="localTasksCounter" value="315" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1290,7 +1277,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Změna barev tlačítek s pozadím v dark režimu.&#10;Vytvoření vlastního stylu pro dialogová okna.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev navigačního menu.&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna barev navigačního menu.&#10;Doplněny soubory nav_item_background.xml a nav_item_text.xml a styl ve styl,xml&#10;Změna udělána na základě varování výsledků testů před vydáním." />
     <MESSAGE value="Změna v obdodobí bez faktury - od data měsíčního odečtu se odečítá 1 den." />
@@ -1315,7 +1301,8 @@
     <MESSAGE value="Nastavený maximální limit (999999.9)čísla pro zobrazení měřice v přehledu." />
     <MESSAGE value="Upravené podmínky pro nastavení posuvníků, pokud jsou jejich hodnoty stejné.&#10;Pokud jsou jejich mina max hodnoty stejné dochází k pádu aplikace." />
     <MESSAGE value="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX." />
-    <option name="LAST_COMMIT_MESSAGE" value="V seznamu faktur, pokud je počáteční datum nebo koncový datum nastaven na 0L. Zobrazí se místo data pouze znaky XX." />
+    <MESSAGE value="Doplněna možnost nastavení výchozího stavu měřidel pro &quot;Období bez faktury&quot; pokud není zadána alespoň jedna faktura." />
+    <option name="LAST_COMMIT_MESSAGE" value="Doplněna možnost nastavení výchozího stavu měřidel pro &quot;Období bez faktury&quot; pokud není zadána alespoň jedna faktura." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
