@@ -104,7 +104,7 @@ public class HdoService extends Service {
         String time = ViewHelper.convertLongToTime(milins);
         boolean isHdo = HdoTime.checkHdo(hdoModels, calendar);
         if (isHdo) {
-            time = time + "   ** Nízský tarif **";
+            time = time + "   ** Nízký tarif **";
         } else {
             time = time + "   ** Vysoký tarif **";
         }

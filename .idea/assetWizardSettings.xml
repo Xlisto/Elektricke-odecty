@@ -101,7 +101,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop\electric_meter_test.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Desktop" />
                                                 <entry key="scalingPercent" value="79" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
@@ -166,7 +166,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Xlisto\Documents\9.png" />
+                                                <entry key="imagePath" value="C:\Users\Xlisto\Mega\Programovani\AndroidStudioProjects\ElektroDroid - grafika\ic_graph_nt_on.png" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -202,9 +202,8 @@
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="13f304" />
                                       <entry key="cropped" value="true" />
-                                      <entry key="iconShape" value="NONE" />
-                                      <entry key="imageAsset" value="C:\Users\Xlisto\Documents\9.png" />
-                                      <entry key="outputName" value="number_9" />
+                                      <entry key="imageAsset" value="C:\Users\Xlisto\Mega\Programovani\AndroidStudioProjects\ElektroDroid - grafika\ic_graph_nt_on.png" />
+                                      <entry key="outputName" value="ic_graph_nt_on" />
                                     </map>
                                   </option>
                                 </PersistentState>

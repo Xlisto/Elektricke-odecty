@@ -212,7 +212,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
 
     /**
-     * Nastavuje posuvníky a popisky pro hodnoty VT (Vysoký tarif) a NT (Nízský tarif) a pro datum.
+     * Nastavuje posuvníky a popisky pro hodnoty VT (Vysoký tarif) a NT (Nízký tarif) a pro datum.
      * Vypočítává polohu středové hodnoty pro každý posuvník pomocí minimální a maximální hodnoty.
      * Nastavuje minimální a maximální hodnoty a polohu posuvníků pro VT, NT a datum.
      * Nastavuje popisky pro VT a NT včetně minimální a maximální hodnoty a středovou hodnotu pro VT a NT.

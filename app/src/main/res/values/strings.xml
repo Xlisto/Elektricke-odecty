@@ -7,15 +7,15 @@
     <string name="no_date">XX.XX.XXXX</string>
     <string name="platnost_cenik">Platnost OD - DO</string>
     <string name="dodavatel">Dodavatel</string>
-    <string name="produkt">Produkt</string>
+    <string name="produkt">Produkt (Jméno sazby)</string>
     <string name="distribucni_uzemi">Distribuční území</string>
-    <string name="produktova_rada">Produktová řada</string>
+    <string name="produktova_rada">Produktová řada (Jméno ceníku)</string>
     <string name="nuly">000.0</string>
     <string name="nt">NT</string>
     <string name="neregul_nt">Neregulovaná cena NT</string>
     <string name="regul_nt">Regulovaná cena NT</string>
     <string name="nt2">NT:</string>
-    <string name="nt3">NÍZSKÝ TARIF</string>
+    <string name="nt3">NÍZKÝ TARIF</string>
     <string name="vt">VT</string>
     <string name="neregul_vt">Neregulovaná cena VT</string>
     <string name="regul_vt">Regulovaná cena VT</string>
@@ -142,7 +142,7 @@
     <string name="pomlcky">========</string>
     <string name="zalohy">Záloha</string>
     <string name="pridejte_mesicni_odecty">Přidejte měsíční odečty</string>
-    <string name="regul_alert">Období obsahuje regulované i neregulované ceny</string>
+    <string name="regul_alert">Období obsahuje zastropované i nezastropované ceny</string>
     <string name="new_meter">Byla provedena výměna elektroměru</string>
     <string name="alert">Varování nekonzistence dat</string>
     <string name="alert_date_price_list">Pro období je použitý neplatný ceník</string>
@@ -152,7 +152,7 @@
     <string name="prvniOdecet">Výměna elektroměru</string>
     <string name="addBackup">Vytvořit záložní zip soubor při uložení odečtu</string>
     <string name="datumOdectu">Datum odečtu: </string>
-    <string name="stavNt">Stav počitadla nízského tarifu: </string>
+    <string name="stavNt">Stav počitadla nízkého tarifu: </string>
     <string name="stavVt">Stav počitadla vysokého tarifu: </string>
     <string name="pravidelnaZaloha">Pravidelná měsíční platba (záloha): </string>
     <string name="poznamka">Poznámka:</string>
@@ -169,14 +169,14 @@
     <string name="podpora_obnovitelnych_zdroju">Podpora obnovitelných zdrojů</string>
 
     <string name="zjednodusene_zobrazeni">Zjednodušené zobrazení</string>
-    <string name="regulovane_ceny">Regulované ceny</string>
+    <string name="regulovane_ceny">Zastropované ceny</string>
     <string name="strop_ceny">Zastropované ceny</string>
 
     <string name="logo">LOGO</string>
     <string name="elektrodroid">ElektroDroid</string>
 
     <string name="spotreba_vysokeho_tarifu">Spotřeba VYSOKÉHO tarifu [MWh]:</string>
-    <string name="spotreba_nizskeho_tarifu">Spotřeba NÍZSKÉHO tarifu [MWh]:</string>
+    <string name="spotreba_nizkeho_tarifu">Spotřeba NÍZKÉHO tarifu [MWh]:</string>
     <string name="pocet_mesicu">Počet měsíců:</string>
     <string name="dalsi_sluzby_neuvedene">Další služby/slevy v ceníku neuvedené:</string>
     <string name="nastaveni_parametru">Nastavení parametrů pro porovnání</string>
@@ -250,9 +250,9 @@
     <string name="export_price_list">Export ceníků</string>
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
-    <string name="watch_low_tarif">Sledování nízského tarifu</string>
+    <string name="watch_low_tarif">Sledování nízkého tarifu</string>
     <string name="time_meter">Čas elektroměru</string>
-    <string name="image_destription_nt">Ikona zobrazující aktivní nízský tarif</string>
+    <string name="image_destription_nt">Ikona zobrazující aktivní nízký tarif</string>
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
@@ -278,7 +278,7 @@
     <string name="description_btn_period">Přepíná mezi ročním a měsičním grafem</string>
     <string name="description_btn_type">Přepíná mezi čárovým a sloupcovým grafem</string>
     <string name="description_btn_vt">Zobrazí/skryje vysoký tarif</string>
-    <string name="description_btn_nt">Zobrazí/skryje nízský tarif</string>
+    <string name="description_btn_nt">Zobrazí/skryje nízký tarif</string>
     <string name="description_btn_zoom_in">Zvětší graf</string>
     <string name="description_btn_zoom_out">Zmenší graf</string>
 
@@ -288,7 +288,7 @@
     <string name="contentdescription_vt_color">Nastavení barvy vysokého tarifu</string>
     <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
-    <string name="contentdescription_nt_color">Nastavení barvy nízského tarifu</string>
+    <string name="contentdescription_nt_color">Nastavení barvy nízkého tarifu</string>
     <string name="set_color_html">Nastavení barvy</string>
     <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
     <string name="set">Nastav </string>
@@ -489,7 +489,7 @@
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
     <string name="description_import">Seznam ceníku připravených k vložení do aplikace</string>
     <string name="description_invoice">Seznam faktur a aktuální spotřeba</string>
-    <string name="description_hdo_list">Seznam časů nízského tarifu</string>
+    <string name="description_hdo_list">Seznam časů nízkého tarifu</string>
     <string name="description_price_list">Seznam ceníků</string>
     <string name="description_monthly_reading">Seznam záznamů měsíčních odečtů</string>
     <string name="description_subscription_point_name">pojmenujte si odběrné místo</string>

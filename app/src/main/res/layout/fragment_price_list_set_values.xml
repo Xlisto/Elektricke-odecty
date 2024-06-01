@@ -51,7 +51,7 @@
             android:minHeight="48dp"
             app:direction="vertical"
             app:hintText="@string/_1"
-            app:label="@string/spotreba_nizskeho_tarifu" />
+            app:label="@string/spotreba_nizkeho_tarifu" />
 
         <TextView
             android:id="@+id/tvFazePrikon"

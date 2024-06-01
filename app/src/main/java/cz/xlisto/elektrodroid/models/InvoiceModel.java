@@ -147,9 +147,9 @@ public class InvoiceModel {
 
 
     /**
-     * Spotřeba nízského tarifu
+     * Spotřeba nízkého tarifu
      *
-     * @return double spotřeba nízského tarifu
+     * @return double spotřeba nízkého tarifu
      */
     public double getNt() {
         return ntEnd - ntStart;
@@ -157,9 +157,9 @@ public class InvoiceModel {
 
 
     /**
-     * Spotřeba vysokého a nízského tarifu
+     * Spotřeba vysokého a nízkého tarifu
      *
-     * @return double spotřeba vysokého a nízského tarifu
+     * @return double spotřeba vysokého a nízkého tarifu
      */
     public double getVtNt() {
         return getVt() + getNt();
