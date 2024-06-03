@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/meni_dashboard"
+        android:icon="@drawable/ic_dashboard"
+        android:title=""
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/meni_prices"
+        android:icon="@drawable/ic_price_list"
+        android:title=""
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/meni_monthly_readings"
+        android:icon="@drawable/ic_monthly_reading"
+        android:title=""
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/meni_subscription_points"
+        android:icon="@drawable/ic_subscription_point"
+        android:title=""
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/meni_invoice"
+        android:icon="@drawable/baseline_auto_stories_24"
+        android:title=""
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+
+</menu>

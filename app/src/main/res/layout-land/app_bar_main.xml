@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/myBottomNavigation"
         android:layout_below="@id/appBarLayout"
+        android:layout_toEndOf="@id/navigationView"
         tools:layout="@layout/fragment_price_list" />
 
     <com.google.android.material.appbar.AppBarLayout
@@ -26,8 +27,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/color_bar"
-            app:popupTheme="@style/Theme.Odecty.PopupOverlay" >
-            <include layout="@layout/my_toolbar"/>
+            app:popupTheme="@style/Theme.Odecty.PopupOverlay">
+
+            <include layout="@layout/my_toolbar" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,6 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:foregroundGravity="right"
+        android:orientation="vertical"
         app:itemIconTint="@color/bnv"
         app:itemTextColor="@color/bnv"
         app:menu="@menu/menu_bottom_menu" />

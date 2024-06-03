@@ -484,6 +484,7 @@
     <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
 
     <string name="set_first_meters_title">Výchozí hodnoty</string>
+    <string name="alert_app_end">Následující kliknutí aplikaci ukončí</string>
 
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
