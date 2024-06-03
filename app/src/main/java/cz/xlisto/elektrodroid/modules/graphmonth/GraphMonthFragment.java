@@ -88,6 +88,7 @@ public class GraphMonthFragment extends Fragment {
             setImageIconNT();
             setImageIconVT();
             shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_VT, showVT);
+            shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_NT, showNT);
         });
 
         btnShowNT.setOnClickListener(v -> {
@@ -99,6 +100,7 @@ public class GraphMonthFragment extends Fragment {
             graphMonthView.setShowNT(showNT);
             setImageIconNT();
             setImageIconVT();
+            shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_VT, showVT);
             shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_NT, showNT);
         });
 
