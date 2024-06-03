@@ -104,6 +104,7 @@ public class WithOutInvoiceService {
      * @param context kontext aplikace
      */
     public static void editLastItemInInvoice(Context context, String tableTED, String tableFAK, MonthlyReadingModel monthlyReading) {
+
         if (monthlyReading == null) {
             monthlyReading = new MonthlyReadingModel(0, 0, 0, 0, 0, "", 0, 0, false);
         }
@@ -128,13 +129,26 @@ public class WithOutInvoiceService {
             OwnAlertDialog.show(context, title, message);
             return;
         }
-
+        //koncová data z měsíčního odečtu
         invoice.setDateTo(calendar.getTimeInMillis());
         invoice.setVtEnd(monthlyReading.getVt());
         invoice.setNtEnd(monthlyReading.getNt());
-        invoice.setDateFrom(parseParametersDate(parameters));
-        invoice.setVtStart(parseParametersVtNt(parameters)[0]);
-        invoice.setNtStart(parseParametersVtNt(parameters)[1]);
+
+        if (lastInvoice != null) {
+            //pokud existuje poslední faktura, načtou se její údaje a přičte se jeden den a nastaví se jako počáteční data
+            Calendar calendarLastInvoice = Calendar.getInstance();
+            calendarLastInvoice.setTimeInMillis(lastInvoice.getDateTo());
+            calendarLastInvoice.add(Calendar.DAY_OF_MONTH, 1);
+            invoice.setDateFrom(calendarLastInvoice.getTimeInMillis());
+            invoice.setVtStart(lastInvoice.getVtEnd());
+            invoice.setNtStart(lastInvoice.getNtEnd());
+        } else {
+            //pokud neexistuje žádná faktura, načte se poslední záznam z nastavení, pokud existuje
+            invoice.setDateFrom(parseParametersDate(parameters));
+            invoice.setVtStart(parseParametersVtNt(parameters)[0]);
+            invoice.setNtStart(parseParametersVtNt(parameters)[1]);
+        }
+
         dataInvoiceSource.updateInvoice(invoice.getId(), tableTED, invoice);
         dataInvoiceSource.close();
 
