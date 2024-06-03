@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.utils;
 
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -16,7 +17,9 @@ import java.util.List;
  * Xlisto 14.02.2024 21:11
  */
 public class TextSizeAdjuster {
+
     private static final String TAG = "TextSizeAdjuster";
+
 
     public static void adjustTextSize(ViewGroup parentView, TextView textView, Context context) {
         List<TextView> textViews = Collections.singletonList(textView);
@@ -50,10 +53,10 @@ public class TextSizeAdjuster {
                     totalTextWidth += lp.leftMargin + lp.rightMargin; // Přidání marginů vlevo a v pravo
 
                     // Přidání paddingu vlevo a v pravo rodičovského view
-                    totalTextWidth += parentView.getPaddingStart()+parentView.getPaddingEnd();
+                    totalTextWidth += parentView.getPaddingStart() + parentView.getPaddingEnd();
 
                     // Přidání paddingu vlevo a v pravo TextView
-                    totalTextWidth += textView.getPaddingStart()+textView.getPaddingEnd();
+                    totalTextWidth += textView.getPaddingStart() + textView.getPaddingEnd();
                 }
 
                 if (totalTextWidth > widthParent && textSize > minTextSize) {
@@ -76,4 +79,5 @@ public class TextSizeAdjuster {
     private static float spToPx(Context context) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, (float) 8, context.getResources().getDisplayMetrics());
     }
+
 }

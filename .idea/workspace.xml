@@ -458,14 +458,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="Doplněna oprava ukládání zobrazení/skrytí VT a NT při znovu načtení fragmentu. doplněno ukládání hodnoty do sharedpreferences.&#10;Oprava chyby, kdy se nezobrazoval ani jeden z grafů.">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_main.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_navigation_menu.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+    <list default="true" id="eefa2b9e-8ffa-4846-b940-fb4e9f31ccc4" name="Changes" comment="V landscape režimu doplněna lišta s rychlým menu &#10;- ve svislém zobrazení je použit bottomNavigationView&#10;- ve vodorovném režimu je použit navigationView">
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.androidTest.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/ElOdecet.app.unitTest.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/utils/TextSizeAdjuster.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cz/xlisto/elektrodroid/utils/TextSizeAdjuster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_monthly_reading.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -475,7 +475,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\Xlisto\.android\avd\Pixel_5_API_27.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=RF8MA155T3J)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -1226,7 +1226,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701375216262</updated>
     </task>
-    <option name="localTasksCounter" value="317" />
+    <option name="localTasksCounter" value="319" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1300,7 +1300,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Změna v obdodobí bez faktury - od data měsíčního odečtu se odečítá 1 den." />
     <MESSAGE value="Doplnění barvy textu pro dialogové okno v světlém režimu&#10;Příčina: text měl bílou barvu jako pozadí." />
     <MESSAGE value="Oprava automatického počítání spotřeby za aktuální období.&#10;Doplněny reakce na stav, pokud neexistuje žádná zadaná faktura." />
     <MESSAGE value="Opravena chyba při výběru ceníku ve faktuře.&#10;Chyba: pokud se zvolil v záznamu faktury ceník, automaticky se použil v jiném záznamu." />
@@ -1325,7 +1324,8 @@
     <MESSAGE value="Doplněna možnost nastavení výchozího stavu měřidel pro &quot;Období bez faktury&quot; pokud není zadána alespoň jedna faktura." />
     <MESSAGE value="Úprava některých textů v popisech" />
     <MESSAGE value="Doplněna oprava ukládání zobrazení/skrytí VT a NT při znovu načtení fragmentu. doplněno ukládání hodnoty do sharedpreferences.&#10;Oprava chyby, kdy se nezobrazoval ani jeden z grafů." />
-    <option name="LAST_COMMIT_MESSAGE" value="Doplněna oprava ukládání zobrazení/skrytí VT a NT při znovu načtení fragmentu. doplněno ukládání hodnoty do sharedpreferences.&#10;Oprava chyby, kdy se nezobrazoval ani jeden z grafů." />
+    <MESSAGE value="V landscape režimu doplněna lišta s rychlým menu &#10;- ve svislém zobrazení je použit bottomNavigationView&#10;- ve vodorovném režimu je použit navigationView" />
+    <option name="LAST_COMMIT_MESSAGE" value="V landscape režimu doplněna lišta s rychlým menu &#10;- ve svislém zobrazení je použit bottomNavigationView&#10;- ve vodorovném režimu je použit navigationView" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
