@@ -13,4 +13,24 @@
         android:checked="true"
         android:minHeight="48dp"
         android:text="@string/show_fab_button" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchShowBottomNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switchShowFab"
+        android:layout_alignParentEnd="true"
+        android:checked="true"
+        android:minHeight="48dp"
+        android:text="@string/show_bottom_nav" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchShowLeftNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switchShowBottomNavigation"
+        android:layout_alignParentEnd="true"
+        android:checked="true"
+        android:minHeight="48dp"
+        android:text="@string/show_nav" />
 </RelativeLayout>

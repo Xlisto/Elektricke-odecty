@@ -16,7 +16,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -121,7 +124,7 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
         shpFilter = new ShPFilter(getActivity());
         if (getArguments() != null) {
             showSelectItem = getArguments().getBoolean(SHOW_SELECT_ITEM);
@@ -140,6 +143,31 @@ public class PriceListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_price_list, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_filter_pricelist) {
+                    PriceListFilterDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), TAG);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.menu_delete_unused_pricelist) {
+                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.delete_unused_pricelist),
+                            YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, getResources().getString(R.string.delete_unused_pricelist_content));
+                    yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_price_list, container, false);
     }
 
@@ -164,6 +192,7 @@ public class PriceListFragment extends Fragment {
             getParentFragmentManager().setFragmentResult(FLAG_PRICE_LIST_FRAGMENT, bundle);
             getParentFragmentManager().popBackStack();
         });
+
         //listener při potvrzení filtru ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListFilterDialogFragment.FLAG_RESULT_FILTER_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
@@ -174,6 +203,7 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
+
         //listener při potvrzení smazání ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST, this,
                 ((requestKey, result) -> {
@@ -185,6 +215,7 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
+
         //listener při potvrzení smazání nevyužitých ceníků
         requireActivity().getSupportFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
@@ -200,8 +231,9 @@ public class PriceListFragment extends Fragment {
                         showDetailPriceFragment(false);
                     }
                 }));
+
         //listener při zavření dialogového okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> {
                     UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
                     btnShowBack();
@@ -234,27 +266,6 @@ public class PriceListFragment extends Fragment {
         outState.putSerializable(FLAG_SIDE, side);
         if (btnBack != null)
             outState.putString(BTN_BACK_TEXT, btnBack.getText().toString());
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        requireActivity().getMenuInflater().inflate(R.menu.menu_price_list, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.menu_filter_pricelist) {
-            PriceListFilterDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), TAG);
-        }
-        if (id == R.id.menu_delete_unused_pricelist) {
-            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.delete_unused_pricelist),
-                    YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, getResources().getString(R.string.delete_unused_pricelist_content));
-            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 

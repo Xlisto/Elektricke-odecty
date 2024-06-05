@@ -20,7 +20,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,7 +87,7 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
         //posluchač potvrzení smazání záznamu
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingAdapter.FLAG_DELETE_MONTHLY_READING, this,
                 (requestKey, result) -> {
@@ -92,6 +95,7 @@ public class MonthlyReadingFragment extends Fragment {
                         monthlyReadingAdapter.deleteMonthlyReading(requireContext());
                     }
                 });
+
         //posluchač změny filtru
         requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingFilterDialogFragment.MONTHLY_READING_FILTER, this,
                 (requestKey, result) -> {
@@ -107,27 +111,54 @@ public class MonthlyReadingFragment extends Fragment {
                     }
                     loadDataFromDatabase();
                 });
+
         //posluchač změny odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
                     loadDataFromDatabase();
                     UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
                 });
+
         //posluchač změny měsíčního odečtu - zobrazení detailu v land režimu
         onClickItemListener = (idCurrentlyReading, idPreviousReading) -> {
             this.idCurrentlyReading = idCurrentlyReading;
             this.idPreviousReading = idPreviousReading;
             showDetailFragment(idCurrentlyReading, idPreviousReading);
         };
+
         //posluchač na zavření dialogového okna s nastavením
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
-                (requestKey, result) -> UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true));
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+                (requestKey, result) -> {
+                    UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
+                    loadDataFromDatabase();
+                });
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_monthly_reading, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_filter_monthly_reading) {
+                    MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from, to);
+                    monthlyReadingFilterDialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
+                    return true;
+                }
+
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_monthly_reading, container, false);
     }
 
@@ -206,23 +237,6 @@ public class MonthlyReadingFragment extends Fragment {
         outState.putLong(TO, to);
         outState.putLong(ID_CURRENTLY_READING, idCurrentlyReading);
         outState.putLong(ID_PREVIOUS_READING, idPreviousReading);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        requireActivity().getMenuInflater().inflate(R.menu.menu_monthly_reading, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_filter_monthly_reading) {
-            MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from, to);
-            monthlyReadingFilterDialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 

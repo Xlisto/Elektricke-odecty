@@ -15,7 +15,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,7 +80,6 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
         invoiceListViewModel = new ViewModelProvider(this).get(InvoiceListViewModel.class);
         //invoiceListViewModel.setShovedDialog(false);
@@ -138,7 +140,7 @@ public class InvoiceListFragment extends Fragment {
         });
 
         //posluchač zavření dialogová okna nastavení
-        getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true)
         );
 
@@ -164,6 +166,25 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_invoice, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_invoice_item_settings) {
+                    SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_invoice_list, container, false);
     }
 
@@ -220,7 +241,6 @@ public class InvoiceListFragment extends Fragment {
         boolean isExists = dataInvoiceSource.checkInvoiceExists(tableFak);
 
         dataInvoiceSource.close();
-        Log.w(TAG, "IsShowedDialog: " + invoiceListViewModel.isShowingDialog().getValue());
 
         //zobrazí upozornění, pokud neexistuje žádná faktura
         if (!isExists) {
@@ -232,23 +252,6 @@ public class InvoiceListFragment extends Fragment {
         invoiceAdapter = new InvoiceListAdapter(requireContext(), invoices, rv);
         rv.setAdapter(invoiceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_invoice, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_invoice_item_settings) {
-            SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 

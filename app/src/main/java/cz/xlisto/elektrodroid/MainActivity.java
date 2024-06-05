@@ -50,6 +50,7 @@ import cz.xlisto.elektrodroid.services.HdoNotice;
 import cz.xlisto.elektrodroid.services.HdoService;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
+import cz.xlisto.elektrodroid.shp.ShPSettings;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
@@ -202,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             }
             return itemId == R.id.meni_nothing;
         });
+
         //levý drawer
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
@@ -307,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
         startHdoService();
-        setVisibilityBottomNavigation();
+        setVisibilityNavigation();
 
         /*
          * Akce kliknutí na tlačítko zpět
@@ -343,6 +345,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (fragment != null && DetectScreenMode.isLandscape(getApplicationContext())) {
             getSupportFragmentManager().popBackStack();
         }
+
+        //posluchač na zavření dialogového okna s nastavením
+        getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
+                (requestKey, result) -> setVisibilityNavigation());
+
     }
 
 
@@ -420,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setConfiguration(newConfig);
-        setVisibilityBottomNavigation();
+        setVisibilityNavigation();
     }
 
 
@@ -440,9 +447,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     /**
      * Nastaví viditelnost bottomNavigationView
      */
-    private void setVisibilityBottomNavigation() {
-        myBottomNavigationView.setVisibility(orientation == 1 ? View.VISIBLE : View.GONE);
-        myNavigationView.setVisibility(orientation == 1 ? View.GONE : View.VISIBLE);
+    private void setVisibilityNavigation() {
+        ShPSettings shPSettings = new ShPSettings(getApplicationContext());
+        boolean showBottomNavigation = shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true);
+        boolean showLeftNavigation = shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true);
+        myBottomNavigationView.setVisibility(orientation == 1 && showBottomNavigation ? View.VISIBLE : View.GONE);
+        myNavigationView.setVisibility(orientation == 2 && showLeftNavigation ? View.VISIBLE : View.GONE);
     }
 
 

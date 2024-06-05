@@ -138,7 +138,7 @@ public class PaymentFragment extends Fragment {
                     }
                 });
         //posluchač zavření dialogová okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddPayment, fab, requireActivity(), true)
         );
     }

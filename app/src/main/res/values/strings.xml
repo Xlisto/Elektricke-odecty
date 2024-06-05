@@ -472,6 +472,8 @@
     <string name="no_invoice_alert">Není zadána poslední faktura. \nZobrazit dialog pro nastavení výchozích hodnot můžete stisknutím tlačítka nebo zadejte poslední fakturu.</string>
 
     <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
+    <string name="show_bottom_nav">Zobrazit dolní panel rychlé navigace</string>
+    <string name="show_nav">Zobrazit levý panel rychlé navigace</string>
     <string name="add_monthly_reading">Přidat odečet</string>
     <string name="add_monthly_price_list">Přidat ceník</string>
     <string name="add_subscriptionpoint">Přidat odběrné místo</string>

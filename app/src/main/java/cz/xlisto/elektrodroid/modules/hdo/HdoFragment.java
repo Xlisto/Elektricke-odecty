@@ -163,7 +163,7 @@ public class HdoFragment extends Fragment {
                         (requestKey, result) -> onResume()
                 );
         //posluchač při zavření dialogového okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true)));
     }
 

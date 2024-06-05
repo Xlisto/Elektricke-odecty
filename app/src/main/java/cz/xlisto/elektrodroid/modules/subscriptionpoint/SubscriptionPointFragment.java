@@ -105,6 +105,7 @@ public class SubscriptionPointFragment extends Fragment {
         btnAddSubscriptionPoint.setOnClickListener(v -> addSubcsriptionPoint());
         btnEdit.setOnClickListener(v -> edit());
         btnDelete.setOnClickListener(v -> showDeleteDialog());
+
         //posluchač na odstranění odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DELETE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
@@ -112,12 +113,14 @@ public class SubscriptionPointFragment extends Fragment {
                         deleteItemSubscriptionPoint();
                     }
                 });
+
         //posluchač na změnu odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> onResume()
         );
+
         //posluchač na zavření dialogového okna s nastavením
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, result) -> UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc, false)
         );
     }

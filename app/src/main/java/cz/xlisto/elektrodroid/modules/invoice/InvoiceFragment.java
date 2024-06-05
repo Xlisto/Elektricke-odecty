@@ -19,7 +19,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -99,7 +102,7 @@ public class InvoiceFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
         if (getArguments() != null) {
             tableFAK = getArguments().getString(TABLE_FAK);
             tableNOW = getArguments().getString(TABLE_NOW);
@@ -122,6 +125,25 @@ public class InvoiceFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_invoice, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_invoice_item_settings) {
+                    SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_invoice, container, false);
     }
 
@@ -146,10 +168,12 @@ public class InvoiceFragment extends Fragment {
             addOneShowTypeTotalPrice();
             setTotalTextView();
         });
+
         //změna textu tlačítka podle toho, zda se jedná o zobrazení stávající faktury nebo období bez faktury
         if (idFak == -1L) {
             btnAddItemInvoice.setText(getResources().getString(R.string.select_invoice));
         }
+
         //posluchač na změnu počtu záznamů ve faktuře - spojení záznamů
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceJoinDialogFragment.RESULT_JOIN_DIALOG_FRAGMENT,
@@ -160,6 +184,7 @@ public class InvoiceFragment extends Fragment {
                         invoiceAdapter.setUpdateJoin(invoices, position);
                     }
                 });
+
         //posluchač na změnu počtu záznamů ve faktuře - rozdělení záznamů
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceCutDialogFragment.RESULT_CUT_DIALOG_FRAGMENT,
@@ -170,6 +195,7 @@ public class InvoiceFragment extends Fragment {
                         invoiceAdapter.setUpdateCut(invoices, position);
                     }
                 });
+
         //posluchač na odstranění záznamu ve faktuře
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceAdapter.INVOICE_ADAPTER_DELETE_INVOICE,
@@ -179,6 +205,7 @@ public class InvoiceFragment extends Fragment {
                         invoiceAdapter.deleteItem();
                     }
                 });
+
         //posluchač na vytvoření nové faktury zw záznamů v období bez faktury
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 InvoiceCreateDialogFragment.RESULT_CREATE_DIALOG_FRAGMENT,
@@ -188,6 +215,7 @@ public class InvoiceFragment extends Fragment {
                         createInvoice(result.getString(InvoiceCreateDialogFragment.NUMBER, "0"));
                     }
                 });
+
         //posluchač na změnu nastavení automatického generování faktury
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 SettingsInvoiceDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT,
@@ -197,8 +225,9 @@ public class InvoiceFragment extends Fragment {
                         invoiceAdapter.resetButtons();
                     }
                 });
+
         //posluchač zavření dialogová okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true)
         );
     }
@@ -233,24 +262,6 @@ public class InvoiceFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putLong(ID_FAK, idFak);
         outState.putInt(POSITION, position);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        if (idFak == -1L)
-            inflater.inflate(R.menu.menu_invoice, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_invoice_item_settings) {
-            SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 
