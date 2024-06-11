@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
@@ -14,13 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.List;
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -31,6 +31,7 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
  * Xlisto 24.04.2023 20:06
  */
 public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHolder> {
+
     private static final String TAG = "BackupAdapter";
     public static final String FLAG_DIALOG_FRAGMENT_BACKUP = "backupDialogFragmentBackup";
     public static final String FLAG_DIALOG_FRAGMENT_DELETE = "backupDialogFragmentDelete";
@@ -44,6 +45,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
+
         TextView tvName;
         TextView tvTyp;
         ImageView iconFile;
@@ -56,6 +58,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+
     }
 
 
@@ -86,41 +89,10 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentFile object = documentFiles.get(position);
-        String text = object.toString();
-        holder.tvName.setText(text);
 
-        boolean cenik = Objects.requireNonNull(object.getName()).contains(".cenik");
-        boolean odecet = Objects.requireNonNull(object.getName()).contains(".odecet");
-        boolean zip_old = Objects.requireNonNull(object.getName()).contains("ElektroDroid.zip");
-        boolean zip_now = Objects.requireNonNull(object.getName()).contains("El odecet.zip");
-
-
-        if (cenik) text = object.getName().replace(".cenik", "");
-        if (odecet) text = object.getName().replace(".odecet", "");
-        if (zip_old) {
-            text = object.getName().replace(" ElektroDroid.zip", "");
-        }
-        if (zip_now) {
-            text = object.getName().replace(" El odecet.zip", "");
-        }
-        holder.tvName.setText(text);
-
-
-        if (cenik) {
-            holder.iconFile.setImageResource(R.mipmap.ic_cenik);
-            holder.tvTyp.setText(context.getResources().getString(R.string.backup_pricelist));
-        }
-        if (odecet) {
-            holder.iconFile.setImageResource(R.mipmap.ic_odecet);
-            holder.tvTyp.setText(context.getResources().getString(R.string.backup_readings));
-        }
-        if (zip_old || zip_now) {
-            if (zip_old)
-                holder.iconFile.setImageResource(R.mipmap.ic_odecet);
-            if (zip_now)
-                holder.iconFile.setImageResource(R.mipmap.ic_odecet_new);
-            holder.tvTyp.setText(context.getResources().getString(R.string.backup_zip));
-        }
+        holder.tvName.setText(IconFileHelper.getName(object.getName()));
+        holder.iconFile.setImageResource(IconFileHelper.getIcon(object.getName()));
+        holder.tvTyp.setText(IconFileHelper.getType(object.getName(), context));
 
         showButtons(holder, position);
 
@@ -212,4 +184,5 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             showButtons = selectedPosition;
         }
     }
+
 }
