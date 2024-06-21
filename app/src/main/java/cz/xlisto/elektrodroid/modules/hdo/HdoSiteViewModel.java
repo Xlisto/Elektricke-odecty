@@ -49,6 +49,8 @@ public class HdoSiteViewModel extends ViewModel {
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
             showProgress.postValue(false);
+            if (msg.what == 101)
+                return;//kod 101 znamená, že se nepodařilo získat data; skryje progress a ukončí se
             Connections.ResultData resultData = (Connections.ResultData) msg.obj;
             if (resultData.result.equals("[]")) {
                 showAlert.postValue(true);
@@ -101,7 +103,7 @@ public class HdoSiteViewModel extends ViewModel {
                                 groupsExceptionList.add(new String[]{group, category});
                             }
                         }
-                        if (codes.size() > 0) {
+                        if (!codes.isEmpty()) {
                             String exceptionAreaList = "";
                             switch (resultData.area) {
                                 case "Brno - venkov":
@@ -350,7 +352,7 @@ public class HdoSiteViewModel extends ViewModel {
             //při první průchodu vrátí null, ukončuji
             if (hdoListContainer == null)
                 return;
-            if (hdoListContainer.size() != 0) {
+            if (!hdoListContainer.isEmpty()) {
                 String[] validityDate = new String[hdoListContainer.size()];
                 for (int i = 0; i < hdoListContainer.size(); i++) {
                     validityDate[i] = hdoListContainer.get(i).validityDate;

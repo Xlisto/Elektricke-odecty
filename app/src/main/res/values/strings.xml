@@ -485,6 +485,8 @@
     <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>
     <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
 
+    <string name="no_data_alert">Nepodařilo se stáhnout žádná data. Zkontrolujte připojení k internetu. Může se také jednat o chybu v aplikaci nebo změnu formátu dat na straně serveru. Zkuste zobrazit čas HDO ve webovém prohlížeči.</string>
+
     <string name="set_first_meters_title">Výchozí hodnoty</string>
     <string name="alert_app_end">Následující kliknutí aplikaci ukončí</string>
 

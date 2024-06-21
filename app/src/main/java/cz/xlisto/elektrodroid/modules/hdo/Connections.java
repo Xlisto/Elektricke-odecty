@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
@@ -73,6 +74,7 @@ public class Connections {
             //hlavička
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Host", "api.egd.cz");
+            connection.setRequestProperty("Content-Type", "application/json");
 
             //parametry v hlavičce dotaz
             //jsonParam = new JSONObject(urlParameters);
@@ -87,6 +89,10 @@ public class Connections {
         }
 
         InputStream in = readInputStream(connection, context);
+        if (in == null) {
+            handler.sendEmptyMessage(101);
+            return;
+        }
 
         String result = readerStream(in);
         Message message = new Message();
@@ -205,7 +211,9 @@ public class Connections {
             in = new BufferedInputStream(connection.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
-            OwnAlertDialog.show(context, "Varování", "Nejste připojeni k internetu");
+            OwnAlertDialog.show(context,
+                    context.getResources().getString(R.string.error),
+                    context.getResources().getString(R.string.no_data_alert));
             return null;
         }
         return in;
@@ -551,6 +559,7 @@ public class Connections {
         PRE,
         CODES
     }
+
 
     static class GroupAndCategoryContainer {
         String urlHdo, urlParameters, code, districtName;

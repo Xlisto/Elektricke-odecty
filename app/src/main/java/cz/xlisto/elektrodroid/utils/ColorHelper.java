@@ -45,7 +45,13 @@ public class ColorHelper {
             htmlColor = htmlColorBuilder.toString();
 
             // Převod hexadecimálního řetězce na číslo
-            int color = Integer.parseInt(htmlColor, 16);
+            int color = 0;
+            try {
+                color = Integer.parseInt(htmlColor, 16);
+            } catch (NumberFormatException e) {
+                color = 101010;
+                e.printStackTrace();
+            }
 
             // Nastavení alfa kanálu na hodnotu 255 (plná průhlednost)
             color |= 0xFF000000;
