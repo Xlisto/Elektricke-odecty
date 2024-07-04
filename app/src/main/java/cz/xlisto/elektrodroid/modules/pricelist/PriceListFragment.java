@@ -341,9 +341,9 @@ public class PriceListFragment extends Fragment {
                     idFragment = fragment.getId();
                 } else {
                     fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
-                    //TODO: při rotaci vzniká chyba, že fragment je null
-                    assert fragment != null;
-                    fragment.loadPrice(idSelectedPriceList);
+                    if (fragment != null) {
+                        fragment.loadPrice(idSelectedPriceList);
+                    }
                 }
             } else {
                 if (idFragment != 0) {
