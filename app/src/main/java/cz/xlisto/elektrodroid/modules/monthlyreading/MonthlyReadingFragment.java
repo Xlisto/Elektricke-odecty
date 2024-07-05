@@ -138,7 +138,6 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(new MenuProvider() {
             @Override
@@ -225,12 +224,6 @@ public class MonthlyReadingFragment extends Fragment {
 
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(FROM, from);
@@ -277,13 +270,13 @@ public class MonthlyReadingFragment extends Fragment {
         if (DetectScreenMode.isLandscape(requireActivity())) {
             MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
             if (idCurrentlyReading >= 0 && idPreviousReading >= 0)
-                requireActivity().getSupportFragmentManager().beginTransaction()
+                getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment, MonthlyReadingDetailFragment.TAG)
-                        .addToBackStack(null).commit();
+                        .commit();
             else {
-                requireActivity().getSupportFragmentManager().beginTransaction()
+                getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerViewDetail, new Fragment())
-                        .addToBackStack(null).commit();
+                        .commit();
             }
         }
     }

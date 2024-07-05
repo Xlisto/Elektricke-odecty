@@ -335,12 +335,12 @@ public class PriceListFragment extends Fragment {
             if (idSelectedPriceList != -1) {
                 if (idFragment == 0) {
                     fragment = PriceListDetailFragment.newInstance(idSelectedPriceList, true);
-                    requireActivity().getSupportFragmentManager().beginTransaction()
+                    getChildFragmentManager().beginTransaction()
                             .replace(R.id.fl_price_list_right, fragment)
                             .commit();
                     idFragment = fragment.getId();
                 } else {
-                    fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
+                    fragment = (PriceListDetailFragment) getChildFragmentManager().findFragmentById(idFragment);
                     if (fragment != null) {
                         fragment.loadPrice(idSelectedPriceList);
                     }
@@ -349,7 +349,7 @@ public class PriceListFragment extends Fragment {
                 if (idFragment != 0) {
                     fragment = (PriceListDetailFragment) requireActivity().getSupportFragmentManager().findFragmentById(idFragment);
                     if (fragment != null) {
-                        requireActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                        getChildFragmentManager().beginTransaction().remove(fragment).commit();
                         idFragment = 0;
                     }
                 }
