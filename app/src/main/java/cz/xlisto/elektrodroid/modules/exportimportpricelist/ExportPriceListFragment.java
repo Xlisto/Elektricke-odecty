@@ -112,7 +112,7 @@ public class ExportPriceListFragment extends Fragment {
                     yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
                     return;
                 }
-                files.saveJSONFile(requireActivity(), json, fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)), resultTree);
+                files.saveJSONFile(requireActivity(), getView(), json, fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)), resultTree);
             }
         });
 
@@ -122,7 +122,7 @@ public class ExportPriceListFragment extends Fragment {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 ShPBackup shPBackup = new ShPBackup(requireActivity());
                 Files files = new Files();
-                files.saveJSONFile(requireActivity(), json, fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)), resultTree);
+                files.saveJSONFile(requireActivity(), getView(), json, fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)), resultTree);
             }
         });
     }

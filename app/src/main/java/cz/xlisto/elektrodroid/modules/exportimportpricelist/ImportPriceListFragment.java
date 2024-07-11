@@ -24,7 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +37,8 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -62,6 +66,8 @@ public class ImportPriceListFragment extends Fragment {
     private ShPBackup shPBackup;
     private RecyclerView recyclerView;
     private LinearLayout lnProgressBar;
+    private Button btnSelectFolder;
+    private TextView tvDescriptionPermition;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
     private ImportPriceListAdapter importExportAdapter;
     private static final String[] filtersFileName = {".json"};
@@ -127,6 +133,8 @@ public class ImportPriceListFragment extends Fragment {
         shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
+        btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
+        tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermition);
 
 
         //listener dialogového okna na smazání souboru JSON zálohy
@@ -188,21 +196,35 @@ public class ImportPriceListFragment extends Fragment {
                         FragmentChange.replace(requireActivity(), priceListFragment, ALPHA);
                     }
                 }));
+
+        btnSelectFolder.setOnClickListener(v -> Files.openTree(false, requireActivity(), resultTree));
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        boolean showLnProgressBar = true;
         Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         if (Files.permissions(requireActivity(), uri)) {
+            btnSelectFolder.setVisibility(View.GONE);
+            tvDescriptionPermition.setVisibility(View.GONE);
             new Files().loadFiles(requireActivity(), uri, filtersFileName, handlerLoadFile, resultTree, 22);
+        } else {
+            showLnProgressBar = false;
+            View view = requireActivity().getCurrentFocus();
+            if (view == null) {
+                view = getView(); // Vytvoří nový View, pokud žádný není aktuálně zaostřen
+            }
+            Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+                    .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
+                    .show();
         }
 
         documentFiles.clear();
         recyclerView.setAdapter(new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        showLnProgressBar(true);
+        showLnProgressBar(showLnProgressBar);
     }
 
 

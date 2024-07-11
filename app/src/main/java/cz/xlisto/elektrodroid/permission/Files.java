@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -108,7 +109,7 @@ public class Files {
      * @param nameFile název souboru
      * @param uri      Uri složky
      */
-    public void saveJSONFile(Activity activity, String json, String nameFile, Uri uri, ActivityResultLauncher<Intent> resultTree) {
+    public void saveJSONFile(Activity activity, View view, String json, String nameFile, Uri uri, ActivityResultLauncher<Intent> resultTree) {
 
         if (permissions(activity, uri)) {
             DocumentFile folder = DocumentFile.fromTreeUri(activity, uri);
@@ -130,7 +131,8 @@ public class Files {
                 }
             }
         } else {
-            Snackbar.make(Objects.requireNonNull(activity.getCurrentFocus()), activity.getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+
+            Snackbar.make(view, activity.getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
                     .setAction(activity.getResources().getString(R.string.select), v -> openTree(true, activity, resultTree))
                     .show();
         }
