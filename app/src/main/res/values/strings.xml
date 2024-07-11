@@ -325,8 +325,8 @@
     <string name="backup_readings">Záloha odečtů</string>
     <string name="backup_zip">Komprimovaná záloha odečtů a ceníků</string>
     <string name="icon_alert">Ikona varování</string>
-    <string name="add_price_list">Přidat ceník do aplikace</string>
-    <string name="delete_price_list_file">Smazat soubor s ceníkem</string>
+    <string name="add_price_list">Přidat do aplikace</string>
+    <string name="delete_price_list_file">Smazat</string>
 
     <string name="allow_write_to_storage">Povolte zápis do paměti zařízení</string>
     <string name="allow">POVOLIT</string>

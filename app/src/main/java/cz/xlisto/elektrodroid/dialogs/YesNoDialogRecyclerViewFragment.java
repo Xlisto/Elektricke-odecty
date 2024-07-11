@@ -4,6 +4,7 @@ package cz.xlisto.elektrodroid.dialogs;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.utils.JSONPriceList;
+
 
 /**
  * Xlisto 09.12.2023 9:12
@@ -49,13 +51,17 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         }
         View view = View.inflate(requireContext(), R.layout.fragment_yes_no_dialog_recycler_view, null);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        Button btnNo = view.findViewById(R.id.btnCancel);
+        Button btnYes = view.findViewById(R.id.btnOk);
         yesNoDialogRecyclerViewAdapter = new YesNoDialogRecyclerViewAdapter(priceLists);
         recyclerView.setAdapter(yesNoDialogRecyclerViewAdapter);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireActivity()));
+
         if (!priceLists.isEmpty())
             builder.setMessage("Zatrhněte všechny sazby, které chcete nahrát.\nCeník: " + priceLists.get(0).getRada());
         builder.setView(view);
-        builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {
+
+        btnYes.setOnClickListener(v -> {
             ArrayList<PriceListModel> priceListsChecked = new ArrayList<>();
             for (PriceListModel priceList : priceLists) {
                 if (priceList.isChecked()) {
@@ -67,6 +73,14 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
             bundle.putBoolean(RESULT, true);
             bundle.putSerializable(SELECTED_ARRAYLIST, priceListsChecked);
             getParentFragmentManager().setFragmentResult(flagResultDialogFragment, bundle);
+            dismiss();
+        });
+
+        btnNo.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(RESULT, false);
+            getParentFragmentManager().setFragmentResult(flagResultDialogFragment, bundle);
+            dismiss();
         });
 
         return builder.create();

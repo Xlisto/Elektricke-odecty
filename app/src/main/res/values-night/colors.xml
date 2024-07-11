@@ -22,6 +22,7 @@
     <color name="colorHint">#B8B7B7</color>
     <color name="colorLabelEditText">#FFFFFF</color>
     <color name="colorButtonText">#FF2172</color>
+    <color name="colorDialogButtonText">#FF2172</color>
 
     <!-- NavigationView -->
     <color name="nav_menu_background">#FF222222</color> <!-- Background color -->
