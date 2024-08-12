@@ -1,11 +1,23 @@
-/local.properties
-/.idea/workspace.xml
-.DS_Store
+# Android Studio
+.idea/workspace.xml
 .idea/tasks.xml
-.idea/dictionaries
-.idea/libraries 
+.idea/dictionaries/
+.idea/libraries/
+/.idea/deploymentTargetSelector.xml
 
-app/build/
-
+# Build files
 .gradle/
+local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/assetWizardSettings.xml
+/.idea/misc.xml
+/.idea/gradle.xml
+/.idea/vcs.xml
+.DS_Store
+
+
+/app/build/
+
 /app/google-services.json
