@@ -23,6 +23,9 @@ android {
 
         }
     }
+    buildFeatures {
+        buildConfig = true // Povolit generování BuildConfig
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
