@@ -3,7 +3,7 @@
 .DS_Store
 .idea/tasks.xml
 .idea/dictionaries
-.idea/libraries
+.idea/libraries 
 
 app/build/
 
