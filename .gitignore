@@ -3,7 +3,9 @@
 .idea/tasks.xml
 .idea/dictionaries/
 .idea/libraries/
-/.idea/deploymentTargetSelector.xml
+.idea/deploymentTargetSelector.xml
+.idea/appInsightsSettings.xml
+.idea/other.xml
 
 # Build files
 .gradle/
