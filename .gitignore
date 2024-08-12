@@ -8,6 +8,7 @@
 .idea/appInsightsSettings.xml
 .idea/other.xml
 .idea/render.experimental.xml
+/.idea/compiler.xml
 
 # Build files
 .gradle/
@@ -25,3 +26,4 @@ local.properties
 /app/build/
 
 /app/google-services.json
+
