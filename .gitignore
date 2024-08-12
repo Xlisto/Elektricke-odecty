@@ -1,6 +1,11 @@
 /local.properties
 /.idea/workspace.xml
+.DS_Store
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
 
 app/build/
 
 .gradle/
+/app/google-services.json
