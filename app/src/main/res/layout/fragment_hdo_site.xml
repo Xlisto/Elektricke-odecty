@@ -145,28 +145,7 @@
             android:text="@string/save_to_clipboard" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/lnProgressBarHdoSite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@drawable/dialog_progressbar"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:id="@+id/pbLoadData"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tvLabelLoadfiles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/please_wait" />
-    </LinearLayout>
+    <include layout="@layout/layout_progress_bar" />
 
     <Spinner
         android:id="@+id/spDateEgd"

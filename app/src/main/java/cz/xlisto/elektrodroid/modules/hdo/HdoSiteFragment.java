@@ -41,9 +41,62 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
+ * Fragment představující funkčnost HDO v aplikaci.
+ * <p>
+ * Tento fragment zajišťuje uživatelské rozhraní a logiku pro interakci s HDO kódy,
+ * včetně načítání dat, zobrazování upozornění a ukládání HDO kódů do databáze.
+ * <p>
+ * Klíčové funkce:
+ * - Sleduje změny dat ve ViewModelu a aktualizuje UI podle toho.
+ * - Zpracovává uživatelské interakce se spinnery a tlačítky.
+ * - Řídí viditelnost různých UI komponent na základě uživatelských výběrů.
+ * - Načítá HDO data z URL a zobrazuje je v RecyclerView.
+ * - Umožňuje uživatelům ukládat HDO data do databáze.
+ * <p>
+ * Klíčové komponenty:
+ * - LinearLayout lnCode, lnCodesEdg, lnHdoButtons, lnProgessBarHdoSite: Layout kontejnery pro různé UI prvky.
+ * - Spinner spDistributionArea, spDistrict, spDateEgd, spA, spB, spPB: Spinnery pro uživatelské výběry.
+ * - EditText etHdoCode: Vstupní pole pro HDO kód.
+ * - TextView tvAlert, tvValidityDate: Textové pohledy pro zobrazování upozornění a dat platnosti.
+ * - RecyclerView rvHdoSite: RecyclerView pro zobrazování HDO dat.
+ * - ArrayLists codes, codesException, groupsList, groupsExceptionList, hdoList, hdoListContainer: Seznamy pro ukládání HDO dat.
+ * - String urlHdo, resultJson, resultArea, exceptionArea: Řetězce pro ukládání URL a výsledků.
+ * - boolean isClearArrayLists: Příznak pro vymazání seznamů.
+ * - HdoSiteViewModel viewModel: ViewModel pro správu dat.
+ * - Handler handler: Handler pro správu zpožděných úkolů.
+ * <p>
+ * Metody životního cyklu:
+ * - onCreate: Inicializuje ViewModel a sleduje změny dat.
+ * - onCreateView: Nafoukne layout fragmentu.
+ * - onViewCreated: Nastaví UI komponenty a jejich posluchače.
+ * - onResume: Zpracovává úkoly při obnovení fragmentu.
+ * - onSaveInstanceState: Ukládá stav instance.
+ * <p>
+ * Pomocné metody:
+ * - hideWidgets: Skryje nepotřebná pole formuláře podle vybrané distribuční sítě.
+ * - openHdoSite: Otevře stránku HDO v webovém prohlížeči.
+ * - urlBuilder: Sestaví URL pro načítání dat.
+ * - loadData: Načítá data z určeného URL.
+ * - setAdapter: Nastaví adaptér pro RecyclerView.
+ * - setTvValidityDate: Nastaví text platnosti.
+ * - setVisibilityAlert: Nastaví viditelnost upozornění.
+ * - setTextAlert: Nastaví text upozornění podle vybraného distributora.
+ * - setVisibilityProgressBar: Nastaví viditelnost progress baru.
+ * - setHdoCodeFromSpinners: Nastaví HDO kód z vybraných spinnerů.
+ * - saveHdo: Uloží HDO data do databáze.
+ * - clearArrayLists: Vymaže obsah seznamů.
+ * - clear: Vymaže obsah seznamů, RecyclerView a spinnerů.
+ * - getSubscriptionPoint: Vrátí odběrné místo.
+ * <p>
+ * Vnitřní třída HdoListContainer:
+ * - Ukládá HDO seznam, datum platnosti a distribuční oblast.
+ * - Poskytuje metody pro získání HDO seznamu a distribuční oblasti.
+ * - Enum Distribution: Představuje různé distribuční oblasti (CEZ, EGD, PRE).
+ * <p>
  * Xlisto 15.06.2023 21:28
  */
 public class HdoSiteFragment extends Fragment {
+
     private static final String TAG = "HdoSiteFragment";
     private static final String FLAG_RESULT_SPINNER_DIALOG_FRAGMENT = "flagResultSpinnerDialogFragment";
     private static final String FLAG_RESULT_YES_NO_DIALOG_FRAGMENT = "flagResultYesNoDialogFragment";
@@ -74,6 +127,11 @@ public class HdoSiteFragment extends Fragment {
     };
 
 
+    /**
+     * Vytvoří novou instanci fragmentu HdoSiteFragment.
+     *
+     * @return Nová instance HdoSiteFragment.
+     */
     public static HdoSiteFragment newInstance() {
         return new HdoSiteFragment();
     }
@@ -91,7 +149,6 @@ public class HdoSiteFragment extends Fragment {
         viewModel.setExceptionHodonin(getResources().getString(R.string.exception_hodonin));
         viewModel.setExceptionBreclav(getResources().getString(R.string.exception_breclav));
         viewModel.setShowAlert();
-
 
         viewModel.getCodesContainer().observe(this, codesContainer -> {
             this.codes.clear();
@@ -156,11 +213,10 @@ public class HdoSiteFragment extends Fragment {
         tvValidityDate = view.findViewById(R.id.tvValidityDate);
         lnHdoButtons = view.findViewById(R.id.lnHdoButtons1);
         spDateEgd = view.findViewById(R.id.spDateEgd);
-        lnProgessBarHdoSite = view.findViewById(R.id.lnProgressBarHdoSite);
+        lnProgessBarHdoSite = view.findViewById(R.id.lnProgressBar);
         spA = view.findViewById(R.id.spA);
         spB = view.findViewById(R.id.spB);
         spPB = view.findViewById(R.id.spPB);
-
 
         spA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -198,7 +254,6 @@ public class HdoSiteFragment extends Fragment {
 
             }
         });
-
 
         //posluchač pro zavření dialogového okna s dotazem na výběr skupiny a kategorie
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_SPINNER_DIALOG_FRAGMENT, this, (requestKey, result) -> {
@@ -276,9 +331,6 @@ public class HdoSiteFragment extends Fragment {
         btnSaveHdo.setOnClickListener(v -> YesNoDialogFragment.newInstance(getString(R.string.save_hdo), FLAG_RESULT_YES_NO_DIALOG_FRAGMENT, getString(R.string.save_hdo_message))
                 .show(requireActivity().getSupportFragmentManager(), "saveHdo"));
 
-
-        //hideWidgets(0);
-
         spA.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code1)));
         spB.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code1)));
         spPB.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.egd_code2)));
@@ -305,7 +357,7 @@ public class HdoSiteFragment extends Fragment {
         viewModel.getHdoListModels().observe(getViewLifecycleOwner(), hdoListModels -> {
             hdoListContainer.clear();
             hdoListContainer.addAll(hdoListModels);
-            if (hdoListModels.size() > 0) {
+            if (!hdoListModels.isEmpty()) {
                 setAdapter(hdoListModels.get(0).getHdoList());
                 hdoList.clear();
                 //hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
@@ -323,11 +375,10 @@ public class HdoSiteFragment extends Fragment {
             setAdapter(hdoList);
         });
 
-
         spDateEgd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (hdoListContainer.size() == 0) return;
+                if (hdoListContainer.isEmpty()) return;
                 setAdapter(hdoListContainer.get(position).getHdoList());
                 hdoList.clear();
                 hdoList.addAll(hdoListContainer.get(position).getHdoList());
@@ -458,7 +509,6 @@ public class HdoSiteFragment extends Fragment {
         else
             tvAlert.setVisibility(View.INVISIBLE);
 
-
     }
 
 
@@ -511,14 +561,14 @@ public class HdoSiteFragment extends Fragment {
      * Uloží HDO do databáze
      */
     private void saveHdo() {
-        if (hdoList.size() > 0) {
+        if (!hdoList.isEmpty()) {
             SubscriptionPointModel subscriptionPoint = getSubscriptionPoint();
             if (subscriptionPoint == null) {
                 return;
             }
 
             String tableHdo = subscriptionPoint.getTableHDO();
-            if (tableHdo == null || tableHdo.equals("")) {
+            if (tableHdo == null || tableHdo.isEmpty()) {
                 Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -563,12 +613,38 @@ public class HdoSiteFragment extends Fragment {
     }
 
 
+    /**
+     * Třída HdoListContainer slouží k ukládání seznamu HDO, data platnosti a distribuční oblasti.
+     * <p>
+     * Tato třída poskytuje metody pro získání seznamu HDO a distribuční oblasti.
+     * <p>
+     * Klíčové komponenty:
+     * - ArrayList\<HdoModel\> hdoList: Seznam HDO modelů.
+     * - String validityDate: Datum platnosti HDO.
+     * - Distribution distribution: Distribuční oblast (CEZ, EGD, PRE).
+     * <p>
+     * Metody:
+     * - HdoListContainer(ArrayList\<HdoModel\> hdoList, String validityDate, Distribution distributionArea): Konstruktor pro inicializaci seznamu HDO, data platnosti a distribuční oblasti.
+     * - ArrayList\<HdoModel\> getHdoList(): Vrací seznam HDO modelů.
+     * - Distribution getDistribution(): Vrací distribuční oblast.
+     * <p>
+     * Enum Distribution:
+     * - Představuje různé distribuční oblasti (CEZ, EGD, PRE).
+     */
     static class HdoListContainer {
+
         ArrayList<HdoModel> hdoList;
         String validityDate;
         Distribution distribution;
 
 
+        /**
+         * Konstruktor pro inicializaci seznamu HDO, data platnosti a distribuční oblasti.
+         *
+         * @param hdoList          Seznam HDO modelů.
+         * @param validityDate     Datum platnosti HDO.
+         * @param distributionArea Distribuční oblast (CEZ, EGD, PRE).
+         */
         public HdoListContainer(ArrayList<HdoModel> hdoList, String validityDate, Distribution distributionArea) {
             this.hdoList = hdoList;
             this.validityDate = validityDate;
@@ -576,18 +652,33 @@ public class HdoSiteFragment extends Fragment {
         }
 
 
+        /**
+         * Vrací seznam HDO modelů.
+         *
+         * @return Seznam HDO modelů.
+         */
         public ArrayList<HdoModel> getHdoList() {
             return hdoList;
         }
 
 
+        /**
+         * Vrací distribuční oblast.
+         *
+         * @return Distribuční oblast.
+         */
         public Distribution getDistribution() {
             return distribution;
         }
 
 
+        /**
+         * Enum představující různé distribuční oblasti.
+         */
         enum Distribution {
             CEZ, EGD, PRE
         }
+
     }
+
 }
