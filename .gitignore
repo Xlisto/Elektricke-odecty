@@ -7,6 +7,7 @@
 .idea/deploymentTargetSelector.xml
 .idea/appInsightsSettings.xml
 .idea/other.xml
+.idea/render.experimental.xml
 
 # Build files
 .gradle/
