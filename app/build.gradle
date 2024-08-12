@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdk 34
         versionCode 139
         versionName '1.139'
 
@@ -36,9 +36,9 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-    buildToolsVersion = '35.0.0 rc3'
+    buildToolsVersion = '35.0.0 rc4'
     namespace 'cz.xlisto.elektrodroid'
-    compileSdk 34
+    compileSdk 35
 }
 
 dependencies {
@@ -70,5 +70,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
     testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.16'
+
+    // optional - needed for credentials support from play services, for devices running
+    implementation 'androidx.credentials:credentials:1.5.0-alpha04'
+    implementation 'androidx.credentials:credentials-play-services-auth:1.5.0-alpha04'
+    implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.1'
 
 }

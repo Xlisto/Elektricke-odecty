@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">El. odečty</string>
     <string name="hdo_service_name">Čas HDO</string>
-    <string name="default_web_client_id">634320309725-2lnsv3j4dssebj8n8m2t364n8q9lmk26.apps.googleusercontent.com</string>
+    <string name="default_web_client_id">634320309725-9a1qp280hkm6a2bsqip9l6t4epdm65lp.apps.googleusercontent.com</string>
+    <string name="default_android_id">634320309725–2lnsv3j4dssebj8n8m2t364n8q9lmk26.apps.googleusercontent.com</string>
 
     <string name="datum_cislem">01.01.2024</string>
     <string name="pomlka">-</string>
@@ -493,6 +494,8 @@
     <string name="ask_permition">Vyberte složku pro zálohy odečtů a ceníků.</string>
 
     <string name="create_folder">Složka na Google Drive</string>
+    <string name="sign_in">Přihlásit</string>
+    <string name="sign_out">Odhlásit</string>
 
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
@@ -520,6 +523,5 @@
 
     <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
     <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

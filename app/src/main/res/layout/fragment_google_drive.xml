@@ -6,5 +6,9 @@
     tools:context=".modules.backup.GoogleDriveFragment">
 
 
-
+    <Button
+        android:id="@+id/btnGoogleSign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="But" />
 </RelativeLayout>

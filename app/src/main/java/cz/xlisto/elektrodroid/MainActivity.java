@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             if (itemId == R.id.menu_google_drive) {
                 uncheckedBottomNavigation();
                 actualFragment = GoogleDriveFragment.newInstance();
-                setToolbarTitle(getResources().getString(R.string.backup1));
+                setToolbarTitle(getResources().getString(R.string.google_drive));
                 b = true;
             }
             if (itemId == R.id.menu_graph_month) {
