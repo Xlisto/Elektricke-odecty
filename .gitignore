@@ -8,7 +8,7 @@
 .idea/appInsightsSettings.xml
 .idea/other.xml
 .idea/render.experimental.xml
-/.idea/compiler.xml
+.idea/compiler.xml
 
 # Build files
 .gradle/

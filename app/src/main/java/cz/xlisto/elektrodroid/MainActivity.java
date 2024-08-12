@@ -32,6 +32,7 @@ import java.util.Objects;
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
+import cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ImportPriceListFragment;
@@ -253,6 +254,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             if (itemId == R.id.menu_backup) {
                 uncheckedBottomNavigation();
                 actualFragment = BackupFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.backup1));
+                b = true;
+            }
+            if (itemId == R.id.menu_google_drive) {
+                uncheckedBottomNavigation();
+                actualFragment = GoogleDriveFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.backup1));
                 b = true;
             }

@@ -70,7 +70,6 @@
     <string name="meric">Měřič</string>
 
 
-
     <string name="ulozit">Uložit</string>
     <string name="zpet">Zpět</string>
     <string name="add">Přidat</string>
@@ -244,7 +243,8 @@
     <string name="subscription_points">Odběrná místa</string>
     <string name="invoices">Fakturace</string>
     <string name="hdo_times">Časy HDO</string>
-    <string name="backup1">Záloha</string>
+    <string name="backup1">Záloha místní</string>
+    <string name="google_drive">Záloha Google</string>
     <string name="graph_month">Měsíční graf</string>
     <string name="graph_color">Barva tarifu</string>
     <string name="import_price_list">Import ceníků</string>
@@ -520,4 +520,6 @@
 
     <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
     <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

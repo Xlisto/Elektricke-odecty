@@ -46,6 +46,11 @@
             app:showAsAction="ifRoom" />
 
         <item
+            android:id="@+id/menu_google_drive"
+            android:title="@string/google_drive"
+            app:showAsAction="ifRoom" />
+
+        <item
             android:id="@+id/menu_graph_month"
             android:title="@string/graph_month"
             app:showAsAction="ifRoom" />
