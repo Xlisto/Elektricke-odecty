@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.SelectHdoCategoryDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.HdoModel;
@@ -148,7 +149,7 @@ public class HdoSiteFragment extends Fragment {
         viewModel.setExceptionJindrichuvHradec(getResources().getString(R.string.exception_jindrichuv_hradec));
         viewModel.setExceptionHodonin(getResources().getString(R.string.exception_hodonin));
         viewModel.setExceptionBreclav(getResources().getString(R.string.exception_breclav));
-        viewModel.setShowAlert();
+        viewModel.setShowAlert(true);
 
         viewModel.getCodesContainer().observe(this, codesContainer -> {
             this.codes.clear();
@@ -165,6 +166,7 @@ public class HdoSiteFragment extends Fragment {
 
         });
 
+        // Sleduje změny v LiveData objektu shouldShowDialog a zobrazuje dialogové okno s výběrem kategorie, pokud je hodnota true.
         viewModel.shouldShowDialog().observe(this, shouldShowDialog -> {
             if (shouldShowDialog) {
                 SelectHdoCategoryDialogFragment.newInstance(getResources().getString(R.string.select), codes, codesException, groupsList, groupsExceptionList, resultArea, exceptionArea, FLAG_RESULT_SPINNER_DIALOG_FRAGMENT)
@@ -173,14 +175,23 @@ public class HdoSiteFragment extends Fragment {
             viewModel.hideDialog();
         });
 
-        viewModel.shouldShowAlert().observe(this, shouldShowAlert -> {
-            setVisibilityAlert(shouldShowAlert);
-            if (shouldShowAlert) {
-                setVisibilityProgressBar(false);
-                //Toast.makeText(requireActivity(), getResources().getString(R.string.no_hdo_codes), Toast.LENGTH_SHORT).show();
+        // Sleduje změny v LiveData objektu shouldShowAlertDialog a zobrazuje dialogové okno s upozorněním, pokud je hodnota true.
+        viewModel.shouldShowAlertDialog().observe(this, shouldShowAlertDialog -> {
+            if (shouldShowAlertDialog) {
+                OwnAlertDialog.show(requireContext(),
+                        requireContext().getResources().getString(R.string.error),
+                        requireContext().getResources().getString(R.string.no_data_alert),
+                        () -> {
+                            viewModel.setShouldShowAlertDialog(false);
+                            HdoSiteFragment.this.setVisibilityProgressBar(false);
+                        });
             }
         });
 
+        // Sleduje změny v LiveData objektu shouldShowAlert a zobrazuje upozornění, pokud je hodnota true.
+        viewModel.shouldShowAlert().observe(this, this::setVisibilityAlert);
+
+        // Sleduje změny v LiveData objektu shouldShowProgress a zobrazuje progress, pokud je hodnota true.
         viewModel.shouldShowProgress().observe(this, this::setVisibilityProgressBar);
 
         if (savedInstanceState != null) {
@@ -472,7 +483,6 @@ public class HdoSiteFragment extends Fragment {
      * @param distributionAreaIndex index distribuční sítě (0-CEZ, 1-EON, 2- PRE)
      */
     private void loadData(String url, int distributionAreaIndex) {
-
         //executor = Executors.newSingleThreadExecutor();
         //0-CEZ,1-EGD,2-PRE
         viewModel.runAsyncOperation(url, distributionAreaIndex, etHdoCode.getText().toString(), requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition(), lnHdoButtons);

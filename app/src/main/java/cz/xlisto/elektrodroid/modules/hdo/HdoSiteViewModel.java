@@ -4,6 +4,7 @@ package cz.xlisto.elektrodroid.modules.hdo;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -24,9 +25,48 @@ import cz.xlisto.elektrodroid.models.HdoModel;
 
 
 /**
+ * Třída HdoSiteViewModel slouží jako ViewModel pro správu dat a logiky související s HDO (Hromadné dálkové ovládání).
+ * <p>
+ * Tato třída poskytuje metody pro asynchronní získávání dat z různých distribučních oblastí (CEZ, EGD, PRE) a jejich zpracování.
+ * <p>
+ * Klíčové komponenty:
+ * - Handler handler: Zpracovává výsledky asynchronních operací.
+ * - MutableLiveData<Boolean> showDialog: Indikuje, zda by mělo být zobrazené dialogové okno.
+ * - MutableLiveData<Boolean> showAlert: Indikuje, zda by mělo být zobrazené upozornění.
+ * - MutableLiveData<Boolean> showProgress: Indikuje, zda by měl být zobrazený progress načítání dat.
+ * - MutableLiveData<CodesContainer> containerMutableLiveData: Obsahuje kódy HDO pro EGD.
+ * - MutableLiveData<ArrayList<HdoModel>> hdoModels: Obsahuje modely HDO.
+ * - MutableLiveData<ArrayList<HdoSiteFragment.HdoListContainer>> hdoListModels: Obsahuje seznamy HDO.
+ * - MutableLiveData<String[]> validityDates: Obsahuje data platnosti HDO.
+ * <p>
+ * Metody:
+ * - shouldShowDialog(): Vrací LiveData indikující, zda by mělo být zobrazené dialogové okno.
+ * - shouldShowAlert(): Vrací LiveData indikující, zda by mělo být zobrazené upozornění.
+ * - shouldShowProgress(): Vrací LiveData indikující, zda by měl být zobrazený progress načítání dat.
+ * - getHdoModel(): Vrací MutableLiveData obsahující modely HDO.
+ * - getHdoListModels(): Vrací MutableLiveData obsahující seznamy HDO.
+ * - getCodesContainer(): Vrací MutableLiveData obsahující kódy HDO pro EGD.
+ * - getValidityDates(): Vrací MutableLiveData obsahující data platnosti HDO.
+ * - setExceptionBrno(String exceptionBrno): Nastaví text výjimky pro Brno - venkov.
+ * - setExceptionJihlava(String exceptionJihlava): Nastaví text výjimky pro Jihlavu.
+ * - setExceptionTrebic(String exceptionTrebic): Nastaví text výjimky pro Třebíč.
+ * - setExceptionJindrichuvHradec(String exceptionJindrichuvHradec): Nastaví text výjimky pro Jindřichův Hradec.
+ * - setExceptionHodonin(String exceptionHodonin): Nastaví text výjimky pro Hodonín.
+ * - setExceptionBreclav(String exceptionBreclav): Nastaví text výjimky pro Břeclav.
+ * - hideDialog(): Skryje dialog se seznamem kódů HDO pro EGD.
+ * - setShowAlert(boolean value): Zobrazí/skryje upozornění.
+ * - clearData(): Smaže data v kontejneru s kódy HDO u EGD.
+ * - runAsyncOperation(String url, int distributionAreaIndex, String hdoCode, FragmentActivity fragmentActivity, String districtName, int districtIndex, LinearLayout lnHdoButtons): Spustí asynchronní operaci pro získání kódů HDO.
+ * - runSecondAsyncOperation(String group, String category, String urlHdo, String code, Context context, String districtName, int districtIndex): Spustí druhou asynchronní operaci pro získání kódů HDO u EGD.
+ * - buildRecyclerView(String jsonData): Sestaví z JSON dat ArrayList<HdoModel> a aktualizuje hodnotu hdoModels.
+ * <p>
+ * Vnitřní třídy:
+ * - CodesContainer: Kontejner pro kódy HDO u EGD.
+ * <p>
  * Xlisto 11.01.2024 12:14
  */
 public class HdoSiteViewModel extends ViewModel {
+
     private static final String TAG = "MyViewModel";
     private String exceptionBrno;
     private String exceptionJihlava;
@@ -38,6 +78,7 @@ public class HdoSiteViewModel extends ViewModel {
 
     private static final Connections connections = new Connections();
     private final MutableLiveData<Boolean> showDialog = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> showAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showAlert = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showProgress = new MutableLiveData<>();
     private final MutableLiveData<CodesContainer> containerMutableLiveData = new MutableLiveData<>();
@@ -49,11 +90,15 @@ public class HdoSiteViewModel extends ViewModel {
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
             showProgress.postValue(false);
-            if (msg.what == 101)
+            if (msg.what == 101) {
+                showAlert.postValue(true);
+                showAlertDialog.postValue(true);
                 return;//kod 101 znamená, že se nepodařilo získat data; skryje progress a ukončí se
+            }
             Connections.ResultData resultData = (Connections.ResultData) msg.obj;
             if (resultData.result.equals("[]")) {
                 showAlert.postValue(true);
+                showAlertDialog.postValue(true);
                 return;
             }
             if (resultData.resultType.equals(Connections.ResultType.CODES)) {
@@ -132,7 +177,7 @@ public class HdoSiteViewModel extends ViewModel {
                         showAlert.postValue(false);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "handleMessage: ", e);
                 }
 
             } else {
@@ -149,6 +194,15 @@ public class HdoSiteViewModel extends ViewModel {
      */
     public LiveData<Boolean> shouldShowDialog() {
         return showDialog;
+    }
+
+
+    /**
+     * Zjistí zda by mělo být zobrazené upozornění
+     * @return true pokud by mělo být zobrazené upozornění
+     */
+    public LiveData<Boolean> shouldShowAlertDialog() {
+        return showAlertDialog;
     }
 
 
@@ -170,6 +224,7 @@ public class HdoSiteViewModel extends ViewModel {
     public LiveData<Boolean> shouldShowProgress() {
         return showProgress;
     }
+
 
     public MutableLiveData<ArrayList<HdoModel>> getHdoModel() {
         return hdoModels;
@@ -275,10 +330,21 @@ public class HdoSiteViewModel extends ViewModel {
 
 
     /**
-     * Zobrazí upozornění
+     * Zobrazí/skryje upozornění
+     *
+     * @param value true pokud se má upozornění zobrazit
      */
-    public void setShowAlert() {
-        showAlert.postValue(true);
+    public void setShowAlert(boolean value) {
+        showAlert.postValue(value);
+    }
+
+
+    /**
+     * Zobrazí/skryje dialogové okno s výstrahou
+     * @param value true pokud se má dialogové okno zobrazit
+     */
+    public void setShouldShowAlertDialog(boolean value) {
+        showAlertDialog.postValue(value);
     }
 
 
@@ -375,6 +441,7 @@ public class HdoSiteViewModel extends ViewModel {
      * Kontejner pro kódy HDO u EGD
      */
     static class CodesContainer {
+
         ArrayList<String> codes;
         ArrayList<String[]> groupsList;
         ArrayList<String> codesException;
@@ -393,5 +460,7 @@ public class HdoSiteViewModel extends ViewModel {
             this.exceptionAreaList = exceptionAreaList;
             this.urlHdo = urlHdo;
         }
+
     }
+
 }

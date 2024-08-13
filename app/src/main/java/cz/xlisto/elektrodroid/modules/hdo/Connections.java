@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -33,16 +34,43 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
 /**
- * Třída pro komunikaci se serverem EGD, CEZ a PRE
+ * Třída Connections slouží k navázání komunikace se servery EGD, CEZ a PRE.
+ * <p>
+ * Tato třída poskytuje metody pro odesílání HTTP POST dotazů na servery a zpracování odpovědí.
+ * <p>
+ * Klíčové komponenty:
+ * - Handler handler: Zpracovává výsledky dotazů.
+ * - Handler handlerOnGroupAndCategory: Zpracovává výsledky dotazů na skupiny a kategorie.
+ * <p>
+ * Metody:
+ * - sendPostParameters(String urlString, String urlParameters, String code, Context context, String districtName, int districtIndex, Handler handler): Odesílá POST dotaz na server.
+ * - sendPost(String urlString, int distributionAreaIndex, String code, Context context, String districtName, int districtIndex, LinearLayout root, Handler handler): Odesílá POST dotaz na server a zpracovává odpověď.
+ * - builderURL(String urlString): Sestaví URL z řetězce.
+ * - builderConnection(URL url): Naváže HTTPS spojení.
+ * - readInputStream(HttpsURLConnection connection, Context context): Načte InputStream z připojení.
+ * - parseJSONCEZ(InputStream in): Načte a zpracuje JSON data z CEZ.
+ * - parseJSONPRE(InputStream in): Načte a zpracuje JSON data z PRE.
+ * - parseEGD(InputStream in, String code, Context context, String districtName, int districtIndex, LinearLayout root): Načte a zpracuje data z EGD.
+ * - onLoadToken(String apiToken, String code, Context context, String districtName, int districtIndex, LinearLayout root): Zpracuje token pro přístup k datům.
+ * - readerStream(InputStream in): Načte stream a uloží jej do řetězce.
+ * - searchKod(String urlHdo, String code, Context context, String districtName, int districtIndex): Sestaví dotaz pro získání kategorie a skupiny.
+ * - searchHdoParseInputDates(String jsonDataString, String districtName, int districtIndex, String code, String urlHdo, Context context, Handler handler): Zpracuje data pro získání časů HDO.
+ * - searchHdo(String group, String category, String urlHdo, String code, Context context, String districtName, int districtIndex, Handler handler): Sestaví dotaz pro získání HDO dat o tarifu.
+ * - getCategoryEgd(int districtIndex): Vrátí kategorii EGD podle vybraného okresu.
+ * <p>
+ * Vnitřní třídy:
+ * - ResultData: Kontejner pro návratová data.
+ * - GroupAndCategoryContainer: Kontejner pro data skupin a kategorií.
+ * - ResultType: Enum pro typ výsledku získání dat.
+ * <p>
  * Xlisto 19.06.2023 12:27
  */
 public class Connections {
+
     private static final String TAG = "Connections";
     private Handler handler;
     //handler obdrží  výsledek s Category a Group a spustí další dotaz na získání časů HDO
@@ -85,10 +113,10 @@ public class Connections {
             wr.flush();
             wr.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "sendPostParameters: ", e);
         }
 
-        InputStream in = readInputStream(connection, context);
+        InputStream in = readInputStream(connection);
         if (in == null) {
             handler.sendEmptyMessage(101);
             return;
@@ -96,7 +124,6 @@ public class Connections {
 
         String result = readerStream(in);
         Message message = new Message();
-
 
         try {
             JSONObject resultJson = new JSONObject(result);
@@ -131,7 +158,7 @@ public class Connections {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "sendPostParameters: ", e);
         }
     }
 
@@ -149,8 +176,13 @@ public class Connections {
         //načte komplet www stránku ze které potom parsuji potřebná data
         URL url = builderURL(urlString);
         HttpsURLConnection connection = builderConnection(url);
-        InputStream in = readInputStream(connection, context);
-        if (in == null) return;
+        InputStream in = readInputStream(connection);
+
+        if (in == null) {
+            handler.sendEmptyMessage(101);
+            return;
+        }
+
         try {
             if (distributionAreaIndex == 0) parseJSONCEZ(in);
             if (distributionAreaIndex == 1)
@@ -158,7 +190,7 @@ public class Connections {
             if (distributionAreaIndex == 2) parseJSONPRE(in);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "sendPost: ", e);
         }
 
     }
@@ -175,8 +207,7 @@ public class Connections {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            //throw new RuntimeException(e);
-            e.printStackTrace();
+            Log.e(TAG, "builderURL: ", e);
         }
         return url;
     }
@@ -194,7 +225,7 @@ public class Connections {
         try {
             connection = (HttpsURLConnection) url.openConnection();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "builderConnection: ", e);
         }
         return connection;
     }
@@ -205,15 +236,12 @@ public class Connections {
      *
      * @return InputStream načítané stránky
      */
-    private InputStream readInputStream(HttpsURLConnection connection, Context context) {
+    private InputStream readInputStream(HttpsURLConnection connection) {
         InputStream in;
         try {
             in = new BufferedInputStream(connection.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
-            OwnAlertDialog.show(context,
-                    context.getResources().getString(R.string.error),
-                    context.getResources().getString(R.string.no_data_alert));
+            Log.e(TAG, "readInputStream: ", e);
             return null;
         }
         return in;
@@ -386,7 +414,7 @@ public class Connections {
                 result.append(line); //zde je uložená komplet www stránka
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "readerStream: ", e);
         }
         return result.toString();
     }
@@ -531,6 +559,7 @@ public class Connections {
      * Kontejner pro návratová data
      */
     static class ResultData {
+
         String result, areaEgd, area, urlString;
         ResultType resultType;
 
@@ -547,6 +576,7 @@ public class Connections {
             this.urlString = urlString;
             this.area = area;
         }
+
     }
 
 
@@ -562,6 +592,7 @@ public class Connections {
 
 
     static class GroupAndCategoryContainer {
+
         String urlHdo, urlParameters, code, districtName;
         Context context;
         int districtIndex;
@@ -575,5 +606,7 @@ public class Connections {
             this.districtName = districtName;
             this.districtIndex = districtIndex;
         }
+
     }
+
 }
