@@ -9,6 +9,9 @@
 .idea/other.xml
 .idea/render.experimental.xml
 .idea/compiler.xml
+.idea/modules/
+.idea/modules/app
+*.iml
 
 # Build files
 .gradle/
