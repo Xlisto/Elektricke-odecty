@@ -46,22 +46,64 @@ import cz.xlisto.elektrodroid.utils.TextSizeAdjuster;
 
 
 /**
- * Adapter pro zobrazení měsíčních odečtů, pro RecyclerView..
+ * Adapter pro zobrazení měsíčních odečtů v RecyclerView.
+ * Tento adapter spravuje zobrazení a interakce s jednotlivými položkami měsíčních odečtů.
  */
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
 
+    /**
+     * Tag pro logování v `MonthlyReadingAdapter`.
+     */
     private static final String TAG = "MonthlyReadingAdapter";
+    /**
+     * Konstantní hodnota pro označení akce smazání měsíčního odečtu.
+     */
     public static final String FLAG_DELETE_MONTHLY_READING = "flagDeleteMonthlyReading";
+    /**
+     * Index aktuálně zobrazených tlačítek.
+     * -1 znamená, že žádná tlačítka nejsou zobrazena.
+     */
     private static int showButtons = -1;
+    /**
+     * Seznam měsíčních odečtů.
+     */
     private final ArrayList<MonthlyReadingModel> items;
-    private boolean simplyView, showRegulPrice;
+
+    /**
+     * Boolean hodnota pro zobrazení jednoduchého pohledu.
+     */
+    private boolean simplyView;
+
+    /**
+     * Boolean hodnota pro zobrazení regulovaných cen.
+     */
+    private boolean showRegulPrice;
+    /**
+     * Model odběrného místa.
+     */
     private final SubscriptionPointModel subscriptionPoint;
+    /**
+     * RecyclerView, ve kterém budou položky zobrazeny.
+     */
     private final RecyclerView recyclerView;
+    /**
+     * ID vybraného měsíčního odečtu.
+     */
     private long selectedMonthlyReadingId;
+    /**
+     * Pozice vybrané položky.
+     */
     private int selectedPosition;
+    /**
+     * Listener pro kliknutí na položku.
+     */
     private OnClickItemListener onClickItemListener;
 
 
+    /**
+     * ViewHolder pro položky v RecyclerView.
+     * Tato třída obsahuje odkazy na zobrazené prvky v jednotlivých položkách měsíčních odečtů.
+     */
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout rootRelativeLayout, rl2, rl3;
@@ -73,6 +115,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         Button btnEdit, btnDetail, btnDelete;
 
 
+        /**
+         * Konstruktor ViewHolderu.
+         *
+         * @param itemView View položky, která bude zobrazena v RecyclerView.
+         */
         public MyViewHolder(@NonNull View itemView) {
 
             super(itemView);
@@ -81,7 +128,15 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
-    //konstruktor
+    /**
+     * Konstruktor pro `MonthlyReadingAdapter`.
+     *
+     * @param items             Seznam měsíčních odečtů.
+     * @param subscriptionPoint Model odběrného místa.
+     * @param simplyView        Boolean hodnota pro zobrazení jednoduchého pohledu.
+     * @param showRegulPrice    Boolean hodnota pro zobrazení regulovaných cen.
+     * @param recyclerView      RecyclerView, ve kterém budou položky zobrazeny.
+     */
     public MonthlyReadingAdapter(ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
 
         this.items = items;
@@ -92,8 +147,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
-    // Vytvoření a inicializace objektu View z XML návrhu vzoru položky.
-    // Příprava kontejneru, ve kterém budou zobrazena data jednotlivé položky
+    /**
+     * Vytvoří a inicializuje objekt View z XML návrhu vzoru položky.
+     * Příprava kontejneru, ve kterém budou zobrazena data jednotlivé položky.
+     *
+     * @param parent   ViewGroup, do kterého bude nový View přidán po jeho vytvoření.
+     * @param viewType Typ nového View.
+     * @return MyViewHolder obsahující nový View.
+     */
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -135,6 +196,13 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
+    /**
+     * Nastaví data pro zobrazení v jednotlivých položkách RecyclerView.
+     * Tato metoda je volána při každém zobrazení položky v RecyclerView.
+     *
+     * @param holder   ViewHolder, který bude aktualizován daty.
+     * @param position Pozice položky v adapteru.
+     */
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -379,6 +447,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
+    /**
+     * Vrátí počet položek v adapteru.
+     *
+     * @return Počet položek v seznamu.
+     */
     @Override
     public int getItemCount() {
 
@@ -387,6 +460,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
+    /**
+     * Vrátí ID položky na zadané pozici.
+     *
+     * @param position Pozice položky v adapteru.
+     * @return ID položky na zadané pozici.
+     */
     @Override
     public long getItemId(int position) {
 
@@ -402,9 +481,12 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Zkontroluje období, zda-li neobsahuje současně regulovanou a neregulovanou cenu
+     * Zkontroluje období, zda-li neobsahuje současně regulovanou a neregulovanou cenu.
      *
-     * @return boolean true - obsahuje, false - neobsahuje
+     * @param priceListRegulBuilder  Objekt PriceListRegulBuilder obsahující informace o regulovaných cenách.
+     * @param monthlyReading         Aktuální měsíční odečet.
+     * @param monthlyReadingPrevious Předchozí měsíční odečet.
+     * @return boolean true - obsahuje, false - neobsahuje.
      */
     private boolean isOverDateRegulPrice(PriceListRegulBuilder priceListRegulBuilder, MonthlyReadingModel monthlyReading, MonthlyReadingModel monthlyReadingPrevious) {
 
@@ -421,10 +503,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Skryje/zobrazí tlačítka pro smazání a editaci
+     * Skryje nebo zobrazí tlačítka pro smazání a editaci na základě aktuální pozice.
      *
-     * @param holder   MyViewHolder
-     * @param position pozice
+     * @param holder   MyViewHolder, který obsahuje odkazy na zobrazené prvky v jednotlivých položkách měsíčních odečtů.
+     * @param position Pozice položky v adapteru.
      */
     private void showButtons(MyViewHolder holder, int position) {
 
@@ -436,7 +518,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Nastaví boolean pro zobrazení/skrytí rozšířených dat
+     * Nastaví boolean pro zobrazení/skrytí rozšířených dat.
+     *
+     * @param b Boolean hodnota pro zobrazení jednoduchého pohledu.
      */
     public void showSimpleView(boolean b) {
 
@@ -446,7 +530,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Nastaví boolean pro zobrazení/skrytí regulovaných cen
+     * Nastaví boolean pro zobrazení/skrytí regulovaných cen.
+     *
+     * @param b Boolean hodnota pro zobrazení regulovaných cen.
      */
     public void setShowRegulPrice(boolean b) {
 
@@ -456,7 +542,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * smaže záznam měsíčního odečtu
+     * Smaže záznam měsíčního odečtu.
+     *
+     * @param context Kontext aplikace.
      */
     public void deleteMonthlyReading(Context context) {
 
@@ -465,10 +553,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Smaže záznam měsíčního odečtu
+     * Smaže záznam měsíčního odečtu.
      *
-     * @param itemId   long id záznamu
-     * @param position int pozice v RecyclerAdapteru
+     * @param itemId   ID záznamu, který má být smazán.
+     * @param position Pozice záznamu v adapteru.
+     * @param context  Kontext aplikace.
      */
     private void deleteMonthlyReading(long itemId, int position, Context context) {
         if (items == null || items.isEmpty()) {
@@ -495,9 +584,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Nastaví listener pro kliknutí na položku
+     * Nastaví listener pro kliknutí na položku.
      *
-     * @param onClickItemListener OnClickItemListener
+     * @param onClickItemListener OnClickItemListener, který bude nastaven.
      */
     public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
 
@@ -505,8 +594,18 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     }
 
 
+    /**
+     * Rozhraní pro listener kliknutí na položku.
+     * Obsahuje metodu pro nastavení listeneru pro kliknutí na cenový seznam.
+     */
     public interface OnClickItemListener {
 
+        /**
+         * Nastaví listener pro kliknutí na cenový seznam.
+         *
+         * @param idCurrentlyReading ID aktuálního odečtu.
+         * @param idPreviousReading  ID předchozího odečtu.
+         */
         void setClickPriceListListener(long idCurrentlyReading, long idPreviousReading);
 
     }
