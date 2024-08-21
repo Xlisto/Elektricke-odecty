@@ -153,7 +153,7 @@ public class WithOutInvoiceService {
         dataInvoiceSource.close();
 
         if (invoice.getDateFrom() > monthlyReading.getDate())
-            showAlertDialog(context);
+            showAlertDialog(context, Errors.DATES_IS_NOT_CORRECT);
     }
 
 
@@ -284,6 +284,20 @@ public class WithOutInvoiceService {
 
 
     /**
+     * Smaže všechny záznamy v období bez faktury
+     *
+     * @param context kontext aplikace
+     */
+    public static void deleteAllItemsInvoiceTableTED(Context context) {
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(context);
+        dataInvoiceSource.open();
+        dataInvoiceSource.deleteAllInvoices(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
+        dataInvoiceSource.close();
+        showAlertDialog(context, Errors.NO_MONTHLY_RECORDS);
+    }
+
+
+    /**
      * Upraví první záznam (počáteční data) v období bezfaktury podle posledního záznamu zapsané faktury
      *
      * @param context kontext aplikace
@@ -298,7 +312,7 @@ public class WithOutInvoiceService {
         InvoiceModel itemLastInvoice = dataInvoiceSource.loadLastInvoiceByDateFromAll(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableFAK());
         MonthlyReadingModel monthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
         if (monthlyReading == null) {//pokud nejsou měsíční odečty, zobrazí se chyba a smaže se stávající období bez faktury
-            OwnAlertDialog.show(context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_monthly_records));
+            showAlertDialog(context, Errors.NO_MONTHLY_RECORDS);
             dataInvoiceSource.deleteAllInvoices(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
             dataMonthlyReadingSource.close();
             dataInvoiceSource.close();
@@ -330,7 +344,7 @@ public class WithOutInvoiceService {
         }
 
         if (calendar.getTimeInMillis() > monthlyReading.getDate()) {
-            showAlertDialog(context);
+            showAlertDialog(context, Errors.DATES_IS_NOT_CORRECT);
         }
 
         dataInvoiceSource.updateInvoice(itemFirstWithoutInvoice.getId(), Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED(), itemFirstWithoutInvoice);
@@ -339,9 +353,27 @@ public class WithOutInvoiceService {
     }
 
 
-    private static void showAlertDialog(Context context) {
-        OwnAlertDialog.show(context, context.getResources().getString(R.string.error),
-                context.getResources().getString(R.string.dates_is_not_correct));
+    /**
+     * Zobrazí dialogové okno s chybovou zprávou.
+     *
+     * @param context kontext aplikace
+     * @param error   typ chyby, který se má zobrazit
+     */
+    private static void showAlertDialog(Context context, Errors error) {
+        String title = context.getResources().getString(R.string.error);
+        String message = "";
+        switch (error) {
+            case NO_INVOICE_RECORDS:
+                message = context.getResources().getString(R.string.no_invoice_records);
+                break;
+            case NO_MONTHLY_RECORDS:
+                message = context.getResources().getString(R.string.no_monthly_records);
+                break;
+            case DATES_IS_NOT_CORRECT:
+                message = context.getResources().getString(R.string.dates_is_not_correct);
+                break;
+        }
+        OwnAlertDialog.show(context, title, message);
     }
 
 
@@ -388,6 +420,13 @@ public class WithOutInvoiceService {
             return new double[]{Double.parseDouble(params[1]), Double.parseDouble(params[2])};
         }
         return new double[]{0.0, 0.0};
+    }
+
+
+    private enum Errors {
+        NO_INVOICE_RECORDS,
+        NO_MONTHLY_RECORDS,
+        DATES_IS_NOT_CORRECT
     }
 
 }

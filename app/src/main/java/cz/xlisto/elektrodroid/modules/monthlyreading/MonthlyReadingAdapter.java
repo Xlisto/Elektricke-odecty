@@ -575,14 +575,17 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         items.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(Math.max(position - 1, 0), getItemCount());
+
         /*
         / Smaže záznam v období bez faktury pokud je vázaný k prvnímu odečtu nebo výměně elektroměru
         / WithOutInvoiceService.deleteItemInInvoiceByIdMonthlyReading(context, subscriptionPoint.getTableTED(), itemId);
         / upraví poslední záznam bez faktury podle posledního měsíčního záznamu
         */
-        //WithOutInvoiceService.editLastItemInInvoice(context, subscriptionPoint.getTableTED(), lastMonthlyReading);
-        WithOutInvoiceService.updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
-
+        if (items.isEmpty()) {
+            WithOutInvoiceService.deleteAllItemsInvoiceTableTED(context);
+        } else {
+            WithOutInvoiceService.updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
+        }
     }
 
 
