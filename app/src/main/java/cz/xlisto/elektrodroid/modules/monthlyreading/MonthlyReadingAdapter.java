@@ -471,11 +471,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * @param position int pozice v RecyclerAdapteru
      */
     private void deleteMonthlyReading(long itemId, int position, Context context) {
+        if (items == null || items.isEmpty()) {
+            Log.e(TAG, "deleteMonthlyReading: Pokus o odstranění z prázdného seznamu");
+            return;
+        }
 
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
         dataMonthlyReadingSource.open();
         dataMonthlyReadingSource.deleteMonthlyReading(itemId, subscriptionPoint.getTableO());
-        //MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(subscriptionPoint.getTableO());
         dataMonthlyReadingSource.close();
 
         //odebere položku z adapter a přepočítá pozice, vynuluje showButtons jež ukazuje na rozbalenou položku
