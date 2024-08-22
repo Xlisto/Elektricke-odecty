@@ -94,6 +94,7 @@ public class MonthlyReadingFragment extends Fragment {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         monthlyReadingAdapter.deleteMonthlyReading(requireContext());
                     }
+                    setShowTvAlert();
                 });
 
         //posluchač změny filtru
@@ -238,7 +239,6 @@ public class MonthlyReadingFragment extends Fragment {
      */
     private void loadDataFromDatabase() {
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
-        tvAlert.setVisibility(View.VISIBLE);
         ArrayList<MonthlyReadingModel> monthlyReadings;
         if (subscriptionPoint != null) {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
@@ -255,14 +255,9 @@ public class MonthlyReadingFragment extends Fragment {
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             monthlyReadingAdapter.setOnClickItemListener(onClickItemListener);
             rv.setAdapter(monthlyReadingAdapter);
-            rv.setLayoutManager(new LinearLayoutManager(getContext()));
-            if (!monthlyReadings.isEmpty())
-                tvAlert.setVisibility(View.GONE);
-            else
-                tvAlert.setText(getResources().getString(R.string.pridejte_mesicni_odecty));
-        } else {
-            tvAlert.setText(getResources().getString(R.string.create_place));
+            rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         }
+        setShowTvAlert();
     }
 
 
@@ -289,6 +284,25 @@ public class MonthlyReadingFragment extends Fragment {
         MonthlyReadingAddFragment monthlyReadingAddFragment = MonthlyReadingAddFragment
                 .newInstance(subscriptionPoint.getTableO(), subscriptionPoint.getTablePLATBY());
         FragmentChange.replace(requireActivity(), monthlyReadingAddFragment, MOVE, true);
+    }
+
+
+    /**
+     * Zobrazí nebo skryje textové upozornění v závislosti na počtu položek v adapteru.
+     * Pokud adapter neobsahuje žádné položky, zobrazí textové upozornění.
+     * Pokud adapter obsahuje alespoň jednu položku, skryje textové upozornění.
+     */
+    private void setShowTvAlert() {
+        if (subscriptionPoint == null || monthlyReadingAdapter.getItemCount() == 0) {
+            tvAlert.setVisibility(View.VISIBLE);
+            if (subscriptionPoint == null) {
+                tvAlert.setText(getResources().getString(R.string.create_place));
+            } else {
+                tvAlert.setText(getResources().getString(R.string.pridejte_mesicni_odecty));
+            }
+        } else {
+            tvAlert.setVisibility(View.GONE);
+        }
     }
 
 

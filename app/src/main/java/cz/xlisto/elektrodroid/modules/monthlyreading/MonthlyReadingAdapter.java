@@ -68,12 +68,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * Seznam měsíčních odečtů.
      */
     private final ArrayList<MonthlyReadingModel> items;
-
     /**
      * Boolean hodnota pro zobrazení jednoduchého pohledu.
      */
     private boolean simplyView;
-
     /**
      * Boolean hodnota pro zobrazení regulovaných cen.
      */
