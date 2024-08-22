@@ -56,6 +56,8 @@
     <string name="poze_dle_jistice">POZE dle jističe</string>
     <string name="cinnost_ote">Činnost OTE</string>
     <string name="cinnost_operatora_trhu">Čin. oper. trhu</string>
+    <string name="provoz_nesitove_infrastruktury">Provoz nesíťové infr.</string>
+    <string name="provoz_nesitove_infrastruktury_poznamka">Od 1.7. se tato položka změnila. Nyní je cena 9,24  </string>
     <string name="dph">DPH</string>
     <string name="dan_z_elektriny">Daň z elektřiny</string>
     <string name="znak_procento">%</string>

@@ -98,13 +98,14 @@
                 </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
 
                 <TextView
-                android:id="@+id/tvPoznamkaDetail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/shape_background_red" />
+                    android:id="@+id/tvPoznamkaDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/shape_background_red" />
             </LinearLayout>
 
 
@@ -456,6 +457,17 @@
                     app:label_price_item="@string/cinnost_operatora_trhu" >
 
                 </cz.xlisto.elektrodroid.ownview.LabelPriceDetail>
+
+                <TextView
+                    android:id="@+id/tvPoznamkaOTE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="-12dp"
+                    android:background="@drawable/shape_background_red"
+                    android:gravity="end" />
 
                 <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldn_POZE1"

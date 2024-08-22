@@ -23,11 +23,10 @@ import cz.xlisto.elektrodroid.utils.DetectScreenMode;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PriceListDetailFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro zobrazení detailů ceníku.
  */
 public class PriceListDetailFragment extends Fragment {
+
     private final static String TAG = "PriceListDetailFragment";
     public final static String PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment";
     public final static String PRICE_LIST_ID = "price_list_id";
@@ -38,22 +37,26 @@ public class PriceListDetailFragment extends Fragment {
     private LabelPriceDetail ldnJ0, ldnJ1, ldnJ2, ldnJ3, ldnJ4, ldnJ5, ldnJ6, ldnJ7, ldnJ8, ldnJ9, ldnJ10, ldnJ11, ldnJ12, ldnJ13, ldnJ14;
     private LabelPriceDetail ldnSystemSluzby, ldnOTE, ldnPOZE1, ldnPOZE2;
     private LabelPriceDetail ldnDan, ldnDPH;
-    private TextView tvPoznamka, tvPoznamkaVT, tvPoznamkaNT, tvPoznamkaPlat, tvPoznamkaPOZE1, tvPoznamkaPOZE2;
+    private TextView tvPoznamka, tvPoznamkaVT, tvPoznamkaNT, tvPoznamkaPlat, tvPoznamkaPOZE1, tvPoznamkaPOZE2, tvPoznamkaOTE;
     private static final String PRICE_ID = "price_list_id";
     private static final String SHOW_IN_FRAGMENT = "show_in_fragment";
     private long price_id;
     private boolean showInFragment;
 
 
+    /**
+     * Konstruktor třídy PriceListDetailFragment.
+     * Tento konstruktor je vyžadován a musí být veřejný a prázdný.
+     */
     public PriceListDetailFragment() {
         // Required empty public constructor
     }
 
 
     /**
-     * Tato metoda vytvoří novou instanci tohoto fragment s definovanými parametry.
+     * Tato metoda vytvoří novou instanci tohoto fragmentu s definovaným ID ceníku.
      *
-     * @param priceListId Parameter 1.
+     * @param priceListId ID ceníku, který má být načten.
      * @return Nová instance fragmentu PriceListDetailFragment.
      */
     public static PriceListDetailFragment newInstance(long priceListId) {
@@ -61,6 +64,13 @@ public class PriceListDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří novou instanci fragmentu PriceListDetailFragment s definovanými parametry.
+     *
+     * @param priceListId    ID ceníku, který má být načten.
+     * @param showInFragment Určuje, zda se má fragment zobrazit v rámci jiného fragmentu.
+     * @return Nová instance fragmentu PriceListDetailFragment.
+     */
     public static PriceListDetailFragment newInstance(long priceListId, boolean showInFragment) {
         PriceListDetailFragment fragment = new PriceListDetailFragment();
         Bundle args = new Bundle();
@@ -106,6 +116,7 @@ public class PriceListDetailFragment extends Fragment {
         tvPoznamkaPlat = v.findViewById(R.id.tvPoznamkaPlat);
         tvPoznamkaPOZE1 = v.findViewById(R.id.tvPoznamkaPOZE1);
         tvPoznamkaPOZE2 = v.findViewById(R.id.tvPoznamkaPOZE2);
+        tvPoznamkaOTE = v.findViewById(R.id.tvPoznamkaOTE);
 
         ldnVTDistribuce = v.findViewById(R.id.ldn_VT_distribuce);
         ldnNTDistribuce = v.findViewById(R.id.ldn_NT_distribuce);
@@ -145,14 +156,21 @@ public class PriceListDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Načte a zobrazí detaily ceníku na základě zadaného ID ceníku.
+     *
+     * @param priceId ID ceníku, který má být načten.
+     */
     public void loadPrice(long priceId) {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
         PriceListModel priceList = dataPriceListSource.readPrice(priceId);
         dataPriceListSource.close();
 
+        long dateStart = priceList.getPlatnostOD();
+        long dateEnd = priceList.getPlatnostDO();
 
-        ldnDatum.setPrice(ViewHelper.convertLongToDate(priceList.getPlatnostOD()));
+        ldnDatum.setPrice(ViewHelper.convertLongToDate(dateStart) + " - " + ViewHelper.convertLongToDate(dateEnd));
 
         ldnRada.setPrice(priceList.getRada());
         ldnProdukt.setPrice(priceList.getProdukt());
@@ -231,10 +249,29 @@ public class PriceListDetailFragment extends Fragment {
             ldnPOZE1.setVisibility(View.GONE);
         }
 
+        //Přenastavení ceníku pro rok 2024, od 1.7. se činnost operátora trhu (OTE) mění na provoz nesíťové infrastruktury
+        //1719784800000 == 1.7.2024
+        if (dateStart >= 1719784800000L && dateEnd <= 1735599600000L) {//1.7.2024 - 31.12.2024
+            ldnOTE.setLabel(getResources().getString(R.string.provoz_nesitove_infrastruktury));
+            ldnOTE.setItem(getResources().getString(R.string.kc_om));
+        }
+
+        //zobrazení varování, pokud platnost ceníku překrývá s přechodem na provoz nesíťové infrastruktury (1.7.2024)
+        if (year == 2024) {
+            //1719784800000 == 1.7.2024
+            if (dateStart < 1719784800000L && dateEnd >= 1719784800000L) {//1.7.2024 - 1.7.2024
+                //zobraz varování
+                tvPoznamkaOTE.setText(getResources().getText(R.string.provoz_nesitove_infrastruktury_poznamka));
+                tvPoznamkaOTE.setVisibility(View.VISIBLE);
+            } else {
+                tvPoznamkaOTE.setVisibility(View.GONE);
+            }
+        }
+
         //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
         tvPoznamka.setVisibility(View.GONE);
         PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, year);
-        String poznamka = priceListRegulBuilder.getNotes(getActivity());
+        String poznamka = priceListRegulBuilder.getNotes(requireActivity());
         String maxVT = priceListRegulBuilder.getMaxVT();
         String maxNT = priceListRegulBuilder.getMaxNT();
         String maxPlat = priceListRegulBuilder.getMaxPlat();
@@ -264,15 +301,17 @@ public class PriceListDetailFragment extends Fragment {
             tvPoznamkaVT.setVisibility(View.GONE);
             tvPoznamkaNT.setVisibility(View.GONE);
             tvPoznamkaPlat.setVisibility(View.GONE);
+            tvPoznamkaPOZE1.setVisibility(View.GONE);
+            tvPoznamkaPOZE2.setVisibility(View.GONE);
         }
     }
 
 
     /**
-     * Nastaví poznámku do textview
+     * Nastaví poznámku do zadaného TextView.
      *
-     * @param tv textview
-     * @param s  poznámka
+     * @param tv TextView, do kterého se má poznámka nastavit.
+     * @param s  Poznámka, která se má nastavit do TextView. Pokud je null, TextView se skryje.
      */
     private void setPoznamka(TextView tv, String s) {
         if (s != null) {
@@ -282,4 +321,5 @@ public class PriceListDetailFragment extends Fragment {
             tv.setVisibility(View.GONE);
         }
     }
+
 }
