@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
  * Xlisto 04.02.2023 20:03
  */
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHolder> {
+
     private static final String TAG = "InvoiceAdapter";
     private static long selectedId;
     private static int selectedPosition;
@@ -62,9 +64,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private PriceListModel priceList;
     private InvoiceJoinDialogFragment invoiceJoinDialogFragment;
     private boolean showCheckBoxSelect = false;
+    private final InvoiceViewModel viewModel;
 
 
+
+    /**
+     * ViewHolder třída pro zobrazení položky faktury.
+     * Obsahuje odkazy na jednotlivé prvky v adapterovém zobrazení položky.
+     */
     static class MyViewHolder extends RecyclerView.ViewHolder {
+
         TextView vtStart, vtEnd, vTDif, ntStart, ntEnd, ntDif, dateStart, dateEnd, dateDifference,
                 vtPrice, ntPrice, tvPayment, tvPOZE, tvPriceTotal, tvPriceTotalDPH, tvOtherServices,
                 tvOtherServicesDescription, tvAlert, tvNewMeter, tvDash;
@@ -76,22 +85,47 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         CheckBox chSelected;
 
 
+        /**
+         * Konstruktor pro vytvoření instance MyViewHolder.
+         *
+         * @param itemView View položky faktury
+         */
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+
     }
 
 
-    public InvoiceAdapter(Context context, ArrayList<InvoiceModel> items, String table, SubscriptionPointModel subscriptionPoint, PozeModel.TypePoze typePoze, RecyclerView recyclerView) {
+    /**
+     * Konstruktor pro vytvoření instance InvoiceAdapter.
+     *
+     * @param context           Kontext aplikace
+     * @param items             Seznam položek faktur
+     * @param table             Název tabulky v databázi
+     * @param subscriptionPoint Model odběrného místa
+     * @param typePoze          Typ POZE (Podpora obnovitelných zdrojů energie)
+     * @param recyclerView      RecyclerView, který bude používat tento adaptér
+     * @param viewModel         ViewModel pro správu stavu zaškrtávacích políček
+     */
+    public InvoiceAdapter(Context context, ArrayList<InvoiceModel> items, String table, SubscriptionPointModel subscriptionPoint, PozeModel.TypePoze typePoze, RecyclerView recyclerView, InvoiceViewModel viewModel) {
         this.context = context;
         this.items = items;
         this.table = table;
         this.subScriptionPoint = subscriptionPoint;
         this.recyclerView = recyclerView;
         this.typePoze = typePoze;
+        this.viewModel = viewModel;
     }
 
 
+    /**
+     * Vytváří nový ViewHolder pro zobrazení položky faktury.
+     *
+     * @param parent   Rodičovský ViewGroup, do kterého bude ViewHolder přidán
+     * @param viewType Typ zobrazení položky (nepoužívá se v tomto případě)
+     * @return Nově vytvořený ViewHolder pro položku faktury
+     */
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -133,6 +167,12 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
 
+    /**
+     * Aktualizuje ViewHolder s daty na dané pozici.
+     *
+     * @param holder   ViewHolder, který má být aktualizován
+     * @param position pozice položky v adaptérů
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         InvoiceModel invoicePrevious = null;
@@ -154,7 +194,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
         checkDate(position, holder, priceListRegulBuilder);
 
-
         String dateStart = ViewHelper.convertLongToDate(invoice.getDateFrom());
         String dateEnd = ViewHelper.convertLongToDate(invoice.getDateTo());
         double differentDate = Calculation.differentMonth(dateStart, dateEnd, DifferenceDate.TypeDate.INVOICE);
@@ -163,7 +202,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.dateDifference.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
 
         holder.btnCut.setEnabled(!dateStart.equals(dateEnd));
-
 
         holder.vtStart.setText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
         holder.ntStart.setText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
@@ -191,17 +229,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.tvPriceTotal.setText(context.getResources().getString(R.string.total, DecimalFormatHelper.df2.format(total)));
         holder.tvPriceTotalDPH.setText(context.getResources().getString(R.string.total_with_tax, DecimalFormatHelper.df2.format(totalDPH)));
 
-
         holder.itemInvoice.setOnClickListener(v -> {
             ShPInvoice shPInvoice = new ShPInvoice(context);
-            if(shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true) && invoice.getIdInvoice() == -1L){
+            if (shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true) && invoice.getIdInvoice() == -1L) {
                 showButtons = -1;
                 showButtons(holder, invoice, position);
                 return;
             }
 
-
             if (showCheckBoxSelect) return;
+
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
                 if (viewHolder != null) {
@@ -259,7 +296,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                     INVOICE_ADAPTER_DELETE_INVOICE).show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
         });
 
-
         holder.lnButtons.setVisibility(View.GONE);
         holder.lnButtons2.setVisibility(View.GONE);
         if (invoice.getIdInvoice() == -1L) {
@@ -279,9 +315,37 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
 
+    /**
+     * Aktualizuje ViewHolder s daty nebo payloads.
+     *
+     * @param holder   ViewHolder, který má být aktualizován
+     * @param position pozice položky v adaptérů
+     * @param payloads seznam payloads, které mají být použity pro částečnou aktualizaci
+     */
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull List<Object> payloads) {
         InvoiceModel invoice = items.get(position);
+        // Vždy aktualizuje viditelnost CheckBoxu
+        if (showCheckBoxSelect) {
+            holder.chSelected.setVisibility(View.VISIBLE);
+            holder.chSelected.setOnCheckedChangeListener((buttonView, isChecked) -> invoice.setSelected(isChecked));
+        } else {
+            holder.chSelected.setVisibility(View.GONE);
+        }
+
+        // Pozoruje stav zaškrtávacího políčka z ViewModelu
+        viewModel.getCheckBoxStates().observe((LifecycleOwner) context, checkBoxStates -> {
+            Boolean isChecked = checkBoxStates.get(position);
+            if (isChecked != null) {
+                holder.chSelected.setChecked(isChecked);
+            }
+        });
+
+        holder.chSelected.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            viewModel.setCheckBoxState(position, isChecked);
+            invoice.setSelected(isChecked);
+        });
+
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads); // Plné překreslení, pokud nejsou žádné payloads
         } else {
@@ -305,11 +369,23 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     }
 
 
+    /**
+     * Smaže aktuálně vybranou položku z databáze a aktualizuje adaptér.
+     * <p>
+     * Tato metoda volá metodu `deleteItem(long id, int position)` s aktuálně
+     * vybraným ID a pozicí, které jsou uloženy ve statických proměnných `selectedId`
+     * a `selectedPosition`.
+     */
     public void deleteItem() {
         deleteItem(selectedId, selectedPosition);
     }
 
 
+    /**
+     * Vrací počet položek v seznamu faktur.
+     *
+     * @return počet položek v seznamu faktur, nebo 0 pokud je seznam prázdný
+     */
     @Override
     public int getItemCount() {
         if (items == null)
@@ -365,6 +441,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         for (int i = 0; i < getItemCount(); i++) {
             notifyItemChanged(i, "showCheckBoxSelect");
         }
+        notifyItemRangeChanged(0, getItemCount());
     }
 
 
@@ -583,7 +660,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     /**
      * Resetuje zobrazení tlačítek/ v žádné položce nebudou zobrazeny tlačítka
      */
-    public void resetButtons(){
+    public void resetButtons() {
         showButtons = -1;
         TransitionManager.beginDelayedTransition(recyclerView);
         for (int i = 0; i < getItemCount(); i++) {
@@ -599,4 +676,5 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     public static void resetShowButtons() {
         showButtons = -1;
     }
+
 }

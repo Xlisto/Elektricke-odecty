@@ -4,7 +4,6 @@ package cz.xlisto.elektrodroid.modules.invoice;
 import static cz.xlisto.elektrodroid.models.PriceListModel.NEW_POZE_YEAR;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +22,7 @@ import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,6 +67,7 @@ public class InvoiceFragment extends Fragment {
     private static final String TABLE_PAY = "tablePay";
     private static final String TABLE_READ = "tableRead";
     private static final String POSITION = "position";
+    private static final String SHOW_SELECT_ITEMS = "showSelectItems";
     private String tableRead, tableFAK, tableNOW, tablePAY, table;
     private long idFak;
     private RecyclerView rv;
@@ -80,11 +81,23 @@ public class InvoiceFragment extends Fragment {
     private ArrayList<InvoiceModel> invoices;
     private PozeModel poze;
     private InvoiceAdapter invoiceAdapter;
-    boolean showCheckBoxSelect = false;
+    boolean showCheckBoxSelect;
     private Button btnCreateInvoice, btnAddItemInvoice;
     private FloatingActionButton fab;
+    private InvoiceViewModel viewModel;
 
 
+    /**
+     * Vytvoří novou instanci InvoiceFragment s danými parametry.
+     *
+     * @param tableFak  Název tabulky faktur
+     * @param tableNow  Název tabulky aktuálních záznamů
+     * @param tablePay  Název tabulky plateb
+     * @param tableRead Název tabulky odečtů
+     * @param idFak     ID faktury
+     * @param position  Pozice záznamu
+     * @return Nová instance InvoiceFragment
+     */
     public static InvoiceFragment newInstance(String tableFak, String tableNow, String tablePay, String tableRead, long idFak, int position) {
         InvoiceFragment invoiceFragment = new InvoiceFragment();
         Bundle bundle = new Bundle();
@@ -102,6 +115,8 @@ public class InvoiceFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(InvoiceViewModel.class);
+        showCheckBoxSelect = false;
 
         if (getArguments() != null) {
             tableFAK = getArguments().getString(TABLE_FAK);
@@ -114,6 +129,7 @@ public class InvoiceFragment extends Fragment {
         if (savedInstanceState != null) {
             idFak = savedInstanceState.getLong(ID_FAK);
             position = savedInstanceState.getInt(POSITION);
+            showCheckBoxSelect = savedInstanceState.getBoolean(SHOW_SELECT_ITEMS);
         }
         table = tableFAK;
         if (idFak == -1L) {
@@ -242,7 +258,8 @@ public class InvoiceFragment extends Fragment {
         loadInvoice();
         setRecyclerView();
         setTotalTextView();
-        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
+        setShowAddButtonAddItemInvoice();
+
     }
 
 
@@ -250,10 +267,6 @@ public class InvoiceFragment extends Fragment {
     public void onPause() {
         super.onPause();
         rv.setAdapter(null);
-        //skrytí checkboxů, skrytí tlačítka pro vytvoření faktury
-        showCheckBoxSelect = false;
-        btnCreateInvoice.setVisibility(View.GONE);
-        invoiceAdapter.setShowCheckBoxSelect(false);
     }
 
 
@@ -262,6 +275,7 @@ public class InvoiceFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putLong(ID_FAK, idFak);
         outState.putInt(POSITION, position);
+        outState.putBoolean(SHOW_SELECT_ITEMS, showCheckBoxSelect);
     }
 
 
@@ -269,17 +283,18 @@ public class InvoiceFragment extends Fragment {
      * Načte záznamy ve faktuře
      */
     private void loadInvoice() {
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(getActivity());
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
-        subscriptionPoint = SubscriptionPoint.load(getActivity());
+        subscriptionPoint = SubscriptionPoint.load(requireActivity());
         //zkontroluje zda existuje záznam v tabulce NOW, pokud ne, vytvoří prázdný záznam
         checkInvoiceItem(dataInvoiceSource);
         invoices = dataInvoiceSource.loadInvoices(idFak, table);
         discountWithTax = dataInvoiceSource.sumDiscountWithTax(idFak, tablePAY);
         dataInvoiceSource.close();
-        poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), getActivity());
+        poze = Calculation.getPoze(invoices, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze(), requireActivity());
         totalPrice = calculationTotalInvoice(invoices, subscriptionPoint, poze);
         PaymentModel.getDiscountDPHText(discountWithTax, tvDiscount);
+        showButtons(idFak == -1L);
     }
 
 
@@ -287,10 +302,9 @@ public class InvoiceFragment extends Fragment {
      * Vytvoří novou fakturu z vybraných záznamů v období bez faktury
      */
     private void createInvoice(String number) {
-        Log.w(TAG, "createInvoice: vytvoření nové faktury ");
         //vytvoří nový záznam v seznamu faktur
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataInvoiceSource.open();
         dataSubscriptionPointSource.open();
         long idFak = dataInvoiceSource.insertInvoiceList(number, subscriptionPoint.getId());
@@ -334,9 +348,11 @@ public class InvoiceFragment extends Fragment {
      * Nastaví na RecyclerView adaptér, zajistí animaci při vytváření
      */
     public void setRecyclerView() {
-        invoiceAdapter = new InvoiceAdapter(getActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv);
+        invoiceAdapter = new InvoiceAdapter(requireActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv, viewModel);
+        invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
         rv.setAdapter(invoiceAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        rv.setLayoutManager(new LinearLayoutManager(requireActivity()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -350,6 +366,7 @@ public class InvoiceFragment extends Fragment {
                 return true;
             }
         });
+        invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
     }
 
 
@@ -428,7 +445,7 @@ public class InvoiceFragment extends Fragment {
      * @return Objekt ceníku
      */
     private PriceListModel getPriceList(InvoiceModel invoice) {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
         PriceListModel priceList = dataPriceListSource.readPrice(invoice.getIdPriceList());
         dataPriceListSource.close();
@@ -437,7 +454,9 @@ public class InvoiceFragment extends Fragment {
 
 
     /**
-     * Nastaví textview s celkovou cenou
+     * Nastaví textview s celkovou cenou.
+     * Zobrazuje různé typy celkových cen na základě hodnoty showTypeTotalPrice.
+     * Pokud jsou některé hodnoty nulové, přeskočí jejich zobrazení.
      */
     private void setTotalTextView() {
         String s;
@@ -491,16 +510,17 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Přepíná viditelnost checkboxů pro výběr položek faktury a tlačítka pro vytvoření nové faktury.
+     * Pokud je aktuální ID faktury -1L, znamená to, že uživatel prohlíží období bez faktury,
+     * a metoda zobrazí checkboxy pro výběr položek k vytvoření nové faktury.
+     * Jinak skryje checkboxy a zobrazí fragment pro přidání nové položky faktury.
+     */
     private void showAddInvoice() {
         if (idFak == -1L) {
             //zobrazit checkboxy pro výběr záznamů pro novou fakturu
             showCheckBoxSelect = !showCheckBoxSelect;
-            invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
-            if (showCheckBoxSelect)
-                btnCreateInvoice.setVisibility(View.VISIBLE);
-            else
-                btnCreateInvoice.setVisibility(View.GONE);
-            //invoiceAdapter.notifyItemRangeChanged(0, invoiceAdapter.getItemCount());
+            setShowAddButtonAddItemInvoice();
         } else {
             btnCreateInvoice.setVisibility(View.GONE);
             showCheckBoxSelect = false;
@@ -512,13 +532,48 @@ public class InvoiceFragment extends Fragment {
 
 
     /**
+     * Nastaví viditelnost tlačítka pro přidání položky faktury a tlačítka pro vytvoření nové faktury.
+     * Pokud je aktuální ID faktury -1L, zobrazí checkboxy pro výběr položek k vytvoření nové faktury.
+     * Jinak skryje checkboxy a zobrazí fragment pro přidání nové položky faktury.
+     */
+    private void setShowAddButtonAddItemInvoice() {
+        if (idFak == -1L) {
+            fab.setVisibility(View.GONE);
+            if (showCheckBoxSelect) {
+                btnCreateInvoice.setVisibility(View.VISIBLE);
+                btnAddItemInvoice.setText(getResources().getString(R.string.deselect_invoice));
+            } else {
+                btnCreateInvoice.setVisibility(View.GONE);
+                btnAddItemInvoice.setText(getResources().getString(R.string.select_invoice));
+            }
+            invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
+        }
+    }
+
+
+    /**
      * Připočítává typ zobrazení celkového součtu
      */
     private void addOneShowTypeTotalPrice() {
-        shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
         showTypeTotalPrice++;
+        shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
         if (showTypeTotalPrice > totalPrice.length - 1) {
             showTypeTotalPrice = 0;
+        }
+    }
+
+
+    /**
+     * Zobrazí nebo skryje tlačítka na základě toho, zda uživatel prohlíží fakturu nebo období bez faktury.
+     *
+     * @param isInvoiceTED Boolean hodnota indikující, zda uživatel prohlíží fakturu (true) nebo období bez faktury (false).
+     */
+    private void showButtons(boolean isInvoiceTED) {
+        if (isInvoiceTED) {
+            btnAddItemInvoice.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.GONE);
+        } else {
+            UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
         }
     }
 
