@@ -67,7 +67,6 @@ public class InvoiceFragment extends Fragment {
     private static final String TABLE_PAY = "tablePay";
     private static final String TABLE_READ = "tableRead";
     private static final String POSITION = "position";
-    private static final String SHOW_SELECT_ITEMS = "showSelectItems";
     private String tableRead, tableFAK, tableNOW, tablePAY, table;
     private long idFak;
     private RecyclerView rv;
@@ -125,12 +124,12 @@ public class InvoiceFragment extends Fragment {
             tableRead = getArguments().getString(TABLE_READ);
             idFak = getArguments().getLong(ID_FAK);
             position = getArguments().getInt(POSITION);
+
         }
-        if (savedInstanceState != null) {
-            idFak = savedInstanceState.getLong(ID_FAK);
-            position = savedInstanceState.getInt(POSITION);
-            showCheckBoxSelect = savedInstanceState.getBoolean(SHOW_SELECT_ITEMS);
-        }
+
+        viewModel.setIdFak(idFak);
+        viewModel.setPosition(position);
+
         table = tableFAK;
         if (idFak == -1L) {
             table = tableNOW;
@@ -246,6 +245,13 @@ public class InvoiceFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true)
         );
+
+        // Pozoruje změny identifikátoru faktury a aktualizuje proměnnou idFak
+        viewModel.getIdFak().observe(getViewLifecycleOwner(), id -> idFak = id);
+        // Pozoruje změny pozice a aktualizuje proměnnou position
+        viewModel.getPosition().observe(getViewLifecycleOwner(), pos -> position = pos);
+        // Pozoruje změny stavu zobrazení zaškrtávacího políčka a aktualizuje proměnnou showCheckBoxSelect
+        viewModel.getShowCheckBoxSelect().observe(getViewLifecycleOwner(), show -> showCheckBoxSelect = show);
     }
 
 
@@ -259,7 +265,6 @@ public class InvoiceFragment extends Fragment {
         setRecyclerView();
         setTotalTextView();
         setShowAddButtonAddItemInvoice();
-
     }
 
 
@@ -267,15 +272,6 @@ public class InvoiceFragment extends Fragment {
     public void onPause() {
         super.onPause();
         rv.setAdapter(null);
-    }
-
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putLong(ID_FAK, idFak);
-        outState.putInt(POSITION, position);
-        outState.putBoolean(SHOW_SELECT_ITEMS, showCheckBoxSelect);
     }
 
 
@@ -520,6 +516,7 @@ public class InvoiceFragment extends Fragment {
         if (idFak == -1L) {
             //zobrazit checkboxy pro výběr záznamů pro novou fakturu
             showCheckBoxSelect = !showCheckBoxSelect;
+            viewModel.setShowCheckBoxSelect(showCheckBoxSelect);
             setShowAddButtonAddItemInvoice();
         } else {
             btnCreateInvoice.setVisibility(View.GONE);
