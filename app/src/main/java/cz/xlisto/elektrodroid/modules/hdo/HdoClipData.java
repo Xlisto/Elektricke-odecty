@@ -1,6 +1,11 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
 
@@ -10,6 +15,7 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 10.08.2023 13:53
  */
 public class HdoClipData {
+
     private static final String TAG = "HdoClipData";
 
 
@@ -22,7 +28,7 @@ public class HdoClipData {
     public static String create(ArrayList<HdoModel> hdoList, String distributionArea) {
         String textClip = "";
 
-        if (hdoList.size() == 0) {
+        if (hdoList.isEmpty()) {
             return textClip;
         }
 
@@ -82,6 +88,7 @@ public class HdoClipData {
 
             textClip.append(getTime(hdoModel, distributionArea));
         }
+        Log.w(TAG, "createOther: " + textClip);
         return textClip.toString();
     }
 
@@ -115,26 +122,26 @@ public class HdoClipData {
      * @return String textová podoba dnů HDO
      */
     private static String getDays(HdoModel hdo) {
-        if (hdo.getMon() == 1 && hdo.getTue() == 1 && hdo.getWed() == 1 && hdo.getThu() == 1 && hdo.getFri() == 1) {
+        Map<String, Integer> dayMap = createDayMap(hdo);
+
+        // Kombinace pracovních dní nebo víkendu
+        if (Integer.valueOf(1).equals(dayMap.getOrDefault("Pracovní dny:", 0)) && Integer.valueOf(0).equals(dayMap.getOrDefault("Víkendy a svátky:", 0))) {
             return "\n\nPracovní dny:";
         }
-        if (hdo.getSat() == 1 && hdo.getSun() == 1) {
+        if (Integer.valueOf(0).equals(dayMap.getOrDefault("Pracovní dny:", 0)) && Integer.valueOf(1).equals(dayMap.getOrDefault("Víkendy a svátky:", 0))) {
             return "\n\nVíkendy a svátky:";
         }
-        if (hdo.getMon() == 1)
-            return "\n\nPondělí:";
-        if (hdo.getTue() == 1)
-            return "\n\nÚterý:";
-        if (hdo.getWed() == 1)
-            return "\n\nStředa:";
-        if (hdo.getThu() == 1)
-            return "\n\nČtvrtek:";
-        if (hdo.getFri() == 1)
-            return "\n\nPátek:";
-        if (hdo.getSat() == 1)
-            return "\n\nSobota:";
-        if (hdo.getSun() == 1)
-            return "\n\nNeděle:";
+        if (Integer.valueOf(1).equals(dayMap.getOrDefault("Pracovní dny:", 0)) && Integer.valueOf(1).equals(dayMap.getOrDefault("Víkendy a svátky:", 0))) {
+            return "\n\nPracovní dny, víkendy a svátky:";
+        }
+
+        // Jednotlivé dny
+        for (Map.Entry<String, Integer> entry : dayMap.entrySet()) {
+            if (entry.getValue() == 1 && !entry.getKey().equals("Pracovní dny:") && !entry.getKey().equals("Víkendy a svátky:")) {
+                return "\n\n" + entry.getKey();
+            }
+        }
+
         return "";
     }
 
@@ -152,4 +159,26 @@ public class HdoClipData {
         else
             return "\n" + hdo.getTimeFrom() + "-" + hdo.getTimeUntil();
     }
+
+
+    /**
+     * Vytvoří mapu dnů s hodnotami 1 nebo 0 podle toho, zda je HDO aktivní v daný den.
+     *
+     * @param hdo HdoModel objekt obsahující informace o HDO
+     * @return Map<String, Integer> mapa dnů s hodnotami 1 nebo 0
+     */
+    private static Map<String, Integer> createDayMap(HdoModel hdo) {
+        Map<String, Integer> dayMap = new HashMap<>();
+        dayMap.put("Pracovní dny:", hdo.getMon() & hdo.getTue() & hdo.getWed() & hdo.getThu() & hdo.getFri());
+        dayMap.put("Víkendy a svátky:", hdo.getSat() & hdo.getSun());
+        dayMap.put("Pondělí:", hdo.getMon());
+        dayMap.put("Úterý:", hdo.getTue());
+        dayMap.put("Středa:", hdo.getWed());
+        dayMap.put("Čtvrtek:", hdo.getThu());
+        dayMap.put("Pátek:", hdo.getFri());
+        dayMap.put("Sobota:", hdo.getSat());
+        dayMap.put("Neděle:", hdo.getSun());
+        return dayMap;
+    }
+
 }
