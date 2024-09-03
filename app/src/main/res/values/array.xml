@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="distribucni_uzemi">
-        <item>Vyber dist. území</item>
+        <item>Dist. území</item>
         <item>ČEZ</item>
         <item>E.ON</item>
         <item>EG.D</item>
@@ -9,7 +9,7 @@
     </string-array>
 
     <string-array name="sazby">
-        <item>Vyber sazbu</item>
+        <item>Sazby</item>
         <item>D 01d</item>
         <item>D 02d</item>
         <item>D 25d</item>

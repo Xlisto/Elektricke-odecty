@@ -37,6 +37,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
+                        android:layout_margin="1dp"
                         android:autofillHints="01.10.2022"
                         android:contentDescription="@string/description_date_until"
                         android:focusable="true"
@@ -48,21 +49,14 @@
                         android:id="@+id/btnPlatnostOD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toStartOf="@id/tvPomlka"
+                        android:layout_margin="1dp"
+                        android:layout_toStartOf="@id/btnPlatnostDO"
                         android:contentDescription="@string/description_date_from"
                         android:focusable="true"
                         android:importantForAutofill="no"
                         android:inputType="none"
                         android:minHeight="48dp"
                         android:text="@string/datum_cislem" />
-
-                    <TextView
-                        android:id="@+id/tvPomlka"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/btnPlatnostOD"
-                        android:layout_toStartOf="@id/btnPlatnostDO"
-                        android:text="@string/pomlka" />
 
                     <TextView
                         android:id="@+id/tvDateInvoiceListDescription"
@@ -104,11 +98,12 @@
                             android:id="@+id/spSazbaSeznam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
                             android:layout_below="@id/tvUzemiSeznam"
+                            android:layout_alignParentEnd="true"
+                            android:layout_toEndOf="@id/spDistribucniUzemiSeznam"
                             android:entries="@array/sazby"
-                            android:minHeight="48dp"
-                            android:minWidth="140dp" />
+                            android:minWidth="140dp"
+                            android:minHeight="48dp" />
 
                         <TextView
                             android:id="@+id/tvUzemiSeznam"
@@ -206,12 +201,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvCenaZaDodavku"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginStart="8dp"
                         android:layout_toEndOf="@id/ivVT"
-                        android:ems="4"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         app:hintText="@string/nuly"
                         app:label="@string/nt2" />
 
@@ -219,12 +215,12 @@
                         android:id="@+id/ivPlat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/ivVT"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@id/tvCenaZaDodavku"
-                        android:layout_marginEnd="5dp"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         app:hintText="@string/nuly"
                         app:label="@string/mesicni_plat" />
 
@@ -234,10 +230,10 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvCenaZaDodavku"
                         android:layout_marginStart="5dp"
-                        android:ems="4"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         app:hintText="@string/nuly"
                         app:label="@string/vt2" />
 
@@ -284,8 +280,9 @@
                         android:id="@+id/ivNT1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
                         android:layout_below="@id/tvCenaZaDistribuci"
+                        android:layout_alignParentEnd="true"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="5"
@@ -298,10 +295,10 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvCenaZaDistribuci"
                         android:layout_marginStart="5dp"
-                        android:ems="4"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         app:hintText="@string/nuly"
                         app:label="@string/vt2" />
 
@@ -550,41 +547,46 @@
                         android:id="@+id/ivOTE"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
                         android:layout_below="@id/tvCenaZaOstatniSluzby"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@id/ivSystemoveSluzby"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/cinnost_ote" />
+                        app:label="@string/cinnost_ote"
+                        app:labelSizeText="10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivCinnostOperatoraTrhu"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
                         android:layout_below="@id/tvCenaZaOstatniSluzby"
-                        android:layout_marginEnd="5dp"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginStart="16dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@id/ivSystemoveSluzby"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/cinnost_operatora_trhu" />
+                        app:label="@string/cinnost_operatora_trhu"
+                        app:labelSizeText="10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivOZE"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@id/ivSystemoveSluzby"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz" />
+                        app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz"
+                        app:labelSizeText="10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivPOZE1"
@@ -596,22 +598,23 @@
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/poze_dle_jistice">
-
-                    </cz.xlisto.elektrodroid.ownview.LabelEditText>
+                        app:label="@string/poze_dle_jistice"
+                        app:labelSizeText="10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivPOZE2"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
                         android:layout_below="@id/ivOZE"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginEnd="5dp"
+                        android:layout_toEndOf="@id/ivPOZE1"
                         android:gravity="end"
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/poze_dle_spotreby" />
+                        app:label="@string/poze_dle_spotreby"
+                        app:labelSizeText="10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivSystemoveSluzby"
@@ -623,7 +626,8 @@
                         android:inputType="numberDecimal"
                         android:maxEms="3"
                         app:hintText="@string/nuly"
-                        app:label="@string/systemove_sluzby" />
+                        app:label="@string/systemove_sluzby"
+                        app:labelSizeText="10" />
 
                 </RelativeLayout>
 

@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -35,6 +36,7 @@ import cz.xlisto.elektrodroid.R;
  * Seznam atributů je v xml souboru attrs.xml s name LabelEditText
  */
 public class LabelEditText extends RelativeLayout {
+
     private TextView textView;
     private EditText editText;
     private int changedBackgroundEditText;
@@ -197,6 +199,7 @@ public class LabelEditText extends RelativeLayout {
         String defaultText = ta.getString(R.styleable.LabelEditText_defaultText);
         String hintText = ta.getString(R.styleable.LabelEditText_hintText);
         int inputType = ta.getInt(R.styleable.LabelEditText_android_inputType, 0);
+        float labelSizeText = ta.getFloat(R.styleable.LabelEditText_labelSizeText, 14); // Výchozí 14sp
         try {
 
             if (label != null) {
@@ -210,6 +213,7 @@ public class LabelEditText extends RelativeLayout {
                 setHintText(hintText);
             }
             editText.setInputType(inputType);
+            setLabelSizeText(labelSizeText);
         } finally {
             ta.recycle();
         }
@@ -327,6 +331,7 @@ public class LabelEditText extends RelativeLayout {
             }
 
 
+            @SuppressLint("UseCompatLoadingForDrawables")
             @Override
             public void afterTextChanged(Editable s) {
                 DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
@@ -393,7 +398,7 @@ public class LabelEditText extends RelativeLayout {
                 BigDecimal bd = BigDecimal.valueOf(Double.parseDouble(s)).setScale(2, RoundingMode.HALF_UP);
                 value = bd.doubleValue();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("LabelEditText", "Chyba při převodu na číslo");
             }
 
             changeChar();
@@ -411,6 +416,14 @@ public class LabelEditText extends RelativeLayout {
     public void setLabel(String label) {
         textView.setText(label);
 
+    }
+
+
+    /**
+     * Nastaví velikost textu u TextView
+     */
+    public void setLabelSizeText(float size) {
+        textView.setTextSize(size);
     }
 
 
@@ -491,7 +504,7 @@ public class LabelEditText extends RelativeLayout {
                 }
                 return Double.parseDouble(string);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e("LabelEditText", "Chyba při převodu na číslo");
                 return 0.0;
             }
         }
@@ -504,4 +517,5 @@ public class LabelEditText extends RelativeLayout {
     public void addTextChangedListener(TextWatcher textWatcher) {
         editText.addTextChangedListener(textWatcher);
     }
+
 }

@@ -16,6 +16,7 @@
         <attr name="android:ems"/>
         <attr name="android:gravity"/>
         <attr name="changedBackgroundEditText" format="reference"/>
+        <attr name="labelSizeText" format="integer"/>
 
     </declare-styleable>
 

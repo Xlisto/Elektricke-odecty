@@ -23,7 +23,7 @@
     <string name="regul_vt">Regulovaná cena VT</string>
     <string name="vt2">VT:</string>
     <string name="vt3">VYSOKÝ TARIF</string>
-    <string name="mesicni_plat">Plat:</string>
+    <string name="mesicni_plat">Stálý měsíční plat:</string>
     <string name="mesicni_plat2">Stálý měsíční plat</string>
     <string name="dan_elektriny">Daň z elektřiny</string>
     <string name="rozdil">Rozdíl</string>
@@ -52,8 +52,8 @@
     <string name="cena_za_ostatni_regulovane_sluzby">Cena za ostatní regulované služby</string>
     <string name="systemove_sluzby">Systémové služby</string>
     <string name="podpora_vykupu_el_z_oze_kvet_a_dz">Podpora výkupu el. z OZE, KVET a DZ</string>
-    <string name="poze_dle_spotreby">POZE dle spotřeby</string>
-    <string name="poze_dle_jistice">POZE dle jističe</string>
+    <string name="poze_dle_spotreby">POZE [kč/MWh]</string>
+    <string name="poze_dle_jistice">POZE [kč/A/měs.]</string>
     <string name="cinnost_ote">Činnost OTE</string>
     <string name="cinnost_operatora_trhu">Čin. oper. trhu</string>
     <string name="provoz_nesitove_infrastruktury">Provoz nesíťové infr.</string>
