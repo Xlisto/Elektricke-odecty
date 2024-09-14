@@ -31,6 +31,13 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
 import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 
 
+/**
+ * Abstraktní třída `PriceListAddEditAbstract` rozšiřující `Fragment`.
+ * <p>
+ * Tato třída poskytuje základní funkcionalitu pro přidávání a úpravu ceníků
+ * v aplikaci. Obsahuje metody pro nastavení adaptérů, načítání regulovaných cen,
+ * a manipulaci s různými widgety uživatelského rozhraní.
+ */
 public abstract class PriceListAddEditAbstract extends Fragment {
 
     public static String TAG = "PriceListAddEditAbstract";
@@ -290,6 +297,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     }
 
 
+    /**
+     * Nastaví adaptér pro spinner sazby distribuce.
+     * <p>
+     * Používá `Handler` k opožděnému spuštění kódu, který načte pole sazeb
+     * z prostředků a nastaví adaptér pro spinner `spSazba`.
+     */
     void setSazbaAdapter() {
         Handler handler = new Handler();
         final Runnable r = () -> {
@@ -303,6 +316,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     }
 
 
+    /**
+     * Nastaví adaptér pro spinner distribučního území.
+     * <p>
+     * Používá `Handler` k opožděnému spuštění kódu, který načte pole distribučních území
+     * z prostředků a nastaví adaptér pro spinner `spDistribucniUzemi`.
+     */
     void setDistribucniUzemiAdapter() {
         Handler handler = new Handler();
         final Runnable r = () -> {
@@ -316,7 +335,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Změni spinner podle data na E.ON nebo EG.D. Položek ČEZ a PRE se netýká
+     * Změni spinner podle data na E.ON nebo EG.D. Položek ČEZ a PRE se netýká.
+     * <p>
+     * Pokud je vybraný index 0, PRE nebo ČEZ, metoda nic nemění.
+     * Pokud je rok 2021 a vyšší a vybraný string položky neodpovídá EG.D,
+     * vybere položku s indexem 3 (EG.D).
+     * Pokud je rok 2020 a nižší a vybraný string položky neodpovídá E.ON,
+     * vybere položku s indexem 2 (E.ON).
      */
     void changeDistributionSpinner() {
         //nic neměnit, pokud je vybraný index 0, PRE nebo ČEZ
@@ -343,6 +368,11 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     }
 
 
+    /**
+     * Získá rok z data vybraného v tlačítku "Platnost od".
+     *
+     * @return int rok vybraný z data v tlačítku "Platnost od"
+     */
     int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         year = calendar.get(Calendar.YEAR);
@@ -351,7 +381,21 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Zobrazí/skryje doplňkové hodnoty jističů u tarifu D57d
+     * Získá long z data vybraného v tlačítku "Platnost od".
+     */
+    long getLongBtnStart() {
+        Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
+        return calendar.getTimeInMillis();
+    }
+
+
+    /**
+     * Zobrazí nebo skryje doplňkové hodnoty jističů u tarifu D57d.
+     * <p>
+     * Pokud je přepínač jističů zapnutý, zobrazí více hodnot jističů a skryje některé další.
+     * Pokud je přepínač jističů vypnutý, zobrazí méně hodnot jističů a skryje některé další.
+     * <p>
+     * Také upraví viditelnost některých dalších hodnot na základě roku.
      */
     void hideItemView() {
         //Zobrazí/skryje doplňkové hodnoty jističů u tarifu D57d
@@ -390,7 +434,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Sestaví objekt ceníku z udajů widgetů
+     * Sestaví objekt ceníku z údajů widgetů.
+     * <p>
+     * Metoda vytvoří a vrátí instanci `PriceListModel` naplněnou daty z různých widgetů
+     * uživatelského rozhraní, jako jsou textová pole a spinnery.
      *
      * @return PriceListModel objekt ceníku
      */
@@ -413,7 +460,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Načte regulované ceny
+     * Nastaví adaptér pro spinner sazby distribuce.
+     * <p>
+     * Používá `Handler` k opožděnému spuštění kódu, který načte pole sazeb
+     * z prostředků a nastaví adaptér pro spinner `spSazba`.
      */
     void setRegulPrice() {
         if (year < 2021)
@@ -451,13 +501,22 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     (priceListModel.getJ12() != 0) || (priceListModel.getJ12() != 0));
 
             hideItemView();
+
+            //změní činnost operátora trhu na provoz nesíťové infrastruktury - od 1.7.2024
+            changeTitleOperatorTrhu();
+            chanagePriceOperatorTrhu();
         };
         handler.postDelayed(r, 1000);
     }
 
 
     /**
-     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen
+     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen.
+     * <p>
+     * Na základě roku vybraného v tlačítku "Platnost od" zobrazí nebo skryje
+     * tlačítko `btnReloadRegulPriceList` a popis `tvNoPriceListDescription`.
+     * Pokud je rok menší než 2021 nebo větší než 2024, tlačítko se skryje a popis se zobrazí.
+     * Jinak se tlačítko zobrazí a popis se skryje.
      */
     void showBtnReloadRegulPriceList() {
         String startDate = btnFrom.getText().toString();
@@ -468,6 +527,33 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         } else {
             btnReloadRegulPriceList.setVisibility(View.VISIBLE);
             tvNoPriceListDescription.setVisibility(View.GONE);
+        }
+    }
+
+
+    /**
+     * Změní název pole "Činnost operátora trhu" na "Provoz nesíťové infrastruktury"
+     * pokud je datum v tlačítku "Platnost od" větší nebo rovno 1.7.2024.
+     */
+    void changeTitleOperatorTrhu() {
+        if (getLongBtnStart() >= 1719784800000L) {//1.7.2024
+            ivCinnostOperatora.setLabel(getString(R.string.provoz_nesitove_infrastruktury));
+        } else {
+            ivCinnostOperatora.setLabel(getString(R.string.cinnost_operatora_trhu));
+        }
+    }
+
+
+    /**
+     * Změní cenu pole "Činnost operátora trhu" na pevnou hodnotu 9.24,
+     * pokud je datum v tlačítku "Platnost od" větší nebo rovno 1.7.2024 a rok je 2024.
+     * <p>
+     * Pokud jsou splněny podmínky, nastaví cenu a zakáže změnu barvy pozadí.
+     */
+    void chanagePriceOperatorTrhu() {
+        if (getLongBtnStart() >= 1719784800000L && year == 2024) {//1.7.2024
+            ivCinnostOperatora.setDefaultText("9.24");
+            ivCinnostOperatora.setAllowChangeBackgroundColor(false);
         }
     }
 
