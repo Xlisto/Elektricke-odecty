@@ -178,7 +178,7 @@ public class HdoSiteFragment extends Fragment {
         // Sleduje změny v LiveData objektu shouldShowAlertDialog a zobrazuje dialogové okno s upozorněním, pokud je hodnota true.
         viewModel.shouldShowAlertDialog().observe(this, shouldShowAlertDialog -> {
             if (shouldShowAlertDialog) {
-                OwnAlertDialog.show(requireContext(),
+                OwnAlertDialog.showDialog(requireActivity(),
                         requireContext().getResources().getString(R.string.error),
                         requireContext().getResources().getString(R.string.no_data_alert),
                         () -> {

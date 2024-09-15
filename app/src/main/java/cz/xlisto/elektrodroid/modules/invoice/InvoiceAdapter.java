@@ -272,7 +272,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             }
             if (!message.isEmpty()) {
                 message += context.getResources().getString(R.string.alert_message_edit_last_record);
-                OwnAlertDialog.show(context, context.getResources().getString(R.string.alert_title), message);
+                OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.alert_title), message,null);
                 return;
             }
             InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),

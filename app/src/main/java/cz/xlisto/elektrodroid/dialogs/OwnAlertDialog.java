@@ -1,75 +1,132 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.content.Context;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Třída OwnAlertDialog slouží k zobrazení vlastního dialogového okna s možností zachycení události zavření dialogu.
- * Xlisto 25.06.2023 9:41
+ * Třída OwnAlertDialog, která rozšiřuje DialogFragment pro zobrazení vlastního dialogového okna.
  */
-public class OwnAlertDialog {
+public class OwnAlertDialog extends DialogFragment {
 
-    private static final String TAG = "AlertDialog";
+    private static final String ARG_TITLE = "title";
+    private static final String ARG_MESSAGE = "message";
+    private OnDialogDismissListener dismissListener;
 
 
     /**
-     * Zobrazí dialogové okno s daným titulem a zprávou.
+     * Vytvoří novou instanci OwnAlertDialog s daným názvem a zprávou.
      *
-     * @param context Kontext, ve kterém se dialog zobrazí.
-     * @param title   Titul dialogového okna.
-     * @param message Zpráva dialogového okna.
+     * @param title   Název dialogu
+     * @param message Zpráva dialogu
+     * @return Nová instance OwnAlertDialog
      */
-    public static void show(Context context, String title, String message) {
-        show(context, title, message, null);
+    public static OwnAlertDialog newInstance(String title, String message) {
+        OwnAlertDialog fragment = new OwnAlertDialog();
+        Bundle args = new Bundle();
+        args.putString(ARG_TITLE, title);
+        args.putString(ARG_MESSAGE, message);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
     /**
-     * Zobrazí dialogové okno s daným titulem, zprávou a listenerem pro zachycení události zavření dialogu.
+     * Vytvoří a vrátí dialogové okno.
      *
-     * @param context         Kontext, ve kterém se dialog zobrazí.
-     * @param title           Titul dialogového okna.
-     * @param message         Zpráva dialogového okna.
-     * @param dismissListener Listener pro zachycení události zavření dialogu.
+     * @param savedInstanceState Stav uložený při předchozím vytvoření
+     * @return Vytvořený dialog
      */
-    public static void show(Context context, String title, String message, OnDialogDismissListener dismissListener) {
-        ((FragmentActivity) context).runOnUiThread(() -> {
-            AlertDialog dialog = new AlertDialog.Builder(context, R.style.DialogTheme)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> {
-                        // Positive button action
-                    })
-                    .setIcon(R.drawable.ic_warning_png)
-                    .create();
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-            dialog.setOnDismissListener(dialogInterface -> {
-                if (dismissListener != null) {
-                    dismissListener.onDialogDismissed();
-                }
-            });
+        String title = null;
+        String message = null;
+        if (getArguments() != null) {
+            title = getArguments().getString(ARG_TITLE);
+            message = getArguments().getString(ARG_MESSAGE);
+        }
 
-            dialog.show();
-        });
+        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> {
+                    // Positive button action
+                })
+                .setIcon(R.drawable.ic_warning_png)
+                .create();
     }
 
 
     /**
-     * Rozhraní pro zachycení události zavření dialogu.
+     * Metoda volaná při zavření dialogu.
+     *
+     * @param dialog Dialogové rozhraní
+     */
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (dismissListener != null) {
+            dismissListener.onDialogDismissed();
+        }
+    }
+
+
+    /**
+     * Nastaví posluchače pro událost zavření dialogu.
+     *
+     * @param listener Posluchač události zavření dialogu
+     */
+    public void setOnDialogDismissListener(OnDialogDismissListener listener) {
+        this.dismissListener = listener;
+    }
+
+
+    /**
+     * Rozhraní pro posluchače události zavření dialogu.
      */
     public interface OnDialogDismissListener {
 
-        /**
-         * Metoda, která se zavolá při zavření dialogu.
-         */
         void onDialogDismissed();
 
+    }
+
+
+    /**
+     * Zobrazí dialogové okno.
+     *
+     * @param activity Aktivita, ve které se dialog zobrazí
+     * @param title    Název dialogu
+     * @param message  Zpráva dialogu
+     */
+    public static void showDialog(FragmentActivity activity, String title, String message) {
+        showDialog(activity, title, message, null);
+    }
+
+
+    /**
+     * Zobrazí dialogové okno s posluchačem události zavření.
+     *
+     * @param activity Aktivita, ve které se dialog zobrazí
+     * @param title    Název dialogu
+     * @param message  Zpráva dialogu
+     * @param listener Posluchač události zavření dialogu
+     */
+    public static void showDialog(FragmentActivity activity, String title, String message, OnDialogDismissListener listener) {
+        OwnAlertDialog dialog = OwnAlertDialog.newInstance(title, message);
+        dialog.setOnDialogDismissListener(listener);
+        dialog.show(activity.getSupportFragmentManager(), "OwnAlertDialog");
     }
 
 }

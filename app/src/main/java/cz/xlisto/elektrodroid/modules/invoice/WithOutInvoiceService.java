@@ -3,6 +3,8 @@ package cz.xlisto.elektrodroid.modules.invoice;
 
 import android.content.Context;
 
+import androidx.fragment.app.FragmentActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -126,7 +128,7 @@ public class WithOutInvoiceService {
             dataInvoiceSource.close();
             String title = context.getResources().getString(R.string.error);
             String message = context.getResources().getString(R.string.no_invoice_records);
-            OwnAlertDialog.show(context, title, message);
+            OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
             return;
         }
         //koncová data z měsíčního odečtu
@@ -200,7 +202,7 @@ public class WithOutInvoiceService {
             if (lastInvoiceDateTo == 0) {//zobrazení chyby, pokud není žádná faktura - nelze generovat záznam
                 String title = context.getResources().getString(R.string.error);
                 String message = context.getResources().getString(R.string.no_invoice_records);
-                OwnAlertDialog.show(context, title, message);
+                OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
                 return;
             }
 
@@ -221,7 +223,7 @@ public class WithOutInvoiceService {
         if (monthlyReadingModels.isEmpty()) {//zobrazení chyby, pokud není žádný měsíční záznam od poslední faktury - nelze generovat záznam
             String title = context.getResources().getString(R.string.error);
             String message = context.getResources().getString(R.string.no_monthly_records);
-            OwnAlertDialog.show(context, title, message);
+            OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
             return;
         }
 
@@ -326,7 +328,7 @@ public class WithOutInvoiceService {
             dataInvoiceSource.deleteAllInvoices(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
             dataMonthlyReadingSource.close();
             dataInvoiceSource.close();
-            OwnAlertDialog.show(context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_invoice_records));
+            OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_invoice_records),null);
             return;
         }
 
@@ -373,7 +375,7 @@ public class WithOutInvoiceService {
                 message = context.getResources().getString(R.string.dates_is_not_correct);
                 break;
         }
-        OwnAlertDialog.show(context, title, message);
+        OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
     }
 
 

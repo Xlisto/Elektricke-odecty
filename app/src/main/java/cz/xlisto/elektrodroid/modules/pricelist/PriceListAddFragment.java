@@ -15,9 +15,10 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PriceListAddFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro vytvoření nového ceníku
+ * Jednoduchý {@link Fragment} podtřída.
+ * Použijte tovární metodu {@link PriceListAddFragment#newInstance}
+ * k vytvoření instance tohoto fragmentu.
  */
 public class PriceListAddFragment extends PriceListAddEditAbstract {
     private final static String TAG = PriceListAddFragment.class.getSimpleName();
@@ -30,10 +31,10 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Použijte tuto tovární metodu k vytvoření nové instance
+     * tohoto fragmentu pomocí poskytnutých parametrů.
      *
-     * @return A new instance of fragment PriceListAddFragment.
+     * @return Nová instance fragmentu PriceListAddFragment.
      */
     public static PriceListAddFragment newInstance() {
         return new PriceListAddFragment();
@@ -86,6 +87,7 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
     public void onResume() {
         super.onResume();
         changeDistributionSpinner();
+
         if (closedDialog) {
             setRegulPrice();
             closedDialog = false;
@@ -94,9 +96,14 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Uloží nový ceník do databáze
+     * Uloží nový ceník do databáze.
+     * <p>
+     * Pokud není vybráno distribuční území nebo sazba, k uložení nedojde.
+     * Po úspěšném uložení se fragment vrátí o jeden krok zpět.
      */
     private void savePriceList() {
+        if(checkDateConditions(requireContext(), requireActivity()))
+            return;
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
             //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde
             return;
@@ -135,14 +142,5 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
         ivDodavatel.setDefaultText(shPAddPriceList.get(ShPAddPriceList.DODAVATEL, ""));
         ivProdukt.setDefaultText(shPAddPriceList.get(ShPAddPriceList.PRODUKT, ""));
         ivRada.setDefaultText(shPAddPriceList.get(ShPAddPriceList.RADA, ""));
-        /*
-        Handler handler = new Handler();
-
-        final Runnable r = () -> {
-             //spDistribucniUzemi.setSelection(shPAddPriceList.get(ShPAddPriceList.DIST_UZEMI, 0));
-             //spDistribucniUzemi.setSelection(shPAddPriceList.get(ShPAddPriceList.SAZBA, 0));
-        };
-        handler.postDelayed(r,1200);
-        */
     }
 }

@@ -12,6 +12,7 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
@@ -21,20 +22,31 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
 /**
- * Fragment pro úpravu ceníku.
+ * Fragment pro úpravu stávajícího ceníku
+ * Jednoduchý {@link Fragment} podtřída.
+ * Použijte tovární metodu {@link PriceListEditFragment#newInstance}
+ * k vytvoření instance tohoto fragmentu.
  */
 public class PriceListEditFragment extends PriceListAddEditAbstract {
+
     private final static String TAG = "PriceListEditFragment";
     private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
     private static final String ARG_ID = "id";
     private long itemId;
 
+
     public PriceListEditFragment() {
         // Required empty public constructor
     }
 
 
+    /**
+     * Použijte tuto tovární metodu k vytvoření nové instance
+     * tohoto fragmentu pomocí poskytnutých parametrů.
+     *
+     * @return Nová instance fragmentu PriceListEditFragment.
+     */
     public static PriceListEditFragment newInstance(long id) {
         PriceListEditFragment fragment = new PriceListEditFragment();
         Bundle args = new Bundle();
@@ -42,6 +54,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,6 +123,9 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Nastaví hodnoty widgetů podle údajů v modelu ceníku.
+     */
     private void setItemPrice() {
         btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostOD()));
         btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostDO()));
@@ -178,9 +194,9 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     /**
      * Porovná pole stringu načtený ze spinneru s hledaným stringem. Při shodě nastaví položku na spinneru
      *
-     * @param strings       pole stringů
-     * @param sp            spinner, pro který se nastaví nalezená položka
-     * @param searchString  hledaný string
+     * @param strings      pole stringů
+     * @param sp           spinner, pro který se nastaví nalezená položka
+     * @param searchString hledaný string
      */
     private void compare(String[] strings, Spinner sp, String searchString) {
 
@@ -199,6 +215,8 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * @param itemId long id ceníku
      */
     private long updatePriceList(long itemId) {
+        if(checkDateConditions(requireContext(), requireActivity()))
+            return 0L;
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
             //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde
             return 0L;
@@ -209,4 +227,5 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         dataPriceListSource.close();
         return id;
     }
+
 }

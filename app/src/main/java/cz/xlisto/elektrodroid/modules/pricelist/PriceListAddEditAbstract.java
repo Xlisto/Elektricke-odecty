@@ -6,6 +6,8 @@ import static android.view.View.VISIBLE;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,10 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -536,10 +540,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * pokud je datum v tlačítku "Platnost od" větší nebo rovno 1.7.2024.
      */
     void changeTitleOperatorTrhu() {
-        if (getLongBtnStart() >= 1719784800000L) {//1.7.2024
-            ivCinnostOperatora.setLabel(getString(R.string.provoz_nesitove_infrastruktury));
-        } else {
-            ivCinnostOperatora.setLabel(getString(R.string.cinnost_operatora_trhu));
+        if (isAdded()) {
+            if (getLongBtnStart() >= 1719784800000L) {//1.7.2024
+                ivCinnostOperatora.setLabel(getString(R.string.provoz_nesitove_infrastruktury));
+            } else {
+                ivCinnostOperatora.setLabel(getString(R.string.cinnost_operatora_trhu));
+            }
         }
     }
 
@@ -551,10 +557,83 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Pokud jsou splněny podmínky, nastaví cenu a zakáže změnu barvy pozadí.
      */
     void chanagePriceOperatorTrhu() {
-        if (getLongBtnStart() >= 1719784800000L && year == 2024) {//1.7.2024
+        if (isAdded() && getLongBtnStart() >= 1719784800000L && year == 2024) {//1.7.2024
             ivCinnostOperatora.setDefaultText("9.24");
             ivCinnostOperatora.setAllowChangeBackgroundColor(false);
         }
+    }
+
+
+    /**
+     * Zkontroluje datumy nastavené na btnFrom a btnUntil.
+     * Pokud btnFrom je mezi 1.1.2024 a 30.6.2024, btnUntil musí být také do 30.6.2024.
+     * Pokud btnFrom je od 1.7.2024, btnUntil musí být maximálně do 31.12.2024.
+     * Pokud btnUntil je menší než btnFrom, zobrazí dialogové okno s výstrahou.
+     * Pokud podmínky nejsou splněny, zobrazí dialogové okno s výstrahou.
+     *
+     * @param context Kontext aplikace pro zobrazení dialogového okna.
+     * @param activity Aktivita, ve které se fragment nachází.
+     * @return true, pokud jsou datumy neplatné a zobrazí dialog s výstrahou, jinak false.
+     */
+    boolean checkDateConditions(Context context, Activity activity) {
+        Calendar fromDate = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
+        Calendar untilDate = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
+
+        boolean isValid = isValid(fromDate, untilDate);
+
+        if (!isValid) {
+            String title = context.getString(R.string.alert_title);
+            String message = context.getString(R.string.alert_message_provoz_nesitove_infrastruktury);
+
+            if (!activity.isFinishing()) {
+                OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
+            }
+
+        }
+
+        if(untilDate.getTimeInMillis() < fromDate.getTimeInMillis()){
+            OwnAlertDialog.showDialog((FragmentActivity) context, context.getString(R.string.alert_title), context.getString(R.string.alert_message_older_date));
+            return true;
+        }
+        return !isValid;
+    }
+
+
+    /**
+     * Zkontroluje, zda jsou data platná podle zadaných podmínek.
+     *
+     * @param fromDate    Počáteční datum
+     * @param untilDate   Konečné datum
+     * @return true, pokud jsou data platná, jinak false
+     */
+    private static boolean isValid(Calendar fromDate, Calendar untilDate) {
+        //1.1.2024
+        Calendar startOf2024 = Calendar.getInstance();
+        startOf2024.set(2024, Calendar.JANUARY, 1, 0, 0, 0);
+        startOf2024.set(Calendar.MILLISECOND, 0);
+
+        //1.7.2024
+        Calendar startOfJuly2024 = Calendar.getInstance();
+        startOfJuly2024.set(2024, Calendar.JULY, 1, 0, 0, 0);
+        startOfJuly2024.set(Calendar.MILLISECOND, 0);
+
+        //31.12.2024
+        Calendar endOf2024 = Calendar.getInstance();
+        endOf2024.set(2024, Calendar.DECEMBER, 31, 23, 59, 59);
+        endOf2024.set(Calendar.MILLISECOND, 0);
+
+        boolean isValid = true;
+
+        if (fromDate.getTimeInMillis() >= startOf2024.getTimeInMillis() && fromDate.getTimeInMillis() < startOfJuly2024.getTimeInMillis()) {
+            if (untilDate.getTimeInMillis() >= startOfJuly2024.getTimeInMillis()) {
+                isValid = false;
+            }
+        } else if (fromDate.getTimeInMillis() >= startOfJuly2024.getTimeInMillis() && fromDate.getTimeInMillis() <= endOf2024.getTimeInMillis()) {
+            if (untilDate.getTimeInMillis() > endOf2024.getTimeInMillis()) {
+                isValid = false;
+            }
+        }
+        return isValid;
     }
 
 }
