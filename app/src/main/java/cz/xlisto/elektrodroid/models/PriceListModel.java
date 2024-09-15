@@ -8,10 +8,14 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import cz.xlisto.elektrodroid.ownview.ViewHelper;
+
+
 /**
  * Model ceníku
  */
 public class PriceListModel implements Serializable {
+
     public final static int NEW_POZE_YEAR = 2016;
     public final static String PRE = "PRE";
     public final static String CEZ = "ČEZ";
@@ -50,8 +54,8 @@ public class PriceListModel implements Serializable {
     private double poze2;
     private final double oze;
     private final double ote;
-    private final long platnostOD;
-    private final long platnostDO;
+    private long platnostOD;
+    private long platnostDO;
     private double dph;
     private final String distribuce;
     private final String autor;
@@ -200,7 +204,7 @@ public class PriceListModel implements Serializable {
                 "\nJ13:" + getJ13() + " J14:" + getJ14() +
                 "\nSystem.služby: " + getSystemSluzby() + " Činnost OTE:" + getCinnost() + " POZE1: " + getPoze1() +
                 "\nPOZE2:" + getPoze2() + " OZE:" + getOze() + " OTE:" + getOte() +
-                "\nPlatnost OD:" + getPlatnostOD() + " DO:" + getPlatnostDO() +
+                "\nPlatnost OD:" + getPlatnostOD() + "(" + ViewHelper.convertLongToDate(getPlatnostOD()) + ") DO:" + getPlatnostDO() + " (" + ViewHelper.convertLongToDate(getPlatnostDO()) + ")" +
                 "\nDistribuce: " + getDistribuce() +
                 "\nDph:" + getDph() + " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor() + " email :" + getEmail();
     }
@@ -421,6 +425,7 @@ public class PriceListModel implements Serializable {
         return email;
     }
 
+
     public boolean isChecked() {
         return isChecked;
     }
@@ -574,4 +579,15 @@ public class PriceListModel implements Serializable {
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
+
+    public void setPlatnostDO(Long platnostDO) {
+        this.platnostDO = platnostDO;
+    }
+
+
+    public void setPlatnostOD(Long platnostOD) {
+        this.platnostOD = platnostOD;
+    }
+
 }

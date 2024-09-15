@@ -6,8 +6,6 @@ import static android.view.View.VISIBLE;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -22,12 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
+import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -82,12 +81,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String DPH = "ivDPH";
     static final String JISTIC = "swJistic";
     static final String LAST_YEAR = "lastYear";
+    static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY = "flagResultDialogProvozNesitoveInfrastruktury";
 
     String[] arrayDistUzemi;
     String[] arraySazba;
     int year, lastYear, selectionDistUzemi, selectionSazba;
     boolean isFirstLoad = true;
     boolean closedDialog = false;
+    long itemId;
 
     Button btnFrom, btnUntil, btnBack, btnSave, btnReloadRegulPriceList;
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
@@ -254,6 +255,31 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         setSazbaAdapter();
         setDistribucniUzemiAdapter();
         showBtnReloadRegulPriceList();
+
+        /*
+         * Nastaví posluchače pro výsledek dialogu "Provoz nesíťové infrastruktury" - změny ceníku od 1.7.2024.
+         * <p>
+         * Tato metoda nastaví posluchače pro výsledek dialogu s klíčem `FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY`.
+         * Pokud je výsledek dialogu kladný, vytvoří dva objekty `PriceListModel` s daty platnosti
+         * a nastaví cenu činnosti na 9.24 pro druhý ceník. Poté uloží nebo aktualizuje ceníky
+         * podle typu fragmentu (`PriceListAddFragment` nebo `PriceListEditFragment`).
+         */
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY, this, (requestKey, result) -> {
+            if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                Calendar calendarLastJune = createCalendar(5, 30);
+                Calendar calendarFirstJuly = createCalendar(6, 1);
+
+                PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastJune.getTimeInMillis(), null);
+                PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstJuly.getTimeInMillis());
+                priceListModelSecond.setCinnost(9.24);
+
+                if (this.getClass().equals(PriceListAddFragment.class)) {
+                    saveNewPriceLists(priceListModelFirst, priceListModelSecond);
+                } else if (this.getClass().equals(PriceListEditFragment.class)) {
+                    updateAndSavePriceLists(priceListModelFirst, priceListModelSecond);
+                }
+            }
+        });
     }
 
 
@@ -571,28 +597,28 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Pokud btnUntil je menší než btnFrom, zobrazí dialogové okno s výstrahou.
      * Pokud podmínky nejsou splněny, zobrazí dialogové okno s výstrahou.
      *
-     * @param context Kontext aplikace pro zobrazení dialogového okna.
-     * @param activity Aktivita, ve které se fragment nachází.
      * @return true, pokud jsou datumy neplatné a zobrazí dialog s výstrahou, jinak false.
      */
-    boolean checkDateConditions(Context context, Activity activity) {
+    boolean checkDateConditions() {
         Calendar fromDate = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         Calendar untilDate = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
         boolean isValid = isValid(fromDate, untilDate);
 
         if (!isValid) {
-            String title = context.getString(R.string.alert_title);
-            String message = context.getString(R.string.alert_message_provoz_nesitove_infrastruktury);
+            String title = requireContext().getString(R.string.alert_title);
+            String message = requireContext().getString(R.string.alert_message_provoz_nesitove_infrastruktury);
 
-            if (!activity.isFinishing()) {
-                OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
+            if (!requireActivity().isFinishing()) {
+                //OwnAlertDialog.showDialog(requireActivity(), title, message);
+                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY, message);
+                yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
             }
 
         }
 
-        if(untilDate.getTimeInMillis() < fromDate.getTimeInMillis()){
-            OwnAlertDialog.showDialog((FragmentActivity) context, context.getString(R.string.alert_title), context.getString(R.string.alert_message_older_date));
+        if (untilDate.getTimeInMillis() < fromDate.getTimeInMillis()) {
+            OwnAlertDialog.showDialog(requireActivity(), requireContext().getString(R.string.alert_title), requireContext().getString(R.string.alert_message_older_date));
             return true;
         }
         return !isValid;
@@ -602,8 +628,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     /**
      * Zkontroluje, zda jsou data platná podle zadaných podmínek.
      *
-     * @param fromDate    Počáteční datum
-     * @param untilDate   Konečné datum
+     * @param fromDate  Počáteční datum
+     * @param untilDate Konečné datum
      * @return true, pokud jsou data platná, jinak false
      */
     private static boolean isValid(Calendar fromDate, Calendar untilDate) {
@@ -634,6 +660,94 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             }
         }
         return isValid;
+    }
+
+
+    /**
+     * Vytvoří a vrátí instanci kalendáře s nastaveným rokem, měsícem a dnem.
+     * <p>
+     * Tato metoda vytvoří objekt `Calendar` a nastaví jeho rok, měsíc a den
+     * podle zadaných parametrů. Čas je nastaven na začátek dne (00:00:00.000).
+     *
+     * @param month Měsíc, který má být nastaven (0-11, kde 0 je leden a 11 je prosinec)
+     * @param day   Den, který má být nastaven
+     * @return Calendar objekt s nastaveným rokem, měsícem a dnem
+     */
+    private Calendar createCalendar(int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2024, month, day, 0, 0, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
+
+    /**
+     * Vytvoří a vrátí instanci `PriceListModel` s nastavenými daty platnosti.
+     * <p>
+     * Tato metoda vytvoří objekt ceníku pomocí metody `createPriceList()`
+     * a nastaví data platnosti podle zadaných parametrů `platnostDO` a `platnostOD`.
+     *
+     * @param platnostDO Datum platnosti do (v milisekundách), může být null
+     * @param platnostOD Datum platnosti od (v milisekundách), může být null
+     * @return PriceListModel objekt ceníku s nastavenými daty platnosti
+     */
+    private PriceListModel createPriceListWithDates(Long platnostDO, Long platnostOD) {
+        PriceListModel priceListModel = createPriceList();
+        if (platnostDO != null) {
+            priceListModel.setPlatnostDO(platnostDO);
+        }
+        if (platnostOD != null) {
+            priceListModel.setPlatnostOD(platnostOD);
+        }
+        return priceListModel;
+    }
+
+
+    /**
+     * Uloží nové ceníky do databáze.
+     * <p>
+     * Tato metoda otevře zdroj dat `DataPriceListSource` a vloží dva nové ceníky
+     * do databáze. Po dokončení operací zdroj dat uzavře. Pokud jsou obě operace
+     * úspěšné (tj. obě ID jsou větší než 0), metoda vrátí fragment o jeden krok
+     * zpět v zásobníku fragmentů.
+     *
+     * @param priceListModelFirst  První ceník, který bude vložen
+     * @param priceListModelSecond Druhý ceník, který bude vložen
+     */
+    private void saveNewPriceLists(PriceListModel priceListModelFirst, PriceListModel priceListModelSecond) {
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
+        dataPriceListSource.open();
+        long idFirst = dataPriceListSource.insertPriceList(priceListModelFirst);
+        long idSecond = dataPriceListSource.insertPriceList(priceListModelSecond);
+        dataPriceListSource.close();
+        if (idFirst > 0 && idSecond > 0) {
+            getParentFragmentManager().popBackStack();
+        }
+    }
+
+
+    /**
+     * Aktualizuje první ceník a vloží druhý ceník do databáze.
+     * <p>
+     * Tato metoda nejprve nastaví ID prvního ceníku na hodnotu `itemId`.
+     * Poté otevře zdroj dat `DataPriceListSource` a provede aktualizaci prvního ceníku
+     * a vložení druhého ceníku do databáze. Po dokončení operací zdroj dat uzavře.
+     * Pokud jsou obě operace úspěšné (tj. obě ID jsou větší než 0), metoda vrátí
+     * fragment o jeden krok zpět v zásobníku fragmentů.
+     *
+     * @param priceListModelFirst  První ceník, který bude aktualizován
+     * @param priceListModelSecond Druhý ceník, který bude vložen
+     */
+    private void updateAndSavePriceLists(PriceListModel priceListModelFirst, PriceListModel priceListModelSecond) {
+        priceListModelFirst.setId(itemId);
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
+        dataPriceListSource.open();
+        long idFirst = dataPriceListSource.updatePriceList(priceListModelFirst, itemId);
+        long idSecond = dataPriceListSource.insertPriceList(priceListModelSecond);
+        dataPriceListSource.close();
+        if (idFirst > 0 && idSecond > 0) {
+            getParentFragmentManager().popBackStack();
+        }
     }
 
 }

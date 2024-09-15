@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.dialogs;
 
+
 import android.app.Dialog;
 import android.os.Bundle;
 
@@ -10,11 +11,13 @@ import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
 
+
 /**
- * DialogFragment s tlačítky ANO/NE
- * Výsledek kliknutí je v OnDialogResult
+ * Třída YesNoDialogFragment představuje dialogové okno s tlačítky ANO/NE.
+ * Výsledek kliknutí je předán prostřednictvím rozhraní OnDialogResult.
  */
 public class YesNoDialogFragment extends DialogFragment {
+
     public static final String TAG = "YesNoDialogFragment";
     private static final String TITLE = "title";
     private static final String MESSAGE = "message";
@@ -26,18 +29,34 @@ public class YesNoDialogFragment extends DialogFragment {
     protected String flagResultDialogFragment;
     protected AlertDialog.Builder builder;
 
+
+    /**
+     * Výchozí konstruktor pro YesNoDialogFragment.
+     */
     public YesNoDialogFragment() {
     }
 
 
+    /**
+     * Vytvoří novou instanci YesNoDialogFragment se zadaným názvem a příznakem.
+     *
+     * @param title                    Název dialogu.
+     * @param flagResultDialogFragment Příznak pro identifikaci výsledku dialogu.
+     * @return Nová instance YesNoDialogFragment.
+     */
     public static YesNoDialogFragment newInstance(String title, String flagResultDialogFragment) {
-        YesNoDialogFragment yesNoDialogFragment = new YesNoDialogFragment();
-        yesNoDialogFragment.title = title;
-        yesNoDialogFragment.flagResultDialogFragment = flagResultDialogFragment;
-        return yesNoDialogFragment;
+        return newInstance(title, flagResultDialogFragment, null);
     }
 
 
+    /**
+     * Vytvoří novou instanci YesNoDialogFragment se zadaným názvem, příznakem a zprávou.
+     *
+     * @param title                    Název dialogu.
+     * @param flagResultDialogFragment Příznak pro identifikaci výsledku dialogu.
+     * @param message                  Zpráva dialogu.
+     * @return Nová instance YesNoDialogFragment.
+     */
     public static YesNoDialogFragment newInstance(String title, String flagResultDialogFragment, String message) {
         YesNoDialogFragment yesNoDialogFragment = new YesNoDialogFragment();
         yesNoDialogFragment.title = title;
@@ -57,6 +76,7 @@ public class YesNoDialogFragment extends DialogFragment {
         }
         builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
+        builder.setIcon(R.drawable.ic_warning_png);
         builder.setMessage(message);
         builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {
             Bundle bundle = new Bundle();
@@ -79,4 +99,5 @@ public class YesNoDialogFragment extends DialogFragment {
         outState.putString(MESSAGE, message);
         outState.putString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
     }
+
 }

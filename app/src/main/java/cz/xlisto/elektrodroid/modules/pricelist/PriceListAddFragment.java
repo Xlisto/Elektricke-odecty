@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.shp.ShPAddPriceList;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
@@ -102,13 +104,15 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
      * Po úspěšném uložení se fragment vrátí o jeden krok zpět.
      */
     private void savePriceList() {
-        if(checkDateConditions(requireContext(), requireActivity()))
-            return;
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
             //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde
+            OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return;
         }
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        //kontrola platnosti datumů a zobrazení dialogového dotazu na rozdělění ceníku
+        if(checkDateConditions())
+            return;
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
         long id = dataPriceListSource.insertPriceList(createPriceList());
         dataPriceListSource.close();

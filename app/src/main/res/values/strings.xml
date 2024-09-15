@@ -353,13 +353,16 @@
     <string name="changed_electric_meter">Výměna elektroměru</string>
 
     <string name="alert_title">Upozornění</string>
+    <string name="alert_title_delete_invoice_item">Smazat záznam z faktury</string>
     <string name="alert_message_date">Zkontrolujte rozsah platnosti záznamu. Datum začátku je větší než datum konce.</string>
     <string name="alert_message_vt">Zkontrolujte odečet. Počáteční stav VT je větší než koncový.</string>
     <string name="alert_message_nt">Zkontrolujte odečet. Počáteční stav NT je větší než koncový.</string>
     <string name="alert_message_edit_last_record">\nUpravte záznamy poslední faktury nebo měsíčních odečtů.</string>
-    <string name="alert_title_delete_invoice_item">Smazat záznam z faktury</string>
+    <string name="alert_message_select_area">Vyberte sazbu a distribuční území.</string>
     <string name="alert_message_older_date">Konec platnosti ceníku nastává před jeho začátkem.</string>
-    <string name="alert_message_provoz_nesitove_infrastruktury">Od 1.7.2024 se mění položka \n\'Činnost operátora trhu\' na \'Provoz nesíťové infrastruktury\' \na cena je navýšena na 9,24 Kč bez DPH. \n\nVytvořte jeden ceník s platností od 1.1.2024 do 30.6.2024 a druhý s platnotí od 1.7.2024 do 31.12.2024. </string>
+    <string name="alert_message_provoz_nesitove_infrastruktury">Od 1.7.2024 se mění položka \n\'Činnost operátora trhu\' na \'Provoz nesíťové infrastruktury\' \na cena je navýšena na 9,24 Kč bez DPH.
+        \n\nVytvořte jeden ceník s platností od 1.1.2024 do 30.6.2024 a druhý s platností od 1.7.2024 do 31.12.2024.
+    \n\nChcete, aby aplikace vytvořila dva ceníky?</string>
 
     <string name="double_in_brackets">(%.3f)</string>
     <string name="consuption">Sp.: %s kWh</string>

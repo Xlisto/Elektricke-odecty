@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.Keyboard;
@@ -33,7 +34,6 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
     private static final String ARG_ID = "id";
-    private long itemId;
 
 
     public PriceListEditFragment() {
@@ -215,13 +215,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * @param itemId long id ceníku
      */
     private long updatePriceList(long itemId) {
-        if(checkDateConditions(requireContext(), requireActivity()))
-            return 0L;
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
-            //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde
+            //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde, nemělo by k tomu nikdy dojít
+            OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return 0L;
         }
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
+        if (checkDateConditions())
+            return 0L;
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
         long id = dataPriceListSource.updatePriceList(createPriceList(), itemId);
         dataPriceListSource.close();
