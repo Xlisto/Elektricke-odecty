@@ -11,6 +11,7 @@
 .idea/compiler.xml
 .idea/modules/*
 .idea/modules/app
+.idea/.name
 *.iml
 
 # Build files
