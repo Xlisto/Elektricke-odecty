@@ -137,6 +137,18 @@ public class MonthlyReadingFragment extends Fragment {
                     UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
                     loadDataFromDatabase();
                 });
+
+        //posluchač na zavření dialogového okna s upozorněním na změnu ceníku, které jsou přes 1.7.2024 platnsti
+        getParentFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        //záloha
+                        SaveDataToBackupFile.saveToZip(requireActivity(), null);
+                        //aktualizace měsíčních odečtů
+                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList());
+                        loadDataFromDatabase();
+                    }
+                });
     }
 
 
@@ -210,17 +222,6 @@ public class MonthlyReadingFragment extends Fragment {
         fab.setOnClickListener(v -> addMonthlyReading());
         btnAddMonthlyReading.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
-
-        getParentFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
-                (requestKey, result) -> {
-                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                        //záloha
-                        SaveDataToBackupFile.saveToZip(requireActivity(), null);
-                        //aktualizace měsíčních odečtů
-                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList());
-                        loadDataFromDatabase();
-                    }
-                });
     }
 
 
