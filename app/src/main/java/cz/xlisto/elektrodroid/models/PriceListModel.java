@@ -18,7 +18,6 @@ public class PriceListModel implements Serializable {
 
     public final static int NEW_POZE_YEAR = 2016;
     public final static String PRE = "PRE";
-    public final static String CEZ = "ČEZ";
     public final static String EON = "E.ON";
     public final static String EGD = "EG.D";
     private final static String NO_PRICE_LIST = "Ceník nenalezen!!!";
@@ -61,9 +60,6 @@ public class PriceListModel implements Serializable {
     private final String autor;
     private final long datumVytvoreni;
     private final String email;
-    private final String mwh = " Kč/MWh";
-    private final String mes = " Kč/měsíc";
-    private final String jis = " Kč za 1A/měsíc";
     private boolean isChecked = false;
 
 
@@ -175,7 +171,9 @@ public class PriceListModel implements Serializable {
         if (this.produkt.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
 
-        return getProdukt() + ", " + getSazba() + ",\nPlatný od: " + convertLongToDate(getPlatnostOD());
+        return "id: " + getId() + ", " + getProdukt() + ", " + getSazba()
+                + ",\nPlatný od: " + convertLongToDate(getPlatnostOD() + 1)
+                + " do: " + convertLongToDate(getPlatnostDO()) + "\n";
     }
 
 

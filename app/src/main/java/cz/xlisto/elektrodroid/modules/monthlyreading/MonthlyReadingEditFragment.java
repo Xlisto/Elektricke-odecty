@@ -179,20 +179,12 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         MonthlyReadingModel newMonthlyReading = createMonthlyReading();
         newMonthlyReading.setId(itemId);
 
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.updateMonthlyReading(newMonthlyReading, itemId, tableO);
-        dataSubscriptionPointSource.close();
-
-        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getActivity());
+        DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(requireActivity());
         dataMonthlyReadingSource.open();
+        dataMonthlyReadingSource.updateMonthlyReading(newMonthlyReading, itemId, tableO);
         MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
         dataMonthlyReadingSource.close();
-        //kontrola, zda-li je upravovaný měsíční odečet posledním odečtem
-        //if (lastMonthlyReading.getId() == itemId) {
-        //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
         //úprava posledního záznamu v období bez faktury
         updateItemInvoice(lastMonthlyReading);
-        //}
     }
 }

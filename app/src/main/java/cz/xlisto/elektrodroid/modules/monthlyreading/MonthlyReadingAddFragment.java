@@ -43,12 +43,12 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
 
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Použijte tuto tovární metodu k vytvoření nové instance
+     * tohoto fragmentu pomocí poskytnutých parametrů.
      *
      * @param tableO        Jméno databáze měsíčních odečtů (O).
      * @param tablePayments Jméno databáze plateb (PLATBY).
-     * @return A new instance of fragment MonthlyReadingAddFragment.
+     * @return Nová instance fragmentu MonthlyReadingAddFragment.
      */
     public static MonthlyReadingAddFragment newInstance(String tableO, String tablePayments) {
         MonthlyReadingAddFragment fragment = new MonthlyReadingAddFragment();
@@ -79,29 +79,30 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
 
         btnSave.setOnClickListener(v -> {
             if (selectedIdPriceList > 0 || cbFirstReading.isChecked() || countMonthlyReading == 0) {
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
-                dataSubscriptionPointSource.open();
-                MonthlyReadingModel newMonthlyReading = createMonthlyReading();
-                //získává id nově uloženého měsíčního záznamu
-                long id = dataSubscriptionPointSource.insertMonthlyReading(tableO, newMonthlyReading);
-                //nastavuji id záznamu
-                newMonthlyReading.setId(id);
-                //přidat platbu: true; první odečet: false
-                if (cbAddPayment.isChecked() && !cbFirstReading.isChecked() && countMonthlyReading != 0) {
-                    dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));
-                }
-                dataSubscriptionPointSource.close();
-
                 //načítám poslední měsíční odečet
                 DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getContext());
                 dataMonthlyReadingSource.open();
+
+                MonthlyReadingModel newMonthlyReading = createMonthlyReading();
+                //získává id nově uloženého měsíčního záznamu
+                long id = dataMonthlyReadingSource.insertMonthlyReading(tableO, newMonthlyReading);
+                //nastavuji id záznamu
+                newMonthlyReading.setId(id);
+
                 MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
                 dataMonthlyReadingSource.close();
-                //if(lastMonthlyReading.getDate() <= newMonthlyReading.getDate()){
+
+                //přidat platbu: true; první odečet: false
+                if (cbAddPayment.isChecked() && !cbFirstReading.isChecked() && countMonthlyReading != 0) {
+                    DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
+                    dataSubscriptionPointSource.open();
+                    dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));
+                    dataSubscriptionPointSource.close();
+                }
+
                 //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
                 //úprava posledního záznamu v období bez faktury
                 updateItemInvoice(lastMonthlyReading);
-                //}
 
 
                 if (cbAddBackup.isChecked()) {

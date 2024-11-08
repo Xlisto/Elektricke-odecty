@@ -36,15 +36,18 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.models.SummaryInvoiceModel;
+import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPInvoiceDetail;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
+
 /**
  * Fragment pro zobrazení detailu (jednotlivých složek ceny) faktury.
  */
 public class InvoiceDetailFragment extends Fragment {
+
     private static final String TAG = "InvoiceDetailFragment";
     private static final String ID_FAK = "idFak";
     private static final String TABLE_FAK = "tableFak";
@@ -65,10 +68,13 @@ public class InvoiceDetailFragment extends Fragment {
     private final ArrayList<SummaryInvoiceModel> summaryInvoices = new ArrayList<>();
     private final ArrayList<SummaryInvoiceModel> mergedSummaryInvoices = new ArrayList<>();
     private MySpinnerInvoiceDetailAdapter invoiceListAdapter;
+    private MySpinnerInvoiceDetailAdapter.DatesInvoiceContainer datesInvoice;
+
 
     public InvoiceDetailFragment() {
         // Required empty public constructor
     }
+
 
     /**
      * Vytvoří instanci InvoiceDetailFragment.
@@ -112,6 +118,7 @@ public class InvoiceDetailFragment extends Fragment {
             table = tableNOW;
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,7 +175,7 @@ public class InvoiceDetailFragment extends Fragment {
 
 
     private void setSpinner() {
-        invoiceListAdapter = new MySpinnerInvoiceDetailAdapter(requireActivity(), R.layout.item_own_simple_list, SummaryInvoiceModel.Title.values());
+        invoiceListAdapter = new MySpinnerInvoiceDetailAdapter(requireActivity(), R.layout.item_own_simple_list, SummaryInvoiceModel.Title.values(), datesInvoice);
         spinner.setAdapter(invoiceListAdapter);
         spinner.setSelection(shPInvoiceDetail.get(SHOW_TYPE_DETAIL_INDEX, 0));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -178,6 +185,7 @@ public class InvoiceDetailFragment extends Fragment {
                 calculationDetailsInvoice(invoices);
                 setRecyclerView();
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -191,6 +199,9 @@ public class InvoiceDetailFragment extends Fragment {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
         invoices = dataInvoiceSource.loadInvoices(idFak, table);
+        long minDateInvoice = dataInvoiceSource.minDateInvoice(idFak, table);
+        long maxDateInvoice = dataInvoiceSource.maxDateInvoice(idFak, table);
+        datesInvoice = new MySpinnerInvoiceDetailAdapter.DatesInvoiceContainer(minDateInvoice, maxDateInvoice);
         dataInvoiceSource.close();
     }
 
@@ -199,7 +210,6 @@ public class InvoiceDetailFragment extends Fragment {
         invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
         invoiceDetailAdapter.setListener(totalPrice -> tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice))));
         rv.setAdapter(invoiceDetailAdapter);
-
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.getViewTreeObserver().removeOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -237,6 +247,11 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Vypočítá detaily faktury a naplní seznamy summaryInvoices a mergedSummaryInvoices.
+     *
+     * @param invoices seznam faktur, které mají být zpracovány
+     */
     private void calculationDetailsInvoice(ArrayList<InvoiceModel> invoices) {
         boolean hiddenNT = false;
         summaryInvoices.clear();
@@ -244,7 +259,6 @@ public class InvoiceDetailFragment extends Fragment {
         int phaze = Objects.requireNonNull(subscriptionPoint).getPhaze();
         int countPhaze = subscriptionPoint.getCountPhaze();
         PozeModel poze = Calculation.getPoze(invoices, countPhaze, phaze, requireActivity());
-
 
         for (int i = 0; i < invoices.size(); i++) {
             InvoiceModel invoice = invoices.get(i);
@@ -295,9 +309,15 @@ public class InvoiceDetailFragment extends Fragment {
                         invoice.getVtNt() / 1000, priceList.getSystemSluzby(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.SYS_SERVICES));
             } else if (s.equals(SummaryInvoiceModel.Title.OTE.toString())) {
-                summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getCinnost(),
-                        SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
+                if (invoice.getDateFrom() < (ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()))
+                    summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
+                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getCinnost(),
+                            SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
+            } else if (s.equals(SummaryInvoiceModel.Title.INF.toString())) {
+                if (invoice.getDateFrom() >= (ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()))
+                    summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
+                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getCinnost(),
+                            SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
             } else if (s.equals(SummaryInvoiceModel.Title.POZE.toString())) {
                 if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {//podle spotřeby
                     if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
@@ -354,4 +374,5 @@ public class InvoiceDetailFragment extends Fragment {
         dataPriceListSource.close();
         return priceList;
     }
+
 }

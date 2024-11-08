@@ -31,16 +31,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
+import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
+import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.backup.SaveDataToBackupFile;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
@@ -206,12 +210,25 @@ public class MonthlyReadingFragment extends Fragment {
         fab.setOnClickListener(v -> addMonthlyReading());
         btnAddMonthlyReading.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
+
+        getParentFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        //záloha
+                        SaveDataToBackupFile.saveToZip(requireActivity(), null);
+                        //aktualizace měsíčních odečtů
+                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList());
+                    }
+                });
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+
+        findPriceListRange();
+
         loadDataFromDatabase();
         UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
         if (rv.getLayoutManager() == null) {
@@ -221,6 +238,7 @@ public class MonthlyReadingFragment extends Fragment {
             swRegulPrice.setEnabled(true);
             swSimplyView.setEnabled(true);
         }
+
     }
 
 
@@ -261,6 +279,15 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Zobrazí detailní fragment měsíčního odečtu v závislosti na aktuálním a předchozím odečtu.
+     * Pokud je zařízení v režimu na šířku (landscape), nahradí obsah fragmentu detailním fragmentem.
+     * Pokud jsou oba identifikátory odečtů platné (>= 0), zobrazí detailní fragment.
+     * Pokud nejsou platné, nahradí obsah prázdným fragmentem.
+     *
+     * @param idCurrentlyReading ID aktuálního měsíčního odečtu
+     * @param idPreviousReading  ID předchozího měsíčního odečtu
+     */
     private void showDetailFragment(long idCurrentlyReading, long idPreviousReading) {
         if (DetectScreenMode.isLandscape(requireActivity())) {
             MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
@@ -306,13 +333,27 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Rozhraní pro posluchače, který reaguje na změnu zobrazení regulované ceny.
+     */
     public interface OnShowRegulPriceListener {
 
+        /**
+         * Metoda volaná při změně zobrazení regulované ceny.
+         *
+         * @param showRegulPrice boolean hodnota určující, zda zobrazit regulovanou cenu
+         */
         void onShowRegulPrice(boolean showRegulPrice);
 
     }
 
 
+    /**
+     * Připojí fragment k aktivitě a nastaví posluchače pro zobrazení regulované ceny.
+     *
+     * @param context Kontext aktivity, ke které je fragment připojen
+     * @throws ClassCastException pokud aktivita neimplementuje rozhraní OnShowRegulPriceListener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -324,6 +365,47 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Načte ceníky v daném časovém rozmezí z databáze.
+     *
+     */
+    private void findPriceListRange() {
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
+        dataPriceListSource.open();
+        ArrayList<PriceListModel> priceLists = dataPriceListSource.readPriceListInDateRange();
+        dataPriceListSource.close();
+
+        if (!priceLists.isEmpty()) {
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                    getString(R.string.alert_title),
+                    YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT,
+                    getString(R.string.alert_message_provoz_nesitove_infrastruktury2));
+            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+        }
+    }
+
+
+    /**
+     * Aktualizuje ceníky v databázi a zobrazí dialogové okno s upozorněním, pokud je potřeba.
+     */
+    private Map<PriceListModel, PriceListModel> updatePriceList() {
+        //zobrazení ceníků pro změnu.
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
+
+        //Rozdělí ceníky podle data a vytvoří novou mapu s upravenými ceníky.Vloží a aktualizuje databázi s ceníky.
+        dataPriceListSource.open();
+        Map<PriceListModel, PriceListModel> newSplitPriceListMap = dataPriceListSource.splitPriceList();
+        dataPriceListSource.close();
+
+        return newSplitPriceListMap;
+    }
+
+
+    /**
+     * Nastaví posluchače pro zobrazení regulované ceny.
+     *
+     * @param isChecked boolean hodnota určující, zda zobrazit regulovanou cenu
+     */
     public void setOnShowRegulPriceListener(boolean isChecked) {
         this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
     }

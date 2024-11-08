@@ -12,6 +12,7 @@
 .idea/modules/*
 .idea/modules/app
 .idea/.name
+.idea/runConfigurations.xml
 *.iml
 
 # Build files

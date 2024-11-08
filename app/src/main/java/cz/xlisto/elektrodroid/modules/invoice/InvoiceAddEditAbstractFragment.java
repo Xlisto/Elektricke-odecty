@@ -319,10 +319,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         }
         dataInvoiceSource.close();
 
-        if (autogenerate)
-            WithOutInvoiceService.updateAllItemsInvoice(requireActivity(), tableTED, tableFAK, tableO);
-        else
-            WithOutInvoiceService.editFirstItemInInvoice(requireActivity());
+        WithOutInvoiceService.updateInvoice(requireContext(), SubscriptionPoint.load(requireContext()));
+
         Keyboard.hide(requireActivity());
         getParentFragmentManager().popBackStack();
     }

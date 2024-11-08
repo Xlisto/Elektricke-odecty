@@ -5,12 +5,15 @@ import static cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_PO
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 
 public class SubscriptionPoint {
+
     /**
      * Načte odběrné místo podle id mista uloženého ve sharedpreferences
      *
@@ -46,4 +49,20 @@ public class SubscriptionPoint {
         dataSubscriptionPointSource.close();
         return count;
     }
+
+
+    /**
+     * Načte všechna odběrná místa z databáze.
+     *
+     * @param context Kontext aplikace
+     * @return ArrayList<SubscriptionPointModel> Seznam odběrných míst
+     */
+    public static ArrayList<SubscriptionPointModel> getAllSubscriptionPoints(Context context) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        ArrayList<SubscriptionPointModel> subscriptionPoints = dataSubscriptionPointSource.loadSubscriptionPoints();
+        dataSubscriptionPointSource.close();
+        return subscriptionPoints;
+    }
+
 }

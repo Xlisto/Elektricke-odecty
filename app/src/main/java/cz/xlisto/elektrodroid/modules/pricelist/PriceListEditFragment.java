@@ -220,6 +220,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return 0L;
         }
+        
         if (checkDateConditions())
             return 0L;
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());

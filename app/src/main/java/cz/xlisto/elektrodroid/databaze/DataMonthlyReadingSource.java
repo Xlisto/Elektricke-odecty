@@ -1,8 +1,17 @@
 package cz.xlisto.elektrodroid.databaze;
 
 
+import static cz.xlisto.elektrodroid.databaze.DbHelper.CENIK_ID;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_ID;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.DATUM;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.GARANCE;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.NT;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.POZNAMKA;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.PRVNI_ODECET;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.VT;
+import static cz.xlisto.elektrodroid.databaze.DbHelper.ZAPLACENO;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -18,6 +27,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  * Xlisto 01.12.2023 9:40
  */
 public class DataMonthlyReadingSource extends DataSource {
+
     private static final String TAG = "DataMonthlyReadingSource";
 
 
@@ -53,7 +63,7 @@ public class DataMonthlyReadingSource extends DataSource {
 
             //načtení posledního měsíčního odečtu
             MonthlyReadingModel monthlyReading = loadLastMonthlyReadingByDate(table);
-            if(monthlyReading == null) {
+            if (monthlyReading == null) {
                 sb.append("Není zapsán žádný měsíční odečet\n");
             } else {
                 sb.append("Datum: ").append(ViewHelper.convertLongToDate(monthlyReading.getDate())).append("   VT: ")
@@ -186,6 +196,17 @@ public class DataMonthlyReadingSource extends DataSource {
 
 
     /**
+     * Vloží měsíční odečet do databáze
+     *
+     * @param tableName      název tabulky
+     * @param monthlyReading měsíční odečet
+     * @return id záznamu
+     */
+    public long insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
+        return database.insert(tableName, null, createContentValue(monthlyReading));
+    }
+
+    /**
      * Smaže měsíční odečet podle ID
      *
      * @param itemId id měsíčního odečtu
@@ -194,6 +215,20 @@ public class DataMonthlyReadingSource extends DataSource {
     public void deleteMonthlyReading(long itemId, String table) {
         database.delete(table, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
+    }
+
+
+    /**
+     * Aktualizuje měsíční odečet v databázi.
+     *
+     * @param monthlyReading objekt MonthlyReadingModel obsahující aktualizovaná data
+     * @param itemId         id měsíčního odečtu, který má být aktualizován
+     * @param tableName      název tabulky, ve které se má aktualizace provést
+     */
+    public void updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
+        database.update(tableName, createContentValue(monthlyReading),
+                COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
+
     }
 
 
@@ -223,4 +258,25 @@ public class DataMonthlyReadingSource extends DataSource {
                 priceListId,
                 firstReading == 1);
     }
+
+
+    /**
+     * Sestaví data měsíčního odečtu pro zápis do databáze
+     *
+     * @param monthlyReading měsíční odečet
+     * @return data měsíčního odečtu
+     */
+    private ContentValues createContentValue(MonthlyReadingModel monthlyReading) {
+        ContentValues values = new ContentValues();
+        values.put(VT, monthlyReading.getVt());
+        values.put(NT, monthlyReading.getNt());
+        values.put(ZAPLACENO, monthlyReading.getPayment());
+        values.put(CENIK_ID, monthlyReading.getPriceListId());
+        values.put(DATUM, monthlyReading.getDate());
+        values.put(PRVNI_ODECET, monthlyReading.isFirst());
+        values.put(GARANCE, monthlyReading.getOtherServices());
+        values.put(POZNAMKA, monthlyReading.getDescription());
+        return values;
+    }
+
 }

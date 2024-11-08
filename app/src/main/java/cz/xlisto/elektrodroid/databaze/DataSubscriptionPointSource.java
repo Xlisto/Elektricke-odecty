@@ -38,15 +38,27 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
  * Přístup k databázi odběrných míst, měsíčních odečtů atd.
  */
 public class DataSubscriptionPointSource extends DataSource {
+
     private static final String TAG = "DataSubscriptionPointSource";
 
 
+    /**
+     * Konstruktor třídy DataSubscriptionPointSource.
+     *
+     * @param context Kontext aplikace
+     */
     public DataSubscriptionPointSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
     }
 
 
+    /**
+     * Vloží odběrné místo do databáze.
+     *
+     * @param subScriptionPointModel Model odběrného místa
+     * @return ID nově vloženého odběrného místa
+     */
     public long insertSubscriptionPoint(SubscriptionPointModel subScriptionPointModel) {
         dbHelper.createSubscriptionPoint(database, subScriptionPointModel.getMilins());
         return database.insert(TABLE_NAME_SUBSCRIPTION_POINT, null, createContentValue(subScriptionPointModel));
@@ -54,35 +66,35 @@ public class DataSubscriptionPointSource extends DataSource {
 
 
     /**
-     * Vloží měsíční odečet do databáze
+     * Vloží platbu do databáze.
      *
-     * @param tableName      název tabulky
-     * @param monthlyReading měsíční odečet
-     * @return id záznamu
+     * @param table   Název tabulky
+     * @param payment Objekt platby
      */
-    public long insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
-        return database.insert(tableName, null, createContentValue(monthlyReading));
-    }
-
-
     public void insertPayment(String table, PaymentModel payment) {
         database.insert(table, null, createContentValue(payment));
     }
 
 
+    /**
+     * Aktualizuje odběrné místo v databázi.
+     *
+     * @param subscriptionPointModel Model odběrného místa
+     * @param itemId                 ID odběrného místa
+     */
     public void updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
         database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContentValue(subscriptionPointModel),
                 COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
     }
 
 
-    public void updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
-        database.update(tableName, createContentValue(monthlyReading),
-                COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
-
-    }
-
-
+    /**
+     * Aktualizuje platbu v databázi.
+     *
+     * @param id      ID platby
+     * @param table   Název tabulky
+     * @param payment Objekt platby
+     */
     public void updatePayment(long id, String table, PaymentModel payment) {
         database.update(table, createContentValue(payment),
                 COLUMN_ID + "=?", new String[]{String.valueOf(id)});
@@ -507,4 +519,5 @@ public class DataSubscriptionPointSource extends DataSource {
         values.put(DATUM, payment.getDate());
         return values;
     }
+
 }

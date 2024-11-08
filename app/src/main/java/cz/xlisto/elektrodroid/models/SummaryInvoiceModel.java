@@ -92,8 +92,9 @@ public class SummaryInvoiceModel {
         VT_DIST("Cena za distrib. množství elektřiny ve vysokém tarifu"),
         NT_DIST("Cena za distrib. množství elektřiny v nízkém tarifu"),
         CIRCUIT_BREAKER("Cena za příkon podle hodnoty hl. jističe před elekt."),
-        SYS_SERVICES("Pevná cena za systémové služby"),
+        SYS_SERVICES("Cena za systémové služby"),
         OTE("Cena za činnosti operátora trhu"),
+        INF("Provoz nesíťové infrastruktury"),
         POZE("Složka ceny na podporu el. z podpor. zdrojů energie");
 
         private final String text;

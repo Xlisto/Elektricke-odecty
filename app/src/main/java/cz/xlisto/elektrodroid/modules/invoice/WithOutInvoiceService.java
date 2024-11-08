@@ -16,6 +16,8 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.shp.ShPInvoice;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -26,6 +28,18 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 public class WithOutInvoiceService {
 
     private static final String TAG = "WithOutInvoiceService";
+
+
+    public static void updateInvoice(Context context, SubscriptionPointModel subscriptionPoint) {
+        boolean autogenerate = new ShPInvoice(context).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
+        //SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(context);
+        if (subscriptionPoint != null) {
+            if (autogenerate)
+                updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
+            else
+                editFirstItemInInvoice(context);
+        }
+    }
 
 
     /**
@@ -328,7 +342,7 @@ public class WithOutInvoiceService {
             dataInvoiceSource.deleteAllInvoices(Objects.requireNonNull(SubscriptionPoint.load(context)).getTableTED());
             dataMonthlyReadingSource.close();
             dataInvoiceSource.close();
-            OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_invoice_records),null);
+            OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.error), context.getResources().getString(R.string.no_invoice_records), null);
             return;
         }
 

@@ -363,6 +363,13 @@
     <string name="alert_message_provoz_nesitove_infrastruktury">Od 1.7.2024 se mění položka \n\'Činnost operátora trhu\' na \'Provoz nesíťové infrastruktury\' \na cena je navýšena na 9,24 Kč bez DPH.
         \n\nVytvořte jeden ceník s platností od 1.1.2024 do 30.6.2024 a druhý s platností od 1.7.2024 do 31.12.2024.
     \n\nChcete, aby aplikace vytvořila dva ceníky?</string>
+    <string name="alert_message_provoz_nesitove_infrastruktury2">Od 1. 7. 2024 se mění název položky
+        \n\'Činnost operátora trhu\' na \'Provoz nesíťové infrastruktury\' a cena je upravena na 9,24 Kč bez DPH.
+        \n\nDotčené ceníky budou aktualizovány tak, že jejich platnost bude omezena do 30. 6. 2024. Vytvoří se kopie ceníků s platností od 1. 7. 2024, již s novou cenou.
+        \n\nMěsíční odečty platné od 1. 7. 2024 budou automaticky přiřazeny k novým ceníkům.
+        \n\nPřed provedením této změny bude vytvořena záloha aktuálního stavu.
+        \n\nPřejete si provést změny?
+    </string>
 
     <string name="double_in_brackets">(%.3f)</string>
     <string name="consuption">Sp.: %s kWh</string>

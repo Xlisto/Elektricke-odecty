@@ -49,15 +49,21 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListSumModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.pricelist.PriceListSplitter;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
+/**
+ * Třída DataPriceListSource poskytuje metody pro práci s databází ceníků.
+ */
 public class DataPriceListSource {
+
     private final String TAG = getClass().getName() + " ";
     public static final String VSE = "[VŠE]";
     private final Context context;
@@ -180,6 +186,31 @@ public class DataPriceListSource {
         database.delete(TABLE_NAME_PRICE, "_id NOT IN (" + questionMarks + ")", ids);
         cursor.close();
         dataSubscriptionPointSource.close();
+    }
+
+
+    /**
+     * Rozdělí seznam ceníků podle data a vytvoří novou mapu s upravenými ceníky.
+     * Upravený ceník a vytvořený nová ceník se uloží do databáze a v map se aktualizuje id nového ceníku.
+     *
+     * @return Mapa obsahující aktualizované dvojice původních a nových ceníků
+     */
+    public Map<PriceListModel, PriceListModel> splitPriceList() {
+        ArrayList<PriceListModel> pricelists = readPriceListInDateRange();
+
+        Map<PriceListModel, PriceListModel> mapPriceList = PriceListSplitter.splitPriceLists(pricelists);
+
+        for (Map.Entry<PriceListModel, PriceListModel> entry : mapPriceList.entrySet()) {
+            PriceListModel originalPriceList = entry.getKey();
+            PriceListModel newPriceList = entry.getValue();
+
+            updatePriceList(originalPriceList, originalPriceList.getId());
+            newPriceList.setId(insertPriceList(newPriceList));
+
+            mapPriceList.put(originalPriceList, newPriceList);
+        }
+
+        return mapPriceList;
     }
 
 
@@ -342,7 +373,7 @@ public class DataPriceListSource {
                 argsSelection,
                 null, null, "rada, produkt, firma");
         ArrayList<PriceListModel> priceListModels = new ArrayList<>();
-
+        //Log.w(TAG, "Počet ceníků?: " + cursor.getCount()+"\n"+selection+"\n"+ Arrays.toString(argsSelection));
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
             PriceListModel priceListModel = new PriceListModel(cursor.getLong(0), cursor.getString(1), //id,rada
@@ -366,6 +397,24 @@ public class DataPriceListSource {
         }
         cursor.close();
         return priceListModels;
+    }
+
+
+    /**
+     * Načte seznam ceníků s počátečním datem platnosti od 1.1.2024 do maximálně platným datem do 30.6.2024
+     * a zároveň, které končí mezi 1.7.2024 až 31.12.2024.
+     *
+     * @return ArrayList<PriceListModel> seznam ceníků v zadaném datumovém rozsahu
+     */
+    public ArrayList<PriceListModel> readPriceListInDateRange() {
+        String selection = "platnost_od >= ? AND platnost_od <= ? AND platnost_do >= ? AND platnost_do <= ?";
+        String[] argsSelection = new String[]{
+                String.valueOf(ViewHelper.parseCalendarFromString("01.01.2024").getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString("30.06.2024").getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString("31.12.2024").getTimeInMillis())
+        };
+        return readPriceList(selection, argsSelection);
     }
 
 
@@ -432,6 +481,5 @@ public class DataPriceListSource {
         cursor.close();
         return itemsCount;
     }
-
 
 }
