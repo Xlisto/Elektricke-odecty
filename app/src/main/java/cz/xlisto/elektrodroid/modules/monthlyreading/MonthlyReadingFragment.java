@@ -218,6 +218,7 @@ public class MonthlyReadingFragment extends Fragment {
                         SaveDataToBackupFile.saveToZip(requireActivity(), null);
                         //aktualizace měsíčních odečtů
                         MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList());
+                        loadDataFromDatabase();
                     }
                 });
     }
