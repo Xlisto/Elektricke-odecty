@@ -171,9 +171,9 @@ public class PriceListModel implements Serializable {
         if (this.produkt.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
 
-        return "id: " + getId() + ", " + getProdukt() + ", " + getSazba()
-                + ",\nPlatný od: " + convertLongToDate(getPlatnostOD() + 1)
-                + " do: " + convertLongToDate(getPlatnostDO()) + "\n";
+        return getProdukt() + ", " + getSazba()
+                + ",\nPlatný: \n" + convertLongToDate(getPlatnostOD() + 1)
+                + " - " + convertLongToDate(getPlatnostDO());
     }
 
 
