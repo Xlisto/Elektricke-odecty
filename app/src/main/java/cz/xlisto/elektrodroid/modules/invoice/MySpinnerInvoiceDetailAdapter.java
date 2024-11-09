@@ -5,8 +5,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,6 +29,14 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     private final DatesInvoiceContainer datesInvoice;
 
 
+    /**
+     * Konstruktor pro vytvoření instance MySpinnerInvoiceDetailAdapter.
+     *
+     * @param context      Kontext aplikace.
+     * @param resource     ID rozložení pro jednotlivé položky.
+     * @param objects      Pole názvů detailů faktury.
+     * @param datesInvoice Kontejner pro minimální a maximální datum faktury.
+     */
     public MySpinnerInvoiceDetailAdapter(@NonNull Context context, int resource, SummaryInvoiceModel.Title[] objects, DatesInvoiceContainer datesInvoice) {
         super(context, resource, objects);
         this.titles = objects;
@@ -36,6 +44,14 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     }
 
 
+    /**
+     * Vrací vlastní zobrazení pro zadanou pozici ve spinneru.
+     *
+     * @param position    Pozice položky ve spinneru.
+     * @param convertView Recyklovaný pohled.
+     * @param parent      Rodičovská ViewGroup.
+     * @return Vlastní zobrazení pro zadanou pozici.
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -43,17 +59,31 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     }
 
 
+    /**
+     * Vrací vlastní zobrazení pro zadanou pozici v rozbalovacím seznamu spinneru.
+     *
+     * @param position    Pozice položky v rozbalovacím seznamu.
+     * @param convertView Recyklovaný pohled.
+     * @param parent      Rodičovská ViewGroup.
+     * @return Vlastní zobrazení pro zadanou pozici.
+     */
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         return getCustomView(position, parent);
     }
 
 
+    /**
+     * Vrací vlastní zobrazení pro zadanou pozici.
+     *
+     * @param position Pozice položky.
+     * @param parent   Rodičovská ViewGroup.
+     * @return Vlastní zobrazení pro zadanou pozici.
+     */
     private View getCustomView(int position, @NonNull ViewGroup parent) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.spinner_invoice_detail, parent, false);
         TextView tvNumberInvoice = view.findViewById(R.id.tvInvoiceDetailName);
         tvNumberInvoice.setText(titles[position].toString());
-        Spinner spinner = (Spinner) parent;
 
         //skrytí položek NT
         if (hideNt) {
@@ -62,11 +92,12 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
                 tv.setVisibility(View.GONE);
                 tv.setHeight(0);
                 view = tv;
-                if(position == 1) {
-                    spinner.setSelection(0);
+                if (position == 1) {
+                    setAdapterViewSelection(parent, 0);
                 } else {
-                    spinner.setSelection(4);
+                    setAdapterViewSelection(parent, 4);
                 }
+
             }
         }
 
@@ -77,7 +108,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
                 tv.setVisibility(View.GONE);
                 tv.setHeight(0);
                 view = tv;
-                spinner.setSelection(8);
+                setAdapterViewSelection(parent, 8);
             }
         }
 
@@ -88,7 +119,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
                 tv.setVisibility(View.GONE);
                 tv.setHeight(0);
                 view = tv;
-                spinner.setSelection(9);
+                setAdapterViewSelection(parent, 9);
             }
         }
 
@@ -96,6 +127,26 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     }
 
 
+    /**
+     * Nastaví výběr AdapterView na zadanou pozici.
+     *
+     * @param parent   Rodičovská ViewGroup, která by měla být instancí AdapterView.
+     * @param position Pozice, na kterou se má výběr nastavit.
+     */
+    private void setAdapterViewSelection(ViewGroup parent, int position) {
+        if (parent instanceof AdapterView) {
+            AdapterView<?> adapterView = (AdapterView<?>) parent;
+            adapterView.setSelection(position);
+        }
+    }
+
+
+    /**
+     * Vrací položku na zadané pozici.
+     *
+     * @param position Pozice položky.
+     * @return Položka na zadané pozici.
+     */
     @Nullable
     @Override
     public SummaryInvoiceModel.Title getItem(int position) {
@@ -103,6 +154,11 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     }
 
 
+    /**
+     * Nastaví, zda se mají skrýt položky NT.
+     *
+     * @param hideNt True, pokud se mají skrýt položky NT, jinak false.
+     */
     public void setHideNt(boolean hideNt) {
         this.hideNt = hideNt;
     }
