@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
@@ -176,12 +177,20 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         if (cbAddPayment.isChecked()) {
             String date = etDatePayment.getText().toString();
             shPAddEditMonthlyReading.set(ARG_DATE_PAYMENT, date);
+
             if (date.isEmpty()) {
                 tvResultDate.setText("");
                 return;
             }
+
             Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date));
+            try {
+                int dayOfMonth = Integer.parseInt(date);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            } catch (Exception e) {
+                Logger.getLogger(TAG).warning("Nepodařilo se převést datum platby na číslo.");
+            }
+
             String sb = getResources().getString(R.string.result_date) +
                     ViewHelper.getSimpleDateFormat().format(calendar.getTime());
             tvResultDate.setText(sb);
