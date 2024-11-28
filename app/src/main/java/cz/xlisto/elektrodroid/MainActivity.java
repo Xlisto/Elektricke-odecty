@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
+import cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment;
 import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
 import cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
@@ -287,6 +288,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.export_price_list));
                 b = true;
             }
+            if (itemId == R.id.menu_about_me) {
+                uncheckedBottomNavigation();
+                actualFragment = AboutMeFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.about_me));
+                b = true;
+            }
             if (actualFragment != null)
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
             drawer.closeDrawer(GravityCompat.START, true);
@@ -405,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
                 "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
                 "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
-                "SubscriptionPointFragment", "GraphColorFragment");
+                "SubscriptionPointFragment", "GraphColorFragment", "AboutMeFragment");
         //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
         for (String tag : visibleFragmentsTags) {

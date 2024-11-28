@@ -1,0 +1,34 @@
+[
+  {
+    "version": 141,
+    "date": "30.11.2024",
+    "changes": [
+      "<b>Nová funkce:</b><br>Zavedení nové položky v regulované části ceníku: <b>\"Provoz nesíťové infrastruktury\"</b>",
+      "<b>Nová funkce:</b><br>Automatická úprava ceníků platných v roce 2024. U stávajících ceníků je zkrácena platnost do 30.6.2024. Současně je vytvořen nový ceník s platností od 1.7.2024 a je přiřazen k měsíčním odečtům zapsaných po 1.7.2024.",
+      "<b>Nová funkce:</b><br>Zavedení informační části \"O aplikaci\".",
+      "<b>Oprava chyby:</b><br>Pád aplikace při vkládání měsíčního odečtu, pokud datum zálohové platby nebylo uvedeno v očekávaném formátu."
+    ]
+  },
+  {
+    "version": 140,
+    "date": "22.8.2024",
+    "changes": [
+      "<b>Oprava chyby:</b><br>Náhodný pád aplikace při mazání měsíčních odečtů."
+    ]
+  },
+  {
+    "version": 139,
+    "date": "11.7.2024",
+    "changes": [
+      "<b>Oprava chyby:</b><br>Pád alikace při importu ceníků, pokud nebylo uděleno oprávnění zápisu do složky.",
+      "<b>Oprava chyby:</b><br>Pád aplikace při výběru sazeb ceníků při importu ceníků."
+    ]
+  },
+  {
+    "version": 136,
+    "date": "21.6.2024",
+    "changes": [
+      "<b>Oprava chyby:</b><br>Nefunkční načítání HDO tarifů u EGD."
+    ]
+  }
+]

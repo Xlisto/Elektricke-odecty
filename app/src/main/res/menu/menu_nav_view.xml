@@ -68,6 +68,10 @@
             android:id="@+id/menu_export_price_list"
             android:title="@string/export_price_list"
             app:showAsAction="ifRoom" />
+        <item
+            android:id="@+id/menu_about_me"
+            android:title="@string/about_me"
+            app:showAsAction="ifRoom" />
 
     </group>
 </menu>

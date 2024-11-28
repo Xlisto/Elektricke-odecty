@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".modules.aboutme.AboutMeFragment">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tvLinkPrivatePolicy"
+        android:padding="5dp"
+        app:layoutManager="LinearLayoutManager" />
+
+    <TextView
+        android:id="@+id/tvLinkPrivatePolicy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:text="@string/link_private_policy"
+        android:textColor="#2196F3"/>
+
+</RelativeLayout>

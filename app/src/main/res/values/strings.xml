@@ -253,6 +253,7 @@
     <string name="graph_color">Barva tarifu</string>
     <string name="import_price_list">Import ceníků</string>
     <string name="export_price_list">Export ceníků</string>
+    <string name="about_me">O aplikaci</string>
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
     <string name="watch_low_tarif">Sledování nízkého tarifu</string>
@@ -538,5 +539,9 @@
 
     <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
     <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
+
+    <string name="version">Vydání: %1$d</string>
+    <string name="invalid_date">Použijte platné číslo</string>
+    <string name="link_private_policy"><u>Odkaz na Zásady ochrany soukromí</u></string>
 
 </resources>
