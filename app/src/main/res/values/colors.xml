@@ -43,6 +43,8 @@
     <color name="nav_menu_item_color_checked">#E3CEFE</color> <!-- Item checked text color -->
     <color name="nav_menu_item_color_pressed">#D5CCE1</color> <!-- Item presed background color -->
 
+    <color name="text_link">#012587</color>
+
 
 
 </resources>
