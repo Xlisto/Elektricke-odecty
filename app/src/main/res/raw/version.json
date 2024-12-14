@@ -1,5 +1,12 @@
 [
   {
+    "version": 142,
+    "date": "15.12.2024",
+    "changes": [
+      "<b>Nová data:</b><br>Doplněny regulované ceny pro rok 2025."
+      ]
+  },
+  {
     "version": 141,
     "date": "30.11.2024",
     "changes": [
@@ -20,7 +27,7 @@
     "version": 139,
     "date": "11.7.2024",
     "changes": [
-      "<b>Oprava chyby:</b><br>Pád alikace při importu ceníků, pokud nebylo uděleno oprávnění zápisu do složky.",
+      "<b>Oprava chyby:</b><br>Pád aplikace při importu ceníků, pokud nebylo uděleno oprávnění zápisu do složky.",
       "<b>Oprava chyby:</b><br>Pád aplikace při výběru sazeb ceníků při importu ceníků."
     ]
   },
