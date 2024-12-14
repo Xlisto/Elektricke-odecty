@@ -64,8 +64,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     String numberInvoice, table;
     CheckBox chIsChangedElectricMeter;
-    String oldDateStart = "1.1.2024";
-    String oldDateEnd = "31.12.2024";
+    String oldDateStart = "1.1.2025";
+    String oldDateEnd = "31.12.2025";
     String tableO, tableFAK, tableTED;
     boolean autogenerate;
     boolean isShowFragment;
