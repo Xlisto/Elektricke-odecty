@@ -2,6 +2,7 @@ package cz.xlisto.elektrodroid.modules.monthlyreading;
 
 
 import static androidx.annotation.Dimension.DP;
+import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -26,7 +27,6 @@ import java.util.Calendar;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
-import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
@@ -43,6 +43,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 17.03.2024 18:34
  */
 public class MonthlyReadingDetailFragment extends Fragment {
+
     public static final String TAG = "MonthlyReadingDetailFragment";
     private static final String ARG_ID_CURRENT = "id_current";
     private static final String ARG_ID_PREVIOUS = "id_previous";
@@ -54,6 +55,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
     private MonthlyReadingDetailViewModel viewModel;
     private TextView tvDate;
     private TextView tvDateScope;
+    private TextView tvNT;
+    private TextView tvNTDash;
     private TextView tvVTMetersStart;
     private TextView tvNTMetersStart;
     private TextView tvVTMetersEnd;
@@ -64,7 +67,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
     private RelativeLayout rlConsuption, rlPrice;
     private int screenWidth = 0;
     private final TextView[][] tvsConsuption = new TextView[2][5];
-    private TextView[][] tvsVt = new TextView[14][3];
+    private TextView[][] tvsVt = new TextView[15][3];
     private String[] tableVt;
     private double[] priceArray;
     private boolean showRegulPrice;
@@ -72,6 +75,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
     private double consuptionVt;
     private double consuptionNt;
     private int marginInPx;
+    private boolean showedNt = true;
 
 
     public static MonthlyReadingDetailFragment newInstance(long idCurrent, long idPrevious, boolean showRegulPrice) {
@@ -109,6 +113,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
         }
 
         tableVt = new String[]{
+                getResources().getString(R.string.polozka),
                 getResources().getString(R.string.neregul_vt),
                 getResources().getString(R.string.regul_vt),
                 getResources().getString(R.string.dan_z_elektriny),
@@ -121,7 +126,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 getResources().getString(R.string.celkem_nt),
                 getResources().getString(R.string.mesicni_platy),
                 getResources().getString(R.string.mesicni_plat_za_jistic),
-                getResources().getString(R.string.cinnost_operatora_trhu),
+                getResources().getString(R.string.provoz_nesitove_infrastruktury),
                 getResources().getString(R.string.celkem),
                 getResources().getString(R.string.poze_dle_spotreby)
 
@@ -144,11 +149,11 @@ public class MonthlyReadingDetailFragment extends Fragment {
         tvDate = view.findViewById(R.id.tvDateMonthDetail);
         tvDateScope = view.findViewById(R.id.tvDateScopeMonthDetail);
         TextView tvVT = view.findViewById(R.id.tvVTMonthDetail);
-        TextView tvNT = view.findViewById(R.id.tvNTMonthDetail);
+        tvNT = view.findViewById(R.id.tvNTMonthDetail);
         tvVTMetersStart = view.findViewById(R.id.tvVTMetersStartMonthDetail);
         tvNTMetersStart = view.findViewById(R.id.tvNTMetersStartMonthDetail);
         TextView tvVTDash = view.findViewById(R.id.tvVTMetersDashMonthDetail);
-        TextView tvNTDash = view.findViewById(R.id.tvNTMetersDashMonthDetail);
+        tvNTDash = view.findViewById(R.id.tvNTMetersDashMonthDetail);
         tvVTMetersEnd = view.findViewById(R.id.tvVTMetersEndMonthDetail);
         tvNTMetersEnd = view.findViewById(R.id.tvNTMetersEndMonthDetail);
         tvVTConsuption = view.findViewById(R.id.tvVTConsuptionMonthDetail);
@@ -194,14 +199,27 @@ public class MonthlyReadingDetailFragment extends Fragment {
         String dateTo = ViewHelper.convertLongToDate(calendar.getTimeInMillis());
         month = Calculation.differentMonth(monthlyReadingPrevious.getDate(), monthlyReadingCurrently.getDate(), DifferenceDate.TypeDate.MONTH);
 
+        //nastavení pro zobrazení staršího popisu "Činnost operátora trhu"
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2024);
+        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.DAY_OF_MONTH, 30);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (calendar.getTimeInMillis() > (monthlyReadingCurrently.getDate())) {
+            tableVt[13] = getResources().getString(R.string.cinnost_operatora_trhu);
+        }
 
         tvDate.setText(String.valueOf(ViewHelper.convertLongToDate(monthlyReadingCurrently.getDate())));
         tvDateScope.setText(String.format(getResources().getString(R.string.string_dash_string) + " (" + month + ")", dateFrom, dateTo));
 
-        tvVTMetersStart.setText(DecimalFormatHelper.df2.format(monthlyReadingPrevious.getVt()));
-        tvNTMetersStart.setText(DecimalFormatHelper.df2.format(monthlyReadingPrevious.getNt()));
+        tvVTMetersStart.setText(df2.format(monthlyReadingPrevious.getVt()));
+        tvNTMetersStart.setText(df2.format(monthlyReadingPrevious.getNt()));
 
-        tvVTMetersEnd.setText(DecimalFormatHelper.df2.format(monthlyReadingCurrently.getVt()));
+        tvVTMetersEnd.setText(df2.format(monthlyReadingCurrently.getVt()));
         tvVTMetersEnd.setText(String.format(getResources().getString(R.string.consuption2), monthlyReadingCurrently.getVt()));
         tvNTMetersEnd.setText(String.format(getResources().getString(R.string.consuption2), monthlyReadingCurrently.getNt()));
 
@@ -212,6 +230,23 @@ public class MonthlyReadingDetailFragment extends Fragment {
         tvNTConsuption.setText(String.format(getResources().getString(R.string.consuption2), consuptionNt));
 
         marginInPx = DensityUtils.dpToPx(requireContext(), 5);
+
+        //skrytí NT sazeb, pokud není použita
+        if (monthlyReadingPrevious.getNt() == 0 && monthlyReadingCurrently.getNt() == 0) {
+            tvNTMetersStart.setVisibility(View.GONE);
+            tvNTMetersEnd.setVisibility(View.GONE);
+            tvNTConsuption.setVisibility(View.GONE);
+            tvNT.setVisibility(View.GONE);
+            tvNTDash.setVisibility(View.GONE);
+            showedNt = false;
+        } else {
+            tvNTMetersStart.setVisibility(View.VISIBLE);
+            tvNTMetersEnd.setVisibility(View.VISIBLE);
+            tvNTConsuption.setVisibility(View.VISIBLE);
+            tvNT.setVisibility(View.VISIBLE);
+            tvNTDash.setVisibility(View.VISIBLE);
+            showedNt = true;
+        }
 
         if (tlVt.getChildCount() == 0)
             tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
@@ -278,7 +313,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
             //nastavení velikosti
             for (TextView[] tvs : textViews) {
                 for (TextView tv : tvs) {
-                    tv.setTextSize(DP, textSize);
+                    if (tv != null)//nutné při skrytí NT sazeb
+                        tv.setTextSize(DP, textSize);
                 }
             }
 
@@ -299,6 +335,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 for (int j = 0; j < textViews.length; j++) {
                     TextView[] tvs = textViews[j];
                     StringBuilder text = new StringBuilder();
+                    if (tvs[i] == null) //nutné při skrytí NT sazeb
+                        continue;
                     text.append(tvs[i].getText().toString());
                     TableRow.LayoutParams layoutParamsTableRow = (TableRow.LayoutParams) tvs[i].getLayoutParams();
                     int marginStart = layoutParamsTableRow.getMarginStart();
@@ -334,15 +372,20 @@ public class MonthlyReadingDetailFragment extends Fragment {
         TextView[][] tvs = new TextView[tableString.length][3];
         int multiplier = 1000;
         for (int i = 0; i < tableString.length; i++) {
+            //přeskočení řádků, které se nezobrazují nízský tarif, pokud není žádná spotřeba a stav je 0
+            if (!showedNt && i >= 6 && i <= 10) {
+                continue;
+            }
+
             double consuption = 0;
-            if (i <= 4)
+            if (i <= 5)
                 consuption = consuptionVt;
-            else if (i <= 9)
+            else if (i <= 10)
                 consuption = consuptionNt;
-            else if (i <= 13) {
+            else if (i <= 14) {
                 consuption = month;
                 multiplier = 1;
-            } else if (i == 14) {
+            } else if (i == 15) {
                 consuption = consuptionVt + consuptionNt;
                 multiplier = 1000;
             }
@@ -359,16 +402,28 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 layoutParams.setMargins(marginInPx, 0, marginInPx, 0); // Nastavení marginů: start, top, end, bottom
                 tv.setLayoutParams(layoutParams);
                 tv.setId(View.generateViewId());
-                if (j == 0)
-                    tv.setText(tableString[i]);
-                else if (j == 1) {
-                    tv.setText(DecimalFormatHelper.df2.format(price[i]));
-                    tv.setGravity(Gravity.END); // Přidání gravity na konec
-                } else {
-                    tv.setText(String.format(getResources().getString(R.string.string_price), DecimalFormatHelper.df2.format(price[i] * consuption / multiplier)));
-                    tv.setGravity(Gravity.END); // Přidání gravity na konec
+                if (i == 0) {//hlavička tabulky
+                    tv.setGravity(Gravity.CENTER);
+                    if (j == 0)
+                        tv.setText(tableString[i]);
+                    else if (j == 1)
+                        tv.setText(getString(R.string.jed_cena));
+                    else tv.setText(getString(R.string.celkem));
+                } else {//těloo tabulky
+                    if (j == 0)
+                        tv.setText(tableString[i]);
+                    else if (j == 1) {
+                        String unit = getResources().getString(R.string.mwh);
+                        if (i == 11 || i == 12 || i == 13 || i == 14)
+                            unit = getResources().getString(R.string.mes);
+                        tv.setText(getResources().getString(R.string.formatted_price, df2.format(price[i - 1]), unit));
+                        tv.setGravity(Gravity.END); // Přidání gravity na konec
+                    } else {
+                        tv.setText(String.format(getResources().getString(R.string.string_price), df2.format(price[i - 1] * consuption / multiplier)));
+                        tv.setGravity(Gravity.END); // Přidání gravity na konec
+                    }
                 }
-                if (i == 4 || i == 9 || i == 13 || i == 14)
+                if (i == 0 || i == 5 || i == 10 || i == 14 || i == 15)
                     tv.setTypeface(Typeface.DEFAULT_BOLD);
                 row.addView(tv);
                 tvs[i][j] = tv;
@@ -376,7 +431,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
             tl.addView(row);
 
             // Přidání mezery po specifických řádcích
-            if (i == 4 || i == 9 || i == 13) {
+            if (i == 5 || i == 10 || i == 14) {
                 TableRow spaceRow = new TableRow(requireContext());
                 TableRow.LayoutParams spaceLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, DensityUtils.dpToPx(requireContext(), 800)); // Převod DP na PX pro výšku
                 spaceRow.setLayoutParams(spaceLayoutParams);
