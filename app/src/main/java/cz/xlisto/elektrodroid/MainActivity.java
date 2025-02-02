@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         myNavigationView = findViewById(R.id.navigationView);
         NavigationView navigationView = findViewById(R.id.nav_view);
         shPMainActivity = new ShPMainActivity(getApplicationContext());
+
         //Horní toolbar + zobrazení tlačítka
         Toolbar toolbar = findViewById(R.id.toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return itemId == R.id.meni_nothing;
         });
 
-        //levý drawer
+        //levá lišta
         myNavigationView.setNavigationItemSelectedListener(item -> {
             uncheckAllMenuItems(myNavigationView.getMenu());
             item.setChecked(true);
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return itemId == R.id.meni_nothing;
         });
 
-        //levý drawer
+        //navigační menu
         navigationView.setNavigationItemSelectedListener(item -> {
             boolean b = false;
             long itemId = item.getItemId();
@@ -304,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             //nastavení fragmentu při kliknutí z notifikace
             if ((Objects.requireNonNull(intent.getStringExtra(HdoNotice.ARGS_FRAGMENT))).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
                 getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
+                navigationView.setCheckedItem(R.id.menu_hdo);
+                uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
                 FragmentChange.replace(this, actualFragment, ALPHA);
                 return;
@@ -323,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             FragmentChange.replace(this, actualFragment, ALPHA);
         }
         startHdoService();
-        setVisibilityNavigation();
 
         /*
          * Akce kliknutí na tlačítko zpět
@@ -354,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         });
         setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
         setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
+
         //při rotaci se skryje detail měsíčního odečtu a zobrazí se seznam
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("MonthlyReadingDetailFragment");
         if (fragment != null && DetectScreenMode.isLandscape(getApplicationContext())) {
@@ -363,7 +366,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         //posluchač na zavření dialogového okna s nastavením
         getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
                 (requestKey, result) -> setVisibilityNavigation());
+    }
 
+
+    protected void onResume() {
+        super.onResume();
+        //nastavení viditelnosti levé a spodní lišty podle orientace obrazovky
+        setVisibilityNavigation();
     }
 
 
@@ -372,10 +381,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onSaveInstanceState(outState);
         outState.putInt(ACTUAL_SELECTED_ITEM_INDEX, selectedItemIndex);
 
-        //Save the fragment's instance
+        //uložení instance aktuálního fragmentu
         if (actualFragment != null && actualFragment.isAdded() && !actualFragment.isDetached())
             getSupportFragmentManager().putFragment(outState, ACTUAL_FRAGMENT, actualFragment);
-
     }
 
 
