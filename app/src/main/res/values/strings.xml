@@ -548,4 +548,21 @@
     <string name="invalid_date">Použijte platné číslo</string>
     <string name="link_private_policy"><u>Odkaz na Zásady ochrany soukromí</u></string>
 
+    <string name="create_new_folder">Vytvořit novou složku</string>
+    <string name="delete_folder">Smazat složku</string>
+    <string name="delete_backup">Smazat zálohu</string>
+    <string name="rename_folder">Přejmenovat složku</string>
+    <string name="rename">Přejmenovat</string>
+    <string name="recover_backup">Obnovit zálohu</string>
+    <string name="no_signs">Nepřihlášen</string>
+    <string name="internet_is_not_available">Internetové připojení není dostupné</string>
+
+    <string name="formatted_price">%1$s %2$s</string>
+    <string name="kwh_vt">1 kwh VT:</string>
+    <string name="kwh_nt">1 kwh NT:</string>
+    <string name="month">Měsíc:</string>
+    <string name="confirm_delete_pricelist">Chcete smazat ceník?</string>
+    <string name="deleting_pricelist">Smazání ceníku</string>
+    <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je použit v těchto záznamech:\n\nObdobí bez faktury: %dx\n\nVe fakturách: %dx\n\nV měsíčních odečtech: %dx</string>
+
 </resources>

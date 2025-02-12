@@ -7,10 +7,12 @@ import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -38,6 +40,7 @@ import cz.xlisto.elektrodroid.utils.Round;
 
 
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
+
     public static final String TAG = "PriceListAdapter";
     public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
@@ -55,12 +58,15 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
+
         RelativeLayout relativeLayout;
         TextView tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
                 tvNote, tvPriceVTRegul, tvPriceNTRegul, tvPriceMonthRegul;
         RadioButton rbSelectItem;
-        LinearLayout lnRegulPrice, lnButtons;
+        LinearLayout lnButtons;
+        GridLayout gridLayout;
         Button btnEdit, btnDelete, btnDetail;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -104,11 +110,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         vh.tvPriceNTRegul = v.findViewById(R.id.tvCenaNTRegul);
         vh.tvPriceMonthRegul = v.findViewById(R.id.tvCenaMesicRegul);
         vh.tvNote = v.findViewById(R.id.tvPoznamkaItemPriceList);
-        vh.lnRegulPrice = v.findViewById(R.id.ln_item_price_list_regul);
         vh.lnButtons = v.findViewById(R.id.lnButtonsPriceListItem);
         vh.btnEdit = v.findViewById(R.id.btnEditPriceListItem);
         vh.btnDelete = v.findViewById(R.id.btnDeletePriceListItem);
         vh.btnDetail = v.findViewById(R.id.btnDetailPriceListItem);
+        vh.gridLayout = v.findViewById(R.id.grid_item_price_list);
 
         return vh;
     }
@@ -122,18 +128,18 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1);
 
         double[] ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint);
-        String cenaVT = "1kWh VT: " + (df2.format(Round.round(ceny[0]))) + " Kč";
-        String cenaNT = "NT: " + (df2.format(Round.round(ceny[1]))) + " Kč";
-        String cenaMesic = "Měsíc: " + (df2.format(Round.round(ceny[2]))) + " Kč s DPH";
+        String cenaVT = (df2.format(Round.round(ceny[0]))) + " Kč";
+        String cenaNT = (df2.format(Round.round(ceny[1]))) + " Kč";
+        String cenaMesic = (df2.format(Round.round(ceny[2]))) + " Kč s DPH";
 
         int year = ViewHelper.yearIntOfLong(priceList.getPlatnostOD());
         PriceListRegulBuilder priceListBuilder = new PriceListRegulBuilder(priceList, year);
         PriceListModel priceListRegul = priceListBuilder.getRegulPriceList();
         double[] cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint);
 
-        String cenaVTRegul = "1kWh VT: " + (df2.format(Round.round(cenyRegul[0]))) + " Kč";
-        String cenaNTRegul = "NT: " + (df2.format(Round.round(cenyRegul[1]))) + " Kč";
-        String cenaMesicRegul = "Měsíc: " + (df2.format(Round.round(cenyRegul[2]))) + " Kč s DPH";
+        String cenaVTRegul = (df2.format(Round.round(cenyRegul[0]))) + " Kč";
+        String cenaNTRegul = (df2.format(Round.round(cenyRegul[1]))) + " Kč";
+        String cenaMesicRegul = (df2.format(Round.round(cenyRegul[2]))) + " Kč s DPH";
 
         if (showSelectItem) {
             //zobrazený radiobutton pro výběr
@@ -142,7 +148,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             holder.relativeLayout.setOnClickListener(v -> {
                 selectedItem = (int) v.getTag();
                 idSelectedPriceList = priceList.getId();
-                notifyDataSetChanged();
+                notifyItemRangeChanged(0, getItemCount());
                 onClickItemListener.setClickPriceListListener(priceList);
             });
             holder.rbSelectItem.setChecked(selectedItem == position);
@@ -196,7 +202,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
                 selectedItemId = priceList.getId();
                 selectedPosition = position;
                 YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                        "Chcete smazat ceník ?", FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST,
+                        context.getString(R.string.confirm_delete_pricelist), FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST,
                         priceList.getRada() + " "
                                 + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
                                 + ViewHelper.convertLongToDate(priceList.getPlatnostOD()) + " - "
@@ -208,8 +214,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             showButtons(holder, position);
         }
 
-        String distUzemi = context.getResources().getString(R.string.dist_uzemi,priceList.getFirma(), priceList.getDistribuce());
-        holder.tvValidityDate.setText(context.getResources().getString(R.string.validity_price_list_date, ViewHelper.convertLongToDate(priceList.getPlatnostOD()),ViewHelper.convertLongToDate(priceList.getPlatnostDO())));
+        String distUzemi = context.getResources().getString(R.string.dist_uzemi, priceList.getFirma(), priceList.getDistribuce());
+        holder.tvValidityDate.setText(context.getResources().getString(R.string.validity_price_list_date, ViewHelper.convertLongToDate(priceList.getPlatnostOD()), ViewHelper.convertLongToDate(priceList.getPlatnostDO())));
         holder.tvSeries.setText(priceList.getRada());
         holder.tvProduct.setText(priceList.getProdukt());
         holder.tvRate.setText(priceList.getSazba());
@@ -224,27 +230,21 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             holder.tvPriceMonthRegul.setText(cenaMesicRegul);
         }
 
-
         //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
         if (priceListBuilder.isRegulPrice()) {
             //ceník obsahuje regulovanou cenu
             holder.tvNote.setText(priceListBuilder.getNotes(context));
             holder.tvNote.setVisibility(View.VISIBLE);
-            holder.lnRegulPrice.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvNote.setVisibility(View.GONE);
-            holder.lnRegulPrice.setVisibility(View.GONE);
-        }
-
-
-        if (priceList.getCenaNT() == 0) {
-            //jednotarifní sazby
-            holder.tvPriceNT.setVisibility(View.GONE);
-            holder.tvPriceNTRegul.setVisibility(View.GONE);
-        } else {
-            //dvoutarifní sazby
-            holder.tvPriceNT.setVisibility(View.VISIBLE);
+            holder.tvPriceVTRegul.setVisibility(View.VISIBLE);
             holder.tvPriceNTRegul.setVisibility(View.VISIBLE);
+            holder.tvPriceMonthRegul.setVisibility(View.VISIBLE);
+            showNTPrice(priceList, holder);
+        } else {
+            showNTPrice(priceList, holder);
+            holder.tvNote.setVisibility(View.GONE);
+            holder.tvPriceVTRegul.setVisibility(View.GONE);
+            holder.tvPriceNTRegul.setVisibility(View.GONE);
+            holder.tvPriceMonthRegul.setVisibility(View.GONE);
         }
 
         holder.lnButtons.setOnClickListener(v -> {
@@ -270,7 +270,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         try {
             itemId = items.get(position).getId();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "getItemId: " + e.getMessage());
         }
 
         return itemId;
@@ -279,7 +279,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
     /**
      * Zobrazí tlačítka pro editaci a smazání ceníku
-     * @param holder MyViewHolder
+     *
+     * @param holder   MyViewHolder
      * @param position int pozice položky ceníku
      */
     private void showButtons(MyViewHolder holder, int position) {
@@ -376,11 +377,30 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      */
     private void showWarningDialog(int ted, int fak, int mon, Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-        builder.setTitle("Smazání ceníku");
-        builder.setMessage("Ceník nelze smazat, protože je použit v těchto záznamech:\n\n" +
-                "Období bez faktury " + ted + "x\n\nVe fakturách, " + fak + "x\n\nV měsíčních odečtech: " + mon + "x");
-        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setTitle(context.getString(R.string.deleting_pricelist));
+        builder.setIcon(R.drawable.ic_warning_png);
+        builder.setMessage(context.getString(R.string.cannot_deleting_pricelist_message, ted, fak, mon));
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+
+    /**
+     * Zobrazí/skryje cenu pro NT
+     *
+     * @param priceList PriceListModel obsahující ceny
+     * @param holder    MyViewHolder
+     */
+    private void showNTPrice(PriceListModel priceList, MyViewHolder holder) {
+        if (priceList.getCenaNT() == 0) {
+            //jednotarifní sazby
+            holder.tvPriceNT.setVisibility(View.GONE);
+            holder.tvPriceNTRegul.setVisibility(View.GONE);
+        } else {
+            //dvoutarifní sazby
+            holder.tvPriceNT.setVisibility(View.VISIBLE);
+            holder.tvPriceNTRegul.setVisibility(View.VISIBLE);
+        }
     }
 
 
