@@ -565,4 +565,5 @@
     <string name="deleting_pricelist">Smazání ceníku</string>
     <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je použit v těchto záznamech:\n\nObdobí bez faktury: %dx\n\nVe fakturách: %dx\n\nV měsíčních odečtech: %dx</string>
 
+    <string name="detail_invoice_description">Seznam jednotlivých položek faktury</string>
 </resources>

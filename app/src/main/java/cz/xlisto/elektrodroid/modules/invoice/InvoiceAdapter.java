@@ -402,17 +402,19 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      * @param position pozice položky
      */
     private void showButtons(MyViewHolder holder, InvoiceModel invoice, int position) {
-        TransitionManager.beginDelayedTransition(recyclerView);
-        if (showButtons == position) {
-            holder.lnButtons.setVisibility(View.VISIBLE);
-            //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktury
-            if (invoice.getIdInvoice() == -1L) {
-                holder.lnButtons2.setVisibility(View.VISIBLE);
+        recyclerView.post(() -> {
+            TransitionManager.beginDelayedTransition(recyclerView);
+            if (showButtons == position) {
+                holder.lnButtons.setVisibility(View.VISIBLE);
+                //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktury
+                if (invoice.getIdInvoice() == -1L) {
+                    holder.lnButtons2.setVisibility(View.VISIBLE);
+                }
+            } else {
+                holder.lnButtons.setVisibility(View.GONE);
+                holder.lnButtons2.setVisibility(View.GONE);
             }
-        } else {
-            holder.lnButtons.setVisibility(View.GONE);
-            holder.lnButtons2.setVisibility(View.GONE);
-        }
+        });
     }
 
 
@@ -437,11 +439,14 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      */
     public void setShowCheckBoxSelect(boolean showCheckBoxSelect) {
         this.showCheckBoxSelect = showCheckBoxSelect;
-        TransitionManager.beginDelayedTransition(recyclerView);
-        for (int i = 0; i < getItemCount(); i++) {
-            notifyItemChanged(i, "showCheckBoxSelect");
-        }
-        notifyItemRangeChanged(0, getItemCount());
+        recyclerView.post(() -> {
+            TransitionManager.beginDelayedTransition(recyclerView);
+            for (int i = 0; i < getItemCount(); i++) {
+                notifyItemChanged(i, "showCheckBoxSelect");
+            }
+            notifyItemRangeChanged(0, getItemCount());
+        });
+
     }
 
 
