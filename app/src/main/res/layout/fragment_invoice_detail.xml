@@ -10,9 +10,10 @@
         android:id="@+id/lnOutSp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/shape_monthly_reading_gray"
         android:orientation="vertical"
         android:visibility="visible">
@@ -29,10 +30,10 @@
                 android:id="@+id/spInvoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="2dp"
                 android:contentDescription="@string/invoice_list"
                 android:minHeight="48dp" />
         </LinearLayout>
@@ -45,7 +46,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/tvTotal"
         android:layout_below="@id/lnOutSp"
-        android:layout_marginTop="-3dp"
         android:contentDescription="@string/detail_invoice_description"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingStart="10dp"

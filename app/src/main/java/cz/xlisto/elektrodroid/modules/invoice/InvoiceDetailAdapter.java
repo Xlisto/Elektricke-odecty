@@ -22,9 +22,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdapter.MyViewHolder> {
     private static final String TAG = "InvoiceDetailAdapter";
     private final ArrayList<SummaryInvoiceModel> items;
-    private double totalPrice;
     private final Context context;
-    private Listener listener;
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate,tvTitle,tvAmount, tvPriceUnit,tvTotalPrice;
@@ -36,7 +34,6 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
 
     public InvoiceDetailAdapter(Context context,ArrayList<SummaryInvoiceModel> items) {
         this.items = items;
-        this.totalPrice = 0;
         this.context = context;
     }
 
@@ -61,8 +58,6 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
         holder.tvAmount.setText(context.getResources().getString(R.string.text_amount,si.getAmount(),si.getUnit()));
         holder.tvPriceUnit.setText(context.getResources().getString(R.string.text_price_unit,si.getUnitPrice(),si.getUnit()));
         holder.tvTotalPrice.setText(context.getResources().getString(R.string.float_price,si.getTotalPrice()));
-        totalPrice += si.getTotalPrice();
-        listener.getTotalPrice(totalPrice);
     }
 
     @Override
@@ -71,13 +66,4 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
             return 0;
         return items.size();
     }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    interface Listener{
-        void getTotalPrice(double totalPrice) ;
-    }
-
 }

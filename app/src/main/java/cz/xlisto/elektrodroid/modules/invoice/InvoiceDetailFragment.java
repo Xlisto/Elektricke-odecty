@@ -66,7 +66,6 @@ public class InvoiceDetailFragment extends Fragment {
     private ShPInvoiceDetail shPInvoiceDetail;
     private ArrayList<InvoiceModel> invoices;
     private final ArrayList<SummaryInvoiceModel> summaryInvoices = new ArrayList<>();
-    private final ArrayList<SummaryInvoiceModel> mergedSummaryInvoices = new ArrayList<>();
     private MySpinnerInvoiceDetailAdapter invoiceListAdapter;
     private MySpinnerInvoiceDetailAdapter.DatesInvoiceContainer datesInvoice;
 
@@ -149,7 +148,7 @@ public class InvoiceDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         rv.setAdapter(null);
-        shPInvoiceDetail = new ShPInvoiceDetail(getActivity());
+        shPInvoiceDetail = new ShPInvoiceDetail(requireActivity());
         showTypeDetailIndex = shPInvoiceDetail.get(ShPInvoiceDetail.SHOW_TYPE_DETAIL_INDEX, 0);
         loadInvoice();
         setSpinner();
@@ -208,7 +207,6 @@ public class InvoiceDetailFragment extends Fragment {
 
     private void setRecyclerView() {
         invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
-        invoiceDetailAdapter.setListener(totalPrice -> tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice))));
         rv.setAdapter(invoiceDetailAdapter);
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -340,24 +338,16 @@ public class InvoiceDetailFragment extends Fragment {
         invoiceListAdapter.setHideNt(hiddenNT);
         invoiceListAdapter.notifyDataSetChanged();
 
-        for (SummaryInvoiceModel summaryInvoice : summaryInvoices) {
-            boolean isMerged = false;
-            for (SummaryInvoiceModel mergedInvoice : mergedSummaryInvoices) {
-                if (summaryInvoice.getTitle() == mergedInvoice.getTitle() && summaryInvoice.getUnit() == mergedInvoice.getUnit() && summaryInvoice.getUnitPrice() == mergedInvoice.getUnitPrice()) {
-                    mergedInvoice.addAmount(summaryInvoice.getAmount());
-                    isMerged = true;
-                    //break;
-                }
-            }
-            if (!isMerged) {
-                mergedSummaryInvoices.add(new SummaryInvoiceModel(summaryInvoice.getDateOf(), summaryInvoice.getDateTo(),
-                        summaryInvoice.getAmount(), summaryInvoice.getUnitPrice(), summaryInvoice.getUnit(), summaryInvoice.getTitle()));
-            }
+        double totalPrice = 0;
+        for(SummaryInvoiceModel summaryInvoice : summaryInvoices){
+            totalPrice += summaryInvoice.getAmount()*summaryInvoice.getUnitPrice();
         }
+
+        tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice)));
 
         InvoiceDetailAdapter invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
         rv.setAdapter(invoiceDetailAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rv.setLayoutManager(new LinearLayoutManager(requireActivity()));
     }
 
 
