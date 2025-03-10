@@ -15,8 +15,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,8 +31,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,24 +54,28 @@ import cz.xlisto.elektrodroid.shp.ShPFilter;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 
+
 /**
- * Xlisto 06.12.2023 18:40
+ * Fragment pro importování ceníků.
+ * <p>
+ * Tento fragment poskytuje uživatelské rozhraní pro importování ceníků z vybraného adresáře.
+ * Obsahuje metody pro načítání souborů, sledování stavu načítání a správu vybraných ceníků.
  */
 public class ImportPriceListFragment extends Fragment {
+
     private static final String TAG = "ExportImportPriceListFragment";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES = "exportDialogFragment1Prices";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES = "exportDialogFragment2Prices";
-    private ShPBackup shPBackup;
     private RecyclerView recyclerView;
     private LinearLayout lnProgressBar;
+    private ImportPriceListAdapter importExportAdapter;
+    private ImportPriceListViewModel importPriceListViewModel;
+    private Uri uri;
+    private View view;
     private Button btnSelectFolder;
     private TextView tvDescriptionPermition;
-    private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
-    private ImportPriceListAdapter importExportAdapter;
-    private static final String[] filtersFileName = {".json"};
     private static PriceListModel doublePriceList;//ceníky, který je v databázi vícekrát
     private static ArrayList<PriceListModel> singlePriceLists;//ceníky, které jsou v databázi jednou
-
 
     /**
      * Callback z výběru složky
@@ -84,26 +86,10 @@ public class ImportPriceListFragment extends Fragment {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     assert result.getData() != null;
                     Files.activityResult(result.getData(), requireActivity());
+                    loadFiles();
                 }
             }
     );
-
-    private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull android.os.Message msg) {
-            super.handleMessage(msg);
-            documentFiles.clear();
-            documentFiles = (ArrayList<DocumentFile>) msg.obj;
-            importExportAdapter = new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView);
-            recyclerView.setAdapter(importExportAdapter);
-            recyclerView.scheduleLayoutAnimation();
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-
-            showLnProgressBar(false);
-            handlerLoadFile.removeCallbacksAndMessages(null);
-            handlerLoadFile.removeMessages(22);
-        }
-    };
 
 
     public static ImportPriceListFragment newInstance() {
@@ -121,7 +107,8 @@ public class ImportPriceListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_import_price_list, container, false);
+        view =  inflater.inflate(R.layout.fragment_import_price_list, container, false);
+        return view;
     }
 
 
@@ -129,23 +116,34 @@ public class ImportPriceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
-
-        shPBackup = new ShPBackup(requireContext());
+        ShPBackup shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
         tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermition);
 
+        importPriceListViewModel = new ViewModelProvider(this).get(ImportPriceListViewModel.class);
+        importPriceListViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {
+            if (documentFiles != null) {
+                importExportAdapter = new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView);
+                recyclerView.setAdapter(importExportAdapter);
+                recyclerView.scheduleLayoutAnimation();
+                recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+            }
+        });
+        importPriceListViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        if (savedInstanceState == null) {
+            loadFiles();
+        }
+
 
         //listener dialogového okna na smazání souboru JSON zálohy
         requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE, this, (requestKey, result) -> {
-
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 importExportAdapter.deleteFile();
             }
-
         });
-
 
         //listener při seznamu vybraných ceníků k importu
         //zde je seznam zatržených ceníků připravených k importu do databáze
@@ -155,9 +153,7 @@ public class ImportPriceListFragment extends Fragment {
                 assert priceLists != null;
                 saveToDatabase(priceLists);
             }
-
         });
-
 
         //listener při potvrzení přepisu jednoho záznamu v databázi
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES, this, (requestKey, result) -> {
@@ -171,7 +167,6 @@ public class ImportPriceListFragment extends Fragment {
                 Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.rewrite_prices_list), Toast.LENGTH_SHORT).show();
             }
         });
-
 
         //listener při potvrzení existence více než dvou ceníků
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES, this,
@@ -204,27 +199,16 @@ public class ImportPriceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        boolean showLnProgressBar = true;
-        Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         if (Files.permissions(requireActivity(), uri)) {
             btnSelectFolder.setVisibility(View.GONE);
             tvDescriptionPermition.setVisibility(View.GONE);
-            new Files().loadFiles(requireActivity(), uri, filtersFileName, handlerLoadFile, resultTree, 22);
         } else {
-            showLnProgressBar = false;
-            View view = requireActivity().getCurrentFocus();
-            if (view == null) {
-                view = getView(); // Vytvoří nový View, pokud žádný není aktuálně zaostřen
-            }
+            btnSelectFolder.setVisibility(View.VISIBLE);
+            tvDescriptionPermition.setVisibility(View.VISIBLE);
             Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
                     .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
                     .show();
         }
-
-        documentFiles.clear();
-        recyclerView.setAdapter(new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        showLnProgressBar(showLnProgressBar);
     }
 
 
@@ -242,6 +226,7 @@ public class ImportPriceListFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     /**
      * Zobrazí nebo skryje LinearLayout s ProgressBar
@@ -288,27 +273,39 @@ public class ImportPriceListFragment extends Fragment {
                 priceList.setId(idPriceListInDatabase);
                 singlePriceLists.add(priceList);
                 if (i == selectedPriceLists.size() - 1) {
-                    String title = "Ceník již existuje";
-                    String message = "Ceník " + priceList.getProdukt() + ", " + priceList.getSazba() + "\nbyl nalezen.\n\nPřejete si jej přepsat?";
+                    String title = getResources().getString(R.string.price_list_exists);
+                    String message = getResources().getString(R.string.rewrite_price_list, priceList.getProdukt(), priceList.getSazba());
                     if (selectedPriceLists.size() > 1) {
-                        title = "Ceníky již existují";
-                        message = "Několik ceníků již bylo nalezeno.\nPřejete si je všechny přepsat?";
+                        title = getResources().getString(R.string.price_lists_exist);
+                        message = getResources().getString(R.string.found_price_list);
                     }
                     YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES, message);
                     yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
                 }
 
-
             } else {
                 //zobrazí upozornění, že ceník již existuje ve více verzích
                 doublePriceList = priceList;
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance("Ceník již existuje", FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES,
-                        "Ceník " + priceList.getProdukt() + ", " + priceList.getSazba() + "\nbyl nalezen ve více shodných variantách. Nepoužívanou variantu odstraňte ručně.\n\nPřepnout se do seznamu s ceníky?");
+                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.price_list_exists), FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES,
+                        getResources().getString(R.string.price_list_found_multiple_variants, priceList.getProdukt(), priceList.getSazba()));
                 yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
                 break;
             }
 
         }
+    }
+
+
+    /**
+     * Načte soubory z určeného URI, pokud jsou k dispozici potřebná oprávnění.
+     * <p>
+     * Tato metoda kontroluje, zda má aplikace oprávnění k přístupu k URI.
+     * Pokud oprávnění existují, zavolá metodu `loadFiles` ve ViewModelu `importPriceListViewModel`,
+     * která načte soubory z daného URI.
+     */
+    private void loadFiles() {
+        if (Files.permissions(requireActivity(), uri))
+            importPriceListViewModel.loadFiles(requireActivity(), uri, resultTree);
     }
 
 }

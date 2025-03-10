@@ -32,10 +32,12 @@ import cz.xlisto.elektrodroid.utils.MyToast;
 
 
 /**
- * Uloží databáze do ZIPu
- * Xlisto 06.12.2023 17:04
+ * Třída pro ukládání dat do záložního souboru.
+ * <p>
+ * Tato třída rozšiřuje třídu `RecoverData` a poskytuje metody pro ukládání databází do ZIP souboru.
  */
 public class SaveDataToBackupFile extends RecoverData {
+
     private static final String TAG = "SaveBackup";
     private static final Logger LOGGER = LoggerFactory.getLogger(SaveDataToBackupFile.class.getName());
 
@@ -66,7 +68,6 @@ public class SaveDataToBackupFile extends RecoverData {
 
         //uložení zálohovaných souborů do ZIPu
         DocumentFile f = pickedDir.createFile("plain/text", generateNameFile(date.getTime()) + " " + RecoverData.getFiltersFileName()[3]);
-
 
         String applicationId = BuildConfig.APPLICATION_ID;
         File f1 = new File(Environment.getDataDirectory(), "//data//" + applicationId + "//databases//odecty_a_mista");
@@ -105,7 +106,6 @@ public class SaveDataToBackupFile extends RecoverData {
                 zos.closeEntry();
                 zos.close();
                 Toast.makeText(context, context.getResources().getString(R.string.backup_created), Toast.LENGTH_SHORT).show();
-
 
                 //smazání dočasného souboru info.txt
                 f3.delete();
@@ -164,4 +164,5 @@ public class SaveDataToBackupFile extends RecoverData {
         calendar.setTimeInMillis(l);
         return ViewHelper.getSimpleDateTimeFormatForFiles().format(new Date(calendar.getTimeInMillis()));
     }
+
 }

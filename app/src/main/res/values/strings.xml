@@ -566,4 +566,11 @@
     <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je použit v těchto záznamech:\n\nObdobí bez faktury: %dx\n\nVe fakturách: %dx\n\nV měsíčních odečtech: %dx</string>
 
     <string name="detail_invoice_description">Seznam jednotlivých položek faktury</string>
+    <string name="price_list_exists">Ceník již existuje</string>
+    <string name="price_lists_exist">Ceníky již existují</string>
+    <string name="found_price_list">Několik ceníků již bylo nalezeno.\nPřejete si je všechny přepsat?</string>
+    <string name="rewrite_price_list">Ceník %s, %s\nbyl nalezen.\n\nPřejete si jej přepsat?</string>
+    <string name="price_list_found_multiple_variants">Ceník %1$s, %2$s\nbyl nalezen ve více shodných variantách. Nepoužívanou variantu odstraňte ručně.\n\nPřepnout se do seznamu s ceníky?</string>
+    <string name="select_backup_folder">Tlačítko pro výběr složky na zálohy</string>
+    <string name="saved">Uloženo</string>
 </resources>

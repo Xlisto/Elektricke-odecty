@@ -5,18 +5,24 @@ import static cz.xlisto.elektrodroid.permission.Permissions.REQUEST_WRITE_STORAG
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -24,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,54 +45,47 @@ import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
+import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 
 
 /**
- * Xlisto 07.03.2023 12:36
+ * Fragment pro zálohování dat.
  */
-public class BackupFragment extends Fragment {
+public class BackupFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
+
     private static final String TAG = "BackupFragment";
+    private View view;
     private Button btnBackup;
+    private Button btnSelectFolder;
+    private TextView tvDescriptionPermition;
     private RecyclerView recyclerView;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
-    private ShPBackup shPBackup;
     private LinearLayout lnProgressBar;
     private BackupAdapter backupAdapter;
-    /**
-     * Callback z výběru složky
-     */
+    private ConnectivityManager connectivityManager;
+    private NetworkCallbackImpl networkCallback;
+    private BackupViewModel backupViewModel;
+    private Uri uri;
+
+    //Callback z výběru složky
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     assert result.getData() != null;
                     Files.activityResult(result.getData(), requireActivity());
+                    loadFiles();
                 }
             }
     );
-    //handler pro načtení souborů
-    private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull android.os.Message msg) {
-            super.handleMessage(msg);
-            documentFiles.clear();
-            documentFiles = (ArrayList<DocumentFile>) msg.obj;
-            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery);
-            recyclerView.setAdapter(backupAdapter);
-            recyclerView.scheduleLayoutAnimation();
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
-            showLnProgressBar(false);
-            handlerLoadFile.removeCallbacksAndMessages(null);
-            handlerLoadFile.removeMessages(1);
-        }
-    };
-    //handler pro uložení souboru
+    //handler po uložení souboru
     private final Handler handlerSaveZip = new Handler(Looper.getMainLooper()) {
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
             documentFiles.add((DocumentFile) msg.obj);
             SortFile.quickSortDate(documentFiles);
+
             backupAdapter.moveToPosition();
             backupAdapter.notifyItemInserted(0);
             backupAdapter.notifyItemRangeChanged(0, documentFiles.size());
@@ -113,6 +113,7 @@ public class BackupFragment extends Fragment {
             btnBackup.setEnabled(true);
         }
     };
+
     //handler pro výsledek obnovení databáze
     private final Handler handlerResultRecovery = new Handler(Looper.getMainLooper()) {
         public void handleMessage(@NonNull android.os.Message msg) {
@@ -149,8 +150,8 @@ public class BackupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_backup, container, false);
+        view = inflater.inflate(R.layout.fragment_backup, container, false);
+        return view;
     }
 
 
@@ -159,28 +160,52 @@ public class BackupFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
 
-        shPBackup = new ShPBackup(requireContext());
+        ShPBackup shPBackup = new ShPBackup(requireContext());
+
         btnBackup = view.findViewById(R.id.btnZalohuj);
+        btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
         Button btnSelectDir = view.findViewById(R.id.btnVyberSlozkuBackup);
+        tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermition);
         recyclerView = view.findViewById(R.id.recyclerViewBackup);
         btnBackup.setOnClickListener(v -> saveToZip());
         btnSelectDir.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
+        btnSelectFolder.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
 
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_BACKUP, this, (requestKey, result) -> {
+        requireContext();
 
+        connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new NetworkCallbackImpl(this);
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+
+        backupViewModel = new ViewModelProvider(this).get(BackupViewModel.class);
+        backupViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {
+            this.documentFiles = documentFiles;
+            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery, null);
+            recyclerView.setAdapter(backupAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+            showLnProgressBar(false);
+        });
+        backupViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        if (savedInstanceState == null)
+            loadFiles();
+
+        //posluchač výsledku dialogového okna pro obnovení databáze
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_BACKUP, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 backupAdapter.recoverDatabaseFromZip();
             }
-
         });
-
+        //posluchač výsledku dialogového okna pro smazání záložního souboru
         requireActivity().getSupportFragmentManager().setFragmentResultListener(BackupAdapter.FLAG_DIALOG_FRAGMENT_DELETE, this, (requestKey, result) -> {
-
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                 backupAdapter.deleteFile();
             }
-
         });
     }
 
@@ -188,23 +213,30 @@ public class BackupFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Uri uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         btnBackup.setEnabled(Files.permissions(requireActivity(), uri));
         if (Files.permissions(requireActivity(), uri)) {
-            showLnProgressBar(true);
-            new Files().loadFiles(requireActivity(), uri, RecoverData.getFiltersFileName(), handlerLoadFile, resultTree, 1);
+            btnSelectFolder.setVisibility(View.GONE);
+            tvDescriptionPermition.setVisibility(View.GONE);
+
+        } else {
+            btnSelectFolder.setVisibility(View.VISIBLE);
+            tvDescriptionPermition.setVisibility(View.VISIBLE);
+            Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+                    .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
+                    .show();
         }
-
-        documentFiles.clear();
-        recyclerView.setAdapter(new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery));//nastavení prázdného adaptéru kvůli warning: No adapter attached; skipping layout
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+    }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        connectivityManager.unregisterNetworkCallback(networkCallback);
     }
 
 
     /**
-     * Uloží databáze do ZIPu a aktualizuje recyclerview
+     * Uloží databáze do ZIPu a aktualizuje RecyclerView.
      */
     private void saveToZip() {
         btnBackup.setEnabled(false);
@@ -227,7 +259,9 @@ public class BackupFragment extends Fragment {
 
 
     /**
-     * Zobrazí nebo skryje LinearLayout s ProgressBar
+     * Zobrazí nebo skryje LinearLayout s ProgressBar.
+     *
+     * @param b true pro zobrazení, false pro skrytí.
      */
     private void showLnProgressBar(boolean b) {
         if (b) {
@@ -238,4 +272,55 @@ public class BackupFragment extends Fragment {
             lnProgressBar.setVisibility(View.GONE);
         }
     }
+
+
+    /**
+     * Metoda volaná při dostupnosti sítě.
+     * Tato metoda je volána, když je detekováno, že zařízení má přístup k síti.
+     * Aktualizuje data v adapteru a informuje RecyclerView o změně rozsahu položek.
+     */
+    @Override
+    public void onNetworkAvailable() {
+        Log.w(TAG, "Network is available");
+        notifyDataChanged();
+
+    }
+
+
+    /**
+     * Metoda volaná při ztrátě sítě.
+     * Tato metoda je volána, když je detekováno, že zařízení ztratilo přístup k síti.
+     * Aktualizuje data v adapteru a informuje RecyclerView o změně rozsahu položek.
+     */
+    @Override
+    public void onNetworkLost() {
+        Log.w(TAG, "Network is lost");
+        notifyDataChanged();
+    }
+
+
+    /**
+     * Aktualizuje data v adapteru a informuje RecyclerView o změně rozsahu položek.
+     * Tato metoda by měla být volána, když se změní data, která adapter zobrazuje.
+     */
+    private void notifyDataChanged() {
+        requireActivity().runOnUiThread(() -> {
+            if (backupAdapter != null)
+                backupAdapter.notifyDataChanged();
+        });
+    }
+
+
+    /**
+     * Načte soubory z vybraného URI.
+     * <p>
+     * Tato metoda zkontroluje oprávnění k přístupu k souborům a pokud jsou oprávnění udělena,
+     * spustí načítání souborů pomocí `backupViewModel`.
+     */
+    private void loadFiles() {
+        if (Files.permissions(requireActivity(), uri)) {
+            backupViewModel.loadFiles(requireActivity(), uri, resultTree);
+        }
+    }
+
 }

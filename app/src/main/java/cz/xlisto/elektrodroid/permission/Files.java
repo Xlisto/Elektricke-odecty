@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,11 +28,14 @@ import cz.xlisto.elektrodroid.shp.ShPBackup;
 
 
 /**
- * Xlisto 06.12.2023 20:17
+ * Třída Files poskytuje metody pro práci se soubory a složkami v aplikaci.
+ * Obsahuje metody pro načítání, ukládání a kontrolu souborů, stejně jako
+ * metody pro správu oprávnění a výběr složek.
  *
  * @see <a href="https://developer.android.com/training/data-storage/shared/documents-files#grant-access-directory">Grant access to a directory</a>
- **/
+ */
 public class Files {
+
     private static final String TAG = "Files";
     public static final String DEF_URI = "content://com.android.externalstorage.documents/document/primary%3A";
     //"content://com.android.externalstorage.documents/document/primary:"
@@ -49,6 +53,7 @@ public class Files {
      * @param what            číslo zprávy
      */
     public void loadFiles(Activity activity, Uri uri, String[] filtersFileName, Handler handler, ActivityResultLauncher<Intent> resultTree, int what) {
+
         if (permissions(activity, uri)) {
             executorService.execute(() -> {
                 DocumentFile pickedDir = DocumentFile.fromTreeUri(activity, uri);
@@ -65,13 +70,13 @@ public class Files {
                                     }
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "loadFiles: " + e.getMessage());
                             }
                         }
                         SortFile.quickSortDate(documentFiles);
                     }
-                    handler.sendMessage(handler.obtainMessage(what, documentFiles));
-
+                    if (handler != null)
+                        handler.sendMessage(handler.obtainMessage(what, documentFiles));
                 }
             });
         } else {
@@ -90,7 +95,7 @@ public class Files {
      * @param nameFile název souboru
      * @return true pokud existuje
      */
-    public boolean existJSONFile(Activity activity, String nameFile,Uri uri) {
+    public boolean existJSONFile(Activity activity, String nameFile, Uri uri) {
         if (permissions(activity, uri)) {
             DocumentFile folder = DocumentFile.fromTreeUri(activity, uri);
             if (folder != null) {
@@ -110,7 +115,6 @@ public class Files {
      * @param uri      Uri složky
      */
     public void saveJSONFile(Activity activity, View view, String json, String nameFile, Uri uri, ActivityResultLauncher<Intent> resultTree) {
-
         if (permissions(activity, uri)) {
             DocumentFile folder = DocumentFile.fromTreeUri(activity, uri);
             if (folder != null) {
@@ -125,13 +129,12 @@ public class Files {
                     out.write(json.getBytes());
                     out.flush();
                     out.close();
-                    Toast.makeText(activity, "Uloženo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getString(R.string.saved), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         } else {
-
             Snackbar.make(view, activity.getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
                     .setAction(activity.getResources().getString(R.string.select), v -> openTree(true, activity, resultTree))
                     .show();
@@ -191,4 +194,5 @@ public class Files {
         activity.grantUriPermission(activity.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         activity.getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
     }
+
 }
