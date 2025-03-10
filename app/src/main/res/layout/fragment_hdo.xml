@@ -183,6 +183,7 @@
 
     <TextView
         android:id="@+id/tvAlertHdo"
-        style="@style/AlertNoSubscriptionPoint" />
+        style="@style/StyleTvAlert"
+        android:text="@string/create_place"/>
 
 </RelativeLayout>

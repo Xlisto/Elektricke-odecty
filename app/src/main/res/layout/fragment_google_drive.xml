@@ -3,12 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentStart="false"
+    android:layout_alignParentEnd="false"
+    android:padding="10dp"
     tools:context=".modules.backup.GoogleDriveFragment">
 
 
     <Button
         android:id="@+id/btnGoogleSign"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="But" />
+        android:contentDescription="@string/description_btn_sign" />
+
+    <Button
+        android:id="@+id/btnSetDefaultFolder"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btnGoogleSign"
+        android:contentDescription="@string/description_btn_sign"
+        android:text="@string/btn_set_default_folder"/>
+
+    <Button
+        android:id="@+id/btnCreateFolder"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btnSetDefaultFolder"
+        android:contentDescription="@string/description_btn_sign"
+        android:text="@string/btn_create_folder" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGoogleDriveFiles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnGoogleSign" />
+
+    <TextView
+        android:id="@+id/tvAlertNoInternet"
+        style="@style/StyleTvAlert"
+        android:layout_centerInParent="true"
+        android:text="@string/internet_is_not_available"
+        android:textAlignment="center" />
+
+    <include layout="@layout/layout_progress_bar" />
+
 </RelativeLayout>

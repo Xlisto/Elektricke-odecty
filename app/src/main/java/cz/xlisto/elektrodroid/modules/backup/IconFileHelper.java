@@ -7,7 +7,7 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Nastavení správné ikony záložního souboru a typu
+ * Třída IconFileHelper poskytuje metody pro nastavení správné ikony a typu záložního souboru.
  */
 public class IconFileHelper {
 
@@ -17,6 +17,27 @@ public class IconFileHelper {
     private static boolean zip_now = false;
 
 
+    /**
+     * Vrátí ikonu na základě názvu souboru a typu MIME.
+     *
+     * @param name     Název souboru.
+     * @param mimeType Typ MIME souboru.
+     * @return Identifikátor zdroje ikony.
+     */
+    public static int getIcon(String name, String mimeType) {
+        if (mimeType.equals("application/vnd.google-apps.folder")) {
+            return R.mipmap.google_folder;
+        } else
+            return getIcon(name);
+    }
+
+
+    /**
+     * Vrátí ikonu na základě názvu souboru.
+     *
+     * @param name Název souboru.
+     * @return Identifikátor zdroje ikony.
+     */
     public static int getIcon(String name) {
         isContains(name);
         if (cenik) {
@@ -28,11 +49,18 @@ public class IconFileHelper {
         } else if (zip_now) {
             return R.mipmap.ic_odecet_new;
         } else {
-            return R.mipmap.ic_file;
+            return R.mipmap.file;
         }
     }
 
 
+    /**
+     * Vrátí typ záložního souboru na základě názvu souboru.
+     *
+     * @param name    Název souboru.
+     * @param context Kontext aplikace pro přístup k prostředkům.
+     * @return Řetězec obsahující typ záložního souboru.
+     */
     public static String getType(String name, Context context) {
         isContains(name);
         if (cenik) {
@@ -47,6 +75,12 @@ public class IconFileHelper {
     }
 
 
+    /**
+     * Vrátí název souboru bez specifických přípon.
+     *
+     * @param name Název souboru.
+     * @return Název souboru bez přípon.
+     */
     public static String getName(String name) {
         isContains(name);
         return name.replace(".cenik", "").replace(".odecet", "").replace(" ElektroDroid.zip", "").replace("El odecet.zip", "");
@@ -54,6 +88,11 @@ public class IconFileHelper {
     }
 
 
+    /**
+     * Nastaví příznaky na základě toho, zda název souboru obsahuje specifické přípony.
+     *
+     * @param name Název souboru.
+     */
     private static void isContains(String name) {
         cenik = name.contains(".cenik");
         odecet = name.contains(".odecet");

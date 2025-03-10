@@ -1,6 +1,9 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
 
+import static androidx.credentials.GetCredentialRequest.Builder;
+
+import android.accounts.Account;
 import android.content.Context;
 import android.os.CancellationSignal;
 import android.os.Handler;
@@ -9,6 +12,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.credentials.ClearCredentialStateRequest;
+import androidx.credentials.Credential;
 import androidx.credentials.CredentialManager;
 import androidx.credentials.CredentialManagerCallback;
 import androidx.credentials.GetCredentialRequest;
@@ -49,11 +53,11 @@ public class CredentialHelper {
         credentialManager = CredentialManager.create(context);
 
         GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(true)
+                .setFilterByAuthorizedAccounts(false)
                 .setServerClientId(context.getString(R.string.default_web_client_id))
                 .build();
 
-        credentialRequest = new GetCredentialRequest.Builder()
+        credentialRequest = new Builder()
                 .addCredentialOption(googleIdOption)
                 .build();
 
@@ -88,8 +92,18 @@ public class CredentialHelper {
                             @Override
                             public void onResult(GetCredentialResponse getCredentialResponse) {
                                 if (credentialListener != null) {
-                                    new Handler(Looper.getMainLooper()).post(() ->
-                                            credentialListener.onSignInSuccess());
+                                    Credential credential = getCredentialResponse.getCredential();
+                                    //String token = credential.getData().getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN");
+                                    String accountEmail = credential.getData().getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID");
+                                    if (accountEmail != null) {
+                                        Account account = new Account(accountEmail, "com.google");
+
+                                        new Handler(Looper.getMainLooper()).post(() ->
+                                                credentialListener.onSignInSuccess(account));
+                                    }
+
+                                } else {
+                                    Log.e("TokenError", "Access token is missing");
                                 }
                             }
 
@@ -98,7 +112,6 @@ public class CredentialHelper {
                             public void onError(@NonNull GetCredentialException e) {
                                 Log.e(TAG, "onError: " + e);
                             }
-
                         }
                 );
             } catch (Exception e) {
@@ -149,10 +162,11 @@ public class CredentialHelper {
      */
     public interface CredentialListener {
 
-        void onSignInSuccess();
+        void onSignInSuccess(Account account);
 
         void onSignOutSuccess();
 
     }
 
 }
+

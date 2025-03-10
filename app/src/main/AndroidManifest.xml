@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name= "android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Permissions required by GoogleAuthUtil
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -14,9 +15,9 @@
 
     <application
         android:allowBackup="true"
+        android:backupAgent=".MyBackupAgent"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:backupAgent=".MyBackupAgent"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -24,11 +25,10 @@
         android:theme="@style/Theme.Odecty"
         tools:targetApi="34">
         <service
-            android:name= ".services.HdoService"
-            android:label="@string/hdo_service_name"
+            android:name=".services.HdoService"
+            android:enabled="true"
             android:foregroundServiceType="shortService"
-            android:enabled= "true">
-        </service>
+            android:label="@string/hdo_service_name" />
         <receiver
             android:name=".utils.BootCompleteReceiver"
             android:enabled="true"

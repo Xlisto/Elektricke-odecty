@@ -498,7 +498,7 @@ public class DataSubscriptionPointSource extends DataSource {
         values.put(ZAPLACENO, monthlyReading.getPayment());
         values.put(CENIK_ID, monthlyReading.getPriceListId());
         values.put(DATUM, monthlyReading.getDate());
-        values.put(PRVNI_ODECET, monthlyReading.isFirst());
+        values.put(PRVNI_ODECET, monthlyReading.isChangeMeter());
         values.put(GARANCE, monthlyReading.getOtherServices());
         values.put(POZNAMKA, monthlyReading.getDescription());
         return values;

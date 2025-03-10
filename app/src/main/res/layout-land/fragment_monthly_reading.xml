@@ -35,7 +35,8 @@
 
         <TextView
             android:id="@+id/tvAlertMonthlyReading"
-            style="@style/AlertNoSubscriptionPoint" />
+            style="@style/StyleTvAlert"
+            android:text="@string/create_place" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -90,7 +91,8 @@
         android:id="@+id/fragmentContainerViewDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_monthly_reading_detail" />
 
 </LinearLayout>
 

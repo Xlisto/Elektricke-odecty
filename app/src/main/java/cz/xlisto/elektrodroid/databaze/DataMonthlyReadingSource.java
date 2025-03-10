@@ -23,8 +23,9 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
 /**
- * Přístup k databázi měsíčních odečtů
- * Xlisto 01.12.2023 9:40
+ * Třída pro přístup k databázi měsíčních odečtů.
+ * <p>
+ * Tato třída rozšiřuje třídu `DataSource` a poskytuje metody pro práci s měsíčními odečty v databázi.
  */
 public class DataMonthlyReadingSource extends DataSource {
 
@@ -273,7 +274,7 @@ public class DataMonthlyReadingSource extends DataSource {
         values.put(ZAPLACENO, monthlyReading.getPayment());
         values.put(CENIK_ID, monthlyReading.getPriceListId());
         values.put(DATUM, monthlyReading.getDate());
-        values.put(PRVNI_ODECET, monthlyReading.isFirst());
+        values.put(PRVNI_ODECET, monthlyReading.isChangeMeter());
         values.put(GARANCE, monthlyReading.getOtherServices());
         values.put(POZNAMKA, monthlyReading.getDescription());
         return values;

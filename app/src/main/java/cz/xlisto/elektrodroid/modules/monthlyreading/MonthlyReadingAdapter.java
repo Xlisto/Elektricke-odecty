@@ -332,7 +332,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         holder.btnEdit.setOnClickListener(v -> {
             MonthlyReadingEditFragment monthlyReadingEditFragment = MonthlyReadingEditFragment.newInstance(
                     subscriptionPoint.getTableO(),
-                    monthlyReading.getId());
+                    monthlyReading.getId(),
+                    isFirst(position),
+                    isChangeMeter(monthlyReading));
             FragmentChange.replace((FragmentActivity) context, monthlyReadingEditFragment, MOVE, true);
         });
 
@@ -353,7 +355,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-        if (monthlyReading.isFirst() || position == items.size() - 1) {
+        if (isFirst(position) || isChangeMeter(monthlyReading)) {
             holder.tvPriceList.setVisibility(View.GONE);
             holder.tvPayment.setVisibility(View.GONE);
             holder.rl3.setVisibility(View.GONE);
@@ -584,6 +586,28 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         } else {
             WithOutInvoiceService.updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
         }
+    }
+
+
+    /**
+     * Zkontroluje, zda je měsíční odečet první.
+     *
+     * @param position Pozice aktuálního měsíčního odečtu v seznamu.
+     * @return boolean true, pokud je měsíční odečet první nebo poslední, jinak false.
+     */
+    private boolean isFirst(int position) {
+        return (position == items.size() - 1);
+    }
+
+
+    /**
+     * Zkontroluje, zda je měsíční odečet veden jako výměna elektroměru.
+     *
+     * @param monthlyReading Aktuální měsíční odečet.
+     * @return boolean true, pokud je měsíční odečet první nebo poslední, jinak false.
+     */
+    private boolean isChangeMeter(MonthlyReadingModel monthlyReading) {
+        return monthlyReading.isChangeMeter();
     }
 
 

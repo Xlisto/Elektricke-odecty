@@ -8,6 +8,8 @@ import java.util.Calendar;
 
 /**
  * Model měsíčního odečtu
+ * <p>
+ * Tato třída představuje model pro měsíční odečty, který obsahuje informace o datu, platbě, popisu a dalších službách.
  */
 public class MonthlyReadingModel {
     private long id;
@@ -69,7 +71,7 @@ public class MonthlyReadingModel {
         return nt;
     }
 
-    public boolean isFirst() {
+    public boolean isChangeMeter() {
         return first;
     }
 

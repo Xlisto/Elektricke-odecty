@@ -244,12 +244,12 @@ public class WithOutInvoiceService {
         //procházím seznam měsíčních odečtů a vytvářím záznamy faktur. Pokud je výměna elektroměru nebo jiný ceník, vytvoří se nový záznam
         for (int i = 0; i < monthlyReadingModels.size(); i++) {
             MonthlyReadingModel monthlyReadingModel = monthlyReadingModels.get(i);
-            if (monthlyReadingModel.isFirst()) {//nový záznam pro období bez faktury, pokud je vyměněn elektroměr
+            if (monthlyReadingModel.isChangeMeter()) {//nový záznam pro období bez faktury, pokud je vyměněn elektroměr
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(monthlyReadingModel.getDate());
                 newInvoice = new InvoiceModel(calendar.getTimeInMillis(), calendar.getTimeInMillis(),
                         monthlyReadingModel.getVt(), monthlyReadingModel.getVt(), monthlyReadingModel.getNt(), monthlyReadingModel.getNt(),
-                        -1L, -1L, 0, "0", monthlyReadingModel.isFirst());
+                        -1L, -1L, 0, "0", monthlyReadingModel.isChangeMeter());
                 invoicesModels.add(newInvoice);
             } else if (i == 0) {//nový záznam pro období bez faktury, údaje jsou s nejstarším měsíčním odečtem
                 dateLastInvoice.setTimeInMillis(lastInvoiceDateTo);
@@ -260,7 +260,7 @@ public class WithOutInvoiceService {
                     dateLastInvoice.add(Calendar.DAY_OF_MONTH, 1);
                 newInvoice = new InvoiceModel(dateLastInvoice.getTimeInMillis(), dateTo.getTimeInMillis(),
                         lastInvoiceVtEnd, monthlyReadingModel.getVt(), lastInvoiceNtEnd, monthlyReadingModel.getNt(),
-                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
+                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isChangeMeter());
                 invoicesModels.add(newInvoice);
             } else if (prevPriceListId != monthlyReadingModel.getPriceListId()) {//další záznam pro období bez faktury, pokud je jiný ceník
                 Calendar dateFrom = Calendar.getInstance();
@@ -275,7 +275,7 @@ public class WithOutInvoiceService {
                 double nt = newInvoice.getNtEnd();
                 newInvoice = new InvoiceModel(dateFrom.getTimeInMillis(), dateTo.getTimeInMillis(),
                         vt, monthlyReadingModel.getVt(), nt, monthlyReadingModel.getNt(),
-                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isFirst());
+                        -1L, monthlyReadingModel.getPriceListId(), 0, "0", monthlyReadingModel.isChangeMeter());
                 invoicesModels.add(newInvoice);
             } else {//úprava stávajícího záznamu faktury
                 Calendar calendar = Calendar.getInstance();
@@ -438,11 +438,13 @@ public class WithOutInvoiceService {
         return new double[]{0.0, 0.0};
     }
 
-
+    /**
+     * Výčtový typ Errors představuje různé typy chyb, které mohou nastat.
+     */
     private enum Errors {
-        NO_INVOICE_RECORDS,
-        NO_MONTHLY_RECORDS,
-        DATES_IS_NOT_CORRECT
+        NO_INVOICE_RECORDS, // Chyba: Žádné záznamy faktur
+        NO_MONTHLY_RECORDS, // Chyba: Žádné měsíční záznamy
+        DATES_IS_NOT_CORRECT // Chyba: Data nejsou správná
     }
 
 }

@@ -7,7 +7,11 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
 
+/**
+ * Abstraktní třída `ShP`, která poskytuje metody pro práci s `SharedPreferences`.
+ */
 public abstract class ShP {
+
     Context context;
     SharedPreferences shp;
     SharedPreferences.Editor editor;
@@ -54,25 +58,41 @@ public abstract class ShP {
 
     public String get(String key, String defaultValue) {
         getShp();
-        return shp.getString(key,defaultValue);
+        try {
+            return shp.getString(key, defaultValue);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
 
     public long get(String key, long defaultValue) {
         getShp();
-        return shp.getLong(key,defaultValue);
+        try {
+            return shp.getLong(key, defaultValue);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
 
     public int get(String key, int defaultValue) {
         getShp();
-        return shp.getInt(key,defaultValue);
+        try {
+            return shp.getInt(key, defaultValue);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
 
     public boolean get(String key, boolean defaultValue) {
         setShp();
-        return shp.getBoolean(key,defaultValue);
+        try {
+            return shp.getBoolean(key, defaultValue);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

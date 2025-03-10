@@ -16,83 +16,105 @@
         android:background="@drawable/shape_item"
         android:gravity="start">
 
-        <LinearLayout
-            android:id="@+id/ln_item_price_list"
+        <GridLayout
+            android:id="@+id/grid_item_price_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tvFirma"
+            android:columnCount="3"
             android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCenaVTTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="2dp"
+                android:singleLine="false"
+                android:text="@string/kwh_vt"
+                android:textAlignment="viewStart"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCenaNTTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="5dp"
+                android:singleLine="false"
+                android:text="@string/kwh_nt"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvPaymentTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:singleLine="false"
+                android:text="@string/month"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvCenaVT"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
                 android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
+                android:textAlignment="viewStart" />
 
             <TextView
                 android:id="@+id/tvCenaNT"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_columnWeight="1"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
+                android:layout_marginEnd="5dp"
+                android:singleLine="false" />
 
             <TextView
                 android:id="@+id/tvPayment"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
                 android:gravity="end"
-                android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ln_item_price_list_regul"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ln_item_price_list"
-            android:orientation="horizontal">
+                android:singleLine="false" />
 
             <TextView
                 android:id="@+id/tvCenaVTRegul"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
                 android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
+                android:textAlignment="viewStart" />
 
             <TextView
                 android:id="@+id/tvCenaNTRegul"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_columnWeight="1"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
+                android:layout_marginEnd="5dp"
+                android:singleLine="false" />
 
             <TextView
                 android:id="@+id/tvCenaMesicRegul"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
                 android:layout_marginTop="2dp"
-                android:layout_weight="1"
                 android:gravity="end"
                 android:singleLine="false"
                 android:text="@string/jednotkova_cena" />
-        </LinearLayout>
+        </GridLayout>
 
         <LinearLayout
             android:id="@+id/lnButtonsPriceListItem"
@@ -173,7 +195,7 @@
             android:id="@+id/tvPoznamkaItemPriceList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ln_item_price_list_regul"
+            android:layout_below="@id/grid_item_price_list"
             android:layout_marginTop="2dp" />
 
         <TextView

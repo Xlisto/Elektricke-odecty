@@ -18,7 +18,8 @@
 
     <TextView
         android:id="@+id/tvAlertMonthlyReading"
-        style="@style/AlertNoSubscriptionPoint" />
+        style="@style/StyleTvAlert"
+        tools:text="@string/create_place" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -64,6 +65,8 @@
         android:layout_height="match_parent"
         android:layout_above="@id/btnAddMonthlyReading"
         android:layout_below="@id/swSimplyView"
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp"
         android:contentDescription="@string/description_monthly_reading"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:padding="5dp">
@@ -78,4 +81,5 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:text="@string/add_monthly_reading" />
+
 </RelativeLayout>

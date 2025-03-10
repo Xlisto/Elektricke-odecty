@@ -93,8 +93,8 @@
                     android:id="@+id/btnSelectPriceList"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/cbChangeMeter"
                     android:layout_alignParentEnd="true"
-                    android:layout_below="@id/cbFirstReading"
                     android:text="@string/vyberCenik" />
 
                 <CheckBox
@@ -107,13 +107,22 @@
                     android:text="@string/addBackup" />
 
                 <CheckBox
-                    android:id="@+id/cbFirstReading"
+                    android:id="@+id/cbSendBackup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/cbAddBackup"
                     android:checked="false"
                     android:minHeight="48dp"
-                    android:text="@string/prvniOdecet" />
+                    android:text="@string/sendBackup" />
+
+                <CheckBox
+                    android:id="@+id/cbChangeMeter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cbSendBackup"
+                    android:checked="false"
+                    android:minHeight="48dp"
+                    android:text="@string/changeMeter" />
 
                 <CheckBox
                     android:id="@+id/cbAddPayment"
@@ -127,25 +136,25 @@
                     android:id="@+id/etDatePayment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="false"
                     android:layout_below="@id/cbAddPayment"
+                    android:layout_alignParentEnd="false"
                     android:layout_toEndOf="@id/tvContentAddPayment"
                     android:autofillHints="15"
                     android:ems="3"
                     android:inputType="date"
+                    android:maxWidth="488dp"
                     android:maxEms="4"
-                    android:minEms="2"
-                    android:minHeight="48dp"
                     android:minWidth="48dp"
-                    android:maxWidth="488dp" />
+                    android:minHeight="48dp"
+                    android:minEms="2" />
 
                 <TextView
                     android:id="@+id/tvContentAddPayment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/etDatePayment"
-                    android:layout_marginEnd="5dp"
                     android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
                     android:labelFor="@id/etDatePayment"
                     android:text="@string/how_date_pay" />
 
@@ -154,8 +163,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/etDatePayment"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="5dp" />
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp" />
 
             </RelativeLayout>
 
@@ -220,8 +229,10 @@
 
 
             </RelativeLayout>
+
         </RelativeLayout>
 
     </ScrollView>
 
+    <include layout="@layout/layout_progress_bar" />
 </RelativeLayout>

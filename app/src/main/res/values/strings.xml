@@ -156,8 +156,9 @@
     <string name="insert_to_new_invoice">Vložit do nové faktury</string>
 
     <string name="pridatZalohu">Přidat zálohu do seznamu plateb Fakturace</string>
-    <string name="prvniOdecet">Výměna elektroměru</string>
+    <string name="changeMeter">Výměna elektroměru</string>
     <string name="addBackup">Vytvořit záložní zip soubor při uložení odečtu</string>
+    <string name="sendBackup">Odeslat záložní zip soubor do Google Drive</string>
     <string name="datumOdectu">Datum odečtu: </string>
     <string name="stavNt">Stav počitadla nízkého tarifu: </string>
     <string name="stavVt">Stav počitadla vysokého tarifu: </string>
@@ -516,6 +517,18 @@
     <string name="create_folder">Složka na Google Drive</string>
     <string name="sign_in">Přihlásit</string>
     <string name="sign_out">Odhlásit</string>
+    <string name="btn_set_default_folder">Výchozí složka</string>
+    <string name="btn_create_folder">Vytvoř složku</string>
+    <string name="deleted_file">Soubor byl smazán</string>
+    <string name="deleted_folder">Složka byla smazána</string>
+    <string name="not_deleted_file">Soubor se nepodařilo smazat</string>
+    <string name="not_deleted_folder">Složka není prázdná. Může obsahovat soubory, které aplikace nezobrazuje. Nelze smazat.</string>
+    <string name="cannot_delete_default_folder">Není možné smazat výchozí složku pro ukládání. \nNejdříve změňte výchozí složku.</string>
+    <string name="deleted">Smazat</string>
+    <string name="restore">Obnov data</string>
+    <string name="uploaded_file">Soubor byl nahrán na Google Drive</string>
+    <string name="uploading_file_on_drive">Nahrávám soubor\nna Google Drive</string>
+    <string name="not_uploaded_file">Chyba. soubor se nepovedlo nahrát</string>
 
     <!-- descriptions -->
     <string name="description_backup">Seznam vytvořených záloh elektrických odečtů</string>
@@ -540,6 +553,9 @@
     <string name="description_dashboard_sort">Třídění seznamu</string>
     <string name="description_phaze">Fáze</string>
     <string name="description_power">Příkon</string>
+    <string name="description_btn_sign">Tlačítko pro přihlášení/odhlášení Google</string>
+    <string name="description_new_folder">Text nově vytvářené složky</string>
+    <string name="fillhints_backup_folder">Záloha elektrické odečty</string>
 
     <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
     <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
@@ -573,4 +589,5 @@
     <string name="price_list_found_multiple_variants">Ceník %1$s, %2$s\nbyl nalezen ve více shodných variantách. Nepoužívanou variantu odstraňte ručně.\n\nPřepnout se do seznamu s ceníky?</string>
     <string name="select_backup_folder">Tlačítko pro výběr složky na zálohy</string>
     <string name="saved">Uloženo</string>
+    <string name="not_restored_data">Data se neobnovila</string>
 </resources>

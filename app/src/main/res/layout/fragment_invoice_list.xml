@@ -75,7 +75,8 @@
 
     <TextView
         android:id="@+id/tvAlertInvoiceList"
-        style="@style/AlertNoSubscriptionPoint"
+        style="@style/StyleTvAlert"
+        android:text="@string/create_place"
         android:visibility="gone" />
 
 </RelativeLayout>

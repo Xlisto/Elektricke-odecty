@@ -1,8 +1,8 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
 /**
- * Konstanty  pro zálohu a obnovu dat
- * Xlisto 06.12.2023 17:36
+ * Abstraktní třída RecoverData poskytuje základní konstanty a metody
+ * pro zálohu a obnovu dat.
  */
 public abstract class RecoverData {
     private static final String TAG = "RecoverData";
@@ -12,7 +12,9 @@ public abstract class RecoverData {
 
 
     /**
-     * Vrátí pole obsahující povolené přípony - filterFileName
+     * Vrátí pole obsahující povolené přípony - filterFileName.
+     *
+     * @return Pole řetězců obsahující povolené přípony souborů.
      */
     public static String[] getFiltersFileName() {
         return filtersFileName;

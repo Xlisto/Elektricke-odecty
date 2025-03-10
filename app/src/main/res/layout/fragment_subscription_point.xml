@@ -206,7 +206,8 @@
 
     <TextView
         android:id="@+id/tvCreateNewSubscriptionPoint"
-        style="@style/AlertNoSubscriptionPoint"/>
+        style="@style/StyleTvAlert"
+        android:text="@string/create_place"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

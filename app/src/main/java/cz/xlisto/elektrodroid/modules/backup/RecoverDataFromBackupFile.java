@@ -1,12 +1,16 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.documentfile.provider.DocumentFile;
+
+import com.google.api.services.drive.Drive;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +23,7 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
@@ -26,16 +31,53 @@ import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 
 /**
- * Obnoví data ze záložních ZIP souborů
- * Xlisto 13.05.2023 10:04
+ * Třída RecoverDataFromBackupFile rozšiřuje třídu RecoverData a poskytuje metody
+ * pro obnovu dat ze záložních ZIP souborů uložených na Google Drive.
  */
 public class RecoverDataFromBackupFile extends RecoverData {
+
     private static final String TAG = "RecoverDataFromFile";
+    private static Drive drive;
+
+
+    /**
+     * Nastaví službu Google Drive.
+     *
+     * @param service Služba Google Drive, která se má nastavit.
+     */
+    public static void setDriveService(Drive service) {
+        drive = service;
+    }
+
+
+    /**
+     * Obnoví databázi ze ZIP souboru uloženého na Google Drive.
+     *
+     * @param context  Kontext aplikace.
+     * @param fileId   ID souboru na Google Drive.
+     * @param fileName Název souboru.
+     * @param callback Callback, který se zavolá po dokončení obnovy databáze.
+     */
+    public static void recoverDatabaseFromZipGoogleDrive(Context context, String fileId, String fileName, RecoverDatabaseCallback callback) {
+        new Thread(() -> {
+            java.io.File tempFile = new java.io.File(context.getCacheDir(), fileName);
+            boolean result = false;
+            try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+                drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+                DocumentFile documentFile = DocumentFile.fromFile(tempFile);
+                result = recoverDatabaseFromZip(context, documentFile);
+            } catch (IOException e) {
+                Log.e(TAG, "recoverDatabaseFromZipGoogleDrive: " + e.getMessage());
+            }
+            boolean finalResult = result;
+            ((Activity) context).runOnUiThread(() -> callback.onComplete(finalResult));
+        }).start();
+    }
 
 
     public static boolean recoverDatabaseFromZip(Context context, DocumentFile f) {
-        if (f == null || context == null) {
-            Toast.makeText(context, "Data se neobnovila", Toast.LENGTH_LONG).show();
+        if (f == null) {
+            Toast.makeText(context, context.getResources().getString(R.string.not_restored_data), Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -98,6 +140,7 @@ public class RecoverDataFromBackupFile extends RecoverData {
             OutputStream src;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 src = Files.newOutputStream(currentDB.toPath());
+
             } else {
                 src = new FileOutputStream(currentDB);
             }
@@ -124,7 +167,7 @@ public class RecoverDataFromBackupFile extends RecoverData {
             shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "recoverDatabaseFromFile: " + e.getMessage());
             return false;
         }
     }
@@ -172,7 +215,7 @@ public class RecoverDataFromBackupFile extends RecoverData {
             zis.closeEntry();
             zis.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "unzip: " + e.getMessage());
         }
         return files;
     }
@@ -186,4 +229,12 @@ public class RecoverDataFromBackupFile extends RecoverData {
             documentFiles.get(i).delete();
         }
     }
+
+
+    public interface RecoverDatabaseCallback {
+
+        void onComplete(boolean result);
+
+    }
+
 }

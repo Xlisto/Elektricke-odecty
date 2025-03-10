@@ -243,7 +243,8 @@
 
         <TextView
             android:id="@+id/tvAlertDashboard"
-            style="@style/AlertNoSubscriptionPoint"
+            style="@style/StyleTvAlert"
+            android:text="@string/create_place"
             android:visibility="visible" />
 
     </RelativeLayout>

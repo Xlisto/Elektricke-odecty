@@ -11,6 +11,9 @@ import android.content.Context;
 public class ShPGoogleDrive extends ShP {
 
     public static final String USER_SIGNED = "isUserSigned";
+    public static final String USER_NAME = "userName";
+    public static final String DEFAULT_FOLDER_ID = "defaultFolderId";
+    public static final String DEFAULT_FOLDER_NAME = "defaultFolderName";
 
 
     /**

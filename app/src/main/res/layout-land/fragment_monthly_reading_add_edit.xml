@@ -112,7 +112,7 @@
                         android:id="@+id/btnSelectPriceList"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/cbFirstReading"
+                        android:layout_below="@id/cbChangeMeter"
                         android:layout_alignParentEnd="true"
                         android:maxWidth="320dp"
                         android:text="@string/vyberCenik" />
@@ -127,13 +127,22 @@
                         android:text="@string/addBackup" />
 
                     <CheckBox
-                        android:id="@+id/cbFirstReading"
+                        android:id="@+id/cbSendBackup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/cbAddBackup"
                         android:checked="false"
                         android:minHeight="48dp"
-                        android:text="@string/prvniOdecet" />
+                        android:text="@string/sendBackup" />
+
+                    <CheckBox
+                        android:id="@+id/cbChangeMeter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbSendBackup"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/changeMeter" />
 
                     <CheckBox
                         android:id="@+id/cbAddPayment"
@@ -216,6 +225,7 @@
                         app:label="@string/dalsi_sluzby" />
 
                 </RelativeLayout>
+
             </RelativeLayout>
 
         </ScrollView>
@@ -247,5 +257,6 @@
             android:textColor="@color/colorButtonText" />
     </LinearLayout>
 
+    <include layout="@layout/layout_progress_bar" />
 
 </RelativeLayout>
