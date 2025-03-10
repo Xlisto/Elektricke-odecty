@@ -69,13 +69,17 @@ public class MonthlyReadingDetailViewModel extends ViewModel {
      * <p>
      * Tato metoda nastaví objekt `MutableLiveData` na zadanou hodnotu, která určuje, zda se má zobrazit regulovaná cena.
      *
-     * @return Objekt `MutableLiveData` obsahující informace o aktuálním měsíčním odečtu
-     * @ public void setShowRegulPrice(Boolean showRegulPrice) {
-     * this.showRegulPrice.setValue(showRegulPrice);
-     * }
-     * <p>
-     * /**
+     * @param showRegulPrice Boolean hodnota, která určuje, zda se má zobrazit regulovaná cena
+     */
+    public void setShowRegulPrice(Boolean showRegulPrice) {
+        this.showRegulPrice.setValue(showRegulPrice);
+    }
+
+
+    /**
      * Vrací objekt `MutableLiveData`, který obsahuje informace o aktuálním měsíčním odečtu.
+     *
+     * @return Objekt `MutableLiveData` obsahující informace o aktuálním měsíčním odečtu
      */
     public MutableLiveData<MonthlyReadingModel> getMonthlyReadingCurrently() {
         return monthlyReadingCurrently;
