@@ -1,5 +1,16 @@
 [
   {
+    "version": 143,
+    "date": "12.3.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Opraveno chybné zobrazení menu při spuštění aplikace z notifikace.",
+      "Opraveno chybné zobrazení jednotkových cen v seznamu ceníků na malé obrazovce.",
+      "Opraveno chybné sčítání v detailu faktury, pokud byl počet položek větší než velikost obrazovky.",
+      "Opraven pád aplikace při načítání seznamu záložních souborů."
+    ]
+  },
+  {
     "version": 142,
     "date": "15.12.2024",
     "changes": [
