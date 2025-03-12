@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     private static int showButtons = -1;
     private int selectedPosition;
     private static DocumentFile selectedDocumentFile;
-    private final boolean isGoogleDrive;
+    private boolean isGoogleDrive;
     private GoogleDriveService googleDriveService;
     private String selectedFileId;
     private final ShPGoogleDrive shPGoogleDrive;
@@ -168,7 +167,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentFile documentFile;
         File file;
-        Log.w(TAG, "onBindViewHolder: " + NetworkUtil.isInternetAvailable(context));
 
         if (isGoogleDrive) {
             documentFile = null;
@@ -194,6 +192,11 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 holder.btnUpload.setVisibility(View.GONE);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
         }
+
+
+        //TODO: skrytí Drive
+        isGoogleDrive = false;
+        holder.btnUpload.setVisibility(View.GONE);
 
         showButtons(holder, position);
 

@@ -71,6 +71,7 @@ public class ImportPriceListFragment extends Fragment {
     private ImportPriceListAdapter importExportAdapter;
     private ImportPriceListViewModel importPriceListViewModel;
     private Uri uri;
+    private ShPBackup shPBackup;
     private View view;
     private Button btnSelectFolder;
     private TextView tvDescriptionPermition;
@@ -116,7 +117,7 @@ public class ImportPriceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
-        ShPBackup shPBackup = new ShPBackup(requireContext());
+        shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
@@ -132,7 +133,7 @@ public class ImportPriceListFragment extends Fragment {
             }
         });
         importPriceListViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
-        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+
         if (savedInstanceState == null) {
             loadFiles();
         }
@@ -304,6 +305,7 @@ public class ImportPriceListFragment extends Fragment {
      * která načte soubory z daného URI.
      */
     private void loadFiles() {
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         if (Files.permissions(requireActivity(), uri))
             importPriceListViewModel.loadFiles(requireActivity(), uri, resultTree);
     }

@@ -66,6 +66,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private NetworkCallbackImpl networkCallback;
     private BackupViewModel backupViewModel;
     private Uri uri;
+    private ShPBackup shPBackup;
 
     //Callback z výběru složky
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
@@ -160,7 +161,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
 
-        ShPBackup shPBackup = new ShPBackup(requireContext());
+        shPBackup = new ShPBackup(requireContext());
 
         btnBackup = view.findViewById(R.id.btnZalohuj);
         btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
@@ -191,7 +192,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             showLnProgressBar(false);
         });
         backupViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
-        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+
         if (savedInstanceState == null)
             loadFiles();
 
@@ -318,6 +319,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
      * spustí načítání souborů pomocí `backupViewModel`.
      */
     private void loadFiles() {
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         if (Files.permissions(requireActivity(), uri)) {
             backupViewModel.loadFiles(requireActivity(), uri, resultTree);
         }

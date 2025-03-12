@@ -44,11 +44,11 @@
             android:id="@+id/menu_backup"
             android:title="@string/backup1"
             app:showAsAction="ifRoom" />
-
+<!--//TODO: skrytí Drive
         <item
             android:id="@+id/menu_google_drive"
             android:title="@string/google_drive"
-            app:showAsAction="ifRoom" />
+            app:showAsAction="ifRoom" />-->
 
         <item
             android:id="@+id/menu_graph_month"
