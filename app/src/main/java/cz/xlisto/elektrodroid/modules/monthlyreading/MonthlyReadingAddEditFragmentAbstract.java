@@ -319,12 +319,10 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
      */
     void setShowCbSendBackup() {
         requireActivity().runOnUiThread(() -> {
-            //TODO: skrytí Drive
-            cbSendBackup.setVisibility(View.GONE);
-            /*if (internetAvailable)
+            if (internetAvailable)
                 cbSendBackup.setVisibility(View.VISIBLE);
             else
-                cbSendBackup.setVisibility(View.GONE);*/
+                cbSendBackup.setVisibility(View.GONE);
         });
     }
 

@@ -33,6 +33,7 @@ import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment;
 import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
+import cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ImportPriceListFragment;
@@ -258,14 +259,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 setToolbarTitle(getResources().getString(R.string.backup1));
                 b = true;
             }
-            //TODO: skrytí Drive
-            /*
             if (itemId == R.id.menu_google_drive) {
                 uncheckedBottomNavigation();
                 actualFragment = GoogleDriveFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.google_drive));
                 b = true;
-            }*/
+            }
             if (itemId == R.id.menu_graph_month) {
                 uncheckedBottomNavigation();
                 actualFragment = GraphMonthFragment.newInstance();

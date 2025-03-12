@@ -52,7 +52,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     private static int showButtons = -1;
     private int selectedPosition;
     private static DocumentFile selectedDocumentFile;
-    private boolean isGoogleDrive;
+    private final boolean isGoogleDrive;
     private GoogleDriveService googleDriveService;
     private String selectedFileId;
     private final ShPGoogleDrive shPGoogleDrive;
@@ -192,11 +192,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 holder.btnUpload.setVisibility(View.GONE);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
         }
-
-
-        //TODO: skrytí Drive
-        isGoogleDrive = false;
-        holder.btnUpload.setVisibility(View.GONE);
 
         showButtons(holder, position);
 
