@@ -1,5 +1,13 @@
 [
   {
+    "version": 144,
+    "date": "26.3.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Opraven pád aplikace při operacích v měsíčních odečtech."
+    ]
+  },
+  {
     "version": 143,
     "date": "12.3.2025",
     "changes": [
@@ -15,7 +23,7 @@
     "date": "15.12.2024",
     "changes": [
       "<b>Nová data:</b><br>Doplněny regulované ceny pro rok 2025."
-      ]
+    ]
   },
   {
     "version": 141,

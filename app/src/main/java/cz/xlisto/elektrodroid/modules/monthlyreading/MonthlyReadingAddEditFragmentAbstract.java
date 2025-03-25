@@ -318,14 +318,16 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
      * Pokud je internet dostupný, checkbox bude viditelný, jinak bude skrytý.
      */
     void setShowCbSendBackup() {
-        requireActivity().runOnUiThread(() -> {
-            //TODO: skrytí Drive
-            cbSendBackup.setVisibility(View.GONE);
+        if (isAdded() && getActivity() != null) {
+            requireActivity().runOnUiThread(() -> {
+                //TODO: skrytí Drive
+                cbSendBackup.setVisibility(View.GONE);
             /*if (internetAvailable)
                 cbSendBackup.setVisibility(View.VISIBLE);
             else
                 cbSendBackup.setVisibility(View.GONE);*/
-        });
+            });
+        }
     }
 
 
