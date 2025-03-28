@@ -181,22 +181,4 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         updateItemInvoice(lastMonthlyReading);
     }
 
-    /**
-     * Metoda, která se volá, když je dostupné internetové připojení.
-     */
-    @Override
-    public void onNetworkAvailable() {
-        internetAvailable = true;
-        setShowCbSendBackup();
-    }
-
-    /**
-     * Metoda, která se volá, když je ztraceno internetové připojení.
-     */
-    @Override
-    public void onNetworkLost() {
-        internetAvailable = false;
-        setShowCbSendBackup();
-    }
-
 }

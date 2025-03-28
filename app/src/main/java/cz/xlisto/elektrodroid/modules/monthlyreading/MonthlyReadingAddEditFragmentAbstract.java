@@ -13,9 +13,11 @@ import static cz.xlisto.elektrodroid.shp.ShPAddEditMonthlyReading.ARG_SHOW_DESCR
 import static cz.xlisto.elektrodroid.shp.ShPAddEditMonthlyReading.ARG_VT_MONTHLY_READING;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
@@ -76,7 +78,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     PriceListModel selectedPriceList;
     PriceListModel priceListFromDatabase;
     SubscriptionPointModel subscriptionPoint;
-    RelativeLayout rlRoot;
+    RelativeLayout rlRoot,rlOther;
     ShPAddEditMonthlyReading shPAddEditMonthlyReading;
     boolean isFirstLoad = true;
     boolean isChangeMeter = false;
@@ -173,14 +175,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
             }
         });
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        networkCallback = new NetworkCallbackImpl(this);
-
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build();
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-
         return inflater.inflate(R.layout.fragment_monthly_reading_add_edit, container, false);
     }
 
@@ -212,8 +206,12 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         tvContentAddPayment = view.findViewById(R.id.tvContentAddPayment);
         tvResultDate = view.findViewById(R.id.tvResultDate);
         rlRoot = view.findViewById(R.id.rlRoot);
+        rlOther = view.findViewById(R.id.rlOther);
         lnProgressBAr = view.findViewById(R.id.lnProgressBar);
         tvLabelLoadFiles = view.findViewById(R.id.tvLabelLoadFiles);
+
+        //animace při skrytíní a zobrazování widgetů
+        rlOther.setLayoutTransition(new LayoutTransition());
 
         cbShowDescription.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION_MONTHLY_READING, false));
 
@@ -244,6 +242,22 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
             Keyboard.hide(requireActivity());
             getParentFragmentManager().popBackStack();
         });
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new NetworkCallbackImpl(this);
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+
+        // Zjištění aktuálního stavu připojení
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+            onNetworkAvailable();
+        } else {
+            onNetworkLost();
+        }
     }
 
 
@@ -437,6 +451,31 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         dataPriceListSource.open();
         priceListFromDatabase = dataPriceListSource.readPrice(id);
         dataPriceListSource.close();
+    }
+
+    /**
+     * Metoda, která se volá při dostupnosti síťového připojení.
+     * <p>
+     * Tato metoda nastaví příznak `internetAvailable` na `true` a aktualizuje zobrazení
+     * checkboxu pro odeslání zálohy.
+     */
+    @Override
+    public void onNetworkAvailable() {
+        internetAvailable = true;
+        setShowCbSendBackup();
+    }
+
+
+    /**
+     * Metoda, která se volá při ztrátě síťového připojení.
+     * <p>
+     * Tato metoda nastaví příznak `internetAvailable` na `false` a aktualizuje zobrazení
+     * checkboxu pro odeslání zálohy.
+     */
+    @Override
+    public void onNetworkLost() {
+        internetAvailable = false;
+        setShowCbSendBackup();
     }
 
 }

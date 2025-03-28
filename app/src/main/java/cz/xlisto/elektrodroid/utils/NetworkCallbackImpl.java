@@ -19,6 +19,11 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
     private NetworkChangeListener networkChangeListener;
 
 
+    /**
+     * Konstruktor třídy `NetworkCallbackImpl`.
+     *
+     * @param networkChangeListener Instance rozhraní `NetworkChangeListener`, která bude přijímat události změn sítě.
+     */
     public NetworkCallbackImpl(NetworkChangeListener networkChangeListener) {
         this.networkChangeListener = networkChangeListener;
     }
@@ -86,7 +91,7 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
         void onNetworkAvailable();
 
         void onNetworkLost();
-        //void onNetworkCapabilitiesChanged(NetworkCapabilities networkCapabilities);
+
     }
 
 }

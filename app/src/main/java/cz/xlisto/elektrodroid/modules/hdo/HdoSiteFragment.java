@@ -7,12 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +110,7 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
     private LinearLayout lnCode, lnCodesEdg, lnHdoButtons, lnProgessBarHdoSite;
     private Spinner spDistributionArea, spDistrict, spDateEgd, spA, spB, spPB;
     private EditText etHdoCode;
+    private Button btnHdoSite, btnHdoLoadData, btnSaveHdo, btnClipData;
     private TextView tvAlert, tvValidityDate;
     private RecyclerView rvHdoSite;
     private final ArrayList<String> codes = new ArrayList<>();
@@ -122,6 +123,7 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
     private boolean isClearArrayLists = true;
     private HdoSiteViewModel viewModel;
     private String resultArea, exceptionArea;
+    private boolean isNetworkAvailable = false;
     private NetworkCallbackImpl networkCallback;
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -172,14 +174,6 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
 
         });
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        networkCallback = new NetworkCallbackImpl(this);
-
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build();
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-
         // Sleduje změny v LiveData objektu shouldShowDialog a zobrazuje dialogové okno s výběrem kategorie, pokud je hodnota true.
         viewModel.shouldShowDialog().observe(this, shouldShowDialog -> {
             if (shouldShowDialog) {
@@ -226,10 +220,10 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
         super.onViewCreated(view, savedInstanceState);
         spDistributionArea = view.findViewById(R.id.spDistributionArea);
         spDistrict = view.findViewById(R.id.spDistrict);
-        Button btnHdoSite = view.findViewById(R.id.btnHdoSite);
-        Button btnHdoLoadData = view.findViewById(R.id.btnHdoLoadData);
-        Button btnSaveHdo = view.findViewById(R.id.btnSaveHdo);
-        Button btnClipData = view.findViewById(R.id.btnClipData);
+        btnHdoSite = view.findViewById(R.id.btnHdoSite);
+        btnHdoLoadData = view.findViewById(R.id.btnHdoLoadData);
+        btnSaveHdo = view.findViewById(R.id.btnSaveHdo);
+        btnClipData = view.findViewById(R.id.btnClipData);
         etHdoCode = view.findViewById(R.id.etHdoCode);
         lnCode = view.findViewById(R.id.lnCode);
         lnCodesEdg = view.findViewById(R.id.lnCodeEgd);
@@ -290,11 +284,8 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
                 String code = etHdoCode.getText().toString();
 
                 viewModel.runSecondAsyncOperation(group, category, urlHdo, code, requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition());
-            } //else {
-            //setVisibilityProgressBar(false);
-            //}
+            }
             viewModel.hideDialog();
-            //executor = null;
         });
 
         //posluchač pro zavření dialogového okna s dotazem na uložení do databáze
@@ -398,6 +389,7 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
                 }
             }
             setAdapter(hdoList);
+            enableSaveButtons();
         });
 
         spDateEgd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -415,6 +407,25 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
 
             }
         });
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new NetworkCallbackImpl(this);
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+
+        // Zjištění aktuálního stavu připojení
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        isNetworkAvailable = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        if (isNetworkAvailable) {
+            onNetworkAvailable();
+        } else {
+            onNetworkLost();
+        }
+
+        enableSaveButtons();
 
         if (getSubscriptionPoint() == null) {
             btnSaveHdo.setEnabled(false);
@@ -532,7 +543,7 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
 
 
     /**
-     * Nastaví viditelnost upozornění a skryje text platnosti
+     * Nastaví viditelnost upozornění a skryje text platnosti/*
      */
     private void setVisibilityAlert(boolean b) {
         if (b)
@@ -547,14 +558,16 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
      * Nastaví text upozornění podle vybraného distributora
      */
     private void setTextAlert() {
-        switch (spDistributionArea.getSelectedItemPosition()) {
-            case 0:
-            case 1:
-                tvAlert.setText(getResources().getString(R.string.write_hdo));
-                break;
-            case 2:
-                tvAlert.setText(getResources().getString(R.string.select_hdo));
-                break;
+        if (isNetworkAvailable) {
+            switch (spDistributionArea.getSelectedItemPosition()) {
+                case 0:
+                case 1:
+                    tvAlert.setText(getResources().getString(R.string.write_hdo));
+                    break;
+                case 2:
+                    tvAlert.setText(getResources().getString(R.string.select_hdo));
+                    break;
+            }
         }
     }
 
@@ -644,17 +657,53 @@ public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.Net
     }
 
 
+    /**
+     * Povolení nebo zakázání tlačítek.
+     *
+     * @param enable true pro povolení tlačítek, false pro zakázání tlačítek.
+     */
+    private void enableLoadButtons(boolean enable) {
+        requireActivity().runOnUiThread(() -> {
+            btnHdoSite.setEnabled(enable);
+            btnHdoLoadData.setEnabled(enable);
+            etHdoCode.setEnabled(enable);
+        });
+    }
+
+
+    /**
+     * Povolení nebo zakázání tlačítek.
+     */
+    private void enableSaveButtons() {
+        requireActivity().runOnUiThread(() -> {
+            btnSaveHdo.setEnabled(!hdoList.isEmpty());
+            btnClipData.setEnabled(!hdoList.isEmpty());
+            if (hdoList.isEmpty())
+                tvAlert.setVisibility(View.VISIBLE);
+        });
+    }
+
+
     @Override
     public void onNetworkAvailable() {
-        Log.w(TAG, "onNetworkAvailable: ");
+        enableLoadButtons(true);
+        isNetworkAvailable = true;
+        requireActivity().runOnUiThread(() -> {
+            if (etHdoCode.getText().toString().isEmpty())
+                tvAlert.setText(getResources().getString(R.string.write_hdo));
+        });
 
     }
 
 
     @Override
     public void onNetworkLost() {
-        Log.w(TAG, "onNetworkLost: ");
-
+        enableLoadButtons(false);
+        isNetworkAvailable = false;
+        requireActivity().runOnUiThread(() -> {
+            if (etHdoCode.getText().toString().isEmpty())
+                tvAlert.setText(getResources().getString(R.string.no_internet_connection));
+        });
     }
 
 

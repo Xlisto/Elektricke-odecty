@@ -219,30 +219,4 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         }
     }
 
-
-    /**
-     * Metoda, která se volá při dostupnosti síťového připojení.
-     * <p>
-     * Tato metoda nastaví příznak `internetAvailable` na `true` a aktualizuje zobrazení
-     * checkboxu pro odeslání zálohy.
-     */
-    @Override
-    public void onNetworkAvailable() {
-        internetAvailable = true;
-        setShowCbSendBackup();
-    }
-
-
-    /**
-     * Metoda, která se volá při ztrátě síťového připojení.
-     * <p>
-     * Tato metoda nastaví příznak `internetAvailable` na `false` a aktualizuje zobrazení
-     * checkboxu pro odeslání zálohy.
-     */
-    @Override
-    public void onNetworkLost() {
-        internetAvailable = false;
-        setShowCbSendBackup();
-    }
-
 }

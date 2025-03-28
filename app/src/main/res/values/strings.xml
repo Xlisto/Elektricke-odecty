@@ -265,6 +265,7 @@
     <string name="time_meter">Čas elektroměru</string>
     <string name="image_destription_nt">Ikona zobrazující aktivní nízký tarif</string>
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
+    <string name="no_internet_connection">Není aktivní žádné internetové připojení.</string>
 
     <string name="no_hdo">Žádný rozvrh HDO</string>
     <string name="no_found_hdo">Nenalezen žádný čas HDO</string>
