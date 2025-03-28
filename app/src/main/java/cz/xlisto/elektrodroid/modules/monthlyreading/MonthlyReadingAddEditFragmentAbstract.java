@@ -78,7 +78,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     PriceListModel selectedPriceList;
     PriceListModel priceListFromDatabase;
     SubscriptionPointModel subscriptionPoint;
-    RelativeLayout rlRoot,rlOther;
+    RelativeLayout rlRoot, rlOther;
     ShPAddEditMonthlyReading shPAddEditMonthlyReading;
     boolean isFirstLoad = true;
     boolean isChangeMeter = false;
@@ -88,6 +88,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     DocumentFile backupFile;
     String folderId;
     View view;
+    ShPGoogleDrive shPGoogleDrive;
     private NetworkCallbackImpl networkCallback;
     protected MonthlyReadingViewModel viewModel;
     //handler pro zálohu na google drive, spouští se po vytvoření záložního ZIP souboru
@@ -183,6 +184,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.view = view;
+        shPGoogleDrive = new ShPGoogleDrive(requireContext());
         requireActivity().invalidateOptionsMenu();
         shPAddEditMonthlyReading = new ShPAddEditMonthlyReading(requireActivity());
         internetAvailable = NetworkUtil.isInternetAvailable(requireContext());
@@ -210,7 +212,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         lnProgressBAr = view.findViewById(R.id.lnProgressBar);
         tvLabelLoadFiles = view.findViewById(R.id.tvLabelLoadFiles);
 
-        //animace při skrytíní a zobrazování widgetů
+        //animace při skrytí a zobrazování widgetů
         rlOther.setLayoutTransition(new LayoutTransition());
 
         cbShowDescription.setChecked(shPAddEditMonthlyReading.get(ARG_SHOW_DESCRIPTION_MONTHLY_READING, false));
@@ -348,12 +350,17 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
      * Pokud je internet dostupný, checkbox bude viditelný, jinak bude skrytý.
      */
     void setShowCbSendBackup() {
-            requireActivity().runOnUiThread(() -> {
-                if (internetAvailable)
+        requireActivity().runOnUiThread(() -> {
+            if (internetAvailable) {
+                if (shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false))
                     cbSendBackup.setVisibility(View.VISIBLE);
-                else
-                    cbSendBackup.setVisibility(View.GONE);
-            });
+                else {
+                    cbSendBackup.setVisibility(View.VISIBLE);
+                    cbSendBackup.setEnabled(false);
+                }
+            } else
+                cbSendBackup.setVisibility(View.GONE);
+        });
     }
 
 
@@ -452,6 +459,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         priceListFromDatabase = dataPriceListSource.readPrice(id);
         dataPriceListSource.close();
     }
+
 
     /**
      * Metoda, která se volá při dostupnosti síťového připojení.
