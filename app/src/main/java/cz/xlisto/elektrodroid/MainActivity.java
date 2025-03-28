@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import cz.xlisto.elektrodroid.dialogs.SelectConnectionDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment;
@@ -393,6 +394,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (countSubscriptionPoints > 1)
             menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_view));
+        menu.add(0, 2, Menu.NONE, getResources().getString(R.string.select_connection));
+
         return true;
     }
 
@@ -407,6 +410,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (item.getItemId() == 1) {
             SettingsViewDialogFragment.newInstance()
                     .show(getSupportFragmentManager(), SettingsViewDialogFragment.class.getSimpleName());
+            return true;
+        }
+        if(item.getItemId() == 2) {
+            SelectConnectionDialogFragment.newInstance()
+                    .show(getSupportFragmentManager(), SelectConnectionDialogFragment.class.getSimpleName());
             return true;
         }
         return super.onOptionsItemSelected(item);

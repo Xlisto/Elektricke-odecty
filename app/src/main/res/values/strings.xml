@@ -468,6 +468,8 @@
     <string name="button_subscription_point_3">Vybere třetí odběrné místo</string>
     <string name="button_subscription_point_4">Vybere čtvrté odběrné místo</string>
     <string name="settings_view">Nastavení zobrazení</string>
+    <string name="select_connection">Mobilní data</string>
+    <string name="select_connection_titla">Mobilní data</string>
 
     <string name="icon_monthly_result">Zobrazí ikonu podle toho, zda-li je záloha dostatečná či nikoliv.</string>
     <string name="icon_monthly_alert">Zvýraznění záznamu, ve kterém se nachází nějaká chyba.</string>
@@ -590,4 +592,8 @@
     <string name="select_backup_folder">Tlačítko pro výběr složky na zálohy</string>
     <string name="saved">Uloženo</string>
     <string name="not_restored_data">Data se neobnovila</string>
+
+    <string name="use_mobile_connection">Povolit mobilní data</string>
+    <string name="mobile_data_on">Mobilní data jsou zapnuta.\n\nAplikace může používat datové připojení mobilní sítě.</string>
+    <string name="mobile_data_off">Mobilní data jsou vypnuta.\n\nAplikace nebude mít přístup k internetu mimo Wi-Fi.</string>
 </resources>
