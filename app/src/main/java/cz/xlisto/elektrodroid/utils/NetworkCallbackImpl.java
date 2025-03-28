@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
 
     private static final String TAG = "NetworkCallbackImpl";
-    private final NetworkChangeListener networkChangeListener;
+    private NetworkChangeListener networkChangeListener;
 
 
     public NetworkCallbackImpl(NetworkChangeListener networkChangeListener) {
@@ -32,7 +32,7 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
     @Override
     public void onAvailable(@NonNull Network network) {
         super.onAvailable(network);
-        Log.w("NetworkCallback", "Network is available");
+        Log.w(TAG, "Network is available");
         if (networkChangeListener != null)
             networkChangeListener.onNetworkAvailable();
     }
@@ -46,7 +46,7 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
     @Override
     public void onLost(@NonNull Network network) {
         super.onLost(network);
-        Log.w("NetworkCallback", "Network is lost");
+        Log.w(TAG, "Network is lost");
         if (networkChangeListener != null)
             networkChangeListener.onNetworkLost();
     }
@@ -62,14 +62,22 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
     public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
         super.onCapabilitiesChanged(network, networkCapabilities);
         if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            Log.w("NetworkCallback", "Connected via WiFi");
+            Log.w(TAG, "Connected via WiFi");
         } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-            Log.w("NetworkCallback", "Connected via Mobile Data");
+            Log.w(TAG, "Connected via Mobile Data");
         } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-            Log.w("NetworkCallback", "Connected via Ethernet");
+            Log.w(TAG, "Connected via Ethernet");
         } else {
-            Log.w("NetworkCallback", "Connected via Unknown");
+            Log.w(TAG, "Connected via Unknown");
         }
+    }
+
+
+    /**
+     * Odregistruje posluchače změn sítě.
+     */
+    public void unRegister() {
+        networkChangeListener = null;
     }
 
 

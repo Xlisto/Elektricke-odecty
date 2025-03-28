@@ -86,6 +86,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     DocumentFile backupFile;
     String folderId;
     View view;
+    private NetworkCallbackImpl networkCallback;
     protected MonthlyReadingViewModel viewModel;
     //handler pro zálohu na google drive, spouští se po vytvoření záložního ZIP souboru
     protected Handler handlerSaveToGoogleDrive = new Handler(Looper.getMainLooper()) {
@@ -173,7 +174,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         });
 
         ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkCallbackImpl networkCallback = new NetworkCallbackImpl(this);
+        networkCallback = new NetworkCallbackImpl(this);
 
         NetworkRequest networkRequest = new NetworkRequest.Builder()
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -259,6 +260,21 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     }
 
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        MonthlyReadingWidgetContainer monthlyReadingWidgetContainer = new MonthlyReadingWidgetContainer();
+        monthlyReadingWidgetContainer.date = btnDate.getText().toString();
+        monthlyReadingWidgetContainer.vt = labVT.getText();
+        monthlyReadingWidgetContainer.nt = labNT.getText();
+        monthlyReadingWidgetContainer.payment = labPayment.getText();
+        monthlyReadingWidgetContainer.description = labDescription.getText();
+        monthlyReadingWidgetContainer.otherService = labOtherService.getText();
+        viewModel.setWidgetContainer(monthlyReadingWidgetContainer);
+        networkCallback.unRegister();
+    }
+
+
     /**
      * Sestaví objekt odběrného místa z údajů widgetů
      *
@@ -318,12 +334,12 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
      * Pokud je internet dostupný, checkbox bude viditelný, jinak bude skrytý.
      */
     void setShowCbSendBackup() {
-        requireActivity().runOnUiThread(() -> {
-            if (internetAvailable)
-                cbSendBackup.setVisibility(View.VISIBLE);
-            else
-                cbSendBackup.setVisibility(View.GONE);
-        });
+            requireActivity().runOnUiThread(() -> {
+                if (internetAvailable)
+                    cbSendBackup.setVisibility(View.VISIBLE);
+                else
+                    cbSendBackup.setVisibility(View.GONE);
+            });
     }
 
 
@@ -421,20 +437,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         dataPriceListSource.open();
         priceListFromDatabase = dataPriceListSource.readPrice(id);
         dataPriceListSource.close();
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        MonthlyReadingWidgetContainer monthlyReadingWidgetContainer = new MonthlyReadingWidgetContainer();
-        monthlyReadingWidgetContainer.date = btnDate.getText().toString();
-        monthlyReadingWidgetContainer.vt = labVT.getText();
-        monthlyReadingWidgetContainer.nt = labNT.getText();
-        monthlyReadingWidgetContainer.payment = labPayment.getText();
-        monthlyReadingWidgetContainer.description = labDescription.getText();
-        monthlyReadingWidgetContainer.otherService = labOtherService.getText();
-        viewModel.setWidgetContainer(monthlyReadingWidgetContainer);
     }
 
 }

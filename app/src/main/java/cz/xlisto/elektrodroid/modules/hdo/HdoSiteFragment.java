@@ -5,10 +5,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +42,7 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.Keyboard;
+import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -96,7 +101,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * <p>
  * Xlisto 15.06.2023 21:28
  */
-public class HdoSiteFragment extends Fragment {
+public class HdoSiteFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
 
     private static final String TAG = "HdoSiteFragment";
     private static final String FLAG_RESULT_SPINNER_DIALOG_FRAGMENT = "flagResultSpinnerDialogFragment";
@@ -117,6 +122,7 @@ public class HdoSiteFragment extends Fragment {
     private boolean isClearArrayLists = true;
     private HdoSiteViewModel viewModel;
     private String resultArea, exceptionArea;
+    private NetworkCallbackImpl networkCallback;
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
@@ -165,6 +171,14 @@ public class HdoSiteFragment extends Fragment {
             this.urlHdo = codesContainer.urlHdo;
 
         });
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        networkCallback = new NetworkCallbackImpl(this);
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
 
         // Sleduje změny v LiveData objektu shouldShowDialog a zobrazuje dialogové okno s výběrem kategorie, pokud je hodnota true.
         viewModel.shouldShowDialog().observe(this, shouldShowDialog -> {
@@ -421,6 +435,13 @@ public class HdoSiteFragment extends Fragment {
 
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        networkCallback.unRegister();
+    }
+
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ARG_RESULT_JSON, resultJson);
@@ -620,6 +641,20 @@ public class HdoSiteFragment extends Fragment {
      */
     private SubscriptionPointModel getSubscriptionPoint() {
         return SubscriptionPoint.load(requireActivity());
+    }
+
+
+    @Override
+    public void onNetworkAvailable() {
+        Log.w(TAG, "onNetworkAvailable: ");
+
+    }
+
+
+    @Override
+    public void onNetworkLost() {
+        Log.w(TAG, "onNetworkLost: ");
+
     }
 
 
