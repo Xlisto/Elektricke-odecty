@@ -33,3 +33,5 @@ local.properties
 /app/google-services.json
 
 /app/release/*
+/build/reports/problems/problems-report.html
+/app/lint-baseline.xml
