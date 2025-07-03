@@ -199,6 +199,7 @@ public class HdoSiteViewModel extends ViewModel {
 
     /**
      * Zjistí zda by mělo být zobrazené upozornění
+     *
      * @return true pokud by mělo být zobrazené upozornění
      */
     public LiveData<Boolean> shouldShowAlertDialog() {
@@ -341,6 +342,7 @@ public class HdoSiteViewModel extends ViewModel {
 
     /**
      * Zobrazí/skryje dialogové okno s výstrahou
+     *
      * @param value true pokud se má dialogové okno zobrazit
      */
     public void setShouldShowAlertDialog(boolean value) {
