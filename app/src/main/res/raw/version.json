@@ -1,10 +1,18 @@
 [
   {
+    "version": 145,
+    "date": "4.7.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Načítání HDO času z distribuční sítě EG.D. "
+    ]
+  },
+  {
     "version": 144,
     "date": "26.3.2025",
     "changes": [
       "<b>Opravy chyb:</b>",
-      "Opraven pád aplikace při operacích v měsíčních odečtech."
+      "Pád aplikace při operacích v měsíčních odečtech."
     ]
   },
   {
@@ -12,10 +20,10 @@
     "date": "12.3.2025",
     "changes": [
       "<b>Opravy chyb:</b>",
-      "Opraveno chybné zobrazení menu při spuštění aplikace z notifikace.",
-      "Opraveno chybné zobrazení jednotkových cen v seznamu ceníků na malé obrazovce.",
-      "Opraveno chybné sčítání v detailu faktury, pokud byl počet položek větší než velikost obrazovky.",
-      "Opraven pád aplikace při načítání seznamu záložních souborů."
+      "Chybné zobrazení menu při spuštění aplikace z notifikace.",
+      "Chybné zobrazení jednotkových cen v seznamu ceníků na malé obrazovce.",
+      "Chybné sčítání v detailu faktury, pokud byl počet položek větší než velikost obrazovky.",
+      "Pád aplikace při načítání seznamu záložních souborů."
     ]
   },
   {
