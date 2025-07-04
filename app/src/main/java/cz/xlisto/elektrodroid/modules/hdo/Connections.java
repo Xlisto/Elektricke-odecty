@@ -127,6 +127,10 @@ public class Connections {
 
         try {
             JSONObject resultJson = new JSONObject(result);
+            if (resultJson.has("errors")) {
+                handler.sendEmptyMessage(101);
+                return;
+            }
             JSONObject resultData = resultJson.getJSONObject("data");
             JSONObject resultHdo = resultData.getJSONObject("hdo");
             if (resultHdo.has("searchKod")) {
@@ -390,7 +394,7 @@ public class Connections {
             webView.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
 
             webViewClient.setOnPageFinishedListener(() ->
-                searchKod(urlHdo[0], code, context, districtName, districtIndex)
+                    searchKod(urlHdo[0], code, context, districtName, districtIndex)
             );
 
             root.addView(webView);
@@ -629,6 +633,20 @@ public class Connections {
             this.context = context;
             this.districtName = districtName;
             this.districtIndex = districtIndex;
+        }
+
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "GroupAndCategoryContainer{" +
+                    "urlHdo='" + urlHdo + '\'' +
+                    ", urlParameters='" + urlParameters + '\'' +
+                    ", code='" + code + '\'' +
+                    ", districtName='" + districtName + '\'' +
+                    ", context=" + context +
+                    ", districtIndex=" + districtIndex +
+                    '}';
         }
 
     }
