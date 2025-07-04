@@ -11,9 +11,9 @@ android {
     defaultConfig {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
-        targetSdk 34
-        versionCode 144
-        versionName '1.144'
+        targetSdk 35
+        versionCode 145
+        versionName '1.145'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
