@@ -92,6 +92,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
+            if(!isAdded()) return;
             ShPGoogleDrive shPGoogleDrive = new ShPGoogleDrive(requireContext());
             if (cbSendBackup.isChecked()) {
                 if (shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false)) {
