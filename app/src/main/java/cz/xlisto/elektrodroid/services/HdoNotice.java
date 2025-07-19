@@ -19,6 +19,10 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
+ * Pomocná třída pro správu notifikací v aplikaci.
+ * Umožňuje zobrazit dočasnou notifikaci, notifikaci pro foreground službu
+ * a rušit notifikace podle ID.
+ * <p>
  * Xlisto 01.06.2023 22:58
  */
 public class HdoNotice {
@@ -28,8 +32,57 @@ public class HdoNotice {
     public static final String NOTIFICATION_HDO_SERVICE = "HdoService";
     public static final String ARGS_FRAGMENT = "ARGS_FRAGMENT";
     private final static String default_notification_channel_id = "default";
+    private final static int TEMP_SERVICE_NOTIFICATION_ID = 10001;
 
 
+    /**
+     * Zobrazí dočasnou notifikaci s daným titulkem a textem. Vhodná pro vyžádání pozornosti uživatele pro znovuspuštění služby
+     *
+     * @param context     Kontext aplikace
+     * @param title       Titulek notifikace
+     * @param noticeTitle Název kanálu notifikace
+     * @param contentText Text notifikace
+     */
+    public static void setNotice(Context context, String title, String noticeTitle, String contentText) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context, TEMP_SERVICE_NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, default_notification_channel_id)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(contentText)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, noticeTitle, importance);
+            channel.setShowBadge(false);
+            channel.setSound(null, null);
+            builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+
+            assert notificationManager != null;
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        assert notificationManager != null;
+        notificationManager.notify(TEMP_SERVICE_NOTIFICATION_ID, builder.build());
+    }
+
+
+    /**
+     * Zobrazí notifikaci pro foreground službu a nastaví ji jako aktivní.
+     *
+     * @param service     Instance služby
+     * @param id          ID notifikace
+     * @param title       Titulek notifikace
+     * @param noticeTitle Název kanálu notifikace
+     * @param contentText Text notifikace
+     */
     public static void setNotice(Service service, int id, String title, String noticeTitle, String contentText) {
 
         Intent notificationIntent = new Intent(service, MainActivity.class);
@@ -65,9 +118,16 @@ public class HdoNotice {
             service.startForeground(id, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST);
         else
             service.startForeground(id, builder.build());
+        cancelNotice(service.getApplicationContext(), TEMP_SERVICE_NOTIFICATION_ID);
     }
 
 
+    /**
+     * Zruší notifikaci podle zadaného ID.
+     *
+     * @param context Kontext aplikace
+     * @param id      ID notifikace ke zrušení
+     */
     public static void cancelNotice(Context context, int id) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(id);

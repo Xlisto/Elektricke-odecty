@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">El. odečty</string>
     <string name="hdo_service_name">Čas HDO</string>
+    <string name="hdo_click">Klikněte pro spuštění služby hlídání HDO</string>
     <string name="default_web_client_id">634320309725-9a1qp280hkm6a2bsqip9l6t4epdm65lp.apps.googleusercontent.com</string>
     <string name="default_android_id">634320309725–2lnsv3j4dssebj8n8m2t364n8q9lmk26.apps.googleusercontent.com</string>
 

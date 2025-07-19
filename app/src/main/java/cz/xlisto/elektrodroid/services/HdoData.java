@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.services;
 
+
 import android.content.Context;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 13.06.2023 10:22
  */
 public class HdoData {
+
     private static final String TAG = "HdoLoadData";
 
 
@@ -41,15 +43,14 @@ public class HdoData {
 
             ArrayList<String> reles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
 
-            if (reles.size() > 0)
+            if (!reles.isEmpty())
                 rele = reles.get(0);
         }
         if (!rele.isEmpty()) {
             title += " - " + rele;
         }
 
-
-        ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null,null,rele);
+        ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null, null, rele);
         dataHdoSource.close();
         HdoService.setHdoModels(hdoModels);
         HdoService.setTitle(title);
@@ -60,4 +61,5 @@ public class HdoData {
         dataSettingsSource.close();
         HdoService.setDifferentTime(timeShift);
     }
+
 }

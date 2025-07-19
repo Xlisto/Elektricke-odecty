@@ -1,5 +1,14 @@
 [
   {
+    "version": 146,
+    "date": "19.7.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Změna spouštění služby pro sledování času HDO, která zobrazuje aktuální sazbu v notifikaci.",
+      "Od verze Android 12 již není možné automaticky spouštět službu na pozadí (např. po restartu zařízení). Nyní se zobrazí notifikace pro její ruční spuštění."
+    ]
+  },
+  {
     "version": 145,
     "date": "4.7.2025",
     "changes": [

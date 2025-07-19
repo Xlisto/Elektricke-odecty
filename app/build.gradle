@@ -12,8 +12,8 @@ android {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
         targetSdk 35
-        versionCode 145
-        versionName '1.145'
+        versionCode 146
+        versionName '1.146'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -58,6 +58,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.datastore:datastore-core-android:1.1.3'
     implementation 'com.google.firebase:protolite-well-known-types:18.0.0'
+    implementation "androidx.work:work-runtime:2.9.0"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
