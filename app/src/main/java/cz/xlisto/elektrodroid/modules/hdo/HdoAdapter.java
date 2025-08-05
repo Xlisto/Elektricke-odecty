@@ -158,14 +158,16 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             selectedId = hdoModel.getId();
             selectedPosition = position;
             HdoEditFragment hdoEditFragment = HdoEditFragment.newInstance(hdoModel);
-            FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE, true);
+            FragmentActivity activity = (FragmentActivity) holder.itemView.getContext();
+            FragmentChange.replace(activity, hdoEditFragment, FragmentChange.Transaction.MOVE, true);
         });
 
         holder.btnDelete.setOnClickListener(v -> {
             HdoModel hdoModel = items.get(position);
             selectedId = hdoModel.getId();
             selectedPosition = position;
-            YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
+            FragmentActivity activity = (FragmentActivity) holder.itemView.getContext();
+            YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(activity.getSupportFragmentManager(), TAG);
         });
         showButtons(holder, position);
 
