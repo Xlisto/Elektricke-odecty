@@ -63,6 +63,7 @@ public class PaymentModel {
         if (typePayment == 2) return "Automatická";
         if (typePayment == 3) return "Sleva bez DPH";
         if (typePayment == 4) return "Podpora státu (2000 nebo 3500)";
+        if (typePayment == 5) return "Přeplatek, vrácení peněz";
         return "Měsíční záloha";
     }
 

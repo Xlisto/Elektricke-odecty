@@ -32,6 +32,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     static final String CH_PAYMENT = "payment";
     static final String CH_SUPPLEMENT = "supplement";
     static final String CH_DISCOUNT = "discount";
+    static final String CH_REFUND = "refund";
     static final String DP_DAY = "dp_day";
     static final String DP_MONTH = "dp_month";
     static final String DP_YEAR = "dp_year";
@@ -39,7 +40,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     String table;
     Button btnSave, btnBack;
     LabelEditText labPayment;
-    CheckBox chPayment, chSupplement, chDiscount, chSupport;
+    CheckBox chPayment, chSupplement, chDiscount, chSupport, chRefund;
     DatePicker dp;
     PaymentModel payment;
 
@@ -72,6 +73,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chSupplement = view.findViewById(R.id.cbSupplement);
         chDiscount = view.findViewById(R.id.cbDiscount);
         chSupport = view.findViewById(R.id.cbSupport);
+        chRefund = view.findViewById(R.id.cbRefund);
         btnSave = view.findViewById(R.id.btnSavePayment);
         btnBack = view.findViewById(R.id.btnBackPayment);
         dp = view.findViewById(R.id.dpPayment);
@@ -114,11 +116,19 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             }
         });
 
+        chRefund.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chRefund.setChecked(true);
+            }
+        });
+
         if (savedInstanceState != null) {
             labPayment.setDefaultText(savedInstanceState.getString(LAB_PAYMENT));
             chPayment.setChecked(savedInstanceState.getBoolean(CH_PAYMENT));
             chSupplement.setChecked(savedInstanceState.getBoolean(CH_SUPPLEMENT));
             chDiscount.setChecked(savedInstanceState.getBoolean(CH_DISCOUNT));
+            chRefund.setChecked(savedInstanceState.getBoolean(CH_REFUND));
             int year = savedInstanceState.getInt(DP_YEAR);
             int month = savedInstanceState.getInt(DP_MONTH);
             int day = savedInstanceState.getInt(DP_DAY);
@@ -134,6 +144,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         outState.putBoolean(CH_PAYMENT, chPayment.isChecked());
         outState.putBoolean(CH_SUPPLEMENT, chSupplement.isChecked());
         outState.putBoolean(CH_DISCOUNT, chDiscount.isChecked());
+        outState.putBoolean(CH_REFUND, chRefund.isChecked());
         outState.putInt(DP_DAY, dp.getDayOfMonth());
         outState.putInt(DP_MONTH, dp.getMonth());
         outState.putInt(DP_YEAR, dp.getYear());
@@ -145,6 +156,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chSupplement.setChecked(false);
         chDiscount.setChecked(false);
         chSupport.setChecked(false);
+        chRefund.setChecked(false);
     }
 
 
@@ -174,6 +186,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             return 3;
         if (chSupport.isChecked())
             return 4;
+        if (chRefund.isChecked())
+            return 5;
         return 0;
     }
 }

@@ -228,6 +228,7 @@
     <string name="discount">Sleva bez DPH</string>
     <string name="supplement">Doplatek</string>
     <string name="payment">Záloha</string>
+    <string name="refund">Přeplatek</string>
     <string name="support">Jednorázová podpora státu (2000 nebo 3500)</string>
     <string name="payment2">Platba:</string>
     <string name="show_monthly_records_from">Měsíční odečty OD</string>

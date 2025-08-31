@@ -102,6 +102,25 @@
                 android:orientation="horizontal">
 
                 <CheckBox
+                    android:id="@+id/cbRefund"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:checked="false"
+                    android:maxWidth="300dp"
+                    android:text="@string/refund" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/shape_item"
+                android:orientation="horizontal">
+
+                <CheckBox
                     android:id="@+id/cbSupport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -111,8 +130,8 @@
                     android:maxWidth="300dp"
                     android:text="@string/support" />
 
-
             </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

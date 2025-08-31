@@ -385,9 +385,22 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      */
     public double sumPayment(long idFak, String table) {
-        String sql = "SELECT (" +
+        /*String sql = "SELECT (" +
                 "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3),0)) as total " +
-                "GROUP BY total";
+                "GROUP BY total";*/
+
+        String sql = "SELECT\n" +
+                "    SUM(\n" +
+                "        CASE\n" +
+                "            WHEN mimoradna = 3 THEN -castka  -- Pokud mimoradna je 3, použij zápornou hodnotu castka\n" +
+                "            WHEN mimoradna = 5 THEN -castka  -- Pokud mimoradna je 5, použij zápornou hodnotu castka\n" +
+                "            ELSE castka                     -- V ostatních případech použij kladnou hodnotu castka\n" +
+                "        END\n" +
+                "    ) AS total_sum  -- Doporučuji použít alias pro výsledný sloupec\n" +
+                "FROM\n " +
+                table + " \n" +
+                "WHERE\n" +
+                ID_FAK + " = ?";
         String[] args = new String[]{String.valueOf(idFak)};
         return getDoubleSum(sql, args);
     }
