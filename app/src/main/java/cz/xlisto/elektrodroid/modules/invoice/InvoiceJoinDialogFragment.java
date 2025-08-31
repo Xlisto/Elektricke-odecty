@@ -86,7 +86,7 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_join, null);
 
         tvDateFirst = dialogView.findViewById(R.id.tvJoinDate1);

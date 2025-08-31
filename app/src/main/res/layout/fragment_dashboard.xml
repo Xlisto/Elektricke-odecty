@@ -169,10 +169,11 @@
             android:text="@string/no_invoices"
             android:textSize="20sp"
             android:textStyle="bold" />
-
+        <!--style="@style/StyleTvAlert"-->
         <TextView
             android:id="@+id/tvAlertDashboard"
-            style="@style/StyleTvAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/create_place"
             android:visibility="visible" />
 

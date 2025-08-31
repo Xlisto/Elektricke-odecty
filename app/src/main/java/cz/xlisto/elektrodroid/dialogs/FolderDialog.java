@@ -98,7 +98,7 @@ public class FolderDialog extends DialogFragment {
             idBtnOK = R.string.rename;
         }
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new AlertDialog.Builder(requireContext())
                 .setTitle(idTitle)
                 .setView(view)
                 .setPositiveButton(idBtnOK, (dialog, which) -> {

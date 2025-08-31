@@ -211,7 +211,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/edit" />
+                android:text="@string/edit"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
             <Button
                 android:id="@+id/btnDeleteInvoiceItem"
@@ -220,7 +221,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/delete" />
+                android:text="@string/delete"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>
 
         <LinearLayout
@@ -237,7 +239,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:text="@string/cut"
-                android:layout_marginEnd="5dp" />
+                android:layout_marginEnd="5dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
             <Button
                 android:id="@+id/btnJoinInvoiceItem"
@@ -246,7 +249,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/join_previous" />
+                android:text="@string/join_previous"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>
 
         <TextView

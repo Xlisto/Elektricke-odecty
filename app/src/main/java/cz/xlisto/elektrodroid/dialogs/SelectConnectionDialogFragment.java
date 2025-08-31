@@ -52,7 +52,7 @@ public class SelectConnectionDialogFragment extends DialogFragment {
 
         setMessageDescription(switchConnection, tvDescription);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(getResources().getString(R.string.select_connection_titla));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> shPConnections.set(ShPConnections.ALLOW_MOBILE_CONNECTION, switchConnection.isChecked()));

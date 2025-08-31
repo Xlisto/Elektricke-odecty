@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,21 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         drawer.addDrawerListener(toggle);
         //drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        // Zjisti, zda je aktuální režim dark nebo light
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            int statusBarColor = androidx.core.content.ContextCompat.getColor(this, R.color.md_theme_background);
+            window.setStatusBarColor(statusBarColor);
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                // Dark mode: světlé ikony
+                window.getDecorView().setSystemUiVisibility(0);
+            } else {
+                // Light mode: tmavé ikony
+                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+        }
 
         //spodní lišta
         myBottomNavigationView.setOnItemSelectedListener(item -> {

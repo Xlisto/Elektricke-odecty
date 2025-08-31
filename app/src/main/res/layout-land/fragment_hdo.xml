@@ -15,6 +15,7 @@
 
         <Button
             android:id="@+id/btnAddHdo"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -41,44 +42,40 @@
 
             <Button
                 android:id="@+id/btnAddHour"
-                style="@style/Widget.AppCompat.Button.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
-                android:elevation="6dp"
                 android:text="@string/plus_hour"
-                android:textSize="16sp"
-                android:translationZ="6dp" />
+                android:singleLine="true"/>
 
             <Button
                 android:id="@+id/btnRemoveHour"
-                style="@style/Widget.AppCompat.Button.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
                 android:text="@string/minus_hour"
-                android:textSize="16sp" />
+                android:singleLine="true" />
 
 
             <Button
                 android:id="@+id/btnAddMinute"
-                style="@style/Widget.AppCompat.Button.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
-                android:elevation="6dp"
-                android:text="@string/plus_minute"
-                android:textSize="16sp" />
+                android:singleLine="true"
+                android:text="@string/plus_minute"/>
 
             <Button
                 android:id="@+id/btnRemoveMinute"
-                style="@style/Widget.AppCompat.Button.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
-                android:elevation="6dp"
-                android:text="@string/minus_minute"
-                android:textSize="16sp" />
+                android:singleLine="true"
+                android:text="@string/minus_minute"/>
         </LinearLayout>
 
         <LinearLayout
@@ -91,12 +88,10 @@
 
             <Button
                 android:id="@+id/btnHdoLoad"
-                style="@style/Widget.AppCompat.Button.Colored"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:elevation="6dp"
-                android:text="@string/load_hdo"
-                android:textSize="16sp" />
+                android:text="@string/load_hdo" />
 
         </LinearLayout>
 
@@ -160,13 +155,11 @@
             android:layout_marginStart="@dimen/fab_margin"
             android:layout_marginTop="@dimen/fab_margin"
             android:contentDescription="@string/image_destription_new_hdo"
-            android:src="@drawable/ic_content_add"
-            app:backgroundTint="@color/floatingButtonTint"
-            app:tint="@color/floatingButtonBackground" />
+            android:src="@drawable/ic_content_add"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/swHdoService"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/llButton2"
             android:text="@string/watch_low_tarif" />

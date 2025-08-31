@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".modules.subscriptionpoint.SubscriptionPointFragment">
 
     <Button
@@ -203,10 +202,11 @@
         android:gravity="center"
         android:padding="5dp"
         android:textAlignment="center" />
-
+    <!--style="@style/StyleTvAlert"-->
     <TextView
         android:id="@+id/tvCreateNewSubscriptionPoint"
-        style="@style/StyleTvAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/create_place"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -223,9 +223,7 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_content_add"
-        app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
+        android:src="@drawable/ic_content_add"/>
 
 
 </RelativeLayout>

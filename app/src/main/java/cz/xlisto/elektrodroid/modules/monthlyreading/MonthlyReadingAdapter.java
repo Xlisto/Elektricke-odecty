@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -279,10 +280,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             }
             String color = "red";
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_montly_reading_no, null));
+            holder.tvDateDetail.setTextColor(ContextCompat.getColor(holder.tvDateDetail.getContext(), R.color.colorOnRedContainer));
+            holder.tvDate.setTextColor(ContextCompat.getColor(holder.tvDateDetail.getContext(),R.color.colorOnRedContainer));
             int imageResource = R.drawable.ic_ne_smile;
             if (different >= 0) {
                 color = "#008000";
                 holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_yes, null));
+                holder.tvDateDetail.setTextColor(ContextCompat.getColor(holder.tvDateDetail.getContext(), R.color.colorOnGreenContainer));
+                holder.tvDate.setTextColor(ContextCompat.getColor(holder.tvDateDetail.getContext(),R.color.colorOnGreenContainer));
                 imageResource = R.drawable.ic_ano_smile;
             }
 
@@ -368,6 +373,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvAlertRegulPrice.setVisibility(View.GONE);
             holder.tvMonth.setText(context.getResources().getString(R.string.first_reading));
             holder.rootRelativeLayout.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.shape_monthly_reading_gray, null));
+            holder.tvDate.setTextColor(ContextCompat.getColor(holder.tvDateDetail.getContext(),R.color.md_theme_onSurface));
             holder.tvDateDetail.setVisibility(View.GONE);
             holder.btnDetail.setVisibility(View.GONE);
             holder.ivWarning.setVisibility(View.INVISIBLE);

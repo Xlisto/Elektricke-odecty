@@ -33,7 +33,7 @@ public class InvoiceListAddDialogFragment extends InvoiceListAddEditFragmentAbsc
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_list_add_edit, null);
 
         letNumberInvoice = dialogView.findViewById(R.id.letNumberInvoice);

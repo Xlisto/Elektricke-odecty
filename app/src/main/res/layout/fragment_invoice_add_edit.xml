@@ -27,16 +27,14 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/zpet" />
 
         <Button
             android:id="@+id/btnSaveInvoice"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/ulozit" />
     </LinearLayout>
 
     <ScrollView

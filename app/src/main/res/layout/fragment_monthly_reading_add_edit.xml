@@ -18,19 +18,17 @@
 
         <Button
             android:id="@+id/btnBackMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/zpet"/>
 
         <Button
             android:id="@+id/btnSaveMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/ulozit" />
     </LinearLayout>
 
     <ScrollView
@@ -95,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/cbChangeMeter"
                     android:layout_alignParentEnd="true"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:text="@string/vyberCenik" />
 
                 <CheckBox
@@ -182,6 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@id/tvDatumOdectuPocatek"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:text="@string/datum" />
 
                 <TextView

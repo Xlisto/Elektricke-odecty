@@ -20,13 +20,13 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Odecty.AppBarOverlay">
-
+        >
+        <!--android:background="@color/color_bar"--><!--android:theme="@style/Theme.Odecty.AppBarOverlay"-->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/color_bar"
+
             app:popupTheme="@style/Theme.Odecty.PopupOverlay">
 
             <include layout="@layout/my_toolbar" />
@@ -52,12 +52,12 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
         app:labelVisibilityMode="labeled"
-        android:theme="@style/NavigationItemNoRipple"
-        android:background="@color/nav_menu_background"
+
+
         app:itemTextColor="@color/bnv"
         app:itemIconTint="@color/bnv"
         app:itemBackground="@drawable/nav_item_background"
         app:menu="@menu/menu_navigation_menu" />
 
 
-</RelativeLayout>
+</RelativeLayout><!--android:background="@color/nav_menu_background"--><!--android:theme="@style/NavigationItemNoRipple"-->

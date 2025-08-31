@@ -21,8 +21,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/ulozit" />
     </LinearLayout>
 
     <cz.xlisto.elektrodroid.modules.graphcolor.GraphColorView

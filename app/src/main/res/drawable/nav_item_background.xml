@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
+<selector>
+   <!-- <item android:state_pressed="true">
         <inset android:insetRight="5dp" android:insetLeft="5dp" android:insetTop="1dp" android:insetBottom="1dp">
             <shape android:shape="rectangle">
                 <corners android:radius="5dp" />
@@ -28,6 +28,6 @@
         </inset>
     </item>
 
-    <item android:drawable="@color/nav_menu_background" />
+    <item android:drawable="@color/nav_menu_background" />-->
 
 </selector>

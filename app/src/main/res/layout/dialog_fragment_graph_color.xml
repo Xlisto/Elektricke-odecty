@@ -63,8 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:maxWidth="200dp"
-                    android:text="@string/zrusit"
-                    android:textColor="@color/colorButtonText" />
+                    android:text="@string/zrusit"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -80,8 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:maxWidth="200dp"
-                    android:text="@string/set"
-                    android:textColor="@color/colorButtonText" />
+                    android:text="@string/set" />
             </RelativeLayout>
 
         </LinearLayout>

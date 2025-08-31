@@ -6,10 +6,10 @@
         android:width="0dp"
         android:color="@color/color_no" />
 
-    <gradient
+    <!--<gradient
         android:startColor="@color/color_no"
-        android:endColor="#670101"
-        android:angle="0" />
+        android:endColor="@color/color_no_end"
+        android:angle="0" />-->
 
     <padding
         android:bottom="2dp"

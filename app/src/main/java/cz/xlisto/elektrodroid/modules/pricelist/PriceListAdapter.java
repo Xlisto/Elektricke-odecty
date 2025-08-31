@@ -376,7 +376,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech
      */
     private void showWarningDialog(int ted, int fak, int mon, Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(context.getString(R.string.deleting_pricelist));
         builder.setIcon(R.drawable.ic_warning_png);
         builder.setMessage(context.getString(R.string.cannot_deleting_pricelist_message, ted, fak, mon));

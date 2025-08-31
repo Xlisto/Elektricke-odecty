@@ -69,7 +69,7 @@ public class GraphColorDialogFragment extends DialogFragment {
         String vtColor = bundle.getString(ARG_VT_COLOR);
         String ntColor = bundle.getString(ARG_NT_COLOR);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_fragment_graph_color, null);
 
         etVT = view.findViewById(R.id.etVTDialogFragment);

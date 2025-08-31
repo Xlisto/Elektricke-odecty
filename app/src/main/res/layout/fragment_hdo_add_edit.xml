@@ -215,15 +215,13 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/zpet"/>
 
         <Button
             android:id="@+id/btnAddEditHdoSave"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/add"/>
     </LinearLayout>
 </RelativeLayout>

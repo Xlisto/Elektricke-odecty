@@ -40,7 +40,7 @@ public class SettingsViewDialogFragment extends DialogFragment {
         switchShowBottomNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true));
         switchShowLeftNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true));
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(getResources().getString(R.string.settings_view));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {

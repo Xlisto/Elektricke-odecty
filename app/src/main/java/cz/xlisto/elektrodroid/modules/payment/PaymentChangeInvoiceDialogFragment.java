@@ -92,7 +92,7 @@ public class PaymentChangeInvoiceDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View view = View.inflate(requireContext(), R.layout.dialog_payment_change_invoice, null);
         recyclerView = view.findViewById(R.id.rvInvoiceList);
         recyclerView.setAdapter(new PaymentChangeInvoiceAdapter(invoices, selectedIdInvoice));

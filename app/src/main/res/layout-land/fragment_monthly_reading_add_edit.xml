@@ -242,19 +242,17 @@
 
         <Button
             android:id="@+id/btnBackMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/zpet"/>
 
         <Button
             android:id="@+id/btnSaveMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:text="@string/ulozit"/>
     </LinearLayout>
 
     <include layout="@layout/layout_progress_bar" />

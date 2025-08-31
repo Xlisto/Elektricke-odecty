@@ -58,7 +58,7 @@ public class OwnAlertDialog extends DialogFragment {
             message = getArguments().getString(ARG_MESSAGE);
         }
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new AlertDialog.Builder(requireContext())
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> {

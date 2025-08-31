@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -43,9 +42,7 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_content_add"
-        app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
+        android:src="@drawable/ic_content_add"/>
 
     <Button
         android:id="@+id/btnBack"

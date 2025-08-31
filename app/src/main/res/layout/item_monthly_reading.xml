@@ -229,7 +229,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/rl3"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            style="?android:attr/buttonBarStyle">
 
             <Button
                 android:id="@+id/btnEditMonthlyItem"
@@ -238,7 +239,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/edit" />
+                android:text="@string/edit"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
             <Button
                 android:id="@+id/btnDetailMonthlyItem"
@@ -247,7 +249,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/detail" />
+                android:text="@string/detail"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
             <Button
                 android:id="@+id/btnDeleteMonthlyItem"
@@ -256,7 +259,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/delete" />
+                android:text="@string/delete"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>
 
         <TextView
@@ -317,9 +321,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="-5dp"
+        android:layout_marginBottom="2dp"
         android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical"
         android:text="@string/datum"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -331,15 +335,15 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/tvDate"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@id/tvDate"
+        android:layout_marginEnd="10dp"
         android:layout_toStartOf="@id/imageViewWarningMonthlyReading"
+        android:layout_toEndOf="@id/tvDate"
         android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical|end"
+        android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="11sp"
         android:textStyle="bold"
-        android:maxLines="1"
         app:minTextSize="8sp" />
 
     <ImageView

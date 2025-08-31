@@ -122,7 +122,7 @@
 
             <Button
                 android:id="@+id/btnHdoSite"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -131,7 +131,7 @@
 
             <Button
                 android:id="@+id/btnHdoLoadData"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -151,7 +151,7 @@
 
             <Button
                 android:id="@+id/btnSaveHdo"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -160,7 +160,7 @@
 
             <Button
                 android:id="@+id/btnClipData"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

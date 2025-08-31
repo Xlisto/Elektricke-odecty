@@ -75,7 +75,7 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
             //calendar.add(Calendar.DAY_OF_MONTH, -1);
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(getResources().getString(R.string.set_first_meters_title));
         builder.setView(view);
         builder.setIcon(R.drawable.ic_warning_png);

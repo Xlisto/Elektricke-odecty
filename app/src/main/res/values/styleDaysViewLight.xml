@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="TextViewDaysLight">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/md_theme_primary</item>
     </style>
 </resources>

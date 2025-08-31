@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <RelativeLayout
@@ -32,10 +31,11 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="5dp"
             android:visibility="gone" />
-
+        <!--style="@style/StyleTvAlert"-->
         <TextView
             android:id="@+id/tvAlertMonthlyReading"
-            style="@style/StyleTvAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/create_place" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,9 +49,7 @@
             android:clickable="true"
             android:contentDescription="@string/add_nem_monthly_reading"
             android:focusable="true"
-            android:src="@drawable/ic_content_add"
-            app:backgroundTint="@color/floatingButtonTint"
-            app:tint="@color/floatingButtonBackground" />
+            android:src="@drawable/ic_content_add"/>
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/swRegulPrice"

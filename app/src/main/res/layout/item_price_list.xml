@@ -126,28 +126,31 @@
 
             <Button
                 android:id="@+id/btnEditPriceListItem"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="@string/edit" />
 
             <Button
                 android:id="@+id/btnDetailPriceListItem"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="@string/label_price_detail" />
 
             <Button
                 android:id="@+id/btnDeletePriceListItem"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="@string/delete" />
         </LinearLayout>

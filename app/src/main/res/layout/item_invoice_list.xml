@@ -90,19 +90,21 @@
 
             <Button
                 android:id="@+id/btnEditInvoiceList"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="Číslo faktury" />
 
             <Button
                 android:id="@+id/btnShowInvoiceList"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="Zobrazit fakturu" />
 
@@ -118,19 +120,21 @@
 
             <Button
                 android:id="@+id/btnShowPaymentList"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="Zálohové platby" />
 
             <Button
                 android:id="@+id/btnDeleteInvoiceList"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="Smazat fakturu" />
         </LinearLayout>

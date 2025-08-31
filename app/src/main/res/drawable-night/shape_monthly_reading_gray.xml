@@ -5,11 +5,11 @@
     <stroke
         android:width="0dp"
         android:color="@color/l_gray2" />
-    <gradient
-        android:startColor="@color/l_gray2"
-        android:endColor="#474747"
-        android:angle="0" />
 
+    <!--<gradient
+        android:startColor="@color/md_theme_outline"
+        android:endColor="@color/md_theme_surfaceDim"
+        android:angle="0" />-->
 
     <padding
         android:bottom="2dp"

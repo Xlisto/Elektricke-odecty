@@ -240,10 +240,11 @@
             android:layout_below="@id/viewInvoiceSum"
             android:layout_alignParentBottom="true"
             android:contentDescription="@string/description_invoice" />
-
+        <!--style="@style/StyleTvAlert"-->
         <TextView
             android:id="@+id/tvAlertDashboard"
-            style="@style/StyleTvAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/create_place"
             android:visibility="visible" />
 

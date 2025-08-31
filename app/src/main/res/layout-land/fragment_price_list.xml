@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:baselineAligned="false"
     android:orientation="horizontal"
     android:padding="10dp"
@@ -58,9 +57,7 @@
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginBottom="10dp"
             android:contentDescription="@string/add"
-            android:src="@drawable/ic_content_add"
-            app:backgroundTint="@color/floatingButtonTint"
-            app:tint="@color/floatingButtonBackground" />
+            android:src="@drawable/ic_content_add"/>
 
         <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
             android:id="@+id/rv_price_list"

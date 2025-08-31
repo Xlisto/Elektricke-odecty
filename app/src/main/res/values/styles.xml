@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MyNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+    <!--<style name="MyNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
         <item name="itemTextColor">@color/nav_menu_item_color</item>
         <item name="itemIconTint">@color/nav_menu_item_color</item>
         <item name="itemBackground">@color/nav_menu_background</item>
         <item name="background">@color/color_hdo_time_TUV</item>
         <item name="itemTextAppearance">@style/NavMenuItemTextAppearance</item>
-    </style>
+    </style>-->
 
     <!-- Define a new style for NavigationView -->
-    <style name="DialogTheme" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:background">@color/white</item>
-        <item name="colorOnPrimary">@color/purple_500</item>
-        <item name="android:textColor">@color/black</item>
+    <!--<style name="DialogTheme" parent="Theme.AppCompat.Dialog.Alert">-->
+        <!--<item name="android:background">@color/white</item>-->
+        <!--<item name="colorOnPrimary">@color/purple_500</item>-->
+        <!--<item name="android:textColor">@color/black</item>
         <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:backgroundDimAmount">0.5</item>-->
         <!--<item name="colorPrimary">@color/colorButtonText</item>
         <item name="colorText">@color/colorButtonText</item>
         <item name="color">@color/colorButtonText</item>
         <item name="android:colorPrimary">@color/black</item>
 -->
-    </style>
+   <!-- </style>-->
 
     <!-- Define text appearance for navigation menu items -->
-    <style name="NavMenuItemTextAppearance" parent="TextAppearance.AppCompat.Body1">
+    <!--<style name="NavMenuItemTextAppearance" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textColor">@color/nav_menu_item_color</item>
-    </style>
+    </style>-->
 
     <!-- Define color RippleItem-->
-    <style name="NavigationItemNoRipple">
+    <!--<style name="NavigationItemNoRipple">
         <item name="android:colorControlHighlight">@android:color/transparent</item>
         <item name="android:backgroundDimAmount">0.5</item>
-    </style>
+    </style>-->
 
-    <style name="StyleTvAlert">
+    <!--<style name="StyleTvAlert">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>
@@ -46,5 +46,5 @@
         <item name="android:padding">10dp</item>
         <item name="android:text">@string/create_place</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
-    </style>
+    </style>-->
 </resources>

@@ -6,10 +6,10 @@
         android:width="0dp"
         android:color="@color/l_gray1" />
 
-    <gradient
-        android:startColor="@color/l_gray1"
-        android:endColor="#7A7A7A"
-        android:angle="0" />
+   <!-- <gradient
+        android:startColor="@color/md_theme_outline"
+        android:endColor="@color/md_theme_surfaceDim"
+        android:angle="0" />-->
 
     <padding
         android:bottom="2dp"

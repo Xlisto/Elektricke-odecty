@@ -74,7 +74,7 @@ public class YesNoDialogFragment extends DialogFragment {
             message = savedInstanceState.getString(MESSAGE);
             flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT);
         }
-        builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(title);
         builder.setIcon(R.drawable.ic_warning_png);
         builder.setMessage(message);

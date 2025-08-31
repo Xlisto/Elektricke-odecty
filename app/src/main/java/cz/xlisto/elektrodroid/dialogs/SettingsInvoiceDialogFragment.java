@@ -41,7 +41,7 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
         TextView tvDescription = view.findViewById(R.id.tvAutogenerateSettingDescription);
         setDescription(switchAutoGenerate.isChecked(), tvDescription);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(getResources().getString(R.string.autogenerate_title));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {
