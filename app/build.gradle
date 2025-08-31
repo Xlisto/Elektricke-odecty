@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-
+    
     lint {
         baseline = file("lint-baseline.xml")
     }
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 21
-        targetSdk 35
+        targetSdkVersion 36
         versionCode 146
         versionName '1.146'
 
@@ -33,7 +33,17 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE', 'META-INF/LICENSE.txt', 'META-INF/license.txt', 'META-INF/NOTICE', 'META-INF/NOTICE.txt', 'META-INF/notice.txt', 'META-INF/ASL2.0']
+            excludes += [
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/license.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/notice.txt',
+                    'META-INF/ASL2.0',
+                    'META-INF/INDEX.LIST'
+            ]
         }
     }
     compileOptions {
@@ -41,7 +51,7 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
-    buildToolsVersion = '35.0.0 rc4'
+    buildToolsVersion = '36.0.0'
     namespace 'cz.xlisto.elektrodroid'
     compileSdkVersion 36
 }
@@ -53,41 +63,41 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.9.3'
     implementation 'me.grantland:autofittextview:0.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.datastore:datastore-core-android:1.1.3'
-    implementation 'com.google.firebase:protolite-well-known-types:18.0.0'
+    implementation 'androidx.datastore:datastore-core-android:1.1.7'
+    implementation 'com.google.firebase:protolite-well-known-types:18.0.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
     // jsoup HTML parser library @ https://jsoup.org/
-    implementation 'org.jsoup:jsoup:1.18.1'
+    implementation 'org.jsoup:jsoup:1.21.2'
     //Google Drive API
-    implementation 'com.google.guava:guava:33.2.1-android'
-    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation 'com.google.guava:guava:33.4.8-android'
+    implementation 'com.google.android.gms:play-services-auth:21.4.0'
     //implementation 'com.google.http-client:google-http-client-gson:1.44.2'
-    implementation('com.google.api-client:google-api-client-android:2.6.0')
-    implementation('com.google.apis:google-api-services-drive:v3-rev197-1.25.0')
+    implementation('com.google.api-client:google-api-client-android:2.8.1')
+    implementation('com.google.apis:google-api-services-drive:v3-rev20250819-2.0.0')
     // For AGP 7.4+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.16'
-    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.16'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.17'
+    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.17'
 
     // optional - needed for credentials support from play services, for devices running
-    implementation 'androidx.credentials:credentials:1.5.0-rc01'
-    implementation 'androidx.credentials:credentials-play-services-auth:1.5.0-rc01'
+    implementation 'androidx.credentials:credentials:1.5.0'
+    implementation 'androidx.credentials:credentials-play-services-auth:1.5.0'
     implementation 'com.google.android.libraries.identity.googleid:googleid:1.1.1'
 
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.13.1'
 
-    implementation 'com.google.http-client:google-http-client-android:1.41.5'
+    implementation 'com.google.http-client:google-http-client-android:2.0.0'
 
-    implementation 'com.google.api-client:google-api-client:2.0.0'
-    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.34.1'
+    implementation 'com.google.api-client:google-api-client:2.8.1'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.39.0'
     implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
-    implementation 'com.google.auth:google-auth-library-oauth2-http:1.17.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.38.0'
 
 
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
