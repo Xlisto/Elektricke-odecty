@@ -20,6 +20,7 @@ public class MonthlyReadingViewModel extends ViewModel {
     private final MutableLiveData<Boolean> uploadResult = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showingProgressBar = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isChangeMeter = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isAddedPayment = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirst = new MutableLiveData<>();
     private final MutableLiveData<PriceListModel> selectedPriceList = new MutableLiveData<>();
     private final MutableLiveData<MonthlyReadingWidgetContainer> widgetContainer = new MutableLiveData<>();
@@ -27,9 +28,9 @@ public class MonthlyReadingViewModel extends ViewModel {
 
     public MonthlyReadingViewModel() {
         isChangeMeter.setValue(false);
+        isAddedPayment.setValue(false);
         isFirst.setValue(false);
         selectedPriceList.setValue(new PriceListModel());
-
     }
 
 
@@ -87,6 +88,15 @@ public class MonthlyReadingViewModel extends ViewModel {
         this.isChangeMeter.postValue(isChangeMeter);
     }
 
+    /**
+     * Nastaví hodnotu indikující, zda byla přidána platba.
+     *
+     * @param isAddedPayment boolean hodnota, která určuje, zda byla přidána platba
+     */
+    public void setIsAddedPayment(boolean isAddedPayment) {
+        this.isAddedPayment.postValue(isAddedPayment);
+    }
+
 
     /**
      * Nastaví hodnotu indikující, zda se jedná o první načtení.
@@ -126,6 +136,14 @@ public class MonthlyReadingViewModel extends ViewModel {
         return isChangeMeter;
     }
 
+    /**
+     * Vrací LiveData objekt, který indikuje, zda byla přidána platba.
+     *
+     * @return LiveData\<Boolean\> objekt indikující přidání platby
+     */
+    public LiveData<Boolean> getAddedPayment() {
+        return isAddedPayment;
+    }
 
     /**
      * Vrací LiveData objekt, který indikuje, zda se jedná o první načtení.

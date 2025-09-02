@@ -396,11 +396,12 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         labPayment.setEnabled(!isChecked);
         labOtherService.setEnabled(!isChecked);
         cbAddPayment.setEnabled(!isChecked);
-        if (isChecked || !cbChangeMeter.isEnabled())
+        if (isChecked || !cbChangeMeter.isEnabled()) {
             btnSelectPriceList.setVisibility(View.GONE);
+            cbAddPayment.setChecked(false);
+        }
         else
             btnSelectPriceList.setVisibility(View.VISIBLE);
-        cbAddPayment.setChecked(false);
     }
 
 

@@ -102,7 +102,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 dataMonthlyReadingSource.close();
 
                 //přidat platbu: true; první odečet: false
-                if (cbAddPayment.isChecked() && !cbChangeMeter.isChecked() && countMonthlyReading != 0) {
+                if (cbAddPayment.isChecked() && !cbChangeMeter.isChecked() && getCountMonthlyReading() != 0) {
                     DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
                     dataSubscriptionPointSource.open();
                     dataSubscriptionPointSource.insertPayment(tablePayments, createPayment(datePayment));

@@ -25,34 +25,34 @@ public class PriceListModel implements Serializable {
     private String rada;
     private String produkt;
     private final String firma;
-    private double cenaVT;
-    private double cenaNT;
-    private double mesicniPlat;
-    private double dan;
+    private Double cenaVT;
+    private Double cenaNT;
+    private Double mesicniPlat;
+    private Double dan;
     private String sazba;
-    private double distVT;
-    private double distNT;
-    private double j0;
-    private double j1;
-    private double j2;
-    private double j3;
-    private double j4;
-    private double j5;
-    private double j6;
-    private double j7;
-    private double j8;
-    private double j9;
-    private double j10;
-    private double j11;
-    private double j12;
-    private double j13;
-    private double j14;
-    private double systemSluzby;
-    private double cinnost;
-    private double poze1;
-    private double poze2;
-    private final double oze;
-    private final double ote;
+    private Double distVT;
+    private Double distNT;
+    private Double j0;
+    private Double j1;
+    private Double j2;
+    private Double j3;
+    private Double j4;
+    private Double j5;
+    private Double j6;
+    private Double j7;
+    private Double j8;
+    private Double j9;
+    private Double j10;
+    private Double j11;
+    private Double j12;
+    private Double j13;
+    private Double j14;
+    private Double systemSluzby;
+    private Double cinnost;
+    private Double poze1;
+    private Double poze2;
+    private final Double oze;
+    private final Double ote;
     private long platnostOD;
     private long platnostDO;
     private double dph;
@@ -229,22 +229,22 @@ public class PriceListModel implements Serializable {
 
 
     public Double getCenaVT() {
-        return cenaVT;
+        return cenaVT != null ? cenaVT : 0.0;
     }
 
 
     public Double getCenaNT() {
-        return cenaNT;
+        return cenaNT != null ? cenaNT : 0.0;
     }
 
 
     public Double getMesicniPlat() {
-        return mesicniPlat;
+        return mesicniPlat != null ? mesicniPlat : 0.0;
     }
 
 
     public Double getDan() {
-        return dan;
+        return dan != null ? dan : 0.0;
     }
 
 
@@ -254,117 +254,117 @@ public class PriceListModel implements Serializable {
 
 
     public Double getDistVT() {
-        return distVT;
+        return distVT != null ? distVT : 0.0;
     }
 
 
     public Double getDistNT() {
-        return distNT;
+        return distNT != null ? distNT : 0.0;
     }
 
 
     public Double getJ0() {
-        return j0;
+        return j0 != null ? j0 : 0.0;
     }
 
 
     public Double getJ1() {
-        return j1;
+        return j1 != null ? j1 : 0.0;
     }
 
 
     public Double getJ2() {
-        return j2;
+        return j2 != null ? j2 : 0.0;
     }
 
 
     public Double getJ3() {
-        return j3;
+        return j3 != null ? j3 : 0.0;
     }
 
 
     public Double getJ4() {
-        return j4;
+        return j4 != null ? j4 : 0.0;
     }
 
 
     public Double getJ5() {
-        return j5;
+        return j5 != null ? j5 : 0.0;
     }
 
 
     public Double getJ6() {
-        return j6;
+        return j6 != null ? j6 : 0.0;
     }
 
 
     public Double getJ7() {
-        return j7;
+        return j7 != null ? j7 : 0.0;
     }
 
 
     public Double getJ8() {
-        return j8;
+        return j8 != null ? j8 : 0.0;
     }
 
 
     public Double getJ9() {
-        return j9;
+        return j9 != null ? j9 : 0.0;
     }
 
 
     public Double getJ10() {
-        return j10;
+        return j10 != null ? j10 : 0.0;
     }
 
 
     public Double getJ11() {
-        return j11;
+        return j11 != null ? j11 : 0.0;
     }
 
 
     public Double getJ12() {
-        return j12;
+        return j12 != null ? j12 : 0.0;
     }
 
 
     public Double getJ13() {
-        return j13;
+        return j13 != null ? j13 : 0.0;
     }
 
 
     public Double getJ14() {
-        return j14;
+        return j14 != null ? j14 : 0.0;
     }
 
 
     public Double getSystemSluzby() {
-        return systemSluzby;
+        return systemSluzby != null ? systemSluzby : 0.0;
     }
 
 
     public Double getCinnost() {
-        return cinnost;
+        return cinnost != null ? cinnost : 0.0;
     }
 
 
     public Double getPoze1() {
-        return poze1;
+        return poze1 != null ? poze1 : 0.0;
     }
 
 
     public Double getPoze2() {
-        return poze2;
+        return poze2 != null ? poze2 : 0.0;
     }
 
 
     public Double getOze() {
-        return oze;
+        return oze != null ? oze : 0.0;
     }
 
 
     public Double getOte() {
-        return ote;
+        return ote != null ? ote : 0.0;
     }
 
 

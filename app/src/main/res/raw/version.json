@@ -1,5 +1,21 @@
 [
   {
+    "version": 148,
+    "date": "2.9.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Byla opravena chyba načítání ceníku při nulových položkách."
+    ]
+  },{
+    "version": 147,
+    "date": "2.9.2025",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Při vkládání nového měsíčního odečtu se nyní do seznamu plateb automaticky přidá nová záloha pro fakturaci, pokud je tato volba povolena.",
+      "Do seznamu plateb u faktur byla doplněna možnost zadat přeplatek."
+    ]
+  },
+  {
     "version": 146,
     "date": "19.7.2025",
     "changes": [
