@@ -251,7 +251,7 @@ public class PriceListDetailFragment extends Fragment {
 
         //Přenastavení ceníku pro rok 2024, od 1.7. se činnost operátora trhu (OTE) mění na provoz nesíťové infrastruktury
         //1719784800000 == 1.7.2024
-        if (dateStart >= 1719784800000L && dateEnd <= 1735599600000L) {//1.7.2024 - 31.12.2024
+        if (dateStart >= 1719784800000L) {//1.7.2024 - 31.12.2024
             ldnOTE.setLabel(getResources().getString(R.string.provoz_nesitove_infrastruktury));
             ldnOTE.setItem(getResources().getString(R.string.kc_om));
         }
