@@ -492,53 +492,84 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Nastaví adaptér pro spinner sazby distribuce.
+     * Načte regulované ceny asynchronně a aplikuje je do UI.
      * <p>
-     * Používá `Handler` k opožděnému spuštění kódu, který načte pole sazeb
-     * z prostředků a nastaví adaptér pro spinner `spSazba`.
+     * Chování:
+     * - Neprovádí žádné IO na UI vlákně: čtení proběhne v pozadí pomocí
+     *   single-thread {@link java.util.concurrent.ExecutorService}.
+     * - Celá úloha je zabalena v {@code try-catch-finally}: při výjimce se zaznamená
+     *   chybová hláška a na UI se zobrazí informace (pokud je fragment připojen).
+     * - Výsledná aktualizace widgetů probíhá přes {@code mainHandler.post(...)} na hlavním vlákně.
+     * - Před manipulací s UI se kontroluje {@code isAdded()}.
+     * - V {@code finally} je vždy zavoláno {@code executor.shutdown()}.
+     * <p>
+     * Poznámky:
+     * - Metoda předpokládá, že volající rozhoduje o tom, kdy je vhodné ji zavolat
+     *   (např. podle viditelnosti tlačítka pro načtení). ReadRawJSON zodpovídá za detailní
+     *   zpracování/parsing dat.
      */
+
     void setRegulPrice() {
-        if (year < 2021)
-            return;
+        if (year < DEF_MIN_YEAR) return;
+
         ReadRawJSON readRawJSON = new ReadRawJSON(getActivity());
-        Handler handler = new Handler();
-        final Runnable r = () -> {
+        java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newSingleThreadExecutor();
+        android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
 
-            PriceListModel priceListModel = readRawJSON.read(year, spDistribucniUzemi.getSelectedItem().toString(),
-                    spSazba.getSelectedItem().toString());
-            double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(),
-                    priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(),
-                    priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(),
-                    priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(),
-                    priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(),
-                    priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(),
-                    priceListModel.getDph()
-            };
-            LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1,
-                    ivJ0, ivJ1, ivJ2, ivJ3,
-                    ivJ4, ivJ5, ivJ6, ivJ7,
-                    ivJ8, ivJ9, ivJ10, ivJ11,
-                    ivJ12, ivJ13, ivJ14, ivSystemSluzby,
-                    ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan,
-                    ivDPH};
+        executor.execute(() -> {
+            try {
+                PriceListModel priceListModel = readRawJSON.read(year,
+                        spDistribucniUzemi.getSelectedItem().toString(),
+                        spSazba.getSelectedItem().toString());
 
-            for (int i = 0; i < regulPrice.length; i++) {
-                labelEditTexts[i].setAllowChangeBackgroundColor(false);
-                labelEditTexts[i].setChangedBackgroundEditText(R.drawable.error_edittext_background);
-                labelEditTexts[i].setDefaultText(df2.format(regulPrice[i]));
-                labelEditTexts[i].setAllowChangeBackgroundColor(true);
+                double[] regulPrice = new double[]{
+                        priceListModel.getDistVT(), priceListModel.getDistNT(),
+                        priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(),
+                        priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(),
+                        priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(),
+                        priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(),
+                        priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(),
+                        priceListModel.getDph()
+                };
+
+                LabelEditText[] labelEditTexts = new LabelEditText[]{
+                        ivVT1, ivNT1,
+                        ivJ0, ivJ1, ivJ2, ivJ3,
+                        ivJ4, ivJ5, ivJ6, ivJ7,
+                        ivJ8, ivJ9, ivJ10, ivJ11,
+                        ivJ12, ivJ13, ivJ14, ivSystemSluzby,
+                        ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan,
+                        ivDPH
+                };
+
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    for (int i = 0; i < regulPrice.length; i++) {
+                        labelEditTexts[i].setAllowChangeBackgroundColor(false);
+                        labelEditTexts[i].setChangedBackgroundEditText(R.drawable.error_edittext_background);
+                        labelEditTexts[i].setDefaultText(df2.format(regulPrice[i]));
+                        labelEditTexts[i].setAllowChangeBackgroundColor(true);
+                    }
+
+                    switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) ||
+                            (priceListModel.getJ12() != 0) || (priceListModel.getJ13() != 0));
+
+                    hideItemView();
+                    changeTitleOperatorTrhu();
+                    chanagePriceOperatorTrhu();
+                });
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "Chyba při načítání regulovaných cen: " + e.getMessage(), e);
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    // Volitelně: informovat uživatele nebo vyčistit pole
+                    tvNoPriceListDescription.setVisibility(View.VISIBLE);
+                    btnReloadRegulPriceList.setVisibility(View.GONE);
+                });
+            } finally {
+                executor.shutdown();
             }
-
-            switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) ||
-                    (priceListModel.getJ12() != 0) || (priceListModel.getJ12() != 0));
-
-            hideItemView();
-
-            //změní činnost operátora trhu na provoz nesíťové infrastruktury - od 1.7.2024
-            changeTitleOperatorTrhu();
-            chanagePriceOperatorTrhu();
-        };
-        handler.postDelayed(r, 1000);
+        });
     }
 
 
