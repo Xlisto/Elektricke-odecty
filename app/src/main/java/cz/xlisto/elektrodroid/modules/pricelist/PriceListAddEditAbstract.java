@@ -82,6 +82,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String JISTIC = "swJistic";
     static final String LAST_YEAR = "lastYear";
     static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY = "flagResultDialogProvozNesitoveInfrastruktury";
+    private static final int DEF_MIN_YEAR = 2021;
+    private static final int DEF_MAX_YEAR = 2025;
 
     String[] arrayDistUzemi;
     String[] arraySazba;
@@ -541,23 +543,82 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen.
+     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen podle roku z tlačítka "Platnost od".
      * <p>
-     * Na základě roku vybraného v tlačítku "Platnost od" zobrazí nebo skryje
-     * tlačítko `btnReloadRegulPriceList` a popis `tvNoPriceListDescription`.
-     * Pokud je rok menší než 2021 nebo větší než 2025, tlačítko se skryje a popis se zobrazí.
-     * Jinak se tlačítko zobrazí a popis se skryje.
+     * Metoda:
+     * - přečte vybraný rok z `btnFrom`,
+     * - spustí na pozadí volání `getMinMaxYearFromRaw()` které načte minimální a maximální rok z
+     * `res/raw/ostatni.json`,
+     * - výsledek aplikuje v UI vlákně (zobrazení/ skrytí `btnReloadRegulPriceList` a `tvNoPriceListDescription`).
+     * <p>
+     * Pokud načtení JSONu selže nebo nejsou nalezeny žádné roky, použijí se fallback konstanty
+     * `DEF_MIN_YEAR` a `DEF_MAX_YEAR`.
      */
     void showBtnReloadRegulPriceList() {
         String startDate = btnFrom.getText().toString();
-        int year = ViewHelper.parseCalendarFromString(startDate).get(Calendar.YEAR);
-        if (year < 2021 || year > 2025) {
-            btnReloadRegulPriceList.setVisibility(View.GONE);
-            tvNoPriceListDescription.setVisibility(View.VISIBLE);
-        } else {
-            btnReloadRegulPriceList.setVisibility(View.VISIBLE);
-            tvNoPriceListDescription.setVisibility(View.GONE);
+        final int selectedYear = ViewHelper.parseCalendarFromString(startDate).get(Calendar.YEAR);
+
+        // načíst min/max na pozadí
+        new Thread(() -> {
+            int[] bounds = getMinMaxYearFromRaw();
+            int minYear = bounds[0];
+            int maxYear = bounds[1];
+
+            requireActivity().runOnUiThread(() -> {
+                if (selectedYear < minYear || selectedYear > maxYear) {
+                    btnReloadRegulPriceList.setVisibility(View.GONE);
+                    tvNoPriceListDescription.setVisibility(View.VISIBLE);
+                } else {
+                    btnReloadRegulPriceList.setVisibility(View.VISIBLE);
+                    tvNoPriceListDescription.setVisibility(View.GONE);
+                }
+            });
+        }).start();
+    }
+
+
+    /**
+     * Načte soubor {@code res/raw/ostatni.json} a z něj určí minimální a maximální rok
+     * podle pole {@code "rok"} v jednotlivých záznamech.
+     * <p>
+     * Pokud se načítání nebo parsování nezdaří nebo v JSONu nejsou žádné roky,
+     * vrátí fallback hodnoty {@code DEF_MIN_YEAR} a {@code DEF_MAX_YEAR}.
+     * Metoda zachytává výjimky interně (není vyhazuje volajícímu) a vrací výsledky jako
+     * pole dvou celých čísel.
+     *
+     * @return int[] pole délky 2: index 0 = minimální rok, index 1 = maximální rok
+     */
+    private int[] getMinMaxYearFromRaw() {
+        int minYear = Integer.MAX_VALUE;
+        int maxYear = Integer.MIN_VALUE;
+
+        try (java.io.InputStream is = getResources().openRawResource(R.raw.ostatni);
+             java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) sb.append(line);
+
+            org.json.JSONArray arr = new org.json.JSONArray(sb.toString());
+            for (int i = 0; i < arr.length(); i++) {
+                org.json.JSONObject obj = arr.getJSONObject(i);
+                if (obj.has("rok")) {
+                    int r = obj.getInt("rok");
+                    if (r < minYear) minYear = r;
+                    if (r > maxYear) maxYear = r;
+                }
+            }
+        } catch (Exception e) {
+            // fallback pokud se nepodaří načíst JSON
+            minYear = DEF_MIN_YEAR;
+            maxYear = DEF_MAX_YEAR;
         }
+
+        if (minYear == Integer.MAX_VALUE || maxYear == Integer.MIN_VALUE) {
+            minYear = DEF_MIN_YEAR;
+            maxYear = DEF_MAX_YEAR;
+        }
+        return new int[]{minYear, maxYear};
     }
 
 
