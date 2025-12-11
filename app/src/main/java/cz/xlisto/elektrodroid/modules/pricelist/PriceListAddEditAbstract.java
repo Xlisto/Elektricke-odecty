@@ -545,13 +545,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Na základě roku vybraného v tlačítku "Platnost od" zobrazí nebo skryje
      * tlačítko `btnReloadRegulPriceList` a popis `tvNoPriceListDescription`.
-     * Pokud je rok menší než 2021 nebo větší než 2024, tlačítko se skryje a popis se zobrazí.
+     * Pokud je rok menší než 2021 nebo větší než 2025, tlačítko se skryje a popis se zobrazí.
      * Jinak se tlačítko zobrazí a popis se skryje.
      */
     void showBtnReloadRegulPriceList() {
         String startDate = btnFrom.getText().toString();
         int year = ViewHelper.parseCalendarFromString(startDate).get(Calendar.YEAR);
-        if (year < 2021 || year > 2024) {
+        if (year < 2021 || year > 2025) {
             btnReloadRegulPriceList.setVisibility(View.GONE);
             tvNoPriceListDescription.setVisibility(View.VISIBLE);
         } else {
