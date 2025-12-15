@@ -53,5 +53,16 @@
       "POZE2": 495,
       "dph": 21
     }
+  },
+  {
+    "rok": 2026,
+    "ostatni": {
+      "dan": 28.3,
+      "system_sluzby": 164.24,
+      "cinnost": 12.87,
+      "POZE1": 8.32,
+      "POZE2": 495,
+      "dph": 21
+    }
   }
 ]
