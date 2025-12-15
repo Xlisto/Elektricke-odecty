@@ -30,6 +30,7 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.utils.DateUtil;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 
@@ -83,7 +84,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String LAST_YEAR = "lastYear";
     static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY = "flagResultDialogProvozNesitoveInfrastruktury";
     private static final int DEF_MIN_YEAR = 2021;
-    private static final int DEF_MAX_YEAR = 2025;
+    private static final int DEF_MAX_YEAR = 2026;
 
     String[] arrayDistUzemi;
     String[] arraySazba;
@@ -158,7 +159,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             btnFrom.setText(day);
             hideItemView();
             lastYear = year;
-            getYearBtnStart();
+            year = getYearBtnStart();
             onResume();
             setRegulPrice();
             showBtnReloadRegulPriceList();
@@ -250,7 +251,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             isFirstLoad = false;
 
         }
-        getYearBtnStart();
+        year = getYearBtnStart();
         hideItemView();
 
         //nastavení adaptéru, výběr první položky, která reprezentuje nápovědu
@@ -401,19 +402,35 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Získá rok z data vybraného v tlačítku "Platnost od".
+     * Vrátí rok extrahovaný z data zobrazeného v tlačítku "Platnost od".
+     * <p>
+     * Metoda:
+     * - přečte text z tlačítka `btnFrom`,
+     * - pomocí `ViewHelper.parseCalendarFromString` vytvoří objekt `Calendar`,
+     * - vrátí rok získaný z pomocné třídy `DateUtil`.
+     * <p>
+     * Metoda pouze čte hodnotu z UI a neprovádí žádné vedlejší efekty (neukládá rok do polí třídy).
      *
-     * @return int rok vybraný z data v tlačítku "Platnost od"
+     * @return rok vybraný v tlačítku "Platnost od" jako `int`
      */
     int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
-        year = calendar.get(Calendar.YEAR);
-        return year;
+        return new DateUtil(calendar).getYear();
+
     }
 
 
     /**
-     * Získá long z data vybraného v tlačítku "Platnost od".
+     * Vrátí čas v milisekundách extrahovaný z data zobrazeného v tlačítku "Platnost od".
+     * <p>
+     * Metoda:
+     * - přečte text z tlačítka `btnFrom`,
+     * - pomocí `ViewHelper.parseCalendarFromString` vytvoří objekt `Calendar`,
+     * - vrátí hodnotu `calendar.getTimeInMillis()`.
+     * <p>
+     * Metoda pouze čte hodnotu z UI a neprovádí žádné vedlejší efekty (neukládá stav).
+     *
+     * @return čas v milisekundách odpovídající datu z `btnFrom`
      */
     long getLongBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
@@ -496,17 +513,17 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Chování:
      * - Neprovádí žádné IO na UI vlákně: čtení proběhne v pozadí pomocí
-     *   single-thread {@link java.util.concurrent.ExecutorService}.
+     * single-thread {@link java.util.concurrent.ExecutorService}.
      * - Celá úloha je zabalena v {@code try-catch-finally}: při výjimce se zaznamená
-     *   chybová hláška a na UI se zobrazí informace (pokud je fragment připojen).
+     * chybová hláška a na UI se zobrazí informace (pokud je fragment připojen).
      * - Výsledná aktualizace widgetů probíhá přes {@code mainHandler.post(...)} na hlavním vlákně.
      * - Před manipulací s UI se kontroluje {@code isAdded()}.
      * - V {@code finally} je vždy zavoláno {@code executor.shutdown()}.
      * <p>
      * Poznámky:
      * - Metoda předpokládá, že volající rozhoduje o tom, kdy je vhodné ji zavolat
-     *   (např. podle viditelnosti tlačítka pro načtení). ReadRawJSON zodpovídá za detailní
-     *   zpracování/parsing dat.
+     * (např. podle viditelnosti tlačítka pro načtení). ReadRawJSON zodpovídá za detailní
+     * zpracování/parsing dat.
      */
 
     void setRegulPrice() {
@@ -518,7 +535,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
         executor.execute(() -> {
             try {
-                PriceListModel priceListModel = readRawJSON.read(year,
+                Calendar startCal = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
+                Calendar endCal = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
+
+                PriceListModel priceListModel = readRawJSON.read(startCal,endCal,
                         spDistribucniUzemi.getSelectedItem().toString(),
                         spSazba.getSelectedItem().toString());
 

@@ -95,7 +95,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         super.onResume();
         if (isFirstLoad) {
             isFirstLoad = false;
-            getYearBtnStart();
+            year = getYearBtnStart();
             setDistribucniUzemiAdapter();
             setSpinners(priceListModel);
         }

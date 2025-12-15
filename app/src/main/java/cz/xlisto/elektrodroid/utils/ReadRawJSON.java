@@ -1,6 +1,8 @@
 package cz.xlisto.elektrodroid.utils;
 
+
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,17 +11,23 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.PriceListModel;
+
 
 /**
  * Čtení JSON souborů (regulované ceny) z res/raw
  */
 public class ReadRawJSON {
+
     private final static String TAG = "ReadRawJSON";
     private final Context context;
     private int year;
+    private Calendar startCalBtn, endCalBtn;
     private String distUzemi, sazba;
     private final PriceListModel priceListModel;
     private static final String ROK = "rok";
@@ -65,14 +73,32 @@ public class ReadRawJSON {
 
 
     /**
-     * Prohledá objekt JSON s regulovanými cenami a podle typu (distribuční sazba, hodnota jistice) naplní model ceníku
+     * Načte regulované ceny z raw JSON zdrojů a naplní interní model `priceListModel`.
+     * <p>
+     * Postup:
+     * - nastaví rok podle `startCal` (pomocí `DateUtil`),
+     * - uloží parametrické filtry `distUzemi` a `sazba` do polí instance,
+     * - načte obsahy souborů `res/raw/distribuce`, `res/raw/ostatni`, `res/raw/jistice`,
+     * - zavolá `parse` a `parseOther` pro naplnění `priceListModel`.
+     * <p>
+     * Vedlejší efekty:
+     * - mění stav instance (`this.year`, `this.distUzemi`, `this.sazba`),
+     * - aktualizuje a vrací interní `priceListModel`.
+     * <p>
+     * Poznámka:
+     * - parametr `endCal` není v současné implementaci použitý;
+     * pokud se má provádět filtrování podle období, je potřeba ho zpracovat.
      *
-     * @param year      rok ceníku pro který jsou platný regulované ceny
-     * @param distUzemi oblast distribučního území
-     * @param sazba     distribuční sazba
+     * @param startCal  počáteční datum platnosti ceníku (použito pro určení roku)
+     * @param endCal    koncové datum platnosti (aktuálně nevyužito)
+     * @param distUzemi distribuční oblast pro filtrování
+     * @param sazba     distribuční sazba pro filtrování
+     * @return naplněný objekt `PriceListModel`
      */
-    public PriceListModel read(int year, String distUzemi, String sazba) {
-        this.year = year;
+    public PriceListModel read(Calendar startCal, Calendar endCal, String distUzemi, String sazba) {
+        this.year = new DateUtil(startCal).getYear();
+        this.startCalBtn = startCal;
+        this.endCalBtn = endCal;
         this.distUzemi = distUzemi;
         this.sazba = sazba;
         String distribuce = readRaw(R.raw.distribuce);
@@ -106,11 +132,11 @@ public class ReadRawJSON {
             }
             return json;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "readRaw: " + e.getMessage());
         }
         return json;
     }
-    
+
 
     /**
      * Prohledá objekt JSON a podle typu (distribuční oblast, vt, nt nebo ceny jističe) zavolá
@@ -140,7 +166,7 @@ public class ReadRawJSON {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "parse: " + e.getMessage());
         }
     }
 
@@ -204,31 +230,99 @@ public class ReadRawJSON {
 
 
     /**
-     * Sestaví JSON ze stringu. Vyfiltruje podle roku platnosti a přiřadí hodnoty systémové služby, činnost operátora,
-     * poze podle jističe a poze podle spotřeby, dph a dan
+     * Zpracuje obsah pole `OSTATNI` z JSONu a přiřadí hodnoty do `priceListModel`.
+     * <p>
+     * Chování:
+     * - Najde objekt pro aktuální `year`.
+     * - Pokud je `OSTATNI` `JSONObject`, přiřadí jeho hodnoty přímo (SYSTEM_SLUZBY, CINNOST, POZE1, POZE2, DPH, DAN).
+     * - Pokud je `OSTATNI` `JSONArray`, očekává položky s poli `od` a `do` (formáty jako `1.1.`, `1.1`, `01.01`).
+     * Datumy se parsují pomocí `parseDate` a převedou na `Calendar` (rok = `this.year`).
+     * - Pro každou periodu se porovná inkluzivně: `startCalBtn >= startCalendarJson` a `endCalBtn <= endCalendarJson`.
+     * Pokud podmínka platí, použijí se hodnoty z té periody (s fallbackem pomocí `optDouble`) a zpracování končí.
+     * - Pokud žádná položka nevyhovuje nebo JSON neobsahuje `OSTATNI`, `priceListModel` zůstane beze změny.
+     * <p>
+     * Vedlejší efekty: aktualizuje interní `priceListModel`.
      *
-     * @param s String obsahující JSON s ostatními cenami
+     * @param s JSON řetězec obsahující pole `OSTATNI`
      */
     private void parseOther(String s) {
         try {
             JSONArray jsonArray = new JSONArray(s);
+            // Vyfiltruje podle roku platnosti
+            JSONObject otherPriceForSelectYearObj = IntStream.range(0, jsonArray.length())
+                    .mapToObj(jsonArray::optJSONObject)
+                    .filter(Objects::nonNull)
+                    .filter(o -> o.optInt(ROK, -1) == year)
+                    .findFirst()
+                    .orElse(null);
+            if (otherPriceForSelectYearObj == null) return;
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject other = jsonArray.getJSONObject(i);
-                if (other.getInt(ROK) == year) {
-                    JSONObject otherPrice = other.getJSONObject(OSTATNI);
-                    priceListModel.setSystemSluzby(otherPrice.getDouble(SYSTEM_SLUZBY));
-                    priceListModel.setCinnost(otherPrice.getDouble(CINNOST));
-                    priceListModel.setPoze1(otherPrice.getDouble(POZE1));
-                    priceListModel.setPoze2(otherPrice.getDouble(POZE2));
-                    priceListModel.setDph(otherPrice.getDouble(DPH));
-                    priceListModel.setDan(otherPrice.getDouble(DAN));
-                    break;
+            Object otherPrice = otherPriceForSelectYearObj.opt(OSTATNI);
+            if (otherPrice == null) return;
+
+            if (otherPrice instanceof JSONObject) {
+                priceListModel.setSystemSluzby(((JSONObject) otherPrice).getDouble(SYSTEM_SLUZBY));
+                priceListModel.setCinnost(((JSONObject) otherPrice).getDouble(CINNOST));
+                priceListModel.setPoze1(((JSONObject) otherPrice).getDouble(POZE1));
+                priceListModel.setPoze2(((JSONObject) otherPrice).getDouble(POZE2));
+                priceListModel.setDph(((JSONObject) otherPrice).getDouble(DPH));
+                priceListModel.setDan(((JSONObject) otherPrice).getDouble(DAN));
+            } else if (otherPrice instanceof JSONArray) {
+                JSONArray otherPriceArr = (JSONArray) otherPrice;
+
+                for (int i = 0; i < otherPriceArr.length(); i++) {
+                    JSONObject otherPriceObj = otherPriceArr.optJSONObject(i);
+                    String startDate = otherPriceObj.optString("od");
+                    String endDate = otherPriceObj.optString("do");
+
+                    Calendar startCalJson = Calendar.getInstance();
+                    Calendar endCalJson = Calendar.getInstance();
+                    startCalJson.clear();
+                    endCalJson.clear();
+                    startCalJson.set(Calendar.DAY_OF_MONTH, parseDate(startDate)[0]);
+                    endCalJson.set(Calendar.DAY_OF_MONTH, parseDate(endDate)[0]);
+                    startCalJson.set(Calendar.MONTH, parseDate(startDate)[1]);
+                    endCalJson.set(Calendar.MONTH, parseDate(endDate)[1]);
+                    startCalJson.set(Calendar.YEAR, year);
+                    endCalJson.set(Calendar.YEAR, year);
+                    if (!startCalBtn.before(startCalJson) && !endCalBtn.after(endCalJson)) {
+                        // přiřazení hodnot z periody (bezpečně pomocí opt*)
+                        priceListModel.setSystemSluzby(otherPriceObj.optDouble(SYSTEM_SLUZBY, priceListModel.getSystemSluzby()));
+                        priceListModel.setCinnost(otherPriceObj.optDouble(CINNOST, priceListModel.getCinnost()));
+                        priceListModel.setPoze1(otherPriceObj.optDouble(POZE1, priceListModel.getPoze1()));
+                        priceListModel.setPoze2(otherPriceObj.optDouble(POZE2, priceListModel.getPoze2()));
+                        priceListModel.setDph(otherPriceObj.optDouble(DPH, priceListModel.getDph()));
+                        priceListModel.setDan(otherPriceObj.optDouble(DAN, priceListModel.getDan()));
+                        // nalezeno, lze ukončit smyčku
+                        break;
+                    }
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "parseOther: " + e.getMessage());
         }
+    }
+
+
+    private int[] parseDate(String date) {
+        int day = 1;
+        int month = 0;
+        String cleanedString = date.trim();
+        if (cleanedString.endsWith(".")) {
+            cleanedString = cleanedString.substring(0, cleanedString.length() - 1).trim();
+        }
+        String[] parts = cleanedString.split("\\.");
+        try {
+            if (parts.length >= 1 && !parts[0].isEmpty()) {
+                day = Integer.parseInt(parts[0]);
+            }
+            if (parts.length >= 2 && !parts[1].isEmpty()) {
+                month = Integer.parseInt(parts[1]) - 1; // přizpůsobit 0-based
+            }
+        } catch (NumberFormatException ignored) {
+            // fallback na výchozí day=1, month=0
+        }
+        return new int[]{day, month};
     }
 
 
@@ -236,4 +330,5 @@ public class ReadRawJSON {
         JISTIC,
         DISTRIBUCE
     }
+
 }
