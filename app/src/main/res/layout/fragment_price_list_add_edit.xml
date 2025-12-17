@@ -28,8 +28,9 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_bg"
             android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:textColor="@color/button_text_color" />
     </LinearLayout>
 
     <ScrollView
@@ -97,7 +98,7 @@
                 <RelativeLayout
                     android:id="@+id/rl_"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_below="@id/ivDodavatel"
                     android:layout_marginTop="5dp">
 
@@ -149,13 +150,27 @@
                         android:layout_centerHorizontal="true"
                         android:text="@string/reload_prices" />
 
-                    <TextView
-                        android:id="@+id/tvNoPriceListDescription"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/rlNoPriceList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_below="@id/spSazbaSeznam"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/no_price_list" />
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/color_red_alert"
+                        android:padding="8dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvNoPriceListDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/no_price_list"
+                            android:textColor="@color/design_default_color_on_primary"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+
 
                 </RelativeLayout>
 

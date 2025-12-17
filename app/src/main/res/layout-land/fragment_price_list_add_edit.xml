@@ -132,13 +132,24 @@
                             android:layout_centerHorizontal="true"
                             android:text="@string/reload_prices" />
 
-                        <TextView
-                            android:id="@+id/tvNoPriceListDescription"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <RelativeLayout
+                            android:id="@+id/rlNoPriceList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_below="@id/spSazbaSeznam"
-                            android:layout_centerHorizontal="true"
-                            android:text="@string/no_price_list" />
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_red_alert"
+                            android:padding="8dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tvNoPriceListDescription"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_centerHorizontal="true"
+                                android:text="@string/no_price_list"
+                                android:textSize="16sp" />
+                        </RelativeLayout>
 
                     </RelativeLayout>
 
@@ -697,7 +708,8 @@
             android:layout_height="wrap_content"
             android:maxWidth="200dp"
             android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:background="@drawable/button_bg"
+            android:textColor="@color/button_text_color" />
     </LinearLayout>
 
 

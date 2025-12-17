@@ -8,11 +8,13 @@ import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -101,6 +103,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     Spinner spSazba, spDistribucniUzemi;
     TextView tvNoPriceListDescription;
     MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;
+    RelativeLayout rlNoPriceList;
 
 
     @Override
@@ -153,6 +156,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         spDistribucniUzemi = view.findViewById(R.id.spDistribucniUzemiSeznam);
         spSazba = view.findViewById(R.id.spSazbaSeznam);
         tvNoPriceListDescription = view.findViewById(R.id.tvNoPriceListDescription);
+        rlNoPriceList = view.findViewById(R.id.rlNoPriceList);
+
 
         btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
             closedDialog = true;
@@ -168,6 +173,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> {
             btnUntil.setText(day);
             setRegulPrice();
+            showBtnReloadRegulPriceList();
         }, btnUntil.getText().toString()));
 
         switchJistic.setOnClickListener(v -> hideItemView());
@@ -257,7 +263,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         //nastavení adaptéru, výběr první položky, která reprezentuje nápovědu
         setSazbaAdapter();
         setDistribucniUzemiAdapter();
-        showBtnReloadRegulPriceList();
 
         /*
          * Nastaví posluchače pro výsledek dialogu "Provoz nesíťové infrastruktury" - změny ceníku od 1.7.2024.
@@ -362,6 +367,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
             spDistribucniUzemi.setAdapter(adapterDistUzemi);
             spDistribucniUzemi.setSelection(selectionDistUzemi, true);
+            showBtnReloadRegulPriceList();
         };
         handler.postDelayed(r, 1140);
     }
@@ -538,7 +544,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 Calendar startCal = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
                 Calendar endCal = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
-                PriceListModel priceListModel = readRawJSON.read(startCal,endCal,
+                PriceListModel priceListModel = readRawJSON.read(startCal, endCal,
                         spDistribucniUzemi.getSelectedItem().toString(),
                         spSazba.getSelectedItem().toString());
 
@@ -607,21 +613,43 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     void showBtnReloadRegulPriceList() {
         String startDate = btnFrom.getText().toString();
-        final int selectedYear = ViewHelper.parseCalendarFromString(startDate).get(Calendar.YEAR);
+        String endDate = btnUntil.getText().toString();
+        StringBuilder errorsMessage = new StringBuilder();
 
-        // načíst min/max na pozadí
+        final Calendar selectedStart = ViewHelper.parseCalendarFromString(startDate);
+        final Calendar selectedEnd = ViewHelper.parseCalendarFromString(endDate);
+        final int selectedStartYear = selectedStart.get(Calendar.YEAR);
+        final int selectedEndYear = selectedEnd.get(Calendar.YEAR);
+
+        // kontola rozsahů platnosti
         new Thread(() -> {
             int[] bounds = getMinMaxYearFromRaw();
             int minYear = bounds[0];
             int maxYear = bounds[1];
 
             requireActivity().runOnUiThread(() -> {
-                if (selectedYear < minYear || selectedYear > maxYear) {
-                    btnReloadRegulPriceList.setVisibility(View.GONE);
-                    tvNoPriceListDescription.setVisibility(View.VISIBLE);
-                } else {
+                // kontrola platnosti, které nejsou uvedeny
+                btnSave.setEnabled(true);
+                if (selectedStartYear < minYear || selectedStartYear > maxYear) {
+                    errorsMessage.append(getString(R.string.no_price_list));
+                } else if (selectedStartYear<selectedEndYear) {
+                    errorsMessage.append(getString(R.string.start_year_is_smaller));
+                    btnSave.setEnabled(false);
+                } else if (selectedEnd.getTimeInMillis()<selectedStart.getTimeInMillis()) {
+                    errorsMessage.append(getString(R.string.end_year_is_smaller));
+                    btnSave.setEnabled(false);
+                }
+                Log.w(TAG, "Chyby při načítání regulovaných cen: " + errorsMessage);
+
+                if(errorsMessage.length()==0){
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
+                    rlNoPriceList.setVisibility(GONE);
+                } else {
+                    tvNoPriceListDescription.setText(errorsMessage);
+                    btnReloadRegulPriceList.setVisibility(View.GONE);
+                    tvNoPriceListDescription.setVisibility(View.VISIBLE);
+                    rlNoPriceList.setVisibility(VISIBLE);
                 }
             });
         }).start();
@@ -634,7 +662,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Pokud se načítání nebo parsování nezdaří nebo v JSONu nejsou žádné roky,
      * vrátí fallback hodnoty {@code DEF_MIN_YEAR} a {@code DEF_MAX_YEAR}.
-     * Metoda zachytává výjimky interně (není vyhazuje volajícímu) a vrací výsledky jako
+     * Metoda zachytává výjimky interně (nevyhazuje volajícímu) a vrací výsledky jako
      * pole dvou celých čísel.
      *
      * @return int[] pole délky 2: index 0 = minimální rok, index 1 = maximální rok

@@ -505,6 +505,8 @@
     <string name="add_hdo">Přidat čas HDO</string>
 
     <string name="no_price_list">Pro tento rok není dostupná regulovaná cena</string>
+    <string name="start_year_is_smaller">Regulovaná část ceny elektřiny je stanovena ERÚ vždy na kalendářní rok.\nCeník proto musí mít platnost omezenou na jeden rok a nesmí překračovat hranici 31. 12. / 1. 1.</string>
+    <string name="end_year_is_smaller">Konečný datum musí být pozdější než počáteční datum.</string>
 
     <string name="allow_notification_title">Povolení oznámení</string>
     <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>

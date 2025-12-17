@@ -35,6 +35,7 @@
     <color name="colorHint">#707070</color>
     <color name="colorLabelEditText">#000000</color>
     <color name="colorButtonText">#FFAF174F</color>
+    <color name="colorOnDisabled">#808A8A8A</color>
     <color name="colorDialogButtonText">#FF6200EE</color>
 
     <!-- NavigationView -->
