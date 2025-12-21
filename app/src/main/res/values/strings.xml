@@ -594,4 +594,9 @@
     <string name="select_backup_folder">Tlačítko pro výběr složky na zálohy</string>
     <string name="saved">Uloženo</string>
     <string name="not_restored_data">Data se neobnovila</string>
+
+    <string name="alert_regulated_prices_title_during_the_year">Regulované ceny se mění v průběhu roku</string>
+    <string name="alert_regulated_prices_title_every_year">Regulované ceny jsou platné vždy pouze pro jeden kalendářní rok</string>
+    <string name="alert_regulated_prices_text">Regulované ceny jsou rozděleny podle dat platnosti:
+</string>
 </resources>

@@ -46,6 +46,11 @@
 
     <color name="text_link">#012587</color>
 
+    <!-- Alert card (light) -->
+    <color name="alert_bg_light">#FFF3F3</color>       <!-- velmi jemná červená / růžová -->
+    <color name="alert_border_light">#FFE0E0</color>   <!-- decentní okraj -->
+    <color name="text_primary">#FF000000</color>      <!-- primární text -->
+    <color name="text_secondary">#FF222222</color>    <!-- sekundární text (tvoje "gray") -->
 
 
 </resources>

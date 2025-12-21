@@ -153,21 +153,60 @@
                     <RelativeLayout
                         android:id="@+id/rlNoPriceList"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_below="@id/spSazbaSeznam"
-                        android:layout_alignParentBottom="true"
-                        android:background="@color/color_red_alert"
-                        android:padding="8dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_alert_card"
+                        android:padding="12dp"
                         android:visibility="gone">
 
+                        <!-- Levý barevný pruh -->
+                        <View
+                            android:id="@+id/vAlertStripe"
+                            android:layout_width="4dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentStart="true"
+                            android:background="@color/color_red_alert" />
+
+                        <!-- Ikona -->
+                        <ImageView
+                            android:id="@+id/ivAlert"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_toEndOf="@id/vAlertStripe"
+                            android:contentDescription="@string/alert"
+                            android:src="@drawable/ic_warning"
+                            app:tint="@color/color_red_alert" />
+
+                        <!-- Nadpis -->
+                        <TextView
+                            android:id="@+id/tvNoPriceListTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@id/ivAlert"
+                            android:layout_marginStart="8dp"
+                            android:layout_toEndOf="@id/ivAlert"
+                            android:text="@string/alert_regulated_prices_title_every_year"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <!-- Popis -->
                         <TextView
                             android:id="@+id/tvNoPriceListDescription"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_centerHorizontal="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tvNoPriceListTitle"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="6dp"
+                            android:layout_toEndOf="@id/vAlertStripe"
+                            android:lineSpacingExtra="2dp"
                             android:text="@string/no_price_list"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="16sp" />
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+
                     </RelativeLayout>
 
 

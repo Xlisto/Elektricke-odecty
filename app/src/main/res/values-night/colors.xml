@@ -33,4 +33,10 @@
 
     <color name="text_link">#1086FB</color>
 
+    <!-- Alert card (dark) -->
+    <color name="alert_bg_light">#2A140F</color>      <!-- tmavý teplý podklad (červenohnědý) -->
+    <color name="alert_border_light">#4A1F1A</color>  <!-- jemný okraj, pořád tmavý -->
+    <color name="text_primary">#FFFFFFFF</color>     <!-- primární text -->
+    <color name="text_secondary">#B8B7B7</color>     <!-- tvoje šedá pro dark -->
+
 </resources>

@@ -3,7 +3,9 @@ package cz.xlisto.elektrodroid.modules.pricelist;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static java.util.Calendar.*;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
+import static cz.xlisto.elektrodroid.format.SimpleDateFormatHelper.dateFormat;
 import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
 import android.os.Bundle;
@@ -23,6 +25,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
@@ -101,7 +107,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
     SwitchCompat switchJistic;
     Spinner spSazba, spDistribucniUzemi;
-    TextView tvNoPriceListDescription;
+    TextView tvNoPriceListDescription, tvNoPriceListTitle;
     MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;
     RelativeLayout rlNoPriceList;
 
@@ -156,8 +162,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         spDistribucniUzemi = view.findViewById(R.id.spDistribucniUzemiSeznam);
         spSazba = view.findViewById(R.id.spSazbaSeznam);
         tvNoPriceListDescription = view.findViewById(R.id.tvNoPriceListDescription);
+        tvNoPriceListTitle = view.findViewById(R.id.tvNoPriceListTitle);
         rlNoPriceList = view.findViewById(R.id.rlNoPriceList);
-
 
         btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
             closedDialog = true;
@@ -167,13 +173,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             year = getYearBtnStart();
             onResume();
             setRegulPrice();
-            showBtnReloadRegulPriceList();
+            evaluateRegulatedPriceAvailability();
         }, btnFrom.getText().toString()));
 
         btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> {
             btnUntil.setText(day);
             setRegulPrice();
-            showBtnReloadRegulPriceList();
+            evaluateRegulatedPriceAvailability();
         }, btnUntil.getText().toString()));
 
         switchJistic.setOnClickListener(v -> hideItemView());
@@ -367,7 +373,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
             spDistribucniUzemi.setAdapter(adapterDistUzemi);
             spDistribucniUzemi.setSelection(selectionDistUzemi, true);
-            showBtnReloadRegulPriceList();
+            evaluateRegulatedPriceAvailability();
         };
         handler.postDelayed(r, 1140);
     }
@@ -396,7 +402,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             if (!spDistribucniUzemi.getSelectedItem().toString().equals("EG.D")) {
                 setDistribucniUzemiAdapter();
                 selectionDistUzemi = 3;
-
             }
         } else {
             if (!spDistribucniUzemi.getSelectedItem().toString().equals("E.ON")) {
@@ -422,7 +427,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         return new DateUtil(calendar).getYear();
-
     }
 
 
@@ -497,7 +501,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @return PriceListModel objekt ceníku
      */
     PriceListModel createPriceList() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = getInstance();
         long dateCreated = calendar.getTimeInMillis();
         String email = "";
         String autor = "";
@@ -600,48 +604,107 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Zobrazí nebo skryje tlačítko pro načtení regulovaných cen podle roku z tlačítka "Platnost od".
+     * Aktualizuje viditelnost a stav UI související s načítáním regulovaných cen
+     * na základě dat z tlačítek `btnFrom` a `btnUntil`.
      * <p>
-     * Metoda:
-     * - přečte vybraný rok z `btnFrom`,
-     * - spustí na pozadí volání `getMinMaxYearFromRaw()` které načte minimální a maximální rok z
-     * `res/raw/ostatni.json`,
-     * - výsledek aplikuje v UI vlákně (zobrazení/ skrytí `btnReloadRegulPriceList` a `tvNoPriceListDescription`).
+     * Chování:
+     * - Parsuje datumy z `btnFrom` a `btnUntil` pomocí `ViewHelper.parseCalendarFromString`.
+     * - Spouští vlákno na pozadí (nové `Thread`) které volá `getMinMaxYearFromRaw(selectedStart, selectedEnd)`
+     * pro načtení minimálního/ maximálního roku a seznamu platných intervalů z `res/raw/ostatni.json`.
+     * - Po dokončení práce na pozadí přepne do UI vlákna pomocí `requireActivity().runOnUiThread(...)`
+     * a provede následující kontroly a akce:
+     * - aktivuje/deaktivuje `btnSave` podle výsledků validací,
+     * - kontroluje, zda je vybraný rok v rozsahu `minYear..maxYear`,
+     * - kontroluje pořadí a překrytí datumů (start <= end a intervaly pokrývají zvolený rozsah),
+     * - sestaví text s dostupnými intervaly pro zobrazení v `tvNoPriceListDescription`,
+     * - přepne viditelnost `btnReloadRegulPriceList`, `tvNoPriceListDescription` a `rlNoPriceList`,
+     * - aktualizuje nadpis `tvNoPriceListTitle` podle toho, zda platí "každý rok" nebo "během roku".
      * <p>
-     * Pokud načtení JSONu selže nebo nejsou nalezeny žádné roky, použijí se fallback konstanty
-     * `DEF_MIN_YEAR` a `DEF_MAX_YEAR`.
+     * Robustnost:
+     * - Metoda neprovádí IO na hlavním vlákně; všechny IO a parsing jsou v pozadí.
+     * - Závisí na tom, že `getMinMaxYearFromRaw` vrací fallback hodnoty `DEF_MIN_YEAR` a `DEF_MAX_YEAR`
+     * v případě chyby při načítání/parsing JSONu.
+     * - Metoda nijak nevyhazuje výjimky volajícímu; příp. chyby zpracovává interně a upravuje UI.
+     * <p>
+     * Poznámky k vylepšení:
+     * - Pro lepší kontrolu životního cyklu a zrušení úloh lze místo `new Thread` použít `ExecutorService`
+     * nebo jiný mechanismus správy asynchronních úloh.
      */
-    void showBtnReloadRegulPriceList() {
+    void evaluateRegulatedPriceAvailability() {
         String startDate = btnFrom.getText().toString();
         String endDate = btnUntil.getText().toString();
         StringBuilder errorsMessage = new StringBuilder();
 
         final Calendar selectedStart = ViewHelper.parseCalendarFromString(startDate);
         final Calendar selectedEnd = ViewHelper.parseCalendarFromString(endDate);
-        final int selectedStartYear = selectedStart.get(Calendar.YEAR);
-        final int selectedEndYear = selectedEnd.get(Calendar.YEAR);
+        final int selectedStartYear = selectedStart.get(YEAR);
+        final int selectedEndYear = selectedEnd.get(YEAR);
 
         // kontola rozsahů platnosti
         new Thread(() -> {
-            int[] bounds = getMinMaxYearFromRaw();
-            int minYear = bounds[0];
-            int maxYear = bounds[1];
+            ValidityDateContainer getMinMaxYearFromRaw = getMinMaxYearFromRaw(selectedStart, selectedEnd);
+            int minYear = getMinMaxYearFromRaw.getMinYear();
+            int maxYear = getMinMaxYearFromRaw.getMaxYear();
+            ArrayList<Calendar> dates = getMinMaxYearFromRaw.getDates();
 
             requireActivity().runOnUiThread(() -> {
                 // kontrola platnosti, které nejsou uvedeny
                 btnSave.setEnabled(true);
+
                 if (selectedStartYear < minYear || selectedStartYear > maxYear) {
+                    // zadaný rok je mimo rozsah ceníků
                     errorsMessage.append(getString(R.string.no_price_list));
-                } else if (selectedStartYear<selectedEndYear) {
+                } else if (selectedStartYear < selectedEndYear) {
+                    // konečný rok je menší než počáteční
                     errorsMessage.append(getString(R.string.start_year_is_smaller));
                     btnSave.setEnabled(false);
-                } else if (selectedEnd.getTimeInMillis()<selectedStart.getTimeInMillis()) {
+                } else if (selectedEnd.getTimeInMillis() < selectedStart.getTimeInMillis()) {
+                    // konečný rok je větší než počáteční
                     errorsMessage.append(getString(R.string.end_year_is_smaller));
                     btnSave.setEnabled(false);
                 }
-                Log.w(TAG, "Chyby při načítání regulovaných cen: " + errorsMessage);
+                // kontrola platnosti měsíců v ostatní
+                boolean found = false;
+                StringBuilder datesMessageBuilder = new StringBuilder();
+                for (int i = 0; i < dates.size(); i += 2) {
+                    Calendar cal1 = dates.get(i);
+                    Calendar cal2 = dates.get(i + 1);
+                    if (cal1.get(YEAR) != cal2.get(YEAR)) {
+                        // pokud roky nesouhlasí, kontrola se ukončí
+                        found = true;
+                        break;
+                    } else if (cal1.get(YEAR) == selectedStartYear) {
+                        // pokud jsou roky stejné, vytvoří se rozsah platných datumů
+                        datesMessageBuilder
+                                .append(dateFormat.format(cal1.getTime()))
+                                .append(" - ")
+                                .append(dateFormat.format(cal2.getTime()));
+                        datesMessageBuilder.append('\n');
+                    }
+                }
+                String datesMessage = datesMessageBuilder.toString().trim();
 
-                if(errorsMessage.length()==0){
+                // kontrola průniku, pokud některý datumový rozsah vyhovuje rozsahu načtený v ceníku, cyklus se ukončí nastavením proměnné found na true
+                for (int i = 0; i < dates.size(); i += 2) {
+                    Calendar calendar1 = dates.get(i);
+                    Calendar calendar2 = dates.get(i + 1);
+
+                    if (calendar1.getTimeInMillis() <= selectedStart.getTimeInMillis() && calendar2.getTimeInMillis() >= selectedEnd.getTimeInMillis()) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_every_year);
+                //pokud je found false, nastaví se obsah chybového hlášení a připojí se datumový rozpis
+                if (!found) {
+                    tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_during_the_year);
+                    errorsMessage.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
+                    btnSave.setEnabled(false);
+                }
+
+                // zobrazení chybového hlášení, pokud něco obsahuje a zneaktivnění tlačítka pro uložení.
+                if (errorsMessage.length() == 0) {
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
                     rlNoPriceList.setVisibility(GONE);
@@ -657,19 +720,36 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Načte soubor {@code res/raw/ostatni.json} a z něj určí minimální a maximální rok
-     * podle pole {@code "rok"} v jednotlivých záznamech.
+     * Načte a zpracuje soubor `res/raw/ostatni.json` a vrátí minimální a maximální rok
+     * spolu se seznamem platných intervalů (počátek/konec) pro regulované ceny.
      * <p>
-     * Pokud se načítání nebo parsování nezdaří nebo v JSONu nejsou žádné roky,
-     * vrátí fallback hodnoty {@code DEF_MIN_YEAR} a {@code DEF_MAX_YEAR}.
-     * Metoda zachytává výjimky interně (nevyhazuje volajícímu) a vrací výsledky jako
-     * pole dvou celých čísel.
+     * Chování:
+     * - Parsuje JSON a z každého záznamu přečte hodnotu `rok` pro výpočet `minYear` a `maxYear`.
+     * - Pole `ostatni` v záznamu může být objekt nebo pole:
+     * - Pokud je objekt, metoda vytvoří interval 1.1.<rok> - 31.12.<rok>.
+     * - Pokud je pole, pro každý prvek přečte `od` a `do` (očekávaný formát den.měsíc nebo podobný)
+     * a vytvoří odpovídající intervaly pro rok zvolených dat (`selectedStart`/`selectedEnd`).
+     * - Vytvářené `Calendar` objekty mají explicitně nastavené časové složky (začátek dne / konec dne).
+     * <p>
+     * Robustnost:
+     * - Metoda zachytává výjimky interně; v případě chyby (např. nepřístupný nebo nevalidní JSON)
+     * vrací fallback hodnoty `DEF_MIN_YEAR` a `DEF_MAX_YEAR` a prázdný nebo částečně naplněný seznam datumů.
+     * - Nevyhazuje výjimky volajícímu; volající získá vždy instanci `ValidityDateContainer`.
      *
-     * @return int[] pole délky 2: index 0 = minimální rok, index 1 = maximální rok
+     * @param selectedStart Počáteční vybrané datum (použito pro sestavení konkrétních intervalů).
+     * @param selectedEnd   Konečné vybrané datum (použito pro sestavení konkrétních intervalů).
+     * @return ValidityDateContainer obsahující:
+     * - minYear: nejmenší nalezený rok (nebo fallback),
+     * - maxYear: největší nalezený rok (nebo fallback),
+     * - dates: seznam `Calendar` párů (každá dvojice = začátek a konec platného intervalu).
      */
-    private int[] getMinMaxYearFromRaw() {
+    private ValidityDateContainer getMinMaxYearFromRaw(Calendar selectedStart, Calendar
+            selectedEnd) {
         int minYear = Integer.MAX_VALUE;
         int maxYear = Integer.MIN_VALUE;
+        Calendar validStart = getInstance();
+        Calendar validEnd = getInstance();
+        ArrayList<Calendar> dates = new ArrayList<>();
 
         try (java.io.InputStream is = getResources().openRawResource(R.raw.ostatni);
              java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
@@ -686,6 +766,70 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     if (r < minYear) minYear = r;
                     if (r > maxYear) maxYear = r;
                 }
+                Object ostatni = obj.get("ostatni");
+                int year = obj.getInt("rok");
+                // pokud je nastaven jen celý rok
+                if (ostatni instanceof JSONObject) {
+                    // nastavení na 1.1. vybraného roku, čas = 00:00:00.000
+                    validStart.set(selectedStart.get(YEAR), JANUARY, 1, 0, 0, 0);
+                    validStart.set(MILLISECOND, 0);
+                    validEnd.set(selectedEnd.get(YEAR), DECEMBER, 31, 0, 0, 0);
+                    validEnd.set(MILLISECOND, 0);
+                    Calendar parsedStart = getInstance();
+                    parsedStart.set(year, JANUARY, 1, 0, 0, 0);
+                    parsedStart.set(MILLISECOND, 0);
+
+                    Calendar parsedEnd = getInstance();
+                    parsedEnd.set(year, DECEMBER, 31, 23, 59, 59);
+                    parsedEnd.set(MILLISECOND, 0);
+
+                    dates.add(parsedStart);
+                    dates.add(parsedEnd);
+                }
+                // pokud je rok rozdělen na několik dalších úseků
+                if (ostatni instanceof JSONArray) {
+                    JSONArray ostatniArray = (JSONArray) ostatni;
+                    for (int j = 0; j < ostatniArray.length(); j++) {
+                        JSONObject ostatniObj = ostatniArray.getJSONObject(j);
+                        String odRaw = ostatniObj.optString("od", "");
+                        String doRaw = ostatniObj.optString("do", "");
+
+                        int odDay = 1, odMonth = 0;   // default 1.1.
+                        int doDay = 31, doMonth = 11; // default 31.12.
+
+                        try {
+                            String[] odParts = odRaw.replaceAll("\\s", "").split("\\D+");
+                            if (odParts.length >= 2) {
+                                odDay = Integer.parseInt(odParts[0]);
+                                odMonth = Integer.parseInt(odParts[1]) - 1; // Calendar: 0-based
+                            }
+                        } catch (Exception ex) {
+                            Log.w(TAG, "Nelze parsovat 'od': " + odRaw + " - použito výchozí 1.1", ex);
+                        }
+
+                        try {
+                            String[] doParts = doRaw.replaceAll("\\s", "").split("\\D+");
+                            if (doParts.length >= 2) {
+                                doDay = Integer.parseInt(doParts[0]);
+                                doMonth = Integer.parseInt(doParts[1]) - 1;
+                            }
+                        } catch (Exception ex) {
+                            Log.w(TAG, "Nelze parsovat 'do': " + doRaw + " - použito výchozí 31.12", ex);
+                        }
+
+                        Calendar parsedStart = getInstance();
+                        parsedStart.set(selectedStart.get(YEAR), odMonth, odDay, 0, 0, 0);
+                        parsedStart.set(MILLISECOND, 0);
+
+                        Calendar parsedEnd = getInstance();
+                        parsedEnd.set(selectedEnd.get(YEAR), doMonth, doDay, 23, 59, 59);
+                        parsedEnd.set(MILLISECOND, 0);
+
+                        dates.add(parsedStart);
+                        dates.add(parsedEnd);
+                    }
+                }
+
             }
         } catch (Exception e) {
             // fallback pokud se nepodaří načíst JSON
@@ -697,7 +841,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             minYear = DEF_MIN_YEAR;
             maxYear = DEF_MAX_YEAR;
         }
-        return new int[]{minYear, maxYear};
+        return new ValidityDateContainer(minYear, maxYear, dates);
     }
 
 
@@ -774,19 +918,19 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     private static boolean isValid(Calendar fromDate, Calendar untilDate) {
         //1.1.2024
-        Calendar startOf2024 = Calendar.getInstance();
-        startOf2024.set(2024, Calendar.JANUARY, 1, 0, 0, 0);
-        startOf2024.set(Calendar.MILLISECOND, 0);
+        Calendar startOf2024 = getInstance();
+        startOf2024.set(2024, JANUARY, 1, 0, 0, 0);
+        startOf2024.set(MILLISECOND, 0);
 
         //1.7.2024
-        Calendar startOfJuly2024 = Calendar.getInstance();
-        startOfJuly2024.set(2024, Calendar.JULY, 1, 0, 0, 0);
-        startOfJuly2024.set(Calendar.MILLISECOND, 0);
+        Calendar startOfJuly2024 = getInstance();
+        startOfJuly2024.set(2024, JULY, 1, 0, 0, 0);
+        startOfJuly2024.set(MILLISECOND, 0);
 
         //31.12.2024
-        Calendar endOf2024 = Calendar.getInstance();
-        endOf2024.set(2024, Calendar.DECEMBER, 31, 23, 59, 59);
-        endOf2024.set(Calendar.MILLISECOND, 0);
+        Calendar endOf2024 = getInstance();
+        endOf2024.set(2024, DECEMBER, 31, 23, 59, 59);
+        endOf2024.set(MILLISECOND, 0);
 
         boolean isValid = true;
 
@@ -814,9 +958,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @return Calendar objekt s nastaveným rokem, měsícem a dnem
      */
     private Calendar createCalendar(int month, int day) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = getInstance();
         calendar.set(2024, month, day, 0, 0, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(MILLISECOND, 0);
         return calendar;
     }
 
@@ -854,7 +998,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @param priceListModelFirst  První ceník, který bude vložen
      * @param priceListModelSecond Druhý ceník, který bude vložen
      */
-    private void saveNewPriceLists(PriceListModel priceListModelFirst, PriceListModel priceListModelSecond) {
+    private void saveNewPriceLists(PriceListModel priceListModelFirst, PriceListModel
+            priceListModelSecond) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
         long idFirst = dataPriceListSource.insertPriceList(priceListModelFirst);
@@ -878,7 +1023,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @param priceListModelFirst  První ceník, který bude aktualizován
      * @param priceListModelSecond Druhý ceník, který bude vložen
      */
-    private void updateAndSavePriceLists(PriceListModel priceListModelFirst, PriceListModel priceListModelSecond) {
+    private void updateAndSavePriceLists(PriceListModel priceListModelFirst, PriceListModel
+            priceListModelSecond) {
         priceListModelFirst.setId(itemId);
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
@@ -888,6 +1034,59 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         if (idFirst > 0 && idSecond > 0) {
             getParentFragmentManager().popBackStack();
         }
+    }
+
+
+    /**
+     * Pomocná statická třída pro operace související s regulovanými cenami (parsování dat, tvorba intervalů, validace).
+     *
+     * <p>Vlastnosti:
+     * - Třída je pouze s&nbsp;statickými metodami a neobsahuje stav; je bezpečná pro použití z více vláken.
+     * - Konstruktor je privátní, aby se zabránilo vytváření instancí.
+     *
+     * <p>Chování metod:
+     * - Veřejné metody by měly být čisté (pure) — vrací výsledky bez vedlejších efektů.
+     * - Validace vstupů a chybové stavy dokumentovat u jednotlivých metod; preferuje se vracení {@code Optional}
+     * nebo jasné fallback hodnoty místo vyhazování Runtime výjimek.
+     *
+     * <p>Použití:
+     * - Volat statické metody přímo: {@code RegulatedPriceUtils.parseCalendar(...)}.
+     *
+     * <p>Poznámky:
+     * - Pokud metoda provádí IO nebo časově náročnou práci, spouštět ji v pozadí (ExecutorService nebo jiný mechanismus),
+     * aby nedocházelo k blokování UI vlákna (Android specifika).
+     *
+     * @see java.util.Optional
+     * @since 1.0
+     */
+    private static class ValidityDateContainer {
+
+        private final int minYear;
+        private final int maxYear;
+        private final ArrayList<Calendar> dates;
+
+
+        ValidityDateContainer(int minYear, int maxYear, ArrayList<Calendar> dates) {
+            this.minYear = minYear;
+            this.maxYear = maxYear;
+            this.dates = dates;
+        }
+
+
+        public int getMinYear() {
+            return minYear;
+        }
+
+
+        public int getMaxYear() {
+            return maxYear;
+        }
+
+
+        public ArrayList<Calendar> getDates() {
+            return dates;
+        }
+
     }
 
 }

@@ -14,4 +14,5 @@ public class SimpleDateFormatHelper {
     public static SimpleDateFormat dateAndTimeWithSeconds = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
     public static SimpleDateFormat month = new SimpleDateFormat("MM",Locale.getDefault());
     public static SimpleDateFormat year = new SimpleDateFormat("yyyy",Locale.getDefault());
+    public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 }
