@@ -654,14 +654,17 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 if (selectedStartYear < minYear || selectedStartYear > maxYear) {
                     // zadaný rok je mimo rozsah ceníků
                     errorsMessage.append(getString(R.string.no_price_list));
+                    rlNoPriceList.setVisibility(VISIBLE);
+                    tvNoPriceListTitle.setText(R.string.no_price_list);
+                    btnReloadRegulPriceList.setVisibility(View.GONE);
+                    tvNoPriceListDescription.setVisibility(View.GONE);
+                    return;
                 } else if (selectedStartYear < selectedEndYear) {
                     // konečný rok je menší než počáteční
                     errorsMessage.append(getString(R.string.start_year_is_smaller));
-                    btnSave.setEnabled(false);
                 } else if (selectedEnd.getTimeInMillis() < selectedStart.getTimeInMillis()) {
                     // konečný rok je větší než počáteční
                     errorsMessage.append(getString(R.string.end_year_is_smaller));
-                    btnSave.setEnabled(false);
                 }
                 // kontrola platnosti měsíců v ostatní
                 boolean found = false;
@@ -708,11 +711,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
                     rlNoPriceList.setVisibility(GONE);
+                    btnSave.setEnabled(true);
                 } else {
                     tvNoPriceListDescription.setText(errorsMessage);
                     btnReloadRegulPriceList.setVisibility(View.GONE);
                     tvNoPriceListDescription.setVisibility(View.VISIBLE);
                     rlNoPriceList.setVisibility(VISIBLE);
+                    btnSave.setEnabled(false);
                 }
             });
         }).start();
