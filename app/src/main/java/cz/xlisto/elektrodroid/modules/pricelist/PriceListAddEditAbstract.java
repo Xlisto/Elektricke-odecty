@@ -589,7 +589,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     chanagePriceOperatorTrhu();
                 });
             } catch (Exception e) {
-                android.util.Log.e(TAG, "Chyba při načítání regulovaných cen: " + e.getMessage(), e);
+                Log.e(TAG, "Chyba při načítání regulovaných cen: " + e.getMessage(), e);
                 mainHandler.post(() -> {
                     if (!isAdded()) return;
                     // Volitelně: informovat uživatele nebo vyčistit pole
@@ -633,7 +633,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     void evaluateRegulatedPriceAvailability() {
         String startDate = btnFrom.getText().toString();
         String endDate = btnUntil.getText().toString();
-        StringBuilder errorsMessage = new StringBuilder();
+        StringBuilder errorTitleBuilder = new StringBuilder();
+        StringBuilder errorMessageBuilder = new StringBuilder();
 
         final Calendar selectedStart = ViewHelper.parseCalendarFromString(startDate);
         final Calendar selectedEnd = ViewHelper.parseCalendarFromString(endDate);
@@ -653,18 +654,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                 if (selectedStartYear < minYear || selectedStartYear > maxYear) {
                     // zadaný rok je mimo rozsah ceníků
-                    errorsMessage.append(getString(R.string.no_price_list));
-                    rlNoPriceList.setVisibility(VISIBLE);
-                    tvNoPriceListTitle.setText(R.string.no_price_list);
-                    btnReloadRegulPriceList.setVisibility(View.GONE);
-                    tvNoPriceListDescription.setVisibility(View.GONE);
-                    return;
+                    errorTitleBuilder.append(getString(R.string.no_price_list));
                 } else if (selectedStartYear < selectedEndYear) {
                     // konečný rok je menší než počáteční
-                    errorsMessage.append(getString(R.string.start_year_is_smaller));
+                    errorTitleBuilder.append(getString(R.string.start_year_is_smaller_title));
+                    errorMessageBuilder.append(getString(R.string.start_year_is_smaller_message));
                 } else if (selectedEnd.getTimeInMillis() < selectedStart.getTimeInMillis()) {
                     // konečný rok je větší než počáteční
-                    errorsMessage.append(getString(R.string.end_year_is_smaller));
+                    errorTitleBuilder.append(getString(R.string.end_year_is_smaller));
                 }
                 // kontrola platnosti měsíců v ostatní
                 boolean found = false;
@@ -698,26 +695,31 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     }
                 }
 
-                tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_every_year);
                 //pokud je found false, nastaví se obsah chybového hlášení a připojí se datumový rozpis
                 if (!found) {
                     tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_during_the_year);
-                    errorsMessage.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
+                    errorTitleBuilder.append(getString(R.string.alert_regulated_prices_title_during_the_year, selectedStartYear));
+                    errorMessageBuilder.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
                     btnSave.setEnabled(false);
                 }
 
                 // zobrazení chybového hlášení, pokud něco obsahuje a zneaktivnění tlačítka pro uložení.
-                if (errorsMessage.length() == 0) {
+                if (errorTitleBuilder.length() == 0) {
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
                     rlNoPriceList.setVisibility(GONE);
                     btnSave.setEnabled(true);
                 } else {
-                    tvNoPriceListDescription.setText(errorsMessage);
+                    tvNoPriceListTitle.setText(errorTitleBuilder);
+                    tvNoPriceListDescription.setText(errorMessageBuilder);
                     btnReloadRegulPriceList.setVisibility(View.GONE);
-                    tvNoPriceListDescription.setVisibility(View.VISIBLE);
+                    if (errorMessageBuilder.length() == 0)
+                        tvNoPriceListDescription.setVisibility(View.GONE);
+                    else
+                        tvNoPriceListDescription.setVisibility(View.VISIBLE);
                     rlNoPriceList.setVisibility(VISIBLE);
-                    btnSave.setEnabled(false);
+                    if (!errorTitleBuilder.toString().equals(getString(R.string.no_price_list)))
+                        btnSave.setEnabled(false);
                 }
             });
         }).start();
@@ -899,7 +901,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             String message = requireContext().getString(R.string.alert_message_provoz_nesitove_infrastruktury);
 
             if (!requireActivity().isFinishing()) {
-                //OwnAlertDialog.showDialog(requireActivity(), title, message);
                 YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY, message);
                 yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
             }
