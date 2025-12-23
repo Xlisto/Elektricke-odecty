@@ -11,11 +11,14 @@ import java.util.Calendar;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
+
 /**
- * Třída reprezentující platbu ve faktuře
- * Xlisto 15.02.2023 21:59
+ * Reprezentuje jednu platbu ve faktuře.
+ * Obsahuje identifikátory, datum, částku a typ platby spolu s pomocnými metodami
+ * pro převod typu na text a výpočet případné slevy na DPH pro listopad a prosinec 2021.
  */
 public class PaymentModel {
+
     private static final String TAG = "PaymentModel";
     private final long id;
     private final long idFak;
@@ -24,6 +27,15 @@ public class PaymentModel {
     private final int typePayment;
 
 
+    /**
+     * Konstruktor modelu platby.
+     *
+     * @param id          unikátní identifikátor platby
+     * @param idFak       identifikátor faktury, ke které platba patří
+     * @param date        datum platby v milisekundách od epochy
+     * @param payment     částka platby
+     * @param typePayment typ platby (číselná konstanta používaná v aplikaci)
+     */
     public PaymentModel(long id, long idFak, long date, double payment, int typePayment) {
         this.id = id;
         this.idFak = idFak;
@@ -33,31 +45,62 @@ public class PaymentModel {
     }
 
 
+    /**
+     * Vrací unikátní ID platby.
+     *
+     * @return id platby
+     */
     public long getId() {
         return id;
     }
 
 
+    /**
+     * Vrací ID faktury, ke které platba patří.
+     *
+     * @return id faktury
+     */
     public long getIdFak() {
         return idFak;
     }
 
 
+    /**
+     * Vrací datum platby ve formátu milisekund od epochy.
+     *
+     * @return datum platby (long)
+     */
     public long getDate() {
         return date;
     }
 
 
+    /**
+     * Vrací částku platby.
+     *
+     * @return částka platby jako double
+     */
     public double getPayment() {
         return payment;
     }
 
 
+    /**
+     * Vrací typ platby jako číselnou konstantu.
+     *
+     * @return typ platby (int)
+     */
     public int getTypePayment() {
         return typePayment;
     }
 
 
+    /**
+     * Vrací popis typu platby jako čitelný řetězec.
+     * Mapuje internální číselné hodnoty na lokalizované popisky.
+     *
+     * @return textový popisek typu platby
+     */
     public String getTypePaymentString() {
         if (typePayment == 1) return "Doplatek";
         if (typePayment == 2) return "Automatická";
@@ -69,8 +112,11 @@ public class PaymentModel {
 
 
     /**
-     * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
-     * @return double sleva na DPH
+     * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021.
+     * Pokud datum platby spadá do listopadu nebo prosince 2021, vypočte aproximovanou
+     * hodnotu DPH (21 %) z částky platby.
+     *
+     * @return sleva na DPH (double) nebo 0.0 pokud se jedná o jiné období
      */
     //TODO: sleva na DPH za měsíce listopad a prosinec v roce 2021 ve fakturách. Vypočet z plateb
     public double getDiscountDPH() {
@@ -86,6 +132,12 @@ public class PaymentModel {
     }
 
 
+    /**
+     * Vrací textovou reprezentaci objektu PaymentModel.
+     * Zahrnuje id, částku, id faktury, datum (formátované) a typ platby.
+     *
+     * @return řetězcová reprezentace platby
+     */
     @NonNull
     @Override
     public String toString() {
@@ -94,10 +146,12 @@ public class PaymentModel {
 
 
     /**
-     * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021 a zobrazení TextView
+     * Pomocná statická metoda pro zobrazení slevy na DPH v TextView.
+     * Pokud je hodnota slevy větší než 0, nastaví text a viditelnost TextView,
+     * jinak TextView skryje.
      *
-     * @param discount sleva na DPH
-     * @param tv       TextView pro zobrazení slevy na DPH
+     * @param discount sleva na DPH (double)
+     * @param tv       TextView, do kterého se má sleva zobrazit
      */
     public static void getDiscountDPHText(double discount, TextView tv) {
         if (discount > 0) {
@@ -106,4 +160,5 @@ public class PaymentModel {
         } else
             tv.setVisibility(View.GONE);
     }
+
 }
