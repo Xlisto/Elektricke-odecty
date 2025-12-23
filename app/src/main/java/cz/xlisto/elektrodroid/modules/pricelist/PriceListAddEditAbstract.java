@@ -825,11 +825,11 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                         }
 
                         Calendar parsedStart = getInstance();
-                        parsedStart.set(selectedStart.get(YEAR), odMonth, odDay, 0, 0, 0);
+                        parsedStart.set(year, odMonth, odDay, 0, 0, 0);
                         parsedStart.set(MILLISECOND, 0);
 
                         Calendar parsedEnd = getInstance();
-                        parsedEnd.set(selectedEnd.get(YEAR), doMonth, doDay, 23, 59, 59);
+                        parsedEnd.set(year, doMonth, doDay, 23, 59, 59);
                         parsedEnd.set(MILLISECOND, 0);
 
                         dates.add(parsedStart);
@@ -880,7 +880,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
     }
 
-
+//TODO: kontrola ceníku 2024
     /**
      * Zkontroluje datumy nastavené na btnFrom a btnUntil.
      * Pokud btnFrom je mezi 1.1.2024 a 30.6.2024, btnUntil musí být také do 30.6.2024.
