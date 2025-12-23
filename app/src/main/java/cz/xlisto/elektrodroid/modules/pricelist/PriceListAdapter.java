@@ -39,6 +39,11 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.Round;
 
 
+/**
+ * Adapter RecyclerView pro zobrazení seznamu ceníků.
+ * Zajišťuje vykreslení položek, zobrazení ovládacích tlačítek (detail, edit, smazat),
+ * výpočet a formátování cen a reakce na kliknutí položek.
+ */
 public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
 
     public static final String TAG = "PriceListAdapter";
@@ -57,6 +62,9 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     private int selectedPosition;
 
 
+    /**
+     * ViewHolder pro položku ceníku obsahující odkazy na použité View prvky.
+     */
     static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout relativeLayout;
@@ -71,10 +79,20 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
+
     }
 
 
-    //konstruktor
+    /**
+     * Vytvoří nový adaptér pro seznam ceníků.
+     *
+     * @param items               seznam modelů ceníků
+     * @param subscriptionPoint   odběrné místo, podle kterého se počítají ceny
+     * @param selectItem          zda se zobrazuje volba (RadioButton) pro výběr ceníku
+     * @param idSelectedPriceList id aktuálně vybraného ceníku (pokud existuje)
+     * @param onClickItemListener callback pro informování o výběru ceníku
+     * @param recyclerView        RecyclerView, ve kterém je adaptér použit
+     */
     public PriceListAdapter(ArrayList<PriceListModel> items, SubscriptionPointModel subscriptionPoint, boolean selectItem, long idSelectedPriceList,
                             OnClickItemListener onClickItemListener, RecyclerView recyclerView) {
         this.items = items;
@@ -88,8 +106,13 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
-    // Vytvoření a inicializace objektu View z XML návrhu vzoru položky.
-    // Příprava kontejneru, ve kterém budou zobrazena data jednotlivé položky
+    /**
+     * Vytvoří nový ViewHolder inflatováním layoutu položky.
+     *
+     * @param parent   rodičovský ViewGroup
+     * @param viewType typ view (nevyužito)
+     * @return inicializovaný MyViewHolder
+     */
     @SuppressLint("MissingInflatedId")
     @NonNull
     @Override
@@ -120,7 +143,12 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
-    // Naplnění kontejneru daty (kontejner vytvořen v přepsané metodě onCreateViewHolder())
+    /**
+     * Naplní ViewHolder daty z modelu a nastaví posluchače pro interakci uživatele.
+     *
+     * @param holder   ViewHolder, který se má naplnit
+     * @param position pozice položky v poli items
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         final PriceListModel priceList = items.get(position);
@@ -257,6 +285,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
+    /**
+     * Vrací počet položek v adapteru.
+     *
+     * @return počet položek (0 pokud je seznam null)
+     */
     @Override
     public int getItemCount() {
         if (items == null) return 0;
@@ -264,6 +297,12 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
+    /**
+     * Vrací identifikátor položky na dané pozici (pokud existuje).
+     *
+     * @param position pozice položky
+     * @return id položky nebo -1 při chybě
+     */
     @Override
     public long getItemId(int position) {
         long itemId = -1L;
@@ -294,7 +333,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Smaže vybraný ceník
+     * Smaže vybraný ceník (volá interní metodu s uloženým id a pozicí).
+     * Po smazání skryje tlačítka a vymaže uložené id.
      */
     public void deleteItemPrice() {
         deleteItemPrice(selectedItemId, selectedPosition);
@@ -304,7 +344,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Skryje tlačítka pro editaci a smazání ceníku
+     * Skryje tlačítka pro editaci a smazání ceníku (uloží stav -1).
      */
     public void setHideButtons() {
         setShowPositionItem(-1);
@@ -313,8 +353,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Uloží pozici položky ceníku, kde jsou zobrazeny tlačítka
-     * Hodnota -1 skryje všechny tlačítka
+     * Uloží pozici položky ceníku, kde jsou zobrazeny tlačítka.
+     * Hodnota -1 skryje všechny tlačítka.
      *
      * @param position int pozice položky ceníku, kde se mají zobrazit tlačítka
      */
@@ -324,8 +364,8 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Uloží id položky ceníku, kde se mají zobrazit tlačítka
-     * Hodnota -1  - jsou skryty všechny tlačítka
+     * Uloží id položky ceníku, kde se mají zobrazit tlačítka.
+     * Hodnota -1 znamená, že jsou skryty všechny tlačítka.
      *
      * @param id long id položky ceníku, kde se mají zobrazit tlačítka
      */
@@ -335,9 +375,12 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Smaže vybraný ceník podle id
+     * Smaže vybraný ceník podle id a pozice.
+     * Kontroluje, zda není ceník používán v záznamech odběrných míst a v tom případě
+     * zobrazí varovný dialog místo smazání.
      *
-     * @param itemId long id ceníku
+     * @param itemId   id ceníku
+     * @param position pozice v seznamu pro odstranění
      */
     private void deleteItemPrice(long itemId, int position) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
@@ -373,7 +416,12 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech
+     * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech.
+     *
+     * @param ted     počet použití v TED
+     * @param fak     počet použití ve FAK
+     * @param mon     počet použití v MON
+     * @param context kontext pro vytvoření dialogu
      */
     private void showWarningDialog(int ted, int fak, int mon, Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
@@ -386,10 +434,10 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
 
 
     /**
-     * Zobrazí/skryje cenu pro NT
+     * Zobrazí nebo skryje NT cenu podle toho, zda model obsahuje cenu NT.
      *
      * @param priceList PriceListModel obsahující ceny
-     * @param holder    MyViewHolder
+     * @param holder    MyViewHolder, jehož pole budou upraveny
      */
     private void showNTPrice(PriceListModel priceList, MyViewHolder holder) {
         if (priceList.getCenaNT() == 0) {
@@ -404,7 +452,18 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     }
 
 
+    /**
+     * Rozhraní pro předání události výběru ceníku do volající aktivity/fragmentu.
+     */
     public interface OnClickItemListener {
+
+        /**
+         * Voláno při výběru ceníku nebo při zrušení výběru (null).
+         *
+         * @param priceList vybraný model ceníku nebo null
+         */
         void setClickPriceListListener(PriceListModel priceList);
+
     }
+
 }
