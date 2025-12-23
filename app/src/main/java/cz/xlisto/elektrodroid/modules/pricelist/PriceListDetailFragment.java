@@ -151,7 +151,6 @@ public class PriceListDetailFragment extends Fragment {
             long priceId = result.getLong(PRICE_LIST_ID);
             loadPrice(priceId);
         });
-
         return v;
     }
 
@@ -242,10 +241,8 @@ public class PriceListDetailFragment extends Fragment {
             ldnOTE.setPrice(df2.format(priceList.getOte()));
             ldnOTE.setLabel(getResources().getString(R.string.cinnost_ote));
             ldnOTE.setItem(getResources().getString(R.string.kc_MWh));
-
             ldnPOZE2.setPrice(df2.format(priceList.getOze()));
             ldnPOZE2.setLabel(getResources().getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz));
-
             ldnPOZE1.setVisibility(View.GONE);
         }
 
@@ -257,15 +254,12 @@ public class PriceListDetailFragment extends Fragment {
         }
 
         //zobrazení varování, pokud platnost ceníku překrývá s přechodem na provoz nesíťové infrastruktury (1.7.2024)
-        if (year == 2024) {
-            //1719784800000 == 1.7.2024
-            if (dateStart < 1719784800000L && dateEnd >= 1719784800000L) {//1.7.2024 - 1.7.2024
-                //zobraz varování
-                tvPoznamkaOTE.setText(getResources().getText(R.string.provoz_nesitove_infrastruktury_poznamka));
-                tvPoznamkaOTE.setVisibility(View.VISIBLE);
-            } else {
-                tvPoznamkaOTE.setVisibility(View.GONE);
-            }
+        long transition = 1719784800000L;
+        if (year == 2024 && dateStart < transition && dateEnd >= transition) {
+            tvPoznamkaOTE.setText(getResources().getText(R.string.provoz_nesitove_infrastruktury_poznamka));
+            tvPoznamkaOTE.setVisibility(View.VISIBLE);
+        } else {
+            tvPoznamkaOTE.setVisibility(View.GONE);
         }
 
         //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
@@ -290,14 +284,12 @@ public class PriceListDetailFragment extends Fragment {
 
             //vynechání poznámky NT u jednotarifního ceníku
             if (priceList.getDistNT() == 0.0) {
-
                 tvPoznamkaNT.setVisibility(View.GONE);
             }
             tvPoznamkaPlat.setVisibility(View.VISIBLE);
             setPoznamka(tvPoznamkaPlat, maxPlat);
         } else {
             tvPoznamka.setVisibility(View.GONE);
-
             tvPoznamkaVT.setVisibility(View.GONE);
             tvPoznamkaNT.setVisibility(View.GONE);
             tvPoznamkaPlat.setVisibility(View.GONE);
