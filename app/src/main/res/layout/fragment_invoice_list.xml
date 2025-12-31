@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:background="@drawable/shape_background_alert_first_meters"
+        android:background="@drawable/shape_background_red"
         android:gravity="end"
         android:orientation="vertical">
 
