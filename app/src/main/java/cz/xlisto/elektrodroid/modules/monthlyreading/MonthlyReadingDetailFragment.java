@@ -1,6 +1,8 @@
 package cz.xlisto.elektrodroid.modules.monthlyreading;
 
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static androidx.annotation.Dimension.DP;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 
@@ -39,8 +41,28 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
- * Zobrazí detail záznamu měsíčního odečtu
- * Xlisto 17.03.2024 18:34
+ * Fragment zobrazující detail záznamu měsíčního odečtu energie a provádějící související cenové výpočty.
+ * <p>
+ * Účel:
+ * - zobrazit informace o měsíčním odečtu (datums, start/end stavy, spotřeby),
+ * - načíst příslušný ceník a subscription point, případně přepočítat regulovanou cenu,
+ * - vytvořit tabulku položek s jednotkovými cenami a částkami (VT/NT, daně, služby, měsíční platby apod.),
+ * - upravit velikost písma a rozložení tak, aby se texty vešly do dostupné šířky.
+ * <p>
+ * Hlavní odpovědnosti:
+ * - správa UI prvků v detailech měsíčního odečtu,
+ * - komunikace s ViewModel a lokálními datovými zdroji (`DataMonthlyReadingSource`, `DataPriceListSource`),
+ * - provádění výpočtů přes utilitní třídy (`Calculation`, `PriceListRegulBuilder`).
+ * <p>
+ * Vedlejší účinky:
+ * - mění stav `viewModel`u a interní pole (např. `priceArray`),
+ * - modifikuje UI (přidávání řádků do `TableLayout`, nastavování textů a stylů),
+ * - otevírá a zavírá datové zdroje.
+ * <p>
+ * Životní cyklus a omezení:
+ * - vyžaduje platný kontext fragmentu (metody volat pouze pokud je fragment připojen),
+ * - většina operací musí probíhat na hlavním (UI) vlákně — není thread-safe,
+ * - očekává konzistentní data v `priceList` a `subscriptionPoint` (není plně validováno uvnitř metody).
  */
 public class MonthlyReadingDetailFragment extends Fragment {
 
@@ -78,8 +100,27 @@ public class MonthlyReadingDetailFragment extends Fragment {
     private boolean showedNt = true;
 
 
+    /**
+     * Vytvoří novou instanci {@code MonthlyReadingDetailFragment} a uloží do ní
+     * předané identifikátory a volbu zobrazení regulované ceny jako argumenty.
+     * <p>
+     * Postup:
+     * - vytvoří {@link Bundle}, vloží do něj {@code idCurrent}, {@code idPrevious} a {@code showRegulPrice},
+     * - vytvoří nový fragment, nastaví mu argumenty a vrátí instanci.
+     * <p>
+     * Vedlejší účinky:
+     * - žádné globální; metoda vytváří a vrací nový fragment s nastavenými argumenty.
+     * <p>
+     * Požadavky a omezení:
+     * - předané identifikátory by měly být platné pro pozdější načtení dat (např. {@code -1} může znamenat nepřítomný záznam),
+     * - metoda je statická tovární metoda vhodná pro vytváření fragmentu s přednastavenými argumenty.
+     *
+     * @param idCurrent      identifikátor aktuálního měsíčního odečtu (např. z databáze)
+     * @param idPrevious     identifikátor předchozího měsíčního odečtu
+     * @param showRegulPrice pokud {@code true}, fragment bude při inicializaci žádat zobrazení regulované ceny
+     * @return nově vytvořená a inicializovaná instance {@code MonthlyReadingDetailFragment}
+     */
     public static MonthlyReadingDetailFragment newInstance(long idCurrent, long idPrevious, boolean showRegulPrice) {
-
         Bundle args = new Bundle();
         args.putLong(ARG_ID_CURRENT, idCurrent);
         args.putLong(ARG_ID_PREVIOUS, idPrevious);
@@ -233,19 +274,30 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
         //skrytí NT sazeb, pokud není použita
         if (monthlyReadingPrevious.getNt() == 0 && monthlyReadingCurrently.getNt() == 0) {
-            tvNTMetersStart.setVisibility(View.GONE);
-            tvNTMetersEnd.setVisibility(View.GONE);
-            tvNTConsuption.setVisibility(View.GONE);
-            tvNT.setVisibility(View.GONE);
-            tvNTDash.setVisibility(View.GONE);
+            tvNTMetersStart.setVisibility(GONE);
+            tvNTMetersEnd.setVisibility(GONE);
+            tvNTConsuption.setVisibility(GONE);
+            tvNT.setVisibility(GONE);
+            tvNTDash.setVisibility(GONE);
             showedNt = false;
         } else {
-            tvNTMetersStart.setVisibility(View.VISIBLE);
-            tvNTMetersEnd.setVisibility(View.VISIBLE);
-            tvNTConsuption.setVisibility(View.VISIBLE);
-            tvNT.setVisibility(View.VISIBLE);
-            tvNTDash.setVisibility(View.VISIBLE);
+            tvNTMetersStart.setVisibility(VISIBLE);
+            tvNTMetersEnd.setVisibility(VISIBLE);
+            tvNTConsuption.setVisibility(VISIBLE);
+            tvNT.setVisibility(VISIBLE);
+            tvNTDash.setVisibility(VISIBLE);
             showedNt = true;
+        }
+
+        // skrytí detailů, pokud je to záznam o výměně
+        if (monthlyReadingCurrently.getFirst()) {
+            rlPrice.setVisibility(GONE);
+            rlConsuption.setVisibility(GONE);
+            tvDateScope.setVisibility(GONE);
+        } else {
+            rlPrice.setVisibility(VISIBLE);
+            rlConsuption.setVisibility(VISIBLE);
+            tvDateScope.setVisibility(VISIBLE);
         }
 
         if (tlVt.getChildCount() == 0)
@@ -254,7 +306,24 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * Načte měsíční odečet a příslušný ceník
+     * Načte měsíční odečet a příslušný ceník a uloží je do viewModelu a lokálních polí.
+     * <p>
+     * Postup:
+     * - načte `SubscriptionPoint` z lokální konfigurace,
+     * - otevře `DataMonthlyReadingSource` a načte záznamy pro `idCurrent` a `idPrevious`,
+     * - uloží načtené záznamy do `viewModel`u,
+     * - pokud existuje platný `priceListId`, otevře `DataPriceListSource` a načte `PriceList`,
+     * - pokud je aktivní `showRegulPrice`, přepočte ceník přes `PriceListRegulBuilder`,
+     * - zavře otevřené datové zdroje a nakonec zavolá `setPriceArray()` pro aktualizaci interního pole cen.
+     * <p>
+     * Vedlejší účinky:
+     * - mění stav `viewModel`u (nastavuje subscriptionPoint, monthlyReadingCurrently, monthlyReadingPrevious a priceList),
+     * - upravuje interní pole `priceArray`,
+     * - otevírá a zavírá databázové zdroje.
+     * <p>
+     * Požadavky a omezení:
+     * - používá `requireContext()` -> musí být volána, když je fragment připojen (např. v `onCreate`/`onViewCreated`),
+     * - není thread-safe; očekává se volání na hlavním vlákně podle existující logiky fragmentu.
      */
     private void loadMonthlyReading() {
         subscriptionPoint = SubscriptionPoint.load(requireContext());
@@ -284,7 +353,22 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * V cyklu spustí měření šířky textů podle nastavení velikosti písma
+     * Upravení velikosti písma v poli TextView tak, aby se texty vešly do dostupné šířky.
+     * <p>
+     * Postup:
+     * - ověří, že fragment je připojen (`isAdded()`),
+     * - spustí měření a nastavení velikosti písma pro pole `tvsConsuption` a `tvsVt`
+     * voláním `onMeasureTextViews(...)`, které iterativně zvětšuje velikost písma
+     * dokud součet šířek nevyhovuje šířce obrazovky.
+     * <p>
+     * Vedlejší účinky:
+     * - mění velikost (`setTextSize`) jednotlivých TextView,
+     * - používá a čte pole `screenWidth` a layouty `rlConsuption`/`rlPrice`.
+     * <p>
+     * Požadavky a omezení:
+     * - musí být volána, když je fragment připojen a jsou dostupné rozměry (např. po layoutu),
+     * - závisí na `requireContext()` uvnitř volaných metod -> volat na hlavním vlákně,
+     * - není thread-safe.
      */
     private void resizeTextViews() {
         if (isAdded()) {
@@ -295,10 +379,29 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * Měří šířku textů a zvětší písmo tak, aby se texty vešly do šířky
+     * Měří šířky textů v matici TextView a iterativně zvětšuje velikost písma,
+     * dokud součet šířek sloupců nepřesáhne dostupnou šířku v rámci daného RelativeLayoutu.
+     * <p>
+     * Postup:
+     * - zjistí marginy rodičovského RelativeLayoutu `rl`,
+     * - opakovaně zvýší `textSize` a aplikuje jej na všechny nenulové TextView v `textViews`,
+     * - pro každý sloupec spočítá maximální šířku mezi řádky pomocí `Paint.measureText`,
+     * zohlední marginy jednotlivých TextView a tučný styl pro vybrané řádky,
+     * - zastaví, když celková šířka přesáhne dostupnou šířku obrazovky (pole `screenWidth`).
+     * <p>
+     * Vedlejší účinky:
+     * - upravuje velikost písma voláním `setTextSize` na prvcích `textViews`,
+     * - používá `requireContext()` a `DensityUtils` (musí být volána na UI vlákně),
+     * - čte hodnotu `screenWidth` z okolního fragmentu/instanční proměnné.
+     * <p>
+     * Požadavky a omezení:
+     * - volat pouze na hlavním (UI) vlákně a když je fragment připojen (`isAdded()`),
+     * - předpokládá, že `textViews` má konzistentní počet sloupců (`textViews[0].length`),
+     * - některé položky v matici mohou být `null` (např. při skrytí NT sazeb) — metoda s tím počítá.
      *
-     * @param textViews TextView[][] s textViews
-     * @param rl        RelativeLayout
+     * @param textViews matice TextView kde první rozměr představuje řádky a druhý sloupce;
+     *                  mohou se v ní vyskytovat `null` hodnoty, které jsou přeskočeny
+     * @param rl        rodičovský RelativeLayout použitý pro získání marginů a určení dostupné šířky
      */
     private void onMeasureTextViews(TextView[][] textViews, RelativeLayout rl) {
         float totalWidth = 0;
@@ -357,16 +460,34 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * Vytvoří tabulku
+     * Vytvoří řádky a buňky v zadaném TableLayoutu podle řetězců v tableString a hodnot v price.
+     * <p>
+     * Popis:
+     * - projde pole `tableString` a pro každou položku vytvoří `TableRow` se třemi `TextView` (popis, jednotková cena, celkem),
+     * - při neaktivním zobrazení nízkého tarifu (`showedNt == false`) přeskočí položky NT (indexy 6..10),
+     * - vypočítá hodnotu "celkem" podle odpovídající ceny z pole `price`, použitím odpovídající spotřeby
+     * (`consuptionVt`, `consuptionNt`, `month`) a interního násobitele,
+     * - nastaví layout parametry, marginy, zarovnání a tučné písmo pro vybrané řádky,
+     * - přidá oddělovací mezery po definovaných blocích řádků.
+     * <p>
+     * Vedlejší účinky:
+     * - modifikuje `tl` (přidává řádky a `TextView`),
+     * - vytváří a vrací matici `TextView[][]` obsahující odkazy na vytvořené buňky,
+     * - používá `requireContext()` a `DensityUtils` (metodu volat pouze na UI vlákně).
+     * <p>
+     * Požadavky a omezení:
+     * - metoda musí být volána na hlavním vlákně (UI) a fragment musí být připojen,
+     * - očekává, že `price` má délku odpovídající položkám (metoda přistupuje k `price[i - 1]`),
+     * - při skrytí NT mohou být některé řádky přeskočeny.
      *
-     * @param tl           TableLayout
-     * @param tableString  String[] s texty jednotlivých položek ceny
-     * @param price        double[] s cenami jednotlivých položek ceny
-     * @param marginInPx   int s marginem v PX
-     * @param consuptionVt double s spotřebou VT
-     * @param consuptionNt double s spotřebou NT
-     * @param month        double s měsícem
-     * @return TextView[][] s textViews v tableLayoutu
+     * @param tl           cílový TableLayout, do kterého se přidávají vytvořené řádky
+     * @param tableString  pole názvů/popisů řádků (první prvek je hlavička)
+     * @param price        pole cen odpovídající položkám (indexace `price[i - 1]` pro řádek `i`)
+     * @param marginInPx   horizontální margin v pixelech použitý pro každý TextView
+     * @param consuptionVt spotřeba pro VT použitá při výpočtu částek pro příslušné řádky
+     * @param consuptionNt spotřeba pro NT použitá při výpočtu částek pro příslušné řádky
+     * @param month        počet měsíců / měsíční množství použitý pro položky vykazované "za měsíc"
+     * @return matice `TextView[][]` s rozměry `[tableString.length][3]` obsahující odkazy na vytvořené buňky (sloupce: 0=popis,1=jednotková cena,2=celkem)
      */
     private TextView[][] createTable(TableLayout tl, String[] tableString, double[] price, int marginInPx, double consuptionVt, double consuptionNt, double month) {
         TextView[][] tvs = new TextView[tableString.length][3];
@@ -445,7 +566,21 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * Nastaví pole cen
+     * Inicializuje interní pole `priceArray` na základě aktuálního `priceList`
+     * a parametrů `subscriptionPoint`.
+     * <p>
+     * Postup:
+     * - vypočítá jednorázovou cenu jističe voláním `Calculation.calculatePriceBreaker(...)`,
+     * - vybere hodnotu pro "činnost" jako maximum mezi `priceList.getCinnost()` a `priceList.getOte()`,
+     * - naplní pole `priceArray` hodnotami cen jednotlivých položek ve stejném pořadí,
+     * jak je očekává `createTable(...)` (VT, NT, daně, služby, součty, měsíční platy atd.).
+     * <p>
+     * Vedlejší účinky:
+     * - přepisuje pole `priceArray`.
+     * <p>
+     * Požadavky a omezení:
+     * - očekává platný `priceList` a `subscriptionPoint` (není ověřováno v metodě),
+     * - musí být volána na hlavním vlákně a když je fragment připojen (přístup přes `subscriptionPoint`).
      */
     private void setPriceArray() {
         double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
@@ -472,9 +607,24 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     /**
-     * Nastaví zobrazení při změně ne/regulované ceny
+     * Nastaví zobrazení regulované/ne-regulované ceny a přepočítá zobrazené hodnoty.
+     * <p>
+     * Postup:
+     * - aktualizuje hodnotu `showRegulPrice` ve `viewModel`u i lokální proměnné,
+     * - vymaže existující řádky v `tlVt`,
+     * - zavolá `loadMonthlyReading()` pro načtení/aktualizaci dat a `priceArray`,
+     * - znovu vytvoří tabulku voláním `createTable(...)` a upraví velikosti textů voláním `resizeTextViews()`.
+     * <p>
+     * Vedlejší účinky:
+     * - mění stav `viewModel`u,
+     * - modifikuje UI (`tlVt`, `tvsVt`) a interní pole (`priceArray`),
+     * - využívá `requireContext()` v podvolaných metodách.
+     * <p>
+     * Požadavky a omezení:
+     * - volat na hlavním vlákně (UI) a když je fragment připojen,
+     * - operace může být náročná při opakovaném volání (rekonstrukce tabulky).
      *
-     * @param showRegulPrice boolean s hodnotou zobrazení regulované ceny
+     * @param showRegulPrice true pokud má být zobrazena regulovaná cena, false jinak
      */
     public void setShowRegulPrice(boolean showRegulPrice) {
         viewModel.setShowRegulPrice(showRegulPrice);
@@ -485,4 +635,5 @@ public class MonthlyReadingDetailFragment extends Fragment {
         tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
         resizeTextViews();
     }
+
 }
