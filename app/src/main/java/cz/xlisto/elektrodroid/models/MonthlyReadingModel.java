@@ -7,25 +7,41 @@ import java.util.Calendar;
 
 
 /**
- * Model měsíčního odečtu
+ * Model měsíčního odečtu.
  * <p>
- * Tato třída představuje model pro měsíční odečty, který obsahuje informace o datu, platbě, popisu a dalších službách.
+ * Reprezentuje jeden měsíční záznam odečtu se základními údaji:
+ * - id: interní identifikátor záznamu,
+ * - date: datum odečtu v milisekundách od epochy (Unix time),
+ * - vt / nt: spotřeby ve vysokém a nízkém tarifu,
+ * - payment: částka platby za období,
+ * - description: volný textový popis záznamu,
+ * - otherServices: částky za doplňkové služby,
+ * - first: příznak prvního (např. při výměně měřiče),
+ * - priceListId: odkaz na použitý ceník.
+ * <p>
+ * Poznámky:
+ * - Třída je jednoduchý POJO s gettery a settery; není synchronizovaná.
+ * - Pole `date` je v milisekundách a používá se v metodách pracujících s Calendar.
+ * - Metoda {@link #getDifferenceDPH()} počítá specifickou úpravu DPH pro dané období.
  */
 public class MonthlyReadingModel {
+
     private long id;
     private long date;
     private double vt;
     private double nt;
     private double payment;
-    private String description;
-    private double otherServices;
-    private boolean first;
+    final private String description;
+    final private double otherServices;
+    final private boolean first;
     private long priceListId;
+
 
     public MonthlyReadingModel(long id, long date, double vt, double nt, double payment, String description, double otherServices, long priceListId, boolean first) {
         this(date, vt, nt, payment, description, otherServices, priceListId, first);
         this.id = id;
     }
+
 
     public MonthlyReadingModel(long date, double vt, double nt, double payment, String description, double otherServices, long priceListId, boolean first) {
         this.date = date;
@@ -38,38 +54,51 @@ public class MonthlyReadingModel {
         this.first = first;
     }
 
+
     public double getPayment() {
         return payment;
     }
+
 
     public void setPayment(double payment) {
         this.payment = payment;
     }
 
+
     public long getId() {
         return id;
     }
 
-    public long getPriceListId() {
 
+    public long getPriceListId() {
         return priceListId;
     }
+
 
     public long getDate() {
         return date;
     }
 
+
     public double getVt() {
         return vt;
     }
+
+
+    public boolean getFirst() {
+        return first;
+    }
+
 
     public void setVt(double vt) {
         this.vt = vt;
     }
 
+
     public double getNt() {
         return nt;
     }
+
 
     public boolean isChangeMeter() {
         return first;
@@ -80,37 +109,31 @@ public class MonthlyReadingModel {
         this.nt = nt;
     }
 
+
     public String getDescription() {
         return description;
     }
+
 
     public void setId(long id) {
         this.id = id;
     }
 
+
     public void setDate(long date) {
         this.date = date;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public double getOtherServices() {
         return otherServices;
     }
 
-    public void setOtherServices(double otherServices) {
-        this.otherServices = otherServices;
-    }
 
     public void setPriceListId(long priceListId) {
         this.priceListId = priceListId;
     }
 
-    public void setFirst(boolean first) {
-        this.first = first;
-    }
 
     /**
      * Výpočet slevy na DPH za měsíce listopad a prosinec v roce 2021
@@ -120,7 +143,7 @@ public class MonthlyReadingModel {
         calendar.setTimeInMillis(date);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-        if(year == 2021 && month >=10) {
+        if (year == 2021 && month >= 10) {
             return (payment * 0.21);
         }
         return 0.0;
@@ -142,4 +165,5 @@ public class MonthlyReadingModel {
                 ", priceListId=" + priceListId +
                 '}';
     }
+
 }

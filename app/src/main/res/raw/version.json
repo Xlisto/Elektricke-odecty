@@ -1,12 +1,25 @@
 [
   {
+    "version": 149,
+    "date": "31.12.2025",
+    "changes": [
+      "<b>Nová data:</b>",
+      "Doplněny regulované ceny pro rok 2026.",
+      "Aktualizována položka \"Provoz nesíťové infrastruktury\", která je v platnosti od 1. 9. 2025.",
+      "<b>Nová funkce:</b>",
+      "Zavedena kontrola platnosti ceníků, aby nepřekračovala platnost regulovaných cen.",
+      "Doplněna automatická kontrola ceníků pro rok 2025, včetně automatické opravy nové ceny platné od 1.9.2025."
+    ]
+  },
+  {
     "version": 148,
     "date": "2.9.2025",
     "changes": [
       "<b>Opravy chyb:</b>",
       "Byla opravena chyba načítání ceníku při nulových položkách."
     ]
-  },{
+  },
+  {
     "version": 147,
     "date": "2.9.2025",
     "changes": [

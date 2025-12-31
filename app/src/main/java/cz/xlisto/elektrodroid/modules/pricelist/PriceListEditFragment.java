@@ -12,7 +12,6 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
@@ -23,10 +22,24 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
 /**
- * Fragment pro úpravu stávajícího ceníku
- * Jednoduchý {@link Fragment} podtřída.
- * Použijte tovární metodu {@link PriceListEditFragment#newInstance}
- * k vytvoření instance tohoto fragmentu.
+ * Fragment pro úpravu existujícího ceníku.
+ * <p>
+ * Rozšiřuje {@code PriceListAddEditAbstract} a poskytuje načtení záznamu podle
+ * předaného id, naplnění vstupních polí hodnotami ceníku a uložení změn zpět do databáze.
+ * <p>
+ * Hlavní chování:
+ * - vytvoření instance pomocí {@link #newInstance(long)}
+ * - načtení modelu z databáze v {@code onCreate/onViewCreated}
+ * - naplnění UI hodnotami modelu (datum, ceny, sazby, distribuční území)
+ * - validace a aktualizace záznamu přes {@link #updatePriceList(long)}
+ * <p>
+ * Poznámky implementace:
+ * - používá {@code DataPriceListSource} pro čtení a zápis dat
+ * - spinnery jsou nastaveny asynchronně v {@code setSpinners(PriceListModel)}
+ * - zachází s kontrolou datových podmínek a skrytím volitelných polí
+ *
+ * @see PriceListAddEditAbstract
+ * @see #newInstance(long)
  */
 public class PriceListEditFragment extends PriceListAddEditAbstract {
 
@@ -124,7 +137,19 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Nastaví hodnoty widgetů podle údajů v modelu ceníku.
+     * Naplní UI widgety hodnotami z aktuálního {@code PriceListModel}.
+     * <p>
+     * Implementační body:
+     * - Převádí datumové hodnoty pomocí {@link cz.xlisto.elektrodroid.ownview.ViewHelper#convertLongToDate(long)}.
+     * - Formátuje číselné hodnoty pomocí {@code df2} a nastavuje je do příslušných input view.
+     * - Nastavuje textová pole (řada, produkt, dodavatel) a hodnoty sazeb/distancí.
+     * - Podle hodnot J10..J14 upraví stav {@code switchJistic} a zavolá {@link #hideItemView()}.
+     * - Nakonec volá {@link #setSpinners(PriceListModel)} pro nastavení spinnerů.
+     * <p>
+     * Vedlejší efekty:
+     * - Mění stav UI komponent; metoda předpokládá, že fragment je připojen a všechna view jsou inicializována.
+     *
+     * @throws NullPointerException pokud {@code priceListModel} nebo některé widgety jsou {@code null}
      */
     private void setItemPrice() {
         btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostOD()));
@@ -174,13 +199,31 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Nastaví spinnery distribuční uzemí a sazba podle nalezeného údaje v ceníku
+     * Nastaví spinnery distribučního území a sazby podle hodnot v předaném
+     * {@code PriceListModel} s drobným zpožděním, aby měly adaptéry čas na inicializaci.
+     * <p>
+     * Popis:
+     * - Spouští operaci na hlavním vlákně pomocí {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()}
+     * a {@code postDelayed(...)} (prodleva 1300 ms).
+     * - Před manipulací s UI ověřuje {@link #isAdded()} a kontroluje, že {@code priceListModel}
+     * i cílové spinnery nejsou {@code null}, aby se zabránilo {@link NullPointerException}
+     * nebo {@code IllegalStateException}.
+     * - Načítá pole z resources: {@code R.array.distribucni_uzemi} a {@code R.array.sazby}
+     * a pro nastavení výběru volá pomocnou metodu {@link #compare(String[], android.widget.Spinner, String)}.
+     * <p>
+     * Poznámky:
+     * - Všechny UI operace probíhají na hlavním vlákně.
+     * - Prodleva je záměrná, aby bylo jisté, že adaptéry spinnerů jsou inicializované.
+     * - Metoda neprovádí I/O v pozadí; načítání resources je rychlé, ale kontroluje životní cyklus fragmentu.
      *
-     * @param priceListModel PriceListModel ceníku
+     * @param priceListModel model ceníku obsahující hodnoty pro nastavení spinnerů; pokud je {@code null}, metoda nic neprovádí
      */
     private void setSpinners(PriceListModel priceListModel) {
-        Handler handler = new Handler();
+        Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
+            if (!isAdded())
+                return; // ochrana proti IllegalStateException když fragment už není připojen
+
             String[] distribucniUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
             String[] sazby = getResources().getStringArray(R.array.sazby);
 
@@ -192,14 +235,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Porovná pole stringu načtený ze spinneru s hledaným stringem. Při shodě nastaví položku na spinneru
+     * Porovná pole řetězců se zadaným hledaným řetězcem a při první shodě nastaví
+     * odpovídající položku na předaném `Spinneru`.
      *
-     * @param strings      pole stringů
-     * @param sp           spinner, pro který se nastaví nalezená položka
-     * @param searchString hledaný string
+     * @param strings      pole řetězců (možnosti spinneru)
+     * @param sp           spinner, jehož výběr bude nastaven
+     * @param searchString hledaný řetězec
      */
     private void compare(String[] strings, Spinner sp, String searchString) {
-
         for (int i = 0; i < strings.length; i++) {
             String s = strings[i];
             if (s.equals(searchString)) {
@@ -210,9 +253,17 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Upraví ceník vybraný podle itemId
+     * Aktualizuje ceník se zadaným id.
+     * <p>
+     * Provádí validaci povinných polí (vybrané distribuční území a sazba) a kontrolu datových podmínek.
+     * Pokud není vybráno distribuční území nebo sazba, zobrazí varovný dialog a nic neuloží.
+     * Pokud kontrola dat (checkDateConditions) zjistí chybu, aktualizace se neprovede.
+     * <p>
+     * V případě úspěšné validace vytvoří instance DataPriceListSource, otevře ji, provede aktualizaci
+     * pomocí createPriceList(), uzavře zdroj a vrátí id aktualizovaného záznamu.
      *
-     * @param itemId long id ceníku
+     * @param itemId id ceníku, který se má upravit
+     * @return id aktualizovaného záznamu z databáze, nebo 0L pokud aktualizace nebyla provedena kvůli nevalidním vstupům
      */
     private long updatePriceList(long itemId) {
         if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
@@ -220,7 +271,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return 0L;
         }
-        
+
         if (checkDateConditions())
             return 0L;
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());

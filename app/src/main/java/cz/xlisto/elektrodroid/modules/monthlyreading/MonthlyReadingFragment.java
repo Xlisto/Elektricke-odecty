@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,6 +64,8 @@ public class MonthlyReadingFragment extends Fragment {
     private final String FROM = "from";
     private final String ID_CURRENTLY_READING = "idCurrentlyReading";
     private final String ID_PREVIOUS_READING = "idPreviousReading";
+    private final String FLAG_RESULT_DIALOG_FRAGMENT_2024 = "2024";
+    private final String FLAG_RESULT_DIALOG_FRAGMENT_2025 = "2025";
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
     private Button btnAddMonthlyReading;
@@ -138,14 +141,26 @@ public class MonthlyReadingFragment extends Fragment {
                     loadDataFromDatabase();
                 });
 
-        //posluchač na zavření dialogového okna s upozorněním na změnu ceníku, které jsou přes 1.7.2024 platnsti
-        getParentFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
+        //posluchač na zavření dialogového okna s upozorněním na změnu ceníku, které jsou přes 1.7.2024 platnosti
+        getParentFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_FRAGMENT_2024, this,
                 (requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         //záloha
                         SaveDataToBackupFile.saveToZip(requireActivity(), null);
                         //aktualizace měsíčních odečtů
-                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList());
+                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList(PriceListSplitRange.YEAR_2024), PriceListSplitRange.YEAR_2024.getNewStart());
+                        loadDataFromDatabase();
+                    }
+                });
+
+        //posluchač na zavření dialogového okna s upozorněním na změnu ceníku, které jsou přes 1.9.2025 platnosti
+        getParentFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_FRAGMENT_2025, this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                        //záloha
+                        SaveDataToBackupFile.saveToZip(requireActivity(), null);
+                        //aktualizace měsíčních odečtů
+                        MonthlyReadingUpdater.updateMonthlyReadings(requireContext(), updatePriceList(PriceListSplitRange.YEAR_2025), PriceListSplitRange.YEAR_2025.getNewStart());
                         loadDataFromDatabase();
                     }
                 });
@@ -228,8 +243,7 @@ public class MonthlyReadingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        findPriceListRange();
+        promptPriceListUpdateIfNeeded();
 
         loadDataFromDatabase();
         UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
@@ -368,38 +382,98 @@ public class MonthlyReadingFragment extends Fragment {
 
 
     /**
-     * Načte ceníky v daném časovém rozmezí z databáze.
-     *
+     * Asynchronně zkontroluje v databázi přítomnost ceníků spadajících do
+     * předdefinovaných rozsahů (aktuálně YEAR_2024 a YEAR_2025) a při nálezu
+     * nabídne uživateli dialog pro jejich aktualizaci.
+     * <p>
+     * Implementační poznámky:
+     * - Používá `requireContext()` a běží v novém pozadí vlákně; po ukončení
+     * přepne zpět na UI vlákno pomocí `requireActivity().runOnUiThread(...)`.
+     * - Otevírá a vždy uzavírá `DataPriceListSource` ve `finally` bloku.
+     * - Kontroluje nejprve rozsah YEAR_2024 a v případě nalezení zobrazí dialog
+     * s flagem `FLAG_RESULT_DIALOG_FRAGMENT_2024`; jinak kontroluje YEAR_2025.
+     * - Výjimky při práci s DB jsou zalogovány; metoda může vyhodit
+     * `IllegalStateException`, pokud fragment není připojen (volání `requireContext()`/`requireActivity()`).
      */
-    private void findPriceListRange() {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
-        dataPriceListSource.open();
-        ArrayList<PriceListModel> priceLists = dataPriceListSource.readPriceListInDateRange();
-        dataPriceListSource.close();
+    private void promptPriceListUpdateIfNeeded() {
+        final Context context = requireContext();
 
-        if (!priceLists.isEmpty()) {
-            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                    getString(R.string.alert_title),
-                    YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT,
-                    getString(R.string.alert_message_provoz_nesitove_infrastruktury2));
-            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
-        }
+        new Thread(() -> {
+            DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
+            boolean has2024 = false, has2025 = false;
+            try {
+                dataPriceListSource.open();
+
+                has2024 = !dataPriceListSource.readPriceListInDateRange(
+                        PriceListSplitRange.YEAR_2024.getOldStart(),
+                        PriceListSplitRange.YEAR_2024.getOldEnd(),
+                        PriceListSplitRange.YEAR_2024.getNewStart(),
+                        PriceListSplitRange.YEAR_2024.getNewEnd()
+                ).isEmpty();
+                has2025 = !dataPriceListSource.readPriceListInDateRange(
+                        PriceListSplitRange.YEAR_2025.getOldStart(),
+                        PriceListSplitRange.YEAR_2025.getOldEnd(),
+                        PriceListSplitRange.YEAR_2025.getNewStart(),
+                        PriceListSplitRange.YEAR_2025.getNewEnd()
+                ).isEmpty();
+            } catch (Exception e) {
+                Log.e(TAG, "promptPriceListUpdateIfNeeded: error while checking price lists", e);
+            } finally {
+                try {
+                    dataPriceListSource.close();
+                } catch (Exception ignored) {
+                }
+            }
+            boolean finalHas2024 = has2024;
+            boolean finalHas2025 = has2025;
+
+            requireActivity().runOnUiThread(() -> {
+                if (finalHas2024) {
+                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                            getString(R.string.alert_title),
+                            FLAG_RESULT_DIALOG_FRAGMENT_2024,
+                            getString(R.string.alert_message_provoz_nesitove_infrastruktury2));
+                    yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                } else if (finalHas2025) {
+                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                            getString(R.string.alert_title),
+                            FLAG_RESULT_DIALOG_FRAGMENT_2025,
+                            getString(R.string.alert_message_provoz_nesitove_infrastruktury_new_price2));
+                    yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                }
+            });
+        }).start();
     }
 
 
     /**
-     * Aktualizuje ceníky v databázi a zobrazí dialogové okno s upozorněním, pokud je potřeba.
+     * Aktualizuje ceník rozdělením podle zadaného rozsahu.
+     * <p>
+     * Metoda otevře lokální zdroj {@code DataPriceListSource}, provede rozdělení
+     * voláním {@code range.splitUsing(source)} a zdroj vždy uzavře ve {@code finally}.
+     * V případě jakékoli výjimky je chyba zalogována a metoda vrací {@code null}.
+     *
+     * @param range rozsah rozdělení ({@link PriceListSplitRange})
+     * @return mapu původního a nového {@link PriceListModel} po rozdělení,
+     * nebo {@code null}, pokud došlo k chybě
+     * @throws IllegalStateException pokud fragment není připojen a volání {@code requireContext()} selže
+     * @see DataPriceListSource
+     * @see PriceListSplitRange#splitUsing(DataPriceListSource)
      */
-    private Map<PriceListModel, PriceListModel> updatePriceList() {
-        //zobrazení ceníků pro změnu.
+    private Map<PriceListModel, PriceListModel> updatePriceList(PriceListSplitRange range) {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
-
-        //Rozdělí ceníky podle data a vytvoří novou mapu s upravenými ceníky.Vloží a aktualizuje databázi s ceníky.
-        dataPriceListSource.open();
-        Map<PriceListModel, PriceListModel> newSplitPriceListMap = dataPriceListSource.splitPriceList();
-        dataPriceListSource.close();
-
-        return newSplitPriceListMap;
+        try {
+            dataPriceListSource.open();
+            return range.splitUsing(dataPriceListSource);
+        } catch (Exception e) {
+            Log.e(TAG, "updatePriceList: error while updating price list", e);
+            return null;
+        } finally {
+            try {
+                dataPriceListSource.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
 
@@ -410,6 +484,81 @@ public class MonthlyReadingFragment extends Fragment {
      */
     public void setOnShowRegulPriceListener(boolean isChecked) {
         this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
+    }
+
+
+    /**
+     * Rozsah použitelný pro rozdělení ceníku na staré a nové období.
+     * <p>
+     * Enum definuje přednastavené rozsahy (např. pro 2024 a 2025) a uchovává
+     * hranice starého a nového období ve formě řetězců. Slouží jako jedna sada
+     * parametrů, které se předávají do metody pro rozdělení ceníku.
+     * <p>
+     * Důležité:
+     * - `oldStart`/`oldEnd` popisují původní období, které bude rozdělěno.
+     * - `newStart`/`newEnd` popisují začátek a konec nového období po rozdělení.
+     * - {@link #splitUsing(DataPriceListSource)} poskytuje pohodlné volání
+     * {@link DataPriceListSource#splitPriceList(String, String, String, String)}.
+     *
+     * @see DataPriceListSource#splitPriceList(String, String, String, String)
+     * @see #splitUsing(DataPriceListSource)
+     */
+    public enum PriceListSplitRange {
+        YEAR_2024("1.1.2024", "30.06.2024", "1.7.2024", "31.12.2024"),
+        YEAR_2025("1.1.2025", "31.08.2025", "1.9.2025", "31.12.2025");
+
+        private final String oldStart;
+        private final String oldEnd;
+        private final String newStart;
+        private final String newEnd;
+
+
+        PriceListSplitRange(String oldStart, String oldEnd, String newStart, String newEnd) {
+            this.oldStart = oldStart;
+            this.oldEnd = oldEnd;
+            this.newStart = newStart;
+            this.newEnd = newEnd;
+        }
+
+
+        public String getOldStart() {
+            return oldStart;
+        }
+
+
+        public String getOldEnd() {
+            return oldEnd;
+        }
+
+
+        public String getNewStart() {
+            return newStart;
+        }
+
+
+        public String getNewEnd() {
+            return newEnd;
+        }
+
+
+        /**
+         * Provede rozdělení ceníku podle tohoto rozsahu voláním
+         * {@link DataPriceListSource#splitPriceList(String, String, String, String)}.
+         * <p>
+         * Deleguje logiku na předaný {@code source} a vrací výslednou mapu,
+         * kde klíčem je původní {@link PriceListModel} a hodnotou odpovídající nový {@link PriceListModel}.
+         * <p>
+         * Poznámky:
+         * - {@code source} by měl být otevřený (voláno {@code open()}) před tímto voláním, pokud je to potřeba.
+         * - V závislosti na implementaci zdroje metoda může vrátit prázdnou mapu, {@code null}
+         * nebo vyvolat výjimku při chybě přístupu k databázi.
+         *
+         * @param source zdroj dat pro ceníky, použitý k provedení rozdělení
+         * @return mapa původního -> nového {@link PriceListModel}, nebo prázdná/mapa dle chování zdroje; může být i {@code null} při chybě
+         */
+        public Map<PriceListModel, PriceListModel> splitUsing(DataPriceListSource source) {
+            return source.splitPriceList(oldStart, oldEnd, newStart, newEnd);
+        }
     }
 
 }

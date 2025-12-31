@@ -7,7 +7,6 @@ import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
@@ -17,12 +16,32 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
 /**
- * Fragment pro vytvoření nového ceníku
- * Jednoduchý {@link Fragment} podtřída.
- * Použijte tovární metodu {@link PriceListAddFragment#newInstance}
- * k vytvoření instance tohoto fragmentu.
+ * Fragment pro vytvoření nového ceníku.
+ * <p>
+ * Rozšiřuje {@code PriceListAddEditAbstract} a zajišťuje inicializaci UI,
+ * ukládání dočasných preferencí uživatele a vložení nového záznamu do databáze.
+ * <p>
+ * Hlavní chování:
+ * - vytvoření instance pomocí {@link #newInstance()}
+ * - nastavení listenerů pro uložení (btnSave) a návrat (btnBack)
+ * - persistování výběrů a textů přes {@code ShPAddPriceList}
+ * - validace dat a vložení záznamu přes {@code DataPriceListSource#insertPriceList}
+ * - aktualizace spinnerů a výpočet regulované ceny (metoda {@code setRegulPrice})
+ * <p>
+ * Důležité metody:
+ * - {@link #savePriceList()} – validace a uložení nového ceníku
+ * - {@link #setPreference()} / {@link #getPreference()} – uložení/načtení dočasných hodnot
+ * <p>
+ * Poznámky:
+ * - ověřuje se výběr distribučního území a sazby před uložením
+ * - používá dialogy přes {@code OwnAlertDialog} a skrytí klávesnice přes {@code Keyboard}
+ *
+ * @see PriceListAddEditAbstract
+ * @see DataPriceListSource
+ * @see ShPAddPriceList
  */
 public class PriceListAddFragment extends PriceListAddEditAbstract {
+
     private final static String TAG = PriceListAddFragment.class.getSimpleName();
     private ShPAddPriceList shPAddPriceList;
 
@@ -109,8 +128,9 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
             OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return;
         }
-        //kontrola platnosti datumů a zobrazení dialogového dotazu na rozdělění ceníku
-        if(checkDateConditions())
+        //kontrola platnosti datumů a zobrazení dialogového dotazu na rozdělení ceníku
+
+        if (checkDateConditions())
             return;
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
         dataPriceListSource.open();
@@ -147,4 +167,5 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
         ivProdukt.setDefaultText(shPAddPriceList.get(ShPAddPriceList.PRODUKT, ""));
         ivRada.setDefaultText(shPAddPriceList.get(ShPAddPriceList.RADA, ""));
     }
+
 }

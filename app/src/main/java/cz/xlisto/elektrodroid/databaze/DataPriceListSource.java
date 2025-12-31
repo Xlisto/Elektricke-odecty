@@ -49,6 +49,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -190,15 +191,46 @@ public class DataPriceListSource {
 
 
     /**
-     * Rozdělí seznam ceníků podle data a vytvoří novou mapu s upravenými ceníky.
-     * Upravený ceník a vytvořený nová ceník se uloží do databáze a v map se aktualizuje id nového ceníku.
+     * Rozdělí ceníky v zadaném časovém intervalu a uloží změny do databáze.
+     * <p>
+     * Metoda načte ceníky, jejichž počátek platnosti (`platnost_od`) leží mezi
+     * `dateStartFrom` a `dateStartTo` a konec platnosti (`platnost_do`) leží mezi
+     * `dateEndFrom` a `dateEndTo`. Následně použije `PriceListSplitter.splitPriceLists2024`
+     * k vytvoření mapy původních a nově generovaných ceníků. Pro každý pár:
+     * - původní ceník je aktualizován v databázi,
+     * - nový ceník je vložen do databáze a jeho \_id se nastaví v modelu.
+     * <p>
+     * Vstupní datumy musí být ve formátu akceptovaném metodou
+     * `ViewHelper.parseCalendarFromString` (např. \"1.1.2024\"); metoda převádí
+     * tato data na milisekundy pro SQL dotaz.
+     * <p>
+     * Vedlejší efekty:
+     * - provádí aktualizace a inserty v tabulce ceníků v databázi,
+     * - upravuje identifikátory (id) nově vložených záznamů v objektech `PriceListModel`.
      *
-     * @return Mapa obsahující aktualizované dvojice původních a nových ceníků
+     * @param dateStartFrom nejnižší (počáteční) datum počátku platnosti (formát pro ViewHelper)
+     * @param dateStartTo   nejvyšší (konečné) datum počátku platnosti (formát pro ViewHelper)
+     * @param dateEndFrom   nejnižší (počáteční) datum konce platnosti (formát pro ViewHelper)
+     * @param dateEndTo     nejvyšší (konečné) datum konce platnosti (formát pro ViewHelper)
+     * @return map Přiřazení původního ceníku (klíč) → nově vytvořený ceník (hodnota). Klíče i hodnoty obsahují aktuální id po provedení DB operací.
      */
-    public Map<PriceListModel, PriceListModel> splitPriceList() {
-        ArrayList<PriceListModel> pricelists = readPriceListInDateRange();
+    public Map<PriceListModel, PriceListModel> splitPriceList(String dateStartFrom, String dateStartTo, String dateEndFrom, String dateEndTo) {
+        int year;
+        try {
+            year = ViewHelper.parseCalendarFromString(dateStartFrom).get(Calendar.YEAR);
+        } catch (Exception e) {
+            // Pokud nelze parsovat, použij výchozí variantu 2025
+            year = 2025;
+        }
 
-        Map<PriceListModel, PriceListModel> mapPriceList = PriceListSplitter.splitPriceLists(pricelists);
+        ArrayList<PriceListModel> pricelists = readPriceListInDateRange(dateStartFrom, dateStartTo, dateEndFrom, dateEndTo);
+
+        Map<PriceListModel, PriceListModel> mapPriceList;
+        if (year == 2024) {
+            mapPriceList = PriceListSplitter.splitPriceLists2024(pricelists);
+        } else {
+            mapPriceList = PriceListSplitter.splitPriceLists2025(pricelists);
+        }
 
         for (Map.Entry<PriceListModel, PriceListModel> entry : mapPriceList.entrySet()) {
             PriceListModel originalPriceList = entry.getKey();
@@ -401,18 +433,28 @@ public class DataPriceListSource {
 
 
     /**
-     * Načte seznam ceníků s počátečním datem platnosti od 1.1.2024 do maximálně platným datem do 30.6.2024
-     * a zároveň, které končí mezi 1.7.2024 až 31.12.2024.
+     * Načte ceníky, jejichž datum počátku platnosti (platnost_od) leží v rozsahu
+     * mezi dateStartFrom a dateStartTo a zároveň jejich datum konce platnosti (platnost_do)
+     * leží v rozsahu mezi dateEndFrom a dateEndTo.
+     * <p>
+     * Vstupní řetězce musí být ve formátu, který akceptuje
+     * ViewHelper.parseCalendarFromString (např. "1.1.2024"). Metoda převede tato data
+     * na milisekundy a použije je v SQL dotazu.
      *
-     * @return ArrayList<PriceListModel> seznam ceníků v zadaném datumovém rozsahu
+     * @param dateStartFrom nejnižší (počáteční) datum platnosti v řetězcovém formátu
+     * @param dateStartTo   nejvyšší (konečné) datum platnosti v řetězcovém formátu
+     * @param dateEndFrom   nejnižší (počáteční) datum konce platnosti v řetězcovém formátu
+     * @param dateEndTo     nejvyšší (konečné) datum konce platnosti v řetězcovém formátu
+     * @return ArrayList\<PriceListModel\> seznam ceníků odpovídajících zadaným intervalům;
+     * vrací prázdný seznam, pokud žádné záznamy nevyhovují
      */
-    public ArrayList<PriceListModel> readPriceListInDateRange() {
+    public ArrayList<PriceListModel> readPriceListInDateRange(String dateStartFrom, String dateStartTo, String dateEndFrom, String dateEndTo) {
         String selection = "platnost_od >= ? AND platnost_od <= ? AND platnost_do >= ? AND platnost_do <= ?";
         String[] argsSelection = new String[]{
-                String.valueOf(ViewHelper.parseCalendarFromString("01.01.2024").getTimeInMillis()),
-                String.valueOf(ViewHelper.parseCalendarFromString("30.06.2024").getTimeInMillis()),
-                String.valueOf(ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()),
-                String.valueOf(ViewHelper.parseCalendarFromString("31.12.2024").getTimeInMillis())
+                String.valueOf(ViewHelper.parseCalendarFromString(dateStartFrom).getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString(dateStartTo).getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString(dateEndFrom).getTimeInMillis()),
+                String.valueOf(ViewHelper.parseCalendarFromString(dateEndTo).getTimeInMillis())
         };
         return readPriceList(selection, argsSelection);
     }

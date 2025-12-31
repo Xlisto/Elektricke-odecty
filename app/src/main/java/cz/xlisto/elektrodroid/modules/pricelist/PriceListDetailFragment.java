@@ -253,10 +253,14 @@ public class PriceListDetailFragment extends Fragment {
             ldnOTE.setItem(getResources().getString(R.string.kc_om));
         }
 
-        //zobrazení varování, pokud platnost ceníku překrývá s přechodem na provoz nesíťové infrastruktury (1.7.2024)
-        long transition = 1719784800000L;
-        if (year == 2024 && dateStart < transition && dateEnd >= transition) {
+        //zobrazení varování, pokud platnost ceníku překrývá s přechodem na provoz nesíťové infrastruktury (1.7.2024) a nové ceny od 1.9.2025
+        long transition2024 = 1719784800000L;//1.7.2024
+        long transition2025 = 1756677600000L;//1.9.2025
+        if (year == 2024 && dateStart < transition2024 && dateEnd >= transition2024) {
             tvPoznamkaOTE.setText(getResources().getText(R.string.provoz_nesitove_infrastruktury_poznamka));
+            tvPoznamkaOTE.setVisibility(View.VISIBLE);
+        } else if (year == 2025 && dateStart < transition2025 && dateEnd >= transition2025) {
+            tvPoznamkaOTE.setText(getResources().getText(R.string.nova_cena_infrastruktua_poznamka));
             tvPoznamkaOTE.setVisibility(View.VISIBLE);
         } else {
             tvPoznamkaOTE.setVisibility(View.GONE);

@@ -61,7 +61,8 @@
     <string name="cinnost_ote">Činnost OTE</string>
     <string name="cinnost_operatora_trhu">Čin. oper. trhu</string>
     <string name="provoz_nesitove_infrastruktury">Provoz nesíťové infr.</string>
-    <string name="provoz_nesitove_infrastruktury_poznamka">Od 1.7. se tato položka změnila. Nyní je cena 9,24  </string>
+    <string name="provoz_nesitove_infrastruktury_poznamka">Od 1.7. se tato položka změnila. Nyní je cena 9,24.  </string>
+    <string name="nova_cena_infrastruktua_poznamka">Od 1.9. se tato položka zvýšila na 12,45.  </string>
     <string name="dph">DPH</string>
     <string name="dan_z_elektriny">Daň z elektřiny</string>
     <string name="znak_procento">%</string>
@@ -177,8 +178,8 @@
     <string name="dalsi_sluzby2">Další doplňkové služby nebo slevy</string>
     <string name="podpora_obnovitelnych_zdroju">Podpora obnovitelných zdrojů</string>
 
-    <string name="zjednodusene_zobrazeni">Náhled</string>
-    <string name="regulovane_ceny">Zastropované ceny</string>
+    <string name="zjednodusene_zobrazeni">Zkrácený</string>
+    <string name="regulovane_ceny">Zastropované ceny v r. 2023</string>
     <string name="strop_ceny">Zastropované ceny</string>
 
     <string name="logo">LOGO</string>
@@ -375,6 +376,16 @@
         \n\'Činnost operátora trhu\' na \'Provoz nesíťové infrastruktury\' a cena je upravena na 9,24 Kč bez DPH.
         \n\nDotčené ceníky budou aktualizovány tak, že jejich platnost bude omezena do 30. 6. 2024. Vytvoří se kopie ceníků s platností od 1. 7. 2024, již s novou cenou.
         \n\nMěsíční odečty platné od 1. 7. 2024 budou automaticky přiřazeny k novým ceníkům.
+        \n\nPřed provedením této změny bude vytvořena záloha aktuálního stavu.
+        \n\nPřejete si provést změny?
+    </string>
+    <string name="alert_message_provoz_nesitove_infrastruktury_new_price">Od 1.9.2025 se změnila cena \n\'Provoz nesíťové infrastruktury\' na 12,45 Kč bez DPH.
+        \n\nVytvořte jeden ceník s platností od 1.1.2025 do 31.8.2025 a druhý s platností od 1.9.2025 do 31.12.2025.
+    \n\nChcete, aby aplikace vytvořila dva ceníky?</string>
+    <string name="alert_message_provoz_nesitove_infrastruktury_new_price2">Od 1. 9. 2025 se změnila výše
+        \ceny \'Provoz nesíťové infrastruktury\' a cena je upravena na 12,45 Kč bez DPH.
+        \n\nDotčené ceníky budou aktualizovány tak, že jejich platnost bude omezena do 31. 8. 2025. Vytvoří se kopie ceníků s platností od 1. 9. 2025, již s novou cenou.
+        \n\nMěsíční odečty platné od 1. 9. 2025 budou automaticky přiřazeny k novým ceníkům.
         \n\nPřed provedením této změny bude vytvořena záloha aktuálního stavu.
         \n\nPřejete si provést změny?
     </string>

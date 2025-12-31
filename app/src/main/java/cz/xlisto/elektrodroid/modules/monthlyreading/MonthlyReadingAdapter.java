@@ -245,6 +245,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 calendarEnd.add(Calendar.DAY_OF_MONTH, -1);
                 long dateStart = items.get(position + 1).getDate();
                 long dateEnd = calendarEnd.getTimeInMillis();
+                Calendar calendarStart = Calendar.getInstance();
+                calendarStart.setTimeInMillis(dateStart);
+
                 holder.tvDateDetail.setText(context.getResources().getString(R.string.period, ViewHelper.convertLongToDate(dateStart), ViewHelper.convertLongToDate(dateEnd)));
 
                 if (showRegulPrice) {
@@ -269,6 +272,11 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 }
 
                 prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);//vt, nt, stPlat, poze
+
+                int year = calendarStart.get(Calendar.YEAR);
+                if(year==2026)
+                    prices[3] = priceList.getPoze1()/1000;
+
                 monthPrice = month * prices[2];
                 total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();
                 double difference = monthlyReading.getDifferenceDPH();

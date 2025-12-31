@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -91,6 +90,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String JISTIC = "swJistic";
     static final String LAST_YEAR = "lastYear";
     static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY = "flagResultDialogProvozNesitoveInfrastruktury";
+    static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY_2025 = "flagResultDialogProvozNesitoveInfrastruktury2025";
     private static final int DEF_MIN_YEAR = 2021;
     private static final int DEF_MAX_YEAR = 2026;
 
@@ -99,7 +99,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     int year, lastYear, selectionDistUzemi, selectionSazba;
     boolean isFirstLoad = true;
     boolean closedDialog = false;
-    long itemId;
+    Long itemId;
 
     Button btnFrom, btnUntil, btnBack, btnSave, btnReloadRegulPriceList;
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
@@ -113,8 +113,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
     }
 
@@ -164,6 +163,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         tvNoPriceListDescription = view.findViewById(R.id.tvNoPriceListDescription);
         tvNoPriceListTitle = view.findViewById(R.id.tvNoPriceListTitle);
         rlNoPriceList = view.findViewById(R.id.rlNoPriceList);
+
+        PriceListViewModel viewModel = new androidx.lifecycle.ViewModelProvider(requireActivity()).get(PriceListViewModel.class);
+        viewModel.getSaveResultEvent().observe(getViewLifecycleOwner(), event -> {
+            Boolean success = event == null ? null : event.getContentIfNotHandled();
+            if (Boolean.TRUE.equals(success)) {
+                getParentFragmentManager().popBackStack();
+            }
+        });
 
         btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
             closedDialog = true;
@@ -271,27 +278,53 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         setDistribucniUzemiAdapter();
 
         /*
-         * Nastaví posluchače pro výsledek dialogu "Provoz nesíťové infrastruktury" - změny ceníku od 1.7.2024.
-         * <p>
-         * Tato metoda nastaví posluchače pro výsledek dialogu s klíčem `FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY`.
-         * Pokud je výsledek dialogu kladný, vytvoří dva objekty `PriceListModel` s daty platnosti
-         * a nastaví cenu činnosti na 9.24 pro druhý ceník. Poté uloží nebo aktualizuje ceníky
-         * podle typu fragmentu (`PriceListAddFragment` nebo `PriceListEditFragment`).
+         * Listener pro výsledek dialogu `FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY`.
+         *
+         * <p>Chování:
+         * - Po kladné odpovědi vytvoří dva `PriceListModel` s platností před a od začátku nového režimu (1.7.2024):
+         *   - první s platností do 30.6.2024,
+         *   - druhý s platností od 1.7.2024.
+         * - Používá `createCalendar(year, month, day)` (parametr `month` je 0-based, např. 6 = červenec).
+         *   Vytvořený `Calendar` používá výchozí časové pásmo zařízení (`Calendar.getInstance()`).
+         * - U druhého ceníku nastaví pole `cinnost` na 9.24.
+         * - Pokud je aktuální fragment instancí `PriceListAddFragment`, vloží oba nové záznamy;
+         *   pokud je `PriceListEditFragment`, aktualizuje první a vloží druhý.
          */
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                Calendar calendarLastJune = createCalendar(5, 30);
-                Calendar calendarFirstJuly = createCalendar(6, 1);
+                Calendar calendarLastJune = createCalendar(2024, 5, 30);
+                Calendar calendarFirstJuly = createCalendar(2024, 6, 1);
 
-                PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastJune.getTimeInMillis(), null);
-                PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstJuly.getTimeInMillis());
+                PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastJune, null);
+                PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstJuly);
                 priceListModelSecond.setCinnost(9.24);
 
-                if (this.getClass().equals(PriceListAddFragment.class)) {
-                    saveNewPriceLists(priceListModelFirst, priceListModelSecond);
-                } else if (this.getClass().equals(PriceListEditFragment.class)) {
-                    updateAndSavePriceLists(priceListModelFirst, priceListModelSecond);
-                }
+                 viewModel.preparePriceLists(priceListModelFirst, priceListModelSecond, this.getClass().equals(PriceListAddFragment.class), itemId);
+
+            }
+        });
+
+        /*
+         * Listener pro výsledek dialogu `FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY_2025`.
+         *
+         * <p>Chování:
+         * - Po kladné odpovědi vytvoří dva `PriceListModel` s platností těsně před a od začátku nového režimu.
+         * - Používá `createCalendar(year, month, day)` (pole `month` je 0-based, tedy 8 = září),
+         *   vytvořený kalendář používá výchozí časové pásmo zařízení (Calendar.getInstance()).
+         * - U druhého ceníku nastaví pole `cinnost` na 12.45.
+         * - Pokud je aktuální fragment instancí `PriceListAddFragment`, vloží oba nové záznamy,
+         *   pokud je `PriceListEditFragment`, aktualizuje první a vloží druhý.
+         */
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY_2025, this, (requestKey, result) -> {
+            if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                Calendar calendarLastAugust = createCalendar(2025, 7, 31);
+                Calendar calendarFirstSeptember = createCalendar(2025, 8, 1);
+
+                PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastAugust, null);
+                PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstSeptember);
+                priceListModelSecond.setCinnost(12.45);
+
+                viewModel.preparePriceLists(priceListModelFirst, priceListModelSecond, this.getClass().equals(PriceListAddFragment.class), itemId);
             }
         });
     }
@@ -343,32 +376,60 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
     /**
      * Nastaví adaptér pro spinner sazby distribuce.
+     *
      * <p>
-     * Používá `Handler` k opožděnému spuštění kódu, který načte pole sazeb
-     * z prostředků a nastaví adaptér pro spinner `spSazba`.
+     * Provádí bezpečné nastavení dat a adaptéru na hlavním vlákně:
+     * - použije {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()} a vykoná úlohu se zpožděním (1050 ms),
+     * - před manipulací s UI ověří {@link #isAdded()} aby se zabránilo {@code IllegalStateException} pokud už fragment není připojen,
+     * - načte pole sazeb z resources (`R.array.sazby`), vytvoří nový {@code MySpinnerDistributorsAdapter}
+     * a nastaví ho do `spSazba`,
+     * - obnoví předchozí výběr pomocí `selectionSazba`.
+     * <p>
+     * Poznámky:
+     * - Všechny UI operace probíhají na hlavním vlákně.
+     * - Zpoždění slouží k tomu, aby se adaptér nastavil až po dokončení jiných inicializací UI v onViewCreated.
+     * - Metoda nijak nemění stav fragmentu mimo nastavení adaptéru a neprovádí I/O v pozadí.
      */
     void setSazbaAdapter() {
-        Handler handler = new Handler();
+        // zajistit, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
+        Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
+            if (!isAdded())
+                return; // ochrana proti IllegalStateException když fragment už není připojen
+
             arraySazba = getResources().getStringArray(R.array.sazby);
             adapterSazba = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arraySazba, year);
             spSazba.setAdapter(adapterSazba);
             spSazba.setSelection(selectionSazba, true);
         };
         handler.postDelayed(r, 1050);
-
     }
 
 
     /**
      * Nastaví adaptér pro spinner distribučního území.
+     *
      * <p>
-     * Používá `Handler` k opožděnému spuštění kódu, který načte pole distribučních území
-     * z prostředků a nastaví adaptér pro spinner `spDistribucniUzemi`.
+     * Provádí bezpečné nastavení dat a adaptéru na hlavním vlákně:
+     * - použije {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()} a vykoná úlohu se zpožděním (1140 ms),
+     * - před manipulací s UI ověří {@link #isAdded()} aby se zabránilo {@code IllegalStateException} pokud už fragment není připojen,
+     * - načte pole distribučních území z resources (`R.array.distribucni_uzemi`), vytvoří nový {@code MySpinnerDistributorsAdapter}
+     * a nastaví ho do `spDistribucniUzemi`,
+     * - obnoví předchozí výběr pomocí `selectionDistUzemi`,
+     * - po nastavení adaptéru zavolá {@link #evaluateRegulatedPriceAvailability()} pro aktualizaci stavu UI závislého na dostupnosti regulovaných cen.
+     * <p>
+     * Poznámky:
+     * - Všechny UI operace probíhají na hlavním vlákně.
+     * - Zpoždění slouží k tomu, aby se adaptér nastavil až po dokončení jiných inicializací UI v onViewCreated.
+     * - Metoda nijak neprovádí I/O v pozadí (načítání resources je rychlé) a dbá na bezpečnost vůči životnímu cyklu fragmentu.
      */
     void setDistribucniUzemiAdapter() {
-        Handler handler = new Handler();
+        // zajistit, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
+        Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
+            if (!isAdded())
+                return; // ochrana proti IllegalStateException když fragment už není připojen
+
             arrayDistUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
             adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
             spDistribucniUzemi.setAdapter(adapterDistUzemi);
@@ -390,10 +451,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     void changeDistributionSpinner() {
         //nic neměnit, pokud je vybraný index 0, PRE nebo ČEZ
-        if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE")
-                || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ")
-                || spDistribucniUzemi.getSelectedItemPosition() == 0
-        ) return;
+        if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE") || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ") || spDistribucniUzemi.getSelectedItemPosition() == 0)
+            return;
 
         //po předchozí  podmínce se zde dostanou jen E.ON a EG.D
         //pokud je rok 2021 a vyšší. Vybraný string položky neodpovídá EG.D, tak se vybere položka s indexem 3. To je EG.D
@@ -493,12 +552,20 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Sestaví objekt ceníku z údajů widgetů.
+     * Vytvoří a vrátí instanci {@link PriceListModel} naplněnou hodnotami z aktuálních UI komponent.
      * <p>
-     * Metoda vytvoří a vrátí instanci `PriceListModel` naplněnou daty z různých widgetů
-     * uživatelského rozhraní, jako jsou textová pole a spinnery.
+     * Metoda:
+     * - získá čas vytvoření z aktuálního systémového kalendáře,
+     * - načte platnosti (platnost od / platnost do) z tlačítek {@code btnFrom} a {@code btnUntil},
+     * - přečte textová a číselná pole z jednotlivých {@code LabelEditText} a výběry ze spinnerů,
+     * - sestaví a vrátí nový {@code PriceListModel} s id nastaveným na {@code -1L}.
+     * <p>
+     * Poznámky:
+     * - Metoda neprovádí rozsáhlou validaci vstupů; volající by měl zajistit, že UI prvky jsou inicializované
+     * (např. metoda volána po {@code onViewCreated}) a že hodnoty jsou platné.
+     * - Pokud je potřeba validační logika nebo ošetření chyb, přidejte ji před nebo po volání této metody.
      *
-     * @return PriceListModel objekt ceníku
+     * @return nový {@code PriceListModel} obsahující data aktuálně zobrazená v UI
      */
     PriceListModel createPriceList() {
         Calendar calendar = getInstance();
@@ -508,13 +575,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         long validityFrom = ViewHelper.parseCalendarFromString(btnFrom.getText().toString()).getTimeInMillis();
         long validityUntil = ViewHelper.parseCalendarFromString(btnUntil.getText().toString()).getTimeInMillis();
 
-        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(),
-                ivVT.getDouble(), ivNT.getDouble(), ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(),
-                ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(),
-                ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(),
-                ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(),
-                ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(),
-                validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
+        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(), ivVT.getDouble(), ivNT.getDouble(), ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(), ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(), ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(), ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(), ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(), validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
     }
 
 
@@ -548,29 +609,13 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 Calendar startCal = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
                 Calendar endCal = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
-                PriceListModel priceListModel = readRawJSON.read(startCal, endCal,
-                        spDistribucniUzemi.getSelectedItem().toString(),
-                        spSazba.getSelectedItem().toString());
+                PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistribucniUzemi.getSelectedItem().toString(), spSazba.getSelectedItem().toString());
 
-                double[] regulPrice = new double[]{
-                        priceListModel.getDistVT(), priceListModel.getDistNT(),
-                        priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(),
-                        priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(),
-                        priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(),
-                        priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(),
-                        priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(),
-                        priceListModel.getDph()
-                };
 
-                LabelEditText[] labelEditTexts = new LabelEditText[]{
-                        ivVT1, ivNT1,
-                        ivJ0, ivJ1, ivJ2, ivJ3,
-                        ivJ4, ivJ5, ivJ6, ivJ7,
-                        ivJ8, ivJ9, ivJ10, ivJ11,
-                        ivJ12, ivJ13, ivJ14, ivSystemSluzby,
-                        ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan,
-                        ivDPH
-                };
+
+                double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(), priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(), priceListModel.getDph()};
+
+                LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemSluzby, ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan, ivDPH};
 
                 mainHandler.post(() -> {
                     if (!isAdded()) return;
@@ -581,8 +626,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                         labelEditTexts[i].setAllowChangeBackgroundColor(true);
                     }
 
-                    switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) ||
-                            (priceListModel.getJ12() != 0) || (priceListModel.getJ13() != 0));
+                    switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) || (priceListModel.getJ12() != 0) || (priceListModel.getJ13() != 0));
 
                     hideItemView();
                     changeTitleOperatorTrhu();
@@ -651,56 +695,52 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             requireActivity().runOnUiThread(() -> {
                 // kontrola platnosti, které nejsou uvedeny
                 btnSave.setEnabled(true);
-
-                if (selectedStartYear < minYear || selectedStartYear > maxYear) {
-                    // zadaný rok je mimo rozsah ceníků
-                    errorTitleBuilder.append(getString(R.string.no_price_list));
-                } else if (selectedStartYear < selectedEndYear) {
+                if (selectedStartYear < selectedEndYear) {
                     // konečný rok je menší než počáteční
                     errorTitleBuilder.append(getString(R.string.start_year_is_smaller_title));
                     errorMessageBuilder.append(getString(R.string.start_year_is_smaller_message));
+                } else if (selectedStartYear < minYear || selectedStartYear > maxYear) {
+                    // zadaný rok je mimo rozsah ceníků
+                    errorTitleBuilder.append(getString(R.string.no_price_list));
                 } else if (selectedEnd.getTimeInMillis() < selectedStart.getTimeInMillis()) {
                     // konečný rok je větší než počáteční
                     errorTitleBuilder.append(getString(R.string.end_year_is_smaller));
-                }
-                // kontrola platnosti měsíců v ostatní
-                boolean found = false;
-                StringBuilder datesMessageBuilder = new StringBuilder();
-                for (int i = 0; i < dates.size(); i += 2) {
-                    Calendar cal1 = dates.get(i);
-                    Calendar cal2 = dates.get(i + 1);
-                    if (cal1.get(YEAR) != cal2.get(YEAR)) {
-                        // pokud roky nesouhlasí, kontrola se ukončí
-                        found = true;
-                        break;
-                    } else if (cal1.get(YEAR) == selectedStartYear) {
-                        // pokud jsou roky stejné, vytvoří se rozsah platných datumů
-                        datesMessageBuilder
-                                .append(dateFormat.format(cal1.getTime()))
-                                .append(" - ")
-                                .append(dateFormat.format(cal2.getTime()));
-                        datesMessageBuilder.append('\n');
-                    }
-                }
-                String datesMessage = datesMessageBuilder.toString().trim();
-
-                // kontrola průniku, pokud některý datumový rozsah vyhovuje rozsahu načtený v ceníku, cyklus se ukončí nastavením proměnné found na true
-                for (int i = 0; i < dates.size(); i += 2) {
-                    Calendar calendar1 = dates.get(i);
-                    Calendar calendar2 = dates.get(i + 1);
-
-                    if (calendar1.getTimeInMillis() <= selectedStart.getTimeInMillis() && calendar2.getTimeInMillis() >= selectedEnd.getTimeInMillis()) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                //pokud je found false, nastaví se obsah chybového hlášení a připojí se datumový rozpis
-                if (!found) {
-                    tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_during_the_year);
-                    errorTitleBuilder.append(getString(R.string.alert_regulated_prices_title_during_the_year, selectedStartYear));
-                    errorMessageBuilder.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
                     btnSave.setEnabled(false);
+                } else {
+                    // kontrola platnosti měsíců v ostatní
+                    boolean found = false;
+                    StringBuilder datesMessageBuilder = new StringBuilder();
+                    for (int i = 0; i < dates.size(); i += 2) {
+                        Calendar cal1 = dates.get(i);
+                        Calendar cal2 = dates.get(i + 1);
+                        if (cal1.get(YEAR) != cal2.get(YEAR)) {
+                            // pokud roky nesouhlasí, kontrola se ukončí
+                            found = true;
+                            break;
+                        } else if (cal1.get(YEAR) == selectedStartYear) {
+                            // pokud jsou roky stejné, vytvoří se rozsah platných datumů
+                            datesMessageBuilder.append(dateFormat.format(cal1.getTime())).append(" - ").append(dateFormat.format(cal2.getTime()));
+                            datesMessageBuilder.append('\n');
+                        }
+                    }
+                    String datesMessage = datesMessageBuilder.toString().trim();
+
+                    // kontrola průniku, pokud některý datumový rozsah vyhovuje rozsahu načtený v ceníku, cyklus se ukončí nastavením proměnné found na true
+                    for (int i = 0; i < dates.size(); i += 2) {
+                        Calendar calendar1 = dates.get(i);
+                        Calendar calendar2 = dates.get(i + 1);
+
+                        if (calendar1.getTimeInMillis() <= selectedStart.getTimeInMillis() && calendar2.getTimeInMillis() >= selectedEnd.getTimeInMillis()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    //pokud je found false, nastaví se obsah chybového hlášení a připojí se datumový rozpis
+                    if (!found) {
+                        tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_during_the_year);
+                        errorTitleBuilder.append(getString(R.string.alert_regulated_prices_title_during_the_year, selectedStartYear));
+                        errorMessageBuilder.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
+                    }
                 }
 
                 // zobrazení chybového hlášení, pokud něco obsahuje a zneaktivnění tlačítka pro uložení.
@@ -708,19 +748,15 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
                     rlNoPriceList.setVisibility(GONE);
-                    btnSave.setEnabled(true);
                 } else {
                     tvNoPriceListTitle.setText(errorTitleBuilder);
                     tvNoPriceListDescription.setText(errorMessageBuilder);
                     btnReloadRegulPriceList.setVisibility(View.GONE);
-                    if (errorMessageBuilder.length() == 0)
-                        tvNoPriceListDescription.setVisibility(View.GONE);
-                    else
-                        tvNoPriceListDescription.setVisibility(View.VISIBLE);
                     rlNoPriceList.setVisibility(VISIBLE);
-                    if (!errorTitleBuilder.toString().equals(getString(R.string.no_price_list)))
-                        btnSave.setEnabled(false);
                 }
+                if (errorMessageBuilder.length() == 0)
+                    tvNoPriceListDescription.setVisibility(View.GONE);
+                else tvNoPriceListDescription.setVisibility(View.VISIBLE);
             });
         }).start();
     }
@@ -750,16 +786,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - maxYear: největší nalezený rok (nebo fallback),
      * - dates: seznam `Calendar` párů (každá dvojice = začátek a konec platného intervalu).
      */
-    private ValidityDateContainer getMinMaxYearFromRaw(Calendar selectedStart, Calendar
-            selectedEnd) {
+    private ValidityDateContainer getMinMaxYearFromRaw(Calendar selectedStart, Calendar selectedEnd) {
         int minYear = Integer.MAX_VALUE;
         int maxYear = Integer.MIN_VALUE;
         Calendar validStart = getInstance();
         Calendar validEnd = getInstance();
         ArrayList<Calendar> dates = new ArrayList<>();
 
-        try (java.io.InputStream is = getResources().openRawResource(R.raw.ostatni);
-             java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
+        try (java.io.InputStream is = getResources().openRawResource(R.raw.ostatni); java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
 
             StringBuilder sb = new StringBuilder();
             String line;
@@ -880,7 +914,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
     }
 
-//TODO: kontrola ceníku 2024
+
+    //TODO: kontrola ceníku 2024 a 2025
     /**
      * Zkontroluje datumy nastavené na btnFrom a btnUntil.
      * Pokud btnFrom je mezi 1.1.2024 a 30.6.2024, btnUntil musí být také do 30.6.2024.
@@ -894,14 +929,24 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         Calendar fromDate = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         Calendar untilDate = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
-        boolean isValid = isValid(fromDate, untilDate);
+        boolean isValid2024 = isValid(2024, 1, JULY, fromDate, untilDate);
+        boolean isValid2025 = isValid(2025, 1, SEPTEMBER, fromDate, untilDate);
 
-        if (!isValid) {
+        if (!isValid2024) {
             String title = requireContext().getString(R.string.alert_title);
             String message = requireContext().getString(R.string.alert_message_provoz_nesitove_infrastruktury);
 
             if (!requireActivity().isFinishing()) {
                 YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY, message);
+                yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
+            }
+
+        } else if (!isValid2025) {
+            String title = requireContext().getString(R.string.alert_title);
+            String message = requireContext().getString(R.string.alert_message_provoz_nesitove_infrastruktury_new_price);
+
+            if (!requireActivity().isFinishing()) {
+                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY_2025, message);
                 yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
             }
 
@@ -911,41 +956,56 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             OwnAlertDialog.showDialog(requireActivity(), requireContext().getString(R.string.alert_title), requireContext().getString(R.string.alert_message_older_date));
             return true;
         }
-        return !isValid;
+        return (!isValid2024 || !isValid2025);
     }
 
 
     /**
-     * Zkontroluje, zda jsou data platná podle zadaných podmínek.
+     * Zkontroluje platnost intervalu [fromDate, untilDate] vůči pravidlům pro konkrétní rok.
+     * <p>
+     * Pravidla:
+     * - Referenční rok je určen parametrem `year`. Celý rok je od 1.1. 00:00:00 do 31.12. 23:59:59.
+     * - Nový ceník začíná v dni/měsíci zadaném parametry `newDay` a `newMonth` (měsíc 0-11) v tomtéž roce.
+     * - Pokud `fromDate` leží v intervalu [1.1., startNewPrice) pak `untilDate` musí být před `startNewPrice`
+     * (tj. `untilDate.getTimeInMillis() < startNewPrice.getTimeInMillis()`).
+     * - Pokud `fromDate` leží v intervalu [startNewPrice, 31.12.] pak `untilDate` nesmí překročit konec roku
+     * (tj. `untilDate.getTimeInMillis() <= end.getTimeInMillis()`).
+     * <p>
+     * Poznámky:
+     * - Porovnání probíhá na úrovni milisekund.
+     * - Hranice jsou explicitně nastaveny: začátky dne na 00:00:00.000, konec dne na 23:59:59.000.
      *
-     * @param fromDate  Počáteční datum
-     * @param untilDate Konečné datum
-     * @return true, pokud jsou data platná, jinak false
+     * @param year      cílový rok pro validaci
+     * @param newDay    den začátku nového ceníku (1-31)
+     * @param newMonth  měsíc začátku nového ceníku (0-11)
+     * @param fromDate  počáteční datum intervalu (včetně času)
+     * @param untilDate konečné datum intervalu (včetně času)
+     * @return true pokud interval splňuje pravidla pro zadaný rok, jinak false
      */
-    private static boolean isValid(Calendar fromDate, Calendar untilDate) {
-        //1.1.2024
-        Calendar startOf2024 = getInstance();
-        startOf2024.set(2024, JANUARY, 1, 0, 0, 0);
-        startOf2024.set(MILLISECOND, 0);
+    private static boolean isValid(int year, int newDay, int newMonth, Calendar fromDate, Calendar untilDate) {
+        //začátek platnosti ceníku
+        Calendar start = getInstance();
+        start.set(year, JANUARY, 1, 0, 0, 0);
+        start.set(MILLISECOND, 0);
 
-        //1.7.2024
-        Calendar startOfJuly2024 = getInstance();
-        startOfJuly2024.set(2024, JULY, 1, 0, 0, 0);
-        startOfJuly2024.set(MILLISECOND, 0);
+        //Datum platnosti nového ceníku
+        Calendar startNewPrice = getInstance();
+        startNewPrice.set(year, newMonth, newDay, 0, 0, 0);
+        startNewPrice.set(MILLISECOND, 0);
 
-        //31.12.2024
-        Calendar endOf2024 = getInstance();
-        endOf2024.set(2024, DECEMBER, 31, 23, 59, 59);
-        endOf2024.set(MILLISECOND, 0);
+        //konec platnosti ceníku
+        Calendar end = getInstance();
+        end.set(year, DECEMBER, 31, 23, 59, 59);
+        end.set(MILLISECOND, 0);
 
         boolean isValid = true;
 
-        if (fromDate.getTimeInMillis() >= startOf2024.getTimeInMillis() && fromDate.getTimeInMillis() < startOfJuly2024.getTimeInMillis()) {
-            if (untilDate.getTimeInMillis() >= startOfJuly2024.getTimeInMillis()) {
+        if (fromDate.getTimeInMillis() >= start.getTimeInMillis() && fromDate.getTimeInMillis() < startNewPrice.getTimeInMillis()) {
+            if (untilDate.getTimeInMillis() >= startNewPrice.getTimeInMillis()) {
                 isValid = false;
             }
-        } else if (fromDate.getTimeInMillis() >= startOfJuly2024.getTimeInMillis() && fromDate.getTimeInMillis() <= endOf2024.getTimeInMillis()) {
-            if (untilDate.getTimeInMillis() > endOf2024.getTimeInMillis()) {
+        } else if (fromDate.getTimeInMillis() >= startNewPrice.getTimeInMillis() && fromDate.getTimeInMillis() <= end.getTimeInMillis()) {
+            if (untilDate.getTimeInMillis() > end.getTimeInMillis()) {
                 isValid = false;
             }
         }
@@ -954,18 +1014,27 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Vytvoří a vrátí instanci kalendáře s nastaveným rokem, měsícem a dnem.
-     * <p>
-     * Tato metoda vytvoří objekt `Calendar` a nastaví jeho rok, měsíc a den
-     * podle zadaných parametrů. Čas je nastaven na začátek dne (00:00:00.000).
+     * Vytvoří a vrátí novou instanci {@code Calendar} se zadaným rokem, měsícem a dnem.
      *
-     * @param month Měsíc, který má být nastaven (0-11, kde 0 je leden a 11 je prosinec)
-     * @param day   Den, který má být nastaven
-     * @return Calendar objekt s nastaveným rokem, měsícem a dnem
+     * <p>Metoda:
+     * - vytvoří nový {@code Calendar} pomocí {@code Calendar.getInstance()} (používá výchozí časové pásmo),
+     * - nastaví rok, měsíc a den podle parametrů,
+     * - nastaví čas na začátek dne (00:00:00.000),
+     * - vrací plně inicializovaný objekt {@code Calendar} (nová instance, nesdílí stav).
+     * <p>
+     * Poznámky:
+     * - Parametr {@code month} je 0-based (0 = leden, 11 = prosinec).
+     * - Parametr {@code day} je 1-based (1..31 podle měsíce).
+     * - Metoda nemění žádný stav třídy a je bezpečná pro použití z více míst (vrací novou instanci).
+     *
+     * @param year  rok, který se má nastavit
+     * @param month měsíc (0-11)
+     * @param day   den v měsíci (1-31)
+     * @return nový {@code Calendar} nastavený na zadané datum na začátku dne (00:00:00.000)
      */
-    private Calendar createCalendar(int month, int day) {
+    private Calendar createCalendar(int year, int month, int day) {
         Calendar calendar = getInstance();
-        calendar.set(2024, month, day, 0, 0, 0);
+        calendar.set(year, month, day, 0, 0, 0);
         calendar.set(MILLISECOND, 0);
         return calendar;
     }
@@ -981,65 +1050,16 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @param platnostOD Datum platnosti od (v milisekundách), může být null
      * @return PriceListModel objekt ceníku s nastavenými daty platnosti
      */
-    private PriceListModel createPriceListWithDates(Long platnostDO, Long platnostOD) {
+    private PriceListModel createPriceListWithDates(Calendar platnostDO, Calendar platnostOD) {
         PriceListModel priceListModel = createPriceList();
         if (platnostDO != null) {
-            priceListModel.setPlatnostDO(platnostDO);
+            priceListModel.setPlatnostDO(platnostDO.getTimeInMillis());
         }
         if (platnostOD != null) {
-            priceListModel.setPlatnostOD(platnostOD);
+            priceListModel.setPlatnostOD(platnostOD.getTimeInMillis());
         }
+
         return priceListModel;
-    }
-
-
-    /**
-     * Uloží nové ceníky do databáze.
-     * <p>
-     * Tato metoda otevře zdroj dat `DataPriceListSource` a vloží dva nové ceníky
-     * do databáze. Po dokončení operací zdroj dat uzavře. Pokud jsou obě operace
-     * úspěšné (tj. obě ID jsou větší než 0), metoda vrátí fragment o jeden krok
-     * zpět v zásobníku fragmentů.
-     *
-     * @param priceListModelFirst  První ceník, který bude vložen
-     * @param priceListModelSecond Druhý ceník, který bude vložen
-     */
-    private void saveNewPriceLists(PriceListModel priceListModelFirst, PriceListModel
-            priceListModelSecond) {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
-        dataPriceListSource.open();
-        long idFirst = dataPriceListSource.insertPriceList(priceListModelFirst);
-        long idSecond = dataPriceListSource.insertPriceList(priceListModelSecond);
-        dataPriceListSource.close();
-        if (idFirst > 0 && idSecond > 0) {
-            getParentFragmentManager().popBackStack();
-        }
-    }
-
-
-    /**
-     * Aktualizuje první ceník a vloží druhý ceník do databáze.
-     * <p>
-     * Tato metoda nejprve nastaví ID prvního ceníku na hodnotu `itemId`.
-     * Poté otevře zdroj dat `DataPriceListSource` a provede aktualizaci prvního ceníku
-     * a vložení druhého ceníku do databáze. Po dokončení operací zdroj dat uzavře.
-     * Pokud jsou obě operace úspěšné (tj. obě ID jsou větší než 0), metoda vrátí
-     * fragment o jeden krok zpět v zásobníku fragmentů.
-     *
-     * @param priceListModelFirst  První ceník, který bude aktualizován
-     * @param priceListModelSecond Druhý ceník, který bude vložen
-     */
-    private void updateAndSavePriceLists(PriceListModel priceListModelFirst, PriceListModel
-            priceListModelSecond) {
-        priceListModelFirst.setId(itemId);
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
-        dataPriceListSource.open();
-        long idFirst = dataPriceListSource.updatePriceList(priceListModelFirst, itemId);
-        long idSecond = dataPriceListSource.insertPriceList(priceListModelSecond);
-        dataPriceListSource.close();
-        if (idFirst > 0 && idSecond > 0) {
-            getParentFragmentManager().popBackStack();
-        }
     }
 
 
