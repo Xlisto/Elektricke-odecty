@@ -121,7 +121,7 @@ public class ImportPriceListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
-        tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermition);
+        tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermission);
 
         importPriceListViewModel = new ViewModelProvider(this).get(ImportPriceListViewModel.class);
         importPriceListViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {

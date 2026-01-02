@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -49,15 +49,28 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 
 
 /**
- * Fragment pro zálohování dat.
+ * Fragment pro správu zálohování a obnovy dat aplikace.
+ *
+ * <p>Zajišťuje UI pro vytváření ZIP záloh, výběr složky pro ukládání a zobrazení
+ * existujících záložních souborů v {@code RecyclerView}. Spolupracuje s
+ * {@code BackupViewModel} pro asynchronní načítání souborů a udržování stavu
+ * (loading, dostupnost oprávnění). Obsahuje handlery pro zpracování výsledků
+ * ukládání a obnovy a používá {@code ActivityResultLauncher} pro výběr adresáře.</p>
+ *
+ * <p>Implementuje {@code NetworkCallbackImpl.NetworkChangeListener} pro reakci na
+ * změny síťové dostupnosti (aktualizace dat). Kontroluje a vyžaduje oprávnění
+ * k přístupu k URI přes utilitu {@code Files} a spravuje registraci síťového
+ * callbacku v cyklu života fragmentu.</p>
+ *
+ * @see BackupViewModel
+ * @see Files
+ * @see NetworkCallbackImpl.NetworkChangeListener
  */
 public class BackupFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
 
     private static final String TAG = "BackupFragment";
-    private View view;
     private Button btnBackup;
-    private Button btnSelectFolder;
-    private TextView tvDescriptionPermition;
+    private RelativeLayout rlDescriptionPermission;
     private RecyclerView recyclerView;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
     private LinearLayout lnProgressBar;
@@ -151,8 +164,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_backup, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_backup, container, false);
     }
 
 
@@ -164,13 +176,11 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         shPBackup = new ShPBackup(requireContext());
 
         btnBackup = view.findViewById(R.id.btnZalohuj);
-        btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
         Button btnSelectDir = view.findViewById(R.id.btnVyberSlozkuBackup);
-        tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermition);
+        rlDescriptionPermission = view.findViewById(R.id.rlDescriptionPermission);
         recyclerView = view.findViewById(R.id.recyclerViewBackup);
         btnBackup.setOnClickListener(v -> saveToZip());
         btnSelectDir.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
-        btnSelectFolder.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
 
         requireContext();
@@ -192,6 +202,22 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             showLnProgressBar(false);
         });
         backupViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
+        backupViewModel.getHasPermission().observe(getViewLifecycleOwner(), has -> {
+            btnBackup.setEnabled(Boolean.TRUE.equals(has));
+            if (Boolean.TRUE.equals(has)) {
+                rlDescriptionPermission.setVisibility(View.GONE);
+            } else {
+                rlDescriptionPermission.setVisibility(View.VISIBLE);
+                if (backupAdapter != null)
+                    backupAdapter.clearData();
+                View root = requireActivity().findViewById(android.R.id.content);
+                if (root != null) {
+                    Snackbar.make(root, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+                            .setAction(getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
+                            .show();
+                }
+            }
+        });
 
         if (savedInstanceState == null)
             loadFiles();
@@ -214,18 +240,8 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     @Override
     public void onResume() {
         super.onResume();
-        btnBackup.setEnabled(Files.permissions(requireActivity(), uri));
-        if (Files.permissions(requireActivity(), uri)) {
-            btnSelectFolder.setVisibility(View.GONE);
-            tvDescriptionPermition.setVisibility(View.GONE);
-
-        } else {
-            btnSelectFolder.setVisibility(View.VISIBLE);
-            tvDescriptionPermition.setVisibility(View.VISIBLE);
-            Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
-                    .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
-                    .show();
-        }
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        backupViewModel.checkPermission(requireActivity(), uri);
     }
 
 
@@ -260,18 +276,29 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
 
 
     /**
-     * Zobrazí nebo skryje LinearLayout s ProgressBar.
+     * Zobrazí nebo skryje `LinearLayout` s ProgressBar pomocí jednoduché fade animace.
      *
-     * @param b true pro zobrazení, false pro skrytí.
+     * <p>Pokud je parametr {@code b} {@code true}, nastaví se viditelnost `lnProgressBar`
+     * na {@code View.VISIBLE} a spustí se animace {@code android.R.anim.fade_in}.
+     * Pokud je {@code b} {@code false}, nastaví se viditelnost na {@code View.GONE}
+     * a spustí se animace {@code android.R.anim.fade_out}.</p>
+     *
+     * <p>Metoda předpokládá, že běží na UI vlákně a že pole {@code lnProgressBar}
+     * je inicializované (není {@code null}).</p>
+     *
+     * @param b {@code true} pro zobrazení progress baru, {@code false} pro jeho skrytí
      */
     private void showLnProgressBar(boolean b) {
+        int visibility, animation;
         if (b) {
-            lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
-            lnProgressBar.setVisibility(View.VISIBLE);
+            visibility = View.VISIBLE;
+            animation = android.R.anim.fade_in;
         } else {
-            lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
-            lnProgressBar.setVisibility(View.GONE);
+            visibility = View.GONE;
+            animation = android.R.anim.fade_out;
         }
+        lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), animation));
+        lnProgressBar.setVisibility(visibility);
     }
 
 
@@ -284,7 +311,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     public void onNetworkAvailable() {
         Log.w(TAG, "Network is available");
         notifyDataChanged();
-
     }
 
 
@@ -320,6 +346,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
      */
     private void loadFiles() {
         uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        backupViewModel.checkPermission(requireActivity(), uri);
         if (Files.permissions(requireActivity(), uri)) {
             backupViewModel.loadFiles(requireActivity(), uri, resultTree);
         }

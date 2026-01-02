@@ -19,13 +19,39 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.permission.Files;
 
 
+/**
+ * ViewModel pro správu záloh a načítání souborů.
+ *
+ * <p>Spravuje stav a data pro UI při práci se zálohami:
+ * - poskytuje {@code LiveData<ArrayList<DocumentFile>} s nalezenými soubory,
+ * - poskytuje {@code LiveData<Boolean>} indikující, zda probíhá načítání,
+ * - poskytuje {@code LiveData<Boolean>} s informací o oprávnění k adresáři.</p>
+ *
+ * <p>Načítání souborů probíhá asynchronně přes {@code Files.loadFiles} a interní
+ * {@code Handler}, výsledky jsou publikovány do {@code documentFilesLiveData}.
+ * Kontrola oprávnění je dostupná přes {@code checkPermission}.</p>
+ */
 public class BackupViewModel extends ViewModel {
 
     private static final String TAG = "BackupViewModel";
     private final MutableLiveData<ArrayList<DocumentFile>> documentFilesLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> hasPermission = new MutableLiveData<>(false);
 
-    //Handler pro načtení souborů
+    /**
+     * Handler běžící na hlavním vlákně (Looper.getMainLooper()), který zpracovává výsledky
+     * asynchronního načítání souborů.
+     *
+     * <p>Očekává, že {@code msg.obj} bude instance {@code ArrayList<DocumentFile>} obsahující
+     * nalezené soubory. Po přijetí zprávy provede následující kroky:
+     * - zavolá {@code setDocumentFiles} pro publikaci výsledků do {@code LiveData},
+     * - odstraní všechny naplánované callbacky a zprávy z tohoto handleru,
+     * - odstraní zprávy s kódem {@code what == 1} (pokud jsou),
+     * - nastaví {@code isLoading} na {@code false} (přes {@code postValue}).</p>
+     *
+     * <p>Protože běží na hlavním vlákně, operace aktualizace UI/LiveData jsou bezpečné.
+     * Zprávy by měly být posílány v očekávaném formátu, jinak může dojít k {@code ClassCastException}.</p>
+     */
     private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
@@ -89,6 +115,37 @@ public class BackupViewModel extends ViewModel {
      */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+
+    /**
+     * Vrátí `LiveData<Boolean>` indikující, zda aplikace má oprávnění k vybranému URI.
+     *
+     * <p>Hodnota je lifecycle\-aware a měla by být pozorována z UI komponent (Activity/Fragment).
+     * Aktualizuje se voláním `checkPermission` a poskytuje bezpečný způsob, jak reagovat na změny oprávnění.</p>
+     *
+     * @return `LiveData<Boolean>` s informací o oprávnění k adresáři.
+     */
+    public LiveData<Boolean> getHasPermission() {
+        return hasPermission;
+    }
+
+
+    /**
+     * Zkontroluje oprávnění aplikace k zadanému adresáři (URI) a aktualizuje
+     * interní `LiveData<Boolean>` `hasPermission`.
+     *
+     * <p>Metoda používá `Files.permissions(Activity, Uri)` pro ověření přístupu.
+     * Výsledek (true = má oprávnění, false = nemá) je nastaven pomocí
+     * `hasPermission.setValue(...)`, proto by měla být volána z UI vlákna
+     * nebo z lifecycle-aware kontextu (Activity/Fragment).</p>
+     *
+     * @param activity Activity použitá pro kontrolu oprávnění
+     * @param uri      URI adresáře, jehož oprávnění se kontroluje
+     */
+    public void checkPermission(Activity activity, Uri uri) {
+        boolean ok = Files.permissions(activity, uri);
+        hasPermission.setValue(ok);
     }
 
 }

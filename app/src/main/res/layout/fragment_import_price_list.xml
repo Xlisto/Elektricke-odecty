@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tvDescriptionPermition"
+        android:id="@+id/tvDescriptionPermission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -14,7 +14,7 @@
         android:id="@+id/btnSelectFolder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvDescriptionPermition"
+        android:layout_below="@id/tvDescriptionPermission"
         android:layout_centerHorizontal="true"
         android:text="@string/select_folder" />
 

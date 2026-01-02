@@ -7,15 +7,6 @@
 
 
     <Button
-        android:id="@+id/btnSelectFolder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvDescriptionPermition"
-        android:layout_centerHorizontal="true"
-        android:text="@string/select_folder"
-        android:visibility="gone" />
-
-    <Button
         android:id="@+id/btnZalohuj"
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
@@ -47,16 +38,32 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="7dp"
         android:layout_toEndOf="@id/btnZalohuj"
-        android:text="@string/select_folder"
-        android:contentDescription="@string/select_backup_folder"/>
+        android:contentDescription="@string/select_backup_folder"
+        android:text="@string/select_folder" />
 
-    <TextView
-        android:id="@+id/tvDescriptionPermition"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/rlDescriptionPermission"
+
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/ask_permition"
-        android:visibility="gone" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvDescriptionPermission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/shape_background_red"
+            android:text="@string/ask_permition"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+
 
     <include layout="@layout/layout_progress_bar" />
 
