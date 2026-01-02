@@ -56,10 +56,32 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 
 
 /**
- * Fragment pro importování ceníků.
+ * Fragment pro import ceníků z externího adresáře (JSON zálohy).
  * <p>
- * Tento fragment poskytuje uživatelské rozhraní pro importování ceníků z vybraného adresáře.
- * Obsahuje metody pro načítání souborů, sledování stavu načítání a správu vybraných ceníků.
+ * Úel:
+ * - Poskytuje UI pro výběr složky se zálohami, zobrazení dostupných souborů a výběr ceníků k importu.
+ * - Řídí proces importu: vložení nových záznamů, přípravu přepsání existujících záznamů
+ * a řešení konfliktů při více verzích téhož ceníku.
+ * <p>
+ * Hlavní závislosti a komponenty:
+ * - ImportPriceListViewModel: načítání souborů a stav oprávnění.
+ * - ImportPriceListAdapter: zobrazení a správa výběru souborů v RecyclerView.
+ * - DataPriceListSource: operace nad lokální databází (insert/update/count/id).
+ * - Files: kontrola a vyžádání oprávnění k přístupu k adresáři (Storage Access Framework).
+ * - YesNoDialogFragment: potvrzovací dialogy pro přepsání/řešení konfliktů.
+ * - ShPBackup / ShPMainActivity / ShPFilter: uložené preference a nastavení navigace/filtru.
+ * <p>
+ * Chování a životní cyklus:
+ * - V onViewCreated nastavuje pozorovatele LiveData, posluchače výsledků dialogů a UI akce.
+ * - V onResume kontroluje a případně obnovuje oprávnění pro zvolený URI a spouští načtení souborů.
+ * <p>
+ * Vedlejší efekty:
+ * - Zapisuje/aktualizuje záznamy v databázi, mění shared preferences (aktuální fragment/filtr),
+ * naviguje uživatele a zobrazuje Snackbar/Toast pro informace a výzvy k akci.
+ * <p>
+ * Poznámky k implementaci:
+ * - Statické proměnné `singlePriceLists` a `doublePriceList` slouží k předání dat mezi callbacky dialogů.
+ * - Importní logika používá kontrolu počtu záznamů v DB: 0 = vložit, 1 = připravit přepsání, >1 = řešit konflikt.
  */
 public class ImportPriceListFragment extends Fragment {
 
@@ -72,14 +94,23 @@ public class ImportPriceListFragment extends Fragment {
     private ImportPriceListViewModel importPriceListViewModel;
     private Uri uri;
     private ShPBackup shPBackup;
-    private View view;
     private Button btnSelectFolder;
     private TextView tvDescriptionPermition;
     private static PriceListModel doublePriceList;//ceníky, který je v databázi vícekrát
     private static ArrayList<PriceListModel> singlePriceLists;//ceníky, které jsou v databázi jednou
 
     /**
-     * Callback z výběru složky
+     * Callback pro výběr adresáře přes Storage Access Framework.
+     * <p>
+     * Volá se po návratu z intentu spuštěného metodou `Files.openTree`.
+     * - Zpracuje pouze výsledek `Activity.RESULT_OK`.
+     * - Použije `Files.activityResult(Intent, Activity)` pro uložení oprávnění k URI.
+     * - Poté vyvolá `loadFiles()` pro načtení souborů z nově vybraného adresáře.
+     * <p>
+     * Poznámky:
+     * - Registrováno přes `ActivityResultContracts.StartActivityForResult`.
+     * - Spouští se na UI vlákně.
+     * - Používá `assert` že `result.getData()` není `null`.
      */
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -93,6 +124,15 @@ public class ImportPriceListFragment extends Fragment {
     );
 
 
+    /**
+     * Vytvoří novou instanci ImportPriceListFragment.
+     * <p>
+     * Tovární metoda vrací nový objekt fragmentu. Pokud bude potřeba
+     * předat parametry, lze je sem vložit do Bundle a nastavit přes
+     * setArguments(bundle) před návratem instance.
+     *
+     * @return nová instance ImportPriceListFragment
+     */
     public static ImportPriceListFragment newInstance() {
         return new ImportPriceListFragment();
     }
@@ -105,14 +145,38 @@ public class ImportPriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří a vrátí kořenové View pro tento fragment.
+     * <p>
+     * Metoda inflatesuje layout `R.layout.fragment_import_price_list` pomocí předaného
+     * `LayoutInflater` a vrací výsledné View. Inicializace a nastavení UI komponent
+     * nejsou prováděny zde, ale v `onViewCreated`.
+     *
+     * @param inflater           LayoutInflater použitý k rozbalení XML layoutu
+     * @param container          Rodičovský ViewGroup, do kterého může být layout vložen (může být null)
+     * @param savedInstanceState Uložený stav fragmentu, pokud existuje
+     * @return Kořenové View fragmentu (inflated layout)
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_import_price_list, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_import_price_list, container, false);
     }
 
 
+    /**
+     * Inicializuje UI komponenty, ViewModel a chování fragmentu po vytvoření View.
+     * <p>
+     * V metodě se provádí:
+     * - invalidace menu aktivity,
+     * - inicializace referencí na View (RecyclerView, tlačítka, popisky, progress),
+     * - vytvoření a připojení ImportPriceListViewModel a jeho LiveData observerů (seznam souborů, loading, oprávnění),
+     * - registrace fragment result listenerů pro mazání souborů, potvrzení importu a řešení přepisů/konfliktů,
+     * - nastavení onClick listeneru pro výběr složky a volání načtení souborů pokud je `savedInstanceState == null`.
+     *
+     * @param view               kořenové View fragmentu
+     * @param savedInstanceState uložený stav fragmentu, může být null
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -133,11 +197,24 @@ public class ImportPriceListFragment extends Fragment {
             }
         });
         importPriceListViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
+        importPriceListViewModel.getHasPermission().observe(getViewLifecycleOwner(), has -> {
+            if (Boolean.TRUE.equals(has)) {
+                btnSelectFolder.setVisibility(View.GONE);
+                tvDescriptionPermition.setVisibility(View.GONE);
+            } else {
+                btnSelectFolder.setVisibility(View.VISIBLE);
+                tvDescriptionPermition.setVisibility(View.VISIBLE);
+                if (importExportAdapter != null)
+                    importExportAdapter.clear();
+                Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
+                        .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
+                        .show();
+            }
+        });
 
         if (savedInstanceState == null) {
             loadFiles();
         }
-
 
         //listener dialogového okna na smazání souboru JSON zálohy
         requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE, this, (requestKey, result) -> {
@@ -197,19 +274,19 @@ public class ImportPriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Obnoví stav fragmentu při návratu do popředí.
+     * <p>
+     * - Načte uložené URI složky záloh ze `ShPBackup` a uloží ho do proměnné `uri`.
+     * - Pošle tento `uri` do `ImportPriceListViewModel` pro kontrolu oprávnění k přístupu.
+     * <p>
+     * Poznámka: Implementace by měla volat `super.onResume()` před nebo po vlastní logice.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        if (Files.permissions(requireActivity(), uri)) {
-            btnSelectFolder.setVisibility(View.GONE);
-            tvDescriptionPermition.setVisibility(View.GONE);
-        } else {
-            btnSelectFolder.setVisibility(View.VISIBLE);
-            tvDescriptionPermition.setVisibility(View.VISIBLE);
-            Snackbar.make(view, getResources().getString(R.string.add_permissions), Snackbar.LENGTH_LONG)
-                    .setAction(requireActivity().getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
-                    .show();
-        }
+        uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        importPriceListViewModel.checkPermission(requireActivity(), uri);
     }
 
 
@@ -230,23 +307,41 @@ public class ImportPriceListFragment extends Fragment {
 
 
     /**
-     * Zobrazí nebo skryje LinearLayout s ProgressBar
+     * Zobrazí nebo skryje kontejner s ProgressBar pomocí jednoduché fade animace.
+     * <p>
+     * Pokud je parametr `true`, nastaví `lnProgressBar` na VISIBLE a spustí animaci
+     * `android.R.anim.fade_in`. Pokud je `false`, spustí `android.R.anim.fade_out`
+     * a po animaci nastaví `lnProgressBar` na GONE.
+     *
+     * @param b true = zobrazit progress, false = skrýt progress
      */
     private void showLnProgressBar(boolean b) {
+        int visibility, animation;
         if (b) {
-            lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
-            lnProgressBar.setVisibility(View.VISIBLE);
+            visibility = View.VISIBLE;
+            animation = android.R.anim.fade_in;
         } else {
-            lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
-            lnProgressBar.setVisibility(View.GONE);
+            visibility = View.GONE;
+            animation = android.R.anim.fade_out;
         }
+        lnProgressBar.setAnimation(AnimationUtils.loadAnimation(getActivity(), animation));
+        lnProgressBar.setVisibility(visibility);
     }
 
 
     /**
-     * Uloží/upraví nebo se zeptá na další akci s vybranými ceníky pro import do databáze
+     * Zpracuje seznam vybraných ceníků pro import do lokální databáze.
+     * <p>
+     * Pro každý ceník:
+     * - zjistí počet odpovídajících záznamů v DB pomocí `DataPriceListSource`,
+     * - pokud není žádný (\=0) — vloží nový záznam,
+     * - pokud je přesně jeden (\=1) — nastaví jeho `id`, přidá do `singlePriceLists` a po skončení vyvolá dialog pro potvrzení přepisu,
+     * - pokud je více než jeden (\>1) — uloží tento ceník do `doublePriceList` a vyvolá dialog pro řešení více verzí (navigace/filtrace).
+     * <p>
+     * Metoda provádí databázové operace (`open`/`close`/`insert`/`update`/`count`), zobrazuje Toast/YesNoDialogFragment
+     * a může změnit navigaci nebo SharedPreferences (přes dialogy nebo filtry).
      *
-     * @param selectedPriceLists seznam vybraných ceníků pro import do databáze
+     * @param selectedPriceLists seznam vybraných ceníků k importu
      */
     private void saveToDatabase(ArrayList<PriceListModel> selectedPriceLists) {
         singlePriceLists = new ArrayList<>();
@@ -298,14 +393,20 @@ public class ImportPriceListFragment extends Fragment {
 
 
     /**
-     * Načte soubory z určeného URI, pokud jsou k dispozici potřebná oprávnění.
+     * Načte uložené URI složky záloh ze `ShPBackup` a spustí načtení souborů, pokud jsou dostupná oprávnění.
      * <p>
-     * Tato metoda kontroluje, zda má aplikace oprávnění k přístupu k URI.
-     * Pokud oprávnění existují, zavolá metodu `loadFiles` ve ViewModelu `importPriceListViewModel`,
-     * která načte soubory z daného URI.
+     * Postup:
+     * - Načte `uri` z preferencí `ShPBackup`.
+     * - Zavolá `importPriceListViewModel.checkPermission(requireActivity(), uri)` pro ověření oprávnění.
+     * - Pokud `Files.permissions(requireActivity(), uri)` vrátí `true`, zavolá
+     * `importPriceListViewModel.loadFiles(requireActivity(), uri, resultTree)`.
+     * <p>
+     * Vedlejší efekty: čtení SharedPreferences, volání metod ViewModelu a případné zahájení načítání souborů
+     * přes ActivityResult (`resultTree`).
      */
     private void loadFiles() {
         uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        importPriceListViewModel.checkPermission(requireActivity(), uri);
         if (Files.permissions(requireActivity(), uri))
             importPriceListViewModel.loadFiles(requireActivity(), uri, resultTree);
     }

@@ -34,23 +34,23 @@ import cz.xlisto.elektrodroid.permission.Files;
 public class BackupViewModel extends ViewModel {
 
     private static final String TAG = "BackupViewModel";
+    private static final int MSG_LOAD_FILES = 11;
     private final MutableLiveData<ArrayList<DocumentFile>> documentFilesLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> hasPermission = new MutableLiveData<>(false);
 
     /**
-     * Handler běžící na hlavním vlákně (Looper.getMainLooper()), který zpracovává výsledky
+     * Handler běžící na hlavním vlákně (Looper.getMainLooper()) pro zpracování výsledků
      * asynchronního načítání souborů.
-     *
-     * <p>Očekává, že {@code msg.obj} bude instance {@code ArrayList<DocumentFile>} obsahující
-     * nalezené soubory. Po přijetí zprávy provede následující kroky:
-     * - zavolá {@code setDocumentFiles} pro publikaci výsledků do {@code LiveData},
-     * - odstraní všechny naplánované callbacky a zprávy z tohoto handleru,
-     * - odstraní zprávy s kódem {@code what == 1} (pokud jsou),
-     * - nastaví {@code isLoading} na {@code false} (přes {@code postValue}).</p>
-     *
-     * <p>Protože běží na hlavním vlákně, operace aktualizace UI/LiveData jsou bezpečné.
-     * Zprávy by měly být posílány v očekávaném formátu, jinak může dojít k {@code ClassCastException}.</p>
+     * <p>
+     * Očekává, že `msg.obj` bude instance `ArrayList<DocumentFile>`. Po přijetí zprávy:
+     * - publikujeme výsledky voláním `setDocumentFiles(...)`,
+     * - odstraníme všechny naplánované callbacky a zprávy z tohoto handleru,
+     * - odstraníme případné další zprávy se stejným kódem definovaným v `MSG_LOAD_FILES`,
+     * - nastavíme `isLoading` na `false` (pomocí `postValue`).
+     * <p>
+     * Poznámka: protože handler běží na hlavním vlákně, jsou aktualizace `LiveData`
+     * bezpečné. Pokud `msg.obj` nemá očekávaný typ, může dojít k `ClassCastException`.
      */
     private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
         @Override
@@ -58,7 +58,7 @@ public class BackupViewModel extends ViewModel {
             super.handleMessage(msg);
             setDocumentFiles((ArrayList<DocumentFile>) msg.obj);
             handlerLoadFile.removeCallbacksAndMessages(null);
-            handlerLoadFile.removeMessages(1);
+            handlerLoadFile.removeMessages(MSG_LOAD_FILES);
             isLoading.postValue(false);
         }
     };
@@ -101,7 +101,7 @@ public class BackupViewModel extends ViewModel {
      */
     public void loadFiles(Activity activity, Uri uri, ActivityResultLauncher<Intent> resultTree) {
         isLoading.postValue(true);
-        new Files().loadFiles(activity, uri, RecoverData.getFiltersFileName(), handlerLoadFile, resultTree, 1);
+        new Files().loadFiles(activity, uri, RecoverData.getFiltersFileName(), handlerLoadFile, resultTree, MSG_LOAD_FILES);
     }
 
 

@@ -610,4 +610,7 @@
     <string name="alert_regulated_prices_title_during_the_year">V roce %d se regulované ceny změnily v průběhu roku</string>
     <string name="alert_regulated_prices_title_every_year">Regulované ceny jsou platné vždy pouze pro jeden kalendářní rok</string>
     <string name="alert_regulated_prices_text">Regulované ceny jsou rozděleny podle dat platnosti:\n</string>
+
+    <string name="delete_file_with_pricelist">Smazat soubor s ceníkem</string>
+    <string name="upload_file_with_pricelist">Nahrát ceník do aplikace</string>
 </resources>
