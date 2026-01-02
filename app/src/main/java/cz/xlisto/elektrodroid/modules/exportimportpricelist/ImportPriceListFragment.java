@@ -15,6 +15,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,6 +45,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
@@ -101,6 +105,7 @@ public class ImportPriceListFragment extends Fragment {
     private Button btnSelectFolder;
     private TextView tvDescriptionPermition;
     private static PriceListModel doublePriceList;//ceníky, který je v databázi vícekrát
+    private static final Object singlePriceListsLock = new Object();
     private static ArrayList<PriceListModel> singlePriceLists;//ceníky, které jsou v databázi jednou
 
     /**
@@ -345,50 +350,66 @@ public class ImportPriceListFragment extends Fragment {
      */
     private void saveToDatabase(ArrayList<PriceListModel> selectedPriceLists) {
         singlePriceLists = new ArrayList<>();
-        for (int i = 0; i < selectedPriceLists.size(); i++) {
-            PriceListModel priceList = selectedPriceLists.get(i);
-            DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
-            dataPriceListSource.open();
-            int countPriceListInDatabase = dataPriceListSource.countPriceListItems(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
-                    priceList.getFirma(), String.valueOf(priceList.getPlatnostOD()), priceList.getDistribuce());
-            dataPriceListSource.close();
-            if (countPriceListInDatabase == 0) {
-                //přidá ceník do databáze, pokud neexistuje
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            for (int i = 0; i < selectedPriceLists.size(); i++) {
+                PriceListModel priceList = selectedPriceLists.get(i);
+                DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
                 dataPriceListSource.open();
-                dataPriceListSource.insertPriceList(priceList);
-                dataPriceListSource.close();
-                if (i == selectedPriceLists.size() - 1) {
-                    Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.saved_prices_list), Toast.LENGTH_SHORT).show();
-                }
-            } else if (countPriceListInDatabase == 1) {
-                //upraví ceník v databázi, pokud existuje jen jeden
-                dataPriceListSource.open();
-                long idPriceListInDatabase = dataPriceListSource.idPriceListItem(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
+                int countPriceListInDatabase = dataPriceListSource.countPriceListItems(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
                         priceList.getFirma(), String.valueOf(priceList.getPlatnostOD()), priceList.getDistribuce());
                 dataPriceListSource.close();
-                priceList.setId(idPriceListInDatabase);
-                singlePriceLists.add(priceList);
-                if (i == selectedPriceLists.size() - 1) {
-                    String title = getResources().getString(R.string.price_list_exists);
-                    String message = getResources().getString(R.string.rewrite_price_list, priceList.getProdukt(), priceList.getSazba());
-                    if (selectedPriceLists.size() > 1) {
-                        title = getResources().getString(R.string.price_lists_exist);
-                        message = getResources().getString(R.string.found_price_list);
+                if (countPriceListInDatabase == 0) {
+                    //přidá ceník do databáze, pokud neexistuje
+                    dataPriceListSource.open();
+                    dataPriceListSource.insertPriceList(priceList);
+                    dataPriceListSource.close();
+                    if (i == selectedPriceLists.size() - 1) {
+                        mainHandler.post(() ->
+                                Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.saved_prices_list), Toast.LENGTH_SHORT).show()
+                        );
                     }
-                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(title, FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES, message);
-                    yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                } else if (countPriceListInDatabase == 1) {
+                    //upraví ceník v databázi, pokud existuje jen jeden
+                    dataPriceListSource.open();
+                    long idPriceListInDatabase = dataPriceListSource.idPriceListItem(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
+                            priceList.getFirma(), String.valueOf(priceList.getPlatnostOD()), priceList.getDistribuce());
+                    dataPriceListSource.close();
+                    priceList.setId(idPriceListInDatabase);
+                    synchronized (singlePriceListsLock) {
+                        singlePriceLists.add(priceList);
+                    }
+                    if (i == selectedPriceLists.size() - 1) {
+                        String title = getResources().getString(R.string.price_list_exists);
+                        String message = getResources().getString(R.string.rewrite_price_list, priceList.getProdukt(), priceList.getSazba());
+                        if (selectedPriceLists.size() > 1) {
+                            title = getResources().getString(R.string.price_lists_exist);
+                            message = getResources().getString(R.string.found_price_list);
+                        }
+                        final String dlgTitle = title;
+                        final String dlgMessage = message;
+                        mainHandler.post(() -> {
+                            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(dlgTitle, FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES, dlgMessage);
+                            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                        });
+
+                    } else {
+                        //zobrazí upozornění, že ceník již existuje ve více verzích
+                        doublePriceList = priceList;
+                        mainHandler.post(() -> {
+                            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.price_list_exists), FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES,
+                                    getResources().getString(R.string.price_list_found_multiple_variants, priceList.getProdukt(), priceList.getSazba()));
+                            yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
+                        });
+                        break;
+                    }
+
                 }
-
-            } else {
-                //zobrazí upozornění, že ceník již existuje ve více verzích
-                doublePriceList = priceList;
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.price_list_exists), FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES,
-                        getResources().getString(R.string.price_list_found_multiple_variants, priceList.getProdukt(), priceList.getSazba()));
-                yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
-                break;
+                executor.shutdown();
             }
-
-        }
+        });
     }
 
 
