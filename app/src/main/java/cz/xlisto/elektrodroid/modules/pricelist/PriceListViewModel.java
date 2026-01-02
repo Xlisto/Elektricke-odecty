@@ -63,12 +63,11 @@ public class PriceListViewModel extends AndroidViewModel {
                 long idFirst, idSecond;
                 if (isAdd) {
                     idFirst = dataSource.insertPriceList(firstMerged);
-                    idSecond = dataSource.insertPriceList(secondMerged);
                 } else {
                     first.setId(itemId);
                     idFirst = dataSource.updatePriceList(firstMerged, itemId);
-                    idSecond = dataSource.insertPriceList(secondMerged);
                 }
+                idSecond = dataSource.insertPriceList(secondMerged);
                 boolean success = idFirst > 0 && idSecond > 0;
                 saveResultEvent.postValue(new Event<>(success));
             } catch (Exception e) {
