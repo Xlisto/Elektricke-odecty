@@ -27,6 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -138,13 +142,6 @@ public class ImportPriceListFragment extends Fragment {
     }
 
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-
     /**
      * Vytvoří a vrátí kořenové View pro tento fragment.
      * <p>
@@ -165,14 +162,15 @@ public class ImportPriceListFragment extends Fragment {
 
 
     /**
-     * Inicializuje UI komponenty, ViewModel a chování fragmentu po vytvoření View.
+     * Inicializuje UI a chování fragmentu po vytvoření view.
      * <p>
-     * V metodě se provádí:
-     * - invalidace menu aktivity,
-     * - inicializace referencí na View (RecyclerView, tlačítka, popisky, progress),
-     * - vytvoření a připojení ImportPriceListViewModel a jeho LiveData observerů (seznam souborů, loading, oprávnění),
-     * - registrace fragment result listenerů pro mazání souborů, potvrzení importu a řešení přepisů/konfliktů,
-     * - nastavení onClick listeneru pro výběr složky a volání načtení souborů pokud je `savedInstanceState == null`.
+     * - Invaliduje menu aktivity.
+     * - Najde a inicializuje view komponenty (RecyclerView, tlačítka, popisky, progress).
+     * - Vytvoří a připojí ImportPriceListViewModel; navěsí observery pro seznam souborů, stav načítání a oprávnění.
+     * - Zaregistruje MenuProvider přes MenuHost pro možnost výběru adresáře.
+     * - Nastaví fragment result listenery pro mazání souborů, výběr ceníků k importu a potvrzení přepisů/konfliktů.
+     * - Nastaví OnClickListener pro tlačítko výběru složky.
+     * - Pokud je `savedInstanceState == null`, spustí načtení souborů voláním `loadFiles()`.
      *
      * @param view               kořenové View fragmentu
      * @param savedInstanceState uložený stav fragmentu, může být null
@@ -215,6 +213,24 @@ public class ImportPriceListFragment extends Fragment {
         if (savedInstanceState == null) {
             loadFiles();
         }
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_export, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_item_select_folder) {
+                    Files.openTree(false, requireActivity(), resultTree);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         //listener dialogového okna na smazání souboru JSON zálohy
         requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE, this, (requestKey, result) -> {
@@ -287,22 +303,6 @@ public class ImportPriceListFragment extends Fragment {
         super.onResume();
         uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         importPriceListViewModel.checkPermission(requireActivity(), uri);
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        requireActivity().getMenuInflater().inflate(R.menu.menu_export, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.menu_item_select_folder) {
-            Files.openTree(false, requireActivity(), resultTree);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 
