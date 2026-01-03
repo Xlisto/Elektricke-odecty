@@ -1,5 +1,14 @@
 [
   {
+    "version": 150,
+    "date": "2.1.2026",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Opraven výpočet ceny za kWh v náhledu ceníků tak, aby zohledňoval zrušenou platbu za obnovitelné zdroje v roce 2026.",
+      "Opravena chyba způsobující pád aplikace při rotaci obrazovky, pokud byl zobrazen seznam souborů se zálohami nebo seznam pro import ceníků."
+    ]
+  },
+  {
     "version": 149,
     "date": "31.12.2025",
     "changes": [
