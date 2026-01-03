@@ -12,8 +12,8 @@ android {
         applicationId "cz.xlisto.elektrodroid"
         minSdkVersion 23
         targetSdk 36
-        versionCode 150
-        versionName '1.150'
+        versionCode 151
+        versionName '1.151'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
