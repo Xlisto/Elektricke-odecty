@@ -4,3 +4,4 @@
 -dontwarn javax.naming.directory.Attributes
 -dontwarn javax.naming.ldap.LdapName
 -dontwarn javax.naming.ldap.Rdn
+-keep class cz.xlisto.elektrodroid.models.VersionModel { *; }

@@ -100,5 +100,5 @@ dependencies {
 
 
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
-
+    implementation "com.google.re2j:re2j:1.8"
 }
