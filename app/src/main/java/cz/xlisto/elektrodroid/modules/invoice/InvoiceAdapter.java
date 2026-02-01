@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,12 +68,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private final InvoiceViewModel viewModel;
 
 
-
     /**
      * ViewHolder třída pro zobrazení položky faktury.
      * Obsahuje odkazy na jednotlivé prvky v adapterovém zobrazení položky.
      */
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView vtStart, vtEnd, vTDif, ntStart, ntEnd, ntDif, dateStart, dateEnd, dateDifference,
                 vtPrice, ntPrice, tvPayment, tvPOZE, tvPriceTotal, tvPriceTotalDPH, tvOtherServices,
@@ -272,7 +272,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             }
             if (!message.isEmpty()) {
                 message += context.getResources().getString(R.string.alert_message_edit_last_record);
-                OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.alert_title), message,null);
+                OwnAlertDialog.showDialog((FragmentActivity) context, context.getResources().getString(R.string.alert_title), message, null);
                 return;
             }
             InvoiceCutDialogFragment invoiceCutDialogFragment = InvoiceCutDialogFragment.newInstance(invoice.getDateFrom(), invoice.getDateTo(),
@@ -576,7 +576,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.tvAlert.setVisibility(View.GONE);
         } else {
             //zobrazení varovného vykřičníku
-            holder.tvAlert.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+            holder.tvAlert.setTextColor(ContextCompat.getColor(context, R.color.color_red_alert));
             holder.imgAlert.setVisibility(View.VISIBLE);
             if (isOverDateRegulPrice(priceListRegulBuilder, invoice) ||
                     (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo())) {
@@ -632,7 +632,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         if (b1) {
             tv.setTextColor(originalTextViewColors);
         } else {
-            tv.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+            tv.setTextColor(ContextCompat.getColor(context, R.color.color_red_alert));
         }
     }
 
