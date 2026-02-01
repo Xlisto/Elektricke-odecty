@@ -25,6 +25,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Calendar;
+import java.util.Arrays;
+import android.util.Log;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
@@ -233,6 +235,14 @@ public class MonthlyReadingDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Pokud zatím nemáme načtené záznamy, pokusíme se je načíst.
+        if (monthlyReadingCurrently == null || monthlyReadingPrevious == null) {
+            loadMonthlyReading();
+            if (monthlyReadingCurrently == null || monthlyReadingPrevious == null) {
+                Log.w(TAG, "Monthly readings not available in onResume() - skipping UI update");
+                return; // nic dál nezobrazujeme, aby nedošlo k NPE
+            }
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(monthlyReadingCurrently.getDate());
         calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -327,6 +337,16 @@ public class MonthlyReadingDetailFragment extends Fragment {
      */
     private void loadMonthlyReading() {
         subscriptionPoint = SubscriptionPoint.load(requireContext());
+        // Ověříme, že subscriptionPoint existuje, protože dál používáme jeho hodnoty (např. getTableO()).
+        if (subscriptionPoint == null) {
+            Log.w(TAG, "SubscriptionPoint is null in loadMonthlyReading() - skipping DB reads");
+            viewModel.setSubscriptionPoint(null);
+            priceList = null;
+            monthlyReadingCurrently = null;
+            monthlyReadingPrevious = null;
+            setPriceArray();
+            return;
+        }
         viewModel.setSubscriptionPoint(subscriptionPoint);
 
         DataMonthlyReadingSource monthlyReadingSource = new DataMonthlyReadingSource(requireContext());
@@ -372,8 +392,13 @@ public class MonthlyReadingDetailFragment extends Fragment {
      */
     private void resizeTextViews() {
         if (isAdded()) {
-            onMeasureTextViews(tvsConsuption, rlConsuption);
-            onMeasureTextViews(tvsVt, rlPrice);
+            // Zabezpečíme, že rodičovské layouty i pole TextView existují před měřením
+            if (rlConsuption != null) {
+                onMeasureTextViews(tvsConsuption, rlConsuption);
+            }
+            if (rlPrice != null) {
+                onMeasureTextViews(tvsVt, rlPrice);
+            }
         }
     }
 
@@ -471,7 +496,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
      * - přidá oddělovací mezery po definovaných blocích řádků.
      * <p>
      * Vedlejší účinky:
-     * - modifikuje `tl` (přidává řádky a `TextView`),
+     * - modifikuje `tl` (přidává řádků a `TextView`),
      * - vytváří a vrací matici `TextView[][]` obsahující odkazy na vytvořené buňky,
      * - používá `requireContext()` a `DensityUtils` (metodu volat pouze na UI vlákně).
      * <p>
@@ -583,6 +608,15 @@ public class MonthlyReadingDetailFragment extends Fragment {
      * - musí být volána na hlavním vlákně a když je fragment připojen (přístup přes `subscriptionPoint`).
      */
     private void setPriceArray() {
+        // Ošetření situací, kdy zatím nejsou dostupná data — zabrání NPE v release buildu.
+        if (priceList == null || subscriptionPoint == null) {
+            // Pokud chybí ceník nebo informace o odběrném místě, nastavíme pole cen na nuly
+            // tak, aby volající kód (UI) nezpůsobil NPE při renderování.
+            priceArray = new double[15];
+            Arrays.fill(priceArray, 0.0);
+            return;
+        }
+
         double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
         double cinnost = Math.max(priceList.getCinnost(), priceList.getOte());
 
@@ -603,6 +637,16 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 priceList.getMesicniPlat() + jistic + cinnost,
                 priceList.getPoze2()
         };
+
+        // Kontrola roku data aktuálního měsíčního odečtu a případná korekce položky "poze".
+        // Pokud nemáme ještě načtený `monthlyReadingCurrently`, vynecháme kontrolu a ponecháme výchozí hodnotu (poze2).
+        if (monthlyReadingCurrently != null) {
+            Calendar calendarStart = Calendar.getInstance();
+            calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
+            int year = calendarStart.get(Calendar.YEAR);
+            if (year == 2026)
+                priceArray[14] = priceList.getPoze1();
+        }
     }
 
 
@@ -629,11 +673,20 @@ public class MonthlyReadingDetailFragment extends Fragment {
     public void setShowRegulPrice(boolean showRegulPrice) {
         viewModel.setShowRegulPrice(showRegulPrice);
         this.showRegulPrice = showRegulPrice;
+        // Pokud view (tlVt) ještě není připravené, pouze aktualizujeme stav a načteme data.
+        if (tlVt == null) {
+            loadMonthlyReading();
+            return;
+        }
+
         tlVt.removeAllViews();
         loadMonthlyReading();
 
-        tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
-        resizeTextViews();
+        // Vytvoření tabulky jen tehdy, když máme cenu pole a kontext
+        if (priceArray != null) {
+            tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
+            resizeTextViews();
+        }
     }
 
 }
