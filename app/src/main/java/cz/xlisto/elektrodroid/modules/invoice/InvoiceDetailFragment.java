@@ -40,6 +40,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPInvoiceDetail;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
+import cz.xlisto.elektrodroid.utils.Round;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -323,8 +324,11 @@ public class InvoiceDetailFragment extends Fragment {
                                 invoice.getVtNt() / 1000, priceList.getOze(),
                                 SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
                     } else {
+                        Double tempPoze = priceList.getPoze2();
+                        if (priceList.getRokPlatnost() == 2026)
+                            tempPoze = priceList.getPoze1();
                         summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                                invoice.getVtNt() / 1000, priceList.getPoze2(),
+                                invoice.getVtNt() / 1000, tempPoze,
                                 SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
                     }
                 } else {//podle jističe
@@ -339,8 +343,8 @@ public class InvoiceDetailFragment extends Fragment {
         invoiceListAdapter.notifyDataSetChanged();
 
         double totalPrice = 0;
-        for(SummaryInvoiceModel summaryInvoice : summaryInvoices){
-            totalPrice += summaryInvoice.getAmount()*summaryInvoice.getUnitPrice();
+        for (SummaryInvoiceModel summaryInvoice : summaryInvoices) {
+            totalPrice += Round.round(summaryInvoice.getAmount() * summaryInvoice.getUnitPrice());
         }
 
         tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice)));

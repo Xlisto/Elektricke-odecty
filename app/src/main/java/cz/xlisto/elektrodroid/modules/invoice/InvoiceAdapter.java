@@ -216,6 +216,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         double poze = Calculation.getPozeByType(priceList, subScriptionPoint.getCountPhaze(), subScriptionPoint.getPhaze(), (vtDif + ntDif) / 1000, differentDate, typePoze);
         double otherServices = differentDate * invoice.getOtherServices();
 
+        // Kontrola roku počátečního data faktury a případná korekce hodnoty POZE.
+        // Pokud je počáteční rok faktury 2026, vyžaduje to obchodní/legislativní úpravu
+        // (nebo dočasné pravidlo), proto explicitně nastavíme POZE na 0 pro rok 2026.
+        // Tento blok zajišťuje konzistentní výpočet pro dané období.
+        Calendar start = Calendar.getInstance();
+        start.setTimeInMillis(invoice.getDateFrom());
+        int year = start.get(Calendar.YEAR);
+        if(year == 2026)
+            poze = 0;
+
         holder.vTDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(vtDif)));
         holder.ntDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(ntDif)));
         holder.vtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(vtTotal)));

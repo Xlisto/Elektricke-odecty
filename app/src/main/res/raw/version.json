@@ -1,5 +1,13 @@
 [
   {
+    "version": 152,
+    "date": "1.2.2026",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Opraven výpočet ceny za kWh v detailu měsíčního odečtu a v záznamech faktury (POZE nastaveno na 0 pro rok 2026)."
+    ]
+  },
+  {
     "version": 151,
     "date": "3.1.2026",
     "changes": [

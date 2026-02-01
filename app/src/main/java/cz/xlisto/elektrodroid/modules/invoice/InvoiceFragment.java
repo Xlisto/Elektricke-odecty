@@ -409,6 +409,10 @@ public class InvoiceFragment extends Fragment {
                     price[3] = ntVt * regulPriceList.getOze();//poze dle spotřeby starší ceník
                 } else {
                     price[3] = ntVt * regulPriceList.getPoze2();//poze dle spotřeby novější ceník
+                    // Pokud je rok platnosti ceníku 2026, použijeme alternativní sazbu POZE1
+                    // (speciální přechodné pravidlo pro rok 2026), proto přepíšeme hodnotu.
+                    if (priceList.getRokPlatnost() == 2026)
+                        price[3] = ntVt * regulPriceList.getPoze1();
                 }
             } else {
                 price[3] = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentDate * regulPriceList.getPoze1();//poze dle jističe

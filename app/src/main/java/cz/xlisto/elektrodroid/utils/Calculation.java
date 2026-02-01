@@ -486,7 +486,11 @@ public class Calculation {
                 if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
                     pozePrice = (vtConsuption + ntConsuption) * priceList.getOze() / 1000;//poze dle spotřeby starší ceník
                 } else {
-                    pozePrice = (vtConsuption + ntConsuption) * priceList.getPoze2() / 1000;//poze dle spotřeby novější ceník
+                    pozePrice = Round.round(vtConsuption + ntConsuption) * priceList.getPoze2() / 1000;//poze dle spotřeby novější ceník
+                    // Pokud je rok platnosti ceníku 2026, použijeme alternativní sazbu POZE1
+                    // (speciální přechodné pravidlo pro rok 2026), proto přepíšeme hodnotu.
+                    if (priceList.getRokPlatnost() == 2026)
+                        pozePrice = Round.round((vtConsuption + ntConsuption) * priceList.getPoze1());
                 }
             } else {
                 pozePrice = subscriptionPoint.getCountPhaze() * subscriptionPoint.getPhaze() * differentMonth * priceList.getPoze1();//poze dle jističe
