@@ -52,10 +52,26 @@ public class HdoService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        timer.cancel();
+        // bezpečně zrušíme timer pokud existuje
+        if (timer != null) {
+            try {
+                timer.cancel();
+            } catch (Exception ignored) {
+                // nic - jen pro jistotu nechceme pády při zrušení
+            }
+            timer = null;
+        }
         HdoNotice.cancelNotice(this, ID);
         runningTimer = false;
-        unregisterReceiver(mReceiver);
+        // bezpečně odregistrovat receiver
+        if (mReceiver != null) {
+            try {
+                unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException ignored) {
+                // receiver možná už byl odregistrován
+            }
+            mReceiver = null;
+        }
         runningService = false;
     }
 
@@ -65,21 +81,34 @@ public class HdoService extends Service {
         setNotice();
         runningService = true;
 
-        if (!runningTimer) {
+        // zajistíme, že máme vytvořený timer pokud není
+        if (!runningTimer || timer == null) {
             timer = new Timer();
         }
 
-        //výsledek intentu
-        if (intent.getBooleanExtra("screen_state", true)) {
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    timerTick.run();
-                }
-            }, 0, 1000);
-            runningTimer = true;
+        // ochrana proti null intentu (např. restart služby), výchozí hodnota true zachová původní chování
+        boolean screenState = intent == null || intent.getBooleanExtra("screen_state", true);
+
+        if (screenState) {
+            // pokud je již naplánován, neplánujeme znovu
+            if (!runningTimer) {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        timerTick.run();
+                    }
+                }, 0, 1000);
+                runningTimer = true;
+            }
         } else {
-            timer.cancel();
+            if (timer != null) {
+                try {
+                    timer.cancel();
+                } catch (Exception ignored) {
+                    // nic
+                }
+                timer = null;
+            }
             runningTimer = false;
         }
 
