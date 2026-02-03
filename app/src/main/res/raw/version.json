@@ -1,5 +1,13 @@
 [
   {
+    "version": 153,
+    "date": "4.2.2026",
+    "changes": [
+      "<b>Opravy chyb:</b>",
+      "Opraven pád notifikace při spuštění služby HDO."
+    ]
+  },
+  {
     "version": 152,
     "date": "1.2.2026",
     "changes": [
