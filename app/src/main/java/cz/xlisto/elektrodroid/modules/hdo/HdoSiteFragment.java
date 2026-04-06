@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +31,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.SelectHdoCategoryDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -42,59 +49,13 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
- * Fragment představující funkčnost HDO v aplikaci.
+ * Fragment pro práci s HDO (Hromadné Dálkové Ovládání).
+ *
  * <p>
- * Tento fragment zajišťuje uživatelské rozhraní a logiku pro interakci s HDO kódy,
- * včetně načítání dat, zobrazování upozornění a ukládání HDO kódů do databáze.
- * <p>
- * Klíčové funkce:
- * - Sleduje změny dat ve ViewModelu a aktualizuje UI podle toho.
- * - Zpracovává uživatelské interakce se spinnery a tlačítky.
- * - Řídí viditelnost různých UI komponent na základě uživatelských výběrů.
- * - Načítá HDO data z URL a zobrazuje je v RecyclerView.
- * - Umožňuje uživatelům ukládat HDO data do databáze.
- * <p>
- * Klíčové komponenty:
- * - LinearLayout lnCode, lnCodesEdg, lnHdoButtons, lnProgessBarHdoSite: Layout kontejnery pro různé UI prvky.
- * - Spinner spDistributionArea, spDistrict, spDateEgd, spA, spB, spPB: Spinnery pro uživatelské výběry.
- * - EditText etHdoCode: Vstupní pole pro HDO kód.
- * - TextView tvAlert, tvValidityDate: Textové pohledy pro zobrazování upozornění a dat platnosti.
- * - RecyclerView rvHdoSite: RecyclerView pro zobrazování HDO dat.
- * - ArrayLists codes, codesException, groupsList, groupsExceptionList, hdoList, hdoListContainer: Seznamy pro ukládání HDO dat.
- * - String urlHdo, resultJson, resultArea, exceptionArea: Řetězce pro ukládání URL a výsledků.
- * - boolean isClearArrayLists: Příznak pro vymazání seznamů.
- * - HdoSiteViewModel viewModel: ViewModel pro správu dat.
- * - Handler handler: Handler pro správu zpožděných úkolů.
- * <p>
- * Metody životního cyklu:
- * - onCreate: Inicializuje ViewModel a sleduje změny dat.
- * - onCreateView: Nafoukne layout fragmentu.
- * - onViewCreated: Nastaví UI komponenty a jejich posluchače.
- * - onResume: Zpracovává úkoly při obnovení fragmentu.
- * - onSaveInstanceState: Ukládá stav instance.
- * <p>
- * Pomocné metody:
- * - hideWidgets: Skryje nepotřebná pole formuláře podle vybrané distribuční sítě.
- * - openHdoSite: Otevře stránku HDO v webovém prohlížeči.
- * - urlBuilder: Sestaví URL pro načítání dat.
- * - loadData: Načítá data z určeného URL.
- * - setAdapter: Nastaví adaptér pro RecyclerView.
- * - setTvValidityDate: Nastaví text platnosti.
- * - setVisibilityAlert: Nastaví viditelnost upozornění.
- * - setTextAlert: Nastaví text upozornění podle vybraného distributora.
- * - setVisibilityProgressBar: Nastaví viditelnost progress baru.
- * - setHdoCodeFromSpinners: Nastaví HDO kód z vybraných spinnerů.
- * - saveHdo: Uloží HDO data do databáze.
- * - clearArrayLists: Vymaže obsah seznamů.
- * - clear: Vymaže obsah seznamů, RecyclerView a spinnerů.
- * - getSubscriptionPoint: Vrátí odběrné místo.
- * <p>
- * Vnitřní třída HdoListContainer:
- * - Ukládá HDO seznam, datum platnosti a distribuční oblast.
- * - Poskytuje metody pro získání HDO seznamu a distribuční oblasti.
- * - Enum Distribution: Představuje různé distribuční oblasti (CEZ, EGD, PRE).
- * <p>
- * Xlisto 15.06.2023 21:28
+ * Tento fragment umožňuje uživateli sestavit HDO kód, načíst odpovídající data z webu,
+ * zobrazit je v seznamu a případně uložit do lokální databáze. Fragment komunikuje s
+ * {@code HdoSiteViewModel} pro asynchronní operace a uchovává dočasné výsledky v
+ * interních polích.
  */
 public class HdoSiteFragment extends Fragment {
 
@@ -102,6 +63,21 @@ public class HdoSiteFragment extends Fragment {
     private static final String FLAG_RESULT_SPINNER_DIALOG_FRAGMENT = "flagResultSpinnerDialogFragment";
     private static final String FLAG_RESULT_YES_NO_DIALOG_FRAGMENT = "flagResultYesNoDialogFragment";
     private static final String ARG_RESULT_JSON = "resultJson";
+    // JSON keys used to save/load HDO widgets settings
+    private static final String KEY_DISTRIBUTION_AREA_INDEX = "distributionAreaIndex";
+    private static final String KEY_DISTRIBUTION_AREA = "distributionArea";
+    private static final String KEY_DISTRICT_INDEX = "districtIndex";
+    private static final String KEY_DISTRICT = "district";
+    private static final String KEY_A_INDEX = "aIndex";
+    private static final String KEY_A = "a";
+    private static final String KEY_B_INDEX = "bIndex";
+    private static final String KEY_B = "b";
+    private static final String KEY_PB_INDEX = "pbIndex";
+    private static final String KEY_PB = "pb";
+    private static final String KEY_HDO_CODE = "hdoCode";
+    private static final int DIST_CEZ = 0;
+    private static final int DIST_EGD = 1; // EON/EGD
+    private static final int DIST_PRE = 2;
     private LinearLayout lnCode, lnCodesEdg, lnHdoButtons, lnProgessBarHdoSite;
     private Spinner spDistributionArea, spDistrict, spDateEgd, spA, spB, spPB;
     private EditText etHdoCode;
@@ -117,6 +93,49 @@ public class HdoSiteFragment extends Fragment {
     private boolean isClearArrayLists = true;
     private HdoSiteViewModel viewModel;
     private String resultArea, exceptionArea;
+    private final AdapterView.OnItemSelectedListener distributionAreaListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            hideWidgets(position);
+            setSpDistrict(position);
+            clear();
+            setTextAlert();
+        }
+
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+    private final AdapterView.OnItemSelectedListener hdoEGDListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            setHdoCodeFromSpinners();
+        }
+
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+    private final TextWatcher etHdoCodeTextWatcher = new TextWatcher() {
+        @Override
+        public void afterTextChanged(Editable s) {
+            spA.setSelection(0);
+            spB.setSelection(0);
+            spPB.setSelection(0);
+        }
+
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    };
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
@@ -199,6 +218,15 @@ public class HdoSiteFragment extends Fragment {
         }
     }
 
+    /**
+     * Voláno při vytvoření instance view fragmentu.
+     * Inicializuje a nastavuje view komponenty včetně listenerů a načítání uložených nastavení.
+     *
+     * @param inflater           inflater pro vytvoření view
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav (pokud existuje)
+     */
+
 
     @Nullable
     @Override
@@ -229,42 +257,9 @@ public class HdoSiteFragment extends Fragment {
         spB = view.findViewById(R.id.spB);
         spPB = view.findViewById(R.id.spPB);
 
-        spA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setHdoCodeFromSpinners();
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spB.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setHdoCodeFromSpinners();
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        spPB.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setHdoCodeFromSpinners();
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        spA.setOnItemSelectedListener(hdoEGDListener);
+        spB.setOnItemSelectedListener(hdoEGDListener);
+        spPB.setOnItemSelectedListener(hdoEGDListener);
 
         //posluchač pro zavření dialogového okna s dotazem na výběr skupiny a kategorie
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_RESULT_SPINNER_DIALOG_FRAGMENT, this, (requestKey, result) -> {
@@ -276,11 +271,8 @@ public class HdoSiteFragment extends Fragment {
                 String code = etHdoCode.getText().toString();
 
                 viewModel.runSecondAsyncOperation(group, category, urlHdo, code, requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition());
-            } //else {
-            //setVisibilityProgressBar(false);
-            //}
+            }
             viewModel.hideDialog();
-            //executor = null;
         });
 
         //posluchač pro zavření dialogového okna s dotazem na uložení do databáze
@@ -291,31 +283,7 @@ public class HdoSiteFragment extends Fragment {
             }
         });
 
-        spDistributionArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hideWidgets(position);
-                switch (position) {
-                    case 0:
-                        spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_cez)));
-                        break;
-                    case 1:
-                        spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_egd)));
-                        break;
-                    case 2:
-                        spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_pre)));
-                        break;
-
-                }
-                clear();
-                setTextAlert();
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        spDistributionArea.setOnItemSelectedListener(distributionAreaListener);
 
         spDistrict.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -327,13 +295,41 @@ public class HdoSiteFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
+
+        etHdoCode.setOnClickListener(v -> etHdoCode.addTextChangedListener(etHdoCodeTextWatcher));
 
         btnHdoSite.setOnClickListener(v -> openHdoSite());
 
         btnHdoLoadData.setOnClickListener(v -> {
+            SubscriptionPointModel subscriptionPoint = getSubscriptionPoint();
+            if (subscriptionPoint != null) {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put(KEY_DISTRIBUTION_AREA_INDEX, spDistributionArea.getSelectedItemPosition());
+                    obj.put(KEY_DISTRIBUTION_AREA, spDistributionArea.getSelectedItem().toString());
+                    obj.put(KEY_DISTRICT_INDEX, spDistrict.getSelectedItemPosition());
+                    obj.put(KEY_DISTRICT, spDistrict.getSelectedItem().toString());
+                    obj.put(KEY_A_INDEX, spA.getSelectedItemPosition());
+                    obj.put(KEY_A, spA.getSelectedItem().toString());
+                    obj.put(KEY_B_INDEX, spB.getSelectedItemPosition());
+                    obj.put(KEY_B, spB.getSelectedItem().toString());
+                    obj.put(KEY_PB_INDEX, spPB.getSelectedItemPosition());
+                    obj.put(KEY_PB, spPB.getSelectedItem().toString());
+                    obj.put(KEY_HDO_CODE, etHdoCode.getText().toString());
+
+                    String json = obj.toString();
+
+                    DataSettingsSource dataSettingsSource = new DataSettingsSource(requireActivity());
+                    dataSettingsSource.open(); // pokud DataSource má open/close
+                    dataSettingsSource.setHdoWidgets(subscriptionPoint.getId(), json);
+                    dataSettingsSource.close();
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error creating JSON for HDO settings", e);
+                }
+            }
             clearArrayLists();
             Keyboard.hide(requireActivity());
             urlBuilder();
@@ -371,7 +367,7 @@ public class HdoSiteFragment extends Fragment {
             if (!hdoListModels.isEmpty()) {
                 setAdapter(hdoListModels.get(0).getHdoList());
                 hdoList.clear();
-                //hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
+
                 if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD)
                     hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
                 else
@@ -406,6 +402,47 @@ public class HdoSiteFragment extends Fragment {
             btnSaveHdo.setEnabled(false);
         }
 
+        SubscriptionPointModel subscriptionPoint = getSubscriptionPoint();
+        if (subscriptionPoint != null) {
+            DataSettingsSource dataSettingsSource = new DataSettingsSource(requireActivity());
+            dataSettingsSource.open();
+            String json = dataSettingsSource.loadHdoWidgets(subscriptionPoint.getId());
+            dataSettingsSource.close();
+
+            if (json != null && !json.isEmpty()) {
+                try {
+                    JSONObject obj = new JSONObject(json);
+                    int distIndex = obj.optInt(KEY_DISTRIBUTION_AREA_INDEX, -1);
+                    if (distIndex >= 0 && distIndex < spDistributionArea.getCount()) {
+                        spDistributionArea.setOnItemSelectedListener(null);
+                        spDistributionArea.setSelection(distIndex);
+                        setSpDistrict(distIndex);
+                        hideWidgets(distIndex);
+
+                        final int districtIndex = obj.optInt(KEY_DISTRICT_INDEX, -1);
+                        spDistrict.post(() -> {
+                            if (districtIndex >= 0 && spDistrict.getAdapter() != null && districtIndex < spDistrict.getAdapter().getCount()) {
+                                spDistrict.setSelection(districtIndex);
+                            }
+                            spDistributionArea.setOnItemSelectedListener(distributionAreaListener);
+                        });
+
+                        int aIndex = obj.optInt(KEY_A_INDEX, -1);
+                        if (aIndex >= 0 && aIndex < spA.getCount()) spA.setSelection(aIndex);
+                        int bIndex = obj.optInt(KEY_B_INDEX, -1);
+                        if (bIndex >= 0 && bIndex < spB.getCount()) spB.setSelection(bIndex);
+                        int pbIndex = obj.optInt(KEY_PB_INDEX, -1);
+                        if (pbIndex >= 0 && pbIndex < spPB.getCount()) spPB.setSelection(pbIndex);
+                        String hdoCode = obj.optString(KEY_HDO_CODE, "");
+                        if (!hdoCode.isEmpty()) etHdoCode.setText(hdoCode);
+                    }
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing JSON for HDO settings", e);
+                }
+            }
+        }
+
     }
 
 
@@ -433,21 +470,21 @@ public class HdoSiteFragment extends Fragment {
      * @param item Index vybrané distribuční sítě (0-CEZ, 1-EON, 2- PRE)
      */
     private void hideWidgets(int item) {
-        //0-CEZ, 1-EON, 2- PRE
+        // DIST_CEZ, DIST_EGD, DIST_PRE
         switch (item) {
-            case 0:
+            case DIST_CEZ:
                 lnCode.setVisibility(View.VISIBLE);
                 lnCodesEdg.setVisibility(View.GONE);
                 spDateEgd.setVisibility(View.GONE);
                 tvValidityDate.setVisibility(View.VISIBLE);
                 break;
-            case 1:
+            case DIST_EGD:
                 lnCode.setVisibility(View.VISIBLE);
                 lnCodesEdg.setVisibility(View.VISIBLE);
                 spDateEgd.setVisibility(View.VISIBLE);
                 tvValidityDate.setVisibility(View.GONE);
                 break;
-            case 2:
+            case DIST_PRE:
                 lnCode.setVisibility(View.GONE);
                 lnCodesEdg.setVisibility(View.GONE);
                 spDateEgd.setVisibility(View.GONE);
@@ -483,14 +520,15 @@ public class HdoSiteFragment extends Fragment {
      * @param distributionAreaIndex index distribuční sítě (0-CEZ, 1-EON, 2- PRE)
      */
     private void loadData(String url, int distributionAreaIndex) {
-        //executor = Executors.newSingleThreadExecutor();
-        //0-CEZ,1-EGD,2-PRE
+        // DIST_CEZ, DIST_EGD, DIST_PRE
         viewModel.runAsyncOperation(url, distributionAreaIndex, etHdoCode.getText().toString(), requireActivity(), spDistrict.getSelectedItem().toString(), spDistrict.getSelectedItemPosition(), lnHdoButtons);
     }
 
 
     /**
-     * Nastaví adapter pro recycler view
+     * Nastaví adapter pro RecyclerView a spustí layout animaci.
+     *
+     * @param hdoModels seznam {@link HdoModel} který se má zobrazit
      */
     private void setAdapter(ArrayList<HdoModel> hdoModels) {
         HdoAdapter hdoAdapter = new HdoAdapter(hdoModels, rvHdoSite, false);
@@ -511,7 +549,9 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
-     * Nastaví viditelnost upozornění a skryje text platnosti
+     * Nastaví viditelnost textového upozornění (tvAlert).
+     *
+     * @param b true = zobrazit upozornění, false = skrýt
      */
     private void setVisibilityAlert(boolean b) {
         if (b)
@@ -523,15 +563,18 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
-     * Nastaví text upozornění podle vybraného distributora
+     * Aktualizuje text upozornění podle aktuálně vybrané distribuční sítě.
+     * <p>
+     * Používá lokalizované řetězce z resources: pro CEZ/EON zobrazí instrukci pro psaní HDO,
+     * pro PRE zobrazí instrukci pro výběr HDO ze seznamu.
      */
     private void setTextAlert() {
         switch (spDistributionArea.getSelectedItemPosition()) {
-            case 0:
-            case 1:
+            case DIST_CEZ:
+            case DIST_EGD:
                 tvAlert.setText(getResources().getString(R.string.write_hdo));
                 break;
-            case 2:
+            case DIST_PRE:
                 tvAlert.setText(getResources().getString(R.string.select_hdo));
                 break;
         }
@@ -553,12 +596,17 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
-     * Nastaví a sestaví kód HDO z vybraných spinnerů
+     * Sestaví text HDO kódu z hodnot vybraných ve spinnerech A, B a PB
+     * a vloží jej do editTextu {@code etHdoCode}.
+     * <p>
+     * Pokud jsou všechny tři položky prázdné, metoda nic neprovádí.
      */
     private void setHdoCodeFromSpinners() {
         if (spA.getSelectedItem().equals("")
                 && spB.getSelectedItem().equals("")
                 && spPB.getSelectedItem().equals("")) return;
+
+        etHdoCode.removeTextChangedListener(etHdoCodeTextWatcher);
 
         String code = "A" + spA.getSelectedItem()
                 + "B" + spB.getSelectedItem()
@@ -568,7 +616,10 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
-     * Uloží HDO do databáze
+     * Uloží aktuálně načtený seznam HDO do lokální databáze.
+     * <p>
+     * Metoda ověří, že existují načtená data a že je k dispozici odběrné místo
+     * s definovanou tabulkou pro HDO. V případě chyb vypíše krátké Toast hlášení.
      */
     private void saveHdo() {
         if (!hdoList.isEmpty()) {
@@ -620,6 +671,26 @@ public class HdoSiteFragment extends Fragment {
      */
     private SubscriptionPointModel getSubscriptionPoint() {
         return SubscriptionPoint.load(requireActivity());
+    }
+
+
+    /**
+     * Naplní spinner seznamem okresů podle vybrané distribuční sítě.
+     *
+     * @param position index distribuční sítě (DIST_CEZ, DIST_EGD, DIST_PRE)
+     */
+    private void setSpDistrict(int position) {
+        switch (position) {
+            case DIST_CEZ:
+                spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_cez)));
+                break;
+            case DIST_EGD:
+                spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_egd)));
+                break;
+            case DIST_PRE:
+                spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_pre)));
+                break;
+        }
     }
 
 

@@ -1,5 +1,13 @@
 [
   {
+    "version": 154,
+    "date": "X.4.2026",
+    "changes": [
+      "<b>Vylepšení:</b>",
+      "Uložen HDO kod ke každému odběrnému místu."
+    ]
+  },
+  {
     "version": 153,
     "date": "4.2.2026",
     "changes": [

@@ -23,6 +23,7 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_COLOR_NT = "colorNT";
     private static final String PREFIX_NAME = "jmeno";
     private static final String PREFIX_VALUE = "hodnota";
+    private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
 
 
     public DataSettingsSource(Context context) {
@@ -32,10 +33,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Vloží/aktualizuje výchozí stavy měřičů pro případ, že není použitá poslední faktura
+     * Vloží nebo aktualizuje výchozí stavy měřičů pro dané odběrné místo.
+     * Používá se v případě, že není použita poslední faktura.
      *
      * @param idSubscriptionPoint id odběrného místa
-     * @param meters              String s datem a stavy měřičů
+     * @param meters              řetězec obsahující datum a stavy měřičů
      */
     public void setFirstMeter(long idSubscriptionPoint, String meters) {
         String name = loadFirstMeterName(idSubscriptionPoint);
@@ -49,10 +51,10 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Uloží výchozí stavy měřičů pro případ, že není použitá poslední faktura
+     * Vloží nový záznam s výchozími stavy měřičů do tabulky nastavení.
      *
-     * @param name       selektor podle odběrného místa
-     * @param parameters parametry
+     * @param name       název parametru (selektor podle odběrného místa)
+     * @param parameters hodnoty/parametry (např. datum a stavy měřičů)
      */
     private void insertFirstMeters(String name, String parameters) {
         ContentValues values = new ContentValues();
@@ -64,10 +66,10 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Aktualizuje výchozí stavy měřičů pro případ, že není použitá poslední faktura
+     * Aktualizuje existující záznam výchozích stavů měřičů.
      *
-     * @param name       selektor podle odběrného místa
-     * @param parameters parametry
+     * @param name       název parametru (selektor podle odběrného místa)
+     * @param parameters nové hodnoty/parametry
      */
     private void updateFirstMeters(String name, String parameters) {
         String[] arguments = new String[]{name};
@@ -78,10 +80,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Načte výchozí stavy měřičů pro případ, že není použitá poslední faktura
+     * Načte řetězec s výchozími stavy měřičů pro dané odběrné místo.
+     * Pokud záznam neexistuje, vrátí prázdný řetězec.
      *
      * @param idSubscription id odběrného místa
-     * @return String parametry
+     * @return řetězec obsahující parametry (nebo prázdný řetězec)
      */
     public String loadFirstMeters(long idSubscription) {
         String name = loadFirstMeterName(idSubscription);
@@ -107,10 +110,10 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Načte barvy pro VT a NT
-     * Pokud záznam bude chybět - nastaví se výchozí červená a modrá
+     * Načte barvy pro VT (vysoký tarif) a NT (nízký tarif).
+     * Pokud záznamy v databázi chybí, vrátí výchozí barvy (červená pro VT, modrá pro NT).
      *
-     * @return pole celých čísel s barvami
+     * @return pole dvou integer hodnot [barvaVT, barvaNT]
      */
     public int[] loadColorVTNT() {
 
@@ -157,10 +160,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Vrátí název parametru v tabulce s nastavením
+     * Sestaví a vrátí název položky v tabulce nastavení pro posun času
+     * pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
-     * @return String název parametru uloženého v databázi
+     * @return název parametru (řetězec) použitý v tabulce nastavení
      */
     private String loadTimeShiftName(long idSubscriptionPoint) {
 
@@ -175,10 +179,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Načte název parametru v tabulce s nastavením pro nastavení výchozích stavů měřičů
+     * Sestaví a vrátí název položky v tabulce nastavení pro výchozí stavy měřičů
+     * pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
-     * @return String název parametru uloženého v databázi
+     * @return název parametru (řetězec) použitý v tabulce nastavení
      */
     private String loadFirstMeterName(long idSubscriptionPoint) {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
@@ -192,10 +197,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Zkontroluje, zda existuje záznam pro výchozí stavy měřičů
+     * Zjistí, zda v tabulce nastavení existuje záznam výchozích stavů měřičů
+     * pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
-     * @return boolean true/false
+     * @return true pokud záznam existuje, jinak false
      */
     private boolean isExistsFirstMeterName(long idSubscriptionPoint) {
         String name = loadFirstMeterName(idSubscriptionPoint);
@@ -220,11 +226,11 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Vrátí posun času pro dané odběrné místo.
-     * Pokud záznam neexistuje, vytvoří jej s hodnotou 0.
+     * Načte posun času (v milisekundách) pro dané odběrné místo.
+     * Pokud záznam neexistuje, vytvoří nový záznam s hodnotou 0 a vrátí 0.
      *
      * @param idSubscriptionPoint id odběrného místa
-     * @return long posun času v milisekundách
+     * @return posun času v milisekundách
      */
     public long loadTimeShift(long idSubscriptionPoint) {
         if (idSubscriptionPoint < 0) return 0;
@@ -263,7 +269,7 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Změní posun času pro dané odběrné místo
+     * Změní (aktualizuje) posun času pro dané odběrné místo v tabulce nastavení.
      *
      * @param idSubscriptionPoint id odběrného místa
      * @param timeShift           posun času v milisekundách
@@ -279,7 +285,7 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Smaže posun času pro dané odběrné místo
+     * Odstraní záznam s posunem času pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
      */
@@ -290,7 +296,7 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Smaže výchozí stavy měřičů
+     * Odstraní záznam s výchozími stavy měřičů pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
      */
@@ -301,12 +307,120 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Provede smazání podle where klauzule
+     * Pomocná metoda pro smazání záznamu v tabulce nastavení podle jména.
      *
-     * @param whereArgs pole argumentů
+     * @param whereArgs pole argumentů pro WHERE klauzuli (např. název parametru)
      */
     private void delete(String[] whereArgs) {
         database.delete(TABLE_NAME_SETTINGS, PREFIX_NAME + "=?", whereArgs);
+    }
+
+    /**
+     * Uloží nebo aktualizuje JSON konfiguraci widgetů HDO pro dané odběrné místo.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @param json                JSON s konfigurací widgetů
+     */
+    public void setHdoWidgets(long idSubscriptionPoint, String json) {
+        String name = loadHdoWidgetsName(idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, json);
+        } else {
+            insertByName(name, json);
+        }
+    }
+
+    /**
+     * Vloží záznam do tabulky nastavení podle názvu.
+     *
+     * @param name       název parametru
+     * @param parameters hodnota parametru
+     */
+    private void insertByName(String name, String parameters) {
+        ContentValues values = new ContentValues();
+        values.put(PREFIX_NAME, name);
+        values.put(PREFIX_VALUE, parameters);
+        database.insert(TABLE_NAME_SETTINGS, null, values);
+    }
+
+    /**
+     * Aktualizuje záznam v tabulce nastavení podle názvu.
+     *
+     * @param name       název parametru
+     * @param parameters nová hodnota parametru
+     */
+    private void updateByName(String name, String parameters) {
+        String[] arguments = new String[]{name};
+        ContentValues values = new ContentValues();
+        values.put(PREFIX_VALUE, parameters);
+        database.update(TABLE_NAME_SETTINGS, values, PREFIX_NAME + "=?", arguments);
+    }
+
+    /**
+     * Sestaví a vrátí název položky pro ukládání konfigurace HDO widgetů
+     * pro dané odběrné místo.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @return název parametru (řetězec)
+     */
+    private String loadHdoWidgetsName(long idSubscriptionPoint) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        open();
+        SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        String name = PREFIX_HDO_WIDGETS + subscriptionPoint.getIdMilins();
+        dataSubscriptionPointSource.close();
+        return name;
+    }
+
+    /**
+     * Načte uloženou JSON konfiguraci HDO widgetů pro dané odběrné místo.
+     * Pokud záznam neexistuje, vrátí prázdný řetězec.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @return JSON řetězec s konfigurací nebo prázdný řetězec
+     */
+    public String loadHdoWidgets(long idSubscriptionPoint) {
+        String name = loadHdoWidgetsName(idSubscriptionPoint);
+        String selection = PREFIX_NAME + "=?";
+        String[] args = new String[]{name};
+
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                args,
+                null,
+                null,
+                null);
+
+        cursor.moveToFirst();
+        String json = "";
+        if (cursor.getCount() > 0) {
+            json = cursor.getString(cursor.getColumnIndexOrThrow(PREFIX_VALUE));
+        }
+        cursor.close();
+        return json;
+    }
+
+    /**
+     * Pomocná metoda pro ověření existence záznamu podle názvu.
+     *
+     * @param name název parametru
+     * @return true pokud záznam existuje, jinak false
+     */
+    private boolean isExistsByName(String name) {
+        String selection = PREFIX_NAME + "=?";
+        String[] args = new String[]{name};
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                args,
+                null,
+                null,
+                null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
     }
 
 }
