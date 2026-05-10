@@ -13,7 +13,6 @@ googleAuthLibraryOauth2Http = "1.47.0"
 googleHttpClientAndroid = "2.1.0"
 googleOauthClientJetty = "1.39.0"
 googleid = "1.2.0"
-gradleToolchainsFoojayResolverConvention = "1.0.0"
 gson = "2.14.0"
 guava = "33.6.0-jre"
 jsoup = "1.22.2"
@@ -69,4 +68,3 @@ slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-foojay = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "gradleToolchainsFoojayResolverConvention" }
