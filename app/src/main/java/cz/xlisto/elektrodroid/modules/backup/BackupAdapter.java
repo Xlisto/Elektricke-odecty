@@ -25,8 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.api.services.drive.model.File;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.FolderDialog;
@@ -36,8 +40,18 @@ import cz.xlisto.elektrodroid.utils.NetworkUtil;
 
 
 /**
- * Adaptér zobrazení souboru záloh
- * Xlisto 24.04.2023 20:06
+ * Adaptér pro zobrazení a obsluhu souborů záloh.
+ *
+ * <p>Podporuje dva režimy dat:</p>
+ * <ul>
+ *   <li>místní soubory ({@link DocumentFile})</li>
+ *   <li>soubory Google Drive ({@link File})</li>
+ * </ul>
+ *
+ * <p>V lokálním režimu zajišťuje rozbalovací akce nad položkou, obnovu dat,
+ * mazání a také vícenásobný výběr se synchronizací stavu do fragmentu přes
+ * {@link SelectionChangeListener}. V režimu Drive zajišťuje akce nad složkami
+ * a soubory včetně mazání a obnovy.</p>
  */
 public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHolder> {
 
@@ -59,6 +73,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     private final Handler handlerOpenFolder;
     private final Handler handlerRecovery;
     private final Handler handlerShowProgressBar;
+    private final SelectionChangeListener selectionChangeListener;
+    private final Set<Integer> selectedPositions = new TreeSet<>();
+    private boolean multiSelectMode = false;
     //handler smazání souboru z GoogleDrive
     private final Handler handlerReloadFiles = new Handler(Looper.getMainLooper()) {
         @Override
@@ -80,7 +97,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     };
 
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName;
         TextView tvTyp;
@@ -91,12 +108,26 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         Button btnRestore;
         Button btnDelete;
         Button btnUpload;
+        android.widget.CheckBox cbSelect;
 
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 
+    }
+
+    /**
+     * Callback pro předání stavu vícenásobného výběru do nadřazené vrstvy (fragmentu).
+     */
+    public interface SelectionChangeListener {
+        /**
+         * Volá se při každé změně výběru.
+         *
+         * @param selectedCount     počet aktuálně vybraných položek
+         * @param isMultiSelectMode {@code true}, pokud je aktivní režim vícenásobného výběru
+         */
+        void onSelectionChanged(int selectedCount, boolean isMultiSelectMode);
     }
 
 
@@ -108,13 +139,14 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * @param recyclerView    RecyclerView pro zobrazení souborů
      * @param handlerRecovery handler pro obnovu souborů
      */
-    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView, Handler handlerRecovery, Handler handlerShowProgressBar) {
+    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView, Handler handlerRecovery, Handler handlerShowProgressBar, SelectionChangeListener selectionChangeListener) {
         this.documentFiles = documentFiles;
         this.context = context;
         this.recyclerView = recyclerView;
         this.handlerRecovery = handlerRecovery;
         this.handlerShowProgressBar = handlerShowProgressBar;
         this.handlerOpenFolder = null;
+        this.selectionChangeListener = selectionChangeListener;
         this.isGoogleDrive = false;
         shPGoogleDrive = new ShPGoogleDrive(context);
         showButtons = -1;
@@ -138,6 +170,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         this.handlerOpenFolder = handlerOpenFolder;
         this.handlerRecovery = handlerRecovery;
         this.handlerShowProgressBar = null;
+        this.selectionChangeListener = null;
         this.isGoogleDrive = true;
         this.googleDriveService = googleDriveService;
         shPGoogleDrive = new ShPGoogleDrive(context);
@@ -145,6 +178,13 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     }
 
 
+    /**
+     * Vytvoří a napojí {@link MyViewHolder} pro položku seznamu záloh.
+     *
+     * @param parent   rodičovský kontejner RecyclerView
+     * @param viewType typ položky
+     * @return inicializovaný view holder
+     */
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -159,10 +199,21 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         vh.btnRestore = v.findViewById(R.id.btnRestoreBackup);
         vh.btnDelete = v.findViewById(R.id.btnDeleteBackup);
         vh.btnUpload = v.findViewById(R.id.btnUploadBackup);
+        vh.cbSelect = v.findViewById(R.id.cbSelectBackup);
         return vh;
     }
 
 
+    /**
+     * Naváže data na položku seznamu a nastaví obsluhu akcí.
+     *
+     * <p>V lokálním režimu řeší zobrazení checkboxu pro multi-výběr,
+     * rozbalovací tlačítka a akce obnovy/smazání. V režimu Drive řeší
+     * navigaci do složek a akce nad soubory/složkami.</p>
+     *
+     * @param holder   holder položky
+     * @param position pozice položky v adapteru
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentFile documentFile;
@@ -191,6 +242,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             else
                 holder.btnUpload.setVisibility(View.GONE);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
+            holder.cbSelect.setVisibility(multiSelectMode ? View.VISIBLE : View.GONE);
+            holder.cbSelect.setChecked(selectedPositions.contains(position));
         }
 
 
@@ -201,6 +254,23 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         showButtons(holder, position);
 
         holder.rl.setOnClickListener(v -> {
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION)
+                return;
+
+            if (!isGoogleDrive && multiSelectMode) {
+                toggleSelection(adapterPosition);
+                if (multiSelectMode) {
+                    notifyItemChanged(adapterPosition);
+                } else {
+                    selectedPosition = -1;
+                    showButtons = -1;
+                    selectedDocumentFile = null;
+                    notifyAllItemsChanged();
+                }
+                return;
+            }
+
             TransitionManager.beginDelayedTransition(recyclerView);
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
@@ -210,16 +280,36 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
 
             // Check if the item is a folder and display its contents
             if (isGoogleDrive) {
+                if (file == null)
+                    return;
+
                 selectedFileId = file.getId();
                 if ("application/vnd.google-apps.folder".equals(file.getMimeType())) {
                     openFolder(file.getId());
                 } else {
-                    toggleButtons(position, holder);
+                    toggleButtons(adapterPosition, holder);
                 }
             } else {
-                toggleButtons(position, holder);
+                toggleButtons(adapterPosition, holder);
 
             }
+        });
+
+        holder.rl.setOnLongClickListener(v -> {
+            if (isGoogleDrive)
+                return false;
+
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION)
+                return false;
+
+            if (!multiSelectMode) {
+                multiSelectMode = true;
+                showButtons = -1;
+            }
+            toggleSelection(adapterPosition);
+            notifyAllItemsChanged();
+            return true;
         });
 
         holder.btnRestore.setOnClickListener(v -> {
@@ -243,7 +333,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
 
         holder.btnDelete.setOnClickListener(v -> {
             selectedDocumentFile = documentFile;
-            selectedPosition = position;
+            selectedPosition = holder.getBindingAdapterPosition();
+            if (selectedPosition == RecyclerView.NO_POSITION)
+                return;
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getString(R.string.delete_backup), FLAG_DIALOG_FRAGMENT_DELETE);
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
@@ -255,7 +347,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 if (file == null)
                     return false;
                 selectedFileId = file.getId();
-                selectedPosition = position;
+                selectedPosition = holder.getBindingAdapterPosition();
+                if (selectedPosition == RecyclerView.NO_POSITION)
+                    return false;
 
                 if (R.id.rename_folder == item.getItemId()) {
                     FolderDialog.newInstance(FLAG_DIALOG_RENAME_FOLDER, file.getName()).show(((FragmentActivity) context).getSupportFragmentManager(), FolderDialog.TAG);
@@ -300,6 +394,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * @param holder   view holder
      */
     private void toggleButtons(int position, MyViewHolder holder) {
+        if (multiSelectMode)
+            return;
+
         if (showButtons == position) {
             showButtons = -1;
         } else {
@@ -379,6 +476,123 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     }
 
 
+    public void deleteSelectedFiles() {
+        if (isGoogleDrive || selectedPositions.isEmpty())
+            return;
+
+        int deletedCount = 0;
+        for (Integer index : new TreeSet<>(selectedPositions).descendingSet()) {
+            if (index < 0 || index >= documentFiles.size())
+                continue;
+            DocumentFile file = documentFiles.get(index);
+            if (file != null && file.delete()) {
+                documentFiles.remove((int) index);
+                notifyItemRemoved(index);
+                deletedCount++;
+            }
+        }
+
+        clearSelection();
+        showButtons = -1;
+        selectedDocumentFile = null;
+        notifyAllItemsChanged();
+
+        if (deletedCount > 0)
+            Snackbar.make(recyclerView, context.getString(R.string.deleted_file), Snackbar.LENGTH_SHORT).show();
+        else
+            Snackbar.make(recyclerView, context.getString(R.string.not_deleted_file), Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    /**
+     * Vrátí počet aktuálně vybraných položek v lokálním multi-výběru.
+     *
+     * @return počet vybraných položek
+     */
+    public int getSelectedItemCount() {
+        return selectedPositions.size();
+    }
+
+
+    /**
+     * Vrátí URI vybraných lokálních záloh pro možnost obnovení stavu po rotaci.
+     *
+     * @return seznam URI vybraných položek
+     */
+    public ArrayList<String> getSelectedDocumentFileUris() {
+        ArrayList<String> selectedUris = new ArrayList<>();
+        if (documentFiles == null)
+            return selectedUris;
+
+        for (Integer position : selectedPositions) {
+            if (position < 0 || position >= documentFiles.size())
+                continue;
+            DocumentFile documentFile = documentFiles.get(position);
+            if (documentFile != null)
+                selectedUris.add(documentFile.getUri().toString());
+        }
+        return selectedUris;
+    }
+
+
+
+    /**
+     * Vymaže výběr položek a vypne režim vícenásobného výběru.
+     */
+    public void clearSelection() {
+        selectedPositions.clear();
+        multiSelectMode = false;
+        notifySelectionChanged();
+    }
+
+
+    /**
+     * Zruší multi-výběr a zároveň resetuje interní stav výběru/rozbalení položky.
+     */
+    public void cancelMultiSelect() {
+        clearSelection();
+        selectedPosition = -1;
+        showButtons = -1;
+        selectedDocumentFile = null;
+        notifyAllItemsChanged();
+    }
+
+
+    /**
+     * Obnoví výběr položek podle jejich URI (typicky po obnově stavu fragmentu).
+     *
+     * @param selectedUris URI položek, které mají být označeny
+     * @return počet úspěšně obnovených vybraných položek
+     */
+    public int restoreSelectionByUris(List<String> selectedUris) {
+        if (isGoogleDrive || documentFiles == null) {
+            cancelMultiSelect();
+            return 0;
+        }
+
+        selectedPositions.clear();
+        if (selectedUris == null || selectedUris.isEmpty()) {
+            cancelMultiSelect();
+            return 0;
+        }
+
+        Set<String> uriSet = new HashSet<>(selectedUris);
+        for (int i = 0; i < documentFiles.size(); i++) {
+            DocumentFile documentFile = documentFiles.get(i);
+            if (documentFile != null && uriSet.contains(documentFile.getUri().toString()))
+                selectedPositions.add(i);
+        }
+
+        multiSelectMode = !selectedPositions.isEmpty();
+        selectedPosition = -1;
+        showButtons = -1;
+        selectedDocumentFile = null;
+        notifySelectionChanged();
+        notifyAllItemsChanged();
+        return selectedPositions.size();
+    }
+
+
     /**
      * Obnoví data ze záložního vybraného souboru zip
      */
@@ -397,6 +611,11 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * @param position pozice
      */
     private void showButtons(MyViewHolder holder, int position) {
+        if (multiSelectMode) {
+            holder.ln.setVisibility(View.GONE);
+            return;
+        }
+
         if (showButtons == position)
             holder.ln.setVisibility(View.VISIBLE);
         else
@@ -445,6 +664,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     public void updateFile(String fileId, String newName) {
         for (int i = 0; i < files.size(); i++) {
             File file = files.get(i);
+            if (file == null)
+                continue;
             if (file.getId().equals(fileId)) {
                 file.setName(newName);
                 notifyItemChanged(i);
@@ -463,7 +684,42 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             documentFiles.clear();
         if (files != null)
             files.clear();
+        clearSelection();
         notifyDataChanged();
+    }
+
+
+    /**
+     * Přepne výběr konkrétní položky v režimu vícenásobného výběru.
+     *
+     * @param position pozice položky
+     */
+    private void toggleSelection(int position) {
+        if (selectedPositions.contains(position))
+            selectedPositions.remove(position);
+        else
+            selectedPositions.add(position);
+
+        if (selectedPositions.isEmpty()) {
+            multiSelectMode = false;
+        }
+        notifySelectionChanged();
+    }
+
+
+    /**
+     * Odešle callback o změně výběru do posluchače, pokud je registrován.
+     */
+    private void notifySelectionChanged() {
+        if (selectionChangeListener != null)
+            selectionChangeListener.onSelectionChanged(selectedPositions.size(), multiSelectMode);
+    }
+
+
+    private void notifyAllItemsChanged() {
+        int itemCount = getItemCount();
+        if (itemCount > 0)
+            notifyItemRangeChanged(0, itemCount);
     }
 
 }

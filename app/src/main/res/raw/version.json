@@ -4,7 +4,9 @@
     "date": "X.4.2026",
     "changes": [
       "<b>Vylepšení:</b>",
-      "Uložen HDO kod ke každému odběrnému místu."
+      "Uložen HDO kód ke každému odběrnému místu.",
+      "Místní záloha - přesun ovládacích tlačítek.",
+      "Možnost vícenásobného výběru položek pro smazání nepotřebných záloh."
     ]
   },
   {

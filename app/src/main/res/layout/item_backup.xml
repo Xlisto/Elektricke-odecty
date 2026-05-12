@@ -70,7 +70,11 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvNameBackup"
         android:layout_below="@+id/tvNameBackup"
-        android:clickable="false" />
+        android:layout_toStartOf="@id/cbSelectBackup"
+        android:clickable="false"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/tvNameBackup"
@@ -78,8 +82,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/imgIconFile"
+        android:layout_toStartOf="@id/cbSelectBackup"
         android:clickable="false"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <CheckBox
+        android:id="@+id/cbSelectBackup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/ivMoreOptions"

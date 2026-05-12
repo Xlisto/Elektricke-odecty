@@ -583,6 +583,12 @@
     <string name="create_new_folder">Vytvořit novou složku</string>
     <string name="delete_folder">Smazat složku</string>
     <string name="delete_backup">Smazat zálohu</string>
+    <string name="delete_selected_backups">Smazat vybrané zálohy</string>
+    <string name="delete_selected_backups_button">Smaž vybrané (%1$d)</string>
+    <string name="delete_selected_backups_button_default">Smaž vybrané</string>
+    <string name="select_backup_files_to_delete">Nejprve vyberte soubory ke smazání</string>
+    <string name="cancel_selection">Zrušit výběr</string>
+    <string name="selection_canceled">Výběr zrušen</string>
     <string name="rename_folder">Přejmenovat složku</string>
     <string name="rename">Přejmenovat</string>
     <string name="recover_backup">Obnovit zálohu</string>

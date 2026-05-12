@@ -1,13 +1,10 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
 
-import static cz.xlisto.elektrodroid.permission.Permissions.REQUEST_WRITE_STORAGE;
-
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
@@ -16,11 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -31,6 +30,10 @@ import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +65,11 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
  * k přístupu k URI přes utilitu {@code Files} a spravuje registraci síťového
  * callbacku v cyklu života fragmentu.</p>
  *
+ * <p>Akce pro vytvoření zálohy, výběr cílové složky a hromadné operace nad
+ * vybranými položkami jsou dostupné přes AppBar menu. Stav vícenásobného
+ * výběru je ukládán přes {@code savedInstanceState} a po rotaci obrazovky
+ * znovu obnoven podle URI souborů.</p>
+ *
  * @see BackupViewModel
  * @see Files
  * @see NetworkCallbackImpl.NetworkChangeListener
@@ -69,7 +77,15 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 public class BackupFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
 
     private static final String TAG = "BackupFragment";
-    private Button btnBackup;
+    private static final String FLAG_DIALOG_FRAGMENT_DELETE_SELECTED = "backupDialogFragmentDeleteSelected";
+    private static final String STATE_SELECTED_BACKUP_URIS = "stateSelectedBackupUris";
+    private MenuItem menuItemBackup;
+    private MenuItem menuItemDeleteSelected;
+    private MenuItem menuItemCancelSelection;
+    private boolean backupActionEnabled = true;
+    private boolean deleteSelectedActionVisible = false;
+    private int selectedFilesCount = 0;
+    private boolean suppressSelectionCanceledSnackbar = false;
     private RelativeLayout rlDescriptionPermission;
     private RecyclerView recyclerView;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
@@ -80,6 +96,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private BackupViewModel backupViewModel;
     private Uri uri;
     private ShPBackup shPBackup;
+    private ArrayList<String> pendingSelectedBackupUris = new ArrayList<>();
 
     //Callback z výběru složky
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
@@ -124,7 +141,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                     animator.start();
             }
 
-            btnBackup.setEnabled(true);
+            updateBackupActionEnabled(true);
         }
     };
 
@@ -161,26 +178,81 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     }
 
 
+    /**
+     * Vytvoří view fragmentu a registruje položky AppBar menu pro správu záloh.
+     *
+     * @param inflater           inflater layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav fragmentu
+     * @return root view fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_backup, menu);
+                menuItemBackup = menu.findItem(R.id.menu_action_backup_create);
+                menuItemDeleteSelected = menu.findItem(R.id.menu_action_backup_delete_selected);
+                menuItemCancelSelection = menu.findItem(R.id.menu_action_backup_cancel_selection);
+                updateBackupActionEnabled(backupActionEnabled);
+                updateDeleteSelectedAction(selectedFilesCount, deleteSelectedActionVisible);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.menu_action_backup_create) {
+                    saveToZip();
+                    return true;
+                }
+                if (itemId == R.id.menu_action_backup_select_folder) {
+                    Files.openTree(false, requireActivity(), resultTree);
+                    return true;
+                }
+                if (itemId == R.id.menu_action_backup_delete_selected) {
+                    showDeleteSelectedDialog();
+                    return true;
+                }
+                if (itemId == R.id.menu_action_backup_cancel_selection) {
+                    if (backupAdapter != null) {
+                        suppressSelectionCanceledSnackbar = true;
+                        backupAdapter.cancelMultiSelect();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_backup, container, false);
     }
 
 
+    /**
+     * Inicializuje UI a observery ViewModelu, načte data a napojí handlery dialogů.
+     *
+     * @param view               root view fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
 
+        if (savedInstanceState != null) {
+            ArrayList<String> restoredSelection = savedInstanceState.getStringArrayList(STATE_SELECTED_BACKUP_URIS);
+            if (restoredSelection != null)
+                pendingSelectedBackupUris = restoredSelection;
+        }
+
         shPBackup = new ShPBackup(requireContext());
 
-        btnBackup = view.findViewById(R.id.btnZalohuj);
-        Button btnSelectDir = view.findViewById(R.id.btnVyberSlozkuBackup);
         rlDescriptionPermission = view.findViewById(R.id.rlDescriptionPermission);
         recyclerView = view.findViewById(R.id.recyclerViewBackup);
-        btnBackup.setOnClickListener(v -> saveToZip());
-        btnSelectDir.setOnClickListener((v) -> Files.openTree(false, requireActivity(), resultTree));
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
 
         requireContext();
@@ -194,16 +266,19 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
 
         backupViewModel = new ViewModelProvider(this).get(BackupViewModel.class);
+        setupRecyclerViewLayoutManager();
         backupViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {
             this.documentFiles = documentFiles;
-            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery, null);
+            backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery, null,
+                    this::updateDeleteSelectedAction);
             recyclerView.setAdapter(backupAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+            updateDeleteSelectedAction(0, false);
+            restoreSelectionIfNeeded();
             showLnProgressBar(false);
         });
         backupViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
         backupViewModel.getHasPermission().observe(getViewLifecycleOwner(), has -> {
-            btnBackup.setEnabled(Boolean.TRUE.equals(has));
+            updateBackupActionEnabled(Boolean.TRUE.equals(has));
             if (Boolean.TRUE.equals(has)) {
                 rlDescriptionPermission.setVisibility(View.GONE);
             } else {
@@ -234,9 +309,20 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                 backupAdapter.deleteFile();
             }
         });
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_DELETE_SELECTED, this, (requestKey, result) -> {
+            if (result.getBoolean(YesNoDialogFragment.RESULT) && backupAdapter != null) {
+                suppressSelectionCanceledSnackbar = true;
+                backupAdapter.deleteSelectedFiles();
+                updateDeleteSelectedAction(0, false);
+            }
+        });
     }
 
 
+    /**
+     * Při návratu fragmentu znovu kontroluje platnost oprávnění k URI složce záloh.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -245,6 +331,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     }
 
 
+    /**
+     * Uvolní síťový callback registrovaný při inicializaci fragmentu.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -253,25 +342,27 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
 
 
     /**
-     * Uloží databáze do ZIPu a aktualizuje RecyclerView.
+     * Uloží aktuální výběr položek záloh, aby bylo možné jej obnovit po rotaci.
+     *
+     * @param outState bundle pro uložení dočasného stavu fragmentu
      */
-    private void saveToZip() {
-        btnBackup.setEnabled(false);
-        SaveDataToBackupFile.saveToZip(requireActivity(), handlerSaveZip);
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (backupAdapter != null && backupAdapter.getSelectedItemCount() > 0)
+            outState.putStringArrayList(STATE_SELECTED_BACKUP_URIS, backupAdapter.getSelectedDocumentFileUris());
     }
 
 
-    //TODO: DEPRECATED!!!
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_WRITE_STORAGE) {// If request is cancelled, the fakturyArrayList arrays are empty.
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Snackbar.make(requireView(), "Přístup povolen", Snackbar.LENGTH_LONG).show();
-            } else {
-                Snackbar.make(requireView(), "Přístup zamítnut", Snackbar.LENGTH_LONG).show();
-            }
-        }
+    /**
+     * Uloží databáze do ZIPu a aktualizuje RecyclerView.
+     */
+    private void saveToZip() {
+        if (!backupActionEnabled)
+            return;
+
+        updateBackupActionEnabled(false);
+        SaveDataToBackupFile.saveToZip(requireActivity(), handlerSaveZip);
     }
 
 
@@ -349,6 +440,90 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         backupViewModel.checkPermission(requireActivity(), uri);
         if (Files.permissions(requireActivity(), uri)) {
             backupViewModel.loadFiles(requireActivity(), uri, resultTree);
+        }
+    }
+
+
+    /**
+     * Zobrazí potvrzovací dialog pro hromadné smazání vybraných záloh.
+     */
+    private void showDeleteSelectedDialog() {
+        if (backupAdapter == null || backupAdapter.getSelectedItemCount() == 0) {
+            Snackbar.make(requireView(), getString(R.string.select_backup_files_to_delete), Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        YesNoDialogFragment.newInstance(getString(R.string.delete_selected_backups), FLAG_DIALOG_FRAGMENT_DELETE_SELECTED)
+                .show(requireActivity().getSupportFragmentManager(), TAG);
+    }
+
+
+    /**
+     * Synchronizuje stav AppBar akcí pro multi-výběr podle aktuálního počtu označených položek.
+     *
+     * @param selectedCount     počet vybraných položek
+     * @param isMultiSelectMode {@code true}, pokud je aktivní režim vícenásobného výběru
+     */
+    private void updateDeleteSelectedAction(int selectedCount, boolean isMultiSelectMode) {
+        boolean wasMultiSelectVisible = deleteSelectedActionVisible;
+        selectedFilesCount = selectedCount;
+        deleteSelectedActionVisible = isMultiSelectMode;
+        if (menuItemDeleteSelected != null) {
+            menuItemDeleteSelected.setVisible(isMultiSelectMode);
+            menuItemDeleteSelected.setEnabled(selectedCount > 0);
+            menuItemDeleteSelected.setTitle(getString(R.string.delete_selected_backups_button, selectedCount));
+        }
+        if (menuItemCancelSelection != null) {
+            menuItemCancelSelection.setVisible(isMultiSelectMode);
+        }
+        if (wasMultiSelectVisible && !isMultiSelectMode && selectedCount == 0) {
+            if (!suppressSelectionCanceledSnackbar && isAdded()) {
+                Snackbar.make(requireView(), getString(R.string.selection_canceled), Snackbar.LENGTH_SHORT).show();
+            }
+            suppressSelectionCanceledSnackbar = false;
+        }
+    }
+
+
+    /**
+     * Povolení/zakázání AppBar akce pro vytvoření zálohy.
+     *
+     * @param enabled {@code true}, pokud má být akce aktivní
+     */
+    private void updateBackupActionEnabled(boolean enabled) {
+        backupActionEnabled = enabled;
+        if (menuItemBackup != null)
+            menuItemBackup.setEnabled(enabled);
+    }
+
+
+    /**
+     * Obnoví výběr položek po znovuvytvoření fragmentu (např. po rotaci obrazovky).
+     */
+    private void restoreSelectionIfNeeded() {
+        if (backupAdapter == null || pendingSelectedBackupUris == null || pendingSelectedBackupUris.isEmpty())
+            return;
+        if (documentFiles == null || documentFiles.isEmpty())
+            return;
+
+        int restoredCount = backupAdapter.restoreSelectionByUris(pendingSelectedBackupUris);
+        if (restoredCount >= 0)
+            pendingSelectedBackupUris.clear();
+    }
+
+
+    /**
+     * Nastaví vhodný LayoutManager pro seznam záloh podle orientace obrazovky.
+     *
+     * <p>V portrait se používá lineární seznam, v landscape mřížka se dvěma sloupci.</p>
+     */
+    private void setupRecyclerViewLayoutManager() {
+        if (recyclerView == null)
+            return;
+
+        if (getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         }
     }
 
