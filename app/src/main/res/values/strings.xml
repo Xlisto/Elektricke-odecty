@@ -619,4 +619,6 @@
 
     <string name="delete_file_with_pricelist">Smazat soubor s ceníkem</string>
     <string name="upload_file_with_pricelist">Nahrát ceník do aplikace</string>
+    <string name="upload_to_drive">na disk</string>
+    <string name="more_options">Další možnosti</string>
 </resources>

@@ -6,7 +6,8 @@
     android:layout_marginBottom="2dp"
     android:layout_marginTop="2dp"
     android:animateLayoutChanges="false"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/imgIconFile"
@@ -26,6 +27,7 @@
 
     <LinearLayout
         android:id="@+id/lnButtonsBackup"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTypeBackup"
@@ -35,6 +37,7 @@
 
         <Button
             android:id="@+id/btnRestoreBackup"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -45,16 +48,18 @@
 
         <Button
             android:id="@+id/btnUploadBackup"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:clickable="false"
-            android:text="na disk" />
+            android:text="@string/google_drive" />
 
         <Button
             android:id="@+id/btnDeleteBackup"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -80,7 +85,7 @@
         android:id="@+id/tvNameBackup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_alignTop="@id/imgIconFile"
         android:layout_toEndOf="@+id/imgIconFile"
         android:layout_toStartOf="@id/cbSelectBackup"
         android:clickable="false"
@@ -108,6 +113,7 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
+        android:contentDescription="@string/select"
         android:src="@drawable/ic_more" />
 
 </RelativeLayout>
