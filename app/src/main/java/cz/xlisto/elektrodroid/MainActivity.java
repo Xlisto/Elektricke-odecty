@@ -475,7 +475,10 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         boolean showBottomNavigation = shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true);
         boolean showLeftNavigation = shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true);
         myBottomNavigationView.setVisibility(orientation == 1 && showBottomNavigation ? View.VISIBLE : View.GONE);
-        myNavigationView.setVisibility(orientation == 2 && showLeftNavigation ? View.VISIBLE : View.GONE);
+        // V landscape nahrazuje levé menu spodní navigaci.
+        boolean showLeftReplacement = orientation == Configuration.ORIENTATION_LANDSCAPE
+                && (showBottomNavigation || showLeftNavigation);
+        myNavigationView.setVisibility(showLeftReplacement ? View.VISIBLE : View.GONE);
     }
 
 
