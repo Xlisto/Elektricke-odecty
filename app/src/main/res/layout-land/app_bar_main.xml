@@ -42,7 +42,7 @@
         android:visibility="gone"
         app:itemIconTint="@color/bnv"
         app:itemTextColor="@color/bnv"
-        app:menu="@menu/menu_bottom_menu" />
+        app:menu="@menu/menu_main_bottom" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
@@ -54,7 +54,7 @@
         app:itemTextColor="@color/bnv"
         app:itemIconTint="@color/bnv"
         app:itemBackground="@drawable/nav_item_background"
-        app:menu="@menu/menu_navigation_menu" />
+        app:menu="@menu/menu_main_left" />
 
 
 </RelativeLayout>
