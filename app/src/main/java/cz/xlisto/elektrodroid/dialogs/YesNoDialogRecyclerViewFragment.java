@@ -19,10 +19,11 @@ import cz.xlisto.elektrodroid.utils.JSONPriceList;
 
 
 /**
- * Xlisto 09.12.2023 9:12
+ * Rozšíření {@link YesNoDialogFragment} o seznam ceníků v {@link RecyclerView}.
+ * Dialog umožňuje vybrat více sazeb, které se po potvrzení vrátí volajícímu
+ * přes Fragment Result API.
  */
 public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
-    private static final String TAG = "YesNoDialogRecyclerViewFragment";
     public static final String SELECTED_ARRAYLIST = "selectedArrayList";
     public static final String PRICE_ARRAYLIST = "priceArrayList";
     private static DocumentFile documentFile;
@@ -30,6 +31,14 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
     YesNoDialogRecyclerViewAdapter yesNoDialogRecyclerViewAdapter;
 
 
+    /**
+     * Vytvoří novou instanci dialogu s datovým souborem ceníku.
+     *
+     * @param title                    titulek dialogu
+     * @param flagResultDialogFragment klíč pro vrácení výsledku
+     * @param documentFile             JSON soubor se seznamem ceníků
+     * @return instance fragmentu
+     */
     public static YesNoDialogRecyclerViewFragment newInstance(String title, String flagResultDialogFragment, DocumentFile documentFile) {
         YesNoDialogRecyclerViewFragment yesNoDialogRecyclerViewFragment = new YesNoDialogRecyclerViewFragment();
         yesNoDialogRecyclerViewFragment.title = title;
@@ -38,8 +47,15 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         return yesNoDialogRecyclerViewFragment;
     }
 
+    /**
+     * Sestaví dialog s výběrem více položek ceníku.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
+    @SuppressWarnings("unchecked")
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         JSONPriceList jsonPriceList = new JSONPriceList();
@@ -87,6 +103,20 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
     }
 
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Parent class (YesNoDialogFragment) aplikuje DialogButtonColorHelper.
+    }
+
+    /**
+     * Uloží seznam ceníků pro obnovu dialogu po změně konfigurace.
+     *
+     * @param outState výstupní bundle pro persistenci stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

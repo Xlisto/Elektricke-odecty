@@ -2,34 +2,38 @@ package cz.xlisto.elektrodroid.modules.backup;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.xlisto.elektrodroid.permission.Files;
 
 
 /**
- * ViewModel pro správu záloh a načítání souborů.
+ * ViewModel pro správu lokálních záloh a stavu jejich nahrávání na Google Drive.
  *
- * <p>Spravuje stav a data pro UI při práci se zálohami:
- * - poskytuje {@code LiveData<ArrayList<DocumentFile>} s nalezenými soubory,
- * - poskytuje {@code LiveData<Boolean>} indikující, zda probíhá načítání,
- * - poskytuje {@code LiveData<Boolean>} s informací o oprávnění k adresáři.</p>
- *
- * <p>Načítání souborů probíhá asynchronně přes {@code Files.loadFiles} a interní
- * {@code Handler}, výsledky jsou publikovány do {@code documentFilesLiveData}.
- * Kontrola oprávnění je dostupná přes {@code checkPermission}.</p>
+ * <p>Třída drží data i stav operací nezávisle na životním cyklu Fragmentu, takže
+ * UI může bezpečně přežít změny konfigurace (např. rotaci obrazovky). Poskytuje:</p>
+ * <ul>
+ *   <li>seznam načtených lokálních záloh ({@link #getDocumentFiles()}),</li>
+ *   <li>stav načítání ({@link #getIsLoading()}),</li>
+ *   <li>informaci o oprávnění k přístupu do složky ({@link #getHasPermission()}),</li>
+ *   <li>stav hromadného uploadu na Google Drive ({@link #getUploadState()}).</li>
+ * </ul>
  */
 public class BackupViewModel extends ViewModel {
 
@@ -39,24 +43,149 @@ public class BackupViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> hasPermission = new MutableLiveData<>(false);
 
+    // ---- Upload state ----
+
+    public enum UploadStatus {
+        IDLE, IN_PROGRESS, FINISHED, FAILED
+    }
+
     /**
-     * Handler běžící na hlavním vlákně (Looper.getMainLooper()) pro zpracování výsledků
-     * asynchronního načítání souborů.
-     * <p>
-     * Očekává, že `msg.obj` bude instance `ArrayList<DocumentFile>`. Po přijetí zprávy:
-     * - publikujeme výsledky voláním `setDocumentFiles(...)`,
-     * - odstraníme všechny naplánované callbacky a zprávy z tohoto handleru,
-     * - odstraníme případné další zprávy se stejným kódem definovaným v `MSG_LOAD_FILES`,
-     * - nastavíme `isLoading` na `false` (pomocí `postValue`).
-     * <p>
-     * Poznámka: protože handler běží na hlavním vlákně, jsou aktualizace `LiveData`
-     * bezpečné. Pokud `msg.obj` nemá očekávaný typ, může dojít k `ClassCastException`.
+     * Neměnný stav uploadu lokálních záloh na Google Drive.
+     *
+     * @param status        aktuální fáze operace
+     * @param success       informace o úspěchu při finálním stavu
+     * @param uploadedCount počet dosud nahraných souborů
+     * @param totalCount    celkový počet souborů určených k nahrání
+     * @param errorMessage  chybová zpráva pro UI (pouze při FAILED)
+     */
+    public record UploadState(UploadStatus status, boolean success, int uploadedCount, int totalCount,
+                              @Nullable String errorMessage) {
+
+        /**
+         * Vrátí výchozí klidový stav bez aktivního uploadu.
+         *
+         * @return stav {@link UploadStatus#IDLE}
+         */
+        public static UploadState idle() {
+            return new UploadState(UploadStatus.IDLE, false, 0, 0, null);
+        }
+
+        /**
+         * Vrátí průběžný stav uploadu.
+         *
+         * @param processed počet již zpracovaných souborů
+         * @param total     celkový počet souborů
+         * @return stav {@link UploadStatus#IN_PROGRESS}
+         */
+        public static UploadState inProgress(int processed, int total) {
+            return new UploadState(UploadStatus.IN_PROGRESS, false, processed, total, null);
+        }
+
+        /**
+         * Vrátí finální stav po dokončení uploadu.
+         *
+         * @param success       {@code true}, pokud byly nahrány všechny soubory
+         * @param uploadedCount počet úspěšně nahraných souborů
+         * @param totalCount    celkový počet souborů
+         * @return stav {@link UploadStatus#FINISHED}
+         */
+        public static UploadState finished(boolean success, int uploadedCount, int totalCount) {
+            return new UploadState(UploadStatus.FINISHED, success, uploadedCount, totalCount, null);
+        }
+
+        /**
+         * Vrátí chybový stav uploadu.
+         *
+         * @param errorMessage popis chyby určený pro zobrazení uživateli
+         * @return stav {@link UploadStatus#FAILED}
+         */
+        public static UploadState failed(String errorMessage) {
+            return new UploadState(UploadStatus.FAILED, false, 0, 0, errorMessage);
+        }
+    }
+
+    private final MutableLiveData<UploadState> uploadStateLiveData = new MutableLiveData<>(UploadState.idle());
+
+    /**
+     * Vrátí lifecycle-aware stream stavu uploadu na Google Drive.
+     *
+     * @return {@link LiveData} s hodnotou {@link UploadState}
+     */
+    public LiveData<UploadState> getUploadState() {
+        return uploadStateLiveData;
+    }
+
+    /**
+     * Indikuje, zda právě probíhá upload.
+     *
+     * @return {@code true}, pokud je aktuální stav {@link UploadStatus#IN_PROGRESS}
+     */
+    public boolean isUploadInProgress() {
+        UploadState state = uploadStateLiveData.getValue();
+        return state != null && state.status() == UploadStatus.IN_PROGRESS;
+    }
+
+    /**
+     * Resetuje stav uploadu do výchozího klidového stavu.
+     */
+    public void resetUploadToIdle() {
+        uploadStateLiveData.postValue(UploadState.idle());
+    }
+
+    /**
+     * Spustí nahrávání vybraných souborů na Google Drive v pozadí.
+     * Stav průběhu je dostupný přes {@link #getUploadState()}.
+     *
+     * @param appContext  application context (bez reference na Activity)
+     * @param userName    uživatelské jméno Google účtu
+     * @param selectedFiles seznam souborů k nahrání
+     */
+    public void startUpload(Context appContext, String userName, List<DocumentFile> selectedFiles) {
+        if (isUploadInProgress())
+            return;
+
+        if (selectedFiles == null || selectedFiles.isEmpty()) {
+            uploadStateLiveData.postValue(UploadState.failed("No files selected"));
+            return;
+        }
+
+        int totalCount = selectedFiles.size();
+        uploadStateLiveData.postValue(UploadState.inProgress(0, totalCount));
+
+        GoogleDriveService googleDriveService = new GoogleDriveService(appContext, userName);
+        googleDriveService.setOnDriveServiceListener(new GoogleDriveService.OnDriverServiceListener() {
+            @Override
+            public void onDriveServiceReady() {
+                int successCount = 0;
+                for (int i = 0; i < selectedFiles.size(); i++) {
+                    DocumentFile documentFile = selectedFiles.get(i);
+                    if (documentFile != null && googleDriveService.uploadFile(documentFile))
+                        successCount++;
+                    uploadStateLiveData.postValue(UploadState.inProgress(i + 1, totalCount));
+                }
+                final boolean success = successCount == totalCount;
+                uploadStateLiveData.postValue(UploadState.finished(success, successCount, totalCount));
+            }
+
+            @Override
+            public void onDriveServiceError(String errorMessage) {
+                uploadStateLiveData.postValue(UploadState.failed(errorMessage));
+            }
+        });
+    }
+
+    /**
+     * Handler na hlavním vlákně pro dokončení asynchronního načtení souborů.
+     *
+     * <p>Očekává, že {@code msg.obj} obsahuje {@code ArrayList<DocumentFile>}.
+     * Po přijetí výsledku publikuje data do {@link #documentFilesLiveData}
+     * a ukončí stav načítání.</p>
      */
     private final Handler handlerLoadFile = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
-            setDocumentFiles((ArrayList<DocumentFile>) msg.obj);
+            setDocumentFiles(extractDocumentFiles(msg.obj));
             handlerLoadFile.removeCallbacksAndMessages(null);
             handlerLoadFile.removeMessages(MSG_LOAD_FILES);
             isLoading.postValue(false);
@@ -65,12 +194,34 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData` objekt obsahující seznam souborů dokumentů.
-     * <p>
-     * Tato metoda vrací `LiveData` objekt, který obsahuje aktuální seznam souborů dokumentů.
-     * Tento seznam je aktualizován metodou `setDocumentFiles`.
+     * Bezpečně převede payload zprávy na seznam {@link DocumentFile} bez unchecked castu.
      *
-     * @return `LiveData` objekt obsahující seznam souborů dokumentů.
+     * @param payload data přijatá v {@code Message.obj}
+     * @return seznam souborů; při neplatném formátu prázdný seznam
+     */
+    private ArrayList<DocumentFile> extractDocumentFiles(@Nullable Object payload) {
+        ArrayList<DocumentFile> files = new ArrayList<>();
+        if (!(payload instanceof List<?> rawList)) {
+            if (payload != null)
+                Log.w(TAG, "Unexpected loadFiles payload type: " + payload.getClass().getName());
+            return files;
+        }
+
+        for (Object item : rawList) {
+            if (item instanceof DocumentFile documentFile) {
+                files.add(documentFile);
+            } else if (item != null) {
+                Log.w(TAG, "Ignoring non-DocumentFile item in payload: " + item.getClass().getName());
+            }
+        }
+        return files;
+    }
+
+
+    /**
+     * Vrátí stream aktuálního seznamu lokálních záložních souborů.
+     *
+     * @return {@link LiveData} se seznamem {@link DocumentFile}
      */
     public LiveData<ArrayList<DocumentFile>> getDocumentFiles() {
         return documentFilesLiveData;
@@ -78,11 +229,9 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Nastaví seznam souborů dokumentů.
-     * <p>
-     * Tato metoda aktualizuje `LiveData` objekt `documentFilesLiveData` s novým seznamem souborů dokumentů.
+     * Publikuje nový seznam lokálních záloh.
      *
-     * @param files Seznam souborů dokumentů, které mají být nastaveny.
+     * @param files seznam nalezených souborů
      */
     public void setDocumentFiles(ArrayList<DocumentFile> files) {
         documentFilesLiveData.postValue(files);
@@ -90,14 +239,11 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Načte soubory z určeného URI.
-     * <p>
-     * Tato metoda nastaví stav načítání na true a zavolá metodu `loadFiles` třídy `Files`,
-     * která načte soubory z daného URI pomocí zadaného `ActivityResultLauncher`.
+     * Spustí asynchronní načítání souborů ze zvoleného adresáře.
      *
-     * @param activity   Aktivita, ze které je metoda volána.
-     * @param uri        URI složky, ze které se mají načíst soubory.
-     * @param resultTree Launcher pro výsledek aktivity, který se použije pro načtení souborů.
+     * @param activity   hostitelská aktivita
+     * @param uri        URI složky se zálohami
+     * @param resultTree launcher pro případné dožádání oprávnění
      */
     public void loadFiles(Activity activity, Uri uri, ActivityResultLauncher<Intent> resultTree) {
         isLoading.postValue(true);
@@ -106,12 +252,9 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData` objekt obsahující stav načítání.
-     * <p>
-     * Tato metoda vrací `LiveData` objekt, který obsahuje aktuální stav načítání.
-     * Stav načítání je aktualizován metodou `loadFiles`.
+     * Vrátí stream stavu načítání lokálních záloh.
      *
-     * @return `LiveData` objekt obsahující stav načítání.
+     * @return {@link LiveData} s hodnotou {@code true}, pokud probíhá načítání
      */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
@@ -119,12 +262,9 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData<Boolean>` indikující, zda aplikace má oprávnění k vybranému URI.
+     * Vrátí stream informace o oprávnění k přístupu do zvolené složky.
      *
-     * <p>Hodnota je lifecycle\-aware a měla by být pozorována z UI komponent (Activity/Fragment).
-     * Aktualizuje se voláním `checkPermission` a poskytuje bezpečný způsob, jak reagovat na změny oprávnění.</p>
-     *
-     * @return `LiveData<Boolean>` s informací o oprávnění k adresáři.
+     * @return {@link LiveData} s informací, zda je přístup povolen
      */
     public LiveData<Boolean> getHasPermission() {
         return hasPermission;
@@ -132,16 +272,10 @@ public class BackupViewModel extends ViewModel {
 
 
     /**
-     * Zkontroluje oprávnění aplikace k zadanému adresáři (URI) a aktualizuje
-     * interní `LiveData<Boolean>` `hasPermission`.
+     * Ověří oprávnění aplikace k danému URI a publikuje výsledek do `hasPermission`.
      *
-     * <p>Metoda používá `Files.permissions(Activity, Uri)` pro ověření přístupu.
-     * Výsledek (true = má oprávnění, false = nemá) je nastaven pomocí
-     * `hasPermission.setValue(...)`, proto by měla být volána z UI vlákna
-     * nebo z lifecycle-aware kontextu (Activity/Fragment).</p>
-     *
-     * @param activity Activity použitá pro kontrolu oprávnění
-     * @param uri      URI adresáře, jehož oprávnění se kontroluje
+     * @param activity aktivita použitá při kontrole oprávnění
+     * @param uri      URI adresáře, ke kterému se má ověřit přístup
      */
     public void checkPermission(Activity activity, Uri uri) {
         boolean ok = Files.permissions(activity, uri);

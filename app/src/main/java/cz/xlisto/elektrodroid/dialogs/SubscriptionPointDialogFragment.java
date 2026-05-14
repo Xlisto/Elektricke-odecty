@@ -31,20 +31,33 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
- * Xlisto 12.02.2024 19:17
+ * Dialog pro výběr aktivního odběrného místa.
+ * <p>
+ * Načte dostupná odběrná místa z databáze, umožní volbu přes spinner nebo
+ * rychlá tlačítka a po výběru přepne aktivní odběrné místo v aplikaci.
  */
 public class SubscriptionPointDialogFragment extends DialogFragment {
 
-    private static final String TAG = "InvoiceDialogFragment";
     public static final String FLAG_UPDATE_SUBSCRIPTION_POINT = "invoiceDialogFragment";
     private final Button[] buttons = new Button[4];
 
 
+    /**
+     * Vytvoří novou instanci dialogu.
+     *
+     * @return instance fragmentu
+     */
     public static SubscriptionPointDialogFragment newInstance() {
         return new SubscriptionPointDialogFragment();
     }
 
 
+    /**
+     * Sestaví dialog a připraví seznam odběrných míst k výběru.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -115,7 +128,20 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
 
+    /**
+     * Lifecycle callback při odpojení fragmentu.
+     * Oznámí volajícímu, že může obnovit zobrazená data.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -123,6 +149,11 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Uloží zvolené odběrné místo do preference a obnoví hlavní obrazovku.
+     *
+     * @param subscriptionPoint vybrané odběrné místo
+     */
     private void setSubscriptionPoint(SubscriptionPointModel subscriptionPoint) {
         ShPSubscriptionPoint shp = new ShPSubscriptionPoint(requireContext());
         shp.set(ID_SUBSCRIPTION_POINT_LONG, subscriptionPoint.getId());
@@ -131,14 +162,26 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Adapter pro zobrazení odběrných míst ve spinneru.
+     */
     static class Adapter extends ArrayAdapter<SubscriptionPointModel> {
 
+        /**
+         * Vytvoří adapter dat odběrných míst.
+         *
+         * @param context            kontext pro inflaci layoutů
+         * @param subscriptionPoints data odběrných míst
+         */
         public Adapter(Context context, ArrayList<SubscriptionPointModel> subscriptionPoints) {
             super(context, android.R.layout.simple_spinner_item, subscriptionPoints);
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
 
 
+        /**
+         * Vrací view pro aktuálně zvolenou položku spinneru.
+         */
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -146,12 +189,23 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
         }
 
 
+        /**
+         * Vrací view pro položku v rozbaleném seznamu spinneru.
+         */
         @Override
         public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             return getCustomView(position, convertView, parent);
         }
 
 
+        /**
+         * Vytvoří nebo zrecykluje view položky a naplní ho daty odběrného místa.
+         *
+         * @param position    pozice položky
+         * @param convertView recyklovaný view, může být {@code null}
+         * @param parent      rodičovský kontejner
+         * @return naplněné view položky
+         */
         private View getCustomView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);

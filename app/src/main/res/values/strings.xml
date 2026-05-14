@@ -88,6 +88,7 @@
     <string name="label_price_detail">Detail</string>
     <string name="label_price_item">ItemPrice</string>
     <string name="label_item">Item</string>
+    <string name="price_list_item_label">%1$s, %2$s</string>
 
     <string name="description_date_from">Platnost od</string>
     <string name="description_date_until">Platnost do</string>
@@ -533,6 +534,8 @@
     <string name="create_folder">Složka na Google Drive</string>
     <string name="sign_in">Přihlásit</string>
     <string name="sign_out">Odhlásit</string>
+    <string name="sign_in_no_credentials">Není dostupný žádný účet Google. Přidejte účet v zařízení a zkuste to znovu.</string>
+    <string name="sign_in_failed">Přihlášení se nepodařilo. Zkuste to prosím znovu.</string>
     <string name="btn_set_default_folder">Výchozí složka</string>
     <string name="btn_create_folder">Vytvoř složku</string>
     <string name="deleted_file">Soubor byl smazán</string>
@@ -587,6 +590,23 @@
     <string name="delete_selected_backups_button">Smaž vybrané (%1$d)</string>
     <string name="delete_selected_backups_button_default">Smaž vybrané</string>
     <string name="select_backup_files_to_delete">Nejprve vyberte soubory ke smazání</string>
+    <string name="upload_selected_backups_button">Odeslat na Google Drive</string>
+    <string name="upload_selected_backups_title">Odesílání na Google Drive</string>
+    <string name="upload_selected_backups_in_progress">Nahrávám zálohy na Google Drive (%1$d/%2$d)</string>
+    <string name="upload_completed">Nahrávání dokončeno</string>
+    <string name="select_backup_files_to_upload">Nejprve vyberte soubory k odeslání</string>
+    <string name="uploaded_selected_backups">Soubory byly nahrány na Google Drive (%1$d/%2$d)</string>
+    <string name="partially_uploaded_selected_backups">Některé soubory se nepodařilo nahrát na Google Drive (%1$d/%2$d)</string>
+    <string name="not_uploaded_selected_backups">Soubory se nepodařilo nahrát na Google Drive (%1$d/%2$d)</string>
+    <string name="delete_selected_google_drive_files_button">Smazat vybrané (%1$d)</string>
+    <string name="delete_selected_google_drive_files_button_default">Smazat vybrané</string>
+    <string name="delete_selected_google_drive_files_title">Mazání z Google Drive</string>
+    <string name="delete_selected_google_drive_files_in_progress">Mažu vybrané soubory na Google Drive (%1$d/%2$d)</string>
+    <string name="deleted_selected_google_drive_files">Vybrané soubory byly smazány</string>
+    <string name="partially_deleted_selected_google_drive_files">Některé soubory se nepodařilo smazat (%1$d/%2$d)</string>
+    <string name="not_deleted_selected_google_drive_files">Vybrané soubory se nepodařilo smazat</string>
+    <string name="upload_success_google_drive">Úspěšně nahráno na Google Drive</string>
+    <string name="google_drive_service_init_failed">Nepodařilo se připravit Google Drive pro nahrávání</string>
     <string name="cancel_selection">Zrušit výběr</string>
     <string name="selection_canceled">Výběr zrušen</string>
     <string name="rename_folder">Přejmenovat složku</string>
@@ -594,6 +614,7 @@
     <string name="recover_backup">Obnovit zálohu</string>
     <string name="no_signs">Nepřihlášen</string>
     <string name="internet_is_not_available">Internetové připojení není dostupné</string>
+    <string name="google_drive_signed_out_warning">Jste odhlášen. Pro zobrazení obsahu se přihlaste přes ikonu v horní liště.</string>
 
     <string name="formatted_price">%1$s %2$s</string>
     <string name="kwh_vt">1 kwh VT:</string>

@@ -52,5 +52,11 @@
     <color name="text_primary">#FF000000</color>      <!-- primární text -->
     <color name="text_secondary">#FF222222</color>    <!-- sekundární text (tvoje "gray") -->
 
+    <!-- Dialogs (light) -->
+    <color name="dialog_bg">#FFFFFFFF</color>
+    <color name="dialog_border">#26000000</color>
+    <color name="dialog_text_primary">#FF000000</color>
+    <color name="dialog_button_text">#FF6200EE</color>
+    <color name="dialog_button_text_disabled">#FFB0B0B0</color>
 
 </resources>

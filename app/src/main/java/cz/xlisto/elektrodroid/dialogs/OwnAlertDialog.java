@@ -15,7 +15,9 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Třída OwnAlertDialog, která rozšiřuje DialogFragment pro zobrazení vlastního dialogového okna.
+ * Jednoduchý upozorňovací dialog s titulkem, zprávou a tlačítkem potvrzení.
+ * Dialog lze použít přímo přes statické metody {@code showDialog(...)} a volitelně
+ * poslouchat jeho zavření přes {@link OnDialogDismissListener}.
  */
 public class OwnAlertDialog extends DialogFragment {
 
@@ -98,6 +100,9 @@ public class OwnAlertDialog extends DialogFragment {
      */
     public interface OnDialogDismissListener {
 
+        /**
+         * Volá se při zavření dialogu.
+         */
         void onDialogDismissed();
 
     }
@@ -127,6 +132,16 @@ public class OwnAlertDialog extends DialogFragment {
         OwnAlertDialog dialog = OwnAlertDialog.newInstance(title, message);
         dialog.setOnDialogDismissListener(listener);
         dialog.show(activity.getSupportFragmentManager(), "OwnAlertDialog");
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 
 }

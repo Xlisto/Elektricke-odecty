@@ -59,25 +59,48 @@ public class YesNoDialogFragment extends DialogFragment {
      */
     public static YesNoDialogFragment newInstance(String title, String flagResultDialogFragment, String message) {
         YesNoDialogFragment yesNoDialogFragment = new YesNoDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putString(MESSAGE, message);
+        args.putString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
+        yesNoDialogFragment.setArguments(args);
+
+        // Zachováno i v polích pro kompatibilitu se stávajícím kódem/subclassy.
         yesNoDialogFragment.title = title;
         yesNoDialogFragment.message = message;
         yesNoDialogFragment.flagResultDialogFragment = flagResultDialogFragment;
         return yesNoDialogFragment;
     }
 
-
+    /**
+     * Sestaví dialog ANO/NE a nastaví vrácení výsledku přes Fragment Result API.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            title = savedInstanceState.getString(TITLE);
-            message = savedInstanceState.getString(MESSAGE);
-            flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT);
+        if (getArguments() != null) {
+            title = getArguments().getString(TITLE, title);
+            message = getArguments().getString(MESSAGE, message);
+            flagResultDialogFragment = getArguments().getString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
         }
+
+        if (savedInstanceState != null) {
+            title = savedInstanceState.getString(TITLE, title);
+            message = savedInstanceState.getString(MESSAGE, message);
+            flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
+        }
+
         builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
         builder.setIcon(R.drawable.ic_warning_png);
-        builder.setMessage(message);
+
+        if (message != null && !message.trim().isEmpty()) {
+            builder.setMessage(message);
+        }
+
         builder.setPositiveButton(getResources().getString(R.string.ano), (dialog, which) -> {
             Bundle bundle = new Bundle();
             bundle.putBoolean(RESULT, true);
@@ -92,6 +115,21 @@ public class YesNoDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
+
+    /**
+     * Uloží aktuální stav dialogu pro obnovu po změně konfigurace.
+     *
+     * @param outState výstupní bundle pro persistenci stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

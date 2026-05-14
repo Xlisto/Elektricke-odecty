@@ -40,15 +40,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
+import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
+import cz.xlisto.elektrodroid.utils.NetworkUtil;
 
 
 /**
@@ -82,6 +86,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private MenuItem menuItemBackup;
     private MenuItem menuItemDeleteSelected;
     private MenuItem menuItemCancelSelection;
+    private MenuItem menuItemUploadSelected;
     private boolean backupActionEnabled = true;
     private boolean deleteSelectedActionVisible = false;
     private int selectedFilesCount = 0;
@@ -90,6 +95,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private RecyclerView recyclerView;
     private ArrayList<DocumentFile> documentFiles = new ArrayList<>(); //seznam souborů
     private LinearLayout lnProgressBar;
+    private BackupUploadDialogFragment backupUploadDialogFragment;
     private BackupAdapter backupAdapter;
     private ConnectivityManager connectivityManager;
     private NetworkCallbackImpl networkCallback;
@@ -197,8 +203,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                 menuItemBackup = menu.findItem(R.id.menu_action_backup_create);
                 menuItemDeleteSelected = menu.findItem(R.id.menu_action_backup_delete_selected);
                 menuItemCancelSelection = menu.findItem(R.id.menu_action_backup_cancel_selection);
+                menuItemUploadSelected = menu.findItem(R.id.menu_action_backup_upload_selected);
                 updateBackupActionEnabled(backupActionEnabled);
-                updateDeleteSelectedAction(selectedFilesCount, deleteSelectedActionVisible);
+                updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible);
             }
 
 
@@ -215,6 +222,19 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                 }
                 if (itemId == R.id.menu_action_backup_delete_selected) {
                     showDeleteSelectedDialog();
+                    return true;
+                }
+                if (itemId == R.id.menu_action_backup_upload_selected) {
+                    if (backupAdapter == null || backupAdapter.getSelectedItemCount() == 0) {
+                        Snackbar.make(requireView(), getString(R.string.select_backup_files_to_upload), Snackbar.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    if (backupAdapter != null) {
+                        List<androidx.documentfile.provider.DocumentFile> filesToUpload = backupAdapter.getSelectedDocumentFiles();
+                        ShPGoogleDrive shPGoogleDrive = new ShPGoogleDrive(requireContext());
+                        String userName = shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "");
+                        backupViewModel.startUpload(requireContext().getApplicationContext(), userName, filesToUpload);
+                    }
                     return true;
                 }
                 if (itemId == R.id.menu_action_backup_cancel_selection) {
@@ -270,9 +290,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         backupViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {
             this.documentFiles = documentFiles;
             backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery, null,
-                    this::updateDeleteSelectedAction);
+                    this::updateSelectionActions, null);
             recyclerView.setAdapter(backupAdapter);
-            updateDeleteSelectedAction(0, false);
+            updateSelectionActions(0, false);
             restoreSelectionIfNeeded();
             showLnProgressBar(false);
         });
@@ -291,6 +311,33 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                             .setAction(getResources().getString(R.string.select), v -> Files.openTree(false, requireActivity(), resultTree))
                             .show();
                 }
+            }
+        });
+
+        backupViewModel.getUploadState().observe(getViewLifecycleOwner(), state -> {
+            if (state == null) return;
+            switch (state.status()) {
+                case IN_PROGRESS:
+                    backupUploadDialogFragment = ensureUploadDialog(state.totalCount());
+                    backupUploadDialogFragment.showProgress(state.uploadedCount(), state.totalCount());
+                    break;
+                case FINISHED:
+                    backupUploadDialogFragment = ensureUploadDialog(state.totalCount());
+                    backupUploadDialogFragment.showResult(state.success(), state.uploadedCount(), state.totalCount());
+                    if (state.success() && backupAdapter != null) {
+                        suppressSelectionCanceledSnackbar = true;
+                        backupAdapter.cancelMultiSelect();
+                        Snackbar.make(requireView(), getString(R.string.upload_completed), Snackbar.LENGTH_SHORT).show();
+                    }
+                    backupViewModel.resetUploadToIdle();
+                    break;
+                case FAILED:
+                    backupUploadDialogFragment = ensureUploadDialog(0);
+                    backupUploadDialogFragment.showFailure(state.errorMessage() != null ? state.errorMessage() : "");
+                    backupViewModel.resetUploadToIdle();
+                    break;
+                default:
+                    break;
             }
         });
 
@@ -338,6 +385,16 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     public void onDestroy() {
         super.onDestroy();
         connectivityManager.unregisterNetworkCallback(networkCallback);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (backupUploadDialogFragment != null && backupUploadDialogFragment.isAdded()) {
+            backupUploadDialogFragment.dismissAllowingStateLoss();
+        }
+        backupUploadDialogFragment = null;
     }
 
 
@@ -402,6 +459,8 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     public void onNetworkAvailable() {
         Log.w(TAG, "Network is available");
         notifyDataChanged();
+        if (isAdded())
+            requireActivity().runOnUiThread(() -> updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible));
     }
 
 
@@ -414,7 +473,11 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     public void onNetworkLost() {
         Log.w(TAG, "Network is lost");
         notifyDataChanged();
+        if (isAdded())
+            requireActivity().runOnUiThread(() -> updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible));
     }
+
+
 
 
     /**
@@ -481,6 +544,51 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             }
             suppressSelectionCanceledSnackbar = false;
         }
+    }
+
+
+    /**
+     * Synchronizuje stav AppBar akcí pro multi-výběr podle aktuálního počtu označených položek.
+     *
+     * @param selectedCount     počet vybraných položek
+     * @param isMultiSelectMode {@code true}, pokud je aktivní režim vícenásobného výběru
+     */
+    private void updateSelectionActions(int selectedCount, boolean isMultiSelectMode) {
+        updateDeleteSelectedAction(selectedCount, isMultiSelectMode);
+        updateUploadSelectedAction(selectedCount, isMultiSelectMode);
+    }
+
+
+    private BackupUploadDialogFragment ensureUploadDialog(int totalCount) {
+        if (backupUploadDialogFragment != null && backupUploadDialogFragment.isAdded()) {
+            return backupUploadDialogFragment;
+        }
+
+        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager().findFragmentByTag(BackupUploadDialogFragment.TAG);
+        if (existing instanceof BackupUploadDialogFragment) {
+            backupUploadDialogFragment = (BackupUploadDialogFragment) existing;
+            return backupUploadDialogFragment;
+        }
+
+        backupUploadDialogFragment = BackupUploadDialogFragment.newInstance(totalCount);
+        backupUploadDialogFragment.show(requireActivity().getSupportFragmentManager(), BackupUploadDialogFragment.TAG);
+        return backupUploadDialogFragment;
+    }
+
+
+    /**
+     * Synchronizuje viditelnost a aktivitu akce pro odeslání vybraných záloh na Google Drive.
+     *
+     * @param selectedCount     počet vybraných položek
+     * @param isMultiSelectMode {@code true}, pokud je aktivní režim vícenásobného výběru
+     */
+    private void updateUploadSelectedAction(int selectedCount, boolean isMultiSelectMode) {
+        if (menuItemUploadSelected == null)
+            return;
+
+        boolean isOnline = NetworkUtil.isInternetAvailable(requireContext());
+        menuItemUploadSelected.setVisible(isMultiSelectMode);
+        menuItemUploadSelected.setEnabled(isMultiSelectMode && selectedCount > 0 && isOnline);
     }
 
 

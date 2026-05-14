@@ -22,11 +22,12 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Dialogové okno se spinnerem pro výběr kódu
- * Xlisto 11.07.2023 5:31
+ * Dialog pro výběr HDO kódu, skupiny a kategorie.
+ * <p>
+ * Podporuje standardní i výjimečnou oblast. Výsledek je předán přes
+ * Fragment Result API pod klíčem zadaným při vytvoření instance.
  */
 public class SelectHdoCategoryDialogFragment extends DialogFragment {
-    private static final String TAG = "SpinnerDialogFragment";
     public static final String ARG_TITLE = "title";
     public static final String ARG_CODE = "code";
     public static final String ARG_GROUP = "group";
@@ -55,6 +56,19 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     private boolean isExceptionArea = false;
 
 
+    /**
+     * Vytvoří novou instanci dialogu s daty pro obě varianty oblasti.
+     *
+     * @param title                    titulek dialogu
+     * @param codes                    seznam kódů pro standardní oblast
+     * @param codesException           seznam kódů pro výjimečnou oblast
+     * @param groupsList               dvojice skupina/kategorie pro standardní oblast
+     * @param groupExceptionList       dvojice skupina/kategorie pro výjimečnou oblast
+     * @param area                     název standardní oblasti
+     * @param exceptionArea            název výjimečné oblasti
+     * @param flagResultDialogFragment klíč pro odeslání výsledku
+     * @return připravená instance dialogu
+     */
     public static SelectHdoCategoryDialogFragment newInstance(String title, ArrayList<String> codes, ArrayList<String> codesException, ArrayList<String[]> groupsList, ArrayList<String[]> groupExceptionList, String area, String exceptionArea, String flagResultDialogFragment) {
         SelectHdoCategoryDialogFragment selectHdoCategoryDialogFragment = new SelectHdoCategoryDialogFragment();
         selectHdoCategoryDialogFragment.title = title;
@@ -69,6 +83,12 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Sestaví dialog, obnoví stav po rotaci a nastaví předání vybraných dat.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -82,10 +102,10 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
 
         if (savedInstanceState != null) {
             builder.setTitle(savedInstanceState.getString(ARG_TITLE));
-            codes = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES);
-            groupsList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUPS_LIST);
-            codesException = (ArrayList<String>) savedInstanceState.getSerializable(ARG_CODES_EXCEPTION);
-            groupExceptionList = (ArrayList<String[]>) savedInstanceState.getSerializable(ARG_GROUP_EXCEPTION_LIST);
+            codes = savedInstanceState.getStringArrayList(ARG_CODES);
+            groupsList = decodeGroupList(savedInstanceState.getStringArrayList(ARG_GROUPS_LIST));
+            codesException = savedInstanceState.getStringArrayList(ARG_CODES_EXCEPTION);
+            groupExceptionList = decodeGroupList(savedInstanceState.getStringArrayList(ARG_GROUP_EXCEPTION_LIST));
             exceptionArea = savedInstanceState.getString(ARG_EXCEPTION_AREA);
             area = savedInstanceState.getString(ARG_AREA);
             isExceptionArea = savedInstanceState.getBoolean(ARG_IS_EXCEPTION);
@@ -147,15 +167,29 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
 
+    /**
+     * Uloží aktuální stav dialogu pro obnovu po změně konfigurace.
+     *
+     * @param outState výstupní bundle pro persistenci stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ARG_TITLE, title);
-        outState.putSerializable(ARG_CODES, codes);
-        outState.putSerializable(ARG_CODES_EXCEPTION, codesException);
-        outState.putSerializable(ARG_GROUPS_LIST, groupsList);
-        outState.putSerializable(ARG_GROUP_EXCEPTION_LIST, groupExceptionList);
+        outState.putStringArrayList(ARG_CODES, codes);
+        outState.putStringArrayList(ARG_CODES_EXCEPTION, codesException);
+        outState.putStringArrayList(ARG_GROUPS_LIST, encodeGroupList(groupsList));
+        outState.putStringArrayList(ARG_GROUP_EXCEPTION_LIST, encodeGroupList(groupExceptionList));
         outState.putBoolean(ARG_IS_EXCEPTION, isExceptionArea);
         outState.putString(ARG_AREA, area);
         outState.putString(ARG_EXCEPTION_AREA, exceptionArea);
@@ -164,7 +198,60 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Nastaví data spinneru.
+     *
+     * @param list seznam položek pro zobrazení
+     */
     private void setAdapter(ArrayList<String> list) {
         spinner.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, list));
+    }
+
+    /**
+     * Zakóduje seznam dvojic skupina/kategorie do StringArrayList pro uložení do Bundle.
+     *
+     * @param source seznam dvojic [skupina, kategorie]
+     * @return zakódovaný seznam řetězců
+     */
+    private ArrayList<String> encodeGroupList(ArrayList<String[]> source) {
+        if (source == null)
+            return null;
+
+        ArrayList<String> encoded = new ArrayList<>(source.size());
+        for (String[] item : source) {
+            if (item == null || item.length < 2) {
+                encoded.add("\u0001");
+            } else {
+                encoded.add((item[0] == null ? "" : item[0]) + "\u0001" + (item[1] == null ? "" : item[1]));
+            }
+        }
+        return encoded;
+    }
+
+    /**
+     * Dekóduje seznam dvojic skupina/kategorie uložený jako StringArrayList.
+     *
+     * @param source zakódovaný seznam řetězců
+     * @return seznam dvojic [skupina, kategorie]
+     */
+    private ArrayList<String[]> decodeGroupList(ArrayList<String> source) {
+        if (source == null)
+            return null;
+
+        ArrayList<String[]> decoded = new ArrayList<>(source.size());
+        for (String item : source) {
+            if (item == null) {
+                decoded.add(new String[]{"", ""});
+                continue;
+            }
+
+            String[] parts = item.split("\u0001", 2);
+            if (parts.length < 2) {
+                decoded.add(new String[]{parts[0], ""});
+            } else {
+                decoded.add(parts);
+            }
+        }
+        return decoded;
     }
 }

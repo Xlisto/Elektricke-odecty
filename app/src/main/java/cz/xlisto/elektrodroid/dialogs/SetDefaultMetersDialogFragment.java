@@ -17,12 +17,13 @@ import cz.xlisto.elektrodroid.ownview.LabelEditText;
 
 
 /**
- * Dialogové okno pro nastavení výchozích stavů měřičů, pro případ, když není použitá faktura
- * Xlisto 02.04.2024 21:53
+ * Dialogové okno pro nastavení výchozích stavů měřičů bez použití faktury.
+ * <p>
+ * Umožňuje zadat hodnoty VT/NT a datum odečtu, které se následně vrací
+ * volajícímu přes Fragment Result API.
  */
 public class SetDefaultMetersDialogFragment extends DialogFragment {
 
-    private static final String TAG = "SetDefaultMetersDialogFragment";
     public static final String FLAG_RESULT_DIALOG_FRAGMENT = "flagResultSetDefaultMetersDialogFragment";
     public static final String RESULT = "result";
     private static final String ARG_FIRST_METERS = "firstMeters";
@@ -30,6 +31,13 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
     private Calendar calendar;
 
 
+    /**
+     * Vytvoří novou instanci dialogu.
+     *
+     * @param firstMeters serializovaná data výchozích měřičů ve formátu
+     *                    {@code timestamp;vt;nt}
+     * @return instance dialogu
+     */
     public static SetDefaultMetersDialogFragment newInstance(String firstMeters) {
         SetDefaultMetersDialogFragment fragment = new SetDefaultMetersDialogFragment();
         Bundle args = new Bundle();
@@ -39,6 +47,12 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Sestaví dialog a obnoví předchozí hodnoty z argumentů nebo saved state.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -88,7 +102,20 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
 
+    /**
+     * Lifecycle callback při odpojení fragmentu.
+     * Odesílá prázdný výsledek jako signalizaci zavření dialogu.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -96,6 +123,11 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Uloží aktuální stav hodnot VT/NT a data pro obnovu po rotaci.
+     *
+     * @param outState výstupní bundle pro persistenci stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -66,7 +66,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
 
-    private final String TAG = "MonthlyReadingAddEditFragmentAbstract";
     Button btnBack, btnSave, btnDate, btnSelectPriceList;
     LabelEditText labVT, labNT, labPayment, labDescription, labOtherService;
     CheckBox cbAddPayment, cbChangeMeter, cbShowDescription, cbAddBackup, cbSendBackup;
@@ -82,9 +81,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     boolean isChangeMeter = false;
     boolean internetAvailable;
     private static boolean restoredSharedPreferences = false;
-    int countMonthlyReading = 0;
     DocumentFile backupFile;
-    String folderId;
     View view;
     protected MonthlyReadingViewModel viewModel;
     //handler pro zálohu na google drive, spouští se po vytvoření záložního ZIP souboru
@@ -96,11 +93,10 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
             ShPGoogleDrive shPGoogleDrive = new ShPGoogleDrive(requireContext());
             if (cbSendBackup.isChecked()) {
                 if (shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false)) {
-                    folderId = shPGoogleDrive.get(ShPGoogleDrive.DEFAULT_FOLDER_ID, "");
                     String accountName = shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "");
                     backupFile = (DocumentFile) msg.obj;
                     viewModel.showProgressBar();
-                    viewModel.uploadFileToGoogleDrive(requireContext(), backupFile, accountName, folderId);
+                    viewModel.uploadFileToGoogleDrive(requireContext(), backupFile, accountName);
                 } else {
                     Snackbar.make(requireView(), requireContext().getString(R.string.no_signs), Snackbar.LENGTH_LONG).show();
                 }

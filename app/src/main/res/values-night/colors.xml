@@ -39,4 +39,11 @@
     <color name="text_primary">#FFFFFFFF</color>     <!-- primární text -->
     <color name="text_secondary">#B8B7B7</color>     <!-- tvoje šedá pro dark -->
 
+    <!-- Dialogs (dark) -->
+    <color name="dialog_bg">#FF1C1C1C</color>
+    <color name="dialog_border">#40FFFFFF</color>
+    <color name="dialog_text_primary">#FFFFFFFF</color>
+    <color name="dialog_button_text">#FF1086FB</color>
+    <color name="dialog_button_text_disabled">#FF656565</color>
+
 </resources>

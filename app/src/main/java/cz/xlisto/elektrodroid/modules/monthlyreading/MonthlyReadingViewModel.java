@@ -50,12 +50,11 @@ public class MonthlyReadingViewModel extends ViewModel {
      * @param context     Kontext aplikace
      * @param backupFile  Soubor k nahrání
      * @param accountName Název účtu Google
-     * @param folderId    ID složky na Google Drive
      */
-    public void uploadFileToGoogleDrive(Context context, DocumentFile backupFile, String accountName, String folderId) {
-        GoogleDriveService googleDriveService = new GoogleDriveService(context, accountName, folderId);
+    public void uploadFileToGoogleDrive(Context context, DocumentFile backupFile, String accountName) {
+        GoogleDriveService googleDriveService = new GoogleDriveService(context, accountName);
         googleDriveService.setOnDriveServiceListener(() -> {
-            boolean result = googleDriveService.uploadFile(backupFile, folderId);
+            boolean result = googleDriveService.uploadFile(backupFile);
             uploadResult.postValue(result);
         });
     }

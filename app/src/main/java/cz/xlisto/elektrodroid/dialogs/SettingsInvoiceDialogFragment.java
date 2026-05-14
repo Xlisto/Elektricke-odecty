@@ -17,7 +17,10 @@ import cz.xlisto.elektrodroid.shp.ShPInvoice;
 
 
 /**
- * Xlisto 02.04.2024 21:53
+ * Dialog pro nastavení automatického generování faktur.
+ * <p>
+ * Zobrazuje přepínač a průběžně ukládá změnu do {@link ShPInvoice}.
+ * Po potvrzení odešle výsledek přes Fragment Result API.
  */
 public class SettingsInvoiceDialogFragment extends DialogFragment {
     public static final String TAG = "SettingsInvoiceDialogFragment";
@@ -25,11 +28,22 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
     public static final String RESULT = "result";
     private ShPInvoice shPInvoice;
 
+    /**
+     * Vytvoří novou instanci dialogu.
+     *
+     * @return instance fragmentu
+     */
     public static SettingsInvoiceDialogFragment newInstance() {
         return new SettingsInvoiceDialogFragment();
     }
 
 
+    /**
+     * Sestaví dialog s přepínačem automatického generování faktur.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -58,10 +72,20 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
         return builder.create();
     }
 
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje sjednocené barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
 
     /**
-     * Nastaví popisek pod přepínačem
-     * @param b true/false typ zobrazení popisku
+     * Nastaví text popisku pod přepínačem podle stavu volby.
+     *
+     * @param b  {@code true} pokud je autogenerování zapnuté
      * @param tv TextView pro zobrazení popisku
      */
     private void setDescription(boolean b, TextView tv) {

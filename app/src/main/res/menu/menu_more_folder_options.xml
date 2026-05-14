@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/rename_folder"
-        android:title="@string/rename_folder" />
+    <!-- rename_folder položka je deaktivovaná, protože se používá DRIVE_APPDATA rozsah,
+         který neumožňuje práci se složkami na Google Drive -->
     <item
         android:id="@+id/delete_folder"
         android:title="@string/delete_folder" />

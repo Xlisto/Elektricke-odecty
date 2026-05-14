@@ -16,18 +16,33 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
 /**
- * dialogové okno pro zobrazení nastavení zobrazení
+ * Dialogové okno pro změnu preferencí zobrazení aplikace.
+ * <p>
+ * Uživatel může zapnout/vypnout FAB, spodní navigaci a levou navigaci.
+ * Po potvrzení se změny uloží do {@link ShPSettings} a odešlou se výsledky
+ * pro aktualizaci fragmentů i aktivity.
  */
 public class SettingsViewDialogFragment extends DialogFragment {
     public static final String TAG = "SettingsViewDialogFragment";
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
     public static final String FLAG_UPDATE_SETTINGS_FOR_ACTIVITY = "SettingsViewDialogFragment2";
 
+    /**
+     * Vytvoří novou instanci dialogu nastavení zobrazení.
+     *
+     * @return instance fragmentu
+     */
     public static SettingsViewDialogFragment newInstance() {
         return new SettingsViewDialogFragment();
     }
 
 
+    /**
+     * Sestaví dialog s přepínači a uloží hodnoty po potvrzení.
+     *
+     * @param savedInstanceState uložený stav dialogu, může být {@code null}
+     * @return vytvořený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -52,5 +67,15 @@ public class SettingsViewDialogFragment extends DialogFragment {
         });
 
         return builder.create();
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje sjednocené barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 }
