@@ -109,14 +109,6 @@ public class GoogleDriveService {
                 try {
                     String token = googleAccountCredential.getToken();
 
-                    try {
-                        //vymazání tokenu
-                        googleAccountCredential.getGoogleAccountManager().invalidateAuthToken(token);
-                        Log.w(TAG, "Token has been invalidated.");
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error invalidating token: " + e.getMessage(), e);
-                    }
-
                     if (isTokenValid(token)) {
                         Log.d(TAG, "Token is valid and has the required permission.");
                     }
@@ -132,8 +124,12 @@ public class GoogleDriveService {
                 } catch (UserRecoverableAuthException e) {
                     Log.w(TAG, "UserRecoverableAuthException: " + e.getMessage());
                     Intent consentIntent = e.getIntent();
-                    ((Activity) context).startActivityForResult(consentIntent, 111);
-                    notifyDriveServiceError(context.getString(R.string.google_drive_service_init_failed));
+                    if (context instanceof Activity activity) {
+                        activity.runOnUiThread(() -> activity.startActivityForResult(consentIntent, 111));
+                    } else {
+                        Log.e(TAG, "Context is not Activity, cannot request recoverable auth.");
+                        notifyDriveServiceError(context.getString(R.string.google_drive_service_init_failed));
+                    }
                 } catch (GoogleAuthException e) {
                     Log.e(TAG, "GoogleAuthException: " + e.getMessage(), e);
                     notifyDriveServiceError(context.getString(R.string.google_drive_service_init_failed));
@@ -199,6 +195,24 @@ public class GoogleDriveService {
      * @return {@code true}, pokud se nahrání podařilo, jinak {@code false}
      */
     public boolean uploadFile(DocumentFile documentFile) {
+        return uploadFile(documentFile, false);
+    }
+
+
+    /**
+     * Nahraje soubor na Google Drive s volitelným přepsáním již existujících souborů
+     * se stejným názvem v appData prostoru.
+     *
+     * @param documentFile     soubor vybraný přes SAF, který bude nahrán
+     * @param overwriteExisting {@code true}, pokud se mají soubory se stejným názvem nejprve smazat
+     * @return {@code true}, pokud se nahrání podařilo, jinak {@code false}
+     */
+    public boolean uploadFile(DocumentFile documentFile, boolean overwriteExisting) {
+        if (drive == null || documentFile == null || documentFile.getName() == null)
+            return false;
+
+        if (overwriteExisting && !deleteFilesByName(documentFile.getName()))
+            return false;
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
@@ -230,6 +244,39 @@ public class GoogleDriveService {
             return true;
         } catch (IOException e) {
             Log.e(TAG, "Error uploading file: " + e.getMessage(), e);
+            return false;
+        }
+    }
+
+
+    /**
+     * Smaže všechny soubory v appData prostoru, které mají stejný název.
+     *
+     * @param fileName název souboru k odstranění
+     * @return {@code true}, pokud se mazání podařilo nebo nebylo co mazat
+     */
+    private boolean deleteFilesByName(String fileName) {
+        try {
+            String escapedName = fileName.replace("'", "\\'");
+            FileList result = drive.files().list()
+                    .setSpaces(APP_DATA_SPACE)
+                    .setQ("trashed = false and name = '" + escapedName + "'")
+                    .setPageSize(100)
+                    .setFields("files(id)")
+                    .execute();
+
+            List<File> files = result.getFiles();
+            if (files == null || files.isEmpty())
+                return true;
+
+            for (File existingFile : files) {
+                String id = existingFile != null ? existingFile.getId() : null;
+                if (id != null)
+                    drive.files().delete(id).execute();
+            }
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, "Error deleting existing files with same name: " + fileName, e);
             return false;
         }
     }

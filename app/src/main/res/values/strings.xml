@@ -595,6 +595,13 @@
     <string name="upload_selected_backups_in_progress">Nahrávám zálohy na Google Drive (%1$d/%2$d)</string>
     <string name="upload_completed">Nahrávání dokončeno</string>
     <string name="select_backup_files_to_upload">Nejprve vyberte soubory k odeslání</string>
+    <string name="upload_existing_files_title">Soubory už existují</string>
+    <string name="upload_existing_files_message">Na Google Drive už je %1$d soubor(ů) se stejným názvem.
+
+Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
+    <string name="upload_existing_files_overwrite">Přepsat</string>
+    <string name="upload_existing_files_skip">Přeskočit</string>
+    <string name="upload_all_files_already_exist">Všechny vybrané soubory už na Google Drive existují</string>
     <string name="uploaded_selected_backups">Soubory byly nahrány na Google Drive (%1$d/%2$d)</string>
     <string name="partially_uploaded_selected_backups">Některé soubory se nepodařilo nahrát na Google Drive (%1$d/%2$d)</string>
     <string name="not_uploaded_selected_backups">Soubory se nepodařilo nahrát na Google Drive (%1$d/%2$d)</string>

@@ -136,11 +136,12 @@ public class BackupViewModel extends ViewModel {
      * Spustí nahrávání vybraných souborů na Google Drive v pozadí.
      * Stav průběhu je dostupný přes {@link #getUploadState()}.
      *
-     * @param appContext  application context (bez reference na Activity)
-     * @param userName    uživatelské jméno Google účtu
-     * @param selectedFiles seznam souborů k nahrání
+     * @param context           kontext použitý pro inicializaci Google Drive služby
+     * @param userName          uživatelské jméno Google účtu
+     * @param selectedFiles     seznam souborů k nahrání
+     * @param overwriteExisting {@code true}, pokud se mají stejnojmenné soubory na Drive přepsat
      */
-    public void startUpload(Context appContext, String userName, List<DocumentFile> selectedFiles) {
+    public void startUpload(Context context, String userName, List<DocumentFile> selectedFiles, boolean overwriteExisting) {
         if (isUploadInProgress())
             return;
 
@@ -152,14 +153,14 @@ public class BackupViewModel extends ViewModel {
         int totalCount = selectedFiles.size();
         uploadStateLiveData.postValue(UploadState.inProgress(0, totalCount));
 
-        GoogleDriveService googleDriveService = new GoogleDriveService(appContext, userName);
+        GoogleDriveService googleDriveService = new GoogleDriveService(context, userName);
         googleDriveService.setOnDriveServiceListener(new GoogleDriveService.OnDriverServiceListener() {
             @Override
             public void onDriveServiceReady() {
                 int successCount = 0;
                 for (int i = 0; i < selectedFiles.size(); i++) {
                     DocumentFile documentFile = selectedFiles.get(i);
-                    if (documentFile != null && googleDriveService.uploadFile(documentFile))
+                    if (documentFile != null && googleDriveService.uploadFile(documentFile, overwriteExisting))
                         successCount++;
                     uploadStateLiveData.postValue(UploadState.inProgress(i + 1, totalCount));
                 }

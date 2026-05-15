@@ -40,7 +40,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
@@ -82,7 +84,11 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
 
     private static final String TAG = "BackupFragment";
     private static final String FLAG_DIALOG_FRAGMENT_DELETE_SELECTED = "backupDialogFragmentDeleteSelected";
+    private static final String FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT = "backupDialogFragmentUploadConflict";
     private static final String STATE_SELECTED_BACKUP_URIS = "stateSelectedBackupUris";
+    private static final String STATE_PENDING_UPLOAD_CONFLICT_USER_NAME = "statePendingUploadConflictUserName";
+    private static final String STATE_PENDING_UPLOAD_CONFLICT_ALL_URIS = "statePendingUploadConflictAllUris";
+    private static final String STATE_PENDING_UPLOAD_CONFLICT_NON_DUPLICATE_URIS = "statePendingUploadConflictNonDuplicateUris";
     private MenuItem menuItemBackup;
     private MenuItem menuItemDeleteSelected;
     private MenuItem menuItemCancelSelection;
@@ -103,6 +109,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private Uri uri;
     private ShPBackup shPBackup;
     private ArrayList<String> pendingSelectedBackupUris = new ArrayList<>();
+    private String pendingUploadConflictUserName;
+    private ArrayList<DocumentFile> pendingUploadConflictAllFiles = new ArrayList<>();
+    private ArrayList<DocumentFile> pendingUploadConflictNonDuplicateFiles = new ArrayList<>();
 
     //Callback z výběru složky
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
@@ -233,7 +242,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                         List<androidx.documentfile.provider.DocumentFile> filesToUpload = backupAdapter.getSelectedDocumentFiles();
                         ShPGoogleDrive shPGoogleDrive = new ShPGoogleDrive(requireContext());
                         String userName = shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "");
-                        backupViewModel.startUpload(requireContext().getApplicationContext(), userName, filesToUpload);
+                        checkExistingFilesAndStartUpload(userName, filesToUpload);
                     }
                     return true;
                 }
@@ -267,6 +276,12 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             ArrayList<String> restoredSelection = savedInstanceState.getStringArrayList(STATE_SELECTED_BACKUP_URIS);
             if (restoredSelection != null)
                 pendingSelectedBackupUris = restoredSelection;
+
+            pendingUploadConflictUserName = savedInstanceState.getString(STATE_PENDING_UPLOAD_CONFLICT_USER_NAME);
+            ArrayList<String> pendingAllUris = savedInstanceState.getStringArrayList(STATE_PENDING_UPLOAD_CONFLICT_ALL_URIS);
+            ArrayList<String> pendingNonDuplicateUris = savedInstanceState.getStringArrayList(STATE_PENDING_UPLOAD_CONFLICT_NON_DUPLICATE_URIS);
+            pendingUploadConflictAllFiles = restoreDocumentFilesFromUris(pendingAllUris);
+            pendingUploadConflictNonDuplicateFiles = restoreDocumentFilesFromUris(pendingNonDuplicateUris);
         }
 
         shPBackup = new ShPBackup(requireContext());
@@ -364,6 +379,30 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                 updateDeleteSelectedAction(0, false);
             }
         });
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT, this, (requestKey, result) -> {
+            if (pendingUploadConflictUserName == null)
+                return;
+
+            String userName = pendingUploadConflictUserName;
+            ArrayList<DocumentFile> allFiles = new ArrayList<>(pendingUploadConflictAllFiles);
+            ArrayList<DocumentFile> nonDuplicateFiles = new ArrayList<>(pendingUploadConflictNonDuplicateFiles);
+
+            boolean overwrite = result.getBoolean(YesNoDialogFragment.RESULT);
+            if (overwrite) {
+                backupViewModel.startUpload(requireActivity(), userName, allFiles, true);
+            } else {
+                if (nonDuplicateFiles.isEmpty()) {
+                    View root = getView();
+                    if (root != null)
+                        Snackbar.make(root, getString(R.string.upload_all_files_already_exist), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    backupViewModel.startUpload(requireActivity(), userName, nonDuplicateFiles, false);
+                }
+            }
+
+            clearPendingUploadConflict();
+        });
     }
 
 
@@ -408,6 +447,12 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         super.onSaveInstanceState(outState);
         if (backupAdapter != null && backupAdapter.getSelectedItemCount() > 0)
             outState.putStringArrayList(STATE_SELECTED_BACKUP_URIS, backupAdapter.getSelectedDocumentFileUris());
+
+        if (pendingUploadConflictUserName != null) {
+            outState.putString(STATE_PENDING_UPLOAD_CONFLICT_USER_NAME, pendingUploadConflictUserName);
+            outState.putStringArrayList(STATE_PENDING_UPLOAD_CONFLICT_ALL_URIS, toUriStrings(pendingUploadConflictAllFiles));
+            outState.putStringArrayList(STATE_PENDING_UPLOAD_CONFLICT_NON_DUPLICATE_URIS, toUriStrings(pendingUploadConflictNonDuplicateFiles));
+        }
     }
 
 
@@ -573,6 +618,131 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         backupUploadDialogFragment = BackupUploadDialogFragment.newInstance(totalCount);
         backupUploadDialogFragment.show(requireActivity().getSupportFragmentManager(), BackupUploadDialogFragment.TAG);
         return backupUploadDialogFragment;
+    }
+
+
+    /**
+     * Ověří kolizi názvů souborů na Drive a nabídne uživateli strategii (přepsat/přeskočit).
+     * Pokud kolize nenajde, upload se spustí rovnou.
+     */
+    private void checkExistingFilesAndStartUpload(String userName, List<DocumentFile> selectedFiles) {
+        GoogleDriveService googleDriveService = new GoogleDriveService(requireActivity(), userName);
+        googleDriveService.setOnDriveServiceListener(new GoogleDriveService.OnDriverServiceListener() {
+            @Override
+            public void onDriveServiceReady() {
+                Set<String> existingNames = new HashSet<>();
+                List<com.google.api.services.drive.model.File> driveFiles = googleDriveService.listFilesInFolder();
+                if (driveFiles != null) {
+                    for (com.google.api.services.drive.model.File driveFile : driveFiles) {
+                        if (driveFile != null && driveFile.getName() != null)
+                            existingNames.add(driveFile.getName());
+                    }
+                }
+
+                ArrayList<DocumentFile> duplicateFiles = new ArrayList<>();
+                ArrayList<DocumentFile> nonDuplicateFiles = new ArrayList<>();
+                for (DocumentFile selectedFile : selectedFiles) {
+                    if (selectedFile == null || selectedFile.getName() == null)
+                        continue;
+                    if (existingNames.contains(selectedFile.getName()))
+                        duplicateFiles.add(selectedFile);
+                    else
+                        nonDuplicateFiles.add(selectedFile);
+                }
+
+                if (!isAdded())
+                    return;
+
+                requireActivity().runOnUiThread(() -> {
+                    if (!isAdded())
+                        return;
+
+                    if (duplicateFiles.isEmpty()) {
+                        backupViewModel.startUpload(requireActivity(), userName, selectedFiles, false);
+                        return;
+                    }
+
+                    showUploadConflictDialog(userName, selectedFiles, nonDuplicateFiles, duplicateFiles.size());
+                });
+            }
+
+            @Override
+            public void onDriveServiceError(String errorMessage) {
+                if (!isAdded())
+                    return;
+                requireActivity().runOnUiThread(() -> {
+                    View root = getView();
+                    if (root != null)
+                        Snackbar.make(root, errorMessage, Snackbar.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+
+    /**
+     * Zobrazí dialog s rozhodnutím, jak naložit se soubory, které na Drive už existují.
+     */
+    private void showUploadConflictDialog(String userName,
+                                          List<DocumentFile> allSelectedFiles,
+                                          List<DocumentFile> nonDuplicateFiles,
+                                          int duplicateCount) {
+        pendingUploadConflictUserName = userName;
+        pendingUploadConflictAllFiles = new ArrayList<>(allSelectedFiles);
+        pendingUploadConflictNonDuplicateFiles = new ArrayList<>(nonDuplicateFiles);
+
+        YesNoDialogFragment.newInstance(
+                getString(R.string.upload_existing_files_title),
+                FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT,
+                getString(R.string.upload_existing_files_message, duplicateCount),
+                getString(R.string.upload_existing_files_overwrite),
+                getString(R.string.upload_existing_files_skip)
+        ).show(requireActivity().getSupportFragmentManager(), FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT);
+    }
+
+
+    /**
+     * Vyčistí dočasná data použitá pro potvrzovací dialog konfliktu názvů při uploadu.
+     */
+    private void clearPendingUploadConflict() {
+        pendingUploadConflictUserName = null;
+        pendingUploadConflictAllFiles.clear();
+        pendingUploadConflictNonDuplicateFiles.clear();
+    }
+
+
+    /**
+     * Převede seznam DocumentFile na serializovatelný seznam URI stringů.
+     */
+    private ArrayList<String> toUriStrings(List<DocumentFile> files) {
+        ArrayList<String> uris = new ArrayList<>();
+        if (files == null)
+            return uris;
+
+        for (DocumentFile file : files) {
+            if (file != null)
+                uris.add(file.getUri().toString());
+        }
+        return uris;
+    }
+
+
+    /**
+     * Obnoví seznam DocumentFile z URI stringů po změně konfigurace.
+     */
+    private ArrayList<DocumentFile> restoreDocumentFilesFromUris(@Nullable List<String> uriStrings) {
+        ArrayList<DocumentFile> files = new ArrayList<>();
+        if (uriStrings == null || uriStrings.isEmpty())
+            return files;
+
+        for (String uriString : uriStrings) {
+            if (uriString == null || uriString.trim().isEmpty())
+                continue;
+            DocumentFile file = DocumentFile.fromSingleUri(requireContext(), Uri.parse(uriString));
+            if (file != null)
+                files.add(file);
+        }
+        return files;
     }
 
 
