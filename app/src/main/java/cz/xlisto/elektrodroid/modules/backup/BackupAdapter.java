@@ -71,8 +71,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     private final Handler handlerRecovery;
     private final Handler handlerShowProgressBar;
     private final SelectionChangeListener selectionChangeListener;
-    private final UploadStateListener uploadStateListener;
     private final DeleteStateListener deleteStateListener;
+    private final SingleUploadRequestListener singleUploadRequestListener;
+    private final SaveGoogleDriveFileListener saveGoogleDriveFileListener;
     private final Set<Integer> selectedPositions = new TreeSet<>();
     private boolean multiSelectMode = false;
     //handler smazání souboru z GoogleDrive
@@ -131,21 +132,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
 
 
     /**
-     * Callback pro nahrávání vybraných záloh na Google Drive.
-     */
-    public interface UploadStateListener {
-
-        void onUploadStarted(int totalCount);
-
-        void onUploadProgress(int processedCount, int totalCount);
-
-        void onUploadFinished(boolean success, int uploadedCount, int totalCount);
-
-        void onUploadFailed(String message);
-    }
-
-
-    /**
      * Callback pro mazání vybraných záloh.
      */
     public interface DeleteStateListener {
@@ -159,6 +145,21 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         void onDeleteFailed(String message);
     }
 
+    /**
+     * Callback pro požadavek na upload jedné lokální zálohy z tlačítka položky.
+     */
+    public interface SingleUploadRequestListener {
+        void onSingleUploadRequested(@NonNull DocumentFile documentFile);
+    }
+
+
+    /**
+     * Callback pro požadavek na uložení souboru z Google Drive do lokálního úložiště.
+     */
+    public interface SaveGoogleDriveFileListener {
+        void onSaveGoogleDriveFileRequested(@NonNull File file);
+    }
+
 
     /**
      * Konstruktor pro vytvoření instance BackupAdapter pro místní soubory.
@@ -168,41 +169,17 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * @param recyclerView    RecyclerView pro zobrazení souborů
      * @param handlerRecovery handler pro obnovu souborů
      */
-    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView, Handler handlerRecovery, Handler handlerShowProgressBar, SelectionChangeListener selectionChangeListener, UploadStateListener uploadStateListener) {
+    public BackupAdapter(Context context, List<DocumentFile> documentFiles, RecyclerView recyclerView, Handler handlerRecovery, Handler handlerShowProgressBar, SelectionChangeListener selectionChangeListener, SingleUploadRequestListener singleUploadRequestListener) {
         this.documentFiles = documentFiles;
         this.context = context;
         this.recyclerView = recyclerView;
         this.handlerRecovery = handlerRecovery;
         this.handlerShowProgressBar = handlerShowProgressBar;
         this.selectionChangeListener = selectionChangeListener;
-        this.uploadStateListener = uploadStateListener;
         this.deleteStateListener = null;
+        this.singleUploadRequestListener = singleUploadRequestListener;
+        this.saveGoogleDriveFileListener = null;
         this.isGoogleDrive = false;
-        shPGoogleDrive = new ShPGoogleDrive(context);
-        showButtons = -1;
-    }
-
-
-    /**
-     * Konstruktor pro vytvoření instance BackupAdapter pro soubory na Google Drive.
-     *
-     * @param context            kontext aplikace
-     * @param files              seznam souborů na Google Drive
-     * @param recyclerView       RecyclerView pro zobrazení souborů
-     * @param handlerRecovery    handler pro obnovu souborů
-     * @param googleDriveService služba pro práci s Google Drive
-     */
-    public BackupAdapter(Context context, List<File> files, RecyclerView recyclerView, Handler handlerRecovery, GoogleDriveService googleDriveService) {
-        this.files = files;
-        this.context = context;
-        this.recyclerView = recyclerView;
-        this.handlerRecovery = handlerRecovery;
-        this.handlerShowProgressBar = null;
-        this.selectionChangeListener = null;
-        this.uploadStateListener = null;
-        this.deleteStateListener = null;
-        this.isGoogleDrive = true;
-        this.googleDriveService = googleDriveService;
         shPGoogleDrive = new ShPGoogleDrive(context);
         showButtons = -1;
     }
@@ -220,15 +197,16 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * @param selectionChangeListener callback změny výběru
      * @param deleteStateListener callback průběhu mazání
      */
-    public BackupAdapter(Context context, List<File> files, RecyclerView recyclerView, Handler handlerRecovery, GoogleDriveService googleDriveService, SelectionChangeListener selectionChangeListener, DeleteStateListener deleteStateListener) {
+    public BackupAdapter(Context context, List<File> files, RecyclerView recyclerView, Handler handlerRecovery, GoogleDriveService googleDriveService, SelectionChangeListener selectionChangeListener, DeleteStateListener deleteStateListener, SaveGoogleDriveFileListener saveGoogleDriveFileListener) {
         this.files = files;
         this.context = context;
         this.recyclerView = recyclerView;
         this.handlerRecovery = handlerRecovery;
         this.handlerShowProgressBar = null;
         this.selectionChangeListener = selectionChangeListener;
-        this.uploadStateListener = null;
         this.deleteStateListener = deleteStateListener;
+        this.singleUploadRequestListener = null;
+        this.saveGoogleDriveFileListener = saveGoogleDriveFileListener;
         this.isGoogleDrive = true;
         this.googleDriveService = googleDriveService;
         shPGoogleDrive = new ShPGoogleDrive(context);
@@ -283,7 +261,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.tvName.setText(IconFileHelper.getName(file.getName()));
             holder.iconFile.setImageResource(IconFileHelper.getIcon(file.getName(), file.getMimeType()));
             holder.tvTyp.setText(IconFileHelper.getType(file.getName(), context));
-            holder.btnUpload.setVisibility(View.GONE);
+            holder.btnUpload.setVisibility(View.VISIBLE);
+            holder.btnUpload.setText(R.string.save_to_local_storage);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
         } else {
             file = null;
@@ -291,7 +270,9 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.tvName.setText(IconFileHelper.getName(documentFile.getName()));
             holder.iconFile.setImageResource(IconFileHelper.getIcon(documentFile.getName()));
             holder.tvTyp.setText(IconFileHelper.getType(documentFile.getName(), context));
-            if (NetworkUtil.isInternetAvailable(context))
+            holder.btnUpload.setText(R.string.google_drive);
+            boolean isUserLoggedIn = !shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty();
+            if (isUserLoggedIn && NetworkUtil.isInternetAvailable(context))
                 holder.btnUpload.setVisibility(View.VISIBLE);
             else
                 holder.btnUpload.setVisibility(View.GONE);
@@ -365,6 +346,17 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         });
 
         holder.btnUpload.setOnClickListener(v -> {
+            if (isGoogleDrive) {
+                if (saveGoogleDriveFileListener != null)
+                    saveGoogleDriveFileListener.onSaveGoogleDriveFileRequested(file);
+                return;
+            }
+
+            if (singleUploadRequestListener != null) {
+                singleUploadRequestListener.onSingleUploadRequested(documentFile);
+                return;
+            }
+
             Message msg = new Message();
             msg.obj = true;
             if (handlerShowProgressBar != null)
@@ -434,16 +426,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
     }
 
 
-    /**
-     * Nahraje všechny vybrané lokální zálohy na Google Drive.
-     *
-     * @deprecated Použijte {@link cz.xlisto.elektrodroid.modules.backup.BackupViewModel#startUpload} místo toho.
-     *             Tato metoda zůstává pro zpětnou kompatibilitu, ale přesouvá odpovědnost na volajícího.
-     */
-    public void uploadSelectedFilesToGoogleDrive() {
-        // Delegováno na BackupViewModel – viz BackupFragment.onMenuItemSelected
-    }
-
 
     /**
      * Vrátí seznam aktuálně vybraných lokálních souborů záloh.
@@ -461,6 +443,27 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             DocumentFile documentFile = documentFiles.get(position);
             if (documentFile != null)
                 selectedFiles.add(documentFile);
+        }
+        return selectedFiles;
+    }
+
+
+    /**
+     * Vrátí seznam aktuálně vybraných souborů z Google Drive.
+     *
+     * @return seznam {@link File} odpovídajících označeným položkám
+     */
+    public List<File> getSelectedGoogleDriveFiles() {
+        List<File> selectedFiles = new ArrayList<>();
+        if (!isGoogleDrive || files == null)
+            return selectedFiles;
+
+        for (Integer position : new TreeSet<>(selectedPositions)) {
+            if (position < 0 || position >= files.size())
+                continue;
+            File file = files.get(position);
+            if (file != null)
+                selectedFiles.add(file);
         }
         return selectedFiles;
     }
@@ -744,6 +747,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
      * Aktualizuje data v adapteru a informuje RecyclerView o změně rozsahu položek.
      * Tato metoda by měla být volána, když se změní data, která adapter zobrazuje.
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void notifyDataChanged() {
         notifyDataSetChanged();
     }
@@ -789,41 +793,6 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             selectionChangeListener.onSelectionChanged(selectedPositions.size(), multiSelectMode);
     }
 
-
-    private void dispatchUploadStarted(int totalCount) {
-        if (uploadStateListener == null)
-            return;
-
-        runOnMainThread(() -> uploadStateListener.onUploadStarted(totalCount));
-    }
-
-
-    private void dispatchUploadProgress(int processedCount, int totalCount) {
-        if (uploadStateListener == null)
-            return;
-
-        runOnMainThread(() -> uploadStateListener.onUploadProgress(processedCount, totalCount));
-    }
-
-
-    private void dispatchUploadFinished(boolean success, int uploadedCount, int totalCount) {
-        if (uploadStateListener == null)
-            return;
-
-        runOnMainThread(() -> {
-            uploadStateListener.onUploadFinished(success, uploadedCount, totalCount);
-            if (success)
-                cancelMultiSelect();
-        });
-    }
-
-
-    private void dispatchUploadFailed(String message) {
-        if (uploadStateListener == null)
-            return;
-
-        runOnMainThread(() -> uploadStateListener.onUploadFailed(message));
-    }
 
 
     private void dispatchDeleteStarted(int totalCount) {

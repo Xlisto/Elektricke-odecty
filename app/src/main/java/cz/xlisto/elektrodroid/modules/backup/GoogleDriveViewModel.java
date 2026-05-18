@@ -22,6 +22,11 @@ public class GoogleDriveViewModel extends ViewModel {
         IDLE, IN_PROGRESS, FINISHED, FAILED
     }
 
+    /** Stav ukládání do lokálního úložiště */
+    public enum SaveStatus {
+        IDLE, IN_PROGRESS, FINISHED, FAILED
+    }
+
     public record DeleteState(DeleteStatus status, boolean success, int deletedCount, int totalCount,
                               @Nullable String errorMessage) {
 
@@ -67,7 +72,25 @@ public class GoogleDriveViewModel extends ViewModel {
         }
     }
 
+    public record SaveState(SaveStatus status, boolean success, int processedCount, int savedCount, int totalCount,
+                            @Nullable String errorMessage) {
+
+        public static SaveState idle() {
+            return new SaveState(SaveStatus.IDLE, false, 0, 0, 0, null);
+        }
+
+        public static SaveState inProgress(int processedCount, int savedCount, int totalCount) {
+            return new SaveState(SaveStatus.IN_PROGRESS, false, processedCount, savedCount, totalCount, null);
+        }
+
+        public static SaveState finished(boolean success, int savedCount, int totalCount) {
+            return new SaveState(SaveStatus.FINISHED, success, totalCount, savedCount, totalCount, null);
+        }
+
+    }
+
     private final MutableLiveData<DeleteState> deleteState = new MutableLiveData<>(DeleteState.idle());
+    private final MutableLiveData<SaveState> saveState = new MutableLiveData<>(SaveState.idle());
 
     /**
      * Vrátí lifecycle-aware stream aktuálního stavu mazání.
@@ -79,12 +102,33 @@ public class GoogleDriveViewModel extends ViewModel {
     }
 
     /**
+     * Vrátí lifecycle-aware stream aktuálního stavu ukládání do lokálního úložiště.
+     */
+    public LiveData<SaveState> getSaveState() {
+        return saveState;
+    }
+
+    /**
      * Nastaví stav na průběh mazání.
      *
      * @param totalCount celkový počet souborů, které budou mazány
      */
     public void setInProgress(int totalCount) {
         deleteState.postValue(DeleteState.inProgress(totalCount));
+    }
+
+    /**
+     * Nastaví stav na průběh ukládání do lokálního úložiště.
+     */
+    public void setSaveInProgress(int totalCount) {
+        saveState.postValue(SaveState.inProgress(0, 0, totalCount));
+    }
+
+    /**
+     * Aktualizuje průběh ukládání do lokálního úložiště.
+     */
+    public void setSaveProgress(int processedCount, int savedCount, int totalCount) {
+        saveState.postValue(SaveState.inProgress(processedCount, savedCount, totalCount));
     }
 
     /**
@@ -99,6 +143,13 @@ public class GoogleDriveViewModel extends ViewModel {
     }
 
     /**
+     * Nastaví výsledný stav po dokončení ukládání do lokálního úložiště.
+     */
+    public void setSaveFinished(boolean success, int savedCount, int totalCount) {
+        saveState.postValue(SaveState.finished(success, savedCount, totalCount));
+    }
+
+    /**
      * Nastaví chybový stav operace.
      *
      * @param errorMessage text chyby pro UI vrstvu
@@ -107,11 +158,19 @@ public class GoogleDriveViewModel extends ViewModel {
         deleteState.postValue(DeleteState.failed(errorMessage));
     }
 
+
     /**
      * Resetuje stav ViewModelu do výchozího klidového stavu.
      */
     public void resetToIdle() {
         deleteState.postValue(DeleteState.idle());
+    }
+
+    /**
+     * Resetuje stav ukládání do lokálního úložiště do výchozího stavu.
+     */
+    public void resetSaveToIdle() {
+        saveState.postValue(SaveState.idle());
     }
 }
 

@@ -32,18 +32,22 @@ import cz.xlisto.elektrodroid.utils.MyToast;
 
 
 /**
- * Třída pro ukládání dat do záložního souboru.
- * <p>
- * Tato třída rozšiřuje třídu `RecoverData` a poskytuje metody pro ukládání databází do ZIP souboru.
+ * Servisní třída pro vytvoření lokální ZIP zálohy databází aplikace.
+ *
+ * <p>Třída připraví doplňkový informační soubor, sestaví archiv s podporovanými
+ * databázemi a uloží jej do uživatelem vybrané složky záloh přes SAF.
+ * Následně vrací výsledek volajícímu přes volitelný {@link Handler}.</p>
  */
 public class SaveDataToBackupFile extends RecoverData {
 
-    private static final String TAG = "SaveBackup";
     private static final Logger LOGGER = LoggerFactory.getLogger(SaveDataToBackupFile.class.getName());
 
 
     /**
-     * Uloží databáze do ZIPu
+     * Vytvoří a uloží ZIP zálohu databází do aktuálně zvolené složky záloh.
+     *
+     * @param context kontext aplikace
+     * @param handler volitelný handler pro zpětné předání vytvořeného souboru
      */
     public static void saveToZip(Context context, Handler handler) {
         ShPBackup shPBackup = new ShPBackup(context);
@@ -58,10 +62,8 @@ public class SaveDataToBackupFile extends RecoverData {
         //vytvoření a zápis do textového souboru s posledními záznamy
         Date date = new Date();
         String s = readDataFromDatabase(context);
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("info.txt", Context.MODE_PRIVATE));
+        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("info.txt", Context.MODE_PRIVATE))) {
             outputStreamWriter.write(s);
-            outputStreamWriter.close();
         } catch (Exception e) {
             LOGGER.error("Error while writing to file info.txt", e);
         }
@@ -108,7 +110,9 @@ public class SaveDataToBackupFile extends RecoverData {
                 Toast.makeText(context, context.getResources().getString(R.string.backup_created), Toast.LENGTH_SHORT).show();
 
                 //smazání dočasného souboru info.txt
-                f3.delete();
+                boolean deleted = f3.delete();
+                if (!deleted)
+                    LOGGER.warn("Temporary file info.txt was not deleted");
             } catch (IOException e) {
                 LOGGER.error("Error while writing to file", e);
             }
@@ -119,30 +123,30 @@ public class SaveDataToBackupFile extends RecoverData {
 
 
     /**
-     * Zápis jednotlivých souborů do souboru ZIP
+     * Zapíše jeden soubor jako položku do otevřeného ZIP archivu.
      *
-     * @param file     soubor(y) s daty, které se mají uložit do ZIPu
-     * @param zipEntry název souboru v ZIPu
-     * @param zos      ZipOutputStream
-     * @throws IOException chyba při zápisu
+     * @param file     soubor se zdrojovými daty
+     * @param zipEntry cílová položka v ZIP archivu
+     * @param zos      otevřený zip output stream
+     * @throws IOException při chybě čtení nebo zápisu
      */
     private static void writeToFile(File file, ZipEntry zipEntry, ZipOutputStream zos) throws IOException {
         byte[] buffer = new byte[1024];
         int length;
         zos.putNextEntry(zipEntry);
-        FileInputStream in = new FileInputStream(file);
-        while ((length = in.read(buffer)) > 0) {
-            zos.write(buffer, 0, length);
+        try (FileInputStream in = new FileInputStream(file)) {
+            while ((length = in.read(buffer)) > 0) {
+                zos.write(buffer, 0, length);
+            }
         }
-
-        in.close();
     }
 
 
     /**
-     * Načítá poslední záznamy ze všech odběrných míst
+     * Načte textový přehled posledních měsíčních odečtů ze všech odběrných míst.
      *
-     * @return poslední záznam
+     * @param context kontext aplikace
+     * @return textový výpis posledních odečtů
      */
     private static String readDataFromDatabase(Context context) {
         DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(context);
@@ -154,10 +158,10 @@ public class SaveDataToBackupFile extends RecoverData {
 
 
     /**
-     * Vygeneruje název souboru podle data a času vytvoření
+     * Vygeneruje časovou část názvu záložního souboru podle zadaného timestampu.
      *
-     * @param l čas vytvoření
-     * @return název souboru
+     * @param l čas v milisekundách od epochy
+     * @return naformátovaný čas vhodný do názvu zálohy
      */
     private static String generateNameFile(long l) {
         Calendar calendar = Calendar.getInstance();

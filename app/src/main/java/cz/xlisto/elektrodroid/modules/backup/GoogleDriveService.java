@@ -5,6 +5,9 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -306,6 +309,108 @@ public class GoogleDriveService {
 
 
     /**
+     * Uloží soubor z Google Drive do lokálně vybrané záložní složky.
+     * Pokud v cíli existuje soubor se stejným názvem, může být volitelně přepsán.
+     * Po úspěšném stažení se aplikace pokusí zachovat i původní čas změny souboru.
+     *
+     * @param folderUri          URI cílové složky v lokálním úložišti
+     * @param driveFile          metadata souboru na Google Drive
+     * @param overwriteExisting  {@code true}, pokud se má stávající soubor přepsat
+     * @return výsledek akce se zprávou pro UI
+     */
+    public ResultAction saveFileToLocalStorage(Uri folderUri, File driveFile, boolean overwriteExisting) {
+        if (drive == null)
+            return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+
+        if (folderUri == null || driveFile == null || driveFile.getId() == null || driveFile.getName() == null)
+            return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+
+        DocumentFile targetFolder = DocumentFile.fromTreeUri(context, folderUri);
+        if (targetFolder == null || !targetFolder.canWrite())
+            return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.no_folder));
+
+        DocumentFile existingFile = targetFolder.findFile(driveFile.getName());
+        if (existingFile != null) {
+            if (!overwriteExisting)
+                return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_already_exists));
+
+            if (!existingFile.delete())
+                return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+        }
+
+        String mimeType = driveFile.getName().endsWith(".zip") ? "application/zip" : "application/octet-stream";
+        DocumentFile createdFile = targetFolder.createFile(mimeType, driveFile.getName());
+        if (createdFile == null)
+            return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+
+        try (java.io.OutputStream outputStream = context.getContentResolver().openOutputStream(createdFile.getUri())) {
+            if (outputStream == null)
+                return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+
+            drive.files().get(driveFile.getId()).executeMediaAndDownloadTo(outputStream);
+
+            Long timestampFromName = BackupFileTimestampHelper.extractTimestampFromName(driveFile.getName());
+            long effectiveTimestamp = timestampFromName != null ? timestampFromName : -1L;
+            if (effectiveTimestamp <= 0) {
+                DateTime modifiedTime = driveFile.getModifiedTime() != null ? driveFile.getModifiedTime() : driveFile.getCreatedTime();
+                effectiveTimestamp = modifiedTime != null ? modifiedTime.getValue() : -1L;
+            }
+            if (effectiveTimestamp > 0)
+                trySetLocalFileLastModified(folderUri, driveFile.getName(), effectiveTimestamp);
+
+            return new ResultAction(ResultAction.RESULT_OK, context.getString(R.string.save_google_drive_file_success));
+        } catch (IOException e) {
+            Log.e(TAG, "Error saving Google Drive file to local storage: " + e.getMessage(), e);
+            if (createdFile.exists())
+                createdFile.delete();
+            return new ResultAction(ResultAction.RESULT_ERROR, context.getString(R.string.save_google_drive_file_failed));
+        }
+    }
+
+
+    /**
+     * Pokusí se nastavit čas poslední změny u lokálního souboru, pokud cílové URI
+     * odpovídá primárnímu externímu úložišti přístupnému přes filesystem.
+     */
+    private void trySetLocalFileLastModified(Uri folderUri, String fileName, long modifiedTime) {
+        if (modifiedTime <= 0)
+            return;
+
+        try {
+            java.io.File localFile = resolveLocalFileFromTreeUri(folderUri, fileName);
+            if (localFile != null && localFile.exists()) {
+                boolean updated = localFile.setLastModified(modifiedTime);
+                if (!updated)
+                    Log.w(TAG, "Unable to update lastModified for local file: " + fileName);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Unable to preserve local file timestamp for: " + fileName, e);
+        }
+    }
+    /**
+     * Převede tree URI primárního externího úložiště na filesystem path.
+     */
+    private java.io.File resolveLocalFileFromTreeUri(Uri folderUri, String fileName) {
+        if (folderUri == null || fileName == null)
+            return null;
+
+        if (!"com.android.externalstorage.documents".equals(folderUri.getAuthority()))
+            return null;
+
+        String treeDocumentId = DocumentsContract.getTreeDocumentId(folderUri);
+        if (treeDocumentId == null || !treeDocumentId.startsWith("primary:"))
+            return null;
+
+        String relativePath = treeDocumentId.substring("primary:".length());
+        java.io.File baseDirectory = Environment.getExternalStorageDirectory();
+        java.io.File targetDirectory = relativePath.isEmpty()
+                ? baseDirectory
+                : new java.io.File(baseDirectory, relativePath);
+        return new java.io.File(targetDirectory, fileName);
+    }
+
+
+    /**
      * Načte seznam souborů ve složce na Google Drive.
      *
      * @return Seznam souborů ve složce.
@@ -340,18 +445,28 @@ public class GoogleDriveService {
         // Třídění souborů
         Collator collator = Collator.getInstance(new Locale("cs", "CZ"));
         Collections.sort(allFiles, (f1, f2) -> {
-            DateTime date1 = f1.getModifiedTime() != null ? f1.getModifiedTime() : f1.getCreatedTime();
-            DateTime date2 = f2.getModifiedTime() != null ? f2.getModifiedTime() : f2.getCreatedTime();
-            if (date1 == null && date2 == null) {
+            Long timestamp1 = BackupFileTimestampHelper.extractTimestampFromName(f1.getName());
+            Long timestamp2 = BackupFileTimestampHelper.extractTimestampFromName(f2.getName());
+
+            long effectiveTime1 = timestamp1 != null
+                    ? timestamp1
+                    : (f1.getModifiedTime() != null ? f1.getModifiedTime().getValue()
+                    : (f1.getCreatedTime() != null ? f1.getCreatedTime().getValue() : Long.MIN_VALUE));
+            long effectiveTime2 = timestamp2 != null
+                    ? timestamp2
+                    : (f2.getModifiedTime() != null ? f2.getModifiedTime().getValue()
+                    : (f2.getCreatedTime() != null ? f2.getCreatedTime().getValue() : Long.MIN_VALUE));
+
+            if (effectiveTime1 == Long.MIN_VALUE && effectiveTime2 == Long.MIN_VALUE) {
                 return collator.compare(f1.getName(), f2.getName());
             }
-            if (date1 == null) {
+            if (effectiveTime1 == Long.MIN_VALUE) {
                 return 1;
             }
-            if (date2 == null) {
+            if (effectiveTime2 == Long.MIN_VALUE) {
                 return -1;
             }
-            return Long.compare(date2.getValue(), date1.getValue());
+            return Long.compare(effectiveTime2, effectiveTime1);
         });
 
         return allFiles;

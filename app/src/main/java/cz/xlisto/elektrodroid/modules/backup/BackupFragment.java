@@ -305,7 +305,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         backupViewModel.getDocumentFiles().observe(getViewLifecycleOwner(), documentFiles -> {
             this.documentFiles = documentFiles;
             backupAdapter = new BackupAdapter(requireActivity(), documentFiles, recyclerView, handlerResultRecovery, null,
-                    this::updateSelectionActions, null);
+                    this::updateSelectionActions, this::handleSingleItemUploadRequest);
             recyclerView.setAdapter(backupAdapter);
             updateSelectionActions(0, false);
             restoreSelectionIfNeeded();
@@ -404,7 +404,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             clearPendingUploadConflict();
         });
     }
-
 
     /**
      * Při návratu fragmentu znovu kontroluje platnost oprávnění k URI složce záloh.
@@ -805,4 +804,23 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         }
     }
 
+
+    /**
+     * Spustí upload jednoho souboru z tlačítka položky přes stejný flow jako hromadný upload,
+     * aby se zobrazil stejný dialog průběhu a fungovala i kontrola kolizí názvů.
+     */
+    private void handleSingleItemUploadRequest(@NonNull DocumentFile documentFile) {
+        if (!isAdded())
+            return;
+
+        String userName = new ShPGoogleDrive(requireContext()).get(ShPGoogleDrive.USER_NAME, "");
+        if (userName.isEmpty()) {
+            Snackbar.make(requireView(), getString(R.string.google_drive_signed_out_warning), Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        ArrayList<DocumentFile> singleFile = new ArrayList<>();
+        singleFile.add(documentFile);
+        checkExistingFilesAndStartUpload(userName, singleFile);
+    }
 }

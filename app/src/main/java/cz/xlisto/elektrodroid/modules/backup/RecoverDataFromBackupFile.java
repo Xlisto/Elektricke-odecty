@@ -31,8 +31,12 @@ import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 
 /**
- * Třída RecoverDataFromBackupFile rozšiřuje třídu RecoverData a poskytuje metody
- * pro obnovu dat ze záložních ZIP souborů uložených na Google Drive.
+ * Pomocná třída pro obnovu databází aplikace ze záložních souborů.
+ *
+ * <p>Podporuje obnovu z lokálních záloh i z archivů uložených na Google Drive.
+ * V případě ZIP záloh nejprve stáhne nebo rozbalí archiv do dočasného umístění,
+ * následně obnoví jednotlivé databázové soubory a po dokončení provede úklid
+ * dočasně vytvořených souborů.</p>
  */
 public class RecoverDataFromBackupFile extends RecoverData {
 
@@ -41,9 +45,9 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
 
     /**
-     * Nastaví službu Google Drive.
+     * Nastaví instanci služby Google Drive používanou pro obnovu ze vzdálených záloh.
      *
-     * @param service Služba Google Drive, která se má nastavit.
+     * @param service inicializovaná služba Google Drive
      */
     public static void setDriveService(Drive service) {
         drive = service;
@@ -53,10 +57,13 @@ public class RecoverDataFromBackupFile extends RecoverData {
     /**
      * Obnoví databázi ze ZIP souboru uloženého na Google Drive.
      *
-     * @param context  Kontext aplikace.
-     * @param fileId   ID souboru na Google Drive.
-     * @param fileName Název souboru.
-     * @param callback Callback, který se zavolá po dokončení obnovy databáze.
+     * <p>Soubor je nejprve stažen do cache aplikace a následně předán standardnímu
+     * workflow obnovy ze ZIP archivu. Výsledek je vrácen zpět do UI přes callback.</p>
+     *
+     * @param context  kontext aplikace nebo activity
+     * @param fileId   ID souboru na Google Drive
+     * @param fileName název dočasného lokálního souboru v cache
+     * @param callback callback vyvolaný po dokončení obnovy
      */
     public static void recoverDatabaseFromZipGoogleDrive(Context context, String fileId, String fileName, RecoverDatabaseCallback callback) {
         new Thread(() -> {
@@ -70,11 +77,26 @@ public class RecoverDataFromBackupFile extends RecoverData {
                 Log.e(TAG, "recoverDatabaseFromZipGoogleDrive: " + e.getMessage());
             }
             boolean finalResult = result;
-            ((Activity) context).runOnUiThread(() -> callback.onComplete(finalResult));
+            if (context instanceof Activity activity) {
+                activity.runOnUiThread(() -> callback.onComplete(finalResult));
+            } else {
+                callback.onComplete(finalResult);
+            }
         }).start();
     }
 
 
+    /**
+     * Obnoví databázi ze zadaného záložního souboru.
+     *
+     * <p>Pokud jde o ZIP archiv, rozbalí jej do dočasného umístění a postupně obnoví
+     * jednotlivé databázové soubory. U nezipových záloh deleguje obnovu přímo na
+     * {@link #recoverDatabaseFromFile(Context, DocumentFile)}.</p>
+     *
+     * @param context kontext aplikace
+     * @param f       záložní soubor určený k obnově
+     * @return {@code true}, pokud se obnovu podařilo dokončit úspěšně
+     */
     public static boolean recoverDatabaseFromZip(Context context, DocumentFile f) {
         if (f == null) {
             Toast.makeText(context, context.getResources().getString(R.string.not_restored_data), Toast.LENGTH_LONG).show();
@@ -104,10 +126,11 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
 
     /**
-     * Obnoví databázi ze záložních souborů
+     * Obnoví jednu databázi ze záložního souboru.
      *
      * @param context kontext aplikace
-     * @param f       DocumentFile soubor
+     * @param f       soubor obsahující databázi pro obnovu
+     * @return {@code true}, pokud byla databáze obnovena úspěšně
      */
     private static boolean recoverDatabaseFromFile(Context context, DocumentFile f) {
         if (f == null || context == null) {
@@ -122,20 +145,9 @@ public class RecoverDataFromBackupFile extends RecoverData {
         dataPriceListSource.close();
 
         try {
-            File data = Environment.getDataDirectory();
-            String currentDBPath = "";
-
-            boolean cenik = Objects.requireNonNull(f.getName()).contains("cenik");
-            if (cenik) {
-                currentDBPath = "//data//" + context.getPackageName() + "//databases//databaze_cenik";
-            }
-
-            boolean odecet = f.getName().contains("odecet");
-            if (odecet) {
-                currentDBPath = "//data//" + context.getPackageName() + "//databases//odecty_a_mista";
-            }
-
-            File currentDB = new File(data, currentDBPath);//vnitřní databáze
+            File currentDB = resolveTargetDatabaseFile(context, f);
+            if (currentDB == null)
+                return false;
 
             OutputStream src;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -162,7 +174,6 @@ public class RecoverDataFromBackupFile extends RecoverData {
             //nastavení barev VT a NT
             //TODO: doplnit nastavení aplikace
 
-            //new Databaze(getActivity()).getColorApp();//načtení barev z databáze a nastavení do sharedPreferences, otevírá si a zavírá databázy
             ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
             shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
             return true;
@@ -174,10 +185,39 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
 
     /**
-     * Rozbalení ZIP archivu a uložení do stávající složky
+     * Určí cílový databázový soubor ve vnitřním úložišti podle názvu záložního souboru.
      *
-     * @param documentFile soubor se zálohou
-     * @return ArrayList<DocumentFile> seznam souborů
+     * @param context kontext aplikace
+     * @param file    záložní soubor
+     * @return cílový soubor databáze, nebo {@code null}, pokud název neodpovídá podporované DB
+     */
+    private static File resolveTargetDatabaseFile(Context context, DocumentFile file) {
+        if (context == null || file == null)
+            return null;
+
+        String fileName = file.getName();
+        if (fileName == null)
+            return null;
+
+        String currentDBPath;
+        if (fileName.contains("cenik")) {
+            currentDBPath = "//data//" + context.getPackageName() + "//databases//databaze_cenik";
+        } else if (fileName.contains("odecet")) {
+            currentDBPath = "//data//" + context.getPackageName() + "//databases//odecty_a_mista";
+        } else {
+            return null;
+        }
+
+        return new File(Environment.getDataDirectory(), currentDBPath);
+    }
+
+
+    /**
+     * Rozbalí ZIP archiv zálohy do aktuálně vybrané lokální složky záloh.
+     *
+     * @param context      kontext aplikace
+     * @param documentFile soubor se ZIP zálohou
+     * @return seznam rozbalených souborů
      */
     private static ArrayList<DocumentFile> unzip(Context context, DocumentFile documentFile) {
         ShPBackup shPBackup = new ShPBackup(context);
@@ -222,7 +262,9 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
 
     /**
-     * Smazání dočasných souborů z rozbaleného ZIPu
+     * Smaže dočasné soubory vytvořené při rozbalení ZIP zálohy.
+     *
+     * @param documentFiles seznam dočasných souborů určených ke smazání
      */
     public static void deleteDirectory(ArrayList<DocumentFile> documentFiles) {
         for (int i = 0; i < documentFiles.size(); i++) {
@@ -231,8 +273,16 @@ public class RecoverDataFromBackupFile extends RecoverData {
     }
 
 
+    /**
+     * Callback vracející výsledek dokončení obnovy databáze.
+     */
     public interface RecoverDatabaseCallback {
 
+        /**
+         * Vrátí výsledek obnovy databáze.
+         *
+         * @param result {@code true}, pokud byla obnova úspěšná
+         */
         void onComplete(boolean result);
 
     }

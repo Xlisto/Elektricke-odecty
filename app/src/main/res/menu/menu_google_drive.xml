@@ -16,6 +16,13 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_action_google_save_selected"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="@string/save_selected_google_drive_files_button_default"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_action_google_cancel_selection"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         android:title="@string/cancel_selection"

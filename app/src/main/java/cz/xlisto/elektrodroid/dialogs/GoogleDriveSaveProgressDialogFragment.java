@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.backup;
+package cz.xlisto.elektrodroid.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -16,40 +16,28 @@ import java.util.Locale;
 import cz.xlisto.elektrodroid.R;
 
 /**
- * Dialog pro zobrazení průběhu mazání vybraných souborů z Google Drive.
+ * Dialog pro zobrazení průběhu ukládání vybraných souborů z Google Drive do lokální zálohy.
  */
-public class GoogleDriveDeleteProgressDialogFragment extends DialogFragment {
+public class GoogleDriveSaveProgressDialogFragment extends DialogFragment {
 
-    public static final String TAG = "GoogleDriveDeleteProgressDialogFragment";
+    public static final String TAG = "GoogleDriveSaveProgressDialogFragment";
     private static final String ARG_TOTAL_COUNT = "argTotalCount";
     private static final String STATE_TOTAL_COUNT = "stateTotalCount";
-    private static final String STATE_DELETED_COUNT = "stateDeletedCount";
+    private static final String STATE_SAVED_COUNT = "stateSavedCount";
 
     private ProgressBar progressBar;
     private TextView tvStatus;
     private int totalCount;
-    private int deletedCount;
+    private int savedCount;
 
-    /**
-     * Vytvoří novou instanci dialogu.
-     *
-     * @param totalCount počet souborů, které se budou mazat
-     * @return instance dialogu
-     */
-    public static GoogleDriveDeleteProgressDialogFragment newInstance(int totalCount) {
+    public static GoogleDriveSaveProgressDialogFragment newInstance(int totalCount) {
         Bundle args = new Bundle();
         args.putInt(ARG_TOTAL_COUNT, totalCount);
-        GoogleDriveDeleteProgressDialogFragment fragment = new GoogleDriveDeleteProgressDialogFragment();
+        GoogleDriveSaveProgressDialogFragment fragment = new GoogleDriveSaveProgressDialogFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    /**
-     * Sestaví dialog s progress barem pro mazání souborů.
-     *
-     * @param savedInstanceState uložený stav dialogu, může být {@code null}
-     * @return vytvořený dialog
-     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -59,14 +47,14 @@ public class GoogleDriveDeleteProgressDialogFragment extends DialogFragment {
 
         if (savedInstanceState != null) {
             totalCount = savedInstanceState.getInt(STATE_TOTAL_COUNT, totalCount);
-            deletedCount = savedInstanceState.getInt(STATE_DELETED_COUNT, deletedCount);
+            savedCount = savedInstanceState.getInt(STATE_SAVED_COUNT, savedCount);
         } else if (getArguments() != null) {
             totalCount = getArguments().getInt(ARG_TOTAL_COUNT, 0);
         }
 
         setCancelable(false);
         AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-                .setTitle("Mazání z Google Drive")
+                .setTitle(R.string.save_selected_google_drive_files_title)
                 .setView(view)
                 .create();
 
@@ -74,26 +62,15 @@ public class GoogleDriveDeleteProgressDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    /**
-     * Uloží stav dialogu pro obnovu po změně konfigurace.
-     *
-     * @param outState výstupní bundle pro persistenci stavu
-     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_TOTAL_COUNT, totalCount);
-        outState.putInt(STATE_DELETED_COUNT, deletedCount);
+        outState.putInt(STATE_SAVED_COUNT, savedCount);
     }
 
-    /**
-     * Aktualizuje průběh mazání.
-     *
-     * @param deletedCount počet již smazaných souborů
-     * @param totalCount celkový počet souborů
-     */
-    public void showProgress(int deletedCount, int totalCount) {
-        this.deletedCount = deletedCount;
+    public void showProgress(int savedCount, int totalCount) {
+        this.savedCount = savedCount;
         this.totalCount = totalCount;
         applyState();
     }
@@ -103,11 +80,12 @@ public class GoogleDriveDeleteProgressDialogFragment extends DialogFragment {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(false);
             progressBar.setMax(Math.max(totalCount, 1));
-            progressBar.setProgress(Math.min(deletedCount, Math.max(totalCount, 1)));
+            progressBar.setProgress(Math.min(savedCount, Math.max(totalCount, 1)));
         }
 
         if (tvStatus != null) {
-            tvStatus.setText(String.format(Locale.getDefault(), "Mažu vybrané soubory na Google Drive (%d/%d)", deletedCount, totalCount));
+            tvStatus.setText(String.format(Locale.getDefault(), "%s (%d/%d)",
+                    getString(R.string.save_selected_google_drive_files_in_progress), savedCount, totalCount));
         }
     }
 }

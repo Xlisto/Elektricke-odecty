@@ -3,9 +3,11 @@ package cz.xlisto.elektrodroid.modules.backup;
 
 import android.accounts.Account;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,10 +22,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,10 +38,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.api.services.drive.model.File;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.dialogs.GoogleDriveDeleteProgressDialogFragment;
+import cz.xlisto.elektrodroid.dialogs.GoogleDriveSaveProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
+import cz.xlisto.elektrodroid.permission.Files;
+import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
@@ -56,6 +68,10 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
     private static final String TAG = "GoogleDriveFragment";
     private static final int MENU_ACTION_GOOGLE_SIGN = R.id.menu_action_google_sign;
+    private static final String FLAG_DIALOG_FRAGMENT_SAVE_TO_LOCAL = "googleDriveFragmentSaveToLocal";
+    private static final String STATE_PENDING_SAVE_ALL_FILES = "statePendingSaveAllFiles";
+    private static final String STATE_PENDING_SAVE_NON_DUPLICATE_FILES = "statePendingSaveNonDuplicateFiles";
+    private static final String DRIVE_FILE_STATE_SEPARATOR = "\u0001";
 
     private TextView tvAlertNoInternet;
     private CredentialHelper credentialHelper;
@@ -71,9 +87,24 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private boolean multiSelectMode;
     private boolean suppressSelectionCanceledSnackbar;
     private MenuItem menuItemDeleteSelected;
+    private MenuItem menuItemSaveSelected;
     private MenuItem menuItemCancelSelection;
     private GoogleDriveDeleteProgressDialogFragment deleteProgressDialog;
+    private GoogleDriveSaveProgressDialogFragment saveProgressDialog;
     private GoogleDriveViewModel googleDriveViewModel;
+    private ArrayList<File> pendingSaveAllFiles = new ArrayList<>();
+    private ArrayList<File> pendingSaveNonDuplicateFiles = new ArrayList<>();
+
+    private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != android.app.Activity.RESULT_OK || result.getData() == null)
+                    return;
+
+                Files.activityResult(result.getData(), requireActivity());
+                continuePendingSaveToLocal();
+            }
+    );
 
     // handler pro zobrazení výsledku obnovení databáze
     private final Handler handlerResultRecoveryDatabase = new Handler(Looper.getMainLooper()) {
@@ -167,6 +198,11 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            pendingSaveAllFiles = restoreDriveFilesFromState(savedInstanceState.getStringArrayList(STATE_PENDING_SAVE_ALL_FILES));
+            pendingSaveNonDuplicateFiles = restoreDriveFilesFromState(savedInstanceState.getStringArrayList(STATE_PENDING_SAVE_NON_DUPLICATE_FILES));
+        }
+
         // Inicializace ViewModelu pro sledování stavu mazání přes rotaci
         googleDriveViewModel = new ViewModelProvider(this).get(GoogleDriveViewModel.class);
 
@@ -176,6 +212,12 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                 .findFragmentByTag(GoogleDriveDeleteProgressDialogFragment.TAG);
         if (existingDialog instanceof GoogleDriveDeleteProgressDialogFragment) {
             deleteProgressDialog = (GoogleDriveDeleteProgressDialogFragment) existingDialog;
+        }
+
+        androidx.fragment.app.Fragment existingSaveDialog = requireActivity().getSupportFragmentManager()
+                .findFragmentByTag(GoogleDriveSaveProgressDialogFragment.TAG);
+        if (existingSaveDialog instanceof GoogleDriveSaveProgressDialogFragment) {
+            saveProgressDialog = (GoogleDriveSaveProgressDialogFragment) existingSaveDialog;
         }
 
         // Sledování stavu mazání – po rotaci reagujeme na výsledek z ViewModelu
@@ -215,6 +257,46 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             }
         });
 
+        googleDriveViewModel.getSaveState().observe(getViewLifecycleOwner(), state -> {
+            if (state == null) return;
+            switch (state.status()) {
+                case IN_PROGRESS:
+                    saveProgressDialog = ensureSaveProgressDialog(state.totalCount());
+                    saveProgressDialog.showProgress(state.processedCount(), state.totalCount());
+                    break;
+                case FINISHED:
+                    dismissSaveProgressDialog();
+                    if (backupAdapter != null) {
+                        suppressSelectionCanceledSnackbar = true;
+                        backupAdapter.cancelMultiSelect();
+                    }
+                    View saveRoot = getView();
+                    if (saveRoot != null) {
+                        String message;
+                        if (state.success()) {
+                            message = getString(R.string.saved_selected_google_drive_files);
+                        } else if (state.savedCount() > 0) {
+                            message = getString(R.string.partially_saved_selected_google_drive_files, state.savedCount(), state.totalCount());
+                        } else {
+                            message = getString(R.string.not_saved_selected_google_drive_files);
+                        }
+                        Snackbar.make(saveRoot, message, Snackbar.LENGTH_LONG).show();
+                    }
+                    googleDriveViewModel.resetSaveToIdle();
+                    break;
+                case FAILED:
+                    dismissSaveProgressDialog();
+                    View saveFailRoot = getView();
+                    if (saveFailRoot != null && state.errorMessage() != null)
+                        Snackbar.make(saveFailRoot, state.errorMessage(), Snackbar.LENGTH_LONG).show();
+                    googleDriveViewModel.resetSaveToIdle();
+                    break;
+                case IDLE:
+                default:
+                    break;
+            }
+        });
+
         setupMenuProvider();
 
         // posluchač výsledku dialogového okna pro obnovení databáze
@@ -233,6 +315,32 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                 Log.w(TAG, "smazat soubor");
             }
         });
+
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_SAVE_TO_LOCAL, this, (requestKey, result) -> {
+            boolean overwrite = result.getBoolean(YesNoDialogFragment.RESULT);
+            if (overwrite) {
+                startPendingSaveToLocal(new ArrayList<>(pendingSaveAllFiles), true);
+            } else {
+                if (pendingSaveNonDuplicateFiles.isEmpty()) {
+                    clearPendingSaveToLocal();
+                    View root = getView();
+                    if (root != null)
+                        Snackbar.make(root, getString(R.string.save_selected_all_files_already_exist), Snackbar.LENGTH_SHORT).show();
+                } else {
+                    startPendingSaveToLocal(new ArrayList<>(pendingSaveNonDuplicateFiles), false);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!pendingSaveAllFiles.isEmpty())
+            outState.putStringArrayList(STATE_PENDING_SAVE_ALL_FILES, serializeDriveFiles(pendingSaveAllFiles));
+        if (!pendingSaveNonDuplicateFiles.isEmpty())
+            outState.putStringArrayList(STATE_PENDING_SAVE_NON_DUPLICATE_FILES, serializeDriveFiles(pendingSaveNonDuplicateFiles));
     }
 
 
@@ -260,6 +368,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             @Override
             public void onPrepareMenu(@NonNull Menu menu) {
                 menuItemDeleteSelected = menu.findItem(R.id.menu_action_google_delete_selected);
+                menuItemSaveSelected = menu.findItem(R.id.menu_action_google_save_selected);
                 menuItemCancelSelection = menu.findItem(R.id.menu_action_google_cancel_selection);
                 MenuItem signItem = menu.findItem(MENU_ACTION_GOOGLE_SIGN);
                 if (signItem == null || shPGoogleDrive == null)
@@ -274,6 +383,12 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                     menuItemDeleteSelected.setVisible(internetAvailable && multiSelectMode);
                     menuItemDeleteSelected.setEnabled(internetAvailable && multiSelectMode && selectedFilesCount > 0);
                     menuItemDeleteSelected.setTitle(getString(R.string.delete_selected_google_drive_files_button, selectedFilesCount));
+                }
+
+                if (menuItemSaveSelected != null) {
+                    menuItemSaveSelected.setVisible(internetAvailable && multiSelectMode);
+                    menuItemSaveSelected.setEnabled(internetAvailable && multiSelectMode && selectedFilesCount > 0);
+                    menuItemSaveSelected.setTitle(getString(R.string.save_selected_google_drive_files_button, selectedFilesCount));
                 }
 
                 if (menuItemCancelSelection != null) {
@@ -295,6 +410,10 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                 }
                 if (item.getItemId() == R.id.menu_action_google_delete_selected) {
                     deleteSelectedFiles();
+                    return true;
+                }
+                if (item.getItemId() == R.id.menu_action_google_save_selected) {
+                    saveSelectedFilesToLocal();
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_action_google_cancel_selection) {
@@ -365,6 +484,8 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         }
         updateSelectionActions(0, false);
         dismissDeleteProgressDialog();
+        dismissSaveProgressDialog();
+        clearPendingSaveToLocal();
         toggleButtonsAndRecyclerViewVisibility();
         updateAppBarSignMenu();
         onFilesLoaded(List.of());
@@ -411,6 +532,17 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
 
     /**
+     * Uloží vybrané soubory z Google Drive do lokální záložní složky.
+     */
+    private void saveSelectedFilesToLocal() {
+        if (backupAdapter == null || selectedFilesCount == 0)
+            return;
+
+        startSaveFilesWorkflow(backupAdapter.getSelectedGoogleDriveFiles());
+    }
+
+
+    /**
      * Zobrazí nebo skryje LinearLayout s ProgressBar.
      *
      * @param show {@code true} pro zobrazení, {@code false} pro skrytí
@@ -436,7 +568,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         Log.w(TAG, "onFilesLoaded: " + files.size());
         requireActivity().runOnUiThread(() -> {
             showLnProgressBar(false);
-            backupAdapter = new BackupAdapter(requireActivity(), files, recyclerView, handlerResultRecoveryDatabase, googleDriveService, this, this);
+            backupAdapter = new BackupAdapter(requireActivity(), files, recyclerView, handlerResultRecoveryDatabase, googleDriveService, this, this, this::handleSaveGoogleDriveFileRequest);
             recyclerView.setAdapter(backupAdapter);
             updateSelectionActions(0, false);
             recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
@@ -653,6 +785,249 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         if (!isAdded())
             return;
         requireActivity().invalidateOptionsMenu();
+    }
+
+
+    /**
+     * Zahájí workflow uložení vybraného souboru z Google Drive do lokální záložní složky.
+     */
+    private void handleSaveGoogleDriveFileRequest(@NonNull File driveFile) {
+        ArrayList<File> filesToSave = new ArrayList<>();
+        filesToSave.add(driveFile);
+        startSaveFilesWorkflow(filesToSave);
+    }
+
+
+    /**
+     * Pokračuje v ukládání souboru po ověření oprávnění ke složce a případně zobrazí konflikt názvu.
+     */
+    private void continuePendingSaveToLocal() {
+        if (!isAdded() || pendingSaveAllFiles.isEmpty())
+            return;
+
+        Uri backupFolderUri = Uri.parse(new ShPBackup(requireContext()).get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        if (!Files.permissions(requireActivity(), backupFolderUri))
+            return;
+
+        DocumentFile backupFolder = DocumentFile.fromTreeUri(requireContext(), backupFolderUri);
+        if (backupFolder == null || !backupFolder.canWrite()) {
+            View root = getView();
+            if (root != null)
+                Snackbar.make(root, getString(R.string.no_folder), Snackbar.LENGTH_LONG).show();
+            clearPendingSaveToLocal();
+            return;
+        }
+
+        ArrayList<File> duplicateFiles = new ArrayList<>();
+        ArrayList<File> nonDuplicateFiles = new ArrayList<>();
+        Set<String> existingNames = new HashSet<>();
+        for (DocumentFile localFile : backupFolder.listFiles()) {
+            if (localFile != null && localFile.getName() != null)
+                existingNames.add(localFile.getName());
+        }
+
+        for (File driveFile : pendingSaveAllFiles) {
+            if (driveFile == null || driveFile.getName() == null)
+                continue;
+            if (existingNames.contains(driveFile.getName()))
+                duplicateFiles.add(driveFile);
+            else
+                nonDuplicateFiles.add(driveFile);
+        }
+
+        if (!duplicateFiles.isEmpty()) {
+            pendingSaveNonDuplicateFiles = new ArrayList<>(nonDuplicateFiles);
+            YesNoDialogFragment.newInstance(
+                    getString(R.string.save_selected_google_drive_files_exists_title),
+                    FLAG_DIALOG_FRAGMENT_SAVE_TO_LOCAL,
+                    getString(R.string.save_selected_google_drive_files_exists_message),
+                    getString(R.string.upload_existing_files_overwrite),
+                    getString(R.string.upload_existing_files_skip)
+            ).show(requireActivity().getSupportFragmentManager(), FLAG_DIALOG_FRAGMENT_SAVE_TO_LOCAL);
+            return;
+        }
+
+        startPendingSaveToLocal(new ArrayList<>(pendingSaveAllFiles), false);
+    }
+
+
+    /**
+     * Spustí uložení do lokálního úložiště na background vlákně.
+     */
+    private void startPendingSaveToLocal(@NonNull List<File> filesToSave, boolean overwriteExisting) {
+        if (googleDriveService == null || filesToSave.isEmpty())
+            return;
+
+        Uri backupFolderUri = Uri.parse(new ShPBackup(requireContext()).get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        ArrayList<File> filesSnapshot = new ArrayList<>(filesToSave);
+        clearPendingSaveToLocal();
+        if (googleDriveViewModel != null)
+            googleDriveViewModel.setSaveInProgress(filesSnapshot.size());
+
+        new Thread(() -> {
+            int savedCount = 0;
+            int totalCount = filesSnapshot.size();
+            for (int i = 0; i < filesSnapshot.size(); i++) {
+                File fileToSave = filesSnapshot.get(i);
+                GoogleDriveService.ResultAction result = googleDriveService.saveFileToLocalStorage(backupFolderUri, fileToSave, overwriteExisting);
+                if (result.result == GoogleDriveService.ResultAction.RESULT_OK)
+                    savedCount++;
+                if (googleDriveViewModel != null)
+                    googleDriveViewModel.setSaveProgress(i + 1, savedCount, totalCount);
+            }
+
+            final int finalSavedCount = savedCount;
+            final int finalTotalCount = totalCount;
+
+            android.app.Activity activity = getActivity();
+            if (activity == null)
+                return;
+
+            activity.runOnUiThread(() -> {
+                if (googleDriveViewModel != null) {
+                    googleDriveViewModel.setSaveFinished(finalSavedCount == finalTotalCount, finalSavedCount, finalTotalCount);
+                } else {
+                    View root = getView();
+                    if (root != null) {
+                        String message;
+                        if (finalSavedCount == finalTotalCount) {
+                            message = getString(R.string.saved_selected_google_drive_files);
+                        } else if (finalSavedCount > 0) {
+                            message = getString(R.string.partially_saved_selected_google_drive_files, finalSavedCount, finalTotalCount);
+                        } else {
+                            message = getString(R.string.not_saved_selected_google_drive_files);
+                        }
+                        Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }).start();
+    }
+
+
+    /**
+     * Připraví workflow pro uložení souborů z Google Drive do lokální zálohy.
+     */
+    private void startSaveFilesWorkflow(@NonNull List<File> driveFiles) {
+        if (!isAdded())
+            return;
+
+        if (!internetAvailable) {
+            View root = getView();
+            if (root != null)
+                Snackbar.make(root, getString(R.string.internet_is_not_available), Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        if (googleDriveService == null) {
+            View root = getView();
+            if (root != null)
+                Snackbar.make(root, getString(R.string.google_drive_service_init_failed), Snackbar.LENGTH_LONG).show();
+            return;
+        }
+
+        pendingSaveAllFiles = new ArrayList<>(driveFiles);
+        pendingSaveNonDuplicateFiles.clear();
+
+        Uri backupFolderUri = Uri.parse(new ShPBackup(requireContext()).get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
+        if (!Files.permissions(requireActivity(), backupFolderUri)) {
+            Files.openTree(false, requireActivity(), resultTree);
+            return;
+        }
+
+        continuePendingSaveToLocal();
+    }
+
+
+    /**
+     * Vyčistí dočasná metadata pro lokální uložení souboru.
+     */
+    private void clearPendingSaveToLocal() {
+        pendingSaveAllFiles.clear();
+        pendingSaveNonDuplicateFiles.clear();
+    }
+
+
+    /**
+     * Bezpečně otevře nebo vrátí existující dialog průběhu ukládání.
+     */
+    private GoogleDriveSaveProgressDialogFragment ensureSaveProgressDialog(int totalCount) {
+        if (saveProgressDialog != null && saveProgressDialog.isAdded())
+            return saveProgressDialog;
+
+        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager()
+                .findFragmentByTag(GoogleDriveSaveProgressDialogFragment.TAG);
+        if (existing instanceof GoogleDriveSaveProgressDialogFragment) {
+            saveProgressDialog = (GoogleDriveSaveProgressDialogFragment) existing;
+            return saveProgressDialog;
+        }
+
+        saveProgressDialog = GoogleDriveSaveProgressDialogFragment.newInstance(totalCount);
+        saveProgressDialog.show(requireActivity().getSupportFragmentManager(), GoogleDriveSaveProgressDialogFragment.TAG);
+        return saveProgressDialog;
+    }
+
+
+    /**
+     * Bezpečně zavře dialog průběhu ukládání a uvolní referenci.
+     */
+    private void dismissSaveProgressDialog() {
+        if (saveProgressDialog == null)
+            return;
+
+        if (saveProgressDialog.isAdded())
+            saveProgressDialog.dismissAllowingStateLoss();
+        saveProgressDialog = null;
+    }
+
+
+    /**
+     * Převede seznam Drive souborů na serializovatelný stav pro obnovu po rotaci.
+     */
+    private ArrayList<String> serializeDriveFiles(List<File> files) {
+        ArrayList<String> result = new ArrayList<>();
+        if (files == null)
+            return result;
+
+        for (File file : files) {
+            if (file == null || file.getId() == null || file.getName() == null)
+                continue;
+            long modifiedTime = file.getModifiedTime() != null
+                    ? file.getModifiedTime().getValue()
+                    : (file.getCreatedTime() != null ? file.getCreatedTime().getValue() : -1L);
+            result.add(file.getId() + DRIVE_FILE_STATE_SEPARATOR + file.getName() + DRIVE_FILE_STATE_SEPARATOR + modifiedTime);
+        }
+        return result;
+    }
+
+
+    /**
+     * Obnoví seznam Drive souborů ze serializovaného stavu po změně konfigurace.
+     */
+    private ArrayList<File> restoreDriveFilesFromState(@Nullable ArrayList<String> serializedFiles) {
+        ArrayList<File> restoredFiles = new ArrayList<>();
+        if (serializedFiles == null)
+            return restoredFiles;
+
+        for (String serializedFile : serializedFiles) {
+            if (serializedFile == null)
+                continue;
+            String[] parts = serializedFile.split(DRIVE_FILE_STATE_SEPARATOR, 3);
+            if (parts.length < 3)
+                continue;
+
+            File file = new File();
+            file.setId(parts[0]);
+            file.setName(parts[1]);
+            try {
+                long modifiedTime = Long.parseLong(parts[2]);
+                if (modifiedTime > 0)
+                    file.setModifiedTime(new com.google.api.client.util.DateTime(modifiedTime));
+            } catch (NumberFormatException ignored) {
+            }
+            restoredFiles.add(file);
+        }
+        return restoredFiles;
     }
 
 }

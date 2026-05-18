@@ -607,11 +607,21 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="not_uploaded_selected_backups">Soubory se nepodařilo nahrát na Google Drive (%1$d/%2$d)</string>
     <string name="delete_selected_google_drive_files_button">Smazat vybrané (%1$d)</string>
     <string name="delete_selected_google_drive_files_button_default">Smazat vybrané</string>
+    <string name="save_selected_google_drive_files_button">Uložit vybrané (%1$d)</string>
+    <string name="save_selected_google_drive_files_button_default">Uložit vybrané</string>
     <string name="delete_selected_google_drive_files_title">Mazání z Google Drive</string>
     <string name="delete_selected_google_drive_files_in_progress">Mažu vybrané soubory na Google Drive (%1$d/%2$d)</string>
     <string name="deleted_selected_google_drive_files">Vybrané soubory byly smazány</string>
     <string name="partially_deleted_selected_google_drive_files">Některé soubory se nepodařilo smazat (%1$d/%2$d)</string>
     <string name="not_deleted_selected_google_drive_files">Vybrané soubory se nepodařilo smazat</string>
+    <string name="save_selected_google_drive_files_title">Ukládání do lokální zálohy</string>
+    <string name="save_selected_google_drive_files_in_progress">Ukládám vybrané soubory do lokální zálohy</string>
+    <string name="saved_selected_google_drive_files">Vybrané soubory byly uloženy do lokální zálohy</string>
+    <string name="partially_saved_selected_google_drive_files">Některé soubory se nepodařilo uložit do lokální zálohy (%1$d/%2$d)</string>
+    <string name="not_saved_selected_google_drive_files">Vybrané soubory se nepodařilo uložit do lokální zálohy</string>
+    <string name="save_selected_all_files_already_exist">Všechny vybrané soubory už v lokální záloze existují</string>
+    <string name="save_selected_google_drive_files_exists_title">Soubory již existují</string>
+    <string name="save_selected_google_drive_files_exists_message">Některé vybrané soubory již v lokální záloze existují. Přejete si je přepsat, nebo přeskočit?</string>
     <string name="upload_success_google_drive">Úspěšně nahráno na Google Drive</string>
     <string name="google_drive_service_init_failed">Nepodařilo se připravit Google Drive pro nahrávání</string>
     <string name="cancel_selection">Zrušit výběr</string>
@@ -622,6 +632,13 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="no_signs">Nepřihlášen</string>
     <string name="internet_is_not_available">Internetové připojení není dostupné</string>
     <string name="google_drive_signed_out_warning">Jste odhlášen. Pro zobrazení obsahu se přihlaste přes ikonu v horní liště.</string>
+    <string name="save_to_local_storage">Uložit</string>
+    <string name="save_google_drive_file_success">Soubor byl uložen do lokální zálohy</string>
+    <string name="save_google_drive_file_failed">Soubor se nepodařilo uložit do lokální zálohy</string>
+    <string name="save_google_drive_file_already_exists">Soubor v lokální záloze již existuje</string>
+    <string name="save_google_drive_file_exists_title">Soubor již existuje</string>
+    <string name="save_google_drive_file_exists_message">Soubor %1$s již v lokální záloze existuje. Přejete si jej přepsat?</string>
+    <string name="save_google_drive_file_canceled">Uložení zrušeno</string>
 
     <string name="formatted_price">%1$s %2$s</string>
     <string name="kwh_vt">1 kwh VT:</string>
