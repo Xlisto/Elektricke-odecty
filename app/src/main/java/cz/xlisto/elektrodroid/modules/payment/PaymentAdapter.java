@@ -39,12 +39,16 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     private static int selectedPosition;
     private final ArrayList<PaymentModel> items;
     private final RecyclerView recyclerView;
+    private final long invoiceDateFrom;
+    private final long invoiceDateTo;
     private Context context;
     private final String table;
 
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate, tvPayment, tvType, tvDescription;
+        TextView tvWarning;
+        LinearLayout lnWarning;
         LinearLayout lnButtons;
         RelativeLayout rlPaymentOut;
         Button btnEdit, btnDelete, btnChangeInvoice;
@@ -56,10 +60,12 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     }
 
 
-    public PaymentAdapter(ArrayList<PaymentModel> items, RecyclerView recyclerView, String table) {
+    public PaymentAdapter(ArrayList<PaymentModel> items, RecyclerView recyclerView, String table, long invoiceDateFrom, long invoiceDateTo) {
         this.items = items;
         this.recyclerView = recyclerView;
         this.table = table;
+        this.invoiceDateFrom = invoiceDateFrom;
+        this.invoiceDateTo = invoiceDateTo;
     }
 
 
@@ -75,6 +81,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         vh.tvPayment = v.findViewById(R.id.tvPlatba);
         vh.tvType = v.findViewById(R.id.tvDruhPlatby);
         vh.tvDescription = v.findViewById(R.id.tvDescriptionPayment);
+        vh.lnWarning = v.findViewById(R.id.lnPaymentWarning);
+        vh.tvWarning = v.findViewById(R.id.tvWarningPayment);
         vh.btnEdit = v.findViewById(R.id.btnEditPayment);
         vh.btnDelete = v.findViewById(R.id.btnDeletePayment);
 
@@ -92,6 +100,19 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         holder.tvPayment.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(payment.getPayment())));
         holder.tvType.setText(payment.getTypePaymentString());
         PaymentModel.getDiscountDPHText(payment.getDiscountDPH(), holder.tvDescription);
+
+        // Upozornění: sleva (s/bez DPH) je mimo období faktury, ke které je platba přiřazena.
+        boolean isDiscount = payment.getTypePayment() == 3 || payment.getTypePayment() == 6;
+        boolean hasInvoiceRange = invoiceDateFrom > 0 && invoiceDateTo > 0;
+        boolean isOutOfInvoiceRange = hasInvoiceRange && (payment.getDate() < invoiceDateFrom || payment.getDate() > invoiceDateTo);
+        if (isDiscount && isOutOfInvoiceRange) {
+            String dateFrom = ViewHelper.convertLongToDate(invoiceDateFrom);
+            String dateTo = ViewHelper.convertLongToDate(invoiceDateTo);
+            holder.tvWarning.setText(context.getString(R.string.alert_discount_out_of_invoice_range, dateFrom, dateTo));
+            holder.lnWarning.setVisibility(View.VISIBLE);
+        } else {
+            holder.lnWarning.setVisibility(View.GONE);
+        }
 
         holder.rlPaymentOut.setOnClickListener(v1 -> {
             if (showButtons >= 0) {

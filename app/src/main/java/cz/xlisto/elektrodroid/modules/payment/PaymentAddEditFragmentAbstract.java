@@ -23,7 +23,6 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  * Abstraktní třída pro přidání a editaci platby.
  */
 public abstract class PaymentAddEditFragmentAbstract extends Fragment {
-    private static final String TAG = "PaymentAddEditFragmentAbstract";
     public static final String FLAG_RESULT_PAYMENT_FRAGMENT = "flagResultPaymentFragment";
     static final String ID_FAK = "id_fak";
     static final String ID_PAYMENT = "id_payment";
@@ -32,6 +31,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     static final String CH_PAYMENT = "payment";
     static final String CH_SUPPLEMENT = "supplement";
     static final String CH_DISCOUNT = "discount";
+    static final String CH_DISCOUNT_WITH_TAX = "discount_with_tax";
+    static final String CH_SUPPORT = "support";
     static final String CH_REFUND = "refund";
     static final String DP_DAY = "dp_day";
     static final String DP_MONTH = "dp_month";
@@ -40,7 +41,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     String table;
     Button btnSave, btnBack;
     LabelEditText labPayment;
-    CheckBox chPayment, chSupplement, chDiscount, chSupport, chRefund;
+    CheckBox chPayment, chSupplement, chDiscount, chDiscountWithTax, chSupport, chRefund;
     DatePicker dp;
     PaymentModel payment;
 
@@ -72,6 +73,7 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chPayment = view.findViewById(R.id.cbPayment);
         chSupplement = view.findViewById(R.id.cbSupplement);
         chDiscount = view.findViewById(R.id.cbDiscount);
+        chDiscountWithTax = view.findViewById(R.id.cbDiscountWithTax);
         chSupport = view.findViewById(R.id.cbSupport);
         chRefund = view.findViewById(R.id.cbRefund);
         btnSave = view.findViewById(R.id.btnSavePayment);
@@ -116,6 +118,13 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             }
         });
 
+        chDiscountWithTax.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                unCheck();
+                chDiscountWithTax.setChecked(true);
+            }
+        });
+
         chRefund.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 unCheck();
@@ -128,6 +137,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             chPayment.setChecked(savedInstanceState.getBoolean(CH_PAYMENT));
             chSupplement.setChecked(savedInstanceState.getBoolean(CH_SUPPLEMENT));
             chDiscount.setChecked(savedInstanceState.getBoolean(CH_DISCOUNT));
+            chDiscountWithTax.setChecked(savedInstanceState.getBoolean(CH_DISCOUNT_WITH_TAX));
+            chSupport.setChecked(savedInstanceState.getBoolean(CH_SUPPORT));
             chRefund.setChecked(savedInstanceState.getBoolean(CH_REFUND));
             int year = savedInstanceState.getInt(DP_YEAR);
             int month = savedInstanceState.getInt(DP_MONTH);
@@ -144,6 +155,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         outState.putBoolean(CH_PAYMENT, chPayment.isChecked());
         outState.putBoolean(CH_SUPPLEMENT, chSupplement.isChecked());
         outState.putBoolean(CH_DISCOUNT, chDiscount.isChecked());
+        outState.putBoolean(CH_DISCOUNT_WITH_TAX, chDiscountWithTax.isChecked());
+        outState.putBoolean(CH_SUPPORT, chSupport.isChecked());
         outState.putBoolean(CH_REFUND, chRefund.isChecked());
         outState.putInt(DP_DAY, dp.getDayOfMonth());
         outState.putInt(DP_MONTH, dp.getMonth());
@@ -155,13 +168,14 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         chPayment.setChecked(false);
         chSupplement.setChecked(false);
         chDiscount.setChecked(false);
+        chDiscountWithTax.setChecked(false);
         chSupport.setChecked(false);
         chRefund.setChecked(false);
     }
 
 
     void save() {
-        long date = ViewHelper.parseCalendarFromString(""+dp.getDayOfMonth()+"."+(dp.getMonth()+1)+"."+dp.getYear()).getTimeInMillis();
+        long date = ViewHelper.parseCalendarFromString(dp.getDayOfMonth()+"."+(dp.getMonth()+1)+"."+dp.getYear()).getTimeInMillis();
         int typePayment = getTypePayment();
         //TODO: doplnit typ platby
         payment = new PaymentModel(idPayment,idFak,date, labPayment.getDouble(), typePayment);
@@ -177,13 +191,15 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     /**
      * Druh platby
      *
-     * @return 0 - platba, 1 - doplatek, 3 - sleva, 4 - podpora státu
+     * @return 0 - platba, 1 - doplatek, 3 - sleva bez DPH, 4 - podpora státu, 5 - přeplatek, 6 - sleva s DPH
      */
     int getTypePayment() {
         if (chSupplement.isChecked())
             return 1;
         if (chDiscount.isChecked())
             return 3;
+        if (chDiscountWithTax.isChecked())
+            return 6;
         if (chSupport.isChecked())
             return 4;
         if (chRefund.isChecked())

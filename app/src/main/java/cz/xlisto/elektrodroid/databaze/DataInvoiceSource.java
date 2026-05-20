@@ -40,8 +40,6 @@ import cz.xlisto.elektrodroid.utils.Calculation;
  */
 public class DataInvoiceSource extends DataSource {
 
-    private static final String TAG = "DataInvoiceSource";
-
 
     public DataInvoiceSource(Context context) {
         super.context = context;
@@ -334,7 +332,7 @@ public class DataInvoiceSource extends DataSource {
      */
     public double sumDiscountWithTax(long idFak, String table) {
         Cursor cursor = database.rawQuery("SELECT (" +
-                        "IFNULL((SELECT sum(castka*0.21) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3 AND datum >= 1635721200000 AND datum <= 1640908800000),0))",
+                        "IFNULL((SELECT sum(castka*0.21) FROM " + table + " WHERE " + ID_FAK + "=? AND CAST(mimoradna AS INTEGER) NOT IN (3, 6) AND datum >= 1635721200000 AND datum <= 1640908800000),0))",
                 new String[]{String.valueOf(idFak)});
         cursor.moveToFirst();
         double result = cursor.getDouble(0);
@@ -385,22 +383,10 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      */
     public double sumPayment(long idFak, String table) {
-        /*String sql = "SELECT (" +
-                "IFNULL((SELECT sum(castka) FROM " + table + " WHERE " + ID_FAK + "=? AND mimoradna!=3),0)) as total " +
-                "GROUP BY total";*/
-
-        String sql = "SELECT\n" +
-                "    SUM(\n" +
-                "        CASE\n" +
-                "            WHEN mimoradna = 3 THEN -castka  -- Pokud mimoradna je 3, použij zápornou hodnotu castka\n" +
-                "            WHEN mimoradna = 5 THEN -castka  -- Pokud mimoradna je 5, použij zápornou hodnotu castka\n" +
-                "            ELSE castka                     -- V ostatních případech použij kladnou hodnotu castka\n" +
-                "        END\n" +
-                "    ) AS total_sum  -- Doporučuji použít alias pro výsledný sloupec\n" +
-                "FROM\n " +
-                table + " \n" +
-                "WHERE\n" +
-                ID_FAK + " = ?";
+        String sql = "SELECT IFNULL(SUM(castka), 0) " +
+                "FROM " + table + " " +
+                "WHERE " + ID_FAK + " = ? " +
+                "AND CAST(mimoradna AS INTEGER) NOT IN (3, 5, 6)";
         String[] args = new String[]{String.valueOf(idFak)};
         return getDoubleSum(sql, args);
     }
@@ -418,6 +404,23 @@ public class DataInvoiceSource extends DataSource {
         String sql = "SELECT " +
                 "(IFNULL((SELECT sum(castka) FROM " + table +
                 " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND " + ID_FAK + " = ?),0)) as total " +
+                "GROUP BY total";
+        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
+        return getDoubleSum(sql, args);
+    }
+
+
+    /**
+     * Provede součet slev s DPH ve faktuře (sleva se odečítá až z celkové ceny s DPH).
+     *
+     * @param idFak id faktury
+     * @param table název tabulky
+     * @return součet slev s DPH
+     */
+    public double sumDiscountWithTaxInTotal(long idFak, String table, long timeFrom, long timeTo, long idInvoice) {
+        String sql = "SELECT " +
+                "(IFNULL((SELECT sum(castka) FROM " + table +
+                " WHERE " + ID_FAK + "=? AND mimoradna=6 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND " + ID_FAK + " = ?),0)) as total " +
                 "GROUP BY total";
         String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
         return getDoubleSum(sql, args);

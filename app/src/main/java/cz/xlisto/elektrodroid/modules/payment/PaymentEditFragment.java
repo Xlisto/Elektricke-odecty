@@ -17,7 +17,6 @@ import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
  * Xlisto 17.02.2023 23:03
  */
 public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
-    private static final String TAG = "PaymentEditFragment";
     private final String LOAD_DATABASE = "loadDatabase";
     private boolean loadDatabase;
 
@@ -54,12 +53,13 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
         if (loadDatabase) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(payment.getDate());
-            labPayment.setDefaultText("" + DecimalFormatHelper.df2.format(payment.getPayment()));
+            labPayment.setDefaultText(DecimalFormatHelper.df2.format(payment.getPayment()));
             dp.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             int typePayment = payment.getTypePayment();
             if (typePayment == 0) chPayment.setChecked(true);
             if (typePayment == 1) chSupplement.setChecked(true);
             if (typePayment == 3) chDiscount.setChecked(true);
+            if (typePayment == 6) chDiscountWithTax.setChecked(true);
             if (typePayment == 4) chSupport.setChecked(true);
             if (typePayment == 5) chRefund.setChecked(true);
             loadDatabase = false;

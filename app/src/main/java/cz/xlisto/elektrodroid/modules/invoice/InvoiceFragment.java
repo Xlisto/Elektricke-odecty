@@ -60,7 +60,6 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  */
 public class InvoiceFragment extends Fragment {
 
-    private static final String TAG = "InvoiceFragment";
     private static final String ID_FAK = "idFak";
     private static final String TABLE_FAK = "tableFak";
     private static final String TABLE_NOW = "tableNow";
@@ -425,8 +424,9 @@ public class InvoiceFragment extends Fragment {
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
             double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva bez DPH
+            double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva s DPH
             total += otherServices - discountWithoutTax;
-            totalDPH += otherServices - discountWithoutTax + ((otherServices - discountWithoutTax) * priceList.getDph() / 100);
+            totalDPH += otherServices - discountWithoutTax + ((otherServices - discountWithoutTax) * priceList.getDph() / 100) - discountWithTaxInTotal;
         }
         dataInvoiceSource.close();
         totalPriceVt = priceTotal[0];
@@ -466,46 +466,21 @@ public class InvoiceFragment extends Fragment {
             showTypeTotalPrice = 3;//pokud spotřeba NT je 0 a zobrazení NT spotřeby NT, přeskočí se rovnou na cenu VT
         if (totalPrice[1] == 0 && showTypeTotalPrice == 4)
             showTypeTotalPrice++;//pokud spotřeba NT je 0 a zobrazení NT ceny NT, přeskočí se rovnou na cenu platů
-        switch (showTypeTotalPrice) {
-            case 0:
-                s = getResources().getString(R.string.total_vt, totalPrice[showTypeTotalPrice]);
-                break;
-            case 1:
-                s = getResources().getString(R.string.total_nt, totalPrice[showTypeTotalPrice]);
-                break;
-            case 2:
-                s = getResources().getString(R.string.total_vt_nt, totalPrice[showTypeTotalPrice]);
-                break;
-            case 3:
-                s = getResources().getString(R.string.price_vt, totalPrice[showTypeTotalPrice]);
-                break;
-            case 4:
-                s = getResources().getString(R.string.price_nt, totalPrice[showTypeTotalPrice]);
-                break;
-            case 5:
-                s = getResources().getString(R.string.price_fixed_salary, totalPrice[showTypeTotalPrice]);
-                break;
-            case 6:
-                s = getResources().getString(R.string.price_poze, totalPrice[showTypeTotalPrice]);
-                break;
-            case 7:
-                s = getResources().getString(R.string.price_other_services, totalPrice[showTypeTotalPrice]);
-                break;
-            case 8:
-                s = getResources().getString(R.string.price_without_taxes, totalPrice[showTypeTotalPrice]);
-                break;
-            case 9:
-                s = getResources().getString(R.string.price_with_taxes, totalPrice[showTypeTotalPrice]);
-                break;
-            case 10:
-                s = getResources().getString(R.string.paymented_advances, totalPrice[showTypeTotalPrice]);
-                break;
-            case 11:
-                s = getResources().getString(R.string.balance, totalPrice[showTypeTotalPrice]);
-                break;
-            default:
-                s = "";
-        }
+        s = switch (showTypeTotalPrice) {
+            case 0 -> getResources().getString(R.string.total_vt, totalPrice[showTypeTotalPrice]);
+            case 1 -> getResources().getString(R.string.total_nt, totalPrice[showTypeTotalPrice]);
+            case 2 -> getResources().getString(R.string.total_vt_nt, totalPrice[showTypeTotalPrice]);
+            case 3 -> getResources().getString(R.string.price_vt, totalPrice[showTypeTotalPrice]);
+            case 4 -> getResources().getString(R.string.price_nt, totalPrice[showTypeTotalPrice]);
+            case 5 -> getResources().getString(R.string.price_fixed_salary, totalPrice[showTypeTotalPrice]);
+            case 6 -> getResources().getString(R.string.price_poze, totalPrice[showTypeTotalPrice]);
+            case 7 -> getResources().getString(R.string.price_other_services, totalPrice[showTypeTotalPrice]);
+            case 8 -> getResources().getString(R.string.price_without_taxes, totalPrice[showTypeTotalPrice]);
+            case 9 -> getResources().getString(R.string.price_with_taxes, totalPrice[showTypeTotalPrice]);
+            case 10 -> getResources().getString(R.string.paymented_advances, totalPrice[showTypeTotalPrice]);
+            case 11 -> getResources().getString(R.string.balance, totalPrice[showTypeTotalPrice]);
+            default -> "";
+        };
         tvTotal.setText(s);
     }
 

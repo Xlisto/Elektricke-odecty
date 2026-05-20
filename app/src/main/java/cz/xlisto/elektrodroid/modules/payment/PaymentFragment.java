@@ -48,6 +48,8 @@ public class PaymentFragment extends Fragment {
     private RecyclerView rv;
     private TextView tvTotal, tvDiscount;
     private long idSubscriptionPoint;
+    private long invoiceDateFrom;
+    private long invoiceDateTo;
     private ArrayList<PaymentModel> payments;
     private PaymentAdapter paymentAdapter;
     private Button btnAddPayment;
@@ -176,9 +178,18 @@ public class PaymentFragment extends Fragment {
         dataSubscriptionPointSource.open();
         payments = dataSubscriptionPointSource.loadPayments(idFak, table);
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        if (subscriptionPoint == null)
+        if (subscriptionPoint == null) {
+            dataSubscriptionPointSource.close();
             return;
+        }
+        String tableInvoice = idFak == -1L ? subscriptionPoint.getTableTED() : subscriptionPoint.getTableFAK();
         dataSubscriptionPointSource.close();
+
+        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
+        dataInvoiceSource.open();
+        invoiceDateFrom = dataInvoiceSource.minDateInvoice(idFak, tableInvoice);
+        invoiceDateTo = dataInvoiceSource.maxDateInvoice(idFak, tableInvoice);
+        dataInvoiceSource.close();
     }
 
 
@@ -186,7 +197,7 @@ public class PaymentFragment extends Fragment {
      * Nastaví recyclerview se seznamem plateb
      */
     private void setRecyclerView() {
-        paymentAdapter = new PaymentAdapter(payments, rv, table);
+        paymentAdapter = new PaymentAdapter(payments, rv, table, invoiceDateFrom, invoiceDateTo);
         rv.setAdapter(paymentAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

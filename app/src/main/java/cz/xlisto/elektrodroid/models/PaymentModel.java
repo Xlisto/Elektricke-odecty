@@ -19,7 +19,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class PaymentModel {
 
-    private static final String TAG = "PaymentModel";
     private final long id;
     private final long idFak;
     private final long date;
@@ -107,6 +106,7 @@ public class PaymentModel {
         if (typePayment == 3) return "Sleva bez DPH";
         if (typePayment == 4) return "Podpora státu (2000 nebo 3500)";
         if (typePayment == 5) return "Přeplatek, vrácení peněz";
+        if (typePayment == 6) return "Sleva s DPH";
         return "Měsíční záloha";
     }
 
