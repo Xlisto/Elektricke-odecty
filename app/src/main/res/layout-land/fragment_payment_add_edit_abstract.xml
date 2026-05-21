@@ -109,29 +109,51 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/shape_item"
                     android:orientation="horizontal">
 
                     <CheckBox
                         android:id="@+id/cbRefund"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="1"
                         android:checked="false"
                         android:maxWidth="300dp"
                         android:text="@string/refund" />
 
                     <CheckBox
                         android:id="@+id/cbDiscount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
                         android:maxWidth="300dp"
                         android:text="@string/discount"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/shape_item"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/cbDiscountWithTax"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:maxWidth="300dp"
+                        android:text="@string/discount_with_tax"
                         tools:ignore="TouchTargetSizeCheck" />
 
                 </LinearLayout>
