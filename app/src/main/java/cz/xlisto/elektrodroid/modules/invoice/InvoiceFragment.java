@@ -423,8 +423,8 @@ public class InvoiceFragment extends Fragment {
                 total += price[j];
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
-            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva bez DPH
-            double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo(), invoice.getIdInvoice());//sleva s DPH
+            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo());//sleva bez DPH
+            double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo());//sleva s DPH
             total += otherServices - discountWithoutTax;
             totalDPH += otherServices - discountWithoutTax + ((otherServices - discountWithoutTax) * priceList.getDph() / 100) - discountWithTaxInTotal;
         }

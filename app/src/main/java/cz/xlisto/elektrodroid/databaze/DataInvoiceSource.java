@@ -399,13 +399,13 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      * @return součet slev bez DPH
      */
-    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo, long idInvoice) {
+    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo) {
 
         String sql = "SELECT " +
                 "(IFNULL((SELECT sum(castka) FROM " + table +
-                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND " + ID_FAK + " = ?),0)) as total " +
+                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ?),0)) as total " +
                 "GROUP BY total";
-        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
+        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo)};
         return getDoubleSum(sql, args);
     }
 
@@ -417,12 +417,12 @@ public class DataInvoiceSource extends DataSource {
      * @param table název tabulky
      * @return součet slev s DPH
      */
-    public double sumDiscountWithTaxInTotal(long idFak, String table, long timeFrom, long timeTo, long idInvoice) {
+    public double sumDiscountWithTaxInTotal(long idFak, String table, long timeFrom, long timeTo) {
         String sql = "SELECT " +
                 "(IFNULL((SELECT sum(castka) FROM " + table +
-                " WHERE " + ID_FAK + "=? AND mimoradna=6 AND " + DATUM + " >= ? AND " + DATUM + " <= ? AND " + ID_FAK + " = ?),0)) as total " +
+                " WHERE " + ID_FAK + "=? AND mimoradna=6 AND " + DATUM + " >= ? AND " + DATUM + " <= ?),0)) as total " +
                 "GROUP BY total";
-        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo), String.valueOf(idInvoice)};
+        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo)};
         return getDoubleSum(sql, args);
     }
 
