@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="invoice_summary_options_max_height">180dp</dimen>
+</resources>
+

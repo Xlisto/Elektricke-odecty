@@ -3,6 +3,8 @@ package cz.xlisto.elektrodroid.modules.invoice;
 
 import static cz.xlisto.elektrodroid.models.PriceListModel.NEW_POZE_YEAR;
 
+import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,19 +12,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,6 +70,7 @@ public class InvoiceFragment extends Fragment {
     private static final String TABLE_PAY = "tablePay";
     private static final String TABLE_READ = "tableRead";
     private static final String POSITION = "position";
+    private static final String STATE_TOTAL_PANEL_EXPANDED = "stateTotalPanelExpanded";
     private String tableRead, tableFAK, tableNOW, tablePAY, table;
     private long idFak;
     private RecyclerView rv;
@@ -83,6 +88,10 @@ public class InvoiceFragment extends Fragment {
     private Button btnCreateInvoice, btnAddItemInvoice;
     private FloatingActionButton fab;
     private InvoiceViewModel viewModel;
+    private LinearLayout lnInvoiceBottomPanel;
+    private LinearLayout lnInvoiceTotalCard, lnInvoiceTotalOptions;
+    private boolean isTotalPanelExpanded;
+    private boolean isTotalCardAnimating;
 
 
     /**
@@ -171,6 +180,12 @@ public class InvoiceFragment extends Fragment {
         btnCreateInvoice = view.findViewById(R.id.btnCreateInvoice);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountInvoice);
+        lnInvoiceBottomPanel = view.findViewById(R.id.lnInvoiceBottomPanel);
+        lnInvoiceTotalCard = view.findViewById(R.id.lnInvoiceTotalCard);
+        lnInvoiceTotalOptions = view.findViewById(R.id.lnInvoiceTotalOptions);
+        if (savedInstanceState != null) {
+            isTotalPanelExpanded = savedInstanceState.getBoolean(STATE_TOTAL_PANEL_EXPANDED, false);
+        }
         btnAddItemInvoice.setOnClickListener(v -> showAddInvoice());
         fab.setOnClickListener(v -> showAddInvoice());
         btnCreateInvoice.setOnClickListener(v -> {
@@ -178,10 +193,7 @@ public class InvoiceFragment extends Fragment {
             InvoiceCreateDialogFragment invoiceCreateDialogFragment = InvoiceCreateDialogFragment.newInstance();
             invoiceCreateDialogFragment.show(requireActivity().getSupportFragmentManager(), InvoiceCreateDialogFragment.TAG);
         });
-        tvTotal.setOnClickListener(v -> {
-            addOneShowTypeTotalPrice();
-            setTotalTextView();
-        });
+        tvTotal.setOnClickListener(v -> toggleTotalCard());
 
         //změna textu tlačítka podle toho, zda se jedná o zobrazení stávající faktury nebo období bez faktury
         if (idFak == -1L) {
@@ -274,6 +286,13 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_TOTAL_PANEL_EXPANDED, isTotalPanelExpanded);
+    }
+
+
     /**
      * Načte záznamy ve faktuře
      */
@@ -343,25 +362,17 @@ public class InvoiceFragment extends Fragment {
      * Nastaví na RecyclerView adaptér, zajistí animaci při vytváření
      */
     public void setRecyclerView() {
+        rv.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(320);
+        itemAnimator.setRemoveDuration(220);
+        itemAnimator.setMoveDuration(240);
+        itemAnimator.setChangeDuration(180);
+        rv.setItemAnimator(itemAnimator);
         invoiceAdapter = new InvoiceAdapter(requireActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv, viewModel);
         invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
         rv.setAdapter(invoiceAdapter);
-
-        rv.setLayoutManager(new LinearLayoutManager(requireActivity()));
-        rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                rv.getViewTreeObserver().removeOnPreDrawListener(this);
-                rv.getMeasuredHeight();
-                for (int i = 0; i < rv.getChildCount(); i++) {
-                    View v = rv.getChildAt(i);
-                    Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.item_animation_fall_down);
-                    v.startAnimation(animation);
-                }
-                return true;
-            }
-        });
-        invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
+        rv.scheduleLayoutAnimation();
     }
 
 
@@ -464,29 +475,9 @@ public class InvoiceFragment extends Fragment {
      * Pokud jsou některé hodnoty nulové, přeskočí jejich zobrazení.
      */
     private void setTotalTextView() {
-        String s;
-        if (totalPrice[7] == 0 && showTypeTotalPrice == 7)
-            showTypeTotalPrice++;//pokud jsou ostatní služby rovny 0, posune se zobrazení o další
-        if (totalPrice[1] == 0 && showTypeTotalPrice == 1)
-            showTypeTotalPrice = 3;//pokud spotřeba NT je 0 a zobrazení NT spotřeby NT, přeskočí se rovnou na cenu VT
-        if (totalPrice[1] == 0 && showTypeTotalPrice == 4)
-            showTypeTotalPrice++;//pokud spotřeba NT je 0 a zobrazení NT ceny NT, přeskočí se rovnou na cenu platů
-        s = switch (showTypeTotalPrice) {
-            case 0 -> getResources().getString(R.string.total_vt, totalPrice[showTypeTotalPrice]);
-            case 1 -> getResources().getString(R.string.total_nt, totalPrice[showTypeTotalPrice]);
-            case 2 -> getResources().getString(R.string.total_vt_nt, totalPrice[showTypeTotalPrice]);
-            case 3 -> getResources().getString(R.string.price_vt, totalPrice[showTypeTotalPrice]);
-            case 4 -> getResources().getString(R.string.price_nt, totalPrice[showTypeTotalPrice]);
-            case 5 -> getResources().getString(R.string.price_fixed_salary, totalPrice[showTypeTotalPrice]);
-            case 6 -> getResources().getString(R.string.price_poze, totalPrice[showTypeTotalPrice]);
-            case 7 -> getResources().getString(R.string.price_other_services, totalPrice[showTypeTotalPrice]);
-            case 8 -> getResources().getString(R.string.price_without_taxes, totalPrice[showTypeTotalPrice]);
-            case 9 -> getResources().getString(R.string.price_with_taxes, totalPrice[showTypeTotalPrice]);
-            case 10 -> getResources().getString(R.string.paymented_advances, totalPrice[showTypeTotalPrice]);
-            case 11 -> getResources().getString(R.string.balance, totalPrice[showTypeTotalPrice]);
-            default -> "";
-        };
-        tvTotal.setText(s);
+        updateTotalHeader();
+        populateTotalCard();
+        applyTotalCardState();
     }
 
 
@@ -533,18 +524,6 @@ public class InvoiceFragment extends Fragment {
 
 
     /**
-     * Připočítává typ zobrazení celkového součtu
-     */
-    private void addOneShowTypeTotalPrice() {
-        showTypeTotalPrice++;
-        shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
-        if (showTypeTotalPrice > totalPrice.length - 1) {
-            showTypeTotalPrice = 0;
-        }
-    }
-
-
-    /**
      * Zobrazí nebo skryje tlačítka na základě toho, zda uživatel prohlíží fakturu nebo období bez faktury.
      *
      * @param isInvoiceTED Boolean hodnota indikující, zda uživatel prohlíží fakturu (true) nebo období bez faktury (false).
@@ -556,6 +535,259 @@ public class InvoiceFragment extends Fragment {
         } else {
             UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
         }
+    }
+
+
+    /**
+     * Rozbalí nebo sbalí kartu se souhrnnými údaji faktury.
+     */
+    private void toggleTotalCard() {
+        if (isTotalCardAnimating) {
+            return;
+        }
+        isTotalPanelExpanded = !isTotalPanelExpanded;
+        updateTotalHeader();
+        if (isTotalPanelExpanded) {
+            populateTotalCard();
+        }
+        applyTotalCardState(true);
+    }
+
+
+    /**
+     * Vybere typ souhrnného údaje, uloží jej a kartu opět sbalí.
+     */
+    private void selectTotalType(int type) {
+        if (isTotalCardAnimating) {
+            return;
+        }
+        showTypeTotalPrice = type;
+        shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
+        isTotalPanelExpanded = false;
+        updateTotalHeader();
+        applyTotalCardState(true);
+    }
+
+
+    /**
+     * Naplní vysouvací kartu všemi dostupnými souhrnnými informacemi faktury.
+     */
+    private void populateTotalCard() {
+        if (lnInvoiceTotalOptions == null || totalPrice == null) {
+            return;
+        }
+        lnInvoiceTotalOptions.removeAllViews();
+        boolean twoColumns = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+        LinearLayout row = null;
+        int columnIndex = 0;
+        for (int i = 0; i < totalPrice.length; i++) {
+            if (!isTotalTypeAvailable(i)) {
+                continue;
+            }
+            TextView itemView = createTotalOptionItem(i);
+            if (!twoColumns) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                if (lnInvoiceTotalOptions.getChildCount() > 0) {
+                    params.topMargin = dpToPx(4);
+                }
+                itemView.setLayoutParams(params);
+                lnInvoiceTotalOptions.addView(itemView);
+                continue;
+            }
+
+            if (row == null || columnIndex == 0) {
+                row = new LinearLayout(requireContext());
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                if (lnInvoiceTotalOptions.getChildCount() > 0) {
+                    rowParams.topMargin = dpToPx(4);
+                }
+                row.setLayoutParams(rowParams);
+                lnInvoiceTotalOptions.addView(row);
+            }
+
+            LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                    0,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    1f
+            );
+            if (columnIndex == 0) {
+                itemParams.setMarginEnd(dpToPx(4));
+            } else {
+                itemParams.setMarginStart(dpToPx(4));
+            }
+            itemView.setLayoutParams(itemParams);
+            row.addView(itemView);
+            columnIndex = (columnIndex + 1) % 2;
+        }
+
+        if (twoColumns && row != null && row.getChildCount() == 1) {
+            View spacer = new View(requireContext());
+            spacer.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 1f));
+            row.addView(spacer);
+        }
+    }
+
+
+    /**
+     * Vytvoří jednu položku souhrnu faktury.
+     */
+    private TextView createTotalOptionItem(int type) {
+        TextView itemView = new TextView(requireContext());
+        itemView.setPadding(dpToPx(12), dpToPx(10), dpToPx(12), dpToPx(10));
+        String text = getTotalText(type);
+        itemView.setText(android.text.Html.fromHtml(text));
+        itemView.setTextSize(16);
+        itemView.setClickable(true);
+        itemView.setFocusable(true);
+        if (type == showTypeTotalPrice) {
+            itemView.setBackgroundResource(R.drawable.shape_invoice_total_option_selected);
+            itemView.setTypeface(itemView.getTypeface(), Typeface.BOLD);
+        } else {
+            itemView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent));
+        }
+        itemView.setOnClickListener(v -> selectTotalType(type));
+        return itemView;
+    }
+
+
+    /**
+     * Vrátí text pro zvolený typ souhrnného údaje.
+     */
+    private String getTotalText(int type) {
+        return switch (type) {
+            case 0 -> getResources().getString(R.string.total_vt, totalPrice[type]);
+            case 1 -> getResources().getString(R.string.total_nt, totalPrice[type]);
+            case 2 -> getResources().getString(R.string.total_vt_nt, totalPrice[type]);
+            case 3 -> getResources().getString(R.string.price_vt, totalPrice[type]);
+            case 4 -> getResources().getString(R.string.price_nt, totalPrice[type]);
+            case 5 -> getResources().getString(R.string.price_fixed_salary, totalPrice[type]);
+            case 6 -> getResources().getString(R.string.price_poze, totalPrice[type]);
+            case 7 -> getResources().getString(R.string.price_other_services, totalPrice[type]);
+            case 8 -> getResources().getString(R.string.price_without_taxes, totalPrice[type]);
+            case 9 -> getResources().getString(R.string.price_with_taxes, totalPrice[type]);
+            case 10 -> getResources().getString(R.string.paymented_advances, totalPrice[type]);
+            case 11 -> getResources().getString(R.string.balance, totalPrice[type]);
+            default -> "";
+        };
+    }
+
+
+    /**
+     * Zajistí, aby vybraný typ souhrnu vždy odpovídal dostupnému údaji.
+     */
+    private void normalizeShowTypeTotalPrice() {
+        if (isTotalTypeAvailable(showTypeTotalPrice)) {
+            return;
+        }
+        for (int i = 0; i < totalPrice.length; i++) {
+            if (isTotalTypeAvailable(i)) {
+                showTypeTotalPrice = i;
+                shPInvoice.set(ShPInvoice.SHOW_TYPE_TOTAL_PRICE, showTypeTotalPrice);
+                return;
+            }
+        }
+        showTypeTotalPrice = 0;
+    }
+
+
+    /**
+     * Určuje, zda má být daný souhrnný údaj uživateli nabídnut.
+     */
+    private boolean isTotalTypeAvailable(int type) {
+        if (totalPrice == null || type < 0 || type >= totalPrice.length) {
+            return false;
+        }
+        return switch (type) {
+            case 1, 4 -> totalPrice[1] != 0;
+            case 7 -> totalPrice[7] != 0;
+            default -> true;
+        };
+    }
+
+
+    /**
+     * Převod dp na px pro dynamicky vytvářené položky panelu.
+     */
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
+    }
+
+
+    /**
+     * Nastaví stav rozbalovací karty se souhrnem, volitelně s animací.
+     */
+    private void applyTotalCardState() {
+        applyTotalCardState(false);
+    }
+
+
+    private void applyTotalCardState(boolean animate) {
+        if (lnInvoiceTotalCard == null) {
+            return;
+        }
+        lnInvoiceTotalCard.animate().cancel();
+        if (!animate) {
+            lnInvoiceTotalCard.setVisibility(isTotalPanelExpanded ? View.VISIBLE : View.GONE);
+            lnInvoiceTotalCard.setAlpha(isTotalPanelExpanded ? 1f : 0f);
+            lnInvoiceTotalCard.setTranslationY(0f);
+            isTotalCardAnimating = false;
+            return;
+        }
+
+        int shift = Math.max(lnInvoiceTotalCard.getHeight(), lnInvoiceBottomPanel != null ? lnInvoiceBottomPanel.getHeight() : 0);
+        if (shift <= 0) {
+            shift = dpToPx(120);
+        } else {
+            shift += dpToPx(24);
+        }
+
+        isTotalCardAnimating = true;
+        if (isTotalPanelExpanded) {
+            lnInvoiceTotalCard.setVisibility(View.VISIBLE);
+            lnInvoiceTotalCard.setAlpha(0f);
+            lnInvoiceTotalCard.setTranslationY(shift);
+            lnInvoiceTotalCard.animate()
+                    .withLayer()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(420)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .withEndAction(() -> isTotalCardAnimating = false)
+                    .start();
+        } else {
+            lnInvoiceTotalCard.animate()
+                    .withLayer()
+                    .alpha(0f)
+                    .translationY(shift)
+                    .setDuration(300)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .withEndAction(() -> {
+                        lnInvoiceTotalCard.setVisibility(View.GONE);
+                        lnInvoiceTotalCard.setTranslationY(0f);
+                        isTotalCardAnimating = false;
+                    })
+                    .start();
+        }
+    }
+
+
+    /**
+     * Aktualizuje pouze hlavičku souhrnu bez zásahu do karty s položkami.
+     */
+    private void updateTotalHeader() {
+        normalizeShowTypeTotalPrice();
+        tvTotal.setText(android.text.Html.fromHtml(getTotalText(showTypeTotalPrice)));
+        tvTotal.setCompoundDrawablePadding(dpToPx(8));
+        tvTotal.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                isTotalPanelExpanded ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float, 0);
+        tvTotal.setContentDescription(getString(isTotalPanelExpanded ? R.string.invoice_summary_collapse : R.string.invoice_summary_expand));
     }
 
 }
