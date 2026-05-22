@@ -6,7 +6,6 @@ import static cz.xlisto.elektrodroid.databaze.DbHelper.CISLO_FAK;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_DATE_FROM;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_DATE_UNTIL;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_ID;
-import static cz.xlisto.elektrodroid.databaze.DbHelper.DATUM;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.DATUM_PLATBY;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.GARANCE;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.ID_FAK;
@@ -393,36 +392,33 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
-     * Provede součet zálohových plateb ve faktuře bez DPH
+     * Provede součet všech slev bez DPH (mimoradna=3) pro danou fakturu.
+     * Sleva se aplikuje jednorázově na konci výpočtu, nezávisle na datu záznamu.
      *
      * @param idFak id faktury
      * @param table název tabulky
      * @return součet slev bez DPH
      */
-    public double sumDiscountWithoutTax(long idFak, String table, long timeFrom, long timeTo) {
-
-        String sql = "SELECT " +
-                "(IFNULL((SELECT sum(castka) FROM " + table +
-                " WHERE " + ID_FAK + "=? AND mimoradna=3 AND " + DATUM + " >= ? AND " + DATUM + " <= ?),0)) as total " +
-                "GROUP BY total";
-        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo)};
+    public double sumDiscountWithoutTax(long idFak, String table) {
+        String sql = "SELECT IFNULL(SUM(castka), 0) FROM " + table +
+                " WHERE " + ID_FAK + "=? AND mimoradna=3";
+        String[] args = new String[]{String.valueOf(idFak)};
         return getDoubleSum(sql, args);
     }
 
 
     /**
-     * Provede součet slev s DPH ve faktuře (sleva se odečítá až z celkové ceny s DPH).
+     * Provede součet všech slev s DPH (mimoradna=6) pro danou fakturu.
+     * Sleva se aplikuje jednorázově na konci výpočtu z celkové ceny s DPH.
      *
      * @param idFak id faktury
      * @param table název tabulky
      * @return součet slev s DPH
      */
-    public double sumDiscountWithTaxInTotal(long idFak, String table, long timeFrom, long timeTo) {
-        String sql = "SELECT " +
-                "(IFNULL((SELECT sum(castka) FROM " + table +
-                " WHERE " + ID_FAK + "=? AND mimoradna=6 AND " + DATUM + " >= ? AND " + DATUM + " <= ?),0)) as total " +
-                "GROUP BY total";
-        String[] args = new String[]{String.valueOf(idFak), String.valueOf(timeFrom), String.valueOf(timeTo)};
+    public double sumDiscountWithTaxInTotal(long idFak, String table) {
+        String sql = "SELECT IFNULL(SUM(castka), 0) FROM " + table +
+                " WHERE " + ID_FAK + "=? AND mimoradna=6";
+        String[] args = new String[]{String.valueOf(idFak)};
         return getDoubleSum(sql, args);
     }
 

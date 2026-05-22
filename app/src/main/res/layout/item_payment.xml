@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rlPaymentOut"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,35 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_item">
-
-        <LinearLayout
-            android:id="@+id/lnPaymentWarning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@drawable/shape_background_red"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="6dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/imageViewWarningPayment"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:contentDescription="@string/alert"
-                app:srcCompat="@drawable/ic_warning"
-                app:tint="@color/color_red_alert" />
-
-            <TextView
-                android:id="@+id/tvWarningPayment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:textColor="@color/color_red_alert"
-                android:textSize="12sp" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/lnButtonsPayment"
@@ -83,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/lnPaymentWarning"
+            android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/tvCislo0"
             android:gravity="end"
             android:textAllCaps="false"
@@ -113,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/lnPaymentWarning"
+            android:layout_alignParentTop="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
     </RelativeLayout>
 

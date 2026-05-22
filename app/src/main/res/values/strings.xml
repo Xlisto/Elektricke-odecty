@@ -496,8 +496,6 @@
     <string name="btn_move_payment">Přesuň</string>
     <string name="remove_record_payment">Odstranit záznam platby</string>
     <string name="discount_number">Sleva na DPH ve výši %s Kč</string>
-    <string name="alert_discount_description">Sleva bez DPH i sleva s DPH se do výpočtu započítají pouze v období, do kterého spadá jejich datum. U slevy bez DPH se částka ve výsledku navýší o DPH podle sazby daného období. Proto je nutné správně uvést datum započtení slevy, jinak se do faktury nezapočítá.</string>
-    <string name="alert_discount_out_of_invoice_range">Sleva je mimo období faktury (%1$s - %2$s), proto se do výpočtu této faktury nezapočítá.</string>
     <string name="alert_delete_invoice">Chystáte se smazat celou fakturu</string>
     <string name="alert_no_price_list">Pro období není nastaven ceník</string>
     <string name="settings">Nastavení</string>

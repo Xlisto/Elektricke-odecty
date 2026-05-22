@@ -47,9 +47,6 @@ public class PaymentFragment extends Fragment {
     private int position;
     private RecyclerView rv;
     private TextView tvTotal, tvDiscount;
-    private long idSubscriptionPoint;
-    private long invoiceDateFrom;
-    private long invoiceDateTo;
     private ArrayList<PaymentModel> payments;
     private PaymentAdapter paymentAdapter;
     private Button btnAddPayment;
@@ -70,7 +67,7 @@ public class PaymentFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
-        idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
@@ -177,19 +174,7 @@ public class PaymentFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireActivity());
         dataSubscriptionPointSource.open();
         payments = dataSubscriptionPointSource.loadPayments(idFak, table);
-        SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        if (subscriptionPoint == null) {
-            dataSubscriptionPointSource.close();
-            return;
-        }
-        String tableInvoice = idFak == -1L ? subscriptionPoint.getTableTED() : subscriptionPoint.getTableFAK();
         dataSubscriptionPointSource.close();
-
-        DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
-        dataInvoiceSource.open();
-        invoiceDateFrom = dataInvoiceSource.minDateInvoice(idFak, tableInvoice);
-        invoiceDateTo = dataInvoiceSource.maxDateInvoice(idFak, tableInvoice);
-        dataInvoiceSource.close();
     }
 
 
@@ -197,7 +182,7 @@ public class PaymentFragment extends Fragment {
      * Nastaví recyclerview se seznamem plateb
      */
     private void setRecyclerView() {
-        paymentAdapter = new PaymentAdapter(payments, rv, table, invoiceDateFrom, invoiceDateTo);
+        paymentAdapter = new PaymentAdapter(payments, rv, table);
         rv.setAdapter(paymentAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

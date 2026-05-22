@@ -423,10 +423,15 @@ public class InvoiceFragment extends Fragment {
                 total += price[j];
                 totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
             }
-            double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo());//sleva bez DPH
-            double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY, invoice.getDateFrom(), invoice.getDateTo());//sleva s DPH
-            total += otherServices - discountWithoutTax;
-            totalDPH += otherServices - discountWithoutTax + ((otherServices - discountWithoutTax) * priceList.getDph() / 100) - discountWithTaxInTotal;
+            total += otherServices;
+            totalDPH += otherServices + (otherServices * priceList.getDph() / 100);
+            // Slevy se aplikují jednorázově na posledním průchodu smyčky (nezávisle na datu slevy)
+            if (i == invoices.size() - 1) {
+                double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY); // sleva bez DPH - odečte se z ceny bez DPH (pak se přičte DPH)
+                double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY); // sleva s DPH - odečte se přímo z ceny s DPH
+                total -= discountWithoutTax;
+                totalDPH -= discountWithoutTax + (discountWithoutTax * priceList.getDph() / 100) + discountWithTaxInTotal;
+            }
         }
         dataInvoiceSource.close();
         totalPriceVt = priceTotal[0];
