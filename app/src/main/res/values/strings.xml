@@ -485,6 +485,7 @@
     <string name="button_subscription_point_2">Vybere druhé odběrné místo</string>
     <string name="button_subscription_point_3">Vybere třetí odběrné místo</string>
     <string name="button_subscription_point_4">Vybere čtvrté odběrné místo</string>
+    <string name="settings_app">Nastavení aplikace</string>
     <string name="settings_view">Nastavení zobrazení</string>
 
     <string name="icon_monthly_result">Zobrazí ikonu podle toho, zda-li je záloha dostatečná či nikoliv.</string>

@@ -2,6 +2,7 @@ package cz.xlisto.elektrodroid;
 
 
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.ALPHA;
+import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -60,12 +61,14 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 public class MainActivity extends AppCompatActivity implements MonthlyReadingFragment.OnShowRegulPriceListener {
 
-    private final static String TAG = "MainActivity";
     private static final String ACTUAL_FRAGMENT = "actualFragment";
     private static final String ACTUAL_SELECTED_ITEM_INDEX = "actualSelectedItemIndex";
     private Fragment actualFragment;
     private MyBottomNavigationView myBottomNavigationView;
     private NavigationView myNavigationView;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private Toolbar toolbar;
     private TextView toolbarTitle, toolbarSubtitle;
     private ShPMainActivity shPMainActivity;
     private int orientation, selectedItemIndex = -1;
@@ -83,18 +86,23 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         shPMainActivity = new ShPMainActivity(getApplicationContext());
 
         //Horní toolbar + zobrazení tlačítka
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        toolbar = findViewById(R.id.toolbar);
+        drawerLayout = findViewById(R.id.drawer_layout);
         toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
         toolbarSubtitle = toolbar.findViewById(R.id.toolbar_subtitle);
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
-                drawer, toolbar,
+        drawerToggle = new ActionBarDrawerToggle(this,
+                drawerLayout, toolbar,
                 R.string.ano,
                 R.string.ano);
-        drawer.addDrawerListener(toggle);
-        //drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.setToolbarNavigationClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+        });
+        drawerToggle.syncState();
+        getSupportFragmentManager().addOnBackStackChangedListener(this::updateAppBarNavigationIcon);
 
         //spodní lišta
         myBottomNavigationView.setOnItemSelectedListener(item -> {
@@ -297,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             }
             if (actualFragment != null)
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
-            drawer.closeDrawer(GravityCompat.START, true);
+            drawerLayout.closeDrawer(GravityCompat.START, true);
             return b;
         });
         Intent intent = getIntent();
@@ -366,6 +374,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         //posluchač na zavření dialogového okna s nastavením
         getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
                 (requestKey, result) -> setVisibilityNavigation());
+        updateAppBarNavigationIcon();
     }
 
 
@@ -392,21 +401,27 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
         if (countSubscriptionPoints > 1)
             menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
-        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_view));
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_app));
         return true;
     }
 
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home && getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            return true;
+        }
         if (item.getItemId() == 0) {
             SubscriptionPointDialogFragment.newInstance()
                     .show(getSupportFragmentManager(), SubscriptionPointDialogFragment.class.getSimpleName());
             return true;
         }
         if (item.getItemId() == 1) {
-            SettingsViewDialogFragment.newInstance()
-                    .show(getSupportFragmentManager(), SettingsViewDialogFragment.class.getSimpleName());
+            uncheckedBottomNavigation();
+            actualFragment = SettingsViewDialogFragment.newInstance();
+            FragmentChange.replace(MainActivity.this, actualFragment, MOVE, true);
+            setToolbarTitle(getResources().getString(R.string.settings_app));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -420,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
                 "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
                 "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
-                "SubscriptionPointFragment", "GraphColorFragment", "AboutMeFragment");
+                "SubscriptionPointFragment", "GraphColorFragment", "AboutMeFragment", "SettingsViewDialogFragment");
         //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
         for (String tag : visibleFragmentsTags) {
@@ -569,6 +584,31 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 item.setChecked(false);
             }
         }
+    }
+
+
+    /**
+     * Přepne ikonu v AppBar podle stavu backstacku.
+     */
+    private void updateAppBarNavigationIcon() {
+        boolean hasBackStack = getSupportFragmentManager().getBackStackEntryCount() > 0;
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(hasBackStack);
+        }
+
+        if (hasBackStack) {
+            drawerToggle.setDrawerIndicatorEnabled(false);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
+            toolbar.setNavigationOnClickListener(v -> getSupportFragmentManager().popBackStack());
+        } else {
+            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerToggle.setToolbarNavigationClickListener(null);
+        }
+
+        drawerLayout.setDrawerLockMode(hasBackStack
+                ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                : DrawerLayout.LOCK_MODE_UNLOCKED);
+        drawerToggle.syncState();
     }
 
 }
