@@ -12,12 +12,18 @@ import androidx.appcompat.app.AlertDialog;
 import cz.xlisto.elektrodroid.R;
 
 /**
+ * DialogFragment pro přidání nové faktury do seznamu faktur.
+ * Uživatel zadá číslo faktury a potvrdí přidání. Výsledek je předán přes FragmentResult.
  * Xlisto 30.01.2023 20:09
  */
 public class InvoiceListAddDialogFragment extends InvoiceListAddEditFragmentAbsctract {
-    private static final String TAG = "InvoiceAddDialogFragment";
 
-
+    /**
+     * Vytvoří novou instanci dialogu pro přidání faktury.
+     *
+     * @param idSubscriptionPoint ID odběrného místa, ke kterému bude faktura přiřazena
+     * @return nová instance InvoiceListAddDialogFragment
+     */
     public static InvoiceListAddDialogFragment newInstance(long idSubscriptionPoint) {
         InvoiceListAddDialogFragment invoiceAddDialogFragment = new InvoiceListAddDialogFragment();
         Bundle bundle = new Bundle();
@@ -26,9 +32,16 @@ public class InvoiceListAddDialogFragment extends InvoiceListAddEditFragmentAbsc
         return invoiceAddDialogFragment;
     }
 
+    /** Požadovaný prázdný veřejný konstruktor. */
     public InvoiceListAddDialogFragment() {
     }
 
+    /**
+     * Vytvoří a vrátí dialog pro přidání nové faktury.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený AlertDialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

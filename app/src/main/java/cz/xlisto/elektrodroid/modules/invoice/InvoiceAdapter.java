@@ -49,7 +49,6 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
  */
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHolder> {
 
-    private static final String TAG = "InvoiceAdapter";
     private static long selectedId;
     private static int selectedPosition;
     private static int showButtons = -1;

@@ -12,12 +12,19 @@ import androidx.appcompat.app.AlertDialog;
 import cz.xlisto.elektrodroid.R;
 
 /**
+ * DialogFragment pro úpravu čísla existující faktury v seznamu faktur.
+ * Uživatel může změnit číslo faktury a výsledek je předán přes FragmentResult.
  * Xlisto 01.02.2023 20:45
  */
 public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbsctract {
-    private static final String TAG = "InvoiceEditDialogFragment";
-    //static CloseDialogWithPositiveButtonListenerEdit closeDialogWithPositiveButtonListenerEdit;
 
+    /**
+     * Vytvoří novou instanci dialogu pro úpravu čísla faktury.
+     *
+     * @param idInvoice     ID faktury, která se má upravit
+     * @param numberInvoice aktuální číslo faktury
+     * @return nová instance InvoiceListEditDialogFragment
+     */
     public static InvoiceListEditDialogFragment newInstance(long idInvoice, String numberInvoice) {
         InvoiceListEditDialogFragment invoiceEditDialogFragment = new InvoiceListEditDialogFragment();
         Bundle bundle = new Bundle();
@@ -27,36 +34,16 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
         return invoiceEditDialogFragment;
     }
 
+    /** Požadovaný prázdný veřejný konstruktor. */
     public InvoiceListEditDialogFragment() {
     }
 
-    /*@Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Log.w(TAG,"attach ");
-        try {
-            closeDialogWithPositiveButtonListenerEdit = (CloseDialogWithPositiveButtonListenerEdit) context;
-        } catch(ClassCastException e) {
-            //throw new ClassCastException(context.toString() + "must implement");
-        }
-    }*/
-
-    /*@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            closeDialogWithPositiveButtonListenerEdit = (CloseDialogWithPositiveButtonListenerEdit) getParentFragment();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement Callback interface");
-        }
-    }*/
-
-
-
-    /*public interface CloseDialogWithPositiveButtonListenerEdit {
-        void onCloseDialogWithPositiveButton(String numberInvoice, long idSubscriptionPoint);
-    }*/
-
+    /**
+     * Vytvoří a vrátí dialog pro úpravu čísla faktury.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený AlertDialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,10 +42,12 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 
 
 /**
- * Seznam faktur
+ * Adaptér pro zobrazení seznamu faktur v RecyclerView.
+ * Zobrazuje základní informace o každé faktuře (číslo, datum, stav plateb a odečtů)
+ * a umožňuje editaci, zobrazení detailů a smazání faktury.
  * Xlisto 01.02.2023 19:28
  */
-public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.MyViewHolder> {
+public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "InvoiceListAdapter";
     private final Context context;
@@ -57,7 +60,11 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     private long selectedIdFak;
 
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * ViewHolder pro zobrazení jedné položky v seznamu faktur.
+     * Obsahuje reference na všechny Views v položce.
+     */
+    private static final class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout relativeLayout;
         LinearLayout lnButtons1, lnButtons2;
@@ -69,6 +76,11 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         long id;
 
 
+        /**
+         * Konstruktor ViewHolderu.
+         *
+         * @param itemView kořenový View položky
+         */
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
@@ -76,6 +88,13 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Konstruktor adaptéru.
+     *
+     * @param context      kontext aplikace
+     * @param items        seznam faktur
+     * @param recyclerView RecyclerView, ve kterém bude adaptér použit
+     */
     public InvoiceListAdapter(Context context, ArrayList<InvoiceListModel> items, RecyclerView recyclerView) {
         this.context = context;
         this.items = items;
@@ -83,9 +102,16 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Vytvoří nový ViewHolder a inicializuje jeho Views.
+     *
+     * @param parent   rodičovský ViewGroup
+     * @param viewType typ pohledu (nepoužíván)
+     * @return nový inicializovaný ViewHolder
+     */
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_invoice_list, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         vh.relativeLayout = v.findViewById(R.id.item_invoice_list);
@@ -120,18 +146,25 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Naváže data ze seznamu na ViewHolder na dané pozici.
+     *
+     * @param holder   ViewHolder, který se má naplnit daty
+     * @param position pozice položky v seznamu
+     */
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        MyViewHolder viewHolder = (MyViewHolder) holder;
         final InvoiceListModel invoice = items.get(position);
 
-        holder.id = invoice.getIdFak();
+        viewHolder.id = invoice.getIdFak();
         loadTableName();
-        holder.relativeLayout.setOnClickListener(v -> {
+        viewHolder.relativeLayout.setOnClickListener(v -> {
             if (showButtons >= 0) {
-                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                if (viewHolder != null) {
-                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceList1).setVisibility(View.GONE);
-                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceList2).setVisibility(View.GONE);
+                RecyclerView.ViewHolder selectedViewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                if (selectedViewHolder != null) {
+                    selectedViewHolder.itemView.findViewById(R.id.lnButtonsInvoiceList1).setVisibility(View.GONE);
+                    selectedViewHolder.itemView.findViewById(R.id.lnButtonsInvoiceList2).setVisibility(View.GONE);
                 }
             }
 
@@ -141,39 +174,39 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
             else
                 showButtons = position;
             shPInvoiceList.set(ShPInvoiceList.SHOW_BUTTONS_INVOICE_LIST, showButtons);
-            showButtons(holder, position);
+            showButtons(viewHolder, position);
         });
 
         //skrytí popisu čísla faktury
         if (position == 0)
-            holder.tvNumberInvoiceDescription.setVisibility(View.GONE);
+            viewHolder.tvNumberInvoiceDescription.setVisibility(View.GONE);
         else
-            holder.tvNumberInvoiceDescription.setVisibility(View.VISIBLE);
+            viewHolder.tvNumberInvoiceDescription.setVisibility(View.VISIBLE);
 
-        holder.btnNumberInvoice.setOnClickListener(v -> {
-            InvoiceListEditDialogFragment invoiceEditDialogFragment = InvoiceListEditDialogFragment.newInstance(holder.id, holder.tvNumberInvoice.getText().toString());
+        viewHolder.btnNumberInvoice.setOnClickListener(v -> {
+            InvoiceListEditDialogFragment invoiceEditDialogFragment = InvoiceListEditDialogFragment.newInstance(viewHolder.id, viewHolder.tvNumberInvoice.getText().toString());
             invoiceEditDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
-        holder.btnPayments.setOnClickListener(v -> {
+        viewHolder.btnPayments.setOnClickListener(v -> {
             loadTableName();
             InvoiceAdapter.resetShowButtons();
             PaymentAdapter.resetShowButtons();
 
-            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
+            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, viewHolder.id, viewHolder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.PAYMENT);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
 
-        holder.btnShowInvoice.setOnClickListener(v -> {
+        viewHolder.btnShowInvoice.setOnClickListener(v -> {
             loadTableName();
             InvoiceAdapter.resetShowButtons();
             PaymentAdapter.resetShowButtons();
 
-            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, holder.id, holder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
+            InvoiceTabFragment invoiceTabFragment = InvoiceTabFragment.newInstance(tableFak, tableNow, tablePay, tableRead, viewHolder.id, viewHolder.getBindingAdapterPosition(), MyViewPagerAdapter.TypeTabs.INVOICE);
             FragmentChange.replace((FragmentActivity) context, invoiceTabFragment, MOVE, true);
         });
 
-        holder.btnDeleteInvoice.setOnClickListener(v -> {
+        viewHolder.btnDeleteInvoice.setOnClickListener(v -> {
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.alert_delete_invoice), INVOICE_DELETE_LISTENER);
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
 
@@ -187,41 +220,46 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
         String startDate = ViewHelper.convertLongToDate(minDate);
         String endDate = ViewHelper.convertLongToDate(maxDate);
         double differentDate = Calculation.differentMonth(startDate, endDate, DifferenceDate.TypeDate.INVOICE);
-        holder.tvDateOf.setText(startDate);
-        holder.tvDateTo.setText(endDate);
-        holder.tvDateDifferent.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
+        viewHolder.tvDateOf.setText(startDate);
+        viewHolder.tvDateTo.setText(endDate);
+        viewHolder.tvDateDifferent.setText(context.getResources().getString(R.string.double_in_brackets, differentDate));
 
         if (minDate == 0 || maxDate == 0) {
-            holder.tvDateOf.setText(context.getResources().getString(R.string.no_date));
-            holder.tvDateTo.setText(context.getResources().getString(R.string.no_date));
-            holder.tvDateDifferent.setText("");
+            viewHolder.tvDateOf.setText(context.getResources().getString(R.string.no_date));
+            viewHolder.tvDateTo.setText(context.getResources().getString(R.string.no_date));
+            viewHolder.tvDateDifferent.setText("");
         }
 
         if (payments > 0)
-            holder.tvPayments.setText(context.getResources().getString(R.string.advances, payments));
+            viewHolder.tvPayments.setText(context.getResources().getString(R.string.advances, payments));
 
         if (reads > 0)
-            holder.tvReads.setText(context.getResources().getString(R.string.records, reads));
+            viewHolder.tvReads.setText(context.getResources().getString(R.string.records, reads));
         else {
-            holder.tvReads.setText(context.getResources().getString(R.string.no_records));
-            holder.btnShowInvoice.setText(context.getResources().getString(R.string.add_records));
+            viewHolder.tvReads.setText(context.getResources().getString(R.string.no_records));
+            viewHolder.btnShowInvoice.setText(context.getResources().getString(R.string.add_records));
         }
-        holder.tvNumberInvoice.setText(invoice.getNumberInvoice());
-        holder.lnButtons1.setVisibility(View.GONE);
-        holder.tvVTmin.setText(DecimalFormatHelper.df2.format(invoice.getMinVT()));
-        holder.tvVTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxVT()));
-        holder.tvNTmin.setText(DecimalFormatHelper.df2.format(invoice.getMinNT()));
-        holder.tvNTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxNT()));
+        viewHolder.tvNumberInvoice.setText(invoice.getNumberInvoice());
+        viewHolder.lnButtons1.setVisibility(View.GONE);
+        viewHolder.tvVTmin.setText(DecimalFormatHelper.df2.format(invoice.getMinVT()));
+        viewHolder.tvVTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxVT()));
+        viewHolder.tvNTmin.setText(DecimalFormatHelper.df2.format(invoice.getMinNT()));
+        viewHolder.tvNTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxNT()));
 
-        showButtons(holder, position);
+        showButtons(viewHolder, position);
 
-        holder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
-        holder.btnDeleteInvoice.setEnabled(invoice.getIdFak() != -1);
+        viewHolder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
+        viewHolder.btnDeleteInvoice.setEnabled(invoice.getIdFak() != -1);
 
-        checkDate(position, holder);
+        checkDate(position, viewHolder);
     }
 
 
+    /**
+     * Vrátí počet položek v seznamu faktur.
+     *
+     * @return počet faktur, nebo 0 pokud je seznam prázdný
+     */
     @Override
     public int getItemCount() {
         if (items == null)
@@ -230,6 +268,13 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Zkontroluje návaznost dat (datumy, hodnoty VT/NT) mezi sousedními fakturami
+     * a vizuálně zvýrazní případné nesrovnalosti.
+     *
+     * @param position pozice aktuální položky v seznamu
+     * @param holder   ViewHolder aktuální položky
+     */
     private void checkDate(int position, MyViewHolder holder) {
         InvoiceListModel nextInvoiceList, lastInvoiceList, invoiceList;
         String dateOf, dateTo, prevDate, nextDate;
@@ -314,15 +359,24 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Nastaví barvu textu daného TextView – původní nebo výstražnou červenou.
+     *
+     * @param tv TextView, jehož barva se mění
+     * @param b1 {@code true} = barva v pořádku (původní), {@code false} = výstražná barva
+     */
     private void setTextAlertColor(TextView tv, boolean b1) {
         if (b1) {
             tv.setTextColor(originalTextViewColors);
         } else {
-            tv.setTextColor(context.getResources().getColor(R.color.color_red_alert));
+            tv.setTextColor(ContextCompat.getColor(context, R.color.color_red_alert));
         }
     }
 
 
+    /**
+     * Načte názvy tabulek pro aktuálně vybrané odběrné místo ze SharedPreferences a databáze.
+     */
     private void loadTableName() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
         long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
@@ -339,6 +393,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Zobrazí nebo skryje akční tlačítka pro danou položku faktury.
+     *
+     * @param holder   ViewHolder položky
+     * @param position pozice položky v seznamu
+     */
     private void showButtons(MyViewHolder holder, int position) {
         if (position == showButtons) {
             holder.lnButtons1.setVisibility(View.VISIBLE);
@@ -361,6 +421,10 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<InvoiceListAdapter.
     }
 
 
+    /**
+     * Odebere aktuálně vybranou položku faktury ze seznamu a upozorní adaptér na změnu.
+     * Resetuje výběr a zobrazení tlačítek.
+     */
     public void removeItem() {
         items.remove(showButtons);
         notifyItemRemoved(showButtons);

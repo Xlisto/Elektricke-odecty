@@ -14,9 +14,14 @@ import androidx.annotation.Nullable;
  */
 public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
 
-    private static final String TAG = "InvoiceAddFragment";
 
-
+    /**
+     * Vytvoří novou instanci fragmentu pro přidání položky faktury.
+     *
+     * @param table  název tabulky, do které se bude ukládat
+     * @param id_fak ID faktury
+     * @return nová instance InvoiceAddFragment
+     */
     public static InvoiceAddFragment newInstance(String table, long id_fak) {
         InvoiceAddFragment invoiceAddFragment = new InvoiceAddFragment();
         Bundle bundle = new Bundle();
@@ -27,6 +32,12 @@ public class InvoiceAddFragment extends InvoiceAddEditAbstractFragment {
     }
 
 
+    /**
+     * Inicializuje view a nastaví akci tlačítka pro uložení nového záznamu.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

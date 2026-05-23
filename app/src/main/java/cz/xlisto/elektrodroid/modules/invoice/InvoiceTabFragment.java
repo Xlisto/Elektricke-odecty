@@ -38,12 +38,25 @@ public class InvoiceTabFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
 
+    /** Požadovaný prázdný veřejný konstruktor. */
     public InvoiceTabFragment() {
         // Required empty public constructor
     }
 
 
-    public static InvoiceTabFragment newInstance(String tableFak, String tableNow,String tablePay, String tableRead,long idFak, int positionItem, MyViewPagerAdapter.TypeTabs typeTabs) {
+    /**
+     * Vytvoří novou instanci fragmentu se záložkami faktury.
+     *
+     * @param tableFak    název tabulky faktur
+     * @param tableNow    název tabulky bez faktury (TED)
+     * @param tablePay    název tabulky plateb
+     * @param tableRead   název tabulky odečtů
+     * @param idFak       ID faktury
+     * @param positionItem pozice položky v seznamu faktur
+     * @param typeTabs    výchozí záložka, která se zobrazí po otevření
+     * @return nová instance InvoiceTabFragment
+     */
+    public static InvoiceTabFragment newInstance(String tableFak, String tableNow, String tablePay, String tableRead, long idFak, int positionItem, MyViewPagerAdapter.TypeTabs typeTabs) {
         InvoiceTabFragment fragment = new InvoiceTabFragment();
         Bundle args = new Bundle();
         args.putString(TABLE_FAK, tableFak);
@@ -58,6 +71,11 @@ public class InvoiceTabFragment extends Fragment {
     }
 
 
+    /**
+     * Načte argumenty fragmentu potřebné pro inicializaci záložek faktury.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +91,14 @@ public class InvoiceTabFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří root View fragmentu se záložkami.
+     *
+     * @param inflater           inflater pro vytvoření layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return kořenový View fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,6 +106,12 @@ public class InvoiceTabFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje TabLayout, ViewPager a jejich vzájemnou synchronizaci.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

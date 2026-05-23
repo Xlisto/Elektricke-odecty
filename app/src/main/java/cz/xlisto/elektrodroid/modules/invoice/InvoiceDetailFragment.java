@@ -49,7 +49,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public class InvoiceDetailFragment extends Fragment {
 
-    private static final String TAG = "InvoiceDetailFragment";
     private static final String ID_FAK = "idFak";
     private static final String TABLE_FAK = "tableFak";
     private static final String TABLE_NOW = "tableNow";
@@ -71,6 +70,9 @@ public class InvoiceDetailFragment extends Fragment {
     private MySpinnerInvoiceDetailAdapter.DatesInvoiceContainer datesInvoice;
 
 
+    /**
+     * Požadovaný prázdný veřejný konstruktor.
+     */
     public InvoiceDetailFragment() {
         // Required empty public constructor
     }
@@ -99,6 +101,11 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Načte argumenty fragmentu a případně obnoví uložený stav.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +127,14 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří root View pro detail faktury.
+     *
+     * @param inflater           inflater pro vytvoření layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return kořenový View fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,6 +143,12 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje ovládací prvky a nastaví jejich obsluhu.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -145,6 +166,9 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Načte nastavení, data faktury a inicializuje spinner i seznam detailních položek.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -158,6 +182,9 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Uvolní adaptér RecyclerView při přechodu fragmentu do pozadí.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -165,6 +192,11 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Uloží stav fragmentu potřebný po změně konfigurace.
+     *
+     * @param outState bundle pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -174,6 +206,9 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví spinner pro volbu typu detailu a obslouží změnu výběru.
+     */
     private void setSpinner() {
         invoiceListAdapter = new MySpinnerInvoiceDetailAdapter(requireActivity(), R.layout.item_own_simple_list, SummaryInvoiceModel.Title.values(), datesInvoice);
         spinner.setAdapter(invoiceListAdapter);
@@ -195,6 +230,9 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Načte z databáze položky faktury a interval datumu pro filtr spinneru.
+     */
     private void loadInvoice() {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
@@ -206,6 +244,9 @@ public class InvoiceDetailFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví adaptér a layout manager RecyclerView a spustí animační efekty položek.
+     */
     private void setRecyclerView() {
         invoiceDetailAdapter = new InvoiceDetailAdapter(requireActivity(), summaryInvoices);
         rv.setAdapter(invoiceDetailAdapter);

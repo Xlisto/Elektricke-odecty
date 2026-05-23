@@ -27,9 +27,12 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public class WithOutInvoiceService {
 
-    private static final String TAG = "WithOutInvoiceService";
-
-
+    /**
+     * Aktualizuje záznamy období bez faktury podle nastavení automatického generování.
+     *
+     * @param context           kontext aplikace
+     * @param subscriptionPoint aktuální odběrné místo
+     */
     public static void updateInvoice(Context context, SubscriptionPointModel subscriptionPoint) {
         boolean autogenerate = new ShPInvoice(context).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
         //SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(context);
@@ -377,18 +380,14 @@ public class WithOutInvoiceService {
      */
     private static void showAlertDialog(Context context, Errors error) {
         String title = context.getResources().getString(R.string.error);
-        String message = "";
-        switch (error) {
-            case NO_INVOICE_RECORDS:
-                message = context.getResources().getString(R.string.no_invoice_records);
-                break;
-            case NO_MONTHLY_RECORDS:
-                message = context.getResources().getString(R.string.no_monthly_records);
-                break;
-            case DATES_IS_NOT_CORRECT:
-                message = context.getResources().getString(R.string.dates_is_not_correct);
-                break;
-        }
+        String message = switch (error) {
+            case NO_INVOICE_RECORDS ->
+                    context.getResources().getString(R.string.no_invoice_records);
+            case NO_MONTHLY_RECORDS ->
+                    context.getResources().getString(R.string.no_monthly_records);
+            case DATES_IS_NOT_CORRECT ->
+                    context.getResources().getString(R.string.dates_is_not_correct);
+        };
         OwnAlertDialog.showDialog((FragmentActivity) context, title, message);
     }
 
@@ -437,6 +436,7 @@ public class WithOutInvoiceService {
         }
         return new double[]{0.0, 0.0};
     }
+
 
     /**
      * Výčtový typ Errors představuje různé typy chyb, které mohou nastat.

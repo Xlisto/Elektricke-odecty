@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -61,6 +62,22 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     private RelativeLayout rlItem1In, rlItem2In;
 
 
+    /**
+     * Vytvoří novou instanci dialogu pro rozdělení záznamu faktury.
+     *
+     * @param minDate       počáteční datum záznamu
+     * @param maxDate       koncové datum záznamu
+     * @param minVT         počáteční stav VT
+     * @param maxVT         koncový stav VT
+     * @param minNT         počáteční stav NT
+     * @param maxNT         koncový stav NT
+     * @param showNT        zda se má zobrazit NT část
+     * @param idPriceList   ID ceníku
+     * @param id            ID záznamu
+     * @param otherServices ostatní služby
+     * @param table         název tabulky
+     * @return nová instance InvoiceCutDialogFragment
+     */
     public static InvoiceCutDialogFragment newInstance(long minDate, long maxDate, double minVT, double maxVT, double minNT, double maxNT,
                                                        boolean showNT, long idPriceList, long id, double otherServices, String table) {
         InvoiceCutDialogFragment frag = new InvoiceCutDialogFragment();
@@ -82,6 +99,11 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Připojí dialog ke kontextu hostitele a uloží referenci na context.
+     *
+     * @param context kontext hostitelské aktivity
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -89,6 +111,11 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Načte vstupní argumenty potřebné pro rozdělení záznamu.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +134,12 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Vytvoří dialog s posuvníky a vstupy pro rozdělení záznamu podle data a spotřeby.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -286,7 +319,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
             sl.setValue((float) number);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Set slider: " + e);
         }
     }
 
@@ -355,6 +388,13 @@ public class InvoiceCutDialogFragment extends DialogFragment {
 
 
     //todo: doplnit detekci výměny elektroměru
+    /**
+     * Provede fyzické rozdělení záznamu na dvě části a uloží je přes servis.
+     *
+     * @param idPriceList   ID ceníku použitý pro oba nové záznamy
+     * @param id            ID původního záznamu
+     * @param otherServices hodnota ostatních služeb pro nové záznamy
+     */
     private void cut(long idPriceList, long id, double otherServices) {
         InvoiceModel firstInvoice = new InvoiceModel(id, minDate, dateDayEnd,
                 minVT, sliderVT.getValue(), minNT, sliderNT.getValue(), -1L,

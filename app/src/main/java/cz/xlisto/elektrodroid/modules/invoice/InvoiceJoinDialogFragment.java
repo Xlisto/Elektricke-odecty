@@ -44,6 +44,15 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     private TextView tvNtEndFirst, tvNtEndSecond, tvNtEndTotal;
 
 
+    /**
+     * Vytvoří novou instanci dialogu pro spojení dvou záznamů faktury.
+     *
+     * @param idInvoiceFirst  ID prvního záznamu
+     * @param idInvoiceSecond ID druhého záznamu
+     * @param table           název tabulky
+     * @param position        pozice položky v seznamu
+     * @return nová instance InvoiceJoinDialogFragment
+     */
     public static InvoiceJoinDialogFragment newInstance(long idInvoiceFirst, long idInvoiceSecond, String table, int position) {
         Bundle bundle = new Bundle();
         bundle.putLong(ID_INVOICE_FIRST, idInvoiceFirst);
@@ -56,6 +65,11 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Připojí fragment ke kontextu hostitele a uloží si referenci na context.
+     *
+     * @param context kontext hostitelské aktivity
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -63,6 +77,11 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Načte argumenty, načte oba záznamy z databáze a připraví výsledný spojený model.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +102,12 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Vytvoří dialog s náhledem obou záznamů a výsledku jejich spojení.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

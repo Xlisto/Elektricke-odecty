@@ -25,16 +25,30 @@ public class InvoiceCreateDialogFragment extends DialogFragment {
     public static final String RESULT = "result";
 
 
+    /**
+     * Vytvoří novou instanci dialogu pro vytvoření faktury.
+     *
+     * @return nová instance InvoiceCreateDialogFragment
+     */
     public static InvoiceCreateDialogFragment newInstance() {
         return new InvoiceCreateDialogFragment();
     }
 
 
+    /**
+     * Prázdná inicializační metoda ponechaná pro případné budoucí rozšíření.
+     */
     public void onCreate() {
 
     }
 
 
+    /**
+     * Vytvoří dialog se zadáním čísla nové faktury a odešle výsledek přes FragmentResult.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

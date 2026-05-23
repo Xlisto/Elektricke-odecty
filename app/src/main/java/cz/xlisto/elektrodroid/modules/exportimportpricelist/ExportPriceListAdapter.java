@@ -23,7 +23,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  * Xlisto 12.12.2023 18:21
  */
 public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceListAdapter.MyViewHolder> {
-    private static final String TAG = "ExportPriceListAdapter";
+
     public final static String FLAG_DIALOG_FRAGMENT_EXPORT = "dialogFragmentExport";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_REWRITE = "backupDialogFragmentExportRewrite";
     private final Context context;
@@ -31,12 +31,17 @@ public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceList
     private PriceListSumModel selectedPriceListSumModel;
 
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvRada, tvArea, tvDate, tvFirma;
         RelativeLayout rl;
 
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvDate = itemView.findViewById(R.id.tvExportDate);
+            tvFirma = itemView.findViewById(R.id.tvExportFirma);
+            tvArea = itemView.findViewById(R.id.tvExportArea);
+            tvRada = itemView.findViewById(R.id.tvExportRada);
+            rl = itemView.findViewById(R.id.rlExportItem);
         }
     }
 
@@ -51,13 +56,7 @@ public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceList
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_export_price_list, parent, false);
-        MyViewHolder vh = new MyViewHolder(v);
-        vh.tvDate = v.findViewById(R.id.tvExportDate);
-        vh.tvFirma = v.findViewById(R.id.tvExportFirma);
-        vh.tvArea = v.findViewById(R.id.tvExportArea);
-        vh.tvRada = v.findViewById(R.id.tvExportRada);
-        vh.rl = v.findViewById(R.id.rlExportItem);
-        return vh;
+        return new MyViewHolder(v);
     }
 
 

@@ -46,13 +46,13 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link InvoiceListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment zobrazující seznam faktur pro aktuálně vybrané odběrné místo.
+ * Umožňuje přidávání, úpravu a mazání faktur, nastavení výchozích stavů měřičů
+ * a přechod na detail faktury nebo platby.
+ * Používá tovární metodu {@link #newInstance()} pro vytvoření instance.
  */
 public class InvoiceListFragment extends Fragment {
 
-    private final String TAG = "InvoiceFragment";
     public static final String INVOICE_NUMBER_EDIT_LISTENER = "invoice_number_edit_listener";
     public static final String INVOICE_NUMBER_ADD_LISTENER = "invoice_number_add_listener";
     public static final String INVOICE_DELETE_LISTENER = "deleteInvoice";
@@ -72,11 +72,21 @@ public class InvoiceListFragment extends Fragment {
     private InvoiceListViewModel invoiceListViewModel;
 
 
+    /**
+     * Tovární metoda pro vytvoření nové instance fragmentu.
+     *
+     * @return nová instance InvoiceListFragment
+     */
     public static InvoiceListFragment newInstance() {
         return new InvoiceListFragment();
     }
 
 
+    /**
+     * Inicializuje ViewModel a registruje posluchače výsledků z dialogů a dalších fragmentů.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,6 +173,14 @@ public class InvoiceListFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří root View fragmentu a registruje položky horního menu.
+     *
+     * @param inflater           inflater pro vytvoření layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return kořenový View fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -189,6 +207,12 @@ public class InvoiceListFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje UI prvky fragmentu a nastaví jejich obslužné akce.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -211,6 +235,9 @@ public class InvoiceListFragment extends Fragment {
     }
 
 
+    /**
+     * Při návratu do popředí obnoví tlačítka a znovu načte data seznamu faktur.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -255,6 +282,9 @@ public class InvoiceListFragment extends Fragment {
     }
 
 
+    /**
+     * Přečte ID aktuálně vybraného odběrného místa ze SharedPreferences.
+     */
     private void readIdSubscriptionPoint() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(requireActivity());
         idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
@@ -266,6 +296,7 @@ public class InvoiceListFragment extends Fragment {
      */
     private void showAddInvoiceDialog() {
         InvoiceListAddDialogFragment invoiceAddDialogFragment = InvoiceListAddDialogFragment.newInstance(idSubscriptionPoint);
+        String TAG = "InvoiceFragment";
         invoiceAddDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
     }
 

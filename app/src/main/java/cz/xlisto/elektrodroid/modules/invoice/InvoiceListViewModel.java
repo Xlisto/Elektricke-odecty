@@ -10,17 +10,16 @@ import androidx.lifecycle.ViewModel;
  */
 public class InvoiceListViewModel extends ViewModel {
 
-    private static final String TAG = "InvoiceListViewModel";
     private final MutableLiveData<Boolean> isShovedDialog = new MutableLiveData<>();
 
 
+    /**
+     * Nastaví příznak, zda je aktuálně zobrazen dialog.
+     *
+     * @param isLoading {@code true} pokud je dialog zobrazen, jinak {@code false}
+     */
     public void setShovedDialog(boolean isLoading) {
         isShovedDialog.setValue(isLoading);
-    }
-
-
-    public MutableLiveData<Boolean> isShowingDialog() {
-        return isShovedDialog;
     }
 
 }

@@ -119,6 +119,11 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Načte argumenty fragmentu a inicializuje ViewModel.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +150,14 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří root View fragmentu a registruje položky horního menu.
+     *
+     * @param inflater           inflater pro vytvoření layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return kořenový View fragmentu
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -171,6 +184,12 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje UI prvky, posluchače výsledků fragmentů a observéry ViewModelu.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -266,6 +285,9 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Načte data faktury při návratu do popředí a obnoví zobrazení seznamu i souhrnů.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -279,6 +301,9 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Uvolní adaptér RecyclerView při přechodu fragmentu do pozadí.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -286,6 +311,11 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Uloží stav panelu souhrnu při změně konfigurace.
+     *
+     * @param outState bundle pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -728,6 +758,11 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví viditelnost a animaci vysouvací karty se souhrnem faktury.
+     *
+     * @param animate {@code true} pro animovaný přechod, jinak okamžitá změna stavu
+     */
     private void applyTotalCardState(boolean animate) {
         if (lnInvoiceTotalCard == null) {
             return;

@@ -39,7 +39,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public abstract class InvoiceAddEditAbstractFragment extends Fragment {
 
-    private static final String TAG = "InvoiceAddEditAbstractFragment";
     static final String TABLE = "table";
     static final String ID_FAK = "idFak";
     static final String ID = "id";
@@ -71,6 +70,11 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     boolean isShowFragment;
 
 
+    /**
+     * Inicializuje základní údaje fragmentu z argumentů a načte informace o odběrném místě.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +97,14 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří root View pro formulář přidání/úpravy záznamu faktury.
+     *
+     * @param inflater           inflater pro vytvoření layoutu
+     * @param container          rodičovský kontejner
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return kořenový View fragmentu
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -100,6 +112,12 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje ovládací prvky formuláře, nastaví posluchače a obnoví případný uložený stav.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -162,6 +180,11 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Uloží stav formuláře při změně konfigurace.
+     *
+     * @param outState bundle pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -182,6 +205,9 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Skryje klávesnici a nastaví příznak pro znovunačtení dat z databáze.
+     */
     @Override
     public void onStop() {
         super.onStop();
@@ -326,6 +352,9 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Označí, že view fragmentu již není aktivní.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

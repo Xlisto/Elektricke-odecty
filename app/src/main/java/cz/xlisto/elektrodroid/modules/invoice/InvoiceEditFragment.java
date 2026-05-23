@@ -23,9 +23,13 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
 
-    private static final String TAG = "InvoiceEditFragment";
-
-
+    /**
+     * Vytvoří novou instanci fragmentu pro editaci položky faktury.
+     *
+     * @param table název tabulky se záznamy
+     * @param id    ID editovaného záznamu
+     * @return nová instance InvoiceEditFragment
+     */
     public static InvoiceEditFragment newInstance(String table, long id) {
         InvoiceEditFragment invoiceEditFragment = new InvoiceEditFragment();
         Bundle bundle = new Bundle();
@@ -36,6 +40,12 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
     }
 
 
+    /**
+     * Načte data z databáze, předvyplní formulář a nastaví chování tlačítka uložení.
+     *
+     * @param view               kořenový view fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
