@@ -240,13 +240,18 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
 
         holder.itemInvoice.setOnClickListener(v -> {
             ShPInvoice shPInvoice = new ShPInvoice(context);
+
+            if (showCheckBoxSelect) {
+                holder.chSelected.setChecked(!holder.chSelected.isChecked());
+                return;
+            }
+
             if (shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true) && invoice.getIdInvoice() == -1L) {
                 showButtons = -1;
                 showButtons(holder, invoice, position);
                 return;
             }
 
-            if (showCheckBoxSelect) return;
 
             if (showButtons >= 0) {
                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
@@ -261,6 +266,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 showButtons = position;
 
             showButtons(holder, invoice, position);
+        });
+
+        holder.itemInvoice.setOnLongClickListener(v -> {
+            if (invoice.getIdInvoice() != -1L || showCheckBoxSelect) {
+                return false;
+            }
+            viewModel.setShowCheckBoxSelect(true);
+            viewModel.setCheckBoxState(position, true);
+            invoice.setSelected(true);
+            return true;
         });
 
         holder.btnEdit.setOnClickListener(v -> {
@@ -367,6 +382,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                         showButtons = -1;
                         showButtons(holder, items.get(position), position);
                     } else {
+                        holder.chSelected.setChecked(false);
                         holder.chSelected.setVisibility(View.GONE);
                     }
                 }

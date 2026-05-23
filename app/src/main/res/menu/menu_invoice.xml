@@ -5,4 +5,19 @@
         android:id="@+id/menu_invoice_item_settings"
         android:title="@string/settings"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_invoice_item_select"
+        android:title="@string/select_invoice"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_invoice_item_cancel_selection"
+        android:title="@string/deselect_invoice"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_invoice_item_add_invoice"
+        android:title="@string/add_invoice"
+        app:showAsAction="never" />
 </menu>

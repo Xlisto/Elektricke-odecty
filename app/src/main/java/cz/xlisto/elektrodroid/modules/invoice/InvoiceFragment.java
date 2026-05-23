@@ -94,6 +94,55 @@ public class InvoiceFragment extends Fragment {
     private boolean isTotalCardAnimating;
 
 
+    private void updateMenuVisibility(@NonNull Menu menu) {
+        MenuItem selectItem = menu.findItem(R.id.menu_invoice_item_select);
+        MenuItem cancelSelectionItem = menu.findItem(R.id.menu_invoice_item_cancel_selection);
+        MenuItem addInvoiceItem = menu.findItem(R.id.menu_invoice_item_add_invoice);
+        boolean showSelectionMenu = idFak == -1L;
+        boolean multiselectEnabled = showSelectionMenu && showCheckBoxSelect;
+        if (selectItem != null) {
+            selectItem.setVisible(showSelectionMenu && !multiselectEnabled);
+        }
+        if (cancelSelectionItem != null) {
+            cancelSelectionItem.setVisible(multiselectEnabled);
+        }
+        if (addInvoiceItem != null) {
+            addInvoiceItem.setVisible(multiselectEnabled);
+        }
+    }
+
+
+    private void invalidateInvoiceMenu() {
+        (requireActivity()).invalidateMenu();
+    }
+
+
+    private void setMultiSelectMode(boolean enabled) {
+        showCheckBoxSelect = enabled;
+        if (!enabled) {
+            clearInvoiceSelection();
+        }
+        viewModel.setShowCheckBoxSelect(showCheckBoxSelect);
+        setShowAddButtonAddItemInvoice();
+    }
+
+
+    private void clearInvoiceSelection() {
+        if (invoices != null) {
+            for (InvoiceModel invoice : invoices) {
+                invoice.setSelected(false);
+            }
+        }
+        viewModel.clearCheckBoxStates();
+    }
+
+
+    private void showCreateInvoiceDialog() {
+        InvoiceCreateDialogFragment invoiceCreateDialogFragment = InvoiceCreateDialogFragment.newInstance();
+        invoiceCreateDialogFragment.show(requireActivity().getSupportFragmentManager(), InvoiceCreateDialogFragment.TAG);
+    }
+
+
     /**
      * Vytvoří novou instanci InvoiceFragment s danými parametry.
      *
@@ -167,6 +216,13 @@ public class InvoiceFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_invoice, menu);
+                updateMenuVisibility(menu);
+            }
+
+
+            @Override
+            public void onPrepareMenu(@NonNull Menu menu) {
+                updateMenuVisibility(menu);
             }
 
 
@@ -174,6 +230,18 @@ public class InvoiceFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 if (menuItem.getItemId() == R.id.menu_invoice_item_settings) {
                     SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.menu_invoice_item_select) {
+                    setMultiSelectMode(true);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.menu_invoice_item_cancel_selection) {
+                    setMultiSelectMode(false);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.menu_invoice_item_add_invoice) {
+                    showCreateInvoiceDialog();
                     return true;
                 }
                 return false;
@@ -207,16 +275,12 @@ public class InvoiceFragment extends Fragment {
         }
         btnAddItemInvoice.setOnClickListener(v -> showAddInvoice());
         fab.setOnClickListener(v -> showAddInvoice());
-        btnCreateInvoice.setOnClickListener(v -> {
-            //vytvoření nové faktury z vybraných záznamů
-            InvoiceCreateDialogFragment invoiceCreateDialogFragment = InvoiceCreateDialogFragment.newInstance();
-            invoiceCreateDialogFragment.show(requireActivity().getSupportFragmentManager(), InvoiceCreateDialogFragment.TAG);
-        });
+        btnCreateInvoice.setOnClickListener(v -> showCreateInvoiceDialog());
         tvTotal.setOnClickListener(v -> toggleTotalCard());
 
-        //změna textu tlačítka podle toho, zda se jedná o zobrazení stávající faktury nebo období bez faktury
         if (idFak == -1L) {
-            btnAddItemInvoice.setText(getResources().getString(R.string.select_invoice));
+            btnAddItemInvoice.setVisibility(View.GONE);
+            btnCreateInvoice.setVisibility(View.GONE);
         }
 
         //posluchač na změnu počtu záznamů ve faktuře - spojení záznamů
@@ -273,7 +337,7 @@ public class InvoiceFragment extends Fragment {
 
         //posluchač zavření dialogová okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
-                (requestKey, bundle) -> UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true)
+                (requestKey, bundle) -> setShowAddButtonAddItemInvoice()
         );
 
         // Pozoruje změny identifikátoru faktury a aktualizuje proměnnou idFak
@@ -281,7 +345,10 @@ public class InvoiceFragment extends Fragment {
         // Pozoruje změny pozice a aktualizuje proměnnou position
         viewModel.getPosition().observe(getViewLifecycleOwner(), pos -> position = pos);
         // Pozoruje změny stavu zobrazení zaškrtávacího políčka a aktualizuje proměnnou showCheckBoxSelect
-        viewModel.getShowCheckBoxSelect().observe(getViewLifecycleOwner(), show -> showCheckBoxSelect = show);
+        viewModel.getShowCheckBoxSelect().observe(getViewLifecycleOwner(), show -> {
+            showCheckBoxSelect = Boolean.TRUE.equals(show);
+            setShowAddButtonAddItemInvoice();
+        });
     }
 
 
@@ -519,17 +586,13 @@ public class InvoiceFragment extends Fragment {
      */
     private void showAddInvoice() {
         if (idFak == -1L) {
-            //zobrazit checkboxy pro výběr záznamů pro novou fakturu
-            showCheckBoxSelect = !showCheckBoxSelect;
-            viewModel.setShowCheckBoxSelect(showCheckBoxSelect);
-            setShowAddButtonAddItemInvoice();
-        } else {
-            btnCreateInvoice.setVisibility(View.GONE);
-            showCheckBoxSelect = false;
-            //přidání záznamu do faktury
-            InvoiceAddFragment invoiceAddFragment = InvoiceAddFragment.newInstance(table, idFak);
-            FragmentChange.replace(requireActivity(), invoiceAddFragment, FragmentChange.Transaction.MOVE, true);
+            return;
         }
+        btnCreateInvoice.setVisibility(View.GONE);
+        showCheckBoxSelect = false;
+        //přidání záznamu do faktury
+        InvoiceAddFragment invoiceAddFragment = InvoiceAddFragment.newInstance(table, idFak);
+        FragmentChange.replace(requireActivity(), invoiceAddFragment, FragmentChange.Transaction.MOVE, true);
     }
 
 
@@ -541,15 +604,16 @@ public class InvoiceFragment extends Fragment {
     private void setShowAddButtonAddItemInvoice() {
         if (idFak == -1L) {
             fab.setVisibility(View.GONE);
-            if (showCheckBoxSelect) {
-                btnCreateInvoice.setVisibility(View.VISIBLE);
-                btnAddItemInvoice.setText(getResources().getString(R.string.deselect_invoice));
-            } else {
-                btnCreateInvoice.setVisibility(View.GONE);
-                btnAddItemInvoice.setText(getResources().getString(R.string.select_invoice));
+            btnCreateInvoice.setVisibility(View.GONE);
+            btnAddItemInvoice.setVisibility(View.GONE);
+            if (invoiceAdapter != null) {
+                invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
             }
-            invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
+            invalidateInvoiceMenu();
+            return;
         }
+        btnCreateInvoice.setVisibility(View.GONE);
+        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
     }
 
 
@@ -560,7 +624,8 @@ public class InvoiceFragment extends Fragment {
      */
     private void showButtons(boolean isInvoiceTED) {
         if (isInvoiceTED) {
-            btnAddItemInvoice.setVisibility(View.VISIBLE);
+            btnAddItemInvoice.setVisibility(View.GONE);
+            btnCreateInvoice.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
         } else {
             UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);

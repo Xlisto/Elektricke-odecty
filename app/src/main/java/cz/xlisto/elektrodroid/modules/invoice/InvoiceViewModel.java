@@ -52,6 +52,14 @@ public class InvoiceViewModel extends ViewModel {
 
 
     /**
+     * Vymaže všechny uložené stavy checkboxů.
+     */
+    public void clearCheckBoxStates() {
+        checkBoxStates.setValue(new HashMap<>());
+    }
+
+
+    /**
      * Vrací LiveData objekt obsahující identifikátor faktury.
      *
      * @return LiveData objekt s identifikátorem faktury
