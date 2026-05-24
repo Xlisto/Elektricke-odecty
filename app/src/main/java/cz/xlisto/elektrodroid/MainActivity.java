@@ -96,11 +96,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 R.string.ano,
                 R.string.ano);
         drawerLayout.addDrawerListener(drawerToggle);
-        drawerToggle.setToolbarNavigationClickListener(v -> {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().popBackStack();
-            }
-        });
         drawerToggle.syncState();
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateAppBarNavigationIcon);
 
@@ -599,10 +594,10 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (hasBackStack) {
             drawerToggle.setDrawerIndicatorEnabled(false);
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24);
-            toolbar.setNavigationOnClickListener(v -> getSupportFragmentManager().popBackStack());
+            drawerToggle.setToolbarNavigationClickListener(v -> getSupportFragmentManager().popBackStack());
         } else {
-            drawerToggle.setDrawerIndicatorEnabled(true);
             drawerToggle.setToolbarNavigationClickListener(null);
+            drawerToggle.setDrawerIndicatorEnabled(true);
         }
 
         drawerLayout.setDrawerLockMode(hasBackStack
