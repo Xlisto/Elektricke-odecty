@@ -515,6 +515,7 @@
     <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
     <string name="show_bottom_nav">Zobrazit dolní panel rychlé navigace</string>
     <string name="show_nav">Zobrazit levý panel rychlé navigace</string>
+    <string name="allow_mobile_data">Povolit použití mobilních dat pro online funkce</string>
     <string name="add_monthly_reading">Přidat odečet</string>
     <string name="add_monthly_price_list">Přidat ceník</string>
     <string name="add_subscriptionpoint">Přidat odběrné místo</string>
@@ -636,6 +637,15 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="recover_backup">Obnovit zálohu</string>
     <string name="no_signs">Nepřihlášen</string>
     <string name="internet_is_not_available">Internetové připojení není dostupné</string>
+    <string name="wifi_required_title">Vyžadováno WiFi připojení</string>
+    <string name="wifi_required_mobile_disabled_message">WiFi připojení není dostupné a použití mobilních dat je v nastavení zakázáno.</string>
+    <string name="queue_upload_offline_message">Internetové připojení není dostupné. Chcete vybrané zálohy zařadit do čekající fronty pro odeslání při příštím dostupném připojení?</string>
+    <string name="queue_upload_on_wifi">Zařadit jako čekající úlohu</string>
+    <string name="pending_upload_queued_for_wifi">Záloha byla zařazena do čekající fronty. Odeslání proběhne při připojení k WiFi.</string>
+    <string name="pending_upload_waiting_wifi_alert">Čeká odeslání zálohy na Google Drive. Úloha se spustí při připojení k WiFi.</string>
+    <string name="pending_upload_waiting_wifi_alert_count">Čeká odeslání %1$d soubor(ů) na Google Drive. Úloha se spustí při připojení k WiFi.</string>
+    <string name="pending_upload_in_progress">Nahrávám čekající zálohy na Google Drive…</string>
+    <string name="pending_upload_in_progress_count">Nahrávám %1$d čekajících soubor(ů) na Google Drive…</string>
     <string name="google_drive_signed_out_warning">Jste odhlášen. Pro zobrazení obsahu se přihlaste přes ikonu v horní liště.</string>
     <string name="save_to_local_storage">Uložit</string>
     <string name="save_google_drive_file_success">Soubor byl uložen do lokální zálohy</string>

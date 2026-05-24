@@ -34,9 +34,14 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.api.services.drive.model.File;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,6 +51,7 @@ import java.util.Set;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveDeleteProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveSaveProgressDialogFragment;
+import cz.xlisto.elektrodroid.dialogs.PendingBackupUploadProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
@@ -74,6 +80,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private static final String DRIVE_FILE_STATE_SEPARATOR = "\u0001";
 
     private TextView tvAlertNoInternet;
+    private TextView tvPendingUploadAlert;
     private CredentialHelper credentialHelper;
     private ShPGoogleDrive shPGoogleDrive;
     private GoogleDriveService googleDriveService;
@@ -83,6 +90,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private ConnectivityManager connectivityManager;
     private NetworkCallbackImpl networkCallback;
     private boolean internetAvailable;
+    private boolean hasPendingWifiUpload;
+    private boolean hadPendingWifiUpload;
+    private int pendingWifiUploadFilesCount;
     private int selectedFilesCount;
     private boolean multiSelectMode;
     private boolean suppressSelectionCanceledSnackbar;
@@ -91,6 +101,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private MenuItem menuItemCancelSelection;
     private GoogleDriveDeleteProgressDialogFragment deleteProgressDialog;
     private GoogleDriveSaveProgressDialogFragment saveProgressDialog;
+    private PendingBackupUploadProgressDialogFragment pendingUploadProgressDialog;
     private GoogleDriveViewModel googleDriveViewModel;
     private ArrayList<File> pendingSaveAllFiles = new ArrayList<>();
     private ArrayList<File> pendingSaveNonDuplicateFiles = new ArrayList<>();
@@ -146,7 +157,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        internetAvailable = NetworkUtil.isInternetAvailable(requireContext());
+        internetAvailable = NetworkUtil.isInternetAllowedBySettings(requireContext());
     }
 
 
@@ -165,6 +176,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         recyclerView = view.findViewById(R.id.rvGoogleDriveFiles);
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         tvAlertNoInternet = view.findViewById(R.id.tvAlertNoInternet);
+        tvPendingUploadAlert = view.findViewById(R.id.tvPendingUploadAlert);
 
         credentialHelper = new CredentialHelper(requireContext());
         credentialHelper.setCredentialListener(this);
@@ -297,6 +309,8 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             }
         });
 
+        observePendingWifiUploadWork();
+
         setupMenuProvider();
 
         // posluchač výsledku dialogového okna pro obnovení databáze
@@ -350,6 +364,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     @Override
     public void onDestroy() {
         super.onDestroy();
+        dismissPendingUploadProgressDialog();
         connectivityManager.unregisterNetworkCallback(networkCallback);
     }
 
@@ -582,7 +597,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     @Override
     public void onNetworkAvailable() {
         Log.w(TAG, "onNetworkAvailable");
-        internetAvailable = true;
+        internetAvailable = NetworkUtil.isInternetAllowedBySettings(requireContext());
         toggleButtonsAndRecyclerViewVisibility();
         updateAppBarSignMenu();
     }
@@ -594,7 +609,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     @Override
     public void onNetworkLost() {
         Log.w(TAG, "onNetworkLost");
-        internetAvailable = false;
+        internetAvailable = NetworkUtil.isInternetAllowedBySettings(requireContext());
         toggleButtonsAndRecyclerViewVisibility();
         updateAppBarSignMenu();
     }
@@ -609,21 +624,163 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
             if (internetAvailable) {
                 recyclerView.setVisibility(isUserSignedIn ? View.VISIBLE : View.INVISIBLE);
-                if (isUserSignedIn) {
-                    tvAlertNoInternet.setVisibility(View.GONE);
-                } else {
-                    tvAlertNoInternet.setText(getString(R.string.google_drive_signed_out_warning));
-                    tvAlertNoInternet.setVisibility(View.VISIBLE);
-                }
+                updateConnectionAlert(isUserSignedIn);
+                updatePendingUploadAlert();
                 if (isUserSignedIn)
                     loadGoogleFiles();
             } else {
                 recyclerView.setVisibility(View.INVISIBLE);
-                tvAlertNoInternet.setText(getString(R.string.internet_is_not_available));
-                tvAlertNoInternet.setVisibility(View.VISIBLE);
+                updateConnectionAlert(isUserSignedIn);
+                updatePendingUploadAlert();
             }
             updateAppBarSignMenu();
         });
+    }
+
+
+    /**
+     * Průběžně sleduje, zda existuje čekající upload na WiFi naplánovaný z lokálních záloh.
+     */
+    private void observePendingWifiUploadWork() {
+        WorkManager.getInstance(requireContext())
+                .getWorkInfosByTagLiveData(PendingBackupUploadWorker.WORK_TAG_PENDING_UPLOAD_WIFI)
+                .observe(getViewLifecycleOwner(), workInfos -> {
+                    boolean previousPendingState = hasPendingWifiUpload;
+                    hasPendingWifiUpload = false;
+                    pendingWifiUploadFilesCount = 0;
+                    boolean isRunningUpload = false;
+                    if (workInfos != null) {
+                        for (WorkInfo workInfo : workInfos) {
+                            WorkInfo.State state = workInfo.getState();
+                            if (state == WorkInfo.State.ENQUEUED
+                                    || state == WorkInfo.State.BLOCKED
+                                    || state == WorkInfo.State.RUNNING) {
+                                hasPendingWifiUpload = true;
+                            }
+                            if (state == WorkInfo.State.RUNNING)
+                                isRunningUpload = true;
+                        }
+                    }
+
+                    if (hasPendingWifiUpload)
+                        pendingWifiUploadFilesCount = loadPersistedPendingWifiUploadCount();
+
+                    hadPendingWifiUpload = previousPendingState;
+                    final boolean runningUploadNow = isRunningUpload;
+
+                    if (!isAdded())
+                        return;
+
+                    requireActivity().runOnUiThread(() -> {
+                        boolean isUserSignedIn = shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false);
+                        updateConnectionAlert(isUserSignedIn);
+                        updatePendingUploadAlert();
+                        if (runningUploadNow)
+                            showPendingUploadProgressDialog();
+                        else
+                            dismissPendingUploadProgressDialog();
+                        if (hadPendingWifiUpload && !hasPendingWifiUpload && isUserSignedIn && internetAvailable)
+                            loadGoogleFiles();
+                    });
+                });
+    }
+
+
+    /**
+     * Aktualizuje centrální text upozornění podle síťového stavu a přihlášení.
+     */
+    private void updateConnectionAlert(boolean isUserSignedIn) {
+        if (!internetAvailable) {
+            if (NetworkUtil.shouldWarnWifiRequired(requireContext())) {
+                tvAlertNoInternet.setText(getString(R.string.wifi_required_mobile_disabled_message));
+            } else {
+                tvAlertNoInternet.setText(getString(R.string.internet_is_not_available));
+            }
+            tvAlertNoInternet.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        if (!isUserSignedIn) {
+            tvAlertNoInternet.setText(getString(R.string.google_drive_signed_out_warning));
+            tvAlertNoInternet.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        tvAlertNoInternet.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Zobrazí/skryje horní banner s informací o čekajícím uploadu na WiFi.
+     */
+    private void updatePendingUploadAlert() {
+        if (tvPendingUploadAlert == null)
+            return;
+
+        if (!hasPendingWifiUpload) {
+            tvPendingUploadAlert.setVisibility(View.GONE);
+            return;
+        }
+
+        int count = Math.max(pendingWifiUploadFilesCount, 1);
+        tvPendingUploadAlert.setText(getString(R.string.pending_upload_waiting_wifi_alert_count, count));
+        tvPendingUploadAlert.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
+     * Načte počet čekajících souborů z perzistentních metadat pending uploadu.
+     */
+    private int loadPersistedPendingWifiUploadCount() {
+        String fileNamesJson = new ShPBackup(requireContext()).get(ShPBackup.PENDING_WIFI_UPLOAD_FILE_NAMES, "");
+        if (fileNamesJson.isEmpty())
+            return 0;
+
+        try {
+            JSONArray jsonArray = new JSONArray(fileNamesJson);
+            return jsonArray.length();
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to parse pending WiFi upload count", e);
+            return 0;
+        }
+    }
+
+
+    /**
+     * Bezpečně zobrazí dialog průběhu nahrávání čekajících záloh.
+     */
+    private void showPendingUploadProgressDialog() {
+        if (!isAdded())
+            return;
+
+        if (pendingUploadProgressDialog != null && pendingUploadProgressDialog.isAdded())
+            return;
+
+        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager()
+                .findFragmentByTag(PendingBackupUploadProgressDialogFragment.TAG);
+        if (existing instanceof PendingBackupUploadProgressDialogFragment) {
+            pendingUploadProgressDialog = (PendingBackupUploadProgressDialogFragment) existing;
+            return;
+        }
+
+        int count = Math.max(pendingWifiUploadFilesCount, 1);
+        pendingUploadProgressDialog = PendingBackupUploadProgressDialogFragment.newInstance(
+                getString(R.string.pending_upload_in_progress_count, count)
+        );
+        pendingUploadProgressDialog.show(requireActivity().getSupportFragmentManager(), PendingBackupUploadProgressDialogFragment.TAG);
+    }
+
+
+    /**
+     * Bezpečně zavře dialog průběhu nahrávání čekajících záloh.
+     */
+    private void dismissPendingUploadProgressDialog() {
+        if (pendingUploadProgressDialog == null)
+            return;
+
+        if (pendingUploadProgressDialog.isAdded())
+            pendingUploadProgressDialog.dismissAllowingStateLoss();
+        pendingUploadProgressDialog = null;
     }
 
 

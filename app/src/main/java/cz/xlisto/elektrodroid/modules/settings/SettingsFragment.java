@@ -54,6 +54,7 @@ public class SettingsFragment extends Fragment {
         SwitchCompat switchShowFab = view.findViewById(R.id.switchShowFab);
         SwitchCompat switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
         SwitchCompat switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
+        SwitchCompat switchAllowMobileData = view.findViewById(R.id.switchAllowMobileData);
         ShPSettings shPSettings = new ShPSettings(requireContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -71,6 +72,7 @@ public class SettingsFragment extends Fragment {
         switchShowFab.setChecked(shPSettings.get(ShPSettings.SHOW_FAB, true));
         switchShowBottomNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true));
         switchShowLeftNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true));
+        switchAllowMobileData.setChecked(shPSettings.get(ShPSettings.ALLOW_MOBILE_DATA, true));
 
         switchShowFab.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.SHOW_FAB, switchShowFab.isChecked());
@@ -84,6 +86,11 @@ public class SettingsFragment extends Fragment {
 
         switchShowLeftNavigation.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.SHOW_LEFT_NAVIGATION, switchShowLeftNavigation.isChecked());
+            notifySettingsChanged();
+        });
+
+        switchAllowMobileData.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            shPSettings.set(ShPSettings.ALLOW_MOBILE_DATA, switchAllowMobileData.isChecked());
             notifySettingsChanged();
         });
 

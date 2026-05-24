@@ -6,6 +6,10 @@ import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,6 +39,7 @@ import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment;
 import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
 import cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment;
+import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ImportPriceListFragment;
@@ -56,6 +61,7 @@ import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -71,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     private Toolbar toolbar;
     private TextView toolbarTitle, toolbarSubtitle;
     private ShPMainActivity shPMainActivity;
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback pendingUploadNetworkCallback;
     private int orientation, selectedItemIndex = -1;
     private boolean secondClick = false;
 
@@ -79,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setupPendingUploadScheduler();
+        schedulePendingBackupUploadIfNeeded(true);
         setConfiguration(getResources().getConfiguration());
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         myNavigationView = findViewById(R.id.navigationView);
@@ -377,6 +387,16 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onResume();
         //nastavení viditelnosti levé a spodní lišty podle orientace obrazovky
         setVisibilityNavigation();
+        schedulePendingBackupUploadIfNeeded(false);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (connectivityManager != null && pendingUploadNetworkCallback != null) {
+            connectivityManager.unregisterNetworkCallback(pendingUploadNetworkCallback);
+        }
     }
 
 
@@ -604,6 +624,46 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
                 : DrawerLayout.LOCK_MODE_UNLOCKED);
         drawerToggle.syncState();
+    }
+
+
+    /**
+     * Připraví callback změn konektivity pro centrální plánování pending uploadu.
+     */
+    private void setupPendingUploadScheduler() {
+        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        if (connectivityManager == null)
+            return;
+
+        pendingUploadNetworkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                schedulePendingBackupUploadIfNeeded(true);
+            }
+
+            @Override
+            public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
+                if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                    schedulePendingBackupUploadIfNeeded(true);
+                }
+            }
+        };
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build();
+        connectivityManager.registerNetworkCallback(networkRequest, pendingUploadNetworkCallback);
+    }
+
+
+    /**
+     * Naplánuje čekající odesílání záloh centrálně z MainActivity.
+     */
+    private void schedulePendingBackupUploadIfNeeded(boolean replaceExisting) {
+        if (!NetworkUtil.isInternetAllowedBySettings(getApplicationContext()))
+            return;
+
+        PendingBackupUploadScheduler.scheduleIfNeeded(getApplicationContext(), replaceExisting);
     }
 
 }

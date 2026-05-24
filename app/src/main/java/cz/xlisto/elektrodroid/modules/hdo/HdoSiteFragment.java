@@ -45,6 +45,7 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.Keyboard;
+import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -303,6 +304,14 @@ public class HdoSiteFragment extends Fragment {
         btnHdoSite.setOnClickListener(v -> openHdoSite());
 
         btnHdoLoadData.setOnClickListener(v -> {
+            if (NetworkUtil.shouldWarnWifiRequired(requireContext())) {
+                OwnAlertDialog.showDialog(
+                        requireActivity(),
+                        getString(R.string.wifi_required_title),
+                        getString(R.string.wifi_required_mobile_disabled_message)
+                );
+                return;
+            }
             SubscriptionPointModel subscriptionPoint = getSubscriptionPoint();
             if (subscriptionPoint != null) {
                 try {

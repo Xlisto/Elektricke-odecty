@@ -5,8 +5,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.util.Log;
+
+import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
 /**
@@ -23,11 +24,7 @@ public class NetworkUtil {
     public static boolean isInternetAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                return isInternetAvailableApi23(connectivityManager);
-            } else {
-                return isInternetAvailableApiOld(connectivityManager);
-            }
+            return isInternetAvailableApi23(connectivityManager);
         }
         return false;
     }
@@ -63,34 +60,6 @@ public class NetworkUtil {
 
 
     /**
-     * Zjistí, zda je internet dostupný na zařízeních s API nižším než 23.
-     *
-     * @param connectivityManager Objekt `ConnectivityManager` pro získání informací o síti.
-     * @return true, pokud je internet dostupný, jinak false
-     */
-    private static boolean isInternetAvailableApiOld(ConnectivityManager connectivityManager) {
-        NetworkInfo[] networks = connectivityManager.getAllNetworkInfo();
-        Log.w("NetworkUtil", "isInternetAvailable: networks: " + networks.length);
-        for (NetworkInfo networkInfo : networks) {
-            if (networkInfo != null && networkInfo.isConnected()) {
-                if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                    Log.w("NetworkUtil", "Connected via WiFi");
-                    return true;
-                } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-                    Log.w("NetworkUtil", "Connected via Mobile Data");
-                    return true;
-                } else if (networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
-                    Log.w("NetworkUtil", "Connected via Ethernet");
-                    return true;
-                }
-                return false;
-            }
-        }
-        return false;
-    }
-
-
-    /**
      * Zjistí, zda je aktivní připojení k WiFi.
      *
      * @param context Kontext aplikace
@@ -99,11 +68,7 @@ public class NetworkUtil {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                return isWifiConnectedApi23(connectivityManager);
-            } else {
-                return isWifiConnectedLegacy(connectivityManager);
-            }
+            return isWifiConnectedApi23(connectivityManager);
         }
         return false;
     }
@@ -128,15 +93,30 @@ public class NetworkUtil {
 
 
     /**
-     * Zjistí, zda je aktivní připojení k WiFi na zařízeních s API nižším než 23.
-     *
-     * @param connectivityManager Objekt `ConnectivityManager` pro získání informací o síti.
-     * @return true, pokud je aktivní připojení k WiFi, jinak false
+     * Vrátí, zda uživatel v nastavení povolil použití mobilních dat.
      */
-    private static boolean isWifiConnectedLegacy(ConnectivityManager connectivityManager) {
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected() && activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+    public static boolean isMobileDataAllowedByUser(Context context) {
+        return new ShPSettings(context).get(ShPSettings.ALLOW_MOBILE_DATA, true);
+    }
+
+
+    /**
+     * Vrátí true, pokud je povolený přenos dat podle nastavení uživatele a aktuální sítě.
+     * WiFi/Ethernet je vždy povoleno, mobilní síť jen při zapnutém nastavení.
+     */
+    public static boolean isInternetAllowedBySettings(Context context) {
+        if (isWifiConnected(context)) {
+            return true;
+        }
+        return isMobileDataAllowedByUser(context) && isInternetAvailable(context);
+    }
+
+
+    /**
+     * Vrátí true, pokud je potřeba uživatele upozornit na požadavek WiFi připojení.
+     */
+    public static boolean shouldWarnWifiRequired(Context context) {
+        return !isMobileDataAllowedByUser(context) && !isWifiConnected(context);
     }
 
 }
-

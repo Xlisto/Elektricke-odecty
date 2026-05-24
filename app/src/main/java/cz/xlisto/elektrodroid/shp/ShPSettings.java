@@ -12,6 +12,7 @@ public class ShPSettings extends ShP {
     public static final String SHOW_FAB = "showFab";
     public static final String SHOW_BOTTOM_NAVIGATION = "showBottomNavigation";
     public static final String SHOW_LEFT_NAVIGATION = "showLeftNavigation";
+    public static final String ALLOW_MOBILE_DATA = "allowMobileData";
 
 
     public ShPSettings(Context context) {

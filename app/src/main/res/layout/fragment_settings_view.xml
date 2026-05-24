@@ -48,6 +48,14 @@
             android:minHeight="48dp"
             android:text="@string/show_nav" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchAllowMobileData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:minHeight="48dp"
+            android:text="@string/allow_mobile_data" />
+
     </LinearLayout>
 </ScrollView>
 

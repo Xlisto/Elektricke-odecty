@@ -8,10 +8,24 @@
     android:padding="10dp"
     tools:context=".modules.backup.GoogleDriveFragment">
 
+    <TextView
+        android:id="@+id/tvPendingUploadAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/shape_item"
+        android:padding="10dp"
+        android:text="@string/pending_upload_waiting_wifi_alert"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvGoogleDriveFiles"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvPendingUploadAlert" />
 
     <TextView
         android:id="@+id/tvAlertNoInternet"
