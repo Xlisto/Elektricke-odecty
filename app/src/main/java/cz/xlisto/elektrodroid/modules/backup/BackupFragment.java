@@ -49,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -98,7 +99,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     private static final String STATE_PENDING_WIFI_UPLOAD_FILE_NAMES = "statePendingWifiUploadFileNames";
     private MenuItem menuItemBackup;
     private MenuItem menuItemDeleteSelected;
-    private MenuItem menuItemCancelSelection;
+    private MenuItem menuItemToastMenu;
     private MenuItem menuItemUploadSelected;
     private boolean backupActionEnabled = true;
     private boolean deleteSelectedActionVisible = false;
@@ -220,8 +221,12 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                 menuInflater.inflate(R.menu.menu_backup, menu);
                 menuItemBackup = menu.findItem(R.id.menu_action_backup_create);
                 menuItemDeleteSelected = menu.findItem(R.id.menu_action_backup_delete_selected);
-                menuItemCancelSelection = menu.findItem(R.id.menu_action_backup_cancel_selection);
+                menuItemToastMenu = menu.findItem(R.id.menu_action_toast_menu);
                 menuItemUploadSelected = menu.findItem(R.id.menu_action_backup_upload_selected);
+                if (menuItemToastMenu != null) {
+                    menuItemToastMenu.setVisible(false);
+                    menuItemToastMenu.setEnabled(false);
+                }
                 updateBackupActionEnabled(backupActionEnabled);
                 updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible);
             }
@@ -264,13 +269,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                             return true;
                         }
                         checkExistingFilesAndStartUpload(userName, filesToUpload);
-                    }
-                    return true;
-                }
-                if (itemId == R.id.menu_action_backup_cancel_selection) {
-                    if (backupAdapter != null) {
-                        suppressSelectionCanceledSnackbar = true;
-                        backupAdapter.cancelMultiSelect();
                     }
                     return true;
                 }
@@ -467,6 +465,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             backupUploadDialogFragment.dismissAllowingStateLoss();
         }
         backupUploadDialogFragment = null;
+        if (requireActivity() instanceof MainActivity) {
+            ((MainActivity) requireActivity()).updateToolbarForSelection(0, false, null);
+        }
     }
 
 
@@ -619,8 +620,9 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             menuItemDeleteSelected.setEnabled(selectedCount > 0);
             menuItemDeleteSelected.setTitle(getString(R.string.delete_selected_backups_button, selectedCount));
         }
-        if (menuItemCancelSelection != null) {
-            menuItemCancelSelection.setVisible(isMultiSelectMode);
+        if (menuItemToastMenu != null) {
+            menuItemToastMenu.setVisible(false);
+            menuItemToastMenu.setEnabled(false);
         }
         if (wasMultiSelectVisible && !isMultiSelectMode && selectedCount == 0) {
             if (!suppressSelectionCanceledSnackbar && isAdded()) {
@@ -628,6 +630,20 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             }
             suppressSelectionCanceledSnackbar = false;
         }
+
+        if (requireActivity() instanceof MainActivity) {
+            ((MainActivity) requireActivity()).updateToolbarForSelection(selectedCount, isMultiSelectMode,
+                    isMultiSelectMode ? this::cancelSelectionFromToolbar : null);
+        }
+    }
+
+
+    private void cancelSelectionFromToolbar() {
+        if (backupAdapter == null)
+            return;
+
+        suppressSelectionCanceledSnackbar = true;
+        backupAdapter.cancelMultiSelect();
     }
 
 

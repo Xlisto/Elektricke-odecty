@@ -3,7 +3,6 @@
     <string name="hdo_service_name">Čas HDO</string>
     <string name="hdo_click">Klikněte pro spuštění služby hlídání HDO</string>
     <string name="default_web_client_id">634320309725-9a1qp280hkm6a2bsqip9l6t4epdm65lp.apps.googleusercontent.com</string>
-    <string name="default_android_id">634320309725–2lnsv3j4dssebj8n8m2t364n8q9lmk26.apps.googleusercontent.com</string>
 
     <string name="datum_cislem">01.01.2025</string>
     <string name="pomlka">-</string>
@@ -33,7 +32,6 @@
     <string name="cena_za_dodavku">Cena za dodávku elektřiny (neregulovaná)</string>
     <string name="cena_za_distribuci">Cena za zajištění distribuce elektřiny (regulovaná)</string>
     <string name="sazba_distribuce">Sazba dist.</string>
-    <string name="d01">D01</string>
     <string name="mesicni_plat_za_prikon">Měsíční plat v Kč za příkon dle hodnoty hlavního jističe</string>
     <string name="mesicni_plat_za_jistic">Měsíční plat za jistič</string>
     <string name="jistic_do_10">Jistič do 3x10A a do 1x25A včetně</string>
@@ -65,7 +63,6 @@
     <string name="nova_cena_infrastruktua_poznamka">Od 1.9. se tato položka zvýšila na 12,45.  </string>
     <string name="dph">DPH</string>
     <string name="dan_z_elektriny">Daň z elektřiny</string>
-    <string name="znak_procento">%</string>
     <string name="zobrazeno_mene">Zobrazeno méně hodnot jističů</string>
     <string name="zobrazeno_vice">Zobrazeno více hodnot jističů</string>
     <string name="dane">Daně</string>
@@ -84,9 +81,7 @@
     <string name="vybrat">Vybrat</string>
 
     <string name="label_for">Label for:</string>
-    <string name="label_edittext">Label EditText</string>
     <string name="label_price_detail">Detail</string>
-    <string name="label_price_item">ItemPrice</string>
     <string name="label_item">Item</string>
     <string name="price_list_item_label">%1$s, %2$s</string>
 
@@ -114,7 +109,6 @@
     <string name="jednotkova_cena">Jednotková cena</string>
     <string name="jed_cena">Jed. cena</string>
 
-    <string name="smazat_cenik">Smazat ceník?</string>
     <string name="delete_unused_pricelist">Smazat nepoužité ceníky?</string>
     <string name="delete_unused_pricelist_content">Touto akcí nevratně smažete všechny ceníky, které nejsou použity v měsíčních odečtech, ani ve fakturách.</string>
     <string name="ano">ANO</string>
@@ -125,7 +119,6 @@
 
     <string name="poznamka_2022">Od října do konce roku je zrušen POZE</string>
     <string name="poznamka_2023">Na ceník se vztahuje cenový strop VT, NT a zrušení POZE</string>
-    <string name="poznamka_info">Ceník obsahuje poznámku</string>
 
     <string name="x">X</string>
     <string name="faze_x_prikon">Fáze x příkon:</string>
@@ -184,7 +177,6 @@
     <string name="strop_ceny">Zastropované ceny</string>
 
     <string name="logo">LOGO</string>
-    <string name="elektrodroid">ElektroDroid</string>
 
     <string name="spotreba_vysokeho_tarifu">Spotřeba VYSOKÉHO tarifu [MWh]:</string>
     <string name="spotreba_nizkeho_tarifu">Spotřeba NÍZKÉHO tarifu [MWh]:</string>
@@ -223,7 +215,6 @@
     <string name="plus">+</string>
     <string name="add_payment">Přidat platbu</string>
     <string name="add_invoice">Přidat fakturu</string>
-    <string name="create_invoice">Vytvořit fakturu</string>
     <string name="create_new_invoice">Vytvořit novou fakturu</string>
     <string name="select_invoice">Vybrat záznamy do nové faktury</string>
     <string name="deselect_invoice">Zrušit výběr</string>
@@ -271,7 +262,6 @@
     <string name="image_destription_nt">Ikona zobrazující aktivní nízký tarif</string>
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
 
-    <string name="no_hdo">Žádný rozvrh HDO</string>
     <string name="no_found_hdo">Nenalezen žádný čas HDO</string>
     <string name="write_hdo">Vyberte distribuci, napiště HDO kód a \nstiskněte NAČTI HDO</string>
     <string name="select_hdo">Vyberte distribuci, povel přijímače a \nstiskněte NAČTI HDO</string>
@@ -301,10 +291,8 @@
 
     <string name="description_vt_color">Barva VT</string>
     <string name="hint_vt_color">#0c5292</string>
-    <string name="contentdescription_vt_color">Nastavení barvy vysokého tarifu</string>
     <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
-    <string name="contentdescription_nt_color">Nastavení barvy nízkého tarifu</string>
     <string name="set_color_html">Nastavení barvy</string>
     <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
     <string name="set">Nastav </string>
@@ -328,11 +316,9 @@
 
     <string name="btn_date_description_from">Datum začátku faktury</string>
     <string name="btn_date_description_to">Datum konce faktury</string>
-    <string name="btn_date">Datum</string>
 
 
     <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
-    <string name="edittext_date_payment_description">Napiště, kolikáteho bude zaplacena záloha za tento odečet.</string>
 
     <string name="no_folder">!!! ZÁLOHA NEVYTVOŘENA !!! \n\nNejprve vytvořte, vyberte a povolte aplikaci přístup do složky pro zálohy. </string>
     <string name="backup_created">Vytvořena záloha na vnitřním uložišti.</string>
@@ -343,8 +329,6 @@
     <string name="add_price_list">Přidat do aplikace</string>
     <string name="delete_price_list_file">Smazat</string>
 
-    <string name="allow_write_to_storage">Povolte zápis do paměti zařízení</string>
-    <string name="allow">POVOLIT</string>
 
     <string name="saved_prices_list">Vybrané ceníky uloženy.</string>
     <string name="rewrite_prices_list">Vybrané ceníky přepsány.</string>
@@ -406,7 +390,6 @@
     <string name="total_with_tax">%s Kč s DPH</string>
     <string name="string_dash_string">%s - %s</string>
     <string name="string_dash_string_kwh">%s kWh - %s kWh, Sp.: %s kWh</string>
-    <string name="string_dash_string_enter_string_dash_string">%s - %s\n%s + %s</string>
     <string name="advances">Zálohy: %d</string>
     <string name="records">Záznamy: %d</string>
     <string name="no_records">Faktura neobsahuje žádné záznamy</string>
@@ -444,7 +427,6 @@
     <string name="slider_description_nt_cut">Rozdělení měřiče NT</string>
 
     <string name="error">Chyba</string>
-    <string name="date_is_not_correct">Datum (%s) nesmí překročit datum v prvním záznamu v období bez faktury</string>
     <string name="dates_is_not_correct">Koncové datum záznamu faktury je dřívější než datum posledního měsíčního záznamu.\nV případě nefakturovaného období bude výpočet vykazovat zápornou hodnotu.\n\nUpravte poslední záznam faktury nebo doplňte aktuální záznam do měsíčních odečtů.</string>
     <string name="show_total_consuption">Celková spotřeba</string>
     <string name="consuption2">%.2f kWh</string>
@@ -460,7 +442,6 @@
     <string name="btn_left_content_description_sum_invoices">Zobrazí souhrnné faktury předchozího místa</string>
     <string name="btn_right_content_description_sum_invoices">Zobrazí souhrnné faktury následujícího místa</string>
 
-    <string name="no_hdo_codes">Žádná data, zkontrolujte správnost HDO povelu</string>
     <string name="kc_with_tax"> Kč s DPH</string>
     <string name="kc_with_discount"> Kč se slevou DPH</string>
 
@@ -537,19 +518,12 @@
     <string name="alert_app_end">Následující kliknutí aplikaci ukončí</string>
     <string name="ask_permition">Vyberte složku pro zálohy odečtů a ceníků.</string>
 
-    <string name="create_folder">Složka na Google Drive</string>
     <string name="sign_in">Přihlásit</string>
     <string name="sign_out">Odhlásit</string>
     <string name="sign_in_no_credentials">Není dostupný žádný účet Google. Přidejte účet v zařízení a zkuste to znovu.</string>
     <string name="sign_in_failed">Přihlášení se nepodařilo. Zkuste to prosím znovu.</string>
-    <string name="btn_set_default_folder">Výchozí složka</string>
-    <string name="btn_create_folder">Vytvoř složku</string>
     <string name="deleted_file">Soubor byl smazán</string>
-    <string name="deleted_folder">Složka byla smazána</string>
     <string name="not_deleted_file">Soubor se nepodařilo smazat</string>
-    <string name="not_deleted_folder">Složka není prázdná. Může obsahovat soubory, které aplikace nezobrazuje. Nelze smazat.</string>
-    <string name="cannot_delete_default_folder">Není možné smazat výchozí složku pro ukládání. \nNejdříve změňte výchozí složku.</string>
-    <string name="deleted">Smazat</string>
     <string name="restore">Obnov data</string>
     <string name="uploaded_file">Soubor byl nahrán na Google Drive</string>
     <string name="uploading_file_on_drive">Nahrávám soubor\nna Google Drive</string>
@@ -564,8 +538,6 @@
     <string name="description_monthly_reading">Seznam záznamů měsíčních odečtů</string>
     <string name="description_subscription_point_name">pojmenujte si odběrné místo</string>
     <string name="description_subscription_point_description">Zapište si poznámky k odběrnému místu</string>
-    <string name="description_subscription_point_phaze">Zadejte počet fází (1 nebo 3)</string>
-    <string name="description_subscription_point_power">Zadejte příkon hlavního jističe</string>
     <string name="description_list_price_list">Seznam ceníků</string>
     <string name="description_list_price_product">Seznam názvů sazeb</string>
     <string name="description_list_price_sazba">Seznam sazeb</string>
@@ -576,20 +548,11 @@
     <string name="description_subscription_point">Informace o odběrném místě</string>
     <string name="description_rele">Seznam spínaných relé</string>
     <string name="description_dashboard_sort">Třídění seznamu</string>
-    <string name="description_phaze">Fáze</string>
-    <string name="description_power">Příkon</string>
-    <string name="description_btn_sign">Tlačítko pro přihlášení/odhlášení Google</string>
-    <string name="description_new_folder">Text nově vytvářené složky</string>
-    <string name="fillhints_backup_folder">Záloha elektrické odečty</string>
 
-    <string name="hint_left_price_list_other_services">Ostatní služby na levém ceníku</string>
-    <string name="hint_right_price_list_other_services">Ostatní služby na pravém ceníku</string>
 
     <string name="version">Vydání: %1$d</string>
-    <string name="invalid_date">Použijte platné číslo</string>
     <string name="link_private_policy"><u>Odkaz na Zásady ochrany soukromí</u></string>
 
-    <string name="create_new_folder">Vytvořit novou složku</string>
     <string name="delete_folder">Smazat složku</string>
     <string name="delete_backup">Smazat zálohu</string>
     <string name="delete_selected_backups">Smazat vybrané zálohy</string>
@@ -615,8 +578,6 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="delete_selected_google_drive_files_button_default">Smazat vybrané</string>
     <string name="save_selected_google_drive_files_button">Uložit vybrané (%1$d)</string>
     <string name="save_selected_google_drive_files_button_default">Uložit vybrané</string>
-    <string name="delete_selected_google_drive_files_title">Mazání z Google Drive</string>
-    <string name="delete_selected_google_drive_files_in_progress">Mažu vybrané soubory na Google Drive (%1$d/%2$d)</string>
     <string name="deleted_selected_google_drive_files">Vybrané soubory byly smazány</string>
     <string name="partially_deleted_selected_google_drive_files">Některé soubory se nepodařilo smazat (%1$d/%2$d)</string>
     <string name="not_deleted_selected_google_drive_files">Vybrané soubory se nepodařilo smazat</string>
@@ -628,57 +589,46 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="save_selected_all_files_already_exist">Všechny vybrané soubory už v lokální záloze existují</string>
     <string name="save_selected_google_drive_files_exists_title">Soubory již existují</string>
     <string name="save_selected_google_drive_files_exists_message">Některé vybrané soubory již v lokální záloze existují. Přejete si je přepsat, nebo přeskočit?</string>
-    <string name="upload_success_google_drive">Úspěšně nahráno na Google Drive</string>
     <string name="google_drive_service_init_failed">Nepodařilo se připravit Google Drive pro nahrávání</string>
-    <string name="cancel_selection">Zrušit výběr</string>
+    <string name="more">Více možností</string>
     <string name="selection_canceled">Výběr zrušen</string>
-    <string name="rename_folder">Přejmenovat složku</string>
-    <string name="rename">Přejmenovat</string>
+    <string name="pending_upload_in_progress">Probíhá nahrávání čekajících záloh</string>
+    <string name="pending_upload_in_progress_count">Probíhá nahrávání čekajících záloh (%1$d)</string>
+    <string name="pending_upload_queued_for_wifi">Nahrání bylo zařazeno do fronty a spustí se při připojení k Wi‑Fi</string>
+    <string name="pending_upload_waiting_wifi_alert_count">Čeká %1$d souborů na nahrání přes Wi‑Fi</string>
+    <string name="pending_upload_waiting_wifi_alert">Čekají soubory na nahrání přes Wi‑Fi</string>
+    <string name="google_drive_signed_out_warning">Nejste přihlášeni ke Google Drive</string>
+    <string name="internet_is_not_available">Internet není dostupný</string>
+    <string name="queue_upload_offline_message">Internet nyní není dostupný. Chcete nahrání odložit a spustit jej po připojení k Wi‑Fi?</string>
+    <string name="wifi_required_title">Vyžadována Wi‑Fi</string>
+    <string name="wifi_required_mobile_disabled_message">Mobilní data nejsou pro tuto akci povolena. Chcete nahrání odložit do připojení k Wi‑Fi?</string>
+    <string name="queue_upload_on_wifi">Zařadit na Wi‑Fi</string>
+    <string name="save_google_drive_file_failed">Soubor se nepodařilo uložit</string>
+    <string name="save_google_drive_file_already_exists">Soubor již v lokálním úložišti existuje</string>
+    <string name="save_google_drive_file_success">Soubor byl uložen</string>
+    <string name="save_to_local_storage">Uložit do zařízení</string>
     <string name="recover_backup">Obnovit zálohu</string>
-    <string name="no_signs">Nepřihlášen</string>
-    <string name="internet_is_not_available">Internetové připojení není dostupné</string>
-    <string name="wifi_required_title">Vyžadováno WiFi připojení</string>
-    <string name="wifi_required_mobile_disabled_message">WiFi připojení není dostupné a použití mobilních dat je v nastavení zakázáno.</string>
-    <string name="queue_upload_offline_message">Internetové připojení není dostupné. Chcete vybrané zálohy zařadit do čekající fronty pro odeslání při příštím dostupném připojení?</string>
-    <string name="queue_upload_on_wifi">Zařadit jako čekající úlohu</string>
-    <string name="pending_upload_queued_for_wifi">Záloha byla zařazena do čekající fronty. Odeslání proběhne při připojení k WiFi.</string>
-    <string name="pending_upload_waiting_wifi_alert">Čeká odeslání zálohy na Google Drive. Úloha se spustí při připojení k WiFi.</string>
-    <string name="pending_upload_waiting_wifi_alert_count">Čeká odeslání %1$d soubor(ů) na Google Drive. Úloha se spustí při připojení k WiFi.</string>
-    <string name="pending_upload_in_progress">Nahrávám čekající zálohy na Google Drive…</string>
-    <string name="pending_upload_in_progress_count">Nahrávám %1$d čekajících soubor(ů) na Google Drive…</string>
-    <string name="google_drive_signed_out_warning">Jste odhlášen. Pro zobrazení obsahu se přihlaste přes ikonu v horní liště.</string>
-    <string name="save_to_local_storage">Uložit</string>
-    <string name="save_google_drive_file_success">Soubor byl uložen do lokální zálohy</string>
-    <string name="save_google_drive_file_failed">Soubor se nepodařilo uložit do lokální zálohy</string>
-    <string name="save_google_drive_file_already_exists">Soubor v lokální záloze již existuje</string>
-    <string name="save_google_drive_file_exists_title">Soubor již existuje</string>
-    <string name="save_google_drive_file_exists_message">Soubor %1$s již v lokální záloze existuje. Přejete si jej přepsat?</string>
-    <string name="save_google_drive_file_canceled">Uložení zrušeno</string>
-
-    <string name="formatted_price">%1$s %2$s</string>
-    <string name="kwh_vt">1 kwh VT:</string>
-    <string name="kwh_nt">1 kwh NT:</string>
-    <string name="month">Měsíc:</string>
-    <string name="confirm_delete_pricelist">Chcete smazat ceník?</string>
-    <string name="deleting_pricelist">Smazání ceníku</string>
-    <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je použit v těchto záznamech:\n\nObdobí bez faktury: %dx\n\nVe fakturách: %dx\n\nV měsíčních odečtech: %dx</string>
-
-    <string name="detail_invoice_description">Seznam jednotlivých položek faktury</string>
+    <string name="saved">Uloženo</string>
+    <string name="upload_file_with_pricelist">Nahrát soubor s ceníkem</string>
+    <string name="delete_file_with_pricelist">Smazat soubor s ceníkem</string>
     <string name="price_list_exists">Ceník již existuje</string>
     <string name="price_lists_exist">Ceníky již existují</string>
-    <string name="found_price_list">Několik ceníků již bylo nalezeno.\nPřejete si je všechny přepsat?</string>
-    <string name="rewrite_price_list">Ceník %s, %s\nbyl nalezen.\n\nPřejete si jej přepsat?</string>
-    <string name="price_list_found_multiple_variants">Ceník %1$s, %2$s\nbyl nalezen ve více shodných variantách. Nepoužívanou variantu odstraňte ručně.\n\nPřepnout se do seznamu s ceníky?</string>
-    <string name="select_backup_folder">Tlačítko pro výběr složky na zálohy</string>
-    <string name="saved">Uloženo</string>
-    <string name="not_restored_data">Data se neobnovila</string>
+    <string name="rewrite_price_list">Ceník %1$s %2$s již existuje. Chcete jej přepsat?</string>
+    <string name="found_price_list">V databázi byly nalezeny již existující ceníky. Chcete je přepsat?</string>
+    <string name="price_list_found_multiple_variants">Pro %1$s %2$s bylo nalezeno více existujících variant ceníku. Chcete pokračovat v přepsání?</string>
+    <string name="confirm_delete_pricelist">Opravdu smazat ceník?</string>
+    <string name="deleting_pricelist">Mazání ceníku</string>
+    <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je používán v záznamech. TED: %1$d, FAK: %2$d, Měsíční odečty: %3$d.</string>
+    <string name="alert_regulated_prices_title_during_the_year">Chybí regulovaná část ceníku během roku</string>
+    <string name="alert_regulated_prices_title_every_year">Chybí regulovaná část ceníku</string>
+    <string name="alert_regulated_prices_text">Pro zvolené období chybí odpovídající regulovaná část ceníku. Zkontrolujte prosím následující data:</string>
+    <string name="no_signs">Nejste přihlášeni ke Google Drive</string>
+    <string name="not_restored_data">Data se nepodařilo obnovit</string>
+    <string name="formatted_price">%1$s Kč/%2$s</string>
+    <string name="detail_invoice_description">Detail položek faktury</string>
+    <string name="kwh_vt">VT</string>
+    <string name="kwh_nt">NT</string>
+    <string name="month">Měsíc</string>
 
-    <string name="alert_regulated_prices_title_during_the_year">V roce %d se regulované ceny změnily v průběhu roku</string>
-    <string name="alert_regulated_prices_title_every_year">Regulované ceny jsou platné vždy pouze pro jeden kalendářní rok</string>
-    <string name="alert_regulated_prices_text">Regulované ceny jsou rozděleny podle dat platnosti:\n</string>
 
-    <string name="delete_file_with_pricelist">Smazat soubor s ceníkem</string>
-    <string name="upload_file_with_pricelist">Nahrát ceník do aplikace</string>
-    <string name="upload_to_drive">na disk</string>
-    <string name="more_options">Další možnosti</string>
 </resources>

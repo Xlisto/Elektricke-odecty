@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveDeleteProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveSaveProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.PendingBackupUploadProgressDialogFragment;
@@ -98,7 +99,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private boolean suppressSelectionCanceledSnackbar;
     private MenuItem menuItemDeleteSelected;
     private MenuItem menuItemSaveSelected;
-    private MenuItem menuItemCancelSelection;
+    private MenuItem menuItemToastMenu;
     private GoogleDriveDeleteProgressDialogFragment deleteProgressDialog;
     private GoogleDriveSaveProgressDialogFragment saveProgressDialog;
     private PendingBackupUploadProgressDialogFragment pendingUploadProgressDialog;
@@ -384,7 +385,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             public void onPrepareMenu(@NonNull Menu menu) {
                 menuItemDeleteSelected = menu.findItem(R.id.menu_action_google_delete_selected);
                 menuItemSaveSelected = menu.findItem(R.id.menu_action_google_save_selected);
-                menuItemCancelSelection = menu.findItem(R.id.menu_action_google_cancel_selection);
+                menuItemToastMenu = menu.findItem(R.id.menu_action_toast_menu);
                 MenuItem signItem = menu.findItem(MENU_ACTION_GOOGLE_SIGN);
                 if (signItem == null || shPGoogleDrive == null)
                     return;
@@ -406,8 +407,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                     menuItemSaveSelected.setTitle(getString(R.string.save_selected_google_drive_files_button, selectedFilesCount));
                 }
 
-                if (menuItemCancelSelection != null) {
-                    menuItemCancelSelection.setVisible(multiSelectMode);
+                if (menuItemToastMenu != null) {
+                    menuItemToastMenu.setVisible(false);
+                    menuItemToastMenu.setEnabled(false);
                 }
             }
 
@@ -431,16 +433,18 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                     saveSelectedFilesToLocal();
                     return true;
                 }
-                if (item.getItemId() == R.id.menu_action_google_cancel_selection) {
-                    if (backupAdapter != null) {
-                        suppressSelectionCanceledSnackbar = true;
-                        backupAdapter.cancelMultiSelect();
-                    }
-                    return true;
-                }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (requireActivity() instanceof MainActivity) {
+            ((MainActivity) requireActivity()).updateToolbarForSelection(0, false, null);
+        }
     }
 
 
@@ -804,7 +808,21 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             suppressSelectionCanceledSnackbar = false;
         }
 
+        if (requireActivity() instanceof MainActivity) {
+            ((MainActivity) requireActivity()).updateToolbarForSelection(selectedCount, isMultiSelectMode,
+                    isMultiSelectMode ? this::cancelSelectionFromToolbar : null);
+        }
+
         updateAppBarSignMenu();
+    }
+
+
+    private void cancelSelectionFromToolbar() {
+        if (backupAdapter == null)
+            return;
+
+        suppressSelectionCanceledSnackbar = true;
+        backupAdapter.cancelMultiSelect();
     }
 
 

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     private ConnectivityManager.NetworkCallback pendingUploadNetworkCallback;
     private int orientation, selectedItemIndex = -1;
     private boolean secondClick = false;
+    private boolean selectionNavigationActive = false;
+    @Nullable
+    private Runnable selectionNavigationAction;
 
 
     @Override
@@ -551,9 +555,29 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
      *
      * @param title titulek
      */
-    private void setToolbarTitle(String title) {
+    public void setToolbarTitle(String title) {
         shPMainActivity.set(ShPMainActivity.PRIMARY_TITLE, title);
         toolbarTitle.setText(title);
+    }
+
+
+    /**
+     * Aktualizuje toolbar pro režim výběru více položek
+     *
+     * @param selectedCount počet vybraných položek
+     * @param isMultiSelect {@code true}, pokud je aktivní režim výběru
+     */
+    public void updateToolbarForSelection(int selectedCount, boolean isMultiSelect, @Nullable Runnable cancelSelectionAction) {
+        selectionNavigationActive = isMultiSelect;
+        selectionNavigationAction = isMultiSelect ? cancelSelectionAction : null;
+
+        if (isMultiSelect) {
+            toolbarTitle.setText(String.valueOf(selectedCount));
+        } else {
+            toolbarTitle.setText(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
+        }
+
+        updateAppBarNavigationIcon();
     }
 
 
@@ -606,6 +630,19 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
      * Přepne ikonu v AppBar podle stavu backstacku.
      */
     private void updateAppBarNavigationIcon() {
+        if (selectionNavigationActive && selectionNavigationAction != null) {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+            drawerToggle.setDrawerIndicatorEnabled(false);
+            toolbar.setNavigationIcon(R.drawable.ic_close_24);
+            drawerToggle.setToolbarNavigationClickListener(v -> selectionNavigationAction.run());
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            drawerToggle.syncState();
+            return;
+        }
+
         boolean hasBackStack = getSupportFragmentManager().getBackStackEntryCount() > 0;
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(hasBackStack);

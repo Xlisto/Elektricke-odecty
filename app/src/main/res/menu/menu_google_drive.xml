@@ -23,11 +23,10 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_action_google_cancel_selection"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        android:title="@string/cancel_selection"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/menu_action_toast_menu"
+        android:icon="@drawable/ic_dots_vertical_24"
+        android:title="@string/more"
+        app:showAsAction="always" />
 
 </menu>
 
