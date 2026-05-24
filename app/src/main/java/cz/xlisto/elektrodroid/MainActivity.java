@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.modules.aboutme.AboutMeFragment;
 import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         }
 
         //posluchač na zavření dialogového okna s nastavením
-        getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
+        getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
                 (requestKey, result) -> setVisibilityNavigation());
         updateAppBarNavigationIcon();
     }
@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         }
         if (item.getItemId() == 1) {
             uncheckedBottomNavigation();
-            actualFragment = SettingsViewDialogFragment.newInstance();
+            actualFragment = SettingsFragment.newInstance();
             FragmentChange.replace(MainActivity.this, actualFragment, MOVE, true);
             setToolbarTitle(getResources().getString(R.string.settings_app));
             return true;

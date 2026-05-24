@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
@@ -233,7 +233,7 @@ public class PriceListFragment extends Fragment {
                 }));
 
         //listener při zavření dialogového okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> {
                     UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
                     btnShowBack();
@@ -385,7 +385,7 @@ public class PriceListFragment extends Fragment {
     /**
      * Strana, pro kterou se vybírá ceník pro porovnání ceníků
      */
-    enum Side {
+    public enum Side {
         LEFT, RIGHT
     }
 

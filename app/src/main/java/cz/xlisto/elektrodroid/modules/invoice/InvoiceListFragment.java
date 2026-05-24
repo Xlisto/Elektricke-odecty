@@ -34,7 +34,7 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.SetDefaultMetersDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsInvoiceDialogFragment;
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
@@ -150,7 +150,7 @@ public class InvoiceListFragment extends Fragment {
         });
 
         //posluchač zavření dialogová okna nastavení
-        getParentFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+        getParentFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true)
         );
 

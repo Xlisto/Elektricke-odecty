@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PaymentModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
@@ -137,7 +137,7 @@ public class PaymentFragment extends Fragment {
                     }
                 });
         //posluchač zavření dialogová okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> UIHelper.showButtons(btnAddPayment, fab, requireActivity(), true)
         );
     }

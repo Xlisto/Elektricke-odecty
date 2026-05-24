@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -39,7 +40,7 @@ import java.util.TimerTask;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
@@ -55,12 +56,26 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 
 
 /**
- * Fragment zobrazující časy HDO
- * Xlisto 26.05.2023 10:35
+ * Fragment pro zobrazení a správu HDO (Doba Sníženého Tarifu) časů.
+ *
+ * <p></>Tento fragment umožňuje:
+ * - Zobrazit aktuální čas a HDO období
+ * - Spravovat časový posun
+ * - Ovládat HDO službu s notifikacemi
+ * - Vybírat a filtrovat HDO podle relé
+ * - Zobrazit historii HDO záznamů
+ *
+ * <p></>Využívá:
+ * - {@link HdoService} pro monitorování HDO času
+ * - {@link DataHdoSource} pro přístup k datům HDO
+ * - {@link ActivityResultContracts.RequestPermission} pro vyžádání oprávnění na notifikace
+ *
+ * @author Xlisto
+ * @version 2.0 (modernizováno s ActivityResultContracts)
+ * @since 26.05.2023
  */
 public class HdoFragment extends Fragment {
 
-    private static final String TAG = "HdoFragment";
     private static final long minute = 60000;
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
@@ -76,17 +91,32 @@ public class HdoFragment extends Fragment {
     private Intent hdoServiceIntent;
     private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour, btnAddHdo;
     private FloatingActionButton fab;
-    private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1;
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
 
+    // ActivityResultLauncher pro notifikace
+    private androidx.activity.result.ActivityResultLauncher<String> requestNotificationPermissionLauncher;
 
+
+    /**
+     * Vytvoří novou instanci fragmentu HDO.
+     *
+     * @return Nová instance HdoFragment
+     */
     public static HdoFragment newInstance() {
         return new HdoFragment();
     }
 
 
+    /**
+     * Vytvoří root View fragmentu.
+     *
+     * @param inflater           LayoutInflater pro vytvoření layoutu
+     * @param container          Rodičovský kontejner
+     * @param savedInstanceState Uložený stav instance (může být null)
+     * @return Kořenový View fragmentu
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,10 +124,30 @@ public class HdoFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje UI prvky, nastavuje posluchače a registruje ActivityResultLauncher.
+     *
+     * @param view               Kořenový view fragmentu
+     * @param savedInstanceState Uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
+
+        // Inicializace ActivityResultLauncher pro notifikace
+        requestNotificationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (!isGranted) {
+                        // Oprávnění nebylo uděleno
+                        if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                            showSettingsDialog();
+                        }
+                    }
+                });
+
+        // ...existing code...
         hdoServiceIntent = new Intent(requireActivity(), HdoService.class);
         tvTimeHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.tvTimeHdo);
         tvTimeDifference = view.findViewById(cz.xlisto.elektrodroid.R.id.tvTimeDifference);
@@ -163,11 +213,15 @@ public class HdoFragment extends Fragment {
                         (requestKey, result) -> onResume()
                 );
         //posluchač při zavření dialogového okna nastavení
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true)));
     }
 
 
+    /**
+     * Načte data při návratu do popředí a obnoví zobrazení.
+     * Inicializuje timer pro aktualizaci času a vyžádá notifikační oprávnění.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -199,6 +253,9 @@ public class HdoFragment extends Fragment {
     }
 
 
+    /**
+     * Zastaví timer při přechodu fragmentu do pozadí.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -207,7 +264,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Spustí časovač
+     * Spustí časovač pro aktualizaci zobrazení času.
+     * Aktualizuje UI každou sekundu s aktuálním časem a HDO stavem.
      */
     private void startTimer() {
         timer = new Timer();
@@ -221,7 +279,7 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zastaví časovač
+     * Zastaví a zruší časovač, aby se zabránilo zbytečnému spotřebování paměti.
      */
     private void endTimer() {
         if (timer != null) timer.cancel();
@@ -229,7 +287,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Nastaví časový posun
+     * Nastaví a zobrazí časový posun s korektní češtinou (hodin/hodina/hodiny, minut/minuta/minuty).
+     * Aktualizuje TextView s formátovaným rozdílem času.
      */
     private void setTimeDifferent() {
         String hours = "hodin";
@@ -245,7 +304,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Nastaví čas, který se zobrazuje na displeji hodin
+     * Nastaví a aktualizuje čas, který se zobrazuje na displeji hodin.
+     * Aplikuje časový posun a kontroluje, zda se jedná o HDO čas.
      */
     private void setTime() {
         Calendar calendar = Calendar.getInstance();//získání aktuálního času
@@ -258,7 +318,11 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Nastaví barvu textu podle toho, zda je čas v rozmezí HDO a zobrazí ikonu HDO
+     * Nastaví barvu textu a ikonu podle toho, zda je aktuální čas v rozmezí HDO.
+     * - Když je HDO: zelená barva a ikona "NT ON"
+     * - Mimo HDO: sekundární barva podle noční módu a ikona "NT OFF"
+     *
+     * @param show {@code true} pokud je aktuální čas v HDO, {@code false} jinak
      */
     private void setTextHdoColor(boolean show) {
         if (isAdded()) {
@@ -267,9 +331,9 @@ public class HdoFragment extends Fragment {
                 imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_on));
             } else {
                 if (DetectNightMode.isNightMode(requireActivity()))
-                    tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
+                    tvTimeHdo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.secondary_text_dark));
                 else
-                    tvTimeHdo.setTextColor(getResources().getColor(android.R.color.secondary_text_light));
+                    tvTimeHdo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.secondary_text_light));
                 imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_off));
             }
         }
@@ -277,7 +341,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zobrazí/skryje upozornění na nevybrané odběrné místo
+     * Zobrazí nebo skryje upozornění na nevybrané odběrné místo.
+     * Pokud není vybrán žádný punkt, zobrazí varování uživateli.
      */
     private void showAlert() {
         if (idSubscriptionPoint == -1L) {
@@ -289,7 +354,7 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Načte hdo data z databáze a nastaví adapter
+     * Načte všechna HDO data z databáze bez filtrování podle relé.
      */
     private void loadData() {
         loadData(null);
@@ -297,9 +362,11 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Načte hdo data z databáze a nastaví adapter
+     * Načte HDO data z databáze a nastaví adapter pro RecyclerView.
+     * Volitelně filtruje data podle vybraného relé.
+     * Aktualizuje i TextView s intervalem dat.
      *
-     * @param rele - rele, které se má načíst
+     * @param rele Název relé pro filtrování, nebo {@code null} pro zobrazení všech
      */
     private void loadData(String rele) {
         DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
@@ -334,8 +401,9 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Načte seznam relé z databáze a nastaví spinner
-     * Pokud je pouze jedno rele, spinner se nezobrazí
+     * Načte seznam dostupných relé z databáze a nastaví spinner.
+     * Spinner se zobrazí pouze pokud existuje více než jedno relé.
+     * Umožňuje uživateli filtrovat HDO časy podle vybraného relé.
      */
     private void loadReles() {
         DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
@@ -352,7 +420,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Nastaví adapter pro recycler view
+     * Vytvoří a nastaví adapter pro RecyclerView s HDO daty.
+     * Také nastavuje LinearLayoutManager pro vertikální seznam.
      */
     private void setAdapter() {
         hdoAdapter = new HdoAdapter(hdoModels, rvHdo, true);
@@ -362,7 +431,7 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zavolá metodu v adapteru pro odstranění HDO záznamu
+     * Zavolá metodu v adapteru pro odstranění vybraného HDO záznamu z databáze.
      */
     private void deleteHdo() {
         hdoAdapter.deleteItem();
@@ -370,7 +439,9 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Spustí službu pro kontrolu HDO
+     * Spustí HDO službu ({@link HdoService}) pro monitorování a oznamování HDO časů.
+     * Vyžádá notifikační oprávnění a nastaví ForegroundService pro Android 8+.
+     * Aktualizuje službu aktuálními daty o HDO a časovým posunem.
      */
     private void startService() {
         HdoService.setHdoModels(hdoModels);
@@ -388,7 +459,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zastaví službu pro kontrolu HDO
+     * Zastaví HDO službu ({@link HdoService}) a zastaví monitorování HDO.
+     * Volá se při deaktivaci nebo vypnutí HDO.
      */
     private void stopService() {
         //requireActivity().startService(myIntent);//Kvůli chybě: Context.startForegroundService() did not then call Service.startForeground()
@@ -397,7 +469,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Uloží do statické proměnné časový posun z databáze
+     * Aktualizuje HDO službu s aktuálním časovým posunem.
+     * Zajistí, že služba vždy pracuje se správným posunem při monitorování.
      */
     private void setDifferentTimeService() {
         HdoService.setDifferentTime(timeDifferent);
@@ -405,7 +478,10 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Uloží do databáze časový posun, nastaví textview s časovým posunem a aktualizuje časový údaj ve službě
+     * Uloží do databáze nový časový posun, aktualizuje UI a HDO službu.
+     * Volá se při kliknutí na tlačítka +/- pro přidání/odečtení času.
+     *
+     * @param timeShift Nový časový posun v milisekundách
      */
     private void changeTimeShift(long timeShift) {
         if (idSubscriptionPoint == -1L) return;
@@ -419,7 +495,8 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zobrazí dialog pro přidání HDO
+     * Zobrazí dialog pro přidání nového HDO záznamu.
+     * Nahradí aktuální fragment fragmentem {@link HdoAddFragment}.
      */
     private void showAddDialog() {
         HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
@@ -428,9 +505,17 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Zkontroluje oprávnění na notifikace od Androidu 13 (SDK 33)
+     * Zkontroluje a vyžádá oprávnění pro posílání notifikací (Android 13+).
+     *
+     * <p></>Průběh:
+     * 1. Zkontroluje, zda je Android 13+ (TIRAMISU)
+     * 2. Pokud nemáme oprávnění, zkontroluje, zda jsme jej již dřív žádali
+     * 3. Pokud ano, zobrazí vysvětlující dialog
+     * 4. Jinak přímo vyžádá oprávnění přes ActivityResultLauncher
+     *
+     * <p></>Callback je nastaven v {@link #onViewCreated(View, Bundle)}.
      */
-
+    @SuppressWarnings("NewApi")
     private void checkAndRequestNotificationPermission() {
         // Zkontroluje a požádá o oprávnění pro zasílání oznámení
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -441,24 +526,26 @@ public class HdoFragment extends Fragment {
                     showPermissionExplanationDialog();
                 } else {
                     // Požádej o oprávnění přímo
-                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+                    requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
                 }
             }
         }
-
     }
 
 
     /**
-     * Zobrazí dialog s vysvětlením, proč je potřeba oprávnění
+     * Zobrazí AlertDialog s vysvětlením, proč aplikace potřebuje oprávnění pro notifikace.
+     * Po kliknutí na OK vyžádá oprávnění.
+     * Uživatel se pode rozhodnout oprávnění zamítnout (Zrušit) nebo jej odepřít.
      */
+    @SuppressWarnings("NewApi")
     private void showPermissionExplanationDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle(requireContext().getResources().getString(R.string.allow_notification_title))
                 .setMessage(requireContext().getResources().getString(R.string.allow_notification_message))
                 .setPositiveButton(requireContext().getResources().getString(R.string.ok), (dialog, which) -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                        requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+                        requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
 
                 })
                 .setNegativeButton(requireContext().getResources().getString(R.string.zrusit), (dialog, which) -> swHdoService.setChecked(false))
@@ -466,26 +553,10 @@ public class HdoFragment extends Fragment {
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Oprávnění bylo uděleno
-                return;
-            }
-
-            // Oprávnění nebylo uděleno
-            if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // Uživatel zvolil "Don't ask again"
-                showSettingsDialog();
-            }
-        }
-    }
-
-
     /**
-     * Zobrazí dialog s odkazem na nastavení aplikace
+     * Zobrazí dialog s odkazem na aplikační nastavení.
+     * Volá se pokud uživatel zvolil "Znovu se neptat" (Don't ask again) pro notifikace.
+     * Po kliknutí na "Do nastavení" se otevře aplikační nastavení v Systému.
      */
     private void showSettingsDialog() {
         new AlertDialog.Builder(requireContext())
@@ -498,7 +569,9 @@ public class HdoFragment extends Fragment {
 
 
     /**
-     * Otevře nastavení aplikace
+     * Otevře stránku s detaily aplikace v Systémovém nastavení.
+     * Umožňuje uživateli ručně povolit notifikační oprávnění.
+     * Volá se ze {@link #showSettingsDialog()}.
      */
     private void openAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

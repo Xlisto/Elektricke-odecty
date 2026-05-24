@@ -39,7 +39,7 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
-import cz.xlisto.elektrodroid.dialogs.SettingsViewDialogFragment;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
@@ -135,7 +135,7 @@ public class MonthlyReadingFragment extends Fragment {
         };
 
         //posluchač na zavření dialogového okna s nastavením
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsViewDialogFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, result) -> {
                     UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
                     loadDataFromDatabase();

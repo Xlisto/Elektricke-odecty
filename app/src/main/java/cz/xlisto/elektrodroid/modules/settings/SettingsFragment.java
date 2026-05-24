@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.dialogs;
+package cz.xlisto.elektrodroid.modules.settings;
 
 
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
  * Po změně přepínače se hodnoty ihned uloží do {@link ShPSettings} a odešlou se výsledky
  * pro aktualizaci fragmentů i aktivity.
  */
-public class SettingsViewDialogFragment extends Fragment {
+public class SettingsFragment extends Fragment {
     public static final String TAG = "SettingsViewDialogFragment";
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
     public static final String FLAG_UPDATE_SETTINGS_FOR_ACTIVITY = "SettingsViewDialogFragment2";
@@ -32,8 +32,8 @@ public class SettingsViewDialogFragment extends Fragment {
      *
      * @return instance fragmentu
      */
-    public static SettingsViewDialogFragment newInstance() {
-        return new SettingsViewDialogFragment();
+    public static SettingsFragment newInstance() {
+        return new SettingsFragment();
     }
 
 
