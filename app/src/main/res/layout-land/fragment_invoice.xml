@@ -107,6 +107,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvBalanceStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shape_monthly_reading_yes"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
@@ -155,6 +168,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
             </androidx.core.widget.NestedScrollView>
+
         </LinearLayout>
     </LinearLayout>
 

@@ -40,6 +40,11 @@ import cz.xlisto.elektrodroid.utils.Calculation;
 public class DataInvoiceSource extends DataSource {
 
 
+    /**
+     * Vytvoří datový zdroj pro práci s fakturami.
+     *
+     * @param context kontext aplikace
+     */
     public DataInvoiceSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
@@ -376,16 +381,36 @@ public class DataInvoiceSource extends DataSource {
 
 
     /**
-     * Provede součet zálohových plateb ve faktuře
+     * Provede součet zálohových plateb ve faktuře.
+     * Typ plateb 5 (přeplatek / vrácení peněz) se započítá jako záporná částka,
+     * aby snížil výsledný součet.
      *
      * @param idFak id faktury
      * @param table název tabulky
      */
     public double sumPayment(long idFak, String table) {
+        String sql = "SELECT IFNULL(SUM(CASE WHEN CAST(mimoradna AS INTEGER) = 5 THEN -ABS(castka) ELSE castka END), 0) " +
+                "FROM " + table + " " +
+                "WHERE " + ID_FAK + " = ? " +
+                "AND CAST(mimoradna AS INTEGER) NOT IN (3, 6)";
+        String[] args = new String[]{String.valueOf(idFak)};
+        return getDoubleSum(sql, args);
+    }
+
+
+    /**
+     * Provede součet pouze zálohových plateb bez doplatku/přeplatku.
+     * Používá se pro vyhodnocení, zda samotné zálohy pokryly spotřebu.
+     *
+     * @param idFak id faktury
+     * @param table název tabulky
+     * @return součet záloh (typ 0 a 2)
+     */
+    public double sumAdvancePaymentsOnly(long idFak, String table) {
         String sql = "SELECT IFNULL(SUM(castka), 0) " +
                 "FROM " + table + " " +
                 "WHERE " + ID_FAK + " = ? " +
-                "AND CAST(mimoradna AS INTEGER) NOT IN (3, 5, 6)";
+                "AND CAST(mimoradna AS INTEGER) IN (0, 2)";
         String[] args = new String[]{String.valueOf(idFak)};
         return getDoubleSum(sql, args);
     }

@@ -51,6 +51,7 @@ import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPInvoice;
+import cz.xlisto.elektrodroid.utils.InvoiceBalanceHelper;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
@@ -75,9 +76,11 @@ public class InvoiceFragment extends Fragment {
     private long idFak;
     private RecyclerView rv;
     private TextView tvTotal, tvDiscount;
+    private TextView tvBalanceStatus;
     public int showTypeTotalPrice = 0;
     private int position;
     private double[] totalPrice;
+    private double advanceCoverageBalance;
     private double discountWithTax;
     private ShPInvoice shPInvoice;
     private SubscriptionPointModel subscriptionPoint;
@@ -94,6 +97,11 @@ public class InvoiceFragment extends Fragment {
     private boolean isTotalCardAnimating;
 
 
+    /**
+     * Aktualizuje viditelnost položek menu podle aktuálního režimu výběru.
+     *
+     * @param menu instance menu horní lišty
+     */
     private void updateMenuVisibility(@NonNull Menu menu) {
         MenuItem selectItem = menu.findItem(R.id.menu_invoice_item_select);
         MenuItem cancelSelectionItem = menu.findItem(R.id.menu_invoice_item_cancel_selection);
@@ -112,11 +120,19 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Vyvolá překreslení položek menu v aktivitě.
+     */
     private void invalidateInvoiceMenu() {
         (requireActivity()).invalidateMenu();
     }
 
 
+    /**
+     * Zapne nebo vypne režim hromadného výběru položek faktury.
+     *
+     * @param enabled {@code true} pro zapnutí výběru, jinak {@code false}
+     */
     private void setMultiSelectMode(boolean enabled) {
         showCheckBoxSelect = enabled;
         if (!enabled) {
@@ -127,6 +143,9 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Zruší výběr všech položek faktury a vyčistí stavy checkboxů ve ViewModelu.
+     */
     private void clearInvoiceSelection() {
         if (invoices != null) {
             for (InvoiceModel invoice : invoices) {
@@ -137,6 +156,9 @@ public class InvoiceFragment extends Fragment {
     }
 
 
+    /**
+     * Otevře dialog pro vytvoření nové faktury z vybraných položek.
+     */
     private void showCreateInvoiceDialog() {
         InvoiceCreateDialogFragment invoiceCreateDialogFragment = InvoiceCreateDialogFragment.newInstance();
         invoiceCreateDialogFragment.show(requireActivity().getSupportFragmentManager(), InvoiceCreateDialogFragment.TAG);
@@ -267,6 +289,7 @@ public class InvoiceFragment extends Fragment {
         btnCreateInvoice = view.findViewById(R.id.btnCreateInvoice);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountInvoice);
+        tvBalanceStatus = view.findViewById(R.id.tvBalanceStatus);
         lnInvoiceBottomPanel = view.findViewById(R.id.lnInvoiceBottomPanel);
         lnInvoiceTotalCard = view.findViewById(R.id.lnInvoiceTotalCard);
         lnInvoiceTotalOptions = view.findViewById(R.id.lnInvoiceTotalOptions);
@@ -406,6 +429,7 @@ public class InvoiceFragment extends Fragment {
         totalPrice = calculationTotalInvoice(invoices, subscriptionPoint, poze);
         PaymentModel.getDiscountDPHText(discountWithTax, tvDiscount);
         showButtons(idFak == -1L);
+        updateBalanceStatus();
     }
 
 
@@ -483,6 +507,7 @@ public class InvoiceFragment extends Fragment {
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireActivity());
         dataInvoiceSource.open();
         double payment = dataInvoiceSource.sumPayment(idFak, tablePAY); //platby
+        double advancePaymentsOnly = dataInvoiceSource.sumAdvancePaymentsOnly(idFak, tablePAY); // pouze zálohy bez doplatku/přeplatku
         //dataInvoiceSource.close();
         double[] priceTotal = new double[4];
         double total = 0, totalDPH = 0;
@@ -546,8 +571,10 @@ public class InvoiceFragment extends Fragment {
         totalPriceNt = priceTotal[1];
         totalPayment = priceTotal[2];
         totalPoze = priceTotal[3];
+        double totalWithTax = totalDPH - discountWithTax;
+        advanceCoverageBalance = advancePaymentsOnly - totalWithTax;
         return new double[]{totalVt, totalNT, (totalNT + totalVt), totalPriceVt, totalPriceNt,
-                totalPayment, totalPoze, totalOtherServices, total, totalDPH - discountWithTax, payment, payment - totalDPH + discountWithTax};
+                totalPayment, totalPoze, totalOtherServices, total, totalWithTax, payment, payment - totalDPH + discountWithTax};
     }
 
 
@@ -574,7 +601,42 @@ public class InvoiceFragment extends Fragment {
     private void setTotalTextView() {
         updateTotalHeader();
         populateTotalCard();
+        updateBalanceStatus();
         applyTotalCardState();
+    }
+
+
+    /**
+     * Zobrazí informace o tom, zda zálohy pokryly spotřebu faktury.
+     */
+    private void updateBalanceStatus() {
+        if (tvBalanceStatus == null || totalPrice == null || totalPrice.length <= 11) {
+            return;
+        }
+
+        double balance = advanceCoverageBalance;
+        InvoiceBalanceHelper.BalanceState state = InvoiceBalanceHelper.getBalanceState(balance);
+        int backgroundResId;
+        String text;
+
+        switch (state) {
+            case OVERPAYMENT -> {
+                backgroundResId = R.drawable.shape_monthly_reading_yes;
+                text = getString(R.string.invoice_balance_overpayment, InvoiceBalanceHelper.getAbsoluteBalance(balance));
+            }
+            case UNDERPAYMENT -> {
+                backgroundResId = R.drawable.shape_montly_reading_no;
+                text = getString(R.string.invoice_balance_underpayment, InvoiceBalanceHelper.getAbsoluteBalance(balance));
+            }
+            default -> {
+                backgroundResId = R.drawable.shape_monthly_reading_yes;
+                text = getString(R.string.invoice_balance_balanced);
+            }
+        }
+
+        tvBalanceStatus.setBackgroundResource(backgroundResId);
+        tvBalanceStatus.setText(android.text.Html.fromHtml(text));
+        tvBalanceStatus.setVisibility(View.VISIBLE);
     }
 
 

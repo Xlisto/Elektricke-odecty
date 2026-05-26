@@ -36,6 +36,10 @@
     <!-- Alert card (dark) -->
     <color name="alert_bg_light">#2A140F</color>      <!-- tmavý teplý podklad (červenohnědý) -->
     <color name="alert_border_light">#4A1F1A</color>  <!-- jemný okraj, pořád tmavý -->
+    <color name="invoice_balance_positive_bg">#13351C</color>
+    <color name="invoice_balance_positive_border">#2E6F45</color>
+    <color name="invoice_balance_negative_bg">#2A140F</color>
+    <color name="invoice_balance_negative_border">#4A1F1A</color>
     <color name="text_primary">#FFFFFFFF</color>     <!-- primární text -->
     <color name="text_secondary">#B8B7B7</color>     <!-- tvoje šedá pro dark -->
 
