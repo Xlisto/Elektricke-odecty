@@ -113,6 +113,8 @@
     <string name="delete_unused_pricelist_content">Touto akcí nevratně smažete všechny ceníky, které nejsou použity v měsíčních odečtech, ani ve fakturách.</string>
     <string name="ano">ANO</string>
     <string name="ne">NE</string>
+    <string name="hdo_restart_notification_title">HDO služba po restartu čeká na zapnutí</string>
+    <string name="hdo_restart_notification_message">Po restartu se služba HDO nespustí automaticky. Klepněte sem a v aplikaci bude přepínač připravený k zapnutí.</string>
 
     <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: %d/%d</string>
 
@@ -409,9 +411,9 @@
     <string name="paymented_advances">Zaplacené zálohy: &lt;b&gt;%.2f Kč&lt;/b&gt;</string>
     <string name="balance">Bilance: &lt;b&gt;%.2f Kč&lt;/b&gt;</string>
     <string name="invoice_summary_title">Souhrn faktury</string>
-    <string name="invoice_balance_overpayment">Pokrytí spotřeby zálohami: přeplatek &lt;b&gt;%.2f Kč&lt;/b&gt;.</string>
-    <string name="invoice_balance_underpayment">Pokrytí spotřeby zálohami: nedoplatek &lt;b&gt;%.2f Kč&lt;/b&gt;.</string>
-    <string name="invoice_balance_balanced">Pokrytí spotřeby zálohami: vyrovnáno.</string>
+    <string name="invoice_balance_overpayment">Pokrytí spotřeby zálohyami: přeplatek &lt;b&gt;%.2f Kč&lt;/b&gt;.</string>
+    <string name="invoice_balance_underpayment">Pokrytí spotřeby zálohyami: nedoplatek &lt;b&gt;%.2f Kč&lt;/b&gt;.</string>
+    <string name="invoice_balance_balanced">Pokrytí spotřeby zálohyami: vyrovnáno.</string>
     <string name="invoice_summary_expand">Rozbalit souhrn faktury</string>
     <string name="invoice_summary_collapse">Sbalit souhrn faktury</string>
     <string name="text_amount">%.3f %s</string>

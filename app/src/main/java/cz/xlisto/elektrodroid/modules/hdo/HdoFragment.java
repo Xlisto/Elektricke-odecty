@@ -76,6 +76,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  */
 public class HdoFragment extends Fragment {
 
+    private static final String ARG_AUTO_START_SERVICE = "ARG_AUTO_START_SERVICE";
     private static final long minute = 60000;
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
@@ -91,6 +92,7 @@ public class HdoFragment extends Fragment {
     private Intent hdoServiceIntent;
     private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour, btnAddHdo;
     private FloatingActionButton fab;
+    private boolean autoStartServiceRequested = false;
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
@@ -106,6 +108,21 @@ public class HdoFragment extends Fragment {
      */
     public static HdoFragment newInstance() {
         return new HdoFragment();
+    }
+
+
+    /**
+     * Vytvoří novou instanci fragmentu HDO s jednorázovým požadavkem na zapnutí služby.
+     *
+     * @param autoStartService true, pokud se má po otevření fragmentu přepínač automaticky zapnout
+     * @return Nová instance HdoFragment
+     */
+    public static HdoFragment newInstance(boolean autoStartService) {
+        HdoFragment fragment = new HdoFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_AUTO_START_SERVICE, autoStartService);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
@@ -134,6 +151,7 @@ public class HdoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
+        autoStartServiceRequested = getArguments() != null && getArguments().getBoolean(ARG_AUTO_START_SERVICE, false);
 
         // Inicializace ActivityResultLauncher pro notifikace
         requestNotificationPermissionLauncher = registerForActivityResult(
@@ -247,7 +265,12 @@ public class HdoFragment extends Fragment {
         showAlert();
         loadData();
         loadReles();
-        swHdoService.setChecked(HdoService.isRunningService());
+        if (autoStartServiceRequested) {
+            autoStartServiceRequested = false;
+            swHdoService.setChecked(true);
+        } else {
+            swHdoService.setChecked(HdoService.isRunningService());
+        }
         HdoService.setHdoModels(hdoModels);
         HdoService.setDifferentTime(timeDifferent);
     }

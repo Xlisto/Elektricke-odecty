@@ -4,26 +4,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import cz.xlisto.elektrodroid.services.HdoService;
-
 /**
  * Posluchač zapnutí/vypnutí obrazovky obrazovky
  * Xlisto 07.06.2023 11:07
  */
 public class ScreenReceiver extends BroadcastReceiver {
-    private static final String TAG = "ScreenReceiver";
     public static boolean wasScreenOn = true;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+        String action = intent != null ? intent.getAction() : null;
+        if (Intent.ACTION_SCREEN_OFF.equals(action)) {
             wasScreenOn = false;
-        } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+        } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
             wasScreenOn = true;
         }
 
-        Intent i = new Intent(context, HdoService.class);
-        i.putExtra("screen_state", wasScreenOn);
-        context.startService(i);
+        // POZNÁMKA: Nespouštíme HDO službu z broadcast receiveru,
+        // protože Android 36 neumožňuje spustit foreground služby s určitými typy.
+        // Služba se spustí pouze když je aplikace otevřená.
+        // Intent i = new Intent(context, HdoService.class);
+        // i.putExtra("screen_state", wasScreenOn);
+        // i.putExtra("should_be_foreground", false);
+        // context.startService(i);
     }
 }

@@ -27,7 +27,6 @@ import cz.xlisto.elektrodroid.R;
  */
 public class HdoNotice {
 
-    private static final String TAG = "HdoNotice";
     public static final String NOTIFICATION_CHANNEL_ID = "10001";
     public static final String NOTIFICATION_HDO_SERVICE = "HdoService";
     public static final String ARGS_FRAGMENT = "ARGS_FRAGMENT";
@@ -133,4 +132,43 @@ public class HdoNotice {
         notificationManager.cancel(id);
     }
 
+    /**
+     * Zobrazí notifikaci po restartu zařízení s výzvou k ručnímu spuštění HDO služby.
+     * Po klepnutí otevře aplikaci rovnou na HDO obrazovku.
+     *
+     * @param context Kontext aplikace
+     */
+    public static void showRestartNotice(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(ARGS_FRAGMENT, NOTIFICATION_HDO_SERVICE);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                TEMP_SERVICE_NOTIFICATION_ID,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, default_notification_channel_id)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(context.getString(R.string.hdo_restart_notification_title))
+                .setContentText(context.getString(R.string.hdo_restart_notification_message))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, context.getString(R.string.hdo_service_name), importance);
+            channel.setShowBadge(false);
+            channel.setSound(null, null);
+            builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+
+            assert notificationManager != null;
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        assert notificationManager != null;
+        notificationManager.notify(TEMP_SERVICE_NOTIFICATION_ID, builder.build());
+    }
 }

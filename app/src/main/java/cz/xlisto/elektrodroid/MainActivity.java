@@ -50,6 +50,7 @@ import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingDetailFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingFragment;
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListCompareBoxFragment;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment;
@@ -324,8 +325,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
                 navigationView.setCheckedItem(R.id.menu_hdo);
                 uncheckedBottomNavigation();
-                actualFragment = HdoFragment.newInstance();
+                actualFragment = HdoFragment.newInstance(true);
                 FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.hdo_times));
+                SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
+                setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
                 return;
             }
         }
