@@ -4,9 +4,12 @@ package cz.xlisto.elektrodroid.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
+import cz.xlisto.elektrodroid.services.HdoData;
 import cz.xlisto.elektrodroid.services.HdoNotice;
+import cz.xlisto.elektrodroid.services.HdoService;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 
 
@@ -30,7 +33,18 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             ShPHdo shPHdo = new ShPHdo(context);
             if (shPHdo.get(ShPHdo.ARG_RUNNING_SERVICE, false)) {
-                HdoNotice.showRestartNotice(context);
+                if (Build.VERSION.SDK_INT >= 35) {
+                    // Novější Android verze neumožní tento typ FGS bezpečně startovat z BOOT_COMPLETED.
+                    HdoNotice.showRestartNotice(context);
+                } else {
+                    // Starší Android verze: zachování původního auto-startu po restartu zařízení.
+                    HdoData.loadHdoData(context);
+                    Intent i = new Intent(context, HdoService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        context.startForegroundService(i);
+                    else
+                        context.startService(i);
+                }
             }
         }
 
