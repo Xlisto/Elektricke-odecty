@@ -1,7 +1,7 @@
 # Elektrické Odečty - Aplikace Pro Android
 
 ## O aplikaci
-Elektrické odečty Aplikace slouží k průběžnému zaznamenávání stavu elektroměru. Průběžně propočítává cenu spotřebované elektrické energie a porovnává ji se zaplacenými zálohami. Aplikace je navržena pro zařízení s operačním systémem Android, minimální verze SDK je 21 (Android 5.0, Lollipop). Dále umožňuje zaznamenávat vystavené faktury za vyúčtování. Na základě stavu posledního záznamu na elektroměru a poslední obdržené vyúčtovací faktury lze dopočítat aktuální cenu spotřebované elektrické energie.  
+Elektrické odečty Aplikace slouží k průběžnému zaznamenávání stavu elektroměru. Průběžně propočítává cenu spotřebované elektrické energie a porovnává ji se zaplacenými zálohami. Aplikace je navržena pro zařízení s operačním systémem Android, minimální verze SDK je 23 (Android 6.0, Marshmallow). Umožňuje zaznamenávat vystavené faktury za vyúčtování. Na základě stavu posledního záznamu na elektroměru a poslední obdržené vyúčtovací faktury dopočítává aktuální cenu spotřebované elektrické energie a zobrazí stav jestli vzniká přeplatek nebo nedoplatek.  
 
 ### Odběrná místa
 V aplikaci je možné vést evidenci několika odběrných míst. Vedení záznamů a další akce v aplikaci se vždy vztahují k aktuálně zvolenému místu. Pokud je odběrné místo odstraněno, jsou současně odstraněny všechny měsíční záznamy a faktury. Výjimkou je přehled. Pokud je uloženo více odběrných míst, lze pomocí šipek mezi nimi přepínat.  
@@ -14,11 +14,26 @@ Měsíční záznamy jsou srdcem aplikace. Zde se porovnává cena měsíční s
 </p>
 
 ### Záznam faktur
-Záznam faktur je podobný měsíčním záznamům. Faktura se zobrazuje ve třech záložkách. **První záložka „Faktura“ obsahuje vlastní záznamy odečtů (minimálně jeden). Každý záznam má přidělený svůj ceník, podle kterého se počítá cena spotřebované elektrické energie. Pokud je záznamů více, celkový součet faktury se zobrazuje v dolní liště. Kliknutím na lištu se změní zobrazovaný součet. Součty se zobrazují v tomto pořadí**: Celková spotřeba VT → Celková spotřeba NT → Celková spotřeba VT a NT → Cena VT bez DPH → Cena NT bez DPH → Cena stálých platů bez DPH → Cena na podporu obnovitelných zdrojů (POZE) → Celková cena bez DPH → Celková cena s DPH → Zaplacené zálohy → Bilance (rozdíl mezi celkovou cenou a zaplacenými zálohami). Druhá záložka „Detaily“ zobrazuje dílčí záznamy výpočtů faktury. Tato část se může využít pro kontrolu s obdrženou fakturou od vašeho dodavatele. Zde lze nalézt, v jakých částech se nachází případná odchylka. Třetí záložka „Platby“ zaznamenává všechny zaplacené zálohy (případně slevy).
+Záznam faktur je podobný měsíčním záznamům. Faktura se zobrazuje ve třech záložkách. **První záložka „Faktura“ obsahuje vlastní záznamy odečtů (minimálně jeden). Každý záznam má přidělený svůj ceník, podle kterého se počítá cena spotřebované elektrické energie. Pokud je záznamů více, celkový součet faktury se zobrazuje v dolní liště.** 
+Tapnutí na spodní sumu součtů zobrazí panel se všemi dostupnými součty, lze vybrat položku, která se bude zobrazovat ve spodní části obrazovky: 
+→ Celková spotřeba VT 
+→ Celková spotřeba NT 
+→ Celková spotřeba VT a NT 
+→ Cena VT bez DPH
+→ Cena NT bez DPH 
+→ Cena stálých platů bez DPH 
+→ Cena na podporu obnovitelných zdrojů (POZE) 
+→ Celková cena bez DPH 
+→ Celková cena s DPH 
+→ Zaplacené zálohy 
+→ Bilance (rozdíl mezi celkovou cenou a zaplacenými zálohami).
+Ve spodní části se též zobrazuje rychlá informace o aktuálním stavu poměru zaplacených záloh k aktuální spotřebě. Zeleně je označena, pokud se jedná přeplatek. Červeně, pokud vzniká nedoplatek
+ Druhá záložka „Detaily“ zobrazuje dílčí záznamy výpočtů faktury. Tato část se může využít pro kontrolu s obdrženou fakturou od vašeho dodavatele. Zde lze nalézt, v jakých částech se nachází případná odchylka. Třetí záložka „Platby“ zaznamenává všechny zaplacené zálohy (případně slevy).
 <p align="center">
   <img src="/fak_1.png" width="200" />
   <img src="/fak_2.png" width="200" /> 
   <img src="/fak_3.png" width="200" /> 
+  <img src="/fak_4.png" width="200" /> 
 </p>
 
 V seznamu faktur se jako první záznam nachází „Období bez faktury“. Tato část automaticky vypočítává cenu spotřebované elektrické energie mezi posledním záznamem poslední faktury a posledním měsíčním odečtem. 
