@@ -1,5 +1,13 @@
 [
   {
+    "version": 157,
+    "date": "26.5.2026",
+    "changes": [
+      "<b>Změna:</b>",
+      "Zrušena notifikační služba pro sledování HDO, nahrazena notifikacemi o začátku a konci NT."
+    ]
+  },
+  {
     "version": 155,
     "date": "26.5.2026",
     "changes": [
