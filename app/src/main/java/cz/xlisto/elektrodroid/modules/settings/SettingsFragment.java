@@ -4,6 +4,7 @@ package cz.xlisto.elektrodroid.modules.settings;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.app.AlarmManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -30,7 +31,8 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
  * pro aktualizaci fragmentů i aktivity.
  */
 public class SettingsFragment extends Fragment {
-            private CheckBox chNotificationPermission;
+    private CheckBox chNotificationPermission;
+    private CheckBox chExactAlarmPermission;
 
     public static final String TAG = "SettingsViewDialogFragment";
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
@@ -46,11 +48,15 @@ public class SettingsFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří view fragmentu a naváže přepínače na uložené preference.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_view, container, false);
         chNotificationPermission = view.findViewById(R.id.chNotificationPermission);
+        chExactAlarmPermission = view.findViewById(R.id.chExactAlarmPermission);
         SwitchCompat switchShowFab = view.findViewById(R.id.switchShowFab);
         SwitchCompat switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
         SwitchCompat switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
@@ -67,6 +73,17 @@ public class SettingsFragment extends Fragment {
             });
         } else {
             chNotificationPermission.setVisibility(View.GONE);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            chExactAlarmPermission.setVisibility(View.VISIBLE);
+            syncExactAlarmPermissionState();
+            chExactAlarmPermission.setOnClickListener(v -> {
+                syncExactAlarmPermissionState();
+                openExactAlarmSettings();
+            });
+        } else {
+            chExactAlarmPermission.setVisibility(View.GONE);
         }
 
         switchShowFab.setChecked(shPSettings.get(ShPSettings.SHOW_FAB, true));
@@ -98,10 +115,14 @@ public class SettingsFragment extends Fragment {
     }
 
 
+    /**
+     * Po návratu do popředí aktualizuje stavy systémových oprávnění.
+     */
     @Override
     public void onResume() {
         super.onResume();
         syncNotificationPermissionState();
+        syncExactAlarmPermissionState();
     }
 
 
@@ -128,6 +149,19 @@ public class SettingsFragment extends Fragment {
 
 
     /**
+     * Synchronizuje stav checkboxu podle dostupnosti přesných alarmů v systému.
+     */
+    private void syncExactAlarmPermissionState() {
+        if (chExactAlarmPermission == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return;
+        }
+        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
+        boolean canSchedule = alarmManager != null && alarmManager.canScheduleExactAlarms();
+        chExactAlarmPermission.setChecked(canSchedule);
+    }
+
+
+    /**
      * Otevře systémové nastavení notifikací pro aplikaci.
      */
     private void openNotificationSettings() {
@@ -135,6 +169,22 @@ public class SettingsFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
                     .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().getPackageName());
+        } else {
+            intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(android.net.Uri.fromParts("package", requireContext().getPackageName(), null));
+        }
+        startActivity(intent);
+    }
+
+
+    /**
+     * Otevře systémovou obrazovku pro správu oprávnění přesných alarmů.
+     */
+    private void openExactAlarmSettings() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    .setData(android.net.Uri.fromParts("package", requireContext().getPackageName(), null));
         } else {
             intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     .setData(android.net.Uri.fromParts("package", requireContext().getPackageName(), null));

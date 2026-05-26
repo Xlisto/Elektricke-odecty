@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,11 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Odecty">
-        <service
-            android:name=".services.HdoService"
+        <receiver
+            android:name=".services.HdoAlarmReceiver"
             android:enabled="true"
-            android:foregroundServiceType="shortService"
-            android:label="@string/hdo_service_name" />
+            android:exported="false" />
         <receiver
             android:name=".utils.BootCompleteReceiver"
             android:enabled="true"

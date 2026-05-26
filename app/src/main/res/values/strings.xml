@@ -260,6 +260,11 @@
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
     <string name="watch_low_tarif">Sledování nízkého tarifu</string>
+    <string name="hdo_rele">Rele</string>
+    <string name="hdo_day">Den</string>
+    <string name="hdo_notifications_header">Upozornění</string>
+    <string name="hdo_notify_start">Začátek</string>
+    <string name="hdo_notify_end">Konec</string>
     <string name="time_meter">Čas elektroměru</string>
     <string name="image_destription_nt">Ikona zobrazující aktivní nízký tarif</string>
     <string name="image_destription_new_hdo">Tlačítko pro přidání nového času HDO</string>
@@ -516,6 +521,14 @@
     <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>
     <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
     <string name="notifications_enabled">Povolené notifikace</string>
+    <string name="exact_alarms_enabled">Povolené přesné alarmy</string>
+
+    <string name="hdo_notification_start_title">Začíná nízký tarif</string>
+    <string name="hdo_notification_end_title">Končí nízký tarif</string>
+    <string name="hdo_notification_start_message">Nyní začíná období nízké sazby.</string>
+    <string name="hdo_notification_end_message">Nyní končí období nízké sazby.</string>
+    <string name="hdo_notification_start_message_place">%1$s: nyní začíná období nízké sazby.</string>
+    <string name="hdo_notification_end_message_place">%1$s: nyní končí období nízké sazby.</string>
 
     <string name="no_data_alert">Nepodařilo se stáhnout žádná data. Zkontrolujte připojení k internetu. Může se také jednat o chybu v aplikaci nebo změnu formátu dat na straně serveru. Zkuste zobrazit čas HDO ve webovém prohlížeči.</string>
 

@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 
 
@@ -32,6 +31,8 @@ public class HdoModel implements Cloneable {
     private Calendar calendarEnd;
 
     private int mon, tue, wed, thu, fri, sat, sun;
+    private int notifyStart;
+    private int notifyEnd;
 
 
     /**
@@ -53,6 +54,16 @@ public class HdoModel implements Cloneable {
      * @param distributionArea Distribuční oblast HDO.
      */
     public HdoModel(long id, String rele, String dateFrom, String dateUntil, String timeFrom, String timeUntil, int mon, int tue, int wed, int thu, int fri, int sat, int sun, String distributionArea) {
+        this(id, rele, dateFrom, dateUntil, timeFrom, timeUntil, mon, tue, wed, thu, fri, sat, sun, distributionArea, 0, 0);
+    }
+
+
+    /**
+     * Konstruktor třídy HdoModel.
+     */
+    public HdoModel(long id, String rele, String dateFrom, String dateUntil, String timeFrom, String timeUntil,
+                    int mon, int tue, int wed, int thu, int fri, int sat, int sun,
+                    String distributionArea, int notifyStart, int notifyEnd) {
         this.id = id;
         this.rele = rele;
         this.dateFrom = dateFrom;
@@ -67,6 +78,8 @@ public class HdoModel implements Cloneable {
         this.sat = sat;
         this.sun = sun;
         this.distributionArea = distributionArea;
+        this.notifyStart = notifyStart;
+        this.notifyEnd = notifyEnd;
         if (distributionArea != null)
             setDayOfWeekPRE();
     }
@@ -90,7 +103,7 @@ public class HdoModel implements Cloneable {
      * @param distributionArea Distribuční oblast HDO.
      */
     public HdoModel(String rele, String dateFrom, String dateUntil, String timeFrom, String timeUntil, int mon, int tue, int wed, int thu, int fri, int sat, int sun, String distributionArea) {
-        this(-1, rele, dateFrom, dateUntil, timeFrom, timeUntil, mon, tue, wed, thu, fri, sat, sun, distributionArea);
+        this(-1, rele, dateFrom, dateUntil, timeFrom, timeUntil, mon, tue, wed, thu, fri, sat, sun, distributionArea, 0, 0);
     }
 
 
@@ -248,6 +261,26 @@ public class HdoModel implements Cloneable {
     }
 
 
+    public int getNotifyStart() {
+        return notifyStart;
+    }
+
+
+    public void setNotifyStart(int notifyStart) {
+        this.notifyStart = notifyStart;
+    }
+
+
+    public int getNotifyEnd() {
+        return notifyEnd;
+    }
+
+
+    public void setNotifyEnd(int notifyEnd) {
+        this.notifyEnd = notifyEnd;
+    }
+
+
     /**
      * Nastaví aktuální datum a čas začátku a konce HDO
      *
@@ -361,31 +394,10 @@ public class HdoModel implements Cloneable {
                 ", fri=" + fri +
                 ", sat=" + sat +
                 ", sun=" + sun +
+                ", notifyStart=" + notifyStart +
+                ", notifyEnd=" + notifyEnd +
                 ", distributionArea='" + distributionArea + '\'' +
                 '}';
-    }
-
-
-    /**
-     * Vrátí datum a čas začátku a konce HDO
-     *
-     * @return datum a čas začátku a konce HDO
-     */
-    public String getDates() {
-        if (calendarStart == null || calendarEnd == null)
-            return "";
-        int dayStart = calendarStart.get(Calendar.DAY_OF_MONTH);
-        int monthStart = calendarStart.get(Calendar.MONTH) + 1;
-        int yearStart = calendarStart.get(Calendar.YEAR);
-        int hourStart = calendarStart.get(Calendar.HOUR_OF_DAY);
-        int minuteStart = calendarStart.get(Calendar.MINUTE);
-        int dayEnd = calendarEnd.get(Calendar.DAY_OF_MONTH);
-        int monthEnd = calendarEnd.get(Calendar.MONTH) + 1;
-        int yearEnd = calendarEnd.get(Calendar.YEAR);
-        int hourEnd = calendarEnd.get(Calendar.HOUR_OF_DAY);
-        int minuteEnd = calendarEnd.get(Calendar.MINUTE);
-        String formatString = "%02d.%02d.%d %02d:%02d - %02d.%02d.%d %02d:%02d";
-        return String.format(Locale.getDefault(), formatString, dayStart, monthStart, yearStart, hourStart, minuteStart, dayEnd, monthEnd, yearEnd, hourEnd, minuteEnd);
     }
 
 

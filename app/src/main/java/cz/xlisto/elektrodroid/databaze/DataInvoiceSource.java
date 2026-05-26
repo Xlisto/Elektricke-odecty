@@ -29,7 +29,6 @@ import cz.xlisto.elektrodroid.models.InvoiceListSumModel;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.InvoiceSumModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
-import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.Calculation;
 
 
@@ -537,7 +536,6 @@ public class DataInvoiceSource extends DataSource {
      * @return InvoiceListSumModel seznam součtů pro dashboard
      */
     public InvoiceListSumModel getListSumData() {
-        String todayDate = ViewHelper.getTodayDate();
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         InvoiceListSumModel invoiceListSumModel = new InvoiceListSumModel();
@@ -551,7 +549,7 @@ public class DataInvoiceSource extends DataSource {
         for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
             double[] maxVTNT = getMaxSumInvoices(subscriptionPointModel.getTableFAK());
             double sumPayment = sumPayment(-1L, subscriptionPointModel.getTablePLATBY());
-            ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPointModel.getTableHDO(), todayDate, dayOfWeek);
+            ArrayList<HdoModel> hdoModels = dataHdoSource.loadHdo(subscriptionPointModel.getTableHDO(), dayOfWeek);
             ArrayList<InvoiceModel> invoices = loadInvoices(-1L, subscriptionPointModel.getTableTED());
             double totalPrice = Calculation.getTotalSumInvoice(invoices, subscriptionPointModel, context);
             long timeShift = dataSettingsSource.loadTimeShift(subscriptionPointModel.getId());

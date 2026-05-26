@@ -13,7 +13,10 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 /**
- * Xlisto 28.05.2023 17:55
+ * Fragment pro editaci existujícího HDO záznamu.
+ * <p>
+ * Načítá původní hodnoty z modelu předaného v argumentech,
+ * umožní jejich úpravu a po uložení zapíše změny do databáze.
  */
 public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     private static final String TAG = "HdoEditFragment";
@@ -28,6 +31,8 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     private static final String ARG_TIME_FROM = "timeFrom";
     private static final String ARG_TIME_UNTIL = "timeUntil";
     private static final String ARG_IS_FIRST_LOAD = "isFirstLoad";
+    private static final String ARG_NOTIFY_START = "notifyStart";
+    private static final String ARG_NOTIFY_END = "notifyEnd";
     private static final String ARG_RELE = "rele";
     private static final String ARG_DATE_FROM = "dateFrom";
     private static final String ARG_DATE_UNTIL = "dateUntil";
@@ -36,6 +41,12 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     private String timeFrom, timeUntil;
     private boolean isFirstLoad = true;
 
+    /**
+     * Vytvoří instanci editovacího fragmentu a předá mu data vybraného HDO záznamu.
+     *
+     * @param hdoModel upravovaný HDO záznam
+     * @return nakonfigurovaný fragment editace
+     */
     public static HdoEditFragment newInstance(HdoModel hdoModel) {
         HdoEditFragment fragment = new HdoEditFragment();
         Bundle args = new Bundle();
@@ -49,6 +60,8 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
         args.putInt(ARG_SUN, hdoModel.getSun());
         args.putString(ARG_TIME_FROM, hdoModel.getTimeFrom());
         args.putString(ARG_TIME_UNTIL, hdoModel.getTimeUntil());
+        args.putInt(ARG_NOTIFY_START, hdoModel.getNotifyStart());
+        args.putInt(ARG_NOTIFY_END, hdoModel.getNotifyEnd());
         args.putString(ARG_RELE, hdoModel.getRele());
         args.putString(ARG_DATE_FROM, hdoModel.getDateFrom());
         args.putString(ARG_DATE_UNTIL, hdoModel.getDateUntil());
@@ -58,6 +71,9 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     }
 
 
+    /**
+     * Načte argumenty fragmentu s původními hodnotami HDO záznamu.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +88,8 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
             sun = getArguments().getInt(ARG_SUN);
             timeFrom = getArguments().getString(ARG_TIME_FROM);
             timeUntil = getArguments().getString(ARG_TIME_UNTIL);
+            notifyStart = getArguments().getInt(ARG_NOTIFY_START, 0);
+            notifyEnd = getArguments().getInt(ARG_NOTIFY_END, 0);
             rele = getArguments().getString(ARG_RELE);
             dateFrom = getArguments().getString(ARG_DATE_FROM);
             dateUntil = getArguments().getString(ARG_DATE_UNTIL);
@@ -82,6 +100,9 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     }
 
 
+    /**
+     * Inicializuje formulář editace a nastaví hodnoty časů i dnů.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -103,17 +124,10 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
             int minuteFrom = Integer.parseInt(timeFrom.split(":")[1]);
             int hourUntil = Integer.parseInt(timeUntil.split(":")[0]);
             int minuteUntil = Integer.parseInt(timeUntil.split(":")[1]);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                timePickerFrom.setHour(hourFrom);
-                timePickerFrom.setMinute(minuteFrom);
-                timePickerUntil.setHour(hourUntil);
-                timePickerUntil.setMinute(minuteUntil);
-            } else {
-                timePickerFrom.setCurrentHour(hourFrom);
-                timePickerFrom.setCurrentMinute(minuteFrom);
-                timePickerUntil.setCurrentHour(hourUntil);
-                timePickerUntil.setCurrentMinute(minuteUntil);
-            }
+            timePickerFrom.setHour(hourFrom);
+            timePickerFrom.setMinute(minuteFrom);
+            timePickerUntil.setHour(hourUntil);
+            timePickerUntil.setMinute(minuteUntil);
         }
 
         btnSave.setText(getText(cz.xlisto.elektrodroid.R.string.edit));
@@ -121,12 +135,18 @@ public class HdoEditFragment extends HdoAddEditFragmentAbstract {
     }
 
 
+    /**
+     * Uloží interní stav prvního načtení pro korektní obnovu po rotaci.
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ARG_IS_FIRST_LOAD, isFirstLoad);
     }
 
+    /**
+     * Provede validaci a uloží upravený HDO záznam do databáze.
+     */
     private void onSaveClicked(){
         if(checkSelectedDays()){
             return;

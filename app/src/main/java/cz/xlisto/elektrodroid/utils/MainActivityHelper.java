@@ -1,28 +1,30 @@
 package cz.xlisto.elektrodroid.utils;
 
+
 import android.app.Activity;
 
 import java.util.Objects;
 
 import cz.xlisto.elektrodroid.MainActivity;
-import cz.xlisto.elektrodroid.services.HdoData;
 
 
 /**
- * Xlisto 17.01.2024 18:50
+ * Pomocné utility pro práci s hlavní aktivitou aplikace.
+ * <p>
+ * Obsahuje metody pro bezpečnou aktualizaci UI prvků závislých
+ * na aktuálně vybraném odběrném místě.
  */
 public class MainActivityHelper {
-    private static final String TAG = "MainActivityHelper";
-
 
     /**
-     * Aktualizuje toolbar a načte data
+     * Aktualizuje podtitulek toolbaru podle aktivního odběrného místa.
+     *
+     * @param activity aktuální aktivita
      */
     public static void updateToolbarAndLoadData(Activity activity) {
-        if (activity instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) activity;
+        if (activity instanceof MainActivity mainActivity) {
             mainActivity.setToolbarSubtitle(Objects.requireNonNull(SubscriptionPoint.load(activity)).getName());
-            HdoData.loadHdoData(activity);
         }
     }
+
 }

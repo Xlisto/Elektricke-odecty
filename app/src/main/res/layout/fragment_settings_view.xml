@@ -24,6 +24,13 @@
             android:minHeight="48dp"
             android:text="@string/notifications_enabled" />
 
+        <CheckBox
+            android:id="@+id/chExactAlarmPermission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/exact_alarms_enabled" />
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchShowFab"
             android:layout_width="match_parent"

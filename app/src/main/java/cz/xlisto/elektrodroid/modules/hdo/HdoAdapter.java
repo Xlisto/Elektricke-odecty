@@ -1,14 +1,18 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.animation.ValueAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -25,7 +29,10 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 /**
- * Xlisto 26.05.2023 18:38
+ * Adapter pro seznam HDO časů.
+ * <p>
+ * Zajišťuje zobrazení položek, editaci/smazání, ukládání notifikačních voleb
+ * a vlastní animaci rozbalení editačních tlačítek.
  */
 public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     private static final String TAG = "HdoAdapter";
@@ -35,20 +42,37 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     public static final String FLAG_HDO_ADAPTER_DELETE = "flagHdoAdapterDelete";
     private long selectedId;
     private int selectedPosition;
-    private static boolean clickables;
+    private final boolean clickables;
 
 
+    /**
+     * ViewHolder pro jednu položku HDO seznamu.
+     */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvRele, tvDate, tvTime, tvDayMon, tvDayTue, tvDayWed, tvDayThu, tvDayFri, tvDaySat, tvDaySun;
-        LinearLayout lnHdoOut, lnHdoButtons, lnHdoDays;
+        LinearLayout lnHdoOut, lnHdoContent, lnNotifyArea, lnHdoButtons, lnHdoDays;
+        CheckBox cbNotifyStart, cbNotifyEnd;
         Button btnEdit, btnDelete;
+        ValueAnimator buttonsAnimator;
 
+        /**
+         * Vytvoří držák view pro položku RecyclerView.
+         *
+         * @param itemView kořenový view položky
+         */
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }
 
 
+    /**
+     * Vytvoří adapter HDO položek.
+     *
+     * @param items       seznam HDO záznamů
+     * @param recyclerView RecyclerView, ve kterém se seznam zobrazuje
+     * @param clickables  zda je povoleno rozbalování editačních tlačítek
+     */
     public HdoAdapter(ArrayList<HdoModel> items, RecyclerView recyclerView, boolean clickables) {
         this.items = items;
         this.recyclerView = recyclerView;
@@ -56,6 +80,9 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
+    /**
+     * Vytvoří nový ViewHolder pro položku seznamu.
+     */
     @NonNull
     @Override
     public HdoAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -63,6 +90,8 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         MyViewHolder vh = new MyViewHolder(v);
 
         vh.lnHdoOut = v.findViewById(R.id.lnHdoOut);
+        vh.lnHdoContent = v.findViewById(R.id.lnHdoContent);
+        vh.lnNotifyArea = v.findViewById(R.id.lnNotifyArea);
         vh.lnHdoButtons = v.findViewById(R.id.lnButtonsHdo);
         vh.tvRele = v.findViewById(R.id.tvRele);
         vh.tvDate = v.findViewById(R.id.tvDateHdoSite);
@@ -77,11 +106,16 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         vh.tvDayFri = v.findViewById(R.id.tvDayFri);
         vh.tvDaySat = v.findViewById(R.id.tvDaySat);
         vh.tvDaySun = v.findViewById(R.id.tvDaySun);
+        vh.cbNotifyStart = v.findViewById(R.id.cbNotifyStart);
+        vh.cbNotifyEnd = v.findViewById(R.id.cbNotifyEnd);
 
         return vh;
     }
 
 
+    /**
+     * Naplní položku daty, nastaví posluchače a stav rozbalení tlačítek.
+     */
     @Override
     public void onBindViewHolder(@NonNull HdoAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         HdoModel item = items.get(position);
@@ -136,21 +170,38 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
         holder.tvTime.setText(holder.itemView.getContext().getResources().getString(R.string.time, item.getTimeFrom(), item.getTimeUntil()));
 
-        holder.lnHdoOut.setOnClickListener(v1 -> {
-            if (!clickables) return;
-            if (showButtons >= 0) {
-                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                if (viewHolder != null)
-                    viewHolder.itemView.findViewById(R.id.lnButtonsHdo).setVisibility(View.GONE);
-            }
+        holder.cbNotifyStart.setOnCheckedChangeListener(null);
+        holder.cbNotifyEnd.setOnCheckedChangeListener(null);
+        holder.cbNotifyStart.setChecked(item.getNotifyStart() == 1);
+        holder.cbNotifyEnd.setChecked(item.getNotifyEnd() == 1);
 
-            TransitionManager.beginDelayedTransition(recyclerView);
+        holder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            item.setNotifyStart(isChecked ? 1 : 0);
+            updateNotifyFlags(item);
+        });
+
+        holder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            item.setNotifyEnd(isChecked ? 1 : 0);
+            updateNotifyFlags(item);
+        });
+
+        holder.lnHdoContent.setOnClickListener(v1 -> {
+            if (!clickables) return;
             if (showButtons >= 0 && showButtons == position) {
+                collapseButtons(holder);
                 showButtons = -1;
             } else {
+                if (showButtons >= 0) {
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                    if (viewHolder instanceof MyViewHolder) {
+                        collapseButtons((MyViewHolder) viewHolder);
+                    } else if (viewHolder != null) {
+                        viewHolder.itemView.findViewById(R.id.lnButtonsHdo).setVisibility(View.GONE);
+                    }
+                }
                 showButtons = position;
+                expandButtons(holder);
             }
-            showButtons(holder, position);
         });
 
         holder.btnEdit.setOnClickListener(v -> {
@@ -167,12 +218,15 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             selectedPosition = position;
             YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
         });
-        showButtons(holder, position);
+        bindButtonsState(holder, position);
 
 
     }
 
 
+    /**
+     * Vrátí počet položek v adapteru.
+     */
     @Override
     public int getItemCount() {
         if (items == null)
@@ -187,12 +241,202 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
      * @param holder   MyViewHolder
      * @param position pozice
      */
-    private void showButtons(MyViewHolder holder, int position) {
-
-        if (showButtons == position)
+    private void bindButtonsState(MyViewHolder holder, int position) {
+        cancelButtonsAnimator(holder);
+        ViewGroup.LayoutParams params = holder.lnHdoButtons.getLayoutParams();
+        if (showButtons == position) {
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.lnHdoButtons.setLayoutParams(params);
             holder.lnHdoButtons.setVisibility(View.VISIBLE);
-        else
+            holder.lnHdoButtons.setAlpha(1f);
+        } else {
+            params.height = 0;
+            holder.lnHdoButtons.setLayoutParams(params);
             holder.lnHdoButtons.setVisibility(View.GONE);
+            holder.lnHdoButtons.setAlpha(0f);
+        }
+    }
+
+
+    /**
+     * Rozbalí sekci tlačítek dvoufázově: nejdřív výška, pak fade-in.
+     */
+    private void expandButtons(MyViewHolder holder) {
+        cancelButtonsAnimator(holder);
+        final LinearLayout buttons = holder.lnHdoButtons;
+        buttons.setVisibility(View.VISIBLE);
+        buttons.setAlpha(0f);
+
+        ViewGroup.LayoutParams params = buttons.getLayoutParams();
+        int targetHeight = measureViewHeight(buttons, holder.itemView.getWidth());
+        if (targetHeight <= 0) {
+            buttons.setVisibility(View.VISIBLE);
+            buttons.setAlpha(1f);
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            buttons.setLayoutParams(params);
+            return;
+        }
+
+        params.height = 0;
+        buttons.setLayoutParams(params);
+
+        holder.buttonsAnimator = ValueAnimator.ofInt(0, targetHeight);
+        holder.buttonsAnimator.setDuration(220L);
+        holder.buttonsAnimator.setInterpolator(new DecelerateInterpolator());
+        holder.buttonsAnimator.addUpdateListener(animation -> {
+            params.height = (int) animation.getAnimatedValue();
+            buttons.setLayoutParams(params);
+        });
+        holder.buttonsAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                buttons.setLayoutParams(params);
+                startButtonsFadeIn(holder, buttons);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                holder.buttonsAnimator = null;
+            }
+        });
+        holder.buttonsAnimator.start();
+    }
+
+
+    /**
+     * Spustí zobrazení tlačítek z transparentního stavu.
+     */
+    private void startButtonsFadeIn(MyViewHolder holder, LinearLayout buttons) {
+        holder.buttonsAnimator = null;
+        holder.buttonsAnimator = ValueAnimator.ofFloat(0f, 1f);
+        holder.buttonsAnimator.setDuration(120L);
+        holder.buttonsAnimator.setInterpolator(new DecelerateInterpolator());
+        holder.buttonsAnimator.addUpdateListener(animation -> buttons.setAlpha((Float) animation.getAnimatedValue()));
+        holder.buttonsAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                buttons.setAlpha(1f);
+                holder.buttonsAnimator = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                holder.buttonsAnimator = null;
+            }
+        });
+        holder.buttonsAnimator.start();
+    }
+
+
+    /**
+     * Sbalí sekci tlačítek dvoufázově: nejdřív fade-out, pak výška.
+     */
+    private void collapseButtons(MyViewHolder holder) {
+        cancelButtonsAnimator(holder);
+        final LinearLayout buttons = holder.lnHdoButtons;
+        int currentHeight = buttons.getHeight();
+        if (currentHeight <= 0) {
+            buttons.setVisibility(View.GONE);
+            ViewGroup.LayoutParams params = buttons.getLayoutParams();
+            params.height = 0;
+            buttons.setLayoutParams(params);
+            buttons.setAlpha(0f);
+            return;
+        }
+
+        holder.buttonsAnimator = ValueAnimator.ofFloat(1f, 0f);
+        holder.buttonsAnimator.setDuration(110L);
+        holder.buttonsAnimator.setInterpolator(new DecelerateInterpolator());
+        holder.buttonsAnimator.addUpdateListener(animation -> buttons.setAlpha((Float) animation.getAnimatedValue()));
+        holder.buttonsAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                buttons.setAlpha(0f);
+                holder.buttonsAnimator = null;
+                collapseButtonsHeight(holder, buttons);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                holder.buttonsAnimator = null;
+            }
+        });
+        holder.buttonsAnimator.start();
+    }
+
+
+    /**
+     * Sbalí výšku sekce tlačítek na nulu.
+     */
+    private void collapseButtonsHeight(MyViewHolder holder, LinearLayout buttons) {
+        final ViewGroup.LayoutParams params = buttons.getLayoutParams();
+        int currentHeight = buttons.getHeight();
+        if (currentHeight <= 0) {
+            buttons.setVisibility(View.GONE);
+            params.height = 0;
+            buttons.setLayoutParams(params);
+            return;
+        }
+
+        holder.buttonsAnimator = ValueAnimator.ofInt(currentHeight, 0);
+        holder.buttonsAnimator.setDuration(180L);
+        holder.buttonsAnimator.setInterpolator(new DecelerateInterpolator());
+        holder.buttonsAnimator.addUpdateListener(animation -> {
+            params.height = (int) animation.getAnimatedValue();
+            buttons.setLayoutParams(params);
+        });
+        holder.buttonsAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                buttons.setVisibility(View.GONE);
+                params.height = 0;
+                buttons.setLayoutParams(params);
+                holder.buttonsAnimator = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                holder.buttonsAnimator = null;
+            }
+        });
+        holder.buttonsAnimator.start();
+    }
+
+
+    /**
+     * Zruší běžící animaci tlačítek pro konkrétní ViewHolder.
+     */
+    private void cancelButtonsAnimator(MyViewHolder holder) {
+        if (holder.buttonsAnimator != null) {
+            holder.buttonsAnimator.cancel();
+            holder.buttonsAnimator = null;
+        }
+    }
+
+
+    /**
+     * Změří cílovou výšku sekce tlačítek pro animaci rozbalení.
+     */
+    private int measureViewHeight(LinearLayout view, int parentWidth) {
+        int width = parentWidth;
+        if (width <= 0) {
+            width = recyclerView.getWidth();
+        }
+        if (width <= 0) {
+            width = recyclerView.getMeasuredWidth();
+        }
+        if (width <= 0) {
+            width = view.getWidth();
+        }
+        if (width <= 0) {
+            return 0;
+        }
+
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(widthSpec, heightSpec);
+        return view.getMeasuredHeight();
     }
 
 
@@ -219,5 +463,20 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         notifyItemRangeChanged(selectedPosition, items.size());
         selectedPosition = -1;
         showButtons = -1;
+    }
+
+
+    /**
+     * Uloží stav notifikačních voleb HDO záznamu do databáze.
+     *
+     * @param hdoModel upravený HDO model
+     */
+    private void updateNotifyFlags(HdoModel hdoModel) {
+        SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(recyclerView.getContext());
+        if (subscriptionPointModel == null) {
+            return;
+        }
+        DataHdoSource dataHdoSource = new DataHdoSource(recyclerView.getContext());
+        dataHdoSource.updateHdo(hdoModel, subscriptionPointModel.getTableHDO());
     }
 }

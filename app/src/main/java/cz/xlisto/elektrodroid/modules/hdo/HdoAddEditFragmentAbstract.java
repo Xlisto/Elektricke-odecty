@@ -1,7 +1,6 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 26.05.2023 21:13
  */
 public class HdoAddEditFragmentAbstract extends Fragment {
-    private static final String TAG = "HdoAddEditFragmentAbstract";
     static final String ARG_HOUR_FROM = "hourFrom";
     static final String ARG_MINUTE_FROM = "minuteFrom";
     static final String ARG_HOUR_UNTIL = "hourUntil";
@@ -42,9 +40,14 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     int fri = 0;
     int sat = 0;
     int sun = 0;
+    int notifyStart = 0;
+    int notifyEnd = 0;
     String rele, dateFrom, dateUntil;
 
 
+    /**
+     * Vytvoří layout fragmentu pro přidání nebo editaci HDO.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,6 +55,9 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     }
 
 
+    /**
+     * Inicializuje UI prvky a obnoví čas při znovuvytvoření fragmentu.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -75,29 +81,25 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         btnBack.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
         if (savedInstanceState != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                timePickerFrom.setHour(savedInstanceState.getInt(ARG_HOUR_FROM));
-                timePickerFrom.setMinute(savedInstanceState.getInt(ARG_MINUTE_FROM));
-                timePickerUntil.setHour(savedInstanceState.getInt(ARG_HOUR_UNTIL));
-                timePickerUntil.setMinute(savedInstanceState.getInt(ARG_MINUTE_UNTIL));
-            } else {
-                timePickerFrom.setCurrentHour(savedInstanceState.getInt(ARG_HOUR_FROM));
-                timePickerFrom.setCurrentMinute(savedInstanceState.getInt(ARG_MINUTE_FROM));
-                timePickerUntil.setCurrentHour(savedInstanceState.getInt(ARG_HOUR_UNTIL));
-                timePickerUntil.setCurrentMinute(savedInstanceState.getInt(ARG_MINUTE_UNTIL));
-            }
+            timePickerFrom.setHour(savedInstanceState.getInt(ARG_HOUR_FROM));
+            timePickerFrom.setMinute(savedInstanceState.getInt(ARG_MINUTE_FROM));
+            timePickerUntil.setHour(savedInstanceState.getInt(ARG_HOUR_UNTIL));
+            timePickerUntil.setMinute(savedInstanceState.getInt(ARG_MINUTE_UNTIL));
             initDays();
         }
     }
 
 
+    /**
+     * Uloží stav časových pickerů při změně konfigurace.
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ARG_HOUR_FROM, timePickerFrom.getCurrentHour());
-        outState.putInt(ARG_MINUTE_FROM, timePickerFrom.getCurrentMinute());
-        outState.putInt(ARG_HOUR_UNTIL, timePickerUntil.getCurrentHour());
-        outState.putInt(ARG_MINUTE_UNTIL, timePickerUntil.getCurrentMinute());
+        outState.putInt(ARG_HOUR_FROM, timePickerFrom.getHour());
+        outState.putInt(ARG_MINUTE_FROM, timePickerFrom.getMinute());
+        outState.putInt(ARG_HOUR_UNTIL, timePickerUntil.getHour());
+        outState.putInt(ARG_MINUTE_UNTIL, timePickerUntil.getMinute());
     }
 
 
@@ -120,30 +122,22 @@ public class HdoAddEditFragmentAbstract extends Fragment {
      * @return HdoModel
      */
     HdoModel createHdo() {
-        int hourFrom;
-        int minuteFrom;
-        int hourUntil;
-        int minuteUntil;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hourFrom = timePickerFrom.getHour();
-            minuteFrom = timePickerFrom.getMinute();
-            hourUntil = timePickerUntil.getHour();
-            minuteUntil = timePickerUntil.getMinute();
-        } else {
-            hourFrom = timePickerFrom.getCurrentHour();
-            minuteFrom = timePickerFrom.getCurrentMinute();
-            hourUntil = timePickerUntil.getCurrentHour();
-            minuteUntil = timePickerUntil.getCurrentMinute();
-        }
+        int hourFrom = timePickerFrom.getHour();
+        int minuteFrom = timePickerFrom.getMinute();
+        int hourUntil = timePickerUntil.getHour();
+        int minuteUntil = timePickerUntil.getMinute();
 
         String from = String.format(Locale.getDefault(), "%02d:%02d", hourFrom, minuteFrom);
         String until = String.format(Locale.getDefault(), "%02d:%02d", hourUntil, minuteUntil);
         initDays();
 
-        return new HdoModel(rele, dateFrom, dateUntil, from, until, mon, tue, wed, thu, fri, sat, sun, "");
+        return new HdoModel(-1, rele, dateFrom, dateUntil, from, until, mon, tue, wed, thu, fri, sat, sun, "", notifyStart, notifyEnd);
     }
 
 
+    /**
+     * Načte výběr dnů z checkboxů do interních polí modelu.
+     */
     void initDays() {
         mon = cbMonday.isChecked() ? 1 : 0;
         tue = cbTuesday.isChecked() ? 1 : 0;
@@ -155,6 +149,11 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     }
 
 
+    /**
+     * Ověří, že je vybraný alespoň jeden den v týdnu.
+     *
+     * @return {@code true}, pokud validace selže; jinak {@code false}
+     */
     boolean checkSelectedDays() {
         initDays();
         if (mon + tue + wed + thu + fri + sat + sun == 0) {

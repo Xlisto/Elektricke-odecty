@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -55,9 +54,7 @@ import cz.xlisto.elektrodroid.modules.pricelist.PriceListCompareBoxFragment;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.elektrodroid.ownview.MyBottomNavigationView;
-import cz.xlisto.elektrodroid.services.HdoData;
 import cz.xlisto.elektrodroid.services.HdoNotice;
-import cz.xlisto.elektrodroid.services.HdoService;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
@@ -325,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
                 navigationView.setCheckedItem(R.id.menu_hdo);
                 uncheckedBottomNavigation();
-                actualFragment = HdoFragment.newInstance(true);
+                actualFragment = HdoFragment.newInstance();
                 FragmentChange.replace(this, actualFragment, ALPHA);
                 setToolbarTitle(getResources().getString(R.string.hdo_times));
                 SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
@@ -529,18 +526,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Spustí službu pro HDO, pokud je uživatelem povolená
+     * HDO tray služba je z aplikace odebraná kvůli Play Console požadavkům.
+     * Pokud je v preferencích uložen starý stav, vynulujeme ho.
      */
     private void startHdoService() {
         ShPHdo shPHdo = new ShPHdo(getApplicationContext());
-        if (shPHdo.get(ShPHdo.ARG_RUNNING_SERVICE, false)) {
-            HdoData.loadHdoData(getApplicationContext());
-            Intent intent = new Intent(this, HdoService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                startForegroundService(intent);
-            else
-                startService(intent);
-        }
+        if (shPHdo.get(ShPHdo.ARG_RUNNING_SERVICE, false))
+            shPHdo.set(ShPHdo.ARG_RUNNING_SERVICE, false);
     }
 
 

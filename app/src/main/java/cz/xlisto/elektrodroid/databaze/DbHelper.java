@@ -6,6 +6,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+/**
+ * Pomocná třída pro vytvoření a správu SQLite databáze aplikace.
+ * <p>
+ * Definuje názvy tabulek/sloupců a zajišťuje inicializaci databázového schématu.
+ */
 public class DbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "odecty_a_mista";
     public static final int DATABASE_VERSION = 1;
@@ -53,6 +58,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME_UNTIL = "cas_do";
     public static final String COLUMN_RELE = "rele";
     public static final String COLUMN_DISTRIBUTION_AREA = "distribuce";
+    public static final String COLUMN_NOTIFY_START = "notify_start";
+    public static final String COLUMN_NOTIFY_END = "notify_end";
     //faktury
     public static final String CISLO_FAK = "cislo_fak";
     //faktura - detail
@@ -68,17 +75,34 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String REZERVA2 = "rezerva2";
 
 
+    /**
+     * Vytvoří helper pro přístup k databázi aplikace.
+     *
+     * @param context kontext aplikace
+     */
     public DbHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
 
+    /**
+     * Vytvoří databázové schéma při prvním vytvoření databáze.
+     *
+     * @param db instance SQLite databáze
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
     }
 
 
+    /**
+     * Provede migraci databáze při změně verze schématu.
+     *
+     * @param db         instance SQLite databáze
+     * @param oldVersion původní verze schématu
+     * @param newVersion nová verze schématu
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -188,7 +212,8 @@ public class DbHelper extends SQLiteOpenHelper {
         final String TABLE_HDO_CREATE = "CREATE TABLE " + TABLE_NAME_HDO + milins +
                 " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_DATE_FROM + " TEXT, " + COLUMN_DATE_UNTIL + " TEXT, " +
                 COLUMN_MON + " TEXT, " + COLUMN_TUE + " TEXT, " + COLUMN_WED + " TEXT, " + COLUMN_THU + " TEXT, " + COLUMN_FRI + " TEXT, " + COLUMN_SAT + " TEXT, " + COLUMN_SUN + " TEXT, " +
-                SV + " TEXT, " + COLUMN_TIME_FROM + " TEXT, " + COLUMN_TIME_UNTIL + " TEXT, " + COLUMN_RELE + " TEXT, " + COLUMN_DISTRIBUTION_AREA + " TEXT );";
+                SV + " TEXT, " + COLUMN_TIME_FROM + " TEXT, " + COLUMN_TIME_UNTIL + " TEXT, " + COLUMN_RELE + " TEXT, " + COLUMN_DISTRIBUTION_AREA + " TEXT, " +
+                COLUMN_NOTIFY_START + " INTEGER DEFAULT 0, " + COLUMN_NOTIFY_END + " INTEGER DEFAULT 0 );";
         sqlExec(db, TABLE_HDO_CREATE);
     }
 

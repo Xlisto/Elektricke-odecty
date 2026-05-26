@@ -1,12 +1,15 @@
 package cz.xlisto.elektrodroid.databaze;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
+import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 
 
 /**
@@ -14,9 +17,12 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 26.05.2023 18:52
  */
 public class DataHdoSource extends DataSource {
-    private static final String TAG = "DataHdoSource";
 
-
+    /**
+     * Vytvoří datový zdroj pro práci s HDO tabulkami.
+     *
+     * @param context kontext aplikace
+     */
     public DataHdoSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
@@ -24,13 +30,14 @@ public class DataHdoSource extends DataSource {
 
 
     /**
-     * Načte hdo data z databáze a vyfiltruje je podle sloupce datumOd nebo po,ut,st,ct,pa,so,ne
+     * Načte HDO data z databáze a vyfiltruje je podle dne v týdnu.
      *
-     * @param table Tabulka se záznamy HDO
-     * @return ArrayList<HdoModel>
+     * @param table     tabulka se záznamy HDO
+     * @param dayOfWeek den v týdnu (Calendar)
+     * @return seznam HDO záznamů
      */
-    public ArrayList<HdoModel> loadHdo(String table, String datumOd, int dayOfWeek) {
-        return loadHdo(table, datumOd, dayOfWeek, null);
+    public ArrayList<HdoModel> loadHdo(String table, int dayOfWeek) {
+        return loadHdo(table, dayOfWeek, null);
     }
 
 
@@ -41,48 +48,35 @@ public class DataHdoSource extends DataSource {
      * @return ArrayList<HdoModel>
      */
     public ArrayList<HdoModel> loadHdo(String table) {
-        return loadHdo(table, null, null, null);
+        return loadHdo(table, null, null);
     }
 
 
     /**
-     * Načte hdo data z databáze
+     * Načte HDO data z databáze, volitelně podle dne v týdnu a relé.
      *
-     * @param table      Tabulka se záznamy HDO
-     * @param datumOd    String datum platnosti (PRE)
-     * @param dayOfWeek  Integer den v týdnu (jak jej vrací Calendar)
-     * @param selectRele String filtr pro sloupec rele
-     * @return ArrayList<HdoModel>
+     * @param table      tabulka se záznamy HDO
+     * @param dayOfWeek  den v týdnu (jak jej vrací Calendar), nebo {@code null}
+     * @param selectRele filtr pro sloupec relé, nebo {@code null}
+     * @return seznam HDO záznamů
      */
-    public ArrayList<HdoModel> loadHdo(String table, String datumOd, Integer dayOfWeek, String selectRele) {
+    public ArrayList<HdoModel> loadHdo(String table, Integer dayOfWeek, String selectRele) {
+        ensureAlarmColumns(table);
         String distributionArea = getDistributionArea(table);
 
         String selection = "";
         String selectionDayOfWeek = "";
         if (dayOfWeek != null) {
-            switch (dayOfWeek - 1) {
-                case 0:
-                    selectionDayOfWeek = DbHelper.COLUMN_SUN;
-                    break;
-                case 1:
-                    selectionDayOfWeek = DbHelper.COLUMN_MON;
-                    break;
-                case 2:
-                    selectionDayOfWeek = DbHelper.COLUMN_TUE;
-                    break;
-                case 3:
-                    selectionDayOfWeek = DbHelper.COLUMN_WED;
-                    break;
-                case 4:
-                    selectionDayOfWeek = DbHelper.COLUMN_THU;
-                    break;
-                case 5:
-                    selectionDayOfWeek = DbHelper.COLUMN_FRI;
-                    break;
-                case 6:
-                    selectionDayOfWeek = DbHelper.COLUMN_SAT;
-                    break;
-            }
+            selectionDayOfWeek = switch (dayOfWeek - 1) {
+                case 0 -> DbHelper.COLUMN_SUN;
+                case 1 -> DbHelper.COLUMN_MON;
+                case 2 -> DbHelper.COLUMN_TUE;
+                case 3 -> DbHelper.COLUMN_WED;
+                case 4 -> DbHelper.COLUMN_THU;
+                case 5 -> DbHelper.COLUMN_FRI;
+                case 6 -> DbHelper.COLUMN_SAT;
+                default -> selectionDayOfWeek;
+            };
         }
 
         ArrayList<String> selectionArgsList = new ArrayList<>();
@@ -134,12 +128,60 @@ public class DataHdoSource extends DataSource {
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_FRI)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SAT)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SUN)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA))
+                    cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA)),
+                    getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_START),
+                    getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_END)
             );
             hdoModels.add(hdoModel);
         }
         cursor.close();
         return hdoModels;
+    }
+
+
+    /**
+     * Načte jeden HDO záznam podle jeho ID.
+     *
+     * @param table název HDO tabulky
+     * @param id    ID záznamu
+     * @return načtený model nebo {@code null}, pokud neexistuje
+     */
+    public HdoModel loadHdoById(String table, long id) {
+        ensureAlarmColumns(table);
+        Cursor cursor = database.query(table,
+                null,
+                DbHelper.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null,
+                "1");
+
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return null;
+        }
+        cursor.moveToFirst();
+        HdoModel hdoModel = new HdoModel(
+                cursor.getLong(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_ID)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_RELE)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DATE_FROM)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DATE_UNTIL)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TIME_FROM)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TIME_UNTIL)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_MON)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_TUE)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_WED)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_THU)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_FRI)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SAT)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_SUN)),
+                cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.COLUMN_DISTRIBUTION_AREA)),
+                getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_START),
+                getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_END)
+        );
+        cursor.close();
+        return hdoModel;
     }
 
 
@@ -167,13 +209,6 @@ public class DataHdoSource extends DataSource {
     }
 
 
-    public void clearHdo(String table) {
-        open();
-        database.delete(table, null, null);
-        close();
-    }
-
-
     /**
      * Uloží HdoModely do databáze
      *
@@ -182,11 +217,18 @@ public class DataHdoSource extends DataSource {
      */
     public void saveHdo(ArrayList<HdoModel> hdoModels, String table) {
         open();
+        ensureAlarmColumns(table);
+        ArrayList<Long> oldIds = loadIds(table);
         database.delete(table, null, null);
         for (HdoModel hdoModel : hdoModels) {
-            database.insert(table, null, createContentValues(hdoModel));
+            long newId = database.insert(table, null, createContentValues(hdoModel));
+            if (newId > 0) {
+                hdoModel.setId(newId);
+            }
         }
         close();
+        HdoAlarmScheduler.cancelForIds(context, table, oldIds);
+        HdoAlarmScheduler.rescheduleForTable(context, table);
     }
 
 
@@ -198,8 +240,13 @@ public class DataHdoSource extends DataSource {
      */
     public void saveHdo(HdoModel hdoModel, String table) {
         open();
-        database.insert(table, null, createContentValues(hdoModel));
+        ensureAlarmColumns(table);
+        long newId = database.insert(table, null, createContentValues(hdoModel));
         close();
+        if (newId > 0) {
+            hdoModel.setId(newId);
+        }
+        HdoAlarmScheduler.rescheduleForModel(context, table, hdoModel);
     }
 
 
@@ -211,8 +258,10 @@ public class DataHdoSource extends DataSource {
      */
     public void updateHdo(HdoModel hdoModel, String table) {
         open();
+        ensureAlarmColumns(table);
         database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(hdoModel.getId())});
         close();
+        HdoAlarmScheduler.rescheduleForModel(context, table, hdoModel);
     }
 
 
@@ -224,8 +273,10 @@ public class DataHdoSource extends DataSource {
      */
     public void deleteHdo(long id, String table) {
         open();
+        ensureAlarmColumns(table);
         database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         close();
+        HdoAlarmScheduler.cancelForModel(context, table, id);
     }
 
 
@@ -276,6 +327,72 @@ public class DataHdoSource extends DataSource {
         values.put(DbHelper.COLUMN_SAT, hdoModel.getSat());
         values.put(DbHelper.COLUMN_SUN, hdoModel.getSun());
         values.put(DbHelper.COLUMN_DISTRIBUTION_AREA, hdoModel.getDistributionArea());
+        values.put(DbHelper.COLUMN_NOTIFY_START, hdoModel.getNotifyStart());
+        values.put(DbHelper.COLUMN_NOTIFY_END, hdoModel.getNotifyEnd());
         return values;
     }
+
+
+    /**
+     * Bezpečně načte integer hodnotu ze sloupce, který nemusí existovat.
+     *
+     * @param cursor     aktivní cursor
+     * @param columnName název sloupce
+     * @return hodnota sloupce nebo 0, pokud sloupec není dostupný
+     */
+    private int getOptionalInt(Cursor cursor, String columnName) {
+        int index = cursor.getColumnIndex(columnName);
+        return index >= 0 ? cursor.getInt(index) : 0;
+    }
+
+
+    /**
+     * Načte seznam ID všech záznamů v tabulce.
+     *
+     * @param table název tabulky
+     * @return seznam ID
+     */
+    private ArrayList<Long> loadIds(String table) {
+        ArrayList<Long> ids = new ArrayList<>();
+        Cursor cursor = database.query(table,
+                new String[]{DbHelper.COLUMN_ID},
+                null,
+                null,
+                null,
+                null,
+                null);
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToPosition(i);
+            ids.add(cursor.getLong(0));
+        }
+        cursor.close();
+        return ids;
+    }
+
+
+    /**
+     * Zajistí existenci sloupců pro notifikace HDO alarmů.
+     *
+     * @param table název HDO tabulky
+     */
+    private void ensureAlarmColumns(String table) {
+        addColumnIfMissing(table, DbHelper.COLUMN_NOTIFY_START);
+        addColumnIfMissing(table, DbHelper.COLUMN_NOTIFY_END);
+    }
+
+
+    /**
+     * Přidá sloupec do tabulky, pokud ještě neexistuje.
+     *
+     * @param table  název tabulky
+     * @param column název přidávaného sloupce
+     */
+    private void addColumnIfMissing(String table, String column) {
+        try {
+            database.execSQL("ALTER TABLE " + table + " ADD COLUMN " + column + " INTEGER DEFAULT 0");
+        } catch (SQLException ignored) {
+            // Sloupec už existuje nebo tabulka není dostupná.
+        }
+    }
+
 }

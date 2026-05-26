@@ -4,19 +4,14 @@ package cz.xlisto.elektrodroid.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
-import cz.xlisto.elektrodroid.services.HdoData;
-import cz.xlisto.elektrodroid.services.HdoNotice;
-import cz.xlisto.elektrodroid.services.HdoService;
-import cz.xlisto.elektrodroid.shp.ShPHdo;
+import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 
 
 /**
  * Posluchač restartu zařízení a aktualizace aplikace.
- * Po restartu zobrazí notifikaci s výzvou ke spuštění HDO služby.
- * Zároveň naplánuje odeslání čekajících záloh na Google Drive, pokud fronta není prázdná.
+ * Naplánuje odeslání čekajících záloh na Google Drive, pokud fronta není prázdná.
  * Xlisto 13.06.2023 9:21
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
@@ -30,22 +25,10 @@ public class BootCompleteReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent == null ? null : intent.getAction();
-        if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            ShPHdo shPHdo = new ShPHdo(context);
-            if (shPHdo.get(ShPHdo.ARG_RUNNING_SERVICE, false)) {
-                if (Build.VERSION.SDK_INT >= 35) {
-                    // Novější Android verze neumožní tento typ FGS bezpečně startovat z BOOT_COMPLETED.
-                    HdoNotice.showRestartNotice(context);
-                } else {
-                    // Starší Android verze: zachování původního auto-startu po restartu zařízení.
-                    HdoData.loadHdoData(context);
-                    Intent i = new Intent(context, HdoService.class);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        context.startForegroundService(i);
-                    else
-                        context.startService(i);
-                }
-            }
+
+        if (Intent.ACTION_BOOT_COMPLETED.equals(action)
+                || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
+            HdoAlarmScheduler.rescheduleAll(context);
         }
 
         // --- Čekající zálohy na Google Drive ---
