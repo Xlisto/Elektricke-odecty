@@ -9,7 +9,10 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Vymění fragmenty
+ * Pomocná třída pro výměnu fragmentů s animacemi.
+ * <p>
+ * Poskytuje metody pro nahradit fragmenty v kontejneru s animačními efekty,
+ * včetně volby, zda se má fragment přidat do back stacku.
  */
 public class FragmentChange {
 
@@ -58,8 +61,17 @@ public class FragmentChange {
     }
 
 
+    /**
+     * Typ animace pro výměnu fragmentů.
+     */
     public enum Transaction {
+        /**
+         * Animace pohybu fragmentu (zleva doprava a opačně).
+         */
         MOVE,
+        /**
+         * Animace prolínání (alfa kanál).
+         */
         ALPHA
     }
 }

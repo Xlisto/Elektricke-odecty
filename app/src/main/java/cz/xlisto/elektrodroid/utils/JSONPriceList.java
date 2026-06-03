@@ -19,12 +19,18 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListSumModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
+
 /**
- * Xlisto 08.12.2023 21:20
+ * Utilitní třída pro parsování a tvorbu JSON ceníků z souborů.
+ * <p>
+ * Poskytuje metody pro:
+ * - načítání obsahu JSON souborů s cenami elektřiny,
+ * - parsování JSON struktury na objekty {@link PriceListModel},
+ * - vytváření JSON exportu pro zálohu ceníků.
+ * <p>
+ * Přebírá Xlisto 08.12.2023 21:20
  */
 public class JSONPriceList {
-    private static final String TAG = "JSONPriceList";
-
 
     /**
      * Načte obsah JSON souboru s ceníkem
@@ -86,7 +92,17 @@ public class JSONPriceList {
 
 
     /**
-     * Vytvoří objekt ceníku
+     * Vytvoří objekt ceníku z JSON pole.
+     * <p>
+     * Extrahuje všechny cenové údaje z JSONArray a vytvoří kompletní
+     * {@link PriceListModel} s dodatečnými informacemi o autorovi a datu vytvoření.
+     *
+     * @param priceList  JSON pole obsahující údaje o cenách
+     * @param author     autor ceníku
+     * @param email      kontaktní email autora
+     * @param createDate datum vytvoření ceníku
+     * @return kompletní objekt PriceListModel
+     * @throws JSONException pokud se při parsování JSON vyskytne chyba
      */
     private PriceListModel createPriceListObject(JSONArray priceList, String author, String email, String createDate) throws JSONException {
         String rada = priceList.getString(0);
@@ -164,4 +180,5 @@ public class JSONPriceList {
         json.append("}");
         return json.toString();
     }
+
 }

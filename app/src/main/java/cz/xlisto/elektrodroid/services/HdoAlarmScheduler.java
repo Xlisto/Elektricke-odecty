@@ -4,6 +4,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,10 +15,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 /**
  * Plánování alarmů pro upozornění na začátek/konec HDO.
@@ -34,6 +38,9 @@ public final class HdoAlarmScheduler {
     public static final int TYPE_START = 1;
     public static final int TYPE_END = 2;
 
+    public static final String EXTRA_SCHEDULED_TIME = "extra_scheduled_time";
+
+    private static final String LOG_TAG = "HdoAlarmScheduler";
     private static final int MAX_DAYS_LOOKAHEAD = 400;
 
     private HdoAlarmScheduler() {
@@ -107,11 +114,41 @@ public final class HdoAlarmScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) return;
 
-        PendingIntent pendingIntent = createAlarmPendingIntent(context, table, model.getId(), type, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        boolean canExact = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                canExact = alarmManager.canScheduleExactAlarms();
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "canScheduleExactAlarms() check failed, assuming exact allowed", e);
+            }
+        }
 
-        try {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-        } catch (SecurityException ignored) {
+        PendingIntent pendingIntent = createAlarmPendingIntent(context, table, model.getId(), type, triggerAtMillis, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        boolean useSetAlarmClock = new ShPSettings(context).get(ShPSettings.USE_HDO_SET_ALARM, false);
+
+        if (useSetAlarmClock) {
+            try {
+                alarmManager.setAlarmClock(
+                        new AlarmManager.AlarmClockInfo(triggerAtMillis, createAlarmClockInfoIntent(context, table, model.getId(), type)),
+                        pendingIntent
+                );
+                Log.d(LOG_TAG, "Scheduled alarm via setAlarmClock for " + table + ":" + model.getId() + ", type=" + type + " at " + triggerAtMillis);
+                return;
+            } catch (SecurityException e) {
+                Log.w(LOG_TAG, "setAlarmClock failed, falling back to default HDO scheduling", e);
+            }
+        }
+
+        if (canExact) {
+            try {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+                Log.d(LOG_TAG, "Scheduled exact alarm for " + table + ":" + model.getId() + ", type=" + type + " at " + triggerAtMillis);
+            } catch (SecurityException e) {
+                Log.w(LOG_TAG, "setExactAndAllowWhileIdle failed, falling back to setAndAllowWhileIdle", e);
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            }
+        } else {
+            Log.w(LOG_TAG, "Exact alarms not allowed, scheduling inexact alarm for " + table + ":" + model.getId() + ", type=" + type + " at " + triggerAtMillis);
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
         }
     }
@@ -153,7 +190,7 @@ public final class HdoAlarmScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) return;
 
-        PendingIntent pendingIntent = createAlarmPendingIntent(context, table, hdoId, type, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = createAlarmPendingIntent(context, table, hdoId, type, 0L, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
             pendingIntent.cancel();
@@ -170,15 +207,30 @@ public final class HdoAlarmScheduler {
      * @param flags   flagy pro PendingIntent
      * @return vytvořený PendingIntent
      */
-    public static PendingIntent createAlarmPendingIntent(Context context, String table, long hdoId, int type, int flags) {
+    public static PendingIntent createAlarmPendingIntent(Context context, String table, long hdoId, int type, long scheduledAtMillis, int flags) {
         Intent intent = new Intent(context, HdoAlarmReceiver.class);
         intent.setAction(ACTION_HDO_ALARM);
         intent.putExtra(EXTRA_TABLE, table);
         intent.putExtra(EXTRA_HDO_ID, hdoId);
         intent.putExtra(EXTRA_TYPE, type);
+        intent.putExtra(EXTRA_SCHEDULED_TIME, scheduledAtMillis);
 
         int requestCode = (table + ":" + hdoId + ":" + type).hashCode();
         return PendingIntent.getBroadcast(context, requestCode, intent, flags);
+    }
+
+    /**
+     * PendingIntent pro otevření aplikace z případné systémové informace alarmu.
+     */
+    private static PendingIntent createAlarmClockInfoIntent(Context context, String table, long hdoId, int type) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(EXTRA_TABLE, table);
+        intent.putExtra(EXTRA_HDO_ID, hdoId);
+        intent.putExtra(EXTRA_TYPE, type);
+
+        int requestCode = ("info:" + table + ":" + hdoId + ":" + type).hashCode();
+        return PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     /**
@@ -200,6 +252,27 @@ public final class HdoAlarmScheduler {
             }
         }
         return "";
+    }
+
+    /**
+     * Dohledá ID odběrného místa podle názvu HDO tabulky.
+     *
+     * @param context kontext aplikace
+     * @param table   název HDO tabulky
+     * @return ID odběrného místa nebo -1
+     */
+    public static long findSubscriptionPointIdByTable(Context context, String table) {
+        DataSubscriptionPointSource source = new DataSubscriptionPointSource(context);
+        source.open();
+        ArrayList<SubscriptionPointModel> points = source.loadSubscriptionPoints();
+        source.close();
+
+        for (SubscriptionPointModel point : points) {
+            if (table.equals(point.getTableHDO())) {
+                return point.getId();
+            }
+        }
+        return -1L;
     }
 
     /**
@@ -351,5 +424,3 @@ public final class HdoAlarmScheduler {
         return c.getTime();
     }
 }
-
-

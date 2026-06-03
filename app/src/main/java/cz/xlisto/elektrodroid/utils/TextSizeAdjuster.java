@@ -18,15 +18,31 @@ import java.util.List;
  */
 public class TextSizeAdjuster {
 
-    private static final String TAG = "TextSizeAdjuster";
-
-
+    /**
+     * Přizpůsobí velikost písma jednoho TextView rodičovskému ViewGroup.
+     * <p>
+     * Zmenšuje velikost písma, dokud se text nevejde do šířky rodiče.
+     *
+     * @param parentView rodiče ViewGroup, do kterého se má text vejít
+     * @param textView   TextView, jehož velikost se má přizpůsobit
+     * @param context    kontext aplikace
+     */
     public static void adjustTextSize(ViewGroup parentView, TextView textView, Context context) {
         List<TextView> textViews = Collections.singletonList(textView);
         adjustTextSize(parentView, textViews, context);
     }
 
 
+    /**
+     * Přizpůsobí velikost písma více TextViewů rodičovskému ViewGroup.
+     * <p>
+     * Zmenšuje velikost písma všech TextViewů, dokud se všechny texty nevejdou
+     * do šířky rodiče, přičemž bere v úvahu marginy a padding všech prvků.
+     *
+     * @param parentView rodiče ViewGroup, do kterého se mají texty vejít
+     * @param textViews  seznam TextViewů, jejichž velikost se má přizpůsobit
+     * @param context    kontext aplikace
+     */
     public static void adjustTextSize(ViewGroup parentView, List<TextView> textViews, Context context) {
         if (textViews == null || textViews.isEmpty()) return;
 
@@ -76,6 +92,15 @@ public class TextSizeAdjuster {
     }
 
 
+    /**
+     * Převede minimální velikost písma z jednotek sp na pixely.
+     * <p>
+     * Minimální jednotka je nastavena na 8sp, což zabraňuje
+     * příliš malému písmu.
+     *
+     * @param context kontext aplikace
+     * @return minimální velikost písma v pixelech
+     */
     private static float spToPx(Context context) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, (float) 8, context.getResources().getDisplayMetrics());
     }

@@ -1,8 +1,6 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import static cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -25,16 +23,42 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
-import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
- * Dialog pro výběr aktivního odběrného místa.
- * <p>
- * Načte dostupná odběrná místa z databáze, umožní volbu přes spinner nebo
- * rychlá tlačítka a po výběru přepne aktivní odběrné místo v aplikaci.
+ * Dialog pro výběr aktuálního odběrného místa.
+ *
+ * <p>Tento dialog se zobrazuje po obnovení databáze z lokální zálohy nebo Google Drive,
+ * pokud nelze automaticky obnovit poslední vybrané odběrné místo.</p>
+ *
+ * <p>Dialog se adaptivně přizpůsobuje počtu dostupných odběrných míst:</p>
+ * <ul>
+ *   <li><strong>≤4 místa</strong>: Zobrazí se jako 4 tlačítka bez potvrzovacího tlačítka (butonů).
+ *       Při kliknutí na tlačítko se dialog okamžitě zavře a místo se nastaví.</li>
+ *   <li><strong>>4 místa</strong>: Zobrazí se jako Spinner s "OK" potvrzovacím tlačítkem.
+ *       Uživatel vybere místo ze spinneru a potvrdí tlačítkem OK.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>Po výběru:</p>
+ * <ol>
+ *   <li>Místo se uloží do SharedPreferences a databáze (settings table)</li>
+ *   <li>Hlavní obrazovka (toolbar, data) se automaticky aktualizuje</li>
+ *   <li>Dialog se zavře</li>
+ * </ol>
+ * </p>
+ *
+ * <p>Příklad použití:</p>
+ * <pre>
+ *     SubscriptionPointDialogFragment dialog = SubscriptionPointDialogFragment.newInstance();
+ *     dialog.show(getSupportFragmentManager(), "subscriptionPointDialog");
+ * </pre>
+ *
+ * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#setCurrentSelection(Context, long)
+ * @see cz.xlisto.elektrodroid.modules.backup.BackupFragment
+ * @see cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment
  */
 public class SubscriptionPointDialogFragment extends DialogFragment {
 
@@ -53,10 +77,37 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
 
 
     /**
-     * Sestaví dialog a připraví seznam odběrných míst k výběru.
+     * Sestaví a zobrazí dialog pro výběr odběrného místa.
+     *
+     * <p>Proces:</p>
+     * <ol>
+     *   <li>Načte všechna dostupná odběrná místa z databáze</li>
+     *   <li>Rozhodne, zda použít tlačítka (≤4 místa) nebo spinner (>4 místa)</li>
+     *   <li>Nastaví správné listenery a visibility pro vybraný režim</li>
+     *   <li>Předvyvolí aktuálně vybrané místo (pokud existuje)</li>
+     * </ol>
+     * </p>
+     *
+     * <p><strong>Tlačítková varianta (≤4 místa):</strong></p>
+     * <ul>
+     *   <li>Tlačítka se zobrazí v UI (4 tlačítka s názvy míst)</li>
+     *   <li>Spinner se skryje</li>
+     *   <li>Bez "OK" potvrzovacího tlačítka</li>
+     *   <li>Kliknutí na tlačítko zavře dialog a nastaví místo</li>
+     * </ul>
+     * </p>
+     *
+     * <p><strong>Spinner varianta (>4 místa):</strong></p>
+     * <ul>
+     *   <li>Spinner se zobrazí s adapterem pro seznam míst</li>
+     *   <li>Tlačítka se skryjí</li>
+     *   <li>"OK" potvrzovací tlačítko je viditelné</li>
+     *   <li>Kliknutí na OK zavře dialog a nastaví vybrané místo</li>
+     * </ul>
+     * </p>
      *
      * @param savedInstanceState uložený stav dialogu, může být {@code null}
-     * @return vytvořený dialog
+     * @return vytvořený AlertDialog Instance
      */
     @NonNull
     @Override
@@ -68,17 +119,25 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
         dataSubscriptionPointSource.close();
 
         SubscriptionPointModel selectedSubscription = SubscriptionPoint.load(requireContext());
+        final SubscriptionPointModel[] selectedByUser = new SubscriptionPointModel[1];
+        boolean useSpinner = subscriptionPoints.size() > 4;
 
         View view = View.inflate(requireContext(), R.layout.dialog_select_subscription_point, null);
         Spinner spinner = view.findViewById(R.id.spSubscriptionPoints);
+        TextView spinnerLabel = view.findViewById(R.id.tvSpinnerLabel);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.selecting_subscription_point));
-
-        if (subscriptionPoints.size() > 4) {
-            builder.setPositiveButton(getResources().getString(R.string.ok), null);
-        } else
-            spinner.setVisibility(View.GONE);
+        if (useSpinner) {
+            builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {
+                SubscriptionPointModel selected = selectedByUser[0];
+                if (selected == null && !subscriptionPoints.isEmpty()) {
+                    selected = subscriptionPoints.get(spinner.getSelectedItemPosition());
+                }
+                if (selected != null)
+                    setSubscriptionPoint(selected);
+            });
+        }
 
         spinner.setAdapter(new Adapter(requireContext(), subscriptionPoints));
         builder.setView(view);
@@ -87,15 +146,18 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
             for (int i = 0; i < subscriptionPoints.size(); i++) {
                 if (subscriptionPoints.get(i).getId() == selectedSubscription.getId()) {
                     spinner.setSelection(i);
+                    selectedByUser[0] = subscriptionPoints.get(i);
                     break;
                 }
             }
+        } else if (!subscriptionPoints.isEmpty()) {
+            selectedByUser[0] = subscriptionPoints.get(0);
         }
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setSubscriptionPoint(subscriptionPoints.get(position));
+                selectedByUser[0] = subscriptionPoints.get(position);
             }
 
 
@@ -112,18 +174,21 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
 
         for (int i = 0; i < 4; i++) {
             int index = i;
-            if (i < subscriptionPoints.size()) {
+            if (!useSpinner && i < subscriptionPoints.size()) {
                 buttons[i].setText(subscriptionPoints.get(i).getName());
                 buttons[i].setVisibility(View.VISIBLE);
                 buttons[i].setOnClickListener(v -> {
-                    //spinner.setSelection(index);
-                    setSubscriptionPoint(subscriptionPoints.get(index));
+                    selectedByUser[0] = subscriptionPoints.get(index);
+                    setSubscriptionPoint(selectedByUser[0]);
                     dismiss();
                 });
             } else {
                 buttons[i].setVisibility(View.GONE);
             }
         }
+
+        spinner.setVisibility(useSpinner ? View.VISIBLE : View.GONE);
+        spinnerLabel.setVisibility(useSpinner ? View.VISIBLE : View.GONE);
 
         return builder.create();
     }
@@ -150,14 +215,23 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
 
 
     /**
-     * Uloží zvolené odběrné místo do preference a obnoví hlavní obrazovku.
+     * Uloží vybrané odběrné místo a obnoví UI hlavní aplikace.
      *
-     * @param subscriptionPoint vybrané odběrné místo
+     * <p>Tato metoda se zavolá při výběru místa uživatelem (klik na tlačítko nebo potvrzení spinnerů).
+     * Zajišťuje:</p>
+     * <ol>
+     *   <li>Uložení místa do SharedPreferences a databáze (dual persistence)</li>
+     *   <li>Aktualizaci panelu nástrojů (toolbar subtitle)</li>
+     *   <li>Opětovné načtení dat (hlášení HDO, faktury atd.)</li>
+     * </ol>
+     * </p>
+     *
+     * @param subscriptionPoint vybrané odběrné místo k nastavení
+     *
+     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#setCurrentSelection(Context, long)
      */
     private void setSubscriptionPoint(SubscriptionPointModel subscriptionPoint) {
-        ShPSubscriptionPoint shp = new ShPSubscriptionPoint(requireContext());
-        shp.set(ID_SUBSCRIPTION_POINT_LONG, subscriptionPoint.getId());
-
+        SubscriptionPoint.setCurrentSelection(requireContext(), subscriptionPoint.getId());
         MainActivityHelper.updateToolbarAndLoadData(requireActivity());
     }
 

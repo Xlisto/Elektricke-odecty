@@ -11,12 +11,30 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 
 
 /**
- * Přístup k databázi nastavení
- * Xlisto 26.05.2023 11:33
+ * Přístup k databázi nastavení.
+ *
+ * <p>Poskytuje metody pro uložení a načítání různých nastavení aplikace do/z tabulky
+ * {@code nastaveni}. Zahrnuje správu posunů času, výchozích stavů měřičů, barev VT/NT,
+ * konfigurace HDO widgetů a aktuálního vybraného odběrného místa.</p>
+ *
+ * <p>Třída používá PREFIX_NAME a PREFIX_VALUE sloupce pro ukládání para-hodnot
+ * (name-value pairs). Každá kategorie nastavení má svůj prefix (např. "posunCasu",
+ * "firstMeter", "hdoWidgets", "aktualniOdberneMisto").</p>
+ *
+ * <p>Příklad použití:</p>
+ * <pre>
+ *     DataSettingsSource settingsSource = new DataSettingsSource(context);
+ *     settingsSource.open();
+ *     settingsSource.setCurrentSubscriptionPoint(subscriptionPointId);
+ *     long current = settingsSource.loadCurrentSubscriptionPoint();
+ *     settingsSource.close();
+ * </pre>
+ *
+ * @author Xlisto
+ * @version 26.05.2023
  */
 public class DataSettingsSource extends DataSource {
 
-    private static final String TAG = "DataSettingsSource";
     private static final String PREFIX_TIME_SHIFT = "posunCasu";
     private static final String PREFIX_FIRST_METER = "firstMeter";
     private static final String PREFIX_COLOR_VT = "colorVT";
@@ -24,6 +42,7 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_NAME = "jmeno";
     private static final String PREFIX_VALUE = "hodnota";
     private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
+    private static final String PREFIX_CURRENT_SUBSCRIPTION_POINT = "aktualniOdberneMisto";
 
 
     public DataSettingsSource(Context context) {
@@ -400,6 +419,72 @@ public class DataSettingsSource extends DataSource {
         }
         cursor.close();
         return json;
+    }
+
+
+    /**
+     * Uloží nebo aktualizuje ID aktuálně vybraného odběrného místa v tabulce nastavení.
+     *
+     * <p>Tato metoda je součástí mechanismu persistence pro aktuální vybrané odběrné místo.
+     * Pokud záznam s klíčem "aktualniOdberneMisto" již existuje, bude aktualizován,
+     * jinak bude vytvořen nový.</p>
+     *
+     * <p>Pozn: Toto je nižší vrstva ukládání; vyšší vrstva {@code SubscriptionPoint.setCurrentSelection()}
+     * zároveň ukládá do SharedPreferences pro rychlý přístup.</p>
+     *
+     * @param idSubscriptionPoint id odběrného místa, které se má uložit
+     *
+     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#setCurrentSelection(Context, long)
+     */
+    public void setCurrentSubscriptionPoint(long idSubscriptionPoint) {
+        String value = String.valueOf(idSubscriptionPoint);
+        if (isExistsByName(PREFIX_CURRENT_SUBSCRIPTION_POINT))
+            updateByName(PREFIX_CURRENT_SUBSCRIPTION_POINT, value);
+        else
+            insertByName(PREFIX_CURRENT_SUBSCRIPTION_POINT, value);
+    }
+
+
+    /**
+     * Načte ID aktuálně vybraného odběrného místa z tabulky nastavení.
+     *
+     * <p>Tato metoda je určena zejména pro obnovu stavu po importu zálohy. Pokud záznam
+     * v databázi neexistuje, vrátí -1L. Hodnota je parsována z řetězce a pokud parsování
+     * selže (nevalidní formát čísla), vrátí se také -1L.</p>
+     *
+     * <p>Typické použití:</p>
+     * <pre>
+     *     long id = settings.loadCurrentSubscriptionPoint();
+     *     if (id > 0) {
+     *         // Validní ID načteno, lze jej použít
+     *     }
+     * </pre>
+     *
+     * @return id odběrného místa (> 0), nebo -1L pokud záznam neexistuje nebo neobsahuje validní číslo
+     *
+     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)
+     */
+    public long loadCurrentSubscriptionPoint() {
+        String selection = PREFIX_NAME + "=?";
+        String[] args = new String[]{PREFIX_CURRENT_SUBSCRIPTION_POINT};
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                args,
+                null,
+                null,
+                null);
+
+        long subscriptionPointId = -1L;
+        if (cursor.moveToFirst()) {
+            String value = cursor.getString(cursor.getColumnIndexOrThrow(PREFIX_VALUE));
+            try {
+                subscriptionPointId = Long.parseLong(value);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        cursor.close();
+        return subscriptionPointId;
     }
 
     /**

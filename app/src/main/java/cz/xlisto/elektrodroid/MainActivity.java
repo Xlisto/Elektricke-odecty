@@ -32,7 +32,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
@@ -64,6 +63,19 @@ import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
+/**
+ * Hlavní aktivita aplikace Elektrodroid.
+ * <p>
+ * Spravuje:
+ * - Navigaci mezi fragmenty pomocí spodního navigačního panelu a drawer menu
+ * - Výběr a správu odběrných míst
+ * - Sledování síťového připojení pro synchronizaci záloh
+ * - Obnovení orientace obrazovky a ukládání stavu
+ * - Zobrazení notifikací HDO
+ * <p>
+ * Implementuje {@link MonthlyReadingFragment.OnShowRegulPriceListener} pro
+ * interakci s fragmentem měsíčního čtení.
+ */
 public class MainActivity extends AppCompatActivity implements MonthlyReadingFragment.OnShowRegulPriceListener {
 
     private static final String ACTUAL_FRAGMENT = "actualFragment";
@@ -315,20 +327,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             drawerLayout.closeDrawer(GravityCompat.START, true);
             return b;
         });
-        Intent intent = getIntent();
-        if (intent.getStringExtra(HdoNotice.ARGS_FRAGMENT) != null) {
-            //nastavení fragmentu při kliknutí z notifikace
-            if ((Objects.requireNonNull(intent.getStringExtra(HdoNotice.ARGS_FRAGMENT))).equals(HdoNotice.NOTIFICATION_HDO_SERVICE)) {
-                getIntent().putExtra(HdoNotice.ARGS_FRAGMENT, "");
-                navigationView.setCheckedItem(R.id.menu_hdo);
-                uncheckedBottomNavigation();
-                actualFragment = HdoFragment.newInstance();
-                FragmentChange.replace(this, actualFragment, ALPHA);
-                setToolbarTitle(getResources().getString(R.string.hdo_times));
-                SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
-                setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
-                return;
-            }
+        if (handleHdoNotificationIntent(getIntent(), navigationView)) {
+            return;
         }
         if (savedInstanceState != null) {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
@@ -385,6 +385,15 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_ACTIVITY, this,
                 (requestKey, result) -> setVisibilityNavigation());
         updateAppBarNavigationIcon();
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        handleHdoNotificationIntent(intent, navigationView);
     }
 
 
@@ -697,6 +706,40 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return;
 
         PendingBackupUploadScheduler.scheduleIfNeeded(getApplicationContext(), replaceExisting);
+    }
+    /**
+     * Zpracuje kliknutí na HDO notifikaci: nastaví odběrné místo a otevře HDO fragment.
+     *
+     * @return {@code true}, pokud intent obsahoval akci HDO notifikace
+     */
+    private boolean handleHdoNotificationIntent(@Nullable Intent intent, @Nullable NavigationView navigationView) {
+        if (intent == null) {
+            return false;
+        }
+
+        String argsFragment = intent.getStringExtra(HdoNotice.ARGS_FRAGMENT);
+        if (!HdoNotice.NOTIFICATION_HDO_SERVICE.equals(argsFragment)) {
+            return false;
+        }
+
+        long subscriptionPointId = intent.getLongExtra(HdoNotice.EXTRA_SUBSCRIPTION_POINT_ID, -1L);
+        if (subscriptionPointId > 0) {
+            SubscriptionPoint.setCurrentSelection(getApplicationContext(), subscriptionPointId);
+        }
+
+        intent.removeExtra(HdoNotice.ARGS_FRAGMENT);
+        intent.removeExtra(HdoNotice.EXTRA_SUBSCRIPTION_POINT_ID);
+
+        if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.menu_hdo);
+        }
+        uncheckedBottomNavigation();
+        actualFragment = HdoFragment.newInstance();
+        FragmentChange.replace(this, actualFragment, ALPHA);
+        setToolbarTitle(getResources().getString(R.string.hdo_times));
+        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
+        setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
+        return true;
     }
 
 }

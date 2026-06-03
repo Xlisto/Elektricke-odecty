@@ -51,15 +51,15 @@ import org.json.JSONException;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
-import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
-import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
+import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
@@ -171,6 +171,39 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     };
 
     //handler pro výsledek obnovení databáze
+    /**
+     * Handler pro zpracování výsledku obnovení databáze z lokální zálohy.
+     *
+     * <p>Zavolá se po úspěšném nebo neúspěšném importu ZIP souboru se zálohованými daty.
+     * Handler zajišťuje persistenci aktuálně vybraného odběrného místa během procesu obnovy.</p>
+     *
+     * <p>Postup při úspěšné obnově (msg.obj == true):</p>
+     * <ol>
+     *   <li>Zobrazí Snackbar se zprávou "Obnova OK"</li>
+     *   <li>Pokusí se obnovit aktuálně vybrané odběrné místo pomocí
+     *       {@link cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)}</li>
+     *   <li>Pokud se obnova podařila:
+     *       <ul>
+     *         <li>Aktualizuje toolbar a znovu načte data</li>
+     *       </ul>
+     *   </li>
+     *   <li>Pokud se obnova nepodařila (místo není v uloženém nastavení):
+     *       <ul>
+     *         <li>Zobrazí dialog {@link SubscriptionPointDialogFragment} pro výběr místa</li>
+     *       </ul>
+     *   </li>
+     * </ol>
+     * </p>
+     *
+     * <p>Při neúspěšné obnově (msg.obj == false):</p>
+     * <ul>
+     *   <li>Zobrazí Snackbar se zprávou chyby "Obnova selhala"</li>
+     * </ul>
+     * </p>
+     *
+     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)
+     * @see SubscriptionPointDialogFragment
+     */
     private final Handler handlerResultRecovery = new Handler(Looper.getMainLooper()) {
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
@@ -178,14 +211,14 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             if (b) {
                 Snackbar.make(requireView(), getResources().getString(R.string.recovery_ok), Snackbar.LENGTH_LONG).show();
 
-                ShPBackup shPSubscriptionPoint = new ShPBackup(requireContext());
-                DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(requireContext());
-                dataSubscriptionPointSource.open();
-                dataSubscriptionPointSource.loadFirstIdSubscriptionPoint();
-                shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, dataSubscriptionPointSource.loadFirstIdSubscriptionPoint());
-                dataSubscriptionPointSource.close();
-
-                MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+                if (SubscriptionPoint.applyCurrentFromSettings(requireContext())) {
+                    MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+                } else {
+                    SubscriptionPointDialogFragment.newInstance().show(
+                            requireActivity().getSupportFragmentManager(),
+                            SubscriptionPointDialogFragment.class.getSimpleName()
+                    );
+                }
             } else {
                 Snackbar.make(requireView(), getResources().getString(R.string.recovery_fail), Snackbar.LENGTH_LONG).show();
             }

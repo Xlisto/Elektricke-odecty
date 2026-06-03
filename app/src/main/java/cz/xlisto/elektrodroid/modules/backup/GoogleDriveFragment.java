@@ -53,12 +53,15 @@ import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveDeleteProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.GoogleDriveSaveProgressDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.PendingBackupUploadProgressDialogFragment;
+import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
+import cz.xlisto.elektrodroid.utils.MainActivityHelper;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
+import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
@@ -119,6 +122,41 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     );
 
     // handler pro zobrazení výsledku obnovení databáze
+    /**
+     * Handler pro zpracování výsledku obnovení databáze z Google Drive zálohy.
+     *
+     * <p>Zavolá se po úspěšném nebo neúspěšném stažení a importu záložního souboru z Google Drive.
+     * Handler zajišťuje persistenci aktuálně vybraného odběrného místa během procesu obnovy.</p>
+     *
+     * <p>Postup při úspěšné obnově (msg.obj == true):</p>
+     * <ol>
+     *   <li>Skryje progress bar</li>
+     *   <li>Zobrazí Snackbar se zprávou "Obnova OK"</li>
+     *   <li>Pokusí se obnovit aktuálně vybrané odběrné místo pomocí
+     *       {@link cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)}</li>
+     *   <li>Pokud se obnova podařila:
+     *       <ul>
+     *         <li>Aktualizuje toolbar a znovu načte data</li>
+     *       </ul>
+     *   </li>
+     *   <li>Pokud se obnova nepodařila (místo není v uloženém nastavení):
+     *       <ul>
+     *         <li>Zobrazí dialog {@link SubscriptionPointDialogFragment} pro výběr místa</li>
+     *       </ul>
+     *   </li>
+     * </ol>
+     * </p>
+     *
+     * <p>Při neúspěšné obnově (msg.obj == false):</p>
+     * <ul>
+     *   <li>Skryje progress bar</li>
+     *   <li>Zobrazí Snackbar se zprávou chyby "Obnova selhala"</li>
+     * </ul>
+     * </p>
+     *
+     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)
+     * @see SubscriptionPointDialogFragment
+     */
     private final Handler handlerResultRecoveryDatabase = new Handler(Looper.getMainLooper()) {
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
@@ -126,6 +164,14 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             showLnProgressBar(false);
             if (b) {
                 Snackbar.make(requireView(), getResources().getString(R.string.recovery_ok), Snackbar.LENGTH_LONG).show();
+                if (SubscriptionPoint.applyCurrentFromSettings(requireContext())) {
+                    MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+                } else {
+                    SubscriptionPointDialogFragment.newInstance().show(
+                            requireActivity().getSupportFragmentManager(),
+                            SubscriptionPointDialogFragment.class.getSimpleName()
+                    );
+                }
             } else {
                 Snackbar.make(requireView(), getResources().getString(R.string.recovery_fail), Snackbar.LENGTH_LONG).show();
             }

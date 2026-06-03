@@ -15,10 +15,14 @@ import androidx.annotation.NonNull;
  */
 public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
 
-    private static final String TAG = "NetworkCallbackImpl";
     private final NetworkChangeListener networkChangeListener;
 
 
+    /**
+     * Konstruktor pro inicializaci NetworkCallbackImpl.
+     *
+     * @param networkChangeListener posluchač změn síťového připojení
+     */
     public NetworkCallbackImpl(NetworkChangeListener networkChangeListener) {
         this.networkChangeListener = networkChangeListener;
     }
@@ -73,10 +77,21 @@ public class NetworkCallbackImpl extends ConnectivityManager.NetworkCallback {
     }
 
 
+    /**
+     * Rozhraní pro poslouchání změn síťového připojení.
+     * <p>
+     * Umožňuje aplikaci reagovat na dostupnost a ztrátu síťového připojení.
+     */
     public interface NetworkChangeListener {
 
+        /**
+         * Zavolá se, když je síť dostupná.
+         */
         void onNetworkAvailable();
 
+        /**
+         * Zavolá se, když je síť ztracena.
+         */
         void onNetworkLost();
         //void onNetworkCapabilitiesChanged(NetworkCapabilities networkCapabilities);
     }

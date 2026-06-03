@@ -3,7 +3,6 @@ package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.os.Bundle;
@@ -42,9 +41,30 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link SubscriptionPointFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro správu a zobrazení odběrných míst.
+ *
+ * <p>Tento fragment zobrazuje seznam dostupných odběrných míst ve spinneru a podrobné
+ * informace o aktuálně vybraném místě (popis, počet fází, číslo elektroměru atd.).</p>
+ *
+ * <p>Klíčové funkce:</p>
+ * <ul>
+ *   <li><strong>Výběr místa</strong> - Spinner pro přepnutí mezi dostupnými místy</li>
+ *   <li><strong>Persistence výběru</strong> - Automaticky ukládá vybrané místo do SharedPreferences a databáze</li>
+ *   <li><strong>Správa míst</strong> - Tlačítka pro úpravu nebo smazání současného místa</li>
+ *   <li><strong>Vytvoření nového místa</strong> - FloatingActionButton a tlačítko pro přidání nového místa</li>
+ *   <li><strong>Zobrazení stavu</strong> - Pokud nejsou místa dostupná, zobrazí výzvu k vytvoření</li>
+ * </ul>
+ * </p>
+ *
+ * <p>Integrace s feature:</p>
+ * <ul>
+ *   <li>Při změně výběru ve spinneru se volá </li>
+ *   <li>Příjímá aktualizace z {@link SubscriptionPointDialogFragment} skrz fragment result listener</li>
+ * </ul>
+ * </p>
+ *
+ * @see SubscriptionPointDialogFragment
+ * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint
  */
 public class SubscriptionPointFragment extends Fragment {
 
@@ -136,10 +156,26 @@ public class SubscriptionPointFragment extends Fragment {
         dataSubscriptionPointSource.close();
         spSubscriptionPoint.setAdapter(new MySpinnerSubscriptionPointAdapter(requireActivity(), android.R.layout.simple_list_item_1, subscriptionPoints));
         spSubscriptionPoint.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            /**
+             * Zavolá se, když uživatel vybere položku ve spinneru.
+             *
+             * <p>Postup:</p>
+             * <ol>
+             *   <li>Aktualizuje textové popisky pomocí </li>
+             *   <li>Uloží vybrané místo do SharedPreferences a databáze (dual persistence)</li>
+             *   <li>Aktualizuje toolbar a znovu načte data (faktury, HDO hlášení atd.)</li>
+             * </ol>
+             * </p>
+             *
+             * @param parent spinner
+             * @param view vybraná view
+             * @param position index vybraného prvku
+             * @param id row id
+             */
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setText(subscriptionPoints.get(position));
-                shp.set(ID_SUBSCRIPTION_POINT_LONG, subscriptionPoints.get(position).getId());
+                SubscriptionPoint.setCurrentSelection(requireContext(), subscriptionPoints.get(position).getId());
                 MainActivityHelper.updateToolbarAndLoadData(requireActivity());
             }
 
@@ -156,7 +192,7 @@ public class SubscriptionPointFragment extends Fragment {
         }
         //nastavení spinneru podle uloženého id odběrného místa
         for (int i = 0; i < subscriptionPoints.size(); i++) {
-            if (subscriptionPoints.get(i).getId() == shp.get(ID_SUBSCRIPTION_POINT_LONG, 0L)) {
+            if (subscriptionPoints.get(i).getId() == shp.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, 0L)) {
                 spSubscriptionPoint.setSelection(i);
                 break;
             }

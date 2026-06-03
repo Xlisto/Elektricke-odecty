@@ -13,6 +13,7 @@ public class ShPSettings extends ShP {
     public static final String SHOW_BOTTOM_NAVIGATION = "showBottomNavigation";
     public static final String SHOW_LEFT_NAVIGATION = "showLeftNavigation";
     public static final String ALLOW_MOBILE_DATA = "allowMobileData";
+    public static final String USE_HDO_SET_ALARM = "useHdoSetAlarm";
 
 
     public ShPSettings(Context context) {

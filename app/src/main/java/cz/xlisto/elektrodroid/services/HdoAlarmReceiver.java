@@ -3,6 +3,7 @@ package cz.xlisto.elektrodroid.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
@@ -35,6 +36,14 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
             return;
         }
 
+        long scheduledAt = intent.getLongExtra(HdoAlarmScheduler.EXTRA_SCHEDULED_TIME, -1L);
+        long now = System.currentTimeMillis();
+        if (scheduledAt > 0) {
+            Log.d("HdoAlarmReceiver", "Received HDO alarm for " + table + ":" + hdoId + ", type=" + type + ", scheduled=" + scheduledAt + ", now=" + now + ", delayMs=" + (now - scheduledAt));
+        } else {
+            Log.d("HdoAlarmReceiver", "Received HDO alarm for " + table + ":" + hdoId + ", type=" + type + ", scheduled=unknown, now=" + now);
+        }
+
         DataHdoSource source = new DataHdoSource(context);
         source.open();
         HdoModel model = source.loadHdoById(table, hdoId);
@@ -51,6 +60,7 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
         }
 
         String placeName = HdoAlarmScheduler.findSubscriptionPointNameByTable(context, table);
+        long subscriptionPointId = HdoAlarmScheduler.findSubscriptionPointIdByTable(context, table);
         String title;
         String content;
         if (type == HdoAlarmScheduler.TYPE_START) {
@@ -65,7 +75,7 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
                     : context.getString(R.string.hdo_notification_end_message_place, placeName);
         }
 
-        HdoNotice.setNotice(context, title, context.getString(R.string.hdo_service_name), content);
+        HdoNotice.setNotice(context, title, context.getString(R.string.hdo_service_name), content, subscriptionPointId);
         HdoAlarmScheduler.scheduleNextForType(context, table, model, type);
     }
 }

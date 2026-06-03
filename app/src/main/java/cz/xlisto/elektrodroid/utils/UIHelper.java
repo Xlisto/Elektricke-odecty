@@ -13,6 +13,12 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
+/**
+ * Pomocná třída pro správu viditelnosti UI prvků (tlačítka pro přidání a FAB).
+ * <p>
+ * Obsahuje metody pro zobrazení/skrytí tlačítka a FloatingActionButton v závislosti
+ * na vybraném odběrném místě a nastavení aplikace.
+ */
 public class UIHelper {
 
     /**

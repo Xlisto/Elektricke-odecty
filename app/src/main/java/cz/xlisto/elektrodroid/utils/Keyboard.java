@@ -11,12 +11,15 @@ import androidx.fragment.app.FragmentActivity;
  * Xlisto 13.03.2023 22:11
  */
 public class Keyboard {
-    private static final String TAG = "Keyboard";
 
     /**
-     * Skryje klávesnici
-     * @param fragmentActivity
-     * https://www.geeksforgeeks.org/how-to-programmatically-hide-android-soft-keyboard/
+     * Skryje softwarovou klávesnici.
+     * <p>
+     * Získá aktuálně fokusované View a schová klávesnici spojenou s ním.
+     * Pokud není žádné View fokusováno, metoda se beze změny ukončí.
+     *
+     * @param fragmentActivity aktivita, z níž se má klávesnice skrýt
+     * @see <a href="https://www.geeksforgeeks.org/how-to-programmatically-hide-android-soft-keyboard/">Zdroj: geeksforgeeks.org</a>
      */
     public static void hide(FragmentActivity fragmentActivity) {
         View view = fragmentActivity.getCurrentFocus();

@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
@@ -33,6 +34,7 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
 public class SettingsFragment extends Fragment {
     private CheckBox chNotificationPermission;
     private CheckBox chExactAlarmPermission;
+    private Boolean wasExactAlarmEnabled;
 
     public static final String TAG = "SettingsViewDialogFragment";
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
@@ -57,6 +59,7 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings_view, container, false);
         chNotificationPermission = view.findViewById(R.id.chNotificationPermission);
         chExactAlarmPermission = view.findViewById(R.id.chExactAlarmPermission);
+        CheckBox chUseSetAlarm = view.findViewById(R.id.chUseSetAlarm);
         SwitchCompat switchShowFab = view.findViewById(R.id.switchShowFab);
         SwitchCompat switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
         SwitchCompat switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
@@ -90,6 +93,12 @@ public class SettingsFragment extends Fragment {
         switchShowBottomNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true));
         switchShowLeftNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true));
         switchAllowMobileData.setChecked(shPSettings.get(ShPSettings.ALLOW_MOBILE_DATA, true));
+        chUseSetAlarm.setChecked(shPSettings.get(ShPSettings.USE_HDO_SET_ALARM, false));
+
+        chUseSetAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            shPSettings.set(ShPSettings.USE_HDO_SET_ALARM, isChecked);
+            rescheduleAllHdoAlarmsAsync();
+        });
 
         switchShowFab.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.SHOW_FAB, switchShowFab.isChecked());
@@ -158,6 +167,21 @@ public class SettingsFragment extends Fragment {
         AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(android.content.Context.ALARM_SERVICE);
         boolean canSchedule = alarmManager != null && alarmManager.canScheduleExactAlarms();
         chExactAlarmPermission.setChecked(canSchedule);
+
+        // Po povolení přesných alarmů znovu naplánujeme vše, aby další alarmy byly skutečně exact.
+        if (Boolean.FALSE.equals(wasExactAlarmEnabled) && canSchedule) {
+            rescheduleAllHdoAlarmsAsync();
+        }
+        wasExactAlarmEnabled = canSchedule;
+    }
+
+
+    /**
+     * Spustí přeplánování HDO alarmů mimo UI vlákno.
+     */
+    private void rescheduleAllHdoAlarmsAsync() {
+        android.content.Context appContext = requireContext().getApplicationContext();
+        new Thread(() -> HdoAlarmScheduler.rescheduleAll(appContext), "hdo-alarm-reschedule").start();
     }
 
 
