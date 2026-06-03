@@ -641,7 +641,10 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="price_list_found_multiple_variants">Pro %1$s %2$s bylo nalezeno více existujících variant ceníku. Chcete pokračovat v přepsání?</string>
     <string name="confirm_delete_pricelist">Opravdu smazat ceník?</string>
     <string name="deleting_pricelist">Mazání ceníku</string>
-    <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je používán v záznamech. TED: %1$d, FAK: %2$d, Měsíční odečty: %3$d.</string>
+    <string name="cannot_deleting_pricelist_message">Ceník nelze smazat, protože je používán v následujících záznamech:</string>
+    <string name="pricelist_usage_uninvoiced">V nezfakturovaném období</string>
+    <string name="pricelist_usage_invoices">Ve fakturách</string>
+    <string name="pricelist_usage_monthly_readings">V měsíčních odečtech</string>
     <string name="alert_regulated_prices_title_during_the_year">Chybí regulovaná část ceníku během roku</string>
     <string name="alert_regulated_prices_title_every_year">Chybí regulovaná část ceníku</string>
     <string name="alert_regulated_prices_text">Pro zvolené období chybí odpovídající regulovaná část ceníku. Zkontrolujte prosím následující data:</string>
