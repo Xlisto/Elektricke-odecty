@@ -23,6 +23,7 @@ public class OwnAlertDialog extends DialogFragment {
 
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
+    private static final String ARG_POSITIVE_TEXT = "positiveText";
     private OnDialogDismissListener dismissListener;
 
 
@@ -34,10 +35,25 @@ public class OwnAlertDialog extends DialogFragment {
      * @return Nová instance OwnAlertDialog
      */
     public static OwnAlertDialog newInstance(String title, String message) {
+        return newInstance(title, message, null);
+    }
+
+
+    /**
+     * Vytvoří novou instanci OwnAlertDialog s daným názvem, zprávou a volitelným
+     * textem potvrzovacího tlačítka.
+     *
+     * @param title        Název dialogu
+     * @param message      Zpráva dialogu
+     * @param positiveText text kladného tlačítka, nebo {@code null} pro výchozí hodnotu
+     * @return Nová instance OwnAlertDialog
+     */
+    public static OwnAlertDialog newInstance(String title, String message, @Nullable String positiveText) {
         OwnAlertDialog fragment = new OwnAlertDialog();
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
+        args.putString(ARG_POSITIVE_TEXT, positiveText);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,15 +71,21 @@ public class OwnAlertDialog extends DialogFragment {
 
         String title = null;
         String message = null;
+        String positiveText = null;
         if (getArguments() != null) {
             title = getArguments().getString(ARG_TITLE);
             message = getArguments().getString(ARG_MESSAGE);
+            positiveText = getArguments().getString(ARG_POSITIVE_TEXT);
         }
+
+        String positiveButtonText = (positiveText == null || positiveText.trim().isEmpty())
+                ? getString(android.R.string.yes)
+                : positiveText;
 
         return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(android.R.string.yes, (dialogInterface, which) -> {
+                .setPositiveButton(positiveButtonText, (dialogInterface, which) -> {
                     // Positive button action
                 })
                 .setIcon(R.drawable.ic_warning_png)
@@ -116,7 +138,7 @@ public class OwnAlertDialog extends DialogFragment {
      * @param message  Zpráva dialogu
      */
     public static void showDialog(FragmentActivity activity, String title, String message) {
-        showDialog(activity, title, message, null);
+        showDialog(activity, title, message, null, null);
     }
 
 
@@ -129,7 +151,25 @@ public class OwnAlertDialog extends DialogFragment {
      * @param listener Posluchač události zavření dialogu
      */
     public static void showDialog(FragmentActivity activity, String title, String message, OnDialogDismissListener listener) {
-        OwnAlertDialog dialog = OwnAlertDialog.newInstance(title, message);
+        showDialog(activity, title, message, null, listener);
+    }
+
+
+    /**
+     * Zobrazí dialogové okno s volitelným vlastním textem potvrzovacího tlačítka.
+     *
+     * @param activity      Aktivita, ve které se dialog zobrazí
+     * @param title         Název dialogu
+     * @param message       Zpráva dialogu
+     * @param positiveText  text kladného tlačítka, nebo {@code null} pro výchozí hodnotu
+     * @param listener      Posluchač události zavření dialogu
+     */
+    public static void showDialog(FragmentActivity activity,
+                                  String title,
+                                  String message,
+                                  @Nullable String positiveText,
+                                  OnDialogDismissListener listener) {
+        OwnAlertDialog dialog = OwnAlertDialog.newInstance(title, message, positiveText);
         dialog.setOnDialogDismissListener(listener);
         dialog.show(activity.getSupportFragmentManager(), "OwnAlertDialog");
     }

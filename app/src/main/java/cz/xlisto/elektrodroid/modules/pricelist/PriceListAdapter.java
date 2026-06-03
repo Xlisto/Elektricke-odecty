@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +27,7 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
@@ -65,7 +65,7 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     /**
      * ViewHolder pro položku ceníku obsahující odkazy na použité View prvky.
      */
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout relativeLayout;
         TextView tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
@@ -424,12 +424,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
      * @param context kontext pro vytvoření dialogu
      */
     private void showWarningDialog(int ted, int fak, int mon, Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.DialogTheme);
-        builder.setTitle(context.getString(R.string.deleting_pricelist));
-        builder.setIcon(R.drawable.ic_warning_png);
-        builder.setMessage(context.getString(R.string.cannot_deleting_pricelist_message, ted, fak, mon));
-        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> dialog.dismiss());
-        builder.show();
+        if (!(context instanceof FragmentActivity)) {
+            return;
+        }
+        PriceListDeleteBlockedDialogFragment.newInstance(ted, fak, mon)
+                .show(((FragmentActivity) context).getSupportFragmentManager(), "priceListDeleteBlockedDialog");
     }
 
 
