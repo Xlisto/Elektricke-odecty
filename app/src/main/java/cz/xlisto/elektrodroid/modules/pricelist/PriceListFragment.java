@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;

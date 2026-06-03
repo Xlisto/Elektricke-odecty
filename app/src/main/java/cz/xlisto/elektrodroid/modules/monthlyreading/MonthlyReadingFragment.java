@@ -40,6 +40,7 @@ import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
+import cz.xlisto.elektrodroid.dialogs.MonthlyReadingFilterDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
