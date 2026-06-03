@@ -382,6 +382,9 @@ public class HdoFragment extends Fragment {
     /**
      * Vytvoří a nastaví adapter pro RecyclerView s HDO daty.
      * Také nastavuje LinearLayoutManager pro vertikální seznam.
+     * <p>
+     * V tomto fragmentu se používá interaktivní režim adapteru ({@code clickables=true}),
+     * takže jsou viditelné checkboxy pro nastavení notifikací při změně NT i akce editace/mazání.
      */
     private void setAdapter() {
         hdoAdapter = new HdoAdapter(hdoModels, rvHdo, true);

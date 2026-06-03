@@ -536,6 +536,10 @@ public class HdoSiteFragment extends Fragment {
 
     /**
      * Nastaví adapter pro RecyclerView a spustí layout animaci.
+     * <p>
+     * Používá náhledový režim adapteru ({@code clickables=false}), takže se nezobrazují
+     * checkboxy notifikací NT ani editační akce. Seznam zde slouží pouze jako náhled
+     * stažených HDO časů ze sítě.
      *
      * @param hdoModels seznam {@link HdoModel} který se má zobrazit
      */

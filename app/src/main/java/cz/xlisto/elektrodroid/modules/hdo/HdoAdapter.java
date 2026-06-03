@@ -31,8 +31,14 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 /**
  * Adapter pro seznam HDO časů.
  * <p>
- * Zajišťuje zobrazení položek, editaci/smazání, ukládání notifikačních voleb
- * a vlastní animaci rozbalení editačních tlačítek.
+ * Adapter podporuje dva režimy zobrazení:
+ * <ul>
+ *     <li><b>Interaktivní režim</b> ({@code clickables=true}) pro {@link HdoFragment}:
+ *     zobrazuje checkboxy notifikací NT a umožňuje editaci/smazání záznamů.</li>
+ *     <li><b>Náhledový režim</b> ({@code clickables=false}) pro {@link HdoSiteFragment}:
+ *     skrývá notifikační checkboxy i editační akce a slouží pouze k náhledu stažených časů.</li>
+ * </ul>
+ * Obsahuje také animaci rozbalení/sbalení editačních tlačítek.
  */
 public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     private static final String TAG = "HdoAdapter";
@@ -71,7 +77,8 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
      *
      * @param items       seznam HDO záznamů
      * @param recyclerView RecyclerView, ve kterém se seznam zobrazuje
-     * @param clickables  zda je povoleno rozbalování editačních tlačítek
+     * @param clickables  {@code true} = interaktivní režim (editace, mazání, checkboxy notifikací),
+     *                    {@code false} = náhledový režim (bez checkboxů a bez akcí)
      */
     public HdoAdapter(ArrayList<HdoModel> items, RecyclerView recyclerView, boolean clickables) {
         this.items = items;
@@ -114,7 +121,10 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
 
     /**
-     * Naplní položku daty, nastaví posluchače a stav rozbalení tlačítek.
+     * Naplní položku daty a nastaví UI podle režimu adapteru.
+     * <p>
+     * V interaktivním režimu nastaví checkboxy notifikací a jejich posluchače,
+     * v náhledovém režimu skryje celou notifikační oblast.
      */
     @Override
     public void onBindViewHolder(@NonNull HdoAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -172,18 +182,25 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
         holder.cbNotifyStart.setOnCheckedChangeListener(null);
         holder.cbNotifyEnd.setOnCheckedChangeListener(null);
-        holder.cbNotifyStart.setChecked(item.getNotifyStart() == 1);
-        holder.cbNotifyEnd.setChecked(item.getNotifyEnd() == 1);
 
-        holder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            item.setNotifyStart(isChecked ? 1 : 0);
-            updateNotifyFlags(item);
-        });
+        if (clickables) {
+            holder.lnNotifyArea.setVisibility(View.VISIBLE);
+            holder.cbNotifyStart.setChecked(item.getNotifyStart() == 1);
+            holder.cbNotifyEnd.setChecked(item.getNotifyEnd() == 1);
 
-        holder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            item.setNotifyEnd(isChecked ? 1 : 0);
-            updateNotifyFlags(item);
-        });
+            holder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                item.setNotifyStart(isChecked ? 1 : 0);
+                updateNotifyFlags(item);
+            });
+
+            holder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                item.setNotifyEnd(isChecked ? 1 : 0);
+                updateNotifyFlags(item);
+            });
+        } else {
+            // Rezim nahledu (HdoSiteFragment): notifikace se zde nenastavuji.
+            holder.lnNotifyArea.setVisibility(View.GONE);
+        }
 
         holder.lnHdoContent.setOnClickListener(v1 -> {
             if (!clickables) return;
