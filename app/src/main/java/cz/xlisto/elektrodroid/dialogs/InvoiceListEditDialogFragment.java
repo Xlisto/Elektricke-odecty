@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import android.app.Dialog;
@@ -10,10 +10,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
+
 
 /**
  * DialogFragment pro úpravu čísla existující faktury v seznamu faktur.
- * Uživatel může změnit číslo faktury a výsledek je předán přes FragmentResult.
+ * Uživatel může změnit číslo faktury a výsledek je předán přes FragmentResult API.
  * Xlisto 01.02.2023 20:45
  */
 public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbsctract {
@@ -52,8 +54,9 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_list_add_edit, null);
 
         letNumberInvoice = dialogView.findViewById(R.id.letNumberInvoice);
-        if (!numberInvoice.isEmpty())
+        if (!numberInvoice.isEmpty()) {
             letNumberInvoice.setDefaultText(numberInvoice);
+        }
 
         builder.setView(dialogView);
         builder.setTitle("Upravit novou fakturu");
@@ -66,7 +69,7 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
         builder.setNegativeButton(R.string.zrusit, null);
 
         if (savedInstanceState != null) {
-            idSubsriptionPoint = savedInstanceState.getLong(ID_INVOICE);
+            idInvoice = savedInstanceState.getLong(ID_INVOICE);
             letNumberInvoice.setDefaultText(savedInstanceState.getString(NUMBER_INVOICE));
         }
 

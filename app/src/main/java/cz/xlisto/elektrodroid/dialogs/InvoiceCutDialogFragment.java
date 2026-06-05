@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import android.app.AlertDialog;
@@ -25,6 +25,7 @@ import java.util.Calendar;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
+import cz.xlisto.elektrodroid.modules.invoice.WithOutInvoiceService;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.TextSizeAdjuster;
@@ -432,6 +433,16 @@ public class InvoiceCutDialogFragment extends DialogFragment {
         calendar.setTimeInMillis(date);
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         return calendar.getTimeInMillis();
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 
 }

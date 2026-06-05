@@ -28,6 +28,8 @@ import java.util.List;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.dialogs.InvoiceCutDialogFragment;
+import cz.xlisto.elektrodroid.dialogs.InvoiceJoinDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;

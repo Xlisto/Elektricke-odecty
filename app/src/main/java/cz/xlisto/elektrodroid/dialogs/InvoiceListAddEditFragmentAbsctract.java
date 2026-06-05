@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 import android.os.Bundle;
 
@@ -63,6 +63,16 @@ public abstract class InvoiceListAddEditFragmentAbsctract extends DialogFragment
         outState.putLong(ID_SUBSCRIPTION_POINT,idSubsriptionPoint);
         outState.putLong(ID_INVOICE,idInvoice);
         outState.putString(NUMBER_INVOICE, letNumberInvoice.getText());
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 
 

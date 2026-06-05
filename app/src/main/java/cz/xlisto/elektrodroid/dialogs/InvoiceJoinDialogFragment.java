@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import android.app.AlertDialog;
@@ -184,6 +184,16 @@ public class InvoiceJoinDialogFragment extends DialogFragment {
         tvNtEndFirst.setText(df2.format(invoiceFirst.getNtEnd()));
         tvNtEndSecond.setText(df2.format(invoiceSecond.getNtEnd()));
         tvNtEndTotal.setText(df2.format(invoiceJoined.getNtEnd()));
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 
 

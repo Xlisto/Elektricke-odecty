@@ -28,6 +28,7 @@ import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.dialogs.InvoiceListEditDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;

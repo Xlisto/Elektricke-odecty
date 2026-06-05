@@ -32,6 +32,7 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.dialogs.InvoiceListAddDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SetDefaultMetersDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsInvoiceDialogFragment;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;

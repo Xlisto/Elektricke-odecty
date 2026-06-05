@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,7 +15,8 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Dialogové oknovo pro nastavení čísla nové faktury
+ * Dialog pro zadání čísla nové faktury.
+ * Výsledek předává volajícímu fragmentu přes FragmentResult API.
  * Xlisto 18.02.2024 8:15
  */
 public class InvoiceCreateDialogFragment extends DialogFragment {
@@ -36,10 +37,13 @@ public class InvoiceCreateDialogFragment extends DialogFragment {
 
 
     /**
-     * Prázdná inicializační metoda ponechaná pro případné budoucí rozšíření.
+     * Inicializuje fragment při jeho vytvoření.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
      */
-    public void onCreate() {
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
 
@@ -70,5 +74,15 @@ public class InvoiceCreateDialogFragment extends DialogFragment {
         builder.setView(dialogView);
         builder.setTitle(R.string.create_new_invoice);
         return builder.create();
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 }

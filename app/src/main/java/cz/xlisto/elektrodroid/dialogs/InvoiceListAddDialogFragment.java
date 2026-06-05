@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.invoice;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import android.app.Dialog;
@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
+
 
 /**
  * DialogFragment pro přidání nové faktury do seznamu faktur.
@@ -68,4 +70,5 @@ public class InvoiceListAddDialogFragment extends InvoiceListAddEditFragmentAbsc
 
         return builder.create();
     }
+
 }
