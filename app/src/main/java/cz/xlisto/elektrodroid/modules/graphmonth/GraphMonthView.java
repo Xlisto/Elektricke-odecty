@@ -16,6 +16,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
@@ -27,11 +28,12 @@ import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 
 /**
+ * Vlastní view pro vykreslení měsíčního, ročního a porovnávacího grafu spotřeby VT/NT.
+ * Umožňuje přepínat typ grafu, posouvat data gestem a měnit přesnost mřížky.
  * Xlisto 20.08.2023 22:01
  */
 public class GraphMonthView extends View {
 
-    private static final String TAG = "GraphMonthView";
     private final String ARG_X_MOVE_GRAPH_MONTH = "xMoveGraphMonth";
     private final String ARG_X_MOVE_GRAPH_YEAR = "xMoveGraphYear";
     private final String ARG_IS_SHOW_PERIOD = "isShowYear";
@@ -192,6 +194,11 @@ public class GraphMonthView extends View {
     }
 
 
+    /**
+     * Nastaví vstupní data spotřeby pro všechny podporované režimy grafu.
+     *
+     * @param consuption kontejner s měsíčními, ročními a porovnávacími daty
+     */
     public void setConsuption(ConsuptionContainer consuption) {
         if (consuption != null) {
             this.monthlyConsuption = consuption.getMonthlyConsuption();
@@ -267,7 +274,7 @@ public class GraphMonthView extends View {
     private void setAxisHorizontal(Canvas canvas) {
         Paint axisHorizontal = new Paint();
 
-        axisHorizontal.setColor(getResources().getColor(R.color.color_axis));
+        axisHorizontal.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         axisHorizontal.setStrokeWidth(1);
         axisHorizontal.setStyle(Paint.Style.FILL);
 
@@ -295,8 +302,8 @@ public class GraphMonthView extends View {
         Paint background = new Paint();
         Paint text = new Paint();
 
-        background.setColor(getResources().getColor(R.color.color_graph_background));
-        text.setColor(getResources().getColor(R.color.color_axis));
+        background.setColor(ContextCompat.getColor(getContext(), R.color.color_graph_background));
+        text.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         text.setTextSize(dipToPx(10));
 
         int stopY = heightGraph;
@@ -331,28 +338,28 @@ public class GraphMonthView extends View {
         Paint text = new Paint();
         Paint background = new Paint();
 
-        text.setColor(getResources().getColor(R.color.color_axis));
+        text.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
 
         text.setTextSize(dipToPx(10));
 
-        background.setColor(getResources().getColor(R.color.color_graph_background));
+        background.setColor(ContextCompat.getColor(getContext(), R.color.color_graph_background));
         ArrayList<ConsuptionModel> consuption = new ArrayList<>();
-        int xMoveGraph = 0;
-        switch (period) {
-            case 0:
+        int xMoveGraph = switch (period) {
+            case 0 -> {
                 consuption = monthlyConsuption;
-                xMoveGraph = xMoveGraphMonth;
-                break;
-            case 1:
+                yield xMoveGraphMonth;
+            }
+            case 1 -> {
                 consuption = yearConsuption;
-                xMoveGraph = xMoveGraphYear;
-                break;
-            case 2:
+                yield xMoveGraphYear;
+            }
+            case 2 -> {
                 if (compareMonth < monthsConsuption.size())
                     consuption = monthsConsuption.get(compareMonth);
-                xMoveGraph = xMoveGraphYear;
-                break;
-        }
+                yield xMoveGraphYear;
+            }
+            default -> 0;
+        };
 
         if (period == 0 || period == 2)
             canvas.drawRect(0, height - dipToPx(21), width, height, background);
@@ -393,7 +400,7 @@ public class GraphMonthView extends View {
         lineNT.setColor(colorNT);
         lineVTBorder.setColor(ColorUtils.darkerColor(colorVT));
         lineNTBorder.setColor(ColorUtils.darkerColor(colorNT));
-        line.setColor(getResources().getColor(R.color.color_axis));
+        line.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         lineVT.setStrokeWidth(strokeWidth);
         lineNT.setStrokeWidth(strokeWidth);
         int borderGraph = DensityUtils.dpToPx(getContext(), 1);
@@ -408,22 +415,22 @@ public class GraphMonthView extends View {
         line.setPathEffect(new DashPathEffect(new float[]{15f, 30f}, 0f));
 
         ArrayList<ConsuptionModel> consuption = new ArrayList<>();
-        int xMoveGraph = 0;
-        switch (period) {
-            case 0:
+        int xMoveGraph = switch (period) {
+            case 0 -> {
                 consuption = monthlyConsuption;
-                xMoveGraph = xMoveGraphMonth;
-                break;
-            case 1:
+                yield xMoveGraphMonth;
+            }
+            case 1 -> {
                 consuption = yearConsuption;
-                xMoveGraph = xMoveGraphYear;
-                break;
-            case 2:
+                yield xMoveGraphYear;
+            }
+            case 2 -> {
                 if (compareMonth < monthsConsuption.size())
                     consuption = monthsConsuption.get(compareMonth);
-                xMoveGraph = xMoveGraphYear;
-                break;
-        }
+                yield xMoveGraphYear;
+            }
+            default -> 0;
+        };
 
         int startX, stopX, lastX = dipToPx(30) * consuption.size() + left;
         for (int i = 0; i < consuption.size() - 1; i++) {
@@ -576,10 +583,10 @@ public class GraphMonthView extends View {
         Paint text = new Paint();
         Paint textBold = new Paint();
 
-        background.setColor(getResources().getColor(R.color.color_graph_background));
-        border.setColor(getResources().getColor(R.color.color_axis));
-        text.setColor(getResources().getColor(R.color.color_axis));
-        textBold.setColor(getResources().getColor(R.color.color_axis));
+        background.setColor(ContextCompat.getColor(getContext(), R.color.color_graph_background));
+        border.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
+        text.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
+        textBold.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         text.setTextSize(dipToPx(10));
         textBold.setTextSize(dipToPx(10));
         textBold.setTypeface(Typeface.create("Arial", Typeface.BOLD));
@@ -652,10 +659,10 @@ public class GraphMonthView extends View {
         Paint text = new Paint();
         Paint background = new Paint();
         Paint border = new Paint();
-        background.setColor(getResources().getColor(R.color.color_graph_background));
-        border.setColor(getResources().getColor(R.color.color_axis));
+        background.setColor(ContextCompat.getColor(getContext(), R.color.color_graph_background));
+        border.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         border.setStyle(Paint.Style.STROKE);
-        text.setColor(getResources().getColor(R.color.color_axis));
+        text.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         text.setTextSize(dipToPx(8));
         int y = heightGraph - dipToPx(2);
         int textMeasureVT = (int) text.measureText("VT: " + DecimalFormatHelper.df2.format(vt));
@@ -783,6 +790,7 @@ public class GraphMonthView extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
+                performClick();
                 switch (period) {
                     case 0:
                         xMoveGraphAfterMonth = xMoveGraphMonth;
@@ -799,6 +807,18 @@ public class GraphMonthView extends View {
 
         }
         invalidate();
+        return true;
+    }
+
+
+    /**
+     * Obslouží kliknutí na view kvůli správné kompatibilitě s přístupností.
+     *
+     * @return vždy true, protože kliknutí je zpracováno
+     */
+    @Override
+    public boolean performClick() {
+        super.performClick();
         return true;
     }
 
@@ -983,11 +1003,10 @@ public class GraphMonthView extends View {
      * Nastaví koeficient pro přesnost grafu - čím větší číslo, tím je graf přesnější
      */
     public void setCofDown() {
-        cof += 20;
 
-        while ((steep * multiple) > cof) {
+        do {
             cof += 20;
-        }
+        } while ((steep * multiple) > cof);
 
         init();
     }

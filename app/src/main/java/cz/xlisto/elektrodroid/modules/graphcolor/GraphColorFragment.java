@@ -14,7 +14,10 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 
 import java.util.ArrayList;
 
@@ -24,25 +27,33 @@ import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 
 
 /**
- * Fragment pro nastavení barev grafu
+ * Fragment pro nastavení barev grafu VT/NT.
+ * Zajišťuje načtení barev, práci s historií a uložení vybraných hodnot.
  * Xlisto 17.10.2023 21:13
  */
 public class GraphColorFragment extends Fragment {
-    private static final String TAG = "GraphColorFragment";
+
     private GraphColorView graphColorView;
     private String vtColor, ntColor;
     private ArrayList<String> colorsHistory = new ArrayList<>();
 
 
+    /**
+     * @return nová instance fragmentu pro nastavení barev grafu
+     */
     public static GraphColorFragment newInstance() {
         return new GraphColorFragment();
     }
 
 
+    /**
+     * Registruje posluchač změny odběrného místa pro aktualizaci barev.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
         //posluchač na změnu odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
@@ -56,6 +67,9 @@ public class GraphColorFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří layout fragmentu a nastaví akci pro uložení barev.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,10 +93,31 @@ public class GraphColorFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví menu pro výběr barev a registruje příjem výsledku z dialogu.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(menu_graph_color, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.menu_color) {
+                    GraphColorDialogFragment graphColorDialogFragment = GraphColorDialogFragment.newInstance(graphColorView.getColorVTHTML(), graphColorView.getColorNTHTML());
+                    graphColorDialogFragment.show(getParentFragmentManager(), GraphColorDialogFragment.TAG);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 GraphColorDialogFragment.RESULT_GRAPH_COLOR_DIALOG_FRAGMENT,
@@ -101,23 +136,6 @@ public class GraphColorFragment extends Fragment {
         super.onResume();
         loadHistoryColors();
         loadColors();
-    }
-
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(menu_graph_color, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_color) {
-            GraphColorDialogFragment graphColorDialogFragment = GraphColorDialogFragment.newInstance(graphColorView.getColorVTHTML(), graphColorView.getColorNTHTML());
-            graphColorDialogFragment.show(getParentFragmentManager(), GraphColorDialogFragment.TAG);
-            return true;
-        }
-        return false;
     }
 
 
@@ -164,4 +182,5 @@ public class GraphColorFragment extends Fragment {
         vtColor = graphColorView.getColorVTHTML();
         ntColor = graphColorView.getColorNTHTML();
     }
+
 }

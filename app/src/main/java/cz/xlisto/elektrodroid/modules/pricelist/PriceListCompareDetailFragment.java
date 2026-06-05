@@ -33,11 +33,11 @@ import cz.xlisto.elektrodroid.utils.Calculation;
 
 
 /**
- * Fragment pro porovnání ceníků detailní pohled
+ * Fragment pro detailní porovnání ceníků.
+ * Zobrazuje podrobné položky cen, rozdíly i výpočty s/bez DPH.
  */
 
 public class PriceListCompareDetailFragment extends Fragment implements SelectedPriceListsInterface {
-    private static final String TAG = "PriceListCompareDetailFragment";
     private static final String KC_MWH = " Kč/MWh";
     private static final String KC = " Kč";
     private static final String KC_MONTH = " Kč/měsíc";
@@ -77,15 +77,22 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     private double totalPozeLeft, totalPozeRight, totalRight, totalLeft;
 
 
+    /**
+     * @return nová instance detailního porovnání ceníků
+     */
     public static PriceListCompareDetailFragment newInstance() {
         return new PriceListCompareDetailFragment();
     }
 
 
+    /**
+     * Načte výchozí odběrné místo pro výpočty porovnání.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
         long idSubscriptionPoint = shPSubscriptionPoint.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
         if (idSubscriptionPoint != -1L) {
@@ -645,8 +652,15 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Převezme vybrané ceníky a parametry výpočtu a obnoví detailní výpis porovnání.
+     *
+     * @param priceListLeft  ceník na levé straně porovnání
+     * @param priceListRight ceník na pravé straně porovnání
+     * @param container      vstupní parametry spotřeby a služeb
+     */
     @Override
-    public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, PriceListCompareBoxFragment.ConsuptionContainer container) {
+    public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, ConsuptionContainer container) {
 
         if (priceListLeft != null) {
             this.priceListLeftNERegul = priceListLeft;

@@ -15,6 +15,7 @@ import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
@@ -22,7 +23,9 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 
-/** Zobrazení stavu elektroměru pomocí obrázkových čísel
+/**
+ * Zobrazení stavu elektroměru pomocí obrázkových číslic.
+ * Podporuje animované přepočítání z původní na novou hodnotu.
  * Xlisto 18.01.2024 8:58
  */
 public class NumbersMeter extends View {
@@ -65,6 +68,9 @@ public class NumbersMeter extends View {
     }
 
 
+    /**
+     * Inicializuje zdroje obrázků číslic a základní rozměry widgetu.
+     */
     private void init() {
         Bitmap number1, number2, number3, number4, number5, number6, number7, number8, number9, number0;
         number0 = BitmapFactory.decodeResource(getResources(), R.drawable.number_0);
@@ -126,30 +132,19 @@ public class NumbersMeter extends View {
      * @return bitmaps
      */
     private Bitmap getDigitBitmap(int digit) {
-        switch (digit) {
-            case 0:
-                return numbers[0];
-            case 1:
-                return numbers[1];
-            case 2:
-                return numbers[2];
-            case 3:
-                return numbers[3];
-            case 4:
-                return numbers[4];
-            case 5:
-                return numbers[5];
-            case 6:
-                return numbers[6];
-            case 7:
-                return numbers[7];
-            case 8:
-                return numbers[8];
-            case 9:
-                return numbers[9];
-            default:
-                return numbers[0];
-        }
+        return switch (digit) {
+            case 0 -> numbers[0];
+            case 1 -> numbers[1];
+            case 2 -> numbers[2];
+            case 3 -> numbers[3];
+            case 4 -> numbers[4];
+            case 5 -> numbers[5];
+            case 6 -> numbers[6];
+            case 7 -> numbers[7];
+            case 8 -> numbers[8];
+            case 9 -> numbers[9];
+            default -> numbers[0];
+        };
     }
 
 
@@ -184,8 +179,8 @@ public class NumbersMeter extends View {
         int borderBackground = DensityUtils.dpToPx(getContext(), 3);
         RectF rectFWhole = new RectF(padding - borderBackground, padding - borderBackground, (scaledWidth + space) * countNumber + borderBackground + padding - space, padding + scaledHeight + borderBackground);
         RectF rectFDecimal = new RectF((scaledWidth + space) * (countNumber - 1) + padding - space, padding - borderBackground, (scaledWidth + space) * countNumber + borderBackground + padding - space, padding + scaledHeight + borderBackground);
-        pBackgroundNumberWhole.setColor(getResources().getColor(R.color.color_yes));
-        pBackgroundNumberDecimal.setColor(getResources().getColor(R.color.color_red_alert));
+        pBackgroundNumberWhole.setColor(ContextCompat.getColor(getContext(), R.color.color_yes));
+        pBackgroundNumberDecimal.setColor(ContextCompat.getColor(getContext(), R.color.color_red_alert));
         pBackgroundNumberWhole.setStyle(Paint.Style.FILL);
         pBackgroundNumberDecimal.setStyle(Paint.Style.FILL);
         boolean antiAliasing = true;

@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,9 +101,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
     /**
      * ViewHolder pro položky v RecyclerView.
-     * Tato třída obsahuje odkazy na zobrazené prvky v jednotlivých položkách měsíčních odečtů.
+     * Třída je veřejná kvůli veřejnému API adapteru a obsahuje odkazy na prvky položky.
      */
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout rootRelativeLayout, rl2, rl3;
         LinearLayout lnButtons;
@@ -264,7 +265,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     holder.tvAlertRegulPrice.setVisibility(View.VISIBLE);
                     if (!overDatePriceList) {
                         holder.tvAlertRegulPrice.setText(context.getResources().getString(R.string.alert_date_price_list));
-                        holder.tvAlertRegulPrice.setTextColor(holder.tvAlertRegulPrice.getContext().getResources().getColor(R.color.color_red_alert));
+                        holder.tvAlertRegulPrice.setTextColor(ContextCompat.getColor(holder.tvAlertRegulPrice.getContext(), R.color.color_red_alert));
                     }
                 } else {
                     holder.ivWarning.setVisibility(View.INVISIBLE);
@@ -274,8 +275,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);//vt, nt, stPlat, poze
 
                 int year = calendarStart.get(Calendar.YEAR);
-                if(year==2026)
-                    prices[3] = priceList.getPoze1()/1000;
+                if (year == 2026)
+                    prices[3] = priceList.getPoze1() / 1000;
 
                 monthPrice = month * prices[2];
                 total = monthPrice + (prices[0] * vtDiff) + (prices[1] * ntDiff) + prices[3] * (vtDiff + ntDiff) + items.get(position).getOtherServices();

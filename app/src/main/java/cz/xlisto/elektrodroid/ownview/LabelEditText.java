@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -32,7 +34,7 @@ import cz.xlisto.elektrodroid.R;
 
 /**
  * Sloučený View TextView s EditTextem.
- * Zjednodušuje vytvoření EditTextu s TextView.
+ * Zjednodušuje vytvoření EditTextu s popiskem, včetně formátování čísel a validace vstupu.
  * Seznam atributů je v xml souboru attrs.xml s name LabelEditText
  */
 public class LabelEditText extends RelativeLayout {
@@ -96,7 +98,7 @@ public class LabelEditText extends RelativeLayout {
         RelativeLayout relativeLayout = findViewById(R.id.relative_layout);
 
         textView = findViewById(R.id.tvLabelEdit);
-        textView.setTextColor(getResources().getColor(R.color.colorLabelEditText));
+        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorLabelEditText));
         RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         relativeLayoutParams.addRule(RelativeLayout.END_OF, textView.getId());
@@ -118,8 +120,8 @@ public class LabelEditText extends RelativeLayout {
         editText.setMinWidth(widthInPx);
         editText.setMaxWidth(maxWidthInPx);
         editText.setId(View.generateViewId());
-        editText.setHintTextColor(getResources().getColor(R.color.colorHint));
-        editText.setTextColor(getResources().getColor(R.color.colorLabelEditText));
+        editText.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorHint));
+        editText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorLabelEditText));
 
         relativeLayout.addView(editText);
         originalBackgroundDrawable = editText.getBackground();
@@ -356,7 +358,7 @@ public class LabelEditText extends RelativeLayout {
                 }
                 //změna barvy pozadí EditTextu
                 if (allowChangeColor)
-                    editText.setBackground(getResources().getDrawable(changedBackgroundEditText));
+                    editText.setBackground(ContextCompat.getDrawable(getContext(), changedBackgroundEditText));
             }
         });
     }

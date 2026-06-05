@@ -21,7 +21,10 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
-
+/**
+ * Dialog pro zadání vstupních parametrů porovnání ceníků.
+ * Uložené hodnoty vrací přes FragmentResult API.
+ */
 public class PriceListAddParametersDialogFragment extends DialogFragment {
     public static String TAG = "PriceListAddParametersDialogFragment";
     public static String CONSUPTION_CONTAINER = "consuptionContainer";
@@ -36,7 +39,13 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     private EditText letPhaze, letPower, letServicesL, letServicesR;
 
 
-    public static PriceListAddParametersDialogFragment newInstance(PriceListCompareBoxFragment.ConsuptionContainer container) {
+    /**
+     * Vytvoří dialog s předvyplněnými hodnotami z aktuálního kontejneru parametrů.
+     *
+     * @param container aktuální parametry porovnání
+     * @return nová instance dialogu
+     */
+    public static PriceListAddParametersDialogFragment newInstance(ConsuptionContainer container) {
         PriceListAddParametersDialogFragment frag = new PriceListAddParametersDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putDouble(frag.VT, container.vt);
@@ -53,6 +62,12 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Vytvoří a inicializuje dialog pro úpravu parametrů výpočtu.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -88,7 +103,7 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             double power = letPower.getText().toString().isEmpty() ? 0 : Double.parseDouble(letPower.getText().toString().replace(",", "."));
             double servicesL = letServicesL.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesL.getText().toString().replace(",", "."));
             double servicesR = letServicesR.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesR.getText().toString().replace(",", "."));
-            PriceListCompareBoxFragment.ConsuptionContainer container = new PriceListCompareBoxFragment.ConsuptionContainer(vt, nt, month, phaze, power, servicesL, servicesR);
+            ConsuptionContainer container = new ConsuptionContainer(vt, nt, month, phaze, power, servicesL, servicesR);
             Bundle bundle = new Bundle();
             bundle.putSerializable(CONSUPTION_CONTAINER, container);
             getParentFragmentManager().setFragmentResult(TAG, bundle);
@@ -120,6 +135,11 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Uloží rozpracované hodnoty při změně konfigurace.
+     *
+     * @param outState cílový bundle pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

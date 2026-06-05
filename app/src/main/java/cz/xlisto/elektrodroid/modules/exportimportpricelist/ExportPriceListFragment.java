@@ -19,7 +19,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,15 +39,22 @@ import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.utils.JSONPriceList;
 
+
 /**
- * Export ceníků do JSON souboru
+ * Fragment pro export ceníků do JSON souboru.
+ * Umožňuje výběr ceníku, kontrolu přepsání a uložení do zvolené složky.
  * Xlisto 12.12.2023 11:17
  */
 public class ExportPriceListFragment extends Fragment {
-    private static final String TAG = "ExportPriceListFragment";
+
     private RecyclerView recyclerView;
     private ExportPriceListAdapter exportPriceListAdapter;
     private String fileName, json;
+
+
+    /**
+     * @return nová instance fragmentu exportu ceníků
+     */
     public static ExportPriceListFragment newInstance() {
         return new ExportPriceListFragment();
     }
@@ -67,10 +77,12 @@ public class ExportPriceListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
 
+    /**
+     * Vytvoří kořenové zobrazení fragmentu.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,10 +90,29 @@ public class ExportPriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Připraví menu exportu a zaregistruje posluchače pro potvrzení exportu/přepsání souboru.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        requireActivity().invalidateOptionsMenu();
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_export, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.menu_item_select_folder) {
+                    Files.openTree(false, requireActivity(), resultTree);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         recyclerView = view.findViewById(R.id.recyclerViewExport);
 
@@ -106,9 +137,9 @@ public class ExportPriceListFragment extends Fragment {
                         + ViewHelper.getSimpleDateFormat().format(priceListSumModel.getDatum()) + " "
                         + priceListModels.get(0).getDistribuce() + ".json";
 
-                if(files.existJSONFile(requireActivity(), fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)))){
-                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getString(R.string.export_price_list_title),FLAG_DIALOG_FRAGMENT_EXPORT_REWRITE
-                            ,getResources().getString(R.string.export_price_list_rewrite_file_message, fileName));
+                if (files.existJSONFile(requireActivity(), fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)))) {
+                    YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getString(R.string.export_price_list_title), FLAG_DIALOG_FRAGMENT_EXPORT_REWRITE
+                            , getResources().getString(R.string.export_price_list_rewrite_file_message, fileName));
                     yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
                     return;
                 }
@@ -128,6 +159,9 @@ public class ExportPriceListFragment extends Fragment {
     }
 
 
+    /**
+     * Načte souhrn ceníků a aktualizuje seznam pro export.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -142,19 +176,4 @@ public class ExportPriceListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
 
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        requireActivity().getMenuInflater().inflate(R.menu.menu_export, menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.menu_item_select_folder) {
-            Files.openTree(false, requireActivity(), resultTree);
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

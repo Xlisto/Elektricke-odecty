@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -29,10 +30,11 @@ import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 
 /**
+ * Kompaktní tabulkové zobrazení porovnání ceníků.
+ * Zobrazuje parametry obou ceníků, průběžné rozdíly i součtové ceny.
  * Xlisto 01.03.2024 18:01
  */
 public class PriceListCompareCompactFragment extends Fragment implements SelectedPriceListsInterface {
-    private static final String TAG = "PriceListCompareCompactFragment";
 
     private PriceListModel priceListLeft = new PriceListModel(""), priceListRight = new PriceListModel(""),
             priceListLeftRegul = new PriceListModel(""), priceListRightRegul = new PriceListModel("");
@@ -65,11 +67,17 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     };
 
 
+    /**
+     * @return nová instance kompaktního porovnání ceníků
+     */
     public static PriceListCompareCompactFragment newInstance() {
         return new PriceListCompareCompactFragment();
     }
 
 
+    /**
+     * Inicializuje pomocné objekty pro práci s regulovanými cenami.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +86,9 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     }
 
 
+    /**
+     * Vytvoří zobrazení fragmentu a připraví tabulku porovnání.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -220,8 +231,15 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     }
 
 
+    /**
+     * Převezme vybrané ceníky a vstupní parametry a obnoví výstupní tabulku.
+     *
+     * @param priceListLeft  ceník na levé straně porovnání
+     * @param priceListRight ceník na pravé straně porovnání
+     * @param container      vstupní parametry spotřeby a služeb
+     */
     @Override
-    public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, PriceListCompareBoxFragment.ConsuptionContainer container) {
+    public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, ConsuptionContainer container) {
         if (priceListLeft != null) {
             this.priceListLeft = priceListLeft;
             this.priceListLeftNERegul = priceListLeft;
@@ -316,7 +334,7 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
             if (i == 31 || i == 37) {
                 View line = new View(requireContext());
                 line.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 2)); // 2px vysoká čára
-                line.setBackgroundColor(getResources().getColor(R.color.color_axis)); // Nastavení barvy čáry
+                line.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_axis)); // Nastavení barvy čáry
                 tableLayout.addView(line);
             }
             tableLayout.addView(row);

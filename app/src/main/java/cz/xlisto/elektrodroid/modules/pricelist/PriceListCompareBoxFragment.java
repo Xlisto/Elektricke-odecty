@@ -14,18 +14,20 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
-
-import java.io.Serializable;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.PriceListModel;
-import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 
 
 /**
+ * Kontejnerový fragment pro porovnání ceníků.
+ * Zajišťuje výběr levého/pravého ceníku, parametry výpočtu a předání dat do podřízeného fragmentu.
  * Xlisto 01.03.2024 11:46
  */
 public class PriceListCompareBoxFragment extends Fragment {
@@ -33,38 +35,38 @@ public class PriceListCompareBoxFragment extends Fragment {
     private static final String ARG_CONSUPTION_CONTAINER = "consuptionContainer";
     private static long idPriceListLeft = -1L, idPriceListRight = -1L;
     private PriceListModel priceListLeftNERegul, priceListRightNERegul;
-    private PriceListModel priceListLeft, priceListRight, priceListLeftRegul, priceListRightRegul;
-    private PriceListRegulBuilder priceListLeftRegulBuilder, priceListRightRegulBuilder;
+    private PriceListModel priceListLeft, priceListRight;
     private SelectedPriceListsInterface selectedPriceListsInterface;
-    private PriceListCompareDetailFragment priceListCompareDetailFragment;
-    private PriceListCompareCompactFragment priceListCompareCompactFragment;
     private PriceListsViewModel priceListsViewModel;
     private Button btnLeft;
     private Button btnRight;
-    private double vt = 1, nt = 1, month = 1, phaze = 3, power = 25, servicesL = 0, servicesR = 0;
     private ConsuptionContainer consuptionContainer = new ConsuptionContainer();
 
 
+    /**
+     * @return nová instance fragmentu porovnání ceníků
+     */
     public static PriceListCompareBoxFragment newInstance() {
         return new PriceListCompareBoxFragment();
     }
 
 
+    /**
+     * Inicializuje ViewModel a výchozí kontejner vstupních parametrů.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         priceListsViewModel = new ViewModelProvider(this).get(PriceListsViewModel.class);
         consuptionContainer = new ConsuptionContainer();
-
-        /*if (savedInstanceState != null) {
-            consuptionContainer = (ConsuptionContainer) savedInstanceState.getSerializable(ARG_CONSUPTION_CONTAINER);
-        }*/
-
-        //consuptionContainer = priceListsViewModel.getConsuptionContainer();
     }
 
 
+    /**
+     * Vytvoří kořenové zobrazení fragmentu.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,9 +74,33 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Nastaví menu, posluchače výběru ceníků a posluchače změny vstupních parametrů.
+     *
+     * @param view               kořenové zobrazení fragmentu
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_price_list_compare, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.menu_values) {
+                    PriceListAddParametersDialogFragment.newInstance(consuptionContainer)
+                            .show(requireActivity().getSupportFragmentManager(), TAG);
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         btnLeft = view.findViewById(R.id.btnLeft);
         btnRight = view.findViewById(R.id.btnRight);
@@ -89,8 +115,7 @@ public class PriceListCompareBoxFragment extends Fragment {
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        priceListCompareDetailFragment = PriceListCompareDetailFragment.newInstance();
-        priceListCompareCompactFragment = PriceListCompareCompactFragment.newInstance();
+        PriceListCompareCompactFragment priceListCompareCompactFragment = PriceListCompareCompactFragment.newInstance();
 
         //getChildFragmentManager().beginTransaction().replace(R.id.price_list_compare_container, priceListCompareDetailFragment).commit();
         getChildFragmentManager().beginTransaction().replace(R.id.price_list_compare_container, priceListCompareCompactFragment).commit();
@@ -134,6 +159,9 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Obnoví navázání dat z ViewModelu a předá aktuální stav do cílového porovnávacího fragmentu.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -163,6 +191,11 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Uloží aktuální kontejner vstupních parametrů.
+     *
+     * @param outState cílový bundle pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -170,45 +203,5 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        requireActivity().getMenuInflater().inflate(R.menu.menu_price_list_compare, menu);
-    }
 
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        if (id == R.id.menu_values) {
-            PriceListAddParametersDialogFragment.newInstance(consuptionContainer
-            ).show(requireActivity().getSupportFragmentManager(), TAG);
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    static class ConsuptionContainer implements Serializable {
-        double vt, nt, month, phaze, power, servicesL, servicesR;
-
-        public ConsuptionContainer(double vt, double nt, double month, double phaze, double power, double servicesL, double servicesR) {
-            this.vt = vt;
-            this.nt = nt;
-            this.month = month;
-            this.phaze = phaze;
-            this.power = power;
-            this.servicesL = servicesL;
-            this.servicesR = servicesR;
-        }
-
-        public ConsuptionContainer() {
-            this.vt = 1;
-            this.nt = 1;
-            this.month = 12;
-            this.phaze = 3;
-            this.power = 25;
-            this.servicesL = 0;
-            this.servicesR = 0;
-        }
-    }
 }
