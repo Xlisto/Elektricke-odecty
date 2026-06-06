@@ -8,6 +8,7 @@ import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -41,10 +43,12 @@ public class LabelEditText extends RelativeLayout {
 
     private TextView textView;
     private EditText editText;
+    private ImageButton clearButton;
     private int changedBackgroundEditText;
     private Drawable originalBackgroundDrawable;
     private boolean allowChangeColor = false;
     private static final int MAX_WIDTH_DP = 488;
+    private static final float CLEAR_BUTTON_ALPHA = 0.55f;
 
 
     public LabelEditText(Context context) {
@@ -122,9 +126,42 @@ public class LabelEditText extends RelativeLayout {
         editText.setId(View.generateViewId());
         editText.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorHint));
         editText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorLabelEditText));
+        // Rezerva vpravo, aby text nelezl pod ikonku clear.
+        editText.setPadding(
+                editText.getPaddingLeft(),
+                editText.getPaddingTop(),
+                ViewHelper.convertDpToPx(36, getContext()),
+                editText.getPaddingBottom()
+        );
 
         relativeLayout.addView(editText);
         originalBackgroundDrawable = editText.getBackground();
+
+        // Vytvoření Clear Button (ImageButton s ikonkou křížku)
+        clearButton = new ImageButton(context);
+        clearButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_close_24));
+        clearButton.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.colorHint)));
+        clearButton.setAlpha(CLEAR_BUTTON_ALPHA);
+        clearButton.setContentDescription("Vyčistit");
+        clearButton.setBackground(null); // Bez pozadí
+        clearButton.setVisibility(View.GONE); // Na začátku skrytý
+
+        RelativeLayout.LayoutParams clearButtonParams = new RelativeLayout.LayoutParams(
+                ViewHelper.convertDpToPx(40, getContext()),
+                ViewHelper.convertDpToPx(40, getContext())
+        );
+        clearButtonParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        clearButtonParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        clearButtonParams.setMarginEnd(ViewHelper.convertDpToPx(8, getContext()));
+        clearButton.setLayoutParams(clearButtonParams);
+
+        // Click listener pro smazání obsahu
+        clearButton.setOnClickListener(v -> {
+            editText.setText("");
+            editText.requestFocus();
+        });
+
+        relativeLayout.addView(clearButton);
 
         setChangedBackgroundEditText(attributeSet);
         setTexts(attributeSet);
@@ -136,6 +173,7 @@ public class LabelEditText extends RelativeLayout {
         setGravity(attributeSet);
         numberFormatHint();
         setEnabled(attributeSet);
+        setupClearButtonVisibilityListener();
     }
 
 
@@ -359,6 +397,32 @@ public class LabelEditText extends RelativeLayout {
                 //změna barvy pozadí EditTextu
                 if (allowChangeColor)
                     editText.setBackground(ContextCompat.getDrawable(getContext(), changedBackgroundEditText));
+            }
+        });
+    }
+
+
+    /**
+     * Nastaví viditelnost tlačítka Clear Button na základě toho, zda je EditText prázdný
+     */
+    private void setupClearButtonVisibilityListener() {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Zobrazit tlačítko, pokud je text neprázdný
+                if (s.length() > 0) {
+                    clearButton.setVisibility(View.VISIBLE);
+                } else {
+                    clearButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
     }
