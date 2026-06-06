@@ -13,6 +13,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -414,10 +415,10 @@ public class LabelEditText extends RelativeLayout {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Zobrazit tlačítko, pokud je text neprázdný
-                if (s.length() > 0) {
-                    clearButton.setVisibility(View.VISIBLE);
-                } else {
+                if (TextUtils.isEmpty(s)) {
                     clearButton.setVisibility(View.GONE);
+                } else {
+                    clearButton.setVisibility(View.VISIBLE);
                 }
             }
 
