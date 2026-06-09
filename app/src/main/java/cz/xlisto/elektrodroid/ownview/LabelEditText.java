@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputType;
@@ -50,6 +51,10 @@ public class LabelEditText extends RelativeLayout {
     private boolean allowChangeColor = false;
     private static final int MAX_WIDTH_DP = 488;
     private static final float CLEAR_BUTTON_ALPHA = 0.55f;
+    private static final float EDIT_TEXT_DISABLED_TEXT_ALPHA = 0.6f;
+    private static final float CLEAR_BUTTON_DISABLED_ALPHA = EDIT_TEXT_DISABLED_TEXT_ALPHA;
+    private int originalEditTextTextColor;
+    private int originalEditTextHintColor;
 
 
     public LabelEditText(Context context) {
@@ -127,6 +132,8 @@ public class LabelEditText extends RelativeLayout {
         editText.setId(View.generateViewId());
         editText.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorHint));
         editText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorLabelEditText));
+        originalEditTextTextColor = editText.getCurrentTextColor();
+        originalEditTextHintColor = editText.getCurrentHintTextColor();
         // Rezerva vpravo, aby text nelezl pod ikonku clear.
         editText.setPadding(
                 editText.getPaddingLeft(),
@@ -158,6 +165,9 @@ public class LabelEditText extends RelativeLayout {
 
         // Click listener pro smazání obsahu
         clearButton.setOnClickListener(v -> {
+            if (!isEditTextWritable()) {
+                return;
+            }
             editText.setText("");
             editText.requestFocus();
         });
@@ -175,6 +185,7 @@ public class LabelEditText extends RelativeLayout {
         numberFormatHint();
         setEnabled(attributeSet);
         setupClearButtonVisibilityListener();
+        updateClearButtonState(editText.getText());
     }
 
 
@@ -340,7 +351,9 @@ public class LabelEditText extends RelativeLayout {
      * @param b true = povolit, false = zakázat
      */
     public void setEnabled(boolean b) {
+        super.setEnabled(b);
         editText.setEnabled(b);
+        updateClearButtonState(editText.getText());
     }
 
 
@@ -351,6 +364,8 @@ public class LabelEditText extends RelativeLayout {
      */
     public void setTextColor(int color) {
         editText.setTextColor(color);
+        originalEditTextTextColor = color;
+        updateClearButtonState(editText.getText());
     }
 
 
@@ -414,18 +429,45 @@ public class LabelEditText extends RelativeLayout {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Zobrazit tlačítko, pokud je text neprázdný
-                if (TextUtils.isEmpty(s)) {
-                    clearButton.setVisibility(View.GONE);
-                } else {
-                    clearButton.setVisibility(View.VISIBLE);
-                }
+                updateClearButtonState(s);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+    }
+
+
+    private boolean isEditTextWritable() {
+        return editText.isEnabled() && editText.isFocusable() && editText.getKeyListener() != null;
+    }
+
+
+    private void updateClearButtonState(CharSequence text) {
+        boolean writable = isEditTextWritable();
+        int textColor = writable ? originalEditTextTextColor : withAppliedAlpha(originalEditTextTextColor);
+        int hintColor = writable ? originalEditTextHintColor : withAppliedAlpha(originalEditTextHintColor);
+        editText.setTextColor(textColor);
+        editText.setHintTextColor(hintColor);
+
+        if (TextUtils.isEmpty(text)) {
+            clearButton.setVisibility(View.GONE);
+            return;
+        }
+
+        clearButton.setVisibility(View.VISIBLE);
+        clearButton.setEnabled(writable);
+        clearButton.setClickable(writable);
+        clearButton.setAlpha(writable ? CLEAR_BUTTON_ALPHA : CLEAR_BUTTON_DISABLED_ALPHA);
+        int tintColor = writable ? originalEditTextHintColor : withAppliedAlpha(originalEditTextHintColor);
+        clearButton.setImageTintList(ColorStateList.valueOf(tintColor));
+    }
+
+
+    private int withAppliedAlpha(int color) {
+        int alpha = Math.round(Color.alpha(color) * EDIT_TEXT_DISABLED_TEXT_ALPHA);
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
     }
 
 

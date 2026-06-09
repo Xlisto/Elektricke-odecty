@@ -233,6 +233,8 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if (payments > 0)
             viewHolder.tvPayments.setText(context.getResources().getString(R.string.advances, payments));
+        else
+            viewHolder.tvPayments.setText("");
 
         if (reads > 0)
             viewHolder.tvReads.setText(context.getResources().getString(R.string.records, reads));
