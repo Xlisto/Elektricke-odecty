@@ -224,7 +224,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         Calendar start = Calendar.getInstance();
         start.setTimeInMillis(invoice.getDateFrom());
         int year = start.get(Calendar.YEAR);
-        if(year == 2026)
+        if (year == 2026)
             poze = 0;
 
         holder.vTDif.setText(context.getResources().getString(R.string.consuption, DecimalFormatHelper.df2.format(vtDif)));
@@ -254,18 +254,22 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
                 return;
             }
 
+            int previousPosition = showButtons;
+            if (showButtons == position) {
+                showButtons = -1;
+            } else {
+                showButtons = position;
+            }
 
-            if (showButtons >= 0) {
-                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                if (viewHolder != null) {
-                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem).setVisibility(View.GONE);
-                    viewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem2).setVisibility(View.GONE);
+            TransitionManager.beginDelayedTransition(recyclerView);
+
+            if (previousPosition >= 0 && previousPosition != position) {
+                RecyclerView.ViewHolder previousViewHolder = recyclerView.findViewHolderForAdapterPosition(previousPosition);
+                if (previousViewHolder != null) {
+                    previousViewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem).setVisibility(View.GONE);
+                    previousViewHolder.itemView.findViewById(R.id.lnButtonsInvoiceItem2).setVisibility(View.GONE);
                 }
             }
-            if (showButtons == position)
-                showButtons = -1;
-            else
-                showButtons = position;
 
             showButtons(holder, invoice, position);
         });
@@ -429,19 +433,16 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
      * @param position pozice položky
      */
     private void showButtons(MyViewHolder holder, InvoiceModel invoice, int position) {
-        recyclerView.post(() -> {
-            TransitionManager.beginDelayedTransition(recyclerView);
-            if (showButtons == position) {
-                holder.lnButtons.setVisibility(View.VISIBLE);
-                //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktury
-                if (invoice.getIdInvoice() == -1L) {
-                    holder.lnButtons2.setVisibility(View.VISIBLE);
-                }
-            } else {
-                holder.lnButtons.setVisibility(View.GONE);
-                holder.lnButtons2.setVisibility(View.GONE);
+        if (showButtons == position) {
+            holder.lnButtons.setVisibility(View.VISIBLE);
+            //skrytí rozdělovacích tlačítek pro jiné faktury než aktuální období bez faktury
+            if (invoice.getIdInvoice() == -1L) {
+                holder.lnButtons2.setVisibility(View.VISIBLE);
             }
-        });
+        } else {
+            holder.lnButtons.setVisibility(View.GONE);
+            holder.lnButtons2.setVisibility(View.GONE);
+        }
     }
 
 
