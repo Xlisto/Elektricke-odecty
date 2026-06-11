@@ -45,7 +45,7 @@ Nový ceník se přidává tlačítkem **+**. Při vytváření ceníku se zadá
 - celková cena za 1 kWh v nízkém tarifu,
 - stálá měsíční platba.
 
-Cena za 1 kWh se zobrazuje jako celková cena včetně DPH, tedy jako součet obchodní části, regulovaných položek a daně. Stálá měsíční platba se zobrazuje jako celková částka včetně DPH. Zahrnuje stálý plat dodavatele, cenu za jistič a cenu za provoz nesíťové infrastruktury.
+Cena za 1 kWh se zobrazuje jako celková cena včetně DPH, tedy jako součet obchodní části, regulovaných položek a daně. Stálá měsíční platba se zobrazuje jako celková částka včetně DPH. Zahrnuje stálý plat dodavatele, cenu za jistič a cenu za provoz nesíťové infrastruktury. Pro ceníky platné pro rok 2023 se zobrazuje dvojí cena. Vyšší cena zobrazuje platné ceny od dodavatele a nižší cena zobrazuje zastropované ceny státem.
 
 <p align="center">
   <img src="screenshots/cena_2.png" width="300" />
