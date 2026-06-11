@@ -47,6 +47,10 @@ Nový ceník se přidává tlačítkem **+**. Při vytváření ceníku se zadá
 
 Cena za 1 kWh se zobrazuje jako celková cena včetně DPH, tedy jako součet obchodní části, regulovaných položek a daně. Stálá měsíční platba se zobrazuje jako celková částka včetně DPH. Zahrnuje stálý plat dodavatele, cenu za jistič a cenu za provoz nesíťové infrastruktury.
 
+<p align="center">
+  <img src="screenshots/cena_2.png" width="300" />
+</p>
+
 U jednotarifních sazeb, například D01d nebo D02d, se nízký tarif nepoužívá. Položku nízkého tarifu tedy není nutné vyplňovat podle samostatné ceny NT.
 
 Aplikace obsahuje přednastavené regulované ceny od roku 2021 pro všechna tři distribuční území. Po výběru distribučního území, distribuční sazby a období platnosti se automaticky doplní regulované části ceníku. Uživatel proto obvykle zadává hlavně ceny podle svého dodavatele a výsledné hodnoty uvedené v ceníku.
@@ -63,9 +67,8 @@ Tlačítkem **Uložit** se ceník uloží. Tlačítkem **Zpět** se provedené z
 </p>
 
 <p align="center">
-  <img src="screenshots/cena_1.png" width="200" />
-  <img src="screenshots/cena_2.png" width="200" />
-  <img src="screenshots/cena_3.png" width="200" />
+  <img src="screenshots/cena_1.png" width="300" />
+  <img src="screenshots/cena_3.png" width="300" />
 </p>
 
 ### Úprava ceníků
