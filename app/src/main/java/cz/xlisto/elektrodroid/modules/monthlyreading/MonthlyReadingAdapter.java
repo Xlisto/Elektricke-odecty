@@ -198,6 +198,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     /**
      * Nastaví data pro zobrazení v jednotlivých položkách RecyclerView.
      * Tato metoda je volána při každém zobrazení položky v RecyclerView.
+     * Před vlastním plněním dat nejdříve resetuje stavy recyklovaného ViewHolderu,
+     * aby se mezi položkami nepřenášela viditelnost/text z předchozího bindu.
      *
      * @param holder   ViewHolder, který bude aktualizován daty.
      * @param position Pozice položky v adapteru.
@@ -225,6 +227,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         holder.tvNt.setText(DecimalFormatHelper.df2.format(monthlyReading.getNt()));
         holder.tvPayment.setText(context.getResources().getString(R.string.float_price, monthlyReading.getPayment()));
         holder.tvAlertRegulPrice.setVisibility(View.GONE);
+        resetRecycledState(holder);
 
         //výpočet
         if ((position + 1) < items.size()) {
@@ -448,6 +451,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     holder.tvDescription.setVisibility(View.VISIBLE);
                     holder.tvDescription.setText(monthlyReading.getDescription());
                 }
+            } else {
+                holder.tvDescription.setVisibility(View.GONE);
+                holder.tvDescription.setText("");
             }
 
         }
@@ -523,6 +529,25 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.lnButtons.setVisibility(View.VISIBLE);
         else
             holder.lnButtons.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Vynuluje proměnlivé UI stavy držáku položky před novým bindem.
+     * <p>
+     * RecyclerView recykluje view držáky mezi různými typy položek (např. první odečet,
+     * zjednodušený režim, položka s popisem). Bez tohoto resetu může dojít k překryvu textů
+     * nebo k zachování viditelnosti prvků z předchozí položky.
+     *
+     * @param holder view holder, jehož proměnlivé stavy se resetují
+     */
+    private void resetRecycledState(@NonNull MyViewHolder holder) {
+        holder.tvMonth.setVisibility(View.VISIBLE);
+        holder.tvDateDetail.setVisibility(View.VISIBLE);
+        holder.btnDetail.setVisibility(View.VISIBLE);
+        holder.tvDescription.setVisibility(View.GONE);
+        holder.tvDescription.setText("");
+        holder.ivWarning.setVisibility(View.INVISIBLE);
     }
 
 
@@ -628,6 +653,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
     public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
 
         this.onClickItemListener = onClickItemListener;
+    }
+
+
+    /**
+     * Vrátí aktuálně zobrazený seznam měsíčních odečtů.
+     */
+    public ArrayList<MonthlyReadingModel> getItems() {
+        return items;
     }
 
 

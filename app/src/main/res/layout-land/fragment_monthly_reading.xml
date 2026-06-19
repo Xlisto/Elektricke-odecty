@@ -24,6 +24,7 @@
             android:layout_marginEnd="5dp"
             android:text="@string/add_monthly_reading" />
 
+        <!-- Původní horní label filtru; text filtru se nyní zobrazuje uvnitř widgetu bilance. -->
         <TextView
             android:id="@+id/tvMonthlyReadingFilter"
             android:layout_width="wrap_content"
@@ -76,12 +77,29 @@
             android:minHeight="48dp"
             android:text="@string/zjednodusene_zobrazeni" />
 
+        <!-- Sdílený stavový widget (stejný vizuál jako u faktur) pro bilanci filtrovaných odečtů. -->
+        <TextView
+            android:id="@+id/tvBalanceStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/swSimplyView"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/shape_monthly_reading_yes"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
             android:id="@+id/rvMonthlyReading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/btnAddMonthlyReading"
-            android:layout_below="@id/swSimplyView"
+            android:layout_below="@id/tvBalanceStatus"
             android:contentDescription="@string/description_monthly_reading"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             android:padding="5dp" />

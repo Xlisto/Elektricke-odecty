@@ -53,8 +53,8 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.utils.BalanceStatusUiHelper;
 import cz.xlisto.elektrodroid.shp.ShPInvoice;
-import cz.xlisto.elektrodroid.utils.InvoiceBalanceHelper;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
@@ -611,35 +611,22 @@ public class InvoiceFragment extends Fragment {
 
     /**
      * Zobrazí informace o tom, zda zálohy pokryly spotřebu faktury.
+     * Pro vykreslení textu i pozadí používá sdílený helper,
+     * aby byl stavový widget stejný jako v dalších modulech.
      */
     private void updateBalanceStatus() {
         if (tvBalanceStatus == null || totalPrice == null || totalPrice.length <= 11) {
             return;
         }
 
-        double balance = advanceCoverageBalance;
-        InvoiceBalanceHelper.BalanceState state = InvoiceBalanceHelper.getBalanceState(balance);
-        int backgroundResId;
-        String text;
-
-        switch (state) {
-            case OVERPAYMENT -> {
-                backgroundResId = R.drawable.shape_monthly_reading_yes;
-                text = getString(R.string.invoice_balance_overpayment, InvoiceBalanceHelper.getAbsoluteBalance(balance));
-            }
-            case UNDERPAYMENT -> {
-                backgroundResId = R.drawable.shape_montly_reading_no;
-                text = getString(R.string.invoice_balance_underpayment, InvoiceBalanceHelper.getAbsoluteBalance(balance));
-            }
-            default -> {
-                backgroundResId = R.drawable.shape_monthly_reading_yes;
-                text = getString(R.string.invoice_balance_balanced);
-            }
-        }
-
-        tvBalanceStatus.setBackgroundResource(backgroundResId);
-        tvBalanceStatus.setText(android.text.Html.fromHtml(text));
-        tvBalanceStatus.setVisibility(View.VISIBLE);
+        BalanceStatusUiHelper.showBalanceStatus(
+                tvBalanceStatus,
+                requireContext(),
+                advanceCoverageBalance,
+                R.string.invoice_balance_overpayment,
+                R.string.invoice_balance_underpayment,
+                R.string.invoice_balance_balanced
+        );
     }
 
 

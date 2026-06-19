@@ -32,6 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,12 +46,17 @@ import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
+import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.backup.SaveDataToBackupFile;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
+import cz.xlisto.elektrodroid.utils.BalanceStatusUiHelper;
+import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
+import cz.xlisto.elektrodroid.utils.DifferenceDate;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.InvoiceBalanceHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.UIHelper;
 
@@ -70,7 +76,7 @@ public class MonthlyReadingFragment extends Fragment {
     private SubscriptionPointModel subscriptionPoint;
     private FloatingActionButton fab;
     private Button btnAddMonthlyReading;
-    private TextView tvAlert, tvMonthlyReadingFilter;
+    private TextView tvAlert, tvMonthlyReadingFilter, tvBalanceStatus;
     private RecyclerView rv;
     private SwitchMaterial swSimplyView, swRegulPrice;
     private ShPMonthlyReading shPMonthlyReading;
@@ -101,6 +107,7 @@ public class MonthlyReadingFragment extends Fragment {
                 (requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         monthlyReadingAdapter.deleteMonthlyReading(requireContext());
+                        updateBalanceStatus(monthlyReadingAdapter.getItems());
                     }
                     setShowTvAlert();
                 });
@@ -111,13 +118,7 @@ public class MonthlyReadingFragment extends Fragment {
                     to = result.getLong(MonthlyReadingFilterDialogFragment.TO);
                     from = result.getLong(MonthlyReadingFilterDialogFragment.FROM);
                     from = from + ViewHelper.getOffsetTimeZones(from);
-                    tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
-                    tvMonthlyReadingFilter.setText(getResources().getString(R.string.show_period, ViewHelper.convertLongToDate(from), ViewHelper.convertLongToDate(to)));
-                    if (from == 0 && to == Long.MAX_VALUE) {
-                        tvMonthlyReadingFilter.setVisibility(View.GONE);
-                    } else {
-                        tvMonthlyReadingFilter.setVisibility(View.VISIBLE);
-                    }
+                    updateFilterLabel();
                     loadDataFromDatabase();
                 });
 
@@ -212,6 +213,8 @@ public class MonthlyReadingFragment extends Fragment {
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
+        tvBalanceStatus = view.findViewById(R.id.tvBalanceStatus);
+        updateFilterLabel();
         swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
         swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
         swSimplyView.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -232,6 +235,7 @@ public class MonthlyReadingFragment extends Fragment {
                     monthlyReadingAdapter.setShowRegulPrice(isChecked);
                     rv.getLayoutManager().onRestoreInstanceState(out);
                     setOnShowRegulPriceListener(isChecked);
+                    updateBalanceStatus(monthlyReadingAdapter.getItems());
                 }
             }
         });
@@ -291,8 +295,141 @@ public class MonthlyReadingFragment extends Fragment {
             monthlyReadingAdapter.setOnClickItemListener(onClickItemListener);
             rv.setAdapter(monthlyReadingAdapter);
             rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+            updateBalanceStatus(monthlyReadings);
+        } else {
+            updateBalanceStatus(null);
         }
         setShowTvAlert();
+    }
+
+
+    /**
+     * Aktualizuje horní label filtru období.
+     * <p>
+     * Indikace aktivního filtru je nyní součástí widgetu bilance, proto je tento
+     * samostatný label vždy skrytý, aby se informace neduplikovala.
+     */
+    private void updateFilterLabel() {
+        // Indikace filtru je nově součástí widgetu bilance, horní label zůstává skrytý.
+        if (tvMonthlyReadingFilter != null) {
+            tvMonthlyReadingFilter.setVisibility(View.GONE);
+        }
+    }
+
+
+    /**
+     * Vrátí informaci, zda je aktuálně zapnutý filtr období.
+     *
+     * @return {@code true}, pokud je aktivní alespoň jedna hranice období
+     */
+    private boolean isFilterActive() {
+        return from != 0 || to != Long.MAX_VALUE;
+    }
+
+
+    /**
+     * Zobrazí souhrnnou bilanci aktuálně zobrazených měsíčních odečtů.
+     * <p>
+     * Bilance se počítá pouze při aktivním filtru a jen z období, kde je dostupný ceník.
+     * Do výsledného widgetu se kromě částky promítá i text aktivního filtru a počet
+     * aktuálně zobrazených záznamů.
+     *
+     * @param monthlyReadings seznam aktuálně zobrazených měsíčních odečtů po aplikaci filtru
+     */
+    private void updateBalanceStatus(@Nullable ArrayList<MonthlyReadingModel> monthlyReadings) {
+        if (tvBalanceStatus == null || !isFilterActive() || subscriptionPoint == null || monthlyReadings == null || monthlyReadings.size() < 2) {
+            if (tvBalanceStatus != null) {
+                BalanceStatusUiHelper.hideBalanceStatus(tvBalanceStatus);
+            }
+            return;
+        }
+
+        double totalBalance = 0;
+        int includedPeriods = 0;
+        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
+        dataPriceListSource.open();
+        try {
+            for (int position = 0; position < monthlyReadings.size() - 1; position++) {
+                MonthlyReadingModel monthlyReading = monthlyReadings.get(position);
+                if (monthlyReading.isChangeMeter()) {
+                    continue;
+                }
+
+                MonthlyReadingModel previousReading = monthlyReadings.get(position + 1);
+                PriceListModel priceList = dataPriceListSource.readPrice(monthlyReading.getPriceListId());
+                if (priceList == null) {
+                    continue;
+                }
+                includedPeriods++;
+
+                if (swRegulPrice.isChecked()) {
+                    PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, previousReading);
+                    priceList = priceListRegulBuilder.getRegulPriceList();
+                }
+
+                double vtDiff = monthlyReading.getVt() - previousReading.getVt();
+                double ntDiff = monthlyReading.getNt() - previousReading.getNt();
+                double month = Calculation.differentMonth(
+                        ViewHelper.convertLongToDate(previousReading.getDate()),
+                        ViewHelper.convertLongToDate(monthlyReading.getDate()),
+                        DifferenceDate.TypeDate.MONTH
+                );
+                double[] prices = Calculation.calculatePriceWithoutPozeKwh(priceList, subscriptionPoint);
+                Calendar calendarStart = Calendar.getInstance();
+                calendarStart.setTimeInMillis(previousReading.getDate());
+                if (calendarStart.get(Calendar.YEAR) == 2026) {
+                    prices[3] = priceList.getPoze1() / 1000;
+                }
+
+                double totalPrice = (month * prices[2])
+                        + (prices[0] * vtDiff)
+                        + (prices[1] * ntDiff)
+                        + (prices[3] * (vtDiff + ntDiff))
+                        + monthlyReading.getOtherServices();
+                totalPrice = totalPrice + (totalPrice * priceList.getDph() / 100) - monthlyReading.getDifferenceDPH();
+                totalBalance += monthlyReading.getPayment() - totalPrice;
+            }
+        } finally {
+            dataPriceListSource.close();
+        }
+
+        if (includedPeriods == 0) {
+            BalanceStatusUiHelper.hideBalanceStatus(tvBalanceStatus);
+            return;
+        }
+
+        String filterText = getString(
+                R.string.show_period,
+                ViewHelper.convertLongToDate(from),
+                ViewHelper.convertLongToDate(to)
+        );
+        int totalRecords = monthlyReadings.size();
+        InvoiceBalanceHelper.BalanceState state = InvoiceBalanceHelper.getBalanceState(totalBalance);
+        String text = switch (state) {
+            case OVERPAYMENT -> getString(
+                    R.string.monthly_reading_balance_overpayment,
+                    filterText,
+                    InvoiceBalanceHelper.getAbsoluteBalance(totalBalance),
+                    totalRecords
+            );
+            case UNDERPAYMENT -> getString(
+                    R.string.monthly_reading_balance_underpayment,
+                    filterText,
+                    InvoiceBalanceHelper.getAbsoluteBalance(totalBalance),
+                    totalRecords
+            );
+            case BALANCED -> getString(
+                    R.string.monthly_reading_balance_balanced,
+                    filterText,
+                    totalRecords
+            );
+        };
+
+        BalanceStatusUiHelper.showBalanceStatus(
+                tvBalanceStatus,
+                state,
+                text
+        );
     }
 
 
