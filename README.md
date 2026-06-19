@@ -93,12 +93,18 @@ V horní části obrazovky je možné přepínat režim **Zkrácený**. Ve zkrá
 
 Přepínač **Zastropované ceny v r. 2023** slouží pro přepočet záznamů podle pravidel platných pro rok 2023. U běžných novějších záznamů zůstává vypnutý.
 
+<p align="center">
+  <img src="screenshots/mes_1.png" width="300" />
+  <img src="screenshots/mes_2.png" width="300" />
+</p>
+
 Pravidelným používáním aplikace vzniká delší seznam odečtů. Pro lepší orientaci lze použít tlačítko **Filtr odečtů**. Filtr umožňuje zobrazit pouze záznamy v určitém období. Nastavuje se počáteční datum v části **Měsíční odečty OD** a koncové datum v části **Měsíční odečty DO**. Tlačítkem **Filtrovat** se filtr použije, tlačítkem **Vynulovat filtr** se omezení zruší a znovu se zobrazí všechny záznamy. Tlačítkem **Zrušit** se dialog zavře bez použití změn.
 
+Pokud je aplikován filtr, v horní části obrazovky se zobrazí souhrnná informace o vybraném období a celkové bilanci. V měsíčních záznamech se vždy počítá s dražší variantou POZE, tedy s částkou 495 Kč/MWh bez DPH. Výjimkou je rok 2026, kdy je tato část ceny snížena na 0 Kč/MWh.
+
 <p align="center">
-  <img src="screenshots/mes_1.png" width="200" />
-  <img src="screenshots/mes_2.png" width="200" />
-  <img src="screenshots/mes_3.png" width="200" />
+  <img src="screenshots/mes_3.png" width="300" />
+  <img src="screenshots/mes_12.png" width="300" />
 </p>
 
 ### Přidání měsíčního záznamu
