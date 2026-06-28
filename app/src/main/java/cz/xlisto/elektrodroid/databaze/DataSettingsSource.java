@@ -42,6 +42,7 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_NAME = "jmeno";
     private static final String PREFIX_VALUE = "hodnota";
     private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
+    private static final String PREFIX_PRICE_LIST_COMPARE_PARAMETERS = "priceListCompareParameters";
     private static final String PREFIX_CURRENT_SUBSCRIPTION_POINT = "aktualniOdberneMisto";
 
 
@@ -350,6 +351,21 @@ public class DataSettingsSource extends DataSource {
     }
 
     /**
+     * Uloží nebo aktualizuje JSON parametry porovnání ceníků pro dané odběrné místo.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @param json                JSON s parametry porovnání ceníků
+     */
+    public void setPriceListCompareParameters(long idSubscriptionPoint, String json) {
+        String name = loadPriceListCompareName(idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, json);
+        } else {
+            insertByName(name, json);
+        }
+    }
+
+    /**
      * Vloží záznam do tabulky nastavení podle názvu.
      *
      * @param name       název parametru
@@ -393,6 +409,28 @@ public class DataSettingsSource extends DataSource {
     }
 
     /**
+     * Sestaví a vrátí název položky pro ukládání parametrů porovnání ceníků
+     * pro dané odběrné místo.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @return název parametru (řetězec)
+     */
+    private String loadPriceListCompareName(long idSubscriptionPoint) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        open();
+        SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        String name;
+        if (subscriptionPoint != null) {
+            name = PREFIX_PRICE_LIST_COMPARE_PARAMETERS + subscriptionPoint.getIdMilins();
+        } else {
+            name = PREFIX_PRICE_LIST_COMPARE_PARAMETERS + idSubscriptionPoint;
+        }
+        dataSubscriptionPointSource.close();
+        return name;
+    }
+
+    /**
      * Načte uloženou JSON konfiguraci HDO widgetů pro dané odběrné místo.
      * Pokud záznam neexistuje, vrátí prázdný řetězec.
      *
@@ -419,6 +457,45 @@ public class DataSettingsSource extends DataSource {
         }
         cursor.close();
         return json;
+    }
+
+    /**
+     * Načte uložené JSON parametry porovnání ceníků pro dané odběrné místo.
+     * Pokud záznam neexistuje, vrátí prázdný řetězec.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     * @return JSON řetězec s parametry nebo prázdný řetězec
+     */
+    public String loadPriceListCompareParameters(long idSubscriptionPoint) {
+        String name = loadPriceListCompareName(idSubscriptionPoint);
+        String selection = PREFIX_NAME + "=?";
+        String[] args = new String[]{name};
+
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                args,
+                null,
+                null,
+                null);
+
+        cursor.moveToFirst();
+        String json = "";
+        if (cursor.getCount() > 0) {
+            json = cursor.getString(cursor.getColumnIndexOrThrow(PREFIX_VALUE));
+        }
+        cursor.close();
+        return json;
+    }
+
+    /**
+     * Odstraní uložené parametry porovnání ceníků pro dané odběrné místo.
+     *
+     * @param idSubscriptionPoint id odběrného místa
+     */
+    public void deletePriceListCompareParameters(long idSubscriptionPoint) {
+        String[] arguments = new String[]{loadPriceListCompareName(idSubscriptionPoint)};
+        delete(arguments);
     }
 
 

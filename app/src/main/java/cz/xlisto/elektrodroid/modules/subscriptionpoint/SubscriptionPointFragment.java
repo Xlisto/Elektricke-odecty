@@ -241,6 +241,7 @@ public class SubscriptionPointFragment extends Fragment {
         dataSettingsSource.open();
         dataSettingsSource.deleteTimeShift(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
         dataSettingsSource.deleteFirstMeters(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
+        dataSettingsSource.deletePriceListCompareParameters(itemId);
         dataSettingsSource.close();
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();

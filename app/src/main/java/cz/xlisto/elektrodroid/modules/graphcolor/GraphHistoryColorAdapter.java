@@ -16,18 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.dialogs.GraphColorDialogFragment;
+
 
 /**
  * Adapter historie použitých barev
  * Xlisto 28.10.2023 10:24
  */
 public class GraphHistoryColorAdapter extends RecyclerView.Adapter<GraphHistoryColorAdapter.ViewHolder> {
-    private static final String TAG = "GraphHistoryColorAdapter";
+
     private final ArrayList<String> items;
     private final GraphColorDialogFragment graphColorDialogFragment;
 
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         View vVT, vNT;
         TextView tvVT, tvNT;
         RelativeLayout rl;

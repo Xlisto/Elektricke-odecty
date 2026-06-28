@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataGraphColor;
+import cz.xlisto.elektrodroid.dialogs.GraphColorDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 
 

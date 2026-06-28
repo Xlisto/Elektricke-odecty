@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.pricelist;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import static cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG;
@@ -14,10 +14,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.pricelist.ConsuptionContainer;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
@@ -25,7 +30,7 @@ import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
  * Dialog pro zadání vstupních parametrů porovnání ceníků.
  * Uložené hodnoty vrací přes FragmentResult API.
  */
-public class PriceListAddParametersDialogFragment extends DialogFragment {
+public class PriceListComparisonParametersDialogFragment extends DialogFragment {
     public static String TAG = "PriceListAddParametersDialogFragment";
     public static String CONSUPTION_CONTAINER = "consuptionContainer";
     private final String VT = "vt";
@@ -45,12 +50,14 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
      * @param container aktuální parametry porovnání
      * @return nová instance dialogu
      */
-    public static PriceListAddParametersDialogFragment newInstance(ConsuptionContainer container) {
-        PriceListAddParametersDialogFragment frag = new PriceListAddParametersDialogFragment();
+    public static PriceListComparisonParametersDialogFragment newInstance(ConsuptionContainer container) {
+        PriceListComparisonParametersDialogFragment frag = new PriceListComparisonParametersDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putDouble(frag.VT, container.vt);
         bundle.putDouble(frag.NT, container.nt);
         bundle.putDouble(frag.MONTH, container.month);
+        bundle.putDouble(frag.PHAZE, container.phaze);
+        bundle.putDouble(frag.POWER, container.power);
         bundle.putDouble(frag.SERVICES_L, container.servicesL);
         bundle.putDouble(frag.SERVICES_R, container.servicesR);
         frag.setArguments(bundle);
@@ -58,7 +65,7 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
     }
 
 
-    public PriceListAddParametersDialogFragment() {
+    public PriceListComparisonParametersDialogFragment() {
     }
 
 
@@ -86,6 +93,8 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             letVT.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(VT)));
             letNT.setDefaultText(DecimalFormatHelper.df2.format(getArguments().getDouble(NT)));
             letMonth.setDefaultText(DecimalFormatHelper.df0.format(getArguments().getDouble(MONTH)));
+            letPhaze.setText(DecimalFormatHelper.df0.format(getArguments().getDouble(PHAZE)));
+            letPower.setText(DecimalFormatHelper.df0.format(getArguments().getDouble(POWER)));
             letServicesL.setText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_L)));
             letServicesR.setText(DecimalFormatHelper.df2.format(getArguments().getDouble(SERVICES_R)));
         }
@@ -99,11 +108,12 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             double vt = letVT.getDouble();
             double nt = letNT.getDouble();
             double month = letMonth.getDouble();
-            double phaze = letPhaze.getText().toString().isEmpty() ? 0 : Double.parseDouble(letPhaze.getText().toString().replace(",", "."));
-            double power = letPower.getText().toString().isEmpty() ? 0 : Double.parseDouble(letPower.getText().toString().replace(",", "."));
-            double servicesL = letServicesL.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesL.getText().toString().replace(",", "."));
-            double servicesR = letServicesR.getText().toString().isEmpty() ? 0 : Double.parseDouble(letServicesR.getText().toString().replace(",", "."));
+            double phaze = parseInput(letPhaze);
+            double power = parseInput(letPower);
+            double servicesL = parseInput(letServicesL);
+            double servicesR = parseInput(letServicesR);
             ConsuptionContainer container = new ConsuptionContainer(vt, nt, month, phaze, power, servicesL, servicesR);
+            persistCompareParameters(container);
             Bundle bundle = new Bundle();
             bundle.putSerializable(CONSUPTION_CONTAINER, container);
             getParentFragmentManager().setFragmentResult(TAG, bundle);
@@ -119,7 +129,7 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             letServicesR.setText("");
         });
 
-        setPhaze();
+        setPhazeAndPowerDefaults();
 
         if (savedInstanceState != null) {
             letVT.setDefaultText(savedInstanceState.getString(VT));
@@ -154,9 +164,12 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
 
 
     /**
-     * Nastaví výchozí příkon odběrného místa do porovnávání
+     * Nastaví výchozí fázi a příkon z aktuálního odběrného místa.
+     *
+     * <p>Hodnoty se nastaví pouze pokud jsou vstupní pole prázdná,
+     * aby nedošlo k přepsání již načtených/uživatelem zadaných dat.</p>
      */
-    private void setPhaze() {
+    private void setPhazeAndPowerDefaults() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
         long idSubscriptionPoint = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT_LONG, -1L);
 
@@ -164,11 +177,73 @@ public class PriceListAddParametersDialogFragment extends DialogFragment {
             DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
             dataSubscriptionPointSource.open();
             SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-            letPower.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
-            letPower.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
-            letPhaze.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
-            letPhaze.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
+            if (subscriptionPoint != null) {
+                letPower.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
+                letPhaze.setHint(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
+
+                if (letPower.getText().toString().trim().isEmpty()) {
+                    letPower.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getPhaze()));
+                }
+                if (letPhaze.getText().toString().trim().isEmpty()) {
+                    letPhaze.setText(DecimalFormatHelper.df0.format(subscriptionPoint.getCountPhaze()));
+                }
+            }
             dataSubscriptionPointSource.close();
         }
+    }
+
+    /**
+     * Bezpečně převede obsah vstupního pole na číslo.
+     *
+     * @param editText vstupní pole
+     * @return číselná hodnota; při prázdném vstupu vrací 0
+     */
+    private double parseInput(EditText editText) {
+        String value = editText.getText().toString().trim();
+        if (value.isEmpty()) {
+            return 0;
+        }
+        return Double.parseDouble(value.replace(",", "."));
+    }
+
+    /**
+     * Uloží parametry porovnání ceníků jako JSON do tabulky nastavení
+     * pro aktuálně vybrané odběrné místo.
+     *
+     * @param container kontejner parametrů porovnání
+     */
+    private void persistCompareParameters(ConsuptionContainer container) {
+        ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
+        long idSubscriptionPoint = shPSubscriptionPoint.get(ID_SUBSCRIPTION_POINT_LONG, -1L);
+        if (idSubscriptionPoint <= 0) {
+            return;
+        }
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put(VT, container.vt);
+            json.put(NT, container.nt);
+            json.put(MONTH, container.month);
+            json.put(PHAZE, container.phaze);
+            json.put(POWER, container.power);
+            json.put(SERVICES_L, container.servicesL);
+            json.put(SERVICES_R, container.servicesR);
+
+            DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
+            dataSettingsSource.open();
+            dataSettingsSource.setPriceListCompareParameters(idSubscriptionPoint, json.toString());
+            dataSettingsSource.close();
+        } catch (JSONException ignored) {
+        }
+    }
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
     }
 }

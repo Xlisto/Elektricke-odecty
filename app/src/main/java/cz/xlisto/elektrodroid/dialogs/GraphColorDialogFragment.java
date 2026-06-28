@@ -1,4 +1,4 @@
-package cz.xlisto.elektrodroid.modules.graphcolor;
+package cz.xlisto.elektrodroid.dialogs;
 
 
 import android.app.AlertDialog;
@@ -24,13 +24,24 @@ import java.util.regex.Pattern;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataGraphColor;
+import cz.xlisto.elektrodroid.modules.graphcolor.GraphHistoryColorAdapter;
+
 
 /**
- * Dialogové okno pro nastavení barev grafu.
+ * Dialog pro úpravu barev grafu (VT/NT) pomocí HTML hex formátu.
+ *
+ * <p>Fragment zobrazuje vstupní pole pro barvy VT a NT, průběžný náhled,
+ * validaci formátu {@code #RRGGBB} a historii dříve použitých barev.
+ * Po potvrzení vrací vybrané hodnoty přes Fragment Result API pod klíčem
+ * {@link #RESULT_GRAPH_COLOR_DIALOG_FRAGMENT}.</p>
+ *
+ * <p>Součástí je i podpora převzetí barvy z historie
+ * (viz {@link GraphHistoryColorAdapter} a metoda {@link #setColors(String[])}).</p>
  * Xlisto 27.10.2023 19:48
  */
 public class GraphColorDialogFragment extends DialogFragment {
-    static final String TAG = "GraphColorDialogFragment";
+
+    public static final String TAG = "GraphColorDialogFragment";
     public static final String ARG_VT_COLOR = "vtColor";
     public static final String ARG_NT_COLOR = "ntColor";
     public static final String RESULT_GRAPH_COLOR_DIALOG_FRAGMENT = "resultGraphColorDialogFragment";
@@ -40,6 +51,13 @@ public class GraphColorDialogFragment extends DialogFragment {
     private ArrayList<String> items = new ArrayList<>();
 
 
+    /**
+     * Vytvoří novou instanci dialogu s předanými výchozími barvami VT/NT.
+     *
+     * @param vtColor barva VT ve formátu HTML (např. {@code #FF0000})
+     * @param ntColor barva NT ve formátu HTML (např. {@code #0000FF})
+     * @return připravená instance dialogu
+     */
     public static GraphColorDialogFragment newInstance(String vtColor, String ntColor) {
         Bundle bundle = new Bundle();
         bundle.putString(ARG_VT_COLOR, vtColor);
@@ -50,6 +68,11 @@ public class GraphColorDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Načte historii dříve použitých barev z databáze.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +84,12 @@ public class GraphColorDialogFragment extends DialogFragment {
     }
 
 
+    /**
+     * Vytvoří a nakonfiguruje dialog s validací barev, náhledy a historií.
+     *
+     * @param savedInstanceState uložený stav instance (může být null)
+     * @return sestavený dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -102,9 +131,11 @@ public class GraphColorDialogFragment extends DialogFragment {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -121,10 +152,12 @@ public class GraphColorDialogFragment extends DialogFragment {
 
             }
 
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
             }
+
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -135,8 +168,7 @@ public class GraphColorDialogFragment extends DialogFragment {
             }
         });
 
-
-        GraphHistoryColorAdapter adapter = new GraphHistoryColorAdapter(this,items);
+        GraphHistoryColorAdapter adapter = new GraphHistoryColorAdapter(this, items);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -187,14 +219,25 @@ public class GraphColorDialogFragment extends DialogFragment {
 
     /**
      * Nastaví barvy do EditTextů a View.
+     *
      * @param colors pole s barvami ve formátu HTML
      */
-    public void setColors(String[] colors){
+    public void setColors(String[] colors) {
         vVT.setBackgroundColor(Color.parseColor(colors[0]));
         vNT.setBackgroundColor(Color.parseColor(colors[1]));
         etVT.setText(colors[0]);
         etNT.setText(colors[1]);
     }
 
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
 
 }

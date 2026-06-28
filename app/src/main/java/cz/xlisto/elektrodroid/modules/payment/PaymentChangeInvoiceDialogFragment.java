@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
+import cz.xlisto.elektrodroid.dialogs.DialogButtonColorHelper;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
@@ -30,7 +31,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 20.02.2024 15:01
  */
 public class PaymentChangeInvoiceDialogFragment extends DialogFragment {
-    private static final String TAG = "PaymentChangeInvoiceDialogFragment";
+
     public static final String ARG_SELECTED_ID_INVOICE = "selectedIdInvoice";
     public static final String ARG_ID_PAYMENT = "idPayment";
     public static final String ARG_PREVIOUS_ID_INVOICE = "previousIdInvoice";
@@ -71,7 +72,7 @@ public class PaymentChangeInvoiceDialogFragment extends DialogFragment {
 
         DataInvoiceSource dataInvoiceSource = new DataInvoiceSource(requireContext());
 
-        if(subscriptionPoint == null) return;
+        if (subscriptionPoint == null) return;
 
         dataInvoiceSource.open();
         invoices = dataInvoiceSource.loadInvoiceLists(subscriptionPoint);
@@ -126,4 +127,16 @@ public class PaymentChangeInvoiceDialogFragment extends DialogFragment {
         bundle.putBoolean(ARG_RESULT, result);
         getParentFragmentManager().setFragmentResult(FLAG_PAYMENT_ADAPTER_CHANGE_INVOICE, bundle);
     }
+
+
+    /**
+     * Lifecycle callback po zobrazení dialogu.
+     * Aplikuje jednotné barvy tlačítek.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        DialogButtonColorHelper.apply(this);
+    }
+
 }
