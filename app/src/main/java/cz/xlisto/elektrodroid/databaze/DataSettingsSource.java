@@ -585,4 +585,15 @@ public class DataSettingsSource extends DataSource {
         return exists;
     }
 
+    /**
+     * Odstraní uloženou konfiguraci HDO widgetů pro dané odběrné místo.
+     *
+     * @param milins identifikátor milisekund odběrného místa
+     */
+    public void deleteHdoWidgets(long milins) {
+        String name = PREFIX_HDO_WIDGETS + milins;
+        String[] arguments = new String[]{name};
+        delete(arguments);
+    }
+
 }

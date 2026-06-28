@@ -2,25 +2,21 @@ package cz.xlisto.elektrodroid.databaze;
 
 
 import static cz.xlisto.elektrodroid.databaze.DbHelper.CASTKA;
-import static cz.xlisto.elektrodroid.databaze.DbHelper.CENIK_ID;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.CISLO_ELE;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.CISLO_MISTA;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_ID;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.DATUM;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.FAZE;
-import static cz.xlisto.elektrodroid.databaze.DbHelper.GARANCE;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.ID_FAK;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.MIMORADNA;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.NT;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.ODBERENE_MISTO;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.ODBER_ID;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.POPIS;
-import static cz.xlisto.elektrodroid.databaze.DbHelper.POZNAMKA;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.PRIKON;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.PRVNI_ODECET;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.TABLE_NAME_SUBSCRIPTION_POINT;
 import static cz.xlisto.elektrodroid.databaze.DbHelper.VT;
-import static cz.xlisto.elektrodroid.databaze.DbHelper.ZAPLACENO;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,9 +34,6 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
  * Přístup k databázi odběrných míst, měsíčních odečtů atd.
  */
 public class DataSubscriptionPointSource extends DataSource {
-
-    private static final String TAG = "DataSubscriptionPointSource";
-
 
     /**
      * Konstruktor třídy DataSubscriptionPointSource.
@@ -114,6 +107,12 @@ public class DataSubscriptionPointSource extends DataSource {
         database.execSQL("DROP TABLE IF EXISTS " + "PLATBY" + milins);
         database.delete(TABLE_NAME_SUBSCRIPTION_POINT, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
+
+        // Smazání HDO widgetů z tabulky nastavení
+        DataSettingsSource settingsSource = new DataSettingsSource(context);
+        settingsSource.open();
+        settingsSource.deleteHdoWidgets(milins);
+        settingsSource.close();
     }
 
 
@@ -141,26 +140,6 @@ public class DataSubscriptionPointSource extends DataSource {
     }
 
 
-    public ArrayList<String> loadSubscriptionPointName() {
-        ArrayList<String> stringArrayList = new ArrayList<>();
-        Cursor cursor = database.query(TABLE_NAME_SUBSCRIPTION_POINT,
-                new String[]{ODBERENE_MISTO},
-                null,
-                null,
-                null,
-                null,
-                null);
-        for (int i = 0; i < cursor.getCount(); i++) {
-            cursor.moveToPosition(i);
-            String name = cursor.getString(0);
-
-            stringArrayList.add(name);
-        }
-        cursor.close();
-        return stringArrayList;
-    }
-
-
     /**
      * Načte arraylist odběrných míst
      *
@@ -179,24 +158,6 @@ public class DataSubscriptionPointSource extends DataSource {
      */
     public ArrayList<MonthlyReadingModel> loadMonthlyReadings(String table, long from, long to) {
         return loadMonthlyReadings(table, null, from, to, DATUM + " DESC, " + PRVNI_ODECET + " DESC, " + VT + " DESC, " + NT + " DESC");
-    }
-
-
-    /**
-     * Sečte platby jedné faktury
-     *
-     * @param idFak id faktury
-     * @param table jméno tabulky
-     * @return součet plateb
-     */
-    public double loadSumPayment(long idFak, String table) {
-        String selection = "id_fak=?";
-        String[] args = new String[]{String.valueOf(idFak)};
-        Cursor cursor = database.query(table, new String[]{"SUM(castka)"}, selection, args, null, null, null);
-        cursor.moveToFirst();
-        double sum = cursor.getDouble(0);
-        cursor.close();
-        return sum;
     }
 
 
@@ -381,29 +342,6 @@ public class DataSubscriptionPointSource extends DataSource {
 
 
     /**
-     * Načte id prvního nalezeného odběrného místa
-     * Vhodné pro nastavení aktuálního odběrného místa po aktualizaci
-     *
-     * @return id odběrného místa
-     */
-    public long loadFirstIdSubscriptionPoint() {
-        Cursor cursor = database.query(TABLE_NAME_SUBSCRIPTION_POINT,
-                new String[]{"_id"},
-                null,
-                null,
-                null,
-                null,
-                null);
-        if (cursor.getCount() == 0)
-            return -1;
-        cursor.moveToFirst();
-        long id = cursor.getLong(0);
-        cursor.close();
-        return id;
-    }
-
-
-    /**
      * Načte arraylist odběrných míst podle argumentů a setřídí podle názvu odběrného místa
      *
      * @param selection     podmínka
@@ -481,26 +419,6 @@ public class DataSubscriptionPointSource extends DataSource {
         values.put(PRIKON, subScriptionPoint.getPhaze());
         values.put(CISLO_ELE, subScriptionPoint.getNumberElectricMeter());
         values.put(CISLO_MISTA, subScriptionPoint.getNumberSubscriptionPoint());
-        return values;
-    }
-
-
-    /**
-     * Sestaví data měsíčního odečtu pro zápis do databáze
-     *
-     * @param monthlyReading měsíční odečet
-     * @return data měsíčního odečtu
-     */
-    private ContentValues createContentValue(MonthlyReadingModel monthlyReading) {
-        ContentValues values = new ContentValues();
-        values.put(VT, monthlyReading.getVt());
-        values.put(NT, monthlyReading.getNt());
-        values.put(ZAPLACENO, monthlyReading.getPayment());
-        values.put(CENIK_ID, monthlyReading.getPriceListId());
-        values.put(DATUM, monthlyReading.getDate());
-        values.put(PRVNI_ODECET, monthlyReading.isChangeMeter());
-        values.put(GARANCE, monthlyReading.getOtherServices());
-        values.put(POZNAMKA, monthlyReading.getDescription());
         return values;
     }
 
