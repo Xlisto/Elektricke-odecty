@@ -108,10 +108,10 @@ public class DataSubscriptionPointSource extends DataSource {
         database.delete(TABLE_NAME_SUBSCRIPTION_POINT, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
 
-        // Smazání HDO widgetů z tabulky nastavení
+        // Smazání všech osiřelých nastavení navázaných na odběrná místa
         DataSettingsSource settingsSource = new DataSettingsSource(context);
         settingsSource.open();
-        settingsSource.deleteHdoWidgets(milins);
+        settingsSource.deleteOrphanedSubscriptionPointSettings();
         settingsSource.close();
     }
 

@@ -23,10 +23,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
@@ -237,12 +235,6 @@ public class SubscriptionPointFragment extends Fragment {
      * Smaže odběrné místo
      */
     private void deleteItemSubscriptionPoint() {
-        DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
-        dataSettingsSource.open();
-        dataSettingsSource.deleteTimeShift(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
-        dataSettingsSource.deleteFirstMeters(Objects.requireNonNull(SubscriptionPoint.load(requireActivity())).getId());
-        dataSettingsSource.deletePriceListCompareParameters(itemId);
-        dataSettingsSource.close();
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);

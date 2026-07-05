@@ -7,6 +7,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_ID;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 
 
@@ -44,6 +50,12 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
     private static final String PREFIX_PRICE_LIST_COMPARE_PARAMETERS = "priceListCompareParameters";
     private static final String PREFIX_CURRENT_SUBSCRIPTION_POINT = "aktualniOdberneMisto";
+    private static final String[] SUBSCRIPTION_POINT_SETTING_PREFIXES = new String[]{
+            PREFIX_TIME_SHIFT,
+            PREFIX_FIRST_METER,
+            PREFIX_HDO_WIDGETS,
+            PREFIX_PRICE_LIST_COMPARE_PARAMETERS
+    };
 
 
     public DataSettingsSource(Context context) {
@@ -305,37 +317,6 @@ public class DataSettingsSource extends DataSource {
 
 
     /**
-     * Odstraní záznam s posunem času pro dané odběrné místo.
-     *
-     * @param idSubscriptionPoint id odběrného místa
-     */
-    public void deleteTimeShift(long idSubscriptionPoint) {
-        String[] arguments = new String[]{loadTimeShiftName(idSubscriptionPoint)};
-        delete(arguments);
-    }
-
-
-    /**
-     * Odstraní záznam s výchozími stavy měřičů pro dané odběrné místo.
-     *
-     * @param idSubscriptionPoint id odběrného místa
-     */
-    public void deleteFirstMeters(long idSubscriptionPoint) {
-        String[] arguments = new String[]{loadFirstMeterName(idSubscriptionPoint)};
-        delete(arguments);
-    }
-
-
-    /**
-     * Pomocná metoda pro smazání záznamu v tabulce nastavení podle jména.
-     *
-     * @param whereArgs pole argumentů pro WHERE klauzuli (např. název parametru)
-     */
-    private void delete(String[] whereArgs) {
-        database.delete(TABLE_NAME_SETTINGS, PREFIX_NAME + "=?", whereArgs);
-    }
-
-    /**
      * Uloží nebo aktualizuje JSON konfiguraci widgetů HDO pro dané odběrné místo.
      *
      * @param idSubscriptionPoint id odběrného místa
@@ -349,6 +330,7 @@ public class DataSettingsSource extends DataSource {
             insertByName(name, json);
         }
     }
+
 
     /**
      * Uloží nebo aktualizuje JSON parametry porovnání ceníků pro dané odběrné místo.
@@ -365,6 +347,7 @@ public class DataSettingsSource extends DataSource {
         }
     }
 
+
     /**
      * Vloží záznam do tabulky nastavení podle názvu.
      *
@@ -378,6 +361,7 @@ public class DataSettingsSource extends DataSource {
         database.insert(TABLE_NAME_SETTINGS, null, values);
     }
 
+
     /**
      * Aktualizuje záznam v tabulce nastavení podle názvu.
      *
@@ -390,6 +374,7 @@ public class DataSettingsSource extends DataSource {
         values.put(PREFIX_VALUE, parameters);
         database.update(TABLE_NAME_SETTINGS, values, PREFIX_NAME + "=?", arguments);
     }
+
 
     /**
      * Sestaví a vrátí název položky pro ukládání konfigurace HDO widgetů
@@ -407,6 +392,7 @@ public class DataSettingsSource extends DataSource {
         dataSubscriptionPointSource.close();
         return name;
     }
+
 
     /**
      * Sestaví a vrátí název položky pro ukládání parametrů porovnání ceníků
@@ -429,6 +415,7 @@ public class DataSettingsSource extends DataSource {
         dataSubscriptionPointSource.close();
         return name;
     }
+
 
     /**
      * Načte uloženou JSON konfiguraci HDO widgetů pro dané odběrné místo.
@@ -459,6 +446,7 @@ public class DataSettingsSource extends DataSource {
         return json;
     }
 
+
     /**
      * Načte uložené JSON parametry porovnání ceníků pro dané odběrné místo.
      * Pokud záznam neexistuje, vrátí prázdný řetězec.
@@ -488,16 +476,6 @@ public class DataSettingsSource extends DataSource {
         return json;
     }
 
-    /**
-     * Odstraní uložené parametry porovnání ceníků pro dané odběrné místo.
-     *
-     * @param idSubscriptionPoint id odběrného místa
-     */
-    public void deletePriceListCompareParameters(long idSubscriptionPoint) {
-        String[] arguments = new String[]{loadPriceListCompareName(idSubscriptionPoint)};
-        delete(arguments);
-    }
-
 
     /**
      * Uloží nebo aktualizuje ID aktuálně vybraného odběrného místa v tabulce nastavení.
@@ -510,7 +488,6 @@ public class DataSettingsSource extends DataSource {
      * zároveň ukládá do SharedPreferences pro rychlý přístup.</p>
      *
      * @param idSubscriptionPoint id odběrného místa, které se má uložit
-     *
      * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#setCurrentSelection(Context, long)
      */
     public void setCurrentSubscriptionPoint(long idSubscriptionPoint) {
@@ -538,7 +515,6 @@ public class DataSettingsSource extends DataSource {
      * </pre>
      *
      * @return id odběrného místa (> 0), nebo -1L pokud záznam neexistuje nebo neobsahuje validní číslo
-     *
      * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)
      */
     public long loadCurrentSubscriptionPoint() {
@@ -564,6 +540,7 @@ public class DataSettingsSource extends DataSource {
         return subscriptionPointId;
     }
 
+
     /**
      * Pomocná metoda pro ověření existence záznamu podle názvu.
      *
@@ -585,15 +562,84 @@ public class DataSettingsSource extends DataSource {
         return exists;
     }
 
+
     /**
-     * Odstraní uloženou konfiguraci HDO widgetů pro dané odběrné místo.
+     * Smaže všechna nastavení, která už nepatří žádnému existujícímu odběrnému místu.
      *
-     * @param milins identifikátor milisekund odběrného místa
+     * <p>Projde záznamy v tabulce nastavení a ponechá pouze ty položky, které mají podporovaný
+     * prefix a jejich číselná přípona odpovídá některému z aktuálně uložených odběrných míst.</p>
      */
-    public void deleteHdoWidgets(long milins) {
-        String name = PREFIX_HDO_WIDGETS + milins;
-        String[] arguments = new String[]{name};
-        delete(arguments);
+    public void deleteOrphanedSubscriptionPointSettings() {
+        Set<Long> existingMilins = loadExistingSubscriptionPointMilins();
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                new String[]{COLUMN_ID, PREFIX_NAME},
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        ArrayList<Long> idsToDelete = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(1);
+            Long milins = extractSubscriptionPointMilins(name);
+            if (milins != null && !existingMilins.contains(milins)) {
+                idsToDelete.add(cursor.getLong(0));
+            }
+        }
+        cursor.close();
+
+        for (Long id : idsToDelete) {
+            database.delete(TABLE_NAME_SETTINGS, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        }
+    }
+
+
+    /**
+     * Načte množinu všech aktuálně uložených identifikátorů milisekund odběrných míst.
+     *
+     * @return množina platných identifikátorů milisekund
+     */
+    private Set<Long> loadExistingSubscriptionPointMilins() {
+        Set<Long> milins = new HashSet<>();
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        try {
+            for (SubscriptionPointModel subscriptionPoint : dataSubscriptionPointSource.loadSubscriptionPoints()) {
+                milins.add(Long.parseLong(subscriptionPoint.getIdMilins()));
+            }
+        } finally {
+            dataSubscriptionPointSource.close();
+        }
+        return milins;
+    }
+
+
+    /**
+     * Zkusí z názvu položky v tabulce nastavení získat číselnou příponu odběrného místa.
+     *
+     * @param name název položky v tabulce nastavení
+     * @return přípona jako číslo, nebo {@code null}, pokud název neodpovídá podporovanému formátu
+     */
+    private Long extractSubscriptionPointMilins(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        for (String prefix : SUBSCRIPTION_POINT_SETTING_PREFIXES) {
+            if (name.startsWith(prefix)) {
+                String suffix = name.substring(prefix.length());
+                if (suffix.isEmpty()) {
+                    return null;
+                }
+                try {
+                    return Long.parseLong(suffix);
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
 }
