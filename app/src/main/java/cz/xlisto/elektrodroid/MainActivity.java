@@ -11,7 +11,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -364,7 +363,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                     } else if (!secondClick) {
                         secondClick = true;
                         Toast.makeText(getApplication(), getResources().getString(R.string.alert_app_end), Toast.LENGTH_SHORT).show();
-                        new Handler().postDelayed(() -> secondClick = false, 2000);
+                        //new Handler(Looper.getMainLooper()).postDelayed(() -> secondClick = false, 2000);
+                        drawerLayout.postDelayed(() -> secondClick = false, 2000);
                     } else {
                         finish();
                     }
