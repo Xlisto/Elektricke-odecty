@@ -13,6 +13,7 @@ import androidx.documentfile.provider.DocumentFile;
 import com.google.api.services.drive.Drive;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,14 +68,39 @@ public class RecoverDataFromBackupFile extends RecoverData {
      */
     public static void recoverDatabaseFromZipGoogleDrive(Context context, String fileId, String fileName, RecoverDatabaseCallback callback) {
         new Thread(() -> {
-            java.io.File tempFile = new java.io.File(context.getCacheDir(), fileName);
+            File tempFile = new File(context.getCacheDir(), fileName);
             boolean result = false;
+            ArrayList<File> extractedFiles = new ArrayList<>();
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+                // stáhnutí souboru z Google Drive do cache
                 drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
-                DocumentFile documentFile = DocumentFile.fromFile(tempFile);
-                result = recoverDatabaseFromZip(context, documentFile);
+
+                if (fileName.contains(".zip")) {
+                    // rozbalení do cache – nevyžaduje SAF oprávnění
+                    extractedFiles = unzipToCache(context, tempFile);
+                    result = recoverDatabaseFromCacheFiles(context, extractedFiles);
+                } else {
+                    DocumentFile documentFile = DocumentFile.fromFile(tempFile);
+                    result = recoverDatabaseFromZip(context, documentFile);
+                }
             } catch (IOException e) {
                 Log.e(TAG, "recoverDatabaseFromZipGoogleDrive: " + e.getMessage());
+            } finally {
+                // úklid rozbalených dočasných souborů
+                for (File f : extractedFiles) {
+                    if (f.exists() && !f.delete()) {
+                        Log.w(TAG, "Nepodařilo se smazat dočasný soubor: " + f.getPath());
+                    }
+                }
+                // úklid dočasného ZIP souboru
+                if (tempFile.exists() && !tempFile.delete()) {
+                    Log.w(TAG, "Nepodařilo se smazat dočasný ZIP soubor: " + tempFile.getPath());
+                }
+                // úklid dočasné složky v cache
+                File cacheTemp = new File(context.getCacheDir(), "backup_temp");
+                if (cacheTemp.exists() && !cacheTemp.delete()) {
+                    Log.w(TAG, "Nepodařilo se smazat dočasnou složku: " + cacheTemp.getPath());
+                }
             }
             boolean finalResult = result;
             if (context instanceof Activity activity) {
@@ -213,6 +239,69 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
 
     /**
+     * Rozbalí ZIP archiv do dočasné složky v cache aplikace.
+     * Nevyžaduje žádné SAF oprávnění.
+     *
+     * @param context kontext aplikace
+     * @param zipFile lokální ZIP soubor v cache
+     * @return seznam rozbalených souborů v cache
+     * @throws IOException při chybě čtení nebo zápisu
+     */
+    private static ArrayList<File> unzipToCache(Context context, File zipFile) throws IOException {
+        File cacheTemp = new File(context.getCacheDir(), "backup_temp");
+        if (!cacheTemp.exists() && !cacheTemp.mkdirs()) {
+            throw new IOException("Nelze vytvořit dočasnou složku v cache: " + cacheTemp.getPath());
+        }
+
+        ArrayList<File> files = new ArrayList<>();
+        byte[] buffer = new byte[1024];
+
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String entryName = ze.getName();
+                File newFile = new File(cacheTemp, entryName);
+
+                try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                files.add(newFile);
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
+        return files;
+    }
+
+
+    /**
+     * Obnoví databáze ze souborů rozbalených do cache (bez SAF).
+     *
+     * @param context kontext aplikace
+     * @param files   seznam souborů v cache
+     * @return {@code true}, pokud se obnova zdařila
+     */
+    private static boolean recoverDatabaseFromCacheFiles(Context context, ArrayList<File> files) {
+        Boolean[] b = new Boolean[2];
+        int idx = 0;
+        for (File file : files) {
+            String name = file.getName();
+            if (name.equals("odecet.db") || name.equals("cenik.db")) {
+                DocumentFile docFile = DocumentFile.fromFile(file);
+                b[idx] = recoverDatabaseFromFile(context, docFile);
+                idx++;
+            }
+        }
+        if (b[0] == null || b[1] == null)
+            return false;
+        return b[0] && b[1];
+    }
+
+
+    /**
      * Rozbalí ZIP archiv zálohy do aktuálně vybrané lokální složky záloh.
      *
      * @param context      kontext aplikace
@@ -239,7 +328,14 @@ public class RecoverDataFromBackupFile extends RecoverData {
                     newFiled = pickedDir.createFile("bin", fileName);
                 }
 
-                OutputStream fos = context.getContentResolver().openOutputStream(Objects.requireNonNull(newFiled).getUri());
+                if (newFiled == null) {
+                    Log.e(TAG, "unzip: nelze vytvořit soubor " + fileName + " – chybí oprávnění pro zápis do záložní složky");
+                    zis.closeEntry();
+                    zis.close();
+                    return files;
+                }
+
+                OutputStream fos = context.getContentResolver().openOutputStream(newFiled.getUri());
 
                 int len;
                 while ((len = zis.read(buffer)) > 0) {
