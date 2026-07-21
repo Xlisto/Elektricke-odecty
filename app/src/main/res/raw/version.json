@@ -1,5 +1,14 @@
 [
   {
+    "version": 158,
+    "date": "21.7.2026",
+    "changes": [
+      "<b>Vylepšení:</b>",
+      "Oveření aplikace pro ukládání záloh do Google Drive.",
+      "Nové dokumentační stránky aplikace, včetně nápovědy."
+    ]
+  },
+  {
     "version": 157,
     "date": "26.5.2026",
     "changes": [
