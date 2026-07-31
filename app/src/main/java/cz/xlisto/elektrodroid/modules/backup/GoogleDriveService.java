@@ -443,7 +443,7 @@ public class GoogleDriveService {
         });
 
         // Třídění souborů
-        Collator collator = Collator.getInstance(new Locale("cs", "CZ"));
+        Collator collator = Collator.getInstance(Locale.forLanguageTag("cs-CZ"));
         Collections.sort(allFiles, (f1, f2) -> {
             Long timestamp1 = BackupFileTimestampHelper.extractTimestampFromName(f1.getName());
             Long timestamp2 = BackupFileTimestampHelper.extractTimestampFromName(f2.getName());
