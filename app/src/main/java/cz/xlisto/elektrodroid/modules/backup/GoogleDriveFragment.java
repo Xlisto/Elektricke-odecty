@@ -100,6 +100,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private int selectedFilesCount;
     private boolean multiSelectMode;
     private boolean suppressSelectionCanceledSnackbar;
+    private boolean credentialActionInProgress;
     private MenuItem menuItemDeleteSelected;
     private MenuItem menuItemSaveSelected;
     private MenuItem menuItemToastMenu;
@@ -121,7 +122,6 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             }
     );
 
-    // handler pro zobrazení výsledku obnovení databáze
     /**
      * Handler pro zpracování výsledku obnovení databáze z Google Drive zálohy.
      *
@@ -205,6 +205,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         internetAvailable = NetworkUtil.isInternetAllowedBySettings(requireContext());
+        googleDriveViewModel = new ViewModelProvider(this).get(GoogleDriveViewModel.class);
     }
 
 
@@ -229,6 +230,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         credentialHelper.setCredentialListener(this);
 
         shPGoogleDrive = new ShPGoogleDrive(requireContext());
+        credentialActionInProgress = isCredentialActionInProgressPersisted();
 
         connectivityManager = (ConnectivityManager) requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         networkCallback = new NetworkCallbackImpl(this);
@@ -356,6 +358,12 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             }
         });
 
+        googleDriveViewModel.getCredentialState().observe(getViewLifecycleOwner(), state -> {
+            if (state == null)
+                return;
+            handleCredentialState(state);
+        });
+
         observePendingWifiUploadWork();
 
         setupMenuProvider();
@@ -427,6 +435,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                 menuInflater.inflate(R.menu.menu_google_drive, menu);
             }
 
+
             @Override
             public void onPrepareMenu(@NonNull Menu menu) {
                 menuItemDeleteSelected = menu.findItem(R.id.menu_action_google_delete_selected);
@@ -438,6 +447,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
                 boolean isUserSignedIn = shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false);
                 signItem.setVisible(internetAvailable);
+                signItem.setEnabled(internetAvailable && !credentialActionInProgress);
                 signItem.setIcon(isUserSignedIn ? R.drawable.ic_logout_24 : R.drawable.ic_login_24);
                 signItem.setTitle(isUserSignedIn ? R.string.sign_out : R.string.sign_in);
 
@@ -459,16 +469,22 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                 }
             }
 
+
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == MENU_ACTION_GOOGLE_SIGN) {
                     if (credentialHelper == null || shPGoogleDrive == null)
                         return true;
+                    if (credentialActionInProgress)
+                        return true;
 
-                    if (shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false))
+                    if (shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false)) {
+                        googleDriveViewModel.setSigningOut();
                         credentialHelper.signOutWithCredentialManager();
-                    else
+                    } else {
+                        googleDriveViewModel.setSigningIn();
                         credentialHelper.signInWithCredentialManager();
+                    }
                     return true;
                 }
                 if (item.getItemId() == R.id.menu_action_google_delete_selected) {
@@ -504,9 +520,8 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         Log.w(TAG, "onSignInSuccess: " + account.name);
         shPGoogleDrive.set(ShPGoogleDrive.USER_SIGNED, true);
         shPGoogleDrive.set(ShPGoogleDrive.USER_NAME, account.name);
-        toggleButtonsAndRecyclerViewVisibility();
-        updateAppBarSignMenu();
-        loadGoogleFiles();
+        if (googleDriveViewModel != null)
+            googleDriveViewModel.setSignInFinished(account.name);
     }
 
 
@@ -518,18 +533,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      */
     @Override
     public void onSignInError(boolean noCredentials, String errorMessage) {
-        if (!isAdded())
-            return;
-
         shPGoogleDrive.set(ShPGoogleDrive.USER_SIGNED, false);
-        String message = noCredentials
-                ? getString(R.string.sign_in_no_credentials)
-                : getString(R.string.sign_in_failed);
-        updateAppBarSignMenu();
-
-        View root = getView();
-        if (root != null)
-            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
+        if (googleDriveViewModel != null)
+            googleDriveViewModel.setSignInFailed(noCredentials, errorMessage);
 
         Log.w(TAG, "onSignInError: " + errorMessage);
     }
@@ -543,17 +549,16 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         Log.w(TAG, "onSignOutSuccess");
         shPGoogleDrive.set(ShPGoogleDrive.USER_SIGNED, false);
         shPGoogleDrive.set(ShPGoogleDrive.USER_NAME, "");
-        if (backupAdapter != null) {
-            suppressSelectionCanceledSnackbar = true;
-            backupAdapter.cancelMultiSelect();
-        }
-        updateSelectionActions(0, false);
-        dismissDeleteProgressDialog();
-        dismissSaveProgressDialog();
-        clearPendingSaveToLocal();
-        toggleButtonsAndRecyclerViewVisibility();
-        updateAppBarSignMenu();
-        onFilesLoaded(List.of());
+        if (googleDriveViewModel != null)
+            googleDriveViewModel.setSignOutFinished();
+    }
+
+
+    @Override
+    public void onSignOutError(String errorMessage) {
+        if (googleDriveViewModel != null)
+            googleDriveViewModel.setSignOutFailed(errorMessage);
+        Log.w(TAG, "onSignOutError: " + errorMessage);
     }
 
 
@@ -563,6 +568,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     public void loadGoogleFiles() {
         Log.w(TAG, "loadGoogleFiles: internetAvailable: " + internetAvailable);
         if (!internetAvailable)
+            return;
+
+        if (isSignOutInProgress())
             return;
 
         if (shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty())
@@ -669,14 +677,29 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      * Nastaví viditelnost obsahu a stavových hlášek podle internetu a přihlášení.
      */
     private void toggleButtonsAndRecyclerViewVisibility() {
-        requireActivity().runOnUiThread(() -> {
+        android.app.Activity activity = getActivity();
+        if (activity == null)
+            return;
+
+        activity.runOnUiThread(() -> {
+            if (!isAdded())
+                return;
+
             boolean isUserSignedIn = shPGoogleDrive.get(ShPGoogleDrive.USER_SIGNED, false);
+            boolean signOutInProgress = isSignOutInProgress();
 
             if (internetAvailable) {
                 recyclerView.setVisibility(isUserSignedIn ? View.VISIBLE : View.INVISIBLE);
-                updateConnectionAlert(isUserSignedIn);
+                if (signOutInProgress) {
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    if (backupAdapter != null)
+                        backupAdapter.clearData();
+                    updateConnectionAlert(false);
+                } else {
+                    updateConnectionAlert(isUserSignedIn);
+                }
                 updatePendingUploadAlert();
-                if (isUserSignedIn)
+                if (isUserSignedIn && !signOutInProgress)
                     loadGoogleFiles();
             } else {
                 recyclerView.setVisibility(View.INVISIBLE);
@@ -837,7 +860,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     /**
      * Synchronizuje stav výběru v recycler view s menu aplikace.
      *
-     * @param selectedCount počet vybraných položek
+     * @param selectedCount     počet vybraných položek
      * @param isMultiSelectMode {@code true}, pokud je aktivní režim více výběru
      */
     private void updateSelectionActions(int selectedCount, boolean isMultiSelectMode) {
@@ -875,7 +898,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     /**
      * Callback změny výběru z adapteru.
      *
-     * @param selectedCount počet vybraných položek
+     * @param selectedCount     počet vybraných položek
      * @param isMultiSelectMode {@code true}, pokud je aktivní režim více výběru
      */
     @Override
@@ -912,7 +935,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      * Aktualizace průběhu mazání.
      *
      * @param processedCount počet již smazaných souborů
-     * @param totalCount celkový počet souborů
+     * @param totalCount     celkový počet souborů
      */
     @Override
     public void onDeleteProgress(int processedCount, int totalCount) {
@@ -927,9 +950,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     /**
      * Dokončení mazání vybraných souborů.
      *
-     * @param success {@code true}, pokud byly smazány všechny soubory
+     * @param success      {@code true}, pokud byly smazány všechny soubory
      * @param deletedCount počet úspěšně smazaných souborů
-     * @param totalCount celkový počet souborů
+     * @param totalCount   celkový počet souborů
      */
     @Override
     public void onDeleteFinished(boolean success, int deletedCount, int totalCount) {
@@ -983,6 +1006,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
     }
 
+
     /**
      * Bezpečně zavře dialog průběhu mazání a uvolní na něj referenci.
      *
@@ -1006,6 +1030,95 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         if (!isAdded())
             return;
         requireActivity().invalidateOptionsMenu();
+    }
+
+
+    private void handleCredentialState(@NonNull GoogleDriveViewModel.CredentialState state) {
+        switch (state.status()) {
+            case SIGNING_IN:
+                credentialActionInProgress = true;
+                showLnProgressBar(true);
+                updateAppBarSignMenu();
+                break;
+            case SIGNING_OUT:
+                credentialActionInProgress = true;
+                if (backupAdapter != null)
+                    backupAdapter.clearData();
+                showLnProgressBar(true);
+                updateAppBarSignMenu();
+                break;
+            case SIGNED_IN:
+                credentialActionInProgress = false;
+                toggleButtonsAndRecyclerViewVisibility();
+                updateAppBarSignMenu();
+                googleDriveViewModel.resetCredentialToIdle();
+                break;
+            case SIGNED_OUT:
+                credentialActionInProgress = false;
+                showLnProgressBar(false);
+                if (backupAdapter != null) {
+                    suppressSelectionCanceledSnackbar = true;
+                    backupAdapter.cancelMultiSelect();
+                }
+                updateSelectionActions(0, false);
+                dismissDeleteProgressDialog();
+                dismissSaveProgressDialog();
+                clearPendingSaveToLocal();
+                toggleButtonsAndRecyclerViewVisibility();
+                updateAppBarSignMenu();
+                onFilesLoaded(List.of());
+                googleDriveViewModel.resetCredentialToIdle();
+                break;
+            case FAILED_SIGN_IN:
+                credentialActionInProgress = false;
+                showLnProgressBar(false);
+                updateAppBarSignMenu();
+                View signInRoot = getView();
+                if (signInRoot != null) {
+                    String message = state.noCredentials()
+                            ? getString(R.string.sign_in_no_credentials)
+                            : getString(R.string.sign_in_failed);
+                    Snackbar.make(signInRoot, message, Snackbar.LENGTH_LONG).show();
+                }
+                googleDriveViewModel.resetCredentialToIdle();
+                break;
+            case FAILED_SIGN_OUT:
+                credentialActionInProgress = false;
+                showLnProgressBar(false);
+                updateAppBarSignMenu();
+                View signOutRoot = getView();
+                if (signOutRoot != null)
+                    Snackbar.make(signOutRoot, getString(R.string.sign_out_failed), Snackbar.LENGTH_LONG).show();
+                googleDriveViewModel.resetCredentialToIdle();
+                break;
+            case IDLE:
+            default:
+                credentialActionInProgress = false;
+                updateAppBarSignMenu();
+                break;
+        }
+    }
+
+
+    private boolean isCredentialActionInProgressPersisted() {
+        if (googleDriveViewModel == null)
+            return false;
+
+        GoogleDriveViewModel.CredentialState state = googleDriveViewModel.getCredentialState().getValue();
+        if (state == null)
+            return false;
+
+        return state.status() == GoogleDriveViewModel.CredentialStatus.SIGNING_IN
+                || state.status() == GoogleDriveViewModel.CredentialStatus.SIGNING_OUT;
+    }
+
+
+    private boolean isSignOutInProgress() {
+        if (googleDriveViewModel == null)
+            return false;
+
+        GoogleDriveViewModel.CredentialState state = googleDriveViewModel.getCredentialState().getValue();
+        return state != null && state.status() == GoogleDriveViewModel.CredentialStatus.SIGNING_OUT;
     }
 
 

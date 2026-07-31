@@ -40,7 +40,7 @@ import cz.xlisto.elektrodroid.R;
  *     <li>Odhlášení uživatele a vymazání uloženého stavu přihlašovacích údajů</li>
  *     <li>Asynchronní zpracování všech operací pomocí ExecutorService</li>
  * </ul>
- *
+ * <p>
  * Třída vyžaduje posluchače {@link CredentialListener} pro zpracování výsledků operací.
  *
  * @see CredentialListener
@@ -118,7 +118,7 @@ public class CredentialHelper {
      *     <li>V případě úspěchu volá {@link CredentialListener#onSignInSuccess(Account)}</li>
      *     <li>V případě neúspěchu volá {@link CredentialListener#onSignInError(boolean, String)}</li>
      * </ol>
-     *
+     * <p>
      * Metoda se spouští asynchronně, takže se vrátí okamžitě bez čekání na výsledek.
      * Výsledek je vrácen prostřednictvím nastavené {@link CredentialListener}.
      */
@@ -144,11 +144,11 @@ public class CredentialHelper {
      *     <li>Implementuje fallback logiku pro případ, kdy nejsou dostupné uložené přihlašovací údaje</li>
      *     <li>Volá odpovídající callback metody listeneru v hlavním vlákně</li>
      * </ul>
-     *
+     * <p>
      * Fallback mechanismus se spouští pouze jednou, a pokud selže, vrátí chybou.
      *
-     * @param executor {@link ExecutorService} pro spouštění asynchronní operace.
-     * @param request {@link GetCredentialRequest} obsahující možnosti přihlášení.
+     * @param executor        {@link ExecutorService} pro spouštění asynchronní operace.
+     * @param request         {@link GetCredentialRequest} obsahující možnosti přihlášení.
      * @param fallbackAttempt {@code true} pokud se jedná o fallback pokus (Sign In with Google),
      *                        {@code false} pro iniciální pokus (Google ID).
      */
@@ -206,7 +206,7 @@ public class CredentialHelper {
      *     <li>V případě úspěchu volá {@link CredentialListener#onSignOutSuccess()}</li>
      *     <li>V případě neúspěchu zaznamenává chybu (bez volání listeneru)</li>
      * </ol>
-     *
+     * <p>
      * Metoda se spouští asynchronně a chyby odhlášení jsou pouze zaznamenávány.
      * Úspěšné odhlášení je vráceno prostřednictvím nastavené {@link CredentialListener}.
      */
@@ -232,11 +232,19 @@ public class CredentialHelper {
                             @Override
                             public void onError(@NonNull ClearCredentialException e) {
                                 Log.e(TAG, "onError: Sign out failed", e);
+                                if (credentialListener != null) {
+                                    new Handler(Looper.getMainLooper()).post(() ->
+                                            credentialListener.onSignOutError(e.getMessage()));
+                                }
                             }
                         }
                 );
             } catch (Exception e) {
                 Log.e(TAG, "signOutWithCredentialManager: ", e);
+                if (credentialListener != null) {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            credentialListener.onSignOutError(e.getMessage()));
+                }
             }
         });
     }
@@ -251,7 +259,7 @@ public class CredentialHelper {
      *     <li>Chyby během procesu přihlášení</li>
      *     <li>Úspěšné odhlášení</li>
      * </ul>
-     *
+     * <p>
      * Všechny callback metody jsou volány v hlavním vlákně (Main Thread).
      */
     public interface CredentialListener {
@@ -270,17 +278,24 @@ public class CredentialHelper {
          * @param noCredentials {@code true} pokud chyba nastala proto, že nejsou dostupné
          *                      žádné přihlašovací údaje ({@link NoCredentialException}),
          *                      {@code false} pro ostatní typy chyb.
-         * @param errorMessage Popis chyby, která nastala. Může obsahovat informace
-         *                     o důvodu selhání operace.
+         * @param errorMessage  Popis chyby, která nastala. Může obsahovat informace
+         *                      o důvodu selhání operace.
          */
         void onSignInError(boolean noCredentials, String errorMessage);
 
-         /**
+        /**
          * Volán při úspěšném odhlášení uživatele.
          * Po zavolání této metody jsou všechny uložené přihlašovací údaje vymazány
          * z CredentialManager.
          */
         void onSignOutSuccess();
+
+        /**
+         * Volán při chybě během odhlášení uživatele.
+         *
+         * @param errorMessage technický popis chyby odhlášení
+         */
+        void onSignOutError(String errorMessage);
 
     }
 

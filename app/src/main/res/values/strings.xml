@@ -548,6 +548,7 @@
     <string name="sign_out">Odhlásit</string>
     <string name="sign_in_no_credentials">Není dostupný žádný účet Google. Přidejte účet v zařízení a zkuste to znovu.</string>
     <string name="sign_in_failed">Přihlášení se nepodařilo. Zkuste to prosím znovu.</string>
+    <string name="sign_out_failed">Odhlášení se nepodařilo. Zkuste to prosím znovu.</string>
     <string name="deleted_file">Soubor byl smazán</string>
     <string name="not_deleted_file">Soubor se nepodařilo smazat</string>
     <string name="restore">Obnov data</string>

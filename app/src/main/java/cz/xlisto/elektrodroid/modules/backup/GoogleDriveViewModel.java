@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.modules.backup;
 
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -17,17 +18,32 @@ import androidx.lifecycle.ViewModel;
  */
 public class GoogleDriveViewModel extends ViewModel {
 
-    /** Stav mazání */
+    /**
+     * Stav mazání
+     */
     public enum DeleteStatus {
         IDLE, IN_PROGRESS, FINISHED, FAILED
     }
 
-    /** Stav ukládání do lokálního úložiště */
+
+    /**
+     * Stav ukládání do lokálního úložiště
+     */
     public enum SaveStatus {
         IDLE, IN_PROGRESS, FINISHED, FAILED
     }
 
-    public record DeleteState(DeleteStatus status, boolean success, int deletedCount, int totalCount,
+
+    /**
+     * Stav přihlášení/odhlášení přes CredentialManager
+     */
+    public enum CredentialStatus {
+        IDLE, SIGNING_IN, SIGNING_OUT, SIGNED_IN, SIGNED_OUT, FAILED_SIGN_IN, FAILED_SIGN_OUT
+    }
+
+
+    public record DeleteState(DeleteStatus status, boolean success, int deletedCount,
+                              int totalCount,
                               @Nullable String errorMessage) {
 
         /**
@@ -39,6 +55,7 @@ public class GoogleDriveViewModel extends ViewModel {
             return new DeleteState(DeleteStatus.IDLE, false, 0, 0, null);
         }
 
+
         /**
          * Vrátí stav probíhající operace mazání.
          *
@@ -48,6 +65,7 @@ public class GoogleDriveViewModel extends ViewModel {
         public static DeleteState inProgress(int totalCount) {
             return new DeleteState(DeleteStatus.IN_PROGRESS, false, 0, totalCount, null);
         }
+
 
         /**
          * Vrátí finální stav po dokončení mazání.
@@ -61,6 +79,7 @@ public class GoogleDriveViewModel extends ViewModel {
             return new DeleteState(DeleteStatus.FINISHED, success, deletedCount, totalCount, null);
         }
 
+
         /**
          * Vrátí chybový stav operace mazání.
          *
@@ -70,18 +89,23 @@ public class GoogleDriveViewModel extends ViewModel {
         public static DeleteState failed(String errorMessage) {
             return new DeleteState(DeleteStatus.FAILED, false, 0, 0, errorMessage);
         }
+
     }
 
-    public record SaveState(SaveStatus status, boolean success, int processedCount, int savedCount, int totalCount,
+
+    public record SaveState(SaveStatus status, boolean success, int processedCount, int savedCount,
+                            int totalCount,
                             @Nullable String errorMessage) {
 
         public static SaveState idle() {
             return new SaveState(SaveStatus.IDLE, false, 0, 0, 0, null);
         }
 
+
         public static SaveState inProgress(int processedCount, int savedCount, int totalCount) {
             return new SaveState(SaveStatus.IN_PROGRESS, false, processedCount, savedCount, totalCount, null);
         }
+
 
         public static SaveState finished(boolean success, int savedCount, int totalCount) {
             return new SaveState(SaveStatus.FINISHED, success, totalCount, savedCount, totalCount, null);
@@ -89,8 +113,53 @@ public class GoogleDriveViewModel extends ViewModel {
 
     }
 
+
+    public record CredentialState(CredentialStatus status,
+                                  @Nullable String accountName,
+                                  boolean noCredentials,
+                                  @Nullable String errorMessage) {
+
+        public static CredentialState idle() {
+            return new CredentialState(CredentialStatus.IDLE, null, false, null);
+        }
+
+
+        public static CredentialState signingIn() {
+            return new CredentialState(CredentialStatus.SIGNING_IN, null, false, null);
+        }
+
+
+        public static CredentialState signingOut() {
+            return new CredentialState(CredentialStatus.SIGNING_OUT, null, false, null);
+        }
+
+
+        public static CredentialState signedIn(String accountName) {
+            return new CredentialState(CredentialStatus.SIGNED_IN, accountName, false, null);
+        }
+
+
+        public static CredentialState signedOut() {
+            return new CredentialState(CredentialStatus.SIGNED_OUT, null, false, null);
+        }
+
+
+        public static CredentialState failedSignIn(boolean noCredentials, String errorMessage) {
+            return new CredentialState(CredentialStatus.FAILED_SIGN_IN, null, noCredentials, errorMessage);
+        }
+
+
+        public static CredentialState failedSignOut(String errorMessage) {
+            return new CredentialState(CredentialStatus.FAILED_SIGN_OUT, null, false, errorMessage);
+        }
+
+    }
+
+
     private final MutableLiveData<DeleteState> deleteState = new MutableLiveData<>(DeleteState.idle());
     private final MutableLiveData<SaveState> saveState = new MutableLiveData<>(SaveState.idle());
+    private final MutableLiveData<CredentialState> credentialState = new MutableLiveData<>(CredentialState.idle());
+
 
     /**
      * Vrátí lifecycle-aware stream aktuálního stavu mazání.
@@ -101,12 +170,22 @@ public class GoogleDriveViewModel extends ViewModel {
         return deleteState;
     }
 
+
     /**
      * Vrátí lifecycle-aware stream aktuálního stavu ukládání do lokálního úložiště.
      */
     public LiveData<SaveState> getSaveState() {
         return saveState;
     }
+
+
+    /**
+     * Vrátí lifecycle-aware stream stavu přihlášení/odhlášení.
+     */
+    public LiveData<CredentialState> getCredentialState() {
+        return credentialState;
+    }
+
 
     /**
      * Nastaví stav na průběh mazání.
@@ -117,6 +196,7 @@ public class GoogleDriveViewModel extends ViewModel {
         deleteState.postValue(DeleteState.inProgress(totalCount));
     }
 
+
     /**
      * Nastaví stav na průběh ukládání do lokálního úložiště.
      */
@@ -124,12 +204,30 @@ public class GoogleDriveViewModel extends ViewModel {
         saveState.postValue(SaveState.inProgress(0, 0, totalCount));
     }
 
+
+    /**
+     * Nastaví stav probíhajícího přihlášení.
+     */
+    public void setSigningIn() {
+        credentialState.postValue(CredentialState.signingIn());
+    }
+
+
+    /**
+     * Nastaví stav probíhajícího odhlášení.
+     */
+    public void setSigningOut() {
+        credentialState.postValue(CredentialState.signingOut());
+    }
+
+
     /**
      * Aktualizuje průběh ukládání do lokálního úložiště.
      */
     public void setSaveProgress(int processedCount, int savedCount, int totalCount) {
         saveState.postValue(SaveState.inProgress(processedCount, savedCount, totalCount));
     }
+
 
     /**
      * Nastaví výsledný stav po dokončení operace mazání.
@@ -142,12 +240,46 @@ public class GoogleDriveViewModel extends ViewModel {
         deleteState.postValue(DeleteState.finished(success, deletedCount, totalCount));
     }
 
+
     /**
      * Nastaví výsledný stav po dokončení ukládání do lokálního úložiště.
      */
     public void setSaveFinished(boolean success, int savedCount, int totalCount) {
         saveState.postValue(SaveState.finished(success, savedCount, totalCount));
     }
+
+
+    /**
+     * Nastaví úspěšný výsledek přihlášení.
+     */
+    public void setSignInFinished(@Nullable String accountName) {
+        credentialState.postValue(CredentialState.signedIn(accountName));
+    }
+
+
+    /**
+     * Nastaví úspěšný výsledek odhlášení.
+     */
+    public void setSignOutFinished() {
+        credentialState.postValue(CredentialState.signedOut());
+    }
+
+
+    /**
+     * Nastaví chybový výsledek přihlášení.
+     */
+    public void setSignInFailed(boolean noCredentials, @Nullable String errorMessage) {
+        credentialState.postValue(CredentialState.failedSignIn(noCredentials, errorMessage));
+    }
+
+
+    /**
+     * Nastaví chybový výsledek odhlášení.
+     */
+    public void setSignOutFailed(@Nullable String errorMessage) {
+        credentialState.postValue(CredentialState.failedSignOut(errorMessage));
+    }
+
 
     /**
      * Nastaví chybový stav operace.
@@ -166,11 +298,21 @@ public class GoogleDriveViewModel extends ViewModel {
         deleteState.postValue(DeleteState.idle());
     }
 
+
     /**
      * Resetuje stav ukládání do lokálního úložiště do výchozího stavu.
      */
     public void resetSaveToIdle() {
         saveState.postValue(SaveState.idle());
     }
+
+
+    /**
+     * Resetuje stav přihlášení/odhlášení do výchozího stavu.
+     */
+    public void resetCredentialToIdle() {
+        credentialState.postValue(CredentialState.idle());
+    }
+
 }
 
