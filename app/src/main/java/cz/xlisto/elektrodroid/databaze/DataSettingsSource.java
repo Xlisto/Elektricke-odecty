@@ -50,11 +50,21 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
     private static final String PREFIX_PRICE_LIST_COMPARE_PARAMETERS = "priceListCompareParameters";
     private static final String PREFIX_CURRENT_SUBSCRIPTION_POINT = "aktualniOdberneMisto";
+    private static final String PREFIX_READING_NOTIFICATION_ENABLED = "readingNotificationEnabled";
+    private static final String PREFIX_READING_NOTIFICATION_FREQUENCY = "readingNotificationFrequency";
+    private static final String PREFIX_READING_NOTIFICATION_DAY_OF_MONTH = "readingNotificationDayOfMonth";
+    private static final String PREFIX_READING_NOTIFICATION_DAY_OF_WEEK = "readingNotificationDayOfWeek";
+    private static final String PREFIX_READING_NOTIFICATION_TIME = "readingNotificationTime";
     private static final String[] SUBSCRIPTION_POINT_SETTING_PREFIXES = new String[]{
             PREFIX_TIME_SHIFT,
             PREFIX_FIRST_METER,
             PREFIX_HDO_WIDGETS,
-            PREFIX_PRICE_LIST_COMPARE_PARAMETERS
+            PREFIX_PRICE_LIST_COMPARE_PARAMETERS,
+            PREFIX_READING_NOTIFICATION_ENABLED,
+            PREFIX_READING_NOTIFICATION_FREQUENCY,
+            PREFIX_READING_NOTIFICATION_DAY_OF_MONTH,
+            PREFIX_READING_NOTIFICATION_DAY_OF_WEEK,
+            PREFIX_READING_NOTIFICATION_TIME
     };
 
 
@@ -474,6 +484,163 @@ public class DataSettingsSource extends DataSource {
         }
         cursor.close();
         return json;
+    }
+
+
+    /**
+     * Uloží, zda je notifikace zápisu pro odběrné místo povolena.
+     */
+    public void setReadingNotificationEnabled(long idSubscriptionPoint, boolean enabled) {
+        String name = loadReadingNotificationSettingName(PREFIX_READING_NOTIFICATION_ENABLED, idSubscriptionPoint);
+        String value = enabled ? "1" : "0";
+        if (isExistsByName(name)) {
+            updateByName(name, value);
+        } else {
+            insertByName(name, value);
+        }
+    }
+
+
+    /**
+     * Načte, zda je notifikace zápisu pro odběrné místo povolena.
+     * Výchozí hodnota je false.
+     */
+    public boolean loadReadingNotificationEnabled(long idSubscriptionPoint) {
+        String value = loadReadingNotificationValue(PREFIX_READING_NOTIFICATION_ENABLED, idSubscriptionPoint);
+        return "1".equals(value) || "true".equalsIgnoreCase(value);
+    }
+
+
+    /**
+     * Uloží frekvenci notifikace (0 = měsíčně, 1 = týdně).
+     */
+    public void setReadingNotificationFrequency(long idSubscriptionPoint, int frequency) {
+        String name = loadReadingNotificationSettingName(PREFIX_READING_NOTIFICATION_FREQUENCY, idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, String.valueOf(frequency));
+        } else {
+            insertByName(name, String.valueOf(frequency));
+        }
+    }
+
+
+    /**
+     * Načte frekvenci notifikace. Výchozí hodnota je měsíčně (0).
+     */
+    public int loadReadingNotificationFrequency(long idSubscriptionPoint) {
+        String value = loadReadingNotificationValue(PREFIX_READING_NOTIFICATION_FREQUENCY, idSubscriptionPoint);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Uloží den v měsíci pro měsíční notifikaci.
+     */
+    public void setReadingNotificationDayOfMonth(long idSubscriptionPoint, String dayOfMonth) {
+        String name = loadReadingNotificationSettingName(PREFIX_READING_NOTIFICATION_DAY_OF_MONTH, idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, dayOfMonth);
+        } else {
+            insertByName(name, dayOfMonth);
+        }
+    }
+
+
+    /**
+     * Načte den v měsíci pro notifikaci. Výchozí hodnota je "1".
+     */
+    public String loadReadingNotificationDayOfMonth(long idSubscriptionPoint) {
+        String value = loadReadingNotificationValue(PREFIX_READING_NOTIFICATION_DAY_OF_MONTH, idSubscriptionPoint);
+        return value.isEmpty() ? "1" : value;
+    }
+
+
+    /**
+     * Uloží den v týdnu pro týdenní notifikaci.
+     */
+    public void setReadingNotificationDayOfWeek(long idSubscriptionPoint, int dayOfWeek) {
+        String name = loadReadingNotificationSettingName(PREFIX_READING_NOTIFICATION_DAY_OF_WEEK, idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, String.valueOf(dayOfWeek));
+        } else {
+            insertByName(name, String.valueOf(dayOfWeek));
+        }
+    }
+
+
+    /**
+     * Načte den v týdnu pro notifikaci. Výchozí hodnota je 0 (pondělí).
+     */
+    public int loadReadingNotificationDayOfWeek(long idSubscriptionPoint) {
+        String value = loadReadingNotificationValue(PREFIX_READING_NOTIFICATION_DAY_OF_WEEK, idSubscriptionPoint);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Uloží čas notifikace ve formátu HH:mm.
+     */
+    public void setReadingNotificationTime(long idSubscriptionPoint, String time) {
+        String name = loadReadingNotificationSettingName(PREFIX_READING_NOTIFICATION_TIME, idSubscriptionPoint);
+        if (isExistsByName(name)) {
+            updateByName(name, time);
+        } else {
+            insertByName(name, time);
+        }
+    }
+
+
+    /**
+     * Načte čas notifikace. Výchozí hodnota je "08:00".
+     */
+    public String loadReadingNotificationTime(long idSubscriptionPoint) {
+        String value = loadReadingNotificationValue(PREFIX_READING_NOTIFICATION_TIME, idSubscriptionPoint);
+        return value.isEmpty() ? "08:00" : value;
+    }
+
+
+    private String loadReadingNotificationValue(String prefix, long idSubscriptionPoint) {
+        String name = loadReadingNotificationSettingName(prefix, idSubscriptionPoint);
+        String selection = PREFIX_NAME + "=?";
+        String[] args = new String[]{name};
+        Cursor cursor = database.query(TABLE_NAME_SETTINGS,
+                null,
+                selection,
+                args,
+                null,
+                null,
+                null);
+
+        String value = "";
+        if (cursor.moveToFirst()) {
+            value = cursor.getString(cursor.getColumnIndexOrThrow(PREFIX_VALUE));
+        }
+        cursor.close();
+        return value;
+    }
+
+
+    private String loadReadingNotificationSettingName(String prefix, long idSubscriptionPoint) {
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
+        dataSubscriptionPointSource.open();
+        open();
+        SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
+        String name;
+        if (subscriptionPoint != null) {
+            name = prefix + subscriptionPoint.getIdMilins();
+        } else {
+            name = prefix + idSubscriptionPoint;
+        }
+        dataSubscriptionPointSource.close();
+        return name;
     }
 
 
