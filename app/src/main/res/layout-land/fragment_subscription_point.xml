@@ -19,16 +19,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/tvPocetMist"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:id="@+id/layoutSubscriptionPointManagement"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -104,14 +108,6 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                         android:textSize="16sp" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
                 <LinearLayout
                     android:id="@+id/lnDescription"
                     android:layout_width="match_parent"
@@ -200,6 +196,126 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/lnReadingNotification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:orientation="vertical"
+                android:padding="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/shape_item"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <CheckBox
+                        android:id="@+id/chReadingNotificationEnabled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/reading_notification_enabled" />
+
+                    <Spinner
+                        android:id="@+id/spinnerReadingNotificationFrequency"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/reading_notification_frequency"
+                        android:entries="@array/reading_notification_frequency_array"
+                        android:minHeight="48dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutNotificationTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="@string/reading_notification_time"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvNotificationTime"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:minHeight="48dp"
+                            android:padding="8dp"
+                            android:text="@string/reading_notification_time_default" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutMonthlyDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="@string/reading_notification_day_of_month"
+                            android:textSize="12sp" />
+
+                        <EditText
+                            android:id="@+id/etDayOfMonth"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="@null"
+                            android:hint="@string/reading_notification_day_of_month_hint"
+                            android:inputType="number"
+                            android:minHeight="48dp"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutWeeklyDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/reading_notification_day_of_week"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                        <Spinner
+                            android:id="@+id/spinnerDayOfWeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:contentDescription="@string/reading_notification_day_of_week"
+                            android:entries="@array/day_of_week_array"
+                            android:minHeight="48dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
@@ -220,7 +336,7 @@
     <TextView
         android:id="@+id/tvCreateNewSubscriptionPoint"
         style="@style/StyleTvAlert"
-        android:text="@string/create_place"/>
+        android:text="@string/create_place" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

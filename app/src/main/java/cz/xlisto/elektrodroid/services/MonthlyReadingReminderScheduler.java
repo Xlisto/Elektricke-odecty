@@ -10,9 +10,9 @@ import android.util.Log;
 
 import java.util.Calendar;
 
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
-import cz.xlisto.elektrodroid.shp.ShPSettings;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -25,8 +25,7 @@ public final class MonthlyReadingReminderScheduler {
     public static final String EXTRA_TABLE = "extra_table";
     public static final String EXTRA_SUBSCRIPTION_POINT_ID = "extra_subscription_point_id";
     public static final String EXTRA_SCHEDULED_TIME = "extra_scheduled_time";
-
-    public static final int FREQUENCY_MONTHLY = 0;
+    
     public static final int FREQUENCY_WEEKLY = 1;
 
     private static final String TAG = "MonthlyReadReminder";
@@ -70,16 +69,26 @@ public final class MonthlyReadingReminderScheduler {
             return;
         }
 
-        ShPSettings shPSettings = new ShPSettings(context);
-        if (!shPSettings.get(ShPSettings.READING_NOTIFICATION_ENABLED, false)) {
-            cancel(context);
-            return;
-        }
+        long subscriptionPointId = subscriptionPoint.getId();
+        DataSettingsSource settingsSource = new DataSettingsSource(context);
+        settingsSource.open();
+        int frequency;
+        int dayOfMonth;
+        int dayOfWeek;
+        int[] time;
+        try {
+            if (!settingsSource.loadReadingNotificationEnabled(subscriptionPointId)) {
+                cancel(context);
+                return;
+            }
 
-        int frequency = shPSettings.get(ShPSettings.READING_NOTIFICATION_FREQUENCY, FREQUENCY_MONTHLY);
-        int dayOfMonth = parseInt(shPSettings.get(ShPSettings.READING_NOTIFICATION_DAY_OF_MONTH, "1"));
-        int dayOfWeek = shPSettings.get(ShPSettings.READING_NOTIFICATION_DAY_OF_WEEK, 0);
-        int[] time = parseTime(shPSettings.get(ShPSettings.READING_NOTIFICATION_TIME, "08:00"));
+            frequency = settingsSource.loadReadingNotificationFrequency(subscriptionPointId);
+            dayOfMonth = parseInt(settingsSource.loadReadingNotificationDayOfMonth(subscriptionPointId));
+            dayOfWeek = settingsSource.loadReadingNotificationDayOfWeek(subscriptionPointId);
+            time = parseTime(settingsSource.loadReadingNotificationTime(subscriptionPointId));
+        } finally {
+            settingsSource.close();
+        }
 
         long triggerAtMillis = findNextTrigger(context, subscriptionPoint.getTableO(), frequency, dayOfMonth, dayOfWeek, time[0], time[1], System.currentTimeMillis());
         if (triggerAtMillis <= 0L) {

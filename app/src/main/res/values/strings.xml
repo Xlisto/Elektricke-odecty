@@ -662,12 +662,17 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
 
     <!-- Notifikace pro zápis odečtu -->
     <string name="reading_notification_enabled">Povolit notifikaci pro zápis odečtu</string>
+    <string name="reading_notification_settings">Nastavení notifikace pro zápis odečtu</string>
+    <string name="subscription_point_tab_management">Správa odběrného místa</string>
+    <string name="subscription_point_tab_notifications">Notifikace</string>
     <string name="reading_notification_frequency">Frekvence notifikace</string>
     <string name="reading_notification_monthly">Měsíčně</string>
     <string name="reading_notification_weekly">Týdně</string>
     <string name="reading_notification_day_of_month">Den v měsíci (1–31):</string>
+    <string name="reading_notification_day_of_month_hint">1-31</string>
     <string name="reading_notification_day_of_week">Den v týdnu:</string>
     <string name="reading_notification_time">Čas notifikace:</string>
+    <string name="reading_notification_time_default">08:00</string>
     <string name="monthly_reading_reminder_channel_name">Připomenutí zápisu</string>
     <string name="monthly_reading_reminder_title">Připomenutí zápisu odečtu</string>
     <string name="monthly_reading_reminder_message">Nezapomeňte provést měsíční zápis odečtu.</string>
