@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -130,13 +131,13 @@ public class PriceListFragment extends Fragment {
         if (getArguments() != null) {
             showSelectItem = getArguments().getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = getArguments().getLong(ID_SELECTED_PRICE_LIST);
-            side = (Side) getArguments().getSerializable(FLAG_SIDE);
+            side = BundleCompat.getSerializable(getArguments(), FLAG_SIDE, Side.class);
         }
         if (savedInstanceState != null) {
             showSelectItem = savedInstanceState.getBoolean(SHOW_SELECT_ITEM);
             idSelectedPriceList = savedInstanceState.getLong(ID_SELECTED_PRICE_LIST);
             idFragment = savedInstanceState.getInt(ARG_ID_FRAGMENT);
-            side = (Side) savedInstanceState.getSerializable(FLAG_SIDE);
+            side = BundleCompat.getSerializable(savedInstanceState, FLAG_SIDE, Side.class);
         }
     }
 

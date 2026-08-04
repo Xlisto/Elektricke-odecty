@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -177,8 +178,8 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
 
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            PriceListModel priceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
-            PriceListFragment.Side side = (PriceListFragment.Side) result.getSerializable(PriceListFragment.FLAG_SIDE);
+            PriceListModel priceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
+            PriceListFragment.Side side = BundleCompat.getSerializable(result, PriceListFragment.FLAG_SIDE, PriceListFragment.Side.class);
             if (priceList != null && side != null) {
                 if (side.equals(PriceListFragment.Side.LEFT)) {
                     priceListLeftNERegul = priceList;

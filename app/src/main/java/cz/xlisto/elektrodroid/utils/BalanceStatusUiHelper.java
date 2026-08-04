@@ -1,11 +1,11 @@
 package cz.xlisto.elektrodroid.utils;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.StringRes;
+import androidx.core.text.HtmlCompat;
 
 import java.util.Objects;
 
@@ -71,7 +71,7 @@ public final class BalanceStatusUiHelper {
         }
 
         textView.setBackgroundResource(backgroundResId);
-        textView.setText(Html.fromHtml(text));
+        textView.setText(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY));
         textView.setVisibility(View.VISIBLE);
     }
 

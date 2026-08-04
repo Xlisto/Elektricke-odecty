@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 
@@ -148,6 +149,8 @@ public class SubscriptionPoint {
         dataSettingsSource.open();
         dataSettingsSource.setCurrentSubscriptionPoint(idSubscriptionPoint);
         dataSettingsSource.close();
+
+        MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
     }
 
 

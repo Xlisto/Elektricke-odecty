@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.modules.aboutme;
 
 
-import android.text.Html;
+import androidx.core.text.HtmlCompat;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -68,11 +68,7 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
                 changesHtml.append("<br><br>");
         }
         // Nastaví HTML řetězec do TextView
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            holder.tvContent.setText(Html.fromHtml(changesHtml.toString(), Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            holder.tvContent.setText(Html.fromHtml(changesHtml.toString()));
-        }
+        holder.tvContent.setText(HtmlCompat.fromHtml(changesHtml.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         holder.itemView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
     }
 

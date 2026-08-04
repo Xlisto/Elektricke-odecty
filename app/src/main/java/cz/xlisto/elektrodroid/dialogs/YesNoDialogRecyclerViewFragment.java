@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,7 +62,7 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         JSONPriceList jsonPriceList = new JSONPriceList();
         //rotace obrazovky
         if (savedInstanceState != null) {
-            priceLists = (ArrayList<PriceListModel>) savedInstanceState.getSerializable(PRICE_ARRAYLIST);
+            priceLists = BundleCompat.getSerializable(savedInstanceState, PRICE_ARRAYLIST, ArrayList.class);
         } else {
             priceLists = jsonPriceList.getPriceList(requireContext(), documentFile);
         }

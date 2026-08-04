@@ -29,9 +29,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class DataMonthlyReadingSource extends DataSource {
 
-    private static final String TAG = "DataMonthlyReadingSource";
-
-
     public DataMonthlyReadingSource(Context context) {
         super.context = context;
         dbHelper = new DbHelper(context);
@@ -185,6 +182,10 @@ public class DataMonthlyReadingSource extends DataSource {
                 null,
                 null,
                 orderBy);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return monthlyReadingModels;
+        }
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             MonthlyReadingModel monthlyReadingModel = createMonthlyReading(cursor);
@@ -193,6 +194,30 @@ public class DataMonthlyReadingSource extends DataSource {
         }
         cursor.close();
         return monthlyReadingModels;
+    }
+
+
+    /**
+     * Zjistí, zda existuje alespoň jeden měsíční odečet v zadaném období.
+     *
+     * @param table         název tabulky s odečty
+     * @param fromInclusive začátek období včetně
+     * @param toInclusive   konec období včetně
+     * @return true pokud existuje alespoň jeden odečet
+     */
+    public boolean hasMonthlyReadingInPeriod(String table, long fromInclusive, long toInclusive) {
+        try (Cursor cursor = database.query(table,
+                new String[]{"count(*)"},
+                DATUM + ">=? AND " + DATUM + "<=?",
+                new String[]{String.valueOf(fromInclusive), String.valueOf(toInclusive)},
+                null,
+                null,
+                null)) {
+            if (!cursor.moveToFirst()) {
+                return false;
+            }
+            return cursor.getInt(0) > 0;
+        }
     }
 
 
@@ -206,6 +231,7 @@ public class DataMonthlyReadingSource extends DataSource {
     public long insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
         return database.insert(tableName, null, createContentValue(monthlyReading));
     }
+
 
     /**
      * Smaže měsíční odečet podle ID

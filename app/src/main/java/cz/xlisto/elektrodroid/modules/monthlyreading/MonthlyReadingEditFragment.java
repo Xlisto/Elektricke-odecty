@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
@@ -19,6 +20,7 @@ import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
@@ -27,7 +29,6 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  */
 public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbstract {
 
-    private final String TAG = "MonthlyReadingEditFragment";
     private static final String ARG_TABLE_O = "table_O";
     private static final String ARG_ITEM_ID = "item_id";
     private static final String ARG_IS_FIRST_LOAD = "isFirstLoad";
@@ -136,7 +137,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
 
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            selectedPriceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
 
             if (selectedPriceList != null) {
                 btnSelectPriceList.setText(selectedPriceList.getName());
@@ -179,6 +180,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         dataMonthlyReadingSource.close();
         //úprava posledního záznamu v období bez faktury
         updateItemInvoice(lastMonthlyReading);
+        MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
     }
 
     /**

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Frekvence notifikací pro zápis odečtu -->
+    <string-array name="reading_notification_frequency_array">
+        <item>@string/reading_notification_monthly</item>
+        <item>@string/reading_notification_weekly</item>
+    </string-array>
+
+    <!-- Dny v týdnu -->
+    <string-array name="day_of_week_array">
+        <item>@string/day_monday</item>
+        <item>@string/day_tuesday</item>
+        <item>@string/day_wednesday</item>
+        <item>@string/day_thursday</item>
+        <item>@string/day_friday</item>
+        <item>@string/day_saturday</item>
+        <item>@string/day_sunday</item>
+    </string-array>
+</resources>
+

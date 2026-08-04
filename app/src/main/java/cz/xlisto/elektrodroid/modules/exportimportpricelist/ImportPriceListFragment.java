@@ -37,6 +37,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -93,7 +94,6 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
  */
 public class ImportPriceListFragment extends Fragment {
 
-    private static final String TAG = "ExportImportPriceListFragment";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES = "exportDialogFragment1Prices";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES = "exportDialogFragment2Prices";
     private RecyclerView recyclerView;
@@ -248,7 +248,8 @@ public class ImportPriceListFragment extends Fragment {
         //zde je seznam zatržených ceníků připravených k importu do databáze
         requireActivity().getSupportFragmentManager().setFragmentResultListener(ImportPriceListAdapter.FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP, this, (requestKey, result) -> {
             if (result.getBoolean(YesNoDialogFragment.RESULT)) {
-                ArrayList<PriceListModel> priceLists = (ArrayList<PriceListModel>) result.getSerializable(SELECTED_ARRAYLIST);
+                @SuppressWarnings("unchecked")
+                ArrayList<PriceListModel> priceLists = BundleCompat.getSerializable(result, SELECTED_ARRAYLIST, ArrayList.class);
                 assert priceLists != null;
                 saveToDatabase(priceLists);
             }

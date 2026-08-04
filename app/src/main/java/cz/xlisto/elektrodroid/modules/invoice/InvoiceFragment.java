@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -789,7 +790,7 @@ public class InvoiceFragment extends Fragment {
         TextView itemView = new TextView(requireContext());
         itemView.setPadding(dpToPx(12), dpToPx(10), dpToPx(12), dpToPx(10));
         String text = getTotalText(type);
-        itemView.setText(android.text.Html.fromHtml(text));
+        itemView.setText(HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY));
         itemView.setTextSize(16);
         itemView.setClickable(true);
         itemView.setFocusable(true);
@@ -935,7 +936,7 @@ public class InvoiceFragment extends Fragment {
      */
     private void updateTotalHeader() {
         normalizeShowTypeTotalPrice();
-        tvTotal.setText(android.text.Html.fromHtml(getTotalText(showTypeTotalPrice)));
+        tvTotal.setText(HtmlCompat.fromHtml(getTotalText(showTypeTotalPrice), HtmlCompat.FROM_HTML_MODE_LEGACY));
         tvTotal.setCompoundDrawablePadding(dpToPx(8));
         tvTotal.setCompoundDrawablesWithIntrinsicBounds(0, 0,
                 isTotalPanelExpanded ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float, 0);

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 
 import java.util.Calendar;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
@@ -34,7 +36,6 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  */
 public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbstract {
 
-    private final String TAG = "MonthlyReadingAddFragment";
     private static final String ARG_TABLE_O = "table_O";
     private static final String ARG_TABLE_PAYMENT = "table_PLATBY";
     private final String ARG_DATE_PAYMENT = "datePayment";
@@ -112,6 +113,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 //reakce, pokud se jedná o první záznam právě vloženého měsíčního odečtu
                 //úprava posledního záznamu v období bez faktury
                 updateItemInvoice(lastMonthlyReading);
+                MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
 
                 if (cbAddBackup.isChecked()) {
                     backupMonthlyReading();
@@ -173,7 +175,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
 
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            selectedPriceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+            selectedPriceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
             if (selectedPriceList != null) {
                 btnSelectPriceList.setText(selectedPriceList.getName());
                 viewModel.setSelectedPriceList(selectedPriceList);
@@ -209,6 +211,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 int dayOfMonth = Integer.parseInt(date);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             } catch (Exception e) {
+                String TAG = "MonthlyReadingAddFragment";
                 Logger.getLogger(TAG).warning("Nepodařilo se převést datum platby na číslo.");
             }
 

@@ -5,7 +5,8 @@ import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.Html;
+
+import androidx.core.text.HtmlCompat;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.invoice.WithOutInvoiceService;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
@@ -305,10 +307,10 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.tvNtPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[1] * ntDiff)));
             holder.tvPozePrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(prices[3] * (vtDiff + ntDiff))));
             holder.tvNextServicesPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(items.get(position).getOtherServices())));
-            holder.tvMonth.setText(Html.fromHtml(context.getResources().getString(R.string.count_months_html, (DecimalFormatHelper.df3.format(month)))));
+            holder.tvMonth.setText(HtmlCompat.fromHtml(context.getResources().getString(R.string.count_months_html, (DecimalFormatHelper.df3.format(month))), HtmlCompat.FROM_HTML_MODE_LEGACY));
             holder.tvMonthPrice.setText(context.getResources().getString(R.string.string_price, DecimalFormatHelper.df2.format(monthPrice)));
-            holder.tvTotalPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_price_html, DecimalFormatHelper.df2.format(total), differenceDescription)));
-            holder.tvDifferentPrice.setText(Html.fromHtml(context.getResources().getString(R.string.total_different_html, color, DecimalFormatHelper.df2.format(different))));
+            holder.tvTotalPrice.setText(HtmlCompat.fromHtml(context.getResources().getString(R.string.total_price_html, DecimalFormatHelper.df2.format(total), differenceDescription), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            holder.tvDifferentPrice.setText(HtmlCompat.fromHtml(context.getResources().getString(R.string.total_different_html, color, DecimalFormatHelper.df2.format(different)), HtmlCompat.FROM_HTML_MODE_LEGACY));
 
             List<TextView> textViewsVt = Arrays.asList(holder.tvVtDescription, holder.tvVt, holder.tvVtDif, holder.tvVtPrice);
             List<TextView> textViewsNt = Arrays.asList(holder.tvNtDescription, holder.tvNt, holder.tvNtDif, holder.tvNtPrice);
@@ -620,6 +622,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         } else {
             WithOutInvoiceService.updateAllItemsInvoice(context, subscriptionPoint.getTableTED(), subscriptionPoint.getTableFAK(), subscriptionPoint.getTableO());
         }
+        MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
     }
 
 

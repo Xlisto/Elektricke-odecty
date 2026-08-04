@@ -19,6 +19,10 @@
             android:enabled="true"
             android:exported="false" />
         <receiver
+            android:name=".services.MonthlyReadingReminderReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
             android:name=".utils.BootCompleteReceiver"
             android:enabled="true"
             android:exported="true"

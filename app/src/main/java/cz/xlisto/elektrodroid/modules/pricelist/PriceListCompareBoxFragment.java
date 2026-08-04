@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -198,8 +199,8 @@ public class PriceListCompareBoxFragment extends Fragment {
 
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            PriceListModel priceList = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
-            PriceListFragment.Side side = (PriceListFragment.Side) result.getSerializable(PriceListFragment.FLAG_SIDE);
+            PriceListModel priceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
+            PriceListFragment.Side side = BundleCompat.getSerializable(result, PriceListFragment.FLAG_SIDE, PriceListFragment.Side.class);
             if (priceList != null && side != null) {
                 if (side.equals(PriceListFragment.Side.LEFT)) {
                     priceListLeftNERegul = priceList;
@@ -220,7 +221,7 @@ public class PriceListCompareBoxFragment extends Fragment {
 
         //listener pro výběr parametrů
         getParentFragmentManager().setFragmentResultListener(PriceListComparisonParametersDialogFragment.TAG, this, (requestKey, result) -> {
-            consuptionContainer = (ConsuptionContainer) result.getSerializable(PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER);
+            consuptionContainer = BundleCompat.getSerializable(result, PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER, ConsuptionContainer.class);
             selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul, consuptionContainer);
             priceListsViewModel.setConsuptionContainer(consuptionContainer);
         });

@@ -53,6 +53,7 @@ import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.elektrodroid.ownview.MyBottomNavigationView;
 import cz.xlisto.elektrodroid.services.HdoNotice;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderNotice;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
@@ -329,6 +330,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (handleHdoNotificationIntent(getIntent(), navigationView)) {
             return;
         }
+        if (handleMonthlyReadingReminderIntent(getIntent(), navigationView)) {
+            return;
+        }
         if (savedInstanceState != null) {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
             selectedItemIndex = savedInstanceState.getInt(ACTUAL_SELECTED_ITEM_INDEX);
@@ -393,7 +397,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onNewIntent(intent);
         setIntent(intent);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        handleHdoNotificationIntent(intent, navigationView);
+        if (!handleHdoNotificationIntent(intent, navigationView)) {
+            handleMonthlyReadingReminderIntent(intent, navigationView);
+        }
     }
 
 
@@ -737,6 +743,45 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         actualFragment = HdoFragment.newInstance();
         FragmentChange.replace(this, actualFragment, ALPHA);
         setToolbarTitle(getResources().getString(R.string.hdo_times));
+        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
+        setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
+        return true;
+    }
+
+
+    /**
+     * Zpracuje kliknutí na notifikaci připomenutí měsíčního odečtu.
+     *
+     * @return {@code true}, pokud intent obsahoval akci připomenutí měsíčního odečtu
+     */
+    private boolean handleMonthlyReadingReminderIntent(@Nullable Intent intent, @Nullable NavigationView navigationView) {
+        if (intent == null) {
+            return false;
+        }
+
+        String argsFragment = intent.getStringExtra(HdoNotice.ARGS_FRAGMENT);
+        if (!MonthlyReadingReminderNotice.NOTIFICATION_FRAGMENT.equals(argsFragment)) {
+            return false;
+        }
+
+        long subscriptionPointId = intent.getLongExtra(HdoNotice.EXTRA_SUBSCRIPTION_POINT_ID, -1L);
+        if (subscriptionPointId > 0) {
+            SubscriptionPoint.setCurrentSelection(getApplicationContext(), subscriptionPointId);
+        }
+
+        intent.removeExtra(HdoNotice.ARGS_FRAGMENT);
+        intent.removeExtra(HdoNotice.EXTRA_SUBSCRIPTION_POINT_ID);
+
+        if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.menu_monthly_reads);
+        }
+        myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(2).setChecked(true));
+        myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+        selectedItemIndex = 2;
+        shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
+        actualFragment = MonthlyReadingFragment.newInstance();
+        FragmentChange.replace(this, actualFragment, ALPHA);
+        setToolbarTitle(getResources().getString(R.string.month_reads));
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
         setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
         return true;

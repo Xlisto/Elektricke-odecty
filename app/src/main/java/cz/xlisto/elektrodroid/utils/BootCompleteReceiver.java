@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
+import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 
 
 /**
@@ -29,6 +30,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)
                 || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
             HdoAlarmScheduler.rescheduleAll(context);
+            MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
         }
 
         // --- Čekající zálohy na Google Drive ---
