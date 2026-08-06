@@ -41,7 +41,7 @@ public class MonthlyReadingReminderReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (MonthlyReadingReminderScheduler.hasReadingForCurrentPeriod(context, currentSubscriptionPoint)) {
+        if (MonthlyReadingReminderScheduler.hasReadingForScheduledDay(context, currentSubscriptionPoint, scheduledAt)) {
             MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
             return;
         }

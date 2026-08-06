@@ -101,9 +101,9 @@ public final class MonthlyReadingReminderScheduler {
 
 
     /**
-     * Zjistí, zda už pro aktuální relevantní období existuje zapsaný odečet.
+     * Zjistí, zda už pro cílový den připomínky existuje zapsaný odečet.
      */
-    public static boolean hasReadingForCurrentPeriod(Context context, SubscriptionPointModel subscriptionPoint) {
+    public static boolean hasReadingForScheduledDay(Context context, SubscriptionPointModel subscriptionPoint, long scheduledAtMillis) {
         if (subscriptionPoint == null) {
             return false;
         }
@@ -111,21 +111,9 @@ public final class MonthlyReadingReminderScheduler {
         DataMonthlyReadingSource source = new DataMonthlyReadingSource(context);
         source.open();
         try {
-            Calendar from = Calendar.getInstance();
-            from.set(Calendar.DAY_OF_MONTH, 1);
-            from.set(Calendar.HOUR_OF_DAY, 0);
-            from.set(Calendar.MINUTE, 0);
-            from.set(Calendar.SECOND, 0);
-            from.set(Calendar.MILLISECOND, 0);
-
-            Calendar to = (Calendar) from.clone();
-            to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
-            to.set(Calendar.HOUR_OF_DAY, 23);
-            to.set(Calendar.MINUTE, 59);
-            to.set(Calendar.SECOND, 59);
-            to.set(Calendar.MILLISECOND, 999);
-
-            return source.hasMonthlyReadingInPeriod(subscriptionPoint.getTableO(), from.getTimeInMillis(), to.getTimeInMillis());
+            Calendar targetDay = Calendar.getInstance();
+            targetDay.setTimeInMillis(scheduledAtMillis > 0 ? scheduledAtMillis : System.currentTimeMillis());
+            return hasReadingOnDay(source, subscriptionPoint.getTableO(), targetDay);
         } finally {
             source.close();
         }
@@ -169,7 +157,7 @@ public final class MonthlyReadingReminderScheduler {
             for (int i = 0; i < LOOKAHEAD_MONTHS; i++) {
                 Calendar trigger = createMonthlyCandidate(cursor, requestedDayOfMonth, hourOfDay, minute);
 
-                if (trigger.getTimeInMillis() <= nowMillis || hasReadingInMonth(source, table, trigger)) {
+                if (trigger.getTimeInMillis() <= nowMillis || hasReadingOnDay(source, table, trigger)) {
                     cursor.add(Calendar.MONTH, 1);
                     cursor.set(Calendar.DAY_OF_MONTH, 1);
                     setStartOfDay(cursor);
@@ -204,7 +192,7 @@ public final class MonthlyReadingReminderScheduler {
             trigger.add(Calendar.DAY_OF_YEAR, delta);
 
             for (int i = 0; i < LOOKAHEAD_WEEKS; i++) {
-                if (trigger.getTimeInMillis() <= nowMillis || hasReadingInMonth(source, table, trigger)) {
+                if (trigger.getTimeInMillis() <= nowMillis || hasReadingOnDay(source, table, trigger)) {
                     trigger.add(Calendar.DAY_OF_YEAR, 7);
                     continue;
                 }
@@ -217,17 +205,12 @@ public final class MonthlyReadingReminderScheduler {
     }
 
 
-    private static boolean hasReadingInMonth(DataMonthlyReadingSource source, String table, Calendar trigger) {
+    private static boolean hasReadingOnDay(DataMonthlyReadingSource source, String table, Calendar trigger) {
         Calendar from = (Calendar) trigger.clone();
-        from.set(Calendar.DAY_OF_MONTH, 1);
         setStartOfDay(from);
 
         Calendar to = (Calendar) from.clone();
-        to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
-        to.set(Calendar.HOUR_OF_DAY, 23);
-        to.set(Calendar.MINUTE, 59);
-        to.set(Calendar.SECOND, 59);
-        to.set(Calendar.MILLISECOND, 999);
+        setEndOfDay(to);
 
         return source.hasMonthlyReadingInPeriod(table, from.getTimeInMillis(), to.getTimeInMillis());
     }
@@ -279,6 +262,14 @@ public final class MonthlyReadingReminderScheduler {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+
+    private static void setEndOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
     }
 
 
