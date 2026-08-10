@@ -14,15 +14,33 @@ Aplikace pracuje s vysokým tarifem (VT), nízkým tarifem (NT), měsíčními z
 
 Odběrné místo představuje konkrétní místo spotřeby elektřiny, například byt, dům, garáž nebo chatu. V aplikaci lze vést více odběrných míst současně. Veškeré měsíční odečty, faktury, použité ceníky a další záznamy se vždy vztahují k aktuálně vybranému odběrnému místu.
 
-Aktuální odběrné místo se vybírá v horní části obrazovky pomocí rozbalovacího seznamu. Pod ním se zobrazují základní údaje vybraného místa, například poznámka, hodnota hlavního jističe, číslo elektroměru a číslo odběrného místa. Tyto údaje pomáhají odlišit jednotlivá místa a zároveň slouží jako podklad pro některé výpočty, zejména u hodnot souvisejících s hlavním jističem.
+Obrazovka odběrných míst je rozdělena na dvě části: **Správa odběrného místa** a **Notifikace**. V
+části **Správa odběrného místa** se vybírá aktuální odběrné místo a zobrazují se jeho základní
+údaje. Aktuální odběrné místo se vybírá pomocí rozbalovacího seznamu v horní části obrazovky. Pod
+ním se zobrazují například poznámka, hodnota hlavního jističe, číslo elektroměru a číslo odběrného
+místa. Tyto údaje pomáhají odlišit jednotlivá místa a zároveň slouží jako podklad pro některé
+výpočty, zejména u hodnot souvisejících s hlavním jističem.
 
-Nové odběrné místo lze přidat pomocí tlačítka **+** v pravé dolní části obrazovky. Stávající odběrné místo lze upravit tlačítkem **Upravit odběrné místo**. Při úpravě se zadává název odběrného místa, poznámka, počet fází, hodnota jističe, číslo elektroměru a číslo odběrného místa.
+Nové odběrné místo lze přidat pomocí tlačítka **+** v pravé dolní části obrazovky. Stávající odběrné
+místo lze upravit tlačítkem **Upravit odběrné místo**. Při úpravě se zadává název odběrného místa,
+poznámka, počet fází, hodnota jističe, číslo elektroměru a číslo odběrného místa. Tlačítkem **Uložit
+** se změny uloží, tlačítkem **Zpět** se formulář zavře bez uložení změn.
 
 Odběrné místo lze také odstranit tlačítkem **Smazat odběrné místo**. Tuto akci je vhodné používat opatrně, protože odstraněním odběrného místa se smažou také záznamy, které k němu patří, například měsíční odečty a faktury.
 
+V části **Notifikace** lze pro každé odběrné místo nastavit připomenutí zápisu odečtu. Připomenutí
+se zapíná volbou **Povolit notifikaci pro zápis odečtu**. Poté lze zvolit, zda se má upozornění
+zobrazovat například měsíčně nebo týdně, nastavit čas notifikace a u měsíčního připomenutí také den
+v měsíci. Nastavení se vztahuje vždy k aktuálně vybranému odběrnému místu.
+
+Chování notifikací závisí také na systémových oprávněních Androidu. Pokud se upozornění nezobrazují
+nebo se zobrazují se zpožděním, je vhodné zkontrolovat nastavení aplikace v části **Nastavení**,
+zejména oprávnění pro notifikace a přesné alarmy.
+
 <p align="center">
-  <img src="screenshots/odb_1.png" width="300" />
-  <img src="screenshots/odb_2.png" width="300" />
+  <img src="screenshots/odb_1.png" width="200" />
+  <img src="screenshots/odb_2.png" width="200" />
+  <img src="screenshots/odb_3.png" width="200" />
 </p>
 
 ## Ceník
