@@ -1,11 +1,19 @@
 [
   {
+    "version": 160,
+    "date": "14.8.2026",
+    "changes": [
+      "<b>Vylepšení:</b>",
+      "Dokumentace aplikace uložena přímo v aplikaci offline."
+    ]
+  },
+  {
     "version": 159,
     "date": "21.7.2026",
     "changes": [
       "<b>Vylepšení:</b>",
       "Oveření aplikace pro ukládání záloh do Google Drive.",
-      "Nové dokumentační stránky aplikace, včetně nápovědy."
+      "https://elektrodroid.xlisto.com/ - Nové dokumentační stránky aplikace, včetně nápovědy."
     ]
   },
   {

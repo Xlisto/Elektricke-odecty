@@ -41,6 +41,7 @@ import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ImportPriceListFragment;
+import cz.xlisto.elektrodroid.modules.help.HelpFragment;
 import cz.xlisto.elektrodroid.modules.graphcolor.GraphColorFragment;
 import cz.xlisto.elektrodroid.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
@@ -242,12 +243,14 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
                 actualFragment = DashBoardFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.dashboard));
+                selectedItemIndex = 0;
                 b = true;
             }
             if (itemId == R.id.menu_price_list) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_prices);
                 actualFragment = PriceListFragment.newInstance(false, -1L);
                 setToolbarTitle(getResources().getString(R.string.price_lists));
+                selectedItemIndex = 1;
                 b = true;
             }
             if (itemId == R.id.menu_compare_price_list) {
@@ -255,71 +258,90 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 //actualFragment = PriceListCompareDetailFragment.newInstance();
                 actualFragment = PriceListCompareBoxFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.compare_price_list));
+                selectedItemIndex = 2;
                 b = true;
             }
             if (itemId == R.id.menu_monthly_reads) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
                 actualFragment = MonthlyReadingFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.month_reads));
+                selectedItemIndex = 3;
                 b = true;
             }
             if (itemId == R.id.menu_subscription_points) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_subscription_points);
                 actualFragment = SubscriptionPointFragment.newInstance();
+                selectedItemIndex = 4;
                 b = true;
             }
             if (itemId == R.id.menu_invoices) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
                 actualFragment = InvoiceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.invoices));
+                selectedItemIndex = 5;
                 b = true;
             }
             if (itemId == R.id.menu_hdo) {
                 uncheckedBottomNavigation();
                 actualFragment = HdoFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.hdo_times));
+                selectedItemIndex = 6;
                 b = true;
             }
             if (itemId == R.id.menu_backup) {
                 uncheckedBottomNavigation();
                 actualFragment = BackupFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.backup1));
+                selectedItemIndex = 7;
                 b = true;
             }
             if (itemId == R.id.menu_google_drive) {
                 uncheckedBottomNavigation();
                 actualFragment = GoogleDriveFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.google_drive));
+                selectedItemIndex = 8;
                 b = true;
             }
             if (itemId == R.id.menu_graph_month) {
                 uncheckedBottomNavigation();
                 actualFragment = GraphMonthFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.graph_month));
+                selectedItemIndex = 9;
                 b = true;
             }
             if (itemId == R.id.menu_graph_color) {
                 uncheckedBottomNavigation();
                 actualFragment = GraphColorFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.graph_color));
+                selectedItemIndex = 10;
                 b = true;
             }
             if (itemId == R.id.menu_import_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ImportPriceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.import_price_list));
+                selectedItemIndex = 11;
                 b = true;
             }
             if (itemId == R.id.menu_export_price_list) {
                 uncheckedBottomNavigation();
                 actualFragment = ExportPriceListFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.export_price_list));
+                selectedItemIndex = 12;
+                b = true;
+            }
+            if (itemId == R.id.menu_help) {
+                uncheckedBottomNavigation();
+                actualFragment = HelpFragment.newInstance();
+                setToolbarTitle(getResources().getString(R.string.help));
+                selectedItemIndex = 13;
                 b = true;
             }
             if (itemId == R.id.menu_about_me) {
                 uncheckedBottomNavigation();
                 actualFragment = AboutMeFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.about_me));
+                selectedItemIndex = 14;
                 b = true;
             }
             if (actualFragment != null)
@@ -470,7 +492,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
                 "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
                 "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
-                "SubscriptionPointFragment", "GraphColorFragment", "AboutMeFragment", "SettingsViewDialogFragment");
+                "SubscriptionPointFragment", "GraphColorFragment", "HelpFragment", "AboutMeFragment", "SettingsViewDialogFragment");
         //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
         for (String tag : visibleFragmentsTags) {

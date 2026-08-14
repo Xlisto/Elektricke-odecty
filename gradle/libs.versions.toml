@@ -1,33 +1,34 @@
 [versions]
 agp = "9.3.1"
 apiClient = "2.9.0"
-appcompat = "1.7.1"
+appcompat = "1.8.0"
 autofittextview = "0.2.1"
-constraintlayout = "2.2.1"
+constraintlayout = "2.2.2"
 credentials = "1.6.0"
 datastoreCoreAndroid = "1.2.1"
 desugar_jdk_libs = "2.1.5"
 espressoCore = "3.7.0"
 googleApiServicesDrive = "v3-rev20260428-2.0.0"
-googleAuthLibraryOauth2Http = "1.47.0"
-googleHttpClientAndroid = "2.1.0"
+googleAuthLibraryOauth2Http = "1.50.0"
+googleHttpClientAndroid = "2.2.0"
 googleOauthClientJetty = "1.39.0"
 googleid = "1.2.0"
 gson = "2.14.0"
 guava = "33.6.0-jre"
-jsoup = "1.22.2"
+jsoup = "1.23.1"
+commonmark = "0.30.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 legacy = "1.0.0"
-lifecycleViewmodel = "2.10.0"
-material = "1.13.0"
-playServicesAuth = "21.5.1"
+lifecycleViewmodel = "2.11.0"
+material = "1.14.0"
+playServicesAuth = "21.6.0"
 playServicesDrive = "17.0.0"
 preference = "1.2.1"
 protoliteWellKnownTypes = "18.0.1"
 re2j = "1.8"
 recyclerview = "1.4.0"
-slf4j = "2.0.17"
+slf4j = "2.0.18"
 workRuntime = "2.11.2"
 
 [libraries]
@@ -56,6 +57,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+commonmark = { group = "org.commonmark", name = "commonmark", version.ref = "commonmark" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
