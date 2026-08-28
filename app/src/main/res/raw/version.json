@@ -1,5 +1,13 @@
 [
   {
+    "version": 161,
+    "date": "28.8.2026",
+    "changes": [
+      "<b>Optimalizace:</b>",
+      "Zapnuto odstraňování nepoužívaných zdrojů v rámci R8 pro zlepšení výkonu a snížení velikosti aplikace. Úprava souvisí s novými požadavky Google Play platnými od února 2027."
+    ]
+  },
+  {
     "version": 160,
     "date": "14.8.2026",
     "changes": [

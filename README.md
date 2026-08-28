@@ -4,7 +4,8 @@
 
 Elektrické odečty jsou aplikace pro průběžné sledování spotřeby elektrické energie. Umožňují zapisovat stavy elektroměru, evidovat měsíční odečty, porovnávat odhadovanou cenu spotřebované elektřiny se zaplacenými zálohami a ukládat údaje z vyúčtovacích faktur.
 
-Aplikace je určena pro zařízení s operačním systémem Android. Minimální podporovaná verze je Android 6.0 (Marshmallow, SDK 23).
+Aplikace je určena pro zařízení s operačním systémem Android. Minimální podporovaná verze je Android
+7.0 (Nougat, SDK 24).
 
 Hlavním účelem aplikace je poskytnout uživateli průběžný přehled o tom, zda zaplacené zálohy přibližně odpovídají skutečné spotřebě. Po zadání stavu elektroměru, ceníku a údajů z faktur aplikace dopočítává orientační cenu spotřebované elektrické energie. Díky tomu lze včas odhadnout, zda při dalším vyúčtování pravděpodobně vznikne přeplatek, nebo nedoplatek.
 
