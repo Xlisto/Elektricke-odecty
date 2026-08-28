@@ -1,8 +1,16 @@
 plugins {
     alias libs.plugins.android.application
 }
+
 def generatedHelpDir =
         layout.buildDirectory.dir("generated/helpAssets").get().asFile
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 
 tasks.register("generateHelpAssets", Copy) {
@@ -44,6 +52,15 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -58,7 +75,16 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        releaseTest {
+            initWith release
+            resValue "string", "app_name", "El. odečty RELEASE-TEST"
+            applicationIdSuffix ".releasetest"
+            versionNameSuffix "-RELEASE-TEST"
 
+            debuggable true
+
+            signingConfig signingConfigs.release
         }
     }
     buildFeatures {
