@@ -378,7 +378,7 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/layoutJistic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -391,6 +391,7 @@
                         android:id="@+id/ln"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/swJistic"
                         android:orientation="vertical">
 
                         <cz.xlisto.elektrodroid.ownview.LabelEditText
@@ -626,7 +627,7 @@
                         android:maxWidth="300dp" />
 
 
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/layoutOZE"
