@@ -196,7 +196,7 @@ public class LabelEditText extends RelativeLayout {
      */
     private void setDirection(AttributeSet attributeSet) {
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, R.styleable.LabelEditText);
-        int layoutWidth = ta.getInt(R.styleable.LabelEditText_android_layout_width, -1);
+        int layoutWidth = ta.getLayoutDimension(R.styleable.LabelEditText_android_layout_width, LayoutParams.WRAP_CONTENT);
         int direction = ta.getInt(R.styleable.LabelEditText_direction, 1);
 
         LayoutParams paramsTextView;

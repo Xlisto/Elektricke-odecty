@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
@@ -203,6 +204,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         spSazba.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateNeregulatedPriceVisibility();
                 setRegulPrice();
             }
 
@@ -272,6 +274,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
         year = getYearBtnStart();
         hideItemView();
+        updateNeregulatedPriceVisibility();
 
         //nastavení adaptéru, výběr první položky, která reprezentuje nápovědu
         setSazbaAdapter();
@@ -401,6 +404,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             adapterSazba = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arraySazba, year);
             spSazba.setAdapter(adapterSazba);
             spSazba.setSelection(selectionSazba, true);
+            updateNeregulatedPriceVisibility();
         };
         handler.postDelayed(r, 1050);
     }
@@ -552,6 +556,38 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
+     * Nastaví viditelnost NT podle vybrané sazby.
+     *
+     * <p>U sazeb `D 01d` a `D 02d` může být NT skryté. Ve všech ostatních
+     * případech musí být pole NT viditelné, aby bylo možné cenu zadat.</p>
+     */
+    void updateNeregulatedPriceVisibility() {
+        if (ivNT == null) {
+            return;
+        }
+
+        ivNT.setVisibility(isNtOptionalForSelectedSazba() ? GONE : VISIBLE);
+    }
+
+
+    /**
+     * Zjistí, zda je pro aktuálně vybranou sazbu NT volitelné.
+     *
+     * @return {@code true} pro sazby D 01d a D 02d, jinak {@code false}
+     */
+    private boolean isNtOptionalForSelectedSazba() {
+        if (spSazba == null || spSazba.getSelectedItem() == null) {
+            return false;
+        }
+
+        String selectedSazba = spSazba.getSelectedItem().toString()
+                .toLowerCase(Locale.ROOT)
+                .replace(" ", "");
+        return "d01d".equals(selectedSazba) || "d02d".equals(selectedSazba);
+    }
+
+
+    /**
      * Vytvoří a vrátí instanci {@link PriceListModel} naplněnou hodnotami z aktuálních UI komponent.
      * <p>
      * Metoda:
@@ -575,7 +611,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         long validityFrom = ViewHelper.parseCalendarFromString(btnFrom.getText().toString()).getTimeInMillis();
         long validityUntil = ViewHelper.parseCalendarFromString(btnUntil.getText().toString()).getTimeInMillis();
 
-        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(), ivVT.getDouble(), ivNT.getDouble(), ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(), ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(), ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(), ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(), ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(), validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
+        double nt = isNtOptionalForSelectedSazba() ? 0D : ivNT.getDouble();
+
+        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(), ivVT.getDouble(), nt, ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(), ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(), ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(), ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(), ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(), validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
     }
 
 
@@ -738,7 +776,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     //pokud je found false, nastaví se obsah chybového hlášení a připojí se datumový rozpis
                     if (!found) {
                         tvNoPriceListTitle.setText(R.string.alert_regulated_prices_title_during_the_year);
-                        errorTitleBuilder.append(getString(R.string.alert_regulated_prices_title_during_the_year, selectedStartYear));
+                        errorTitleBuilder.append(getString(R.string.alert_regulated_prices_title_during_the_year)).append(" ").append(selectedStartYear);
                         errorMessageBuilder.append(getString(R.string.alert_regulated_prices_text)).append(datesMessage);
                     }
                 }
