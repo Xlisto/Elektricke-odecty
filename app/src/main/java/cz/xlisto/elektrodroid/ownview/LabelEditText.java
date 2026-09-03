@@ -134,11 +134,11 @@ public class LabelEditText extends RelativeLayout {
         editText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorLabelEditText));
         originalEditTextTextColor = editText.getCurrentTextColor();
         originalEditTextHintColor = editText.getCurrentHintTextColor();
-        // Rezerva vpravo, aby text nelezl pod ikonku clear.
+        // Rezerva vpravo, aby text nelezl pod ikonku clear a byl od ní čitelně oddělen.
         editText.setPadding(
                 editText.getPaddingLeft(),
                 editText.getPaddingTop(),
-                ViewHelper.convertDpToPx(36, getContext()),
+                ViewHelper.convertDpToPx(42, getContext()),
                 editText.getPaddingBottom()
         );
 
@@ -160,7 +160,7 @@ public class LabelEditText extends RelativeLayout {
         );
         clearButtonParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         clearButtonParams.addRule(RelativeLayout.CENTER_VERTICAL);
-        clearButtonParams.setMarginEnd(ViewHelper.convertDpToPx(8, getContext()));
+        clearButtonParams.setMarginEnd(ViewHelper.convertDpToPx(4, getContext()));
         clearButton.setLayoutParams(clearButtonParams);
 
         // Click listener pro smazání obsahu

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="false"
-    android:padding="10dp">
+    android:padding="@dimen/price_list_editor_root_padding">
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_margin="1dp"
+                    android:layout_margin="@dimen/price_list_editor_inline_margin"
                     android:autofillHints="01.10.2022"
                     android:contentDescription="@string/description_date_until"
                     android:focusable="true"
@@ -67,7 +67,7 @@
                     android:id="@+id/btnPlatnostOD"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
+                    android:layout_margin="@dimen/price_list_editor_inline_margin"
                     android:layout_toStartOf="@id/btnPlatnostDO"
                     android:contentDescription="@string/description_date_from"
                     android:focusable="true"
@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/btnPlatnostOD"
                     android:layout_alignParentStart="true"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
                     android:layout_toStartOf="@id/btnPlatnostOD"
                     android:text="@string/platnost_cenik" />
 
@@ -92,7 +92,7 @@
                 android:id="@+id/layoutName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
                 android:background="@drawable/shape_item">
 
                 <RelativeLayout
@@ -100,7 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivDodavatel"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="@dimen/price_list_editor_content_spacing">
 
                     <Spinner
                         android:id="@+id/spDistribucniUzemiSeznam"
@@ -127,7 +127,7 @@
                         android:id="@+id/tvUzemiSeznam"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="@dimen/price_list_editor_content_spacing"
                         android:labelFor="@+id/spDistribucniUzemiSeznam"
                         android:text="@string/distribucni_uzemi" />
 
@@ -136,7 +136,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="@dimen/price_list_editor_content_spacing"
                         android:layout_toEndOf="@id/tvUzemiSeznam"
                         android:gravity="end"
                         android:labelFor="@+id/spSazbaSeznam"
@@ -155,12 +155,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/spSazbaSeznam"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="@dimen/price_list_editor_block_margin_top"
                         android:background="@drawable/bg_alert_card"
-                        android:padding="12dp"
+                        android:padding="@dimen/price_list_editor_alert_spacing"
                         android:visibility="gone">
 
-                        <!-- Levý barevný pruh -->
+                        <!-- LevĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ă„â€šĂ˘â‚¬Ä…Ă„Ä…Ă„â€ž barevnĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ă„â€šĂ˘â‚¬Ä…Ă„Ä…Ă„â€ž pruh -->
                         <View
                             android:id="@+id/vAlertStripe"
                             android:layout_width="4dp"
@@ -173,8 +173,8 @@
                             android:id="@+id/ivAlert"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginStart="@dimen/price_list_editor_alert_spacing"
+                            android:layout_marginTop="@dimen/price_list_editor_card_spacing"
                             android:layout_toEndOf="@id/vAlertStripe"
                             android:contentDescription="@string/alert"
                             android:src="@drawable/ic_warning"
@@ -186,11 +186,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@id/ivAlert"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="@dimen/price_list_editor_field_spacing"
                             android:layout_toEndOf="@id/ivAlert"
                             android:text="@string/alert_regulated_prices_title_every_year"
                             android:textColor="@color/text_primary"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/price_list_editor_alert_title_size"
                             android:textStyle="bold" />
 
                         <!-- Popis -->
@@ -199,16 +199,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/tvNoPriceListTitle"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginStart="@dimen/price_list_editor_alert_spacing"
+                            android:layout_marginTop="@dimen/price_list_editor_small_margin_top"
                             android:layout_toEndOf="@id/vAlertStripe"
                             android:lineSpacingExtra="2dp"
                             android:text="@string/no_price_list"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp" />
+                            android:textSize="@dimen/price_list_editor_alert_text_size" />
 
                     </RelativeLayout>
-
 
 
                 </RelativeLayout>
@@ -242,7 +241,7 @@
                     android:inputType="text"
                     android:minHeight="48dp"
                     app:direction="vertical"
-                    app:hintText="Ceníková řada"
+                    app:hintText="@string/produktova_rada"
                     app:label="@string/produktova_rada" />
 
 
@@ -252,21 +251,21 @@
                 android:id="@+id/layoutNeregul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/price_list_editor_card_spacing"
+                android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
                 android:background="@drawable/shape_item"
                 android:orientation="vertical"
-                android:paddingBottom="8dp">
+                android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
                     android:id="@+id/tvCenaZaDodavku"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_section_title_margin_top"
                     android:gravity="center_horizontal"
                     android:text="@string/cena_za_dodavku"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/price_list_editor_section_title_size"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -274,8 +273,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp">
+                    android:paddingStart="@dimen/price_list_editor_content_spacing"
+                    android:paddingEnd="@dimen/price_list_editor_content_spacing">
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivVT"
@@ -294,7 +293,7 @@
                         android:id="@+id/ivNT"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/price_list_editor_field_spacing"
                         android:layout_weight="1"
                         android:ems="6"
                         android:gravity="end"
@@ -309,8 +308,8 @@
                     android:id="@+id/ivPlat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
                     android:ems="6"
                     android:gravity="end"
                     android:inputType="numberDecimal"
@@ -324,29 +323,29 @@
                 android:id="@+id/layoutRegul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/price_list_editor_card_spacing"
+                android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
                 android:background="@drawable/shape_item"
                 android:orientation="vertical"
-                android:paddingBottom="8dp">
+                android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
                     android:id="@+id/tvCenaZaDistribuci"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_section_title_margin_top"
                     android:gravity="center_horizontal"
                     android:text="@string/cena_za_distribuci"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/price_list_editor_section_title_size"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp">
+                    android:paddingStart="@dimen/price_list_editor_content_spacing"
+                    android:paddingEnd="@dimen/price_list_editor_content_spacing">
 
                     <cz.xlisto.elektrodroid.ownview.LabelEditText
                         android:id="@+id/ivVT1"
@@ -365,7 +364,7 @@
                         android:id="@+id/ivNT1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="@dimen/price_list_editor_field_spacing"
                         android:layout_weight="1"
                         android:ems="6"
                         android:gravity="end"
@@ -382,8 +381,8 @@
                 android:id="@+id/layoutJistic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/price_list_editor_card_spacing"
+                android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
                 android:background="@drawable/shape_item">
 
                 <LinearLayout
@@ -397,12 +396,13 @@
                         android:id="@+id/ivJ0"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginTop="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_do_10" />
@@ -411,11 +411,12 @@
                         android:id="@+id/ivJ1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_10" />
@@ -424,11 +425,12 @@
                         android:id="@+id/ivJ2"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_16" />
 
@@ -436,11 +438,12 @@
                         android:id="@+id/ivJ3"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_20" />
@@ -449,11 +452,12 @@
                         android:id="@+id/ivJ4"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25" />
@@ -462,11 +466,12 @@
                         android:id="@+id/ivJ5"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_32" />
@@ -475,11 +480,12 @@
                         android:id="@+id/ivJ6"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_40" />
@@ -488,11 +494,12 @@
                         android:id="@+id/ivJ7"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_50" />
@@ -501,11 +508,12 @@
                         android:id="@+id/ivJ10"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63" />
@@ -514,11 +522,12 @@
                         android:id="@+id/ivJ11"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_80" />
@@ -527,11 +536,12 @@
                         android:id="@+id/ivJ12"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_100" />
@@ -540,11 +550,12 @@
                         android:id="@+id/ivJ13"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_125" />
@@ -553,11 +564,12 @@
                         android:id="@+id/ivJ14"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_160" />
@@ -566,11 +578,12 @@
                         android:id="@+id/ivJ8"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_63_za_A" />
@@ -579,11 +592,12 @@
                         android:id="@+id/ivJ9"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                        android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                        android:ems="5"
                         android:gravity="end"
                         android:inputType="numberDecimal"
-                        android:maxEms="4"
+                        android:maxEms="5"
                         android:minHeight="48dp"
                         app:hintText="@string/nuly"
                         app:label="@string/jistic_nad_25_za_A" />
@@ -593,11 +607,11 @@
                     android:id="@+id/tvMesicniPlatDleJistice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_section_title_margin_top"
                     android:gravity="center_horizontal"
                     android:text="@string/mesicni_plat_za_prikon"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/price_list_editor_section_title_size"
                     android:textStyle="bold" />
 
                 <androidx.appcompat.widget.SwitchCompat
@@ -605,166 +619,177 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tvMesicniPlatDleJistice"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginBottom="@dimen/price_list_editor_content_spacing"
                     android:maxWidth="300dp" />
 
 
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/layoutOZE"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/shape_item">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/price_list_editor_card_spacing"
+                android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
+                android:background="@drawable/shape_item"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
                     android:id="@+id/tvCenaZaOstatniSluzby"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_section_title_margin_top"
                     android:gravity="center_horizontal"
                     android:text="@string/cena_za_ostatni_regulovane_sluzby"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/price_list_editor_section_title_size"
                     android:textStyle="bold" />
 
                 <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/ivOTE"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/tvCenaZaOstatniSluzby"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@id/ivSystemoveSluzby"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:maxEms="3"
-                    android:minHeight="48dp"
-                    app:hintText="@string/nuly"
-                    app:label="@string/cinnost_ote" />
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/ivCinnostOperatoraTrhu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/tvCenaZaOstatniSluzby"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@id/ivSystemoveSluzby"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:maxEms="3"
-                    android:minHeight="48dp"
-                    app:hintText="@string/nuly"
-                    app:label="@string/cinnost_operatora_trhu"
-                    app:labelSizeText="12" />
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/ivOZE"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/ivSystemoveSluzby"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:maxEms="3"
-                    android:minHeight="48dp"
-                    app:hintText="@string/nuly"
-                    app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz"
-                    app:labelSizeText="12"/>
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/ivPOZE1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/ivOZE"
-                    android:layout_marginStart="5dp"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:maxEms="3"
-                    android:minHeight="48dp"
-                    app:hintText="@string/nuly"
-                    app:label="@string/poze_dle_jistice"
-                    app:labelSizeText="12">
-
-                </cz.xlisto.elektrodroid.ownview.LabelEditText>
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/ivPOZE2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/ivOZE"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@id/ivSystemoveSluzby"
-                    android:gravity="end"
-                    android:inputType="numberDecimal"
-                    android:maxEms="3"
-                    android:minHeight="48dp"
-                    app:hintText="@string/nuly"
-                    app:label="@string/poze_dle_spotreby"
-                    app:labelSizeText="12" />
-
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/ivSystemoveSluzby"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/tvCenaZaOstatniSluzby"
-                    android:layout_marginStart="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_content_spacing_small"
+                    android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
                     android:minHeight="48dp"
+                    app:direction="vertical"
                     app:hintText="@string/nuly"
-                    app:label="@string/systemove_sluzby"
-                    app:labelSizeText="12"/>
+                    app:label="@string/systemove_sluzby" />
 
-            </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_content_spacing_small"
+                    android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                    android:orientation="horizontal">
 
-            <RelativeLayout
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/ivCinnostOperatoraTrhu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minHeight="48dp"
+                        app:direction="vertical"
+                        app:hintText="@string/nuly"
+                        app:label="@string/cinnost_operatora_trhu" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/ivOZE"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/price_list_editor_field_spacing"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minHeight="48dp"
+                        app:direction="vertical"
+                        app:hintText="@string/nuly"
+                        app:label="@string/podpora_vykupu_el_z_oze_kvet_a_dz" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/ivOTE"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/price_list_editor_field_spacing"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minHeight="48dp"
+                        app:direction="vertical"
+                        app:hintText="@string/nuly"
+                        app:label="@string/cinnost_ote" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginTop="@dimen/price_list_editor_content_spacing_small"
+                    android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                    android:orientation="horizontal">
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/ivPOZE1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minHeight="48dp"
+                        app:direction="vertical"
+                        app:hintText="@string/nuly"
+                        app:label="@string/poze_dle_jistice" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/ivPOZE2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/price_list_editor_field_spacing"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:maxEms="3"
+                        android:minHeight="48dp"
+                        app:direction="vertical"
+                        app:hintText="@string/nuly"
+                        app:label="@string/poze_dle_spotreby" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/layoutDan"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/shape_item">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/price_list_editor_card_spacing"
+                android:background="@drawable/shape_item"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/ivDan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/price_list_editor_content_spacing"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
                     android:minHeight="48dp"
+                    app:direction="vertical"
                     app:hintText="@string/nuly"
-                    app:label="@string/dan_z_elektriny">
-
-                </cz.xlisto.elektrodroid.ownview.LabelEditText>
+                    app:label="@string/dan_z_elektriny" />
 
                 <cz.xlisto.elektrodroid.ownview.LabelEditText
                     android:id="@+id/ivDPH"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@id/ivDan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="@dimen/price_list_editor_content_spacing"
+                    android:layout_weight="1"
                     android:gravity="end"
                     android:inputType="numberDecimal"
                     android:maxEms="3"
                     android:minWidth="48dp"
                     android:minHeight="48dp"
+                    app:direction="vertical"
                     app:hintText="@string/nuly"
                     app:label="@string/dph" />
-
-            </RelativeLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

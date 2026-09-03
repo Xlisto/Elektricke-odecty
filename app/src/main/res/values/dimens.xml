@@ -8,4 +8,17 @@
     <dimen name="fab_margin">30dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="invoice_summary_options_max_height">260dp</dimen>
+    <dimen name="price_list_editor_root_padding">10dp</dimen>
+    <dimen name="price_list_editor_inline_margin">1dp</dimen>
+    <dimen name="price_list_editor_card_spacing">2dp</dimen>
+    <dimen name="price_list_editor_content_spacing">5dp</dimen>
+    <dimen name="price_list_editor_content_spacing_small">4dp</dimen>
+    <dimen name="price_list_editor_field_spacing">8dp</dimen>
+    <dimen name="price_list_editor_alert_spacing">12dp</dimen>
+    <dimen name="price_list_editor_section_title_margin_top">10dp</dimen>
+    <dimen name="price_list_editor_small_margin_top">6dp</dimen>
+    <dimen name="price_list_editor_block_margin_top">8dp</dimen>
+    <dimen name="price_list_editor_section_title_size">16sp</dimen>
+    <dimen name="price_list_editor_alert_title_size">15sp</dimen>
+    <dimen name="price_list_editor_alert_text_size">14sp</dimen>
 </resources>

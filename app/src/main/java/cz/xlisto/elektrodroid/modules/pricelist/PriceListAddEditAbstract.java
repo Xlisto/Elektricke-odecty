@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Optional;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
@@ -649,11 +650,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                 PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistribucniUzemi.getSelectedItem().toString(), spSazba.getSelectedItem().toString());
 
+                double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(), priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getOze(), priceListModel.getOte(), priceListModel.getDan(), priceListModel.getDph()};
 
-
-                double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(), priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getDan(), priceListModel.getDph()};
-
-                LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemSluzby, ivCinnostOperatora, ivPOZE1, ivPOZE2, ivDan, ivDPH};
+                LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemSluzby, ivCinnostOperatora, ivPOZE1, ivPOZE2, ivOZE, ivOTE, ivDan, ivDPH};
 
                 mainHandler.post(() -> {
                     if (!isAdded()) return;
@@ -726,9 +725,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         // kontola rozsahů platnosti
         new Thread(() -> {
             ValidityDateContainer getMinMaxYearFromRaw = getMinMaxYearFromRaw(selectedStart, selectedEnd);
-            int minYear = getMinMaxYearFromRaw.getMinYear();
-            int maxYear = getMinMaxYearFromRaw.getMaxYear();
-            ArrayList<Calendar> dates = getMinMaxYearFromRaw.getDates();
+            int minYear = getMinMaxYearFromRaw.minYear();
+            int maxYear = getMinMaxYearFromRaw.maxYear();
+            ArrayList<Calendar> dates = getMinMaxYearFromRaw.dates();
 
             requireActivity().runOnUiThread(() -> {
                 // kontrola platnosti, které nejsou uvedeny
@@ -1120,36 +1119,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - Pokud metoda provádí IO nebo časově náročnou práci, spouštět ji v pozadí (ExecutorService nebo jiný mechanismus),
      * aby nedocházelo k blokování UI vlákna (Android specifika).
      *
-     * @see java.util.Optional
+     * @see Optional
      * @since 1.0
      */
-    private static class ValidityDateContainer {
-
-        private final int minYear;
-        private final int maxYear;
-        private final ArrayList<Calendar> dates;
-
-
-        ValidityDateContainer(int minYear, int maxYear, ArrayList<Calendar> dates) {
-            this.minYear = minYear;
-            this.maxYear = maxYear;
-            this.dates = dates;
-        }
-
-
-        public int getMinYear() {
-            return minYear;
-        }
-
-
-        public int getMaxYear() {
-            return maxYear;
-        }
-
-
-        public ArrayList<Calendar> getDates() {
-            return dates;
-        }
+    private record ValidityDateContainer(int minYear, int maxYear, ArrayList<Calendar> dates) {
 
     }
 
