@@ -11,20 +11,6 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-try {
-    Class<?> pe = Class.forName("java.lang.ProcessEnvironment")
-    java.lang.reflect.Field envField = pe.getDeclaredField("theEnvironment")
-    envField.setAccessible(true)
-    Map<String, String> env = (Map<String, String>) envField.get(null)
-    env.remove("ANDROID_PREFS_ROOT")
-
-    java.lang.reflect.Field caseInsensitiveEnvField = pe.getDeclaredField("theCaseInsensitiveEnvironment")
-    caseInsensitiveEnvField.setAccessible(true)
-    Map<String, String> ciEnv = (Map<String, String>) caseInsensitiveEnvField.get(null)
-    ciEnv.remove("ANDROID_PREFS_ROOT")
-} catch (Throwable ignored) {
-}
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
