@@ -865,8 +865,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     dates.add(parsedEnd);
                 }
                 // pokud je rok rozdělen na několik dalších úseků
-                if (ostatni instanceof JSONArray) {
-                    JSONArray ostatniArray = (JSONArray) ostatni;
+                if (ostatni instanceof JSONArray ostatniArray) {
                     for (int j = 0; j < ostatniArray.length(); j++) {
                         JSONObject ostatniObj = ostatniArray.getJSONObject(j);
                         String odRaw = ostatniObj.optString("od", "");

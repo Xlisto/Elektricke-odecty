@@ -1,5 +1,13 @@
 [
   {
+    "version": 162,
+    "date": "3.9.2026",
+    "changes": [
+      "<b>Oprava:</b>",
+      "Některá vstupní pole při vytváření nebo úpravě ceníků byla chybně umístěna."
+    ]
+  },
+  {
     "version": 161,
     "date": "28.8.2026",
     "changes": [
