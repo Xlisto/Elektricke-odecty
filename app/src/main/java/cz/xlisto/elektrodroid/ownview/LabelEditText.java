@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -85,8 +86,12 @@ public class LabelEditText extends RelativeLayout {
         int maxWidthInPx = (int) (MAX_WIDTH_DP * getResources().getDisplayMetrics().density);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        ViewGroup.LayoutParams params = getLayoutParams();
+        int requestedWidth = params != null ? params.width : LayoutParams.WRAP_CONTENT;
 
-        if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
+        // Width cap applies only to WRAP_CONTENT; MATCH_PARENT and 0dp (weight) should fill available space.
+        if (requestedWidth == LayoutParams.WRAP_CONTENT
+                && (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST)) {
             widthSize = Math.min(widthSize, maxWidthInPx);
         }
 
