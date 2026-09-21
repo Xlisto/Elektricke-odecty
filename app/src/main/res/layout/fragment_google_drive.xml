@@ -1,39 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentStart="false"
-    android:layout_alignParentEnd="false"
-    android:padding="10dp"
     tools:context=".modules.backup.GoogleDriveFragment">
 
-    <TextView
-        android:id="@+id/tvPendingUploadAlert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/shape_item"
-        android:padding="10dp"
-        android:text="@string/pending_upload_waiting_wifi_alert"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvGoogleDriveFiles"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvPendingUploadAlert" />
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:padding="10dp">
 
-    <TextView
-        android:id="@+id/tvAlertNoInternet"
-        style="@style/StyleTvAlert"
-        android:layout_centerInParent="true"
-        android:text="@string/internet_is_not_available"
-        android:textAlignment="center" />
+        <TextView
+            android:id="@+id/tvPendingUploadAlert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/shape_item"
+            android:padding="10dp"
+            android:text="@string/pending_upload_waiting_wifi_alert"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:visibility="gone" />
 
-    <include layout="@layout/layout_progress_bar" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvGoogleDriveFiles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tvPendingUploadAlert" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvAlertNoInternet"
+            style="@style/StyleTvAlert"
+            android:layout_centerInParent="true"
+            android:text="@string/internet_is_not_available"
+            android:textAlignment="center" />
+
+        <include layout="@layout/layout_progress_bar" />
+
+    </RelativeLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

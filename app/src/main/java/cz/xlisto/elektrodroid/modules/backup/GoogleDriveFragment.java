@@ -2,6 +2,7 @@ package cz.xlisto.elektrodroid.modules.backup;
 
 
 import android.accounts.Account;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,10 +36,12 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.model.File;
 
 import org.json.JSONArray;
@@ -85,6 +89,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
     private TextView tvAlertNoInternet;
     private TextView tvPendingUploadAlert;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private CredentialHelper credentialHelper;
     private ShPGoogleDrive shPGoogleDrive;
     private GoogleDriveService googleDriveService;
@@ -114,7 +119,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private final ActivityResultLauncher<Intent> resultTree = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                if (result.getResultCode() != android.app.Activity.RESULT_OK || result.getData() == null)
+                if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null)
                     return;
 
                 Files.activityResult(result.getData(), requireActivity());
@@ -133,7 +138,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      *   <li>Skryje progress bar</li>
      *   <li>Zobrazí Snackbar se zprávou "Obnova OK"</li>
      *   <li>Pokusí se obnovit aktuálně vybrané odběrné místo pomocí
-     *       {@link cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)}</li>
+     *       {@link SubscriptionPoint#applyCurrentFromSettings(Context)}</li>
      *   <li>Pokud se obnova podařila:
      *       <ul>
      *         <li>Aktualizuje toolbar a znovu načte data</li>
@@ -154,11 +159,11 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      * </ul>
      * </p>
      *
-     * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint#applyCurrentFromSettings(Context)
+     * @see SubscriptionPoint#applyCurrentFromSettings(Context)
      * @see SubscriptionPointDialogFragment
      */
     private final Handler handlerResultRecoveryDatabase = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(@NonNull android.os.Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             boolean b = (boolean) msg.obj;
             showLnProgressBar(false);
@@ -225,6 +230,21 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         tvAlertNoInternet = view.findViewById(R.id.tvAlertNoInternet);
         tvPendingUploadAlert = view.findViewById(R.id.tvPendingUploadAlert);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (internetAvailable && !shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty()) {
+                loadGoogleFiles();
+            } else {
+                swipeRefreshLayout.setRefreshing(false);
+                View root = getView();
+                if (root != null) {
+                    if (!internetAvailable)
+                        Snackbar.make(root, getString(R.string.internet_is_not_available), Snackbar.LENGTH_SHORT).show();
+                    else
+                        Snackbar.make(root, getString(R.string.google_drive_signed_out_warning), Snackbar.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         credentialHelper = new CredentialHelper(requireContext());
         credentialHelper.setCredentialListener(this);
@@ -269,13 +289,13 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
         // Po rotaci obrazovky může být dialog stále zobrazen ve FragmentManageru.
         // Znovu se k němu připojíme, aby bylo možné ho korektně zavřít.
-        androidx.fragment.app.Fragment existingDialog = requireActivity().getSupportFragmentManager()
+        Fragment existingDialog = requireActivity().getSupportFragmentManager()
                 .findFragmentByTag(GoogleDriveDeleteProgressDialogFragment.TAG);
         if (existingDialog instanceof GoogleDriveDeleteProgressDialogFragment) {
             deleteProgressDialog = (GoogleDriveDeleteProgressDialogFragment) existingDialog;
         }
 
-        androidx.fragment.app.Fragment existingSaveDialog = requireActivity().getSupportFragmentManager()
+        Fragment existingSaveDialog = requireActivity().getSupportFragmentManager()
                 .findFragmentByTag(GoogleDriveSaveProgressDialogFragment.TAG);
         if (existingSaveDialog instanceof GoogleDriveSaveProgressDialogFragment) {
             saveProgressDialog = (GoogleDriveSaveProgressDialogFragment) existingSaveDialog;
@@ -567,14 +587,20 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      */
     public void loadGoogleFiles() {
         Log.w(TAG, "loadGoogleFiles: internetAvailable: " + internetAvailable);
-        if (!internetAvailable)
+        if (!internetAvailable) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             return;
+        }
 
-        if (isSignOutInProgress())
+        if (isSignOutInProgress()) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             return;
+        }
 
-        if (shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty())
+        if (shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty()) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             return;
+        }
 
         if (backupAdapter != null)
             backupAdapter.clearData();
@@ -641,6 +667,8 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         Log.w(TAG, "onFilesLoaded: " + files.size());
         requireActivity().runOnUiThread(() -> {
             showLnProgressBar(false);
+            if (swipeRefreshLayout != null)
+                swipeRefreshLayout.setRefreshing(false);
             backupAdapter = new BackupAdapter(requireActivity(), files, recyclerView, handlerResultRecoveryDatabase, googleDriveService, this, this, this::handleSaveGoogleDriveFileRequest);
             recyclerView.setAdapter(backupAdapter);
             updateSelectionActions(0, false);
@@ -677,7 +705,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
      * Nastaví viditelnost obsahu a stavových hlášek podle internetu a přihlášení.
      */
     private void toggleButtonsAndRecyclerViewVisibility() {
-        android.app.Activity activity = getActivity();
+        Activity activity = getActivity();
         if (activity == null)
             return;
 
@@ -829,7 +857,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         if (pendingUploadProgressDialog != null && pendingUploadProgressDialog.isAdded())
             return;
 
-        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager()
+        Fragment existing = requireActivity().getSupportFragmentManager()
                 .findFragmentByTag(PendingBackupUploadProgressDialogFragment.TAG);
         if (existing instanceof PendingBackupUploadProgressDialogFragment) {
             pendingUploadProgressDialog = (PendingBackupUploadProgressDialogFragment) existing;
@@ -920,7 +948,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         if (!isAdded())
             return;
 
-        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager().findFragmentByTag(GoogleDriveDeleteProgressDialogFragment.TAG);
+        Fragment existing = requireActivity().getSupportFragmentManager().findFragmentByTag(GoogleDriveDeleteProgressDialogFragment.TAG);
         if (existing instanceof GoogleDriveDeleteProgressDialogFragment) {
             deleteProgressDialog = (GoogleDriveDeleteProgressDialogFragment) existing;
         } else {
@@ -1213,7 +1241,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             final int finalSavedCount = savedCount;
             final int finalTotalCount = totalCount;
 
-            android.app.Activity activity = getActivity();
+            Activity activity = getActivity();
             if (activity == null)
                 return;
 
@@ -1289,7 +1317,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         if (saveProgressDialog != null && saveProgressDialog.isAdded())
             return saveProgressDialog;
 
-        androidx.fragment.app.Fragment existing = requireActivity().getSupportFragmentManager()
+        Fragment existing = requireActivity().getSupportFragmentManager()
                 .findFragmentByTag(GoogleDriveSaveProgressDialogFragment.TAG);
         if (existing instanceof GoogleDriveSaveProgressDialogFragment) {
             saveProgressDialog = (GoogleDriveSaveProgressDialogFragment) existing;
@@ -1356,7 +1384,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             try {
                 long modifiedTime = Long.parseLong(parts[2]);
                 if (modifiedTime > 0)
-                    file.setModifiedTime(new com.google.api.client.util.DateTime(modifiedTime));
+                    file.setModifiedTime(new DateTime(modifiedTime));
             } catch (NumberFormatException ignored) {
             }
             restoredFiles.add(file);
