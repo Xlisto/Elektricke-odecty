@@ -18,7 +18,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
+import cz.xlisto.elektrodroid.services.BackupNotice;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
 
 
@@ -70,7 +72,7 @@ public class PendingBackupUploadWorker extends Worker {
     public ListenableWorker.Result doWork() {
         Context context = getApplicationContext();
         if (!NetworkUtil.isWifiConnected(context)) {
-            return ListenableWorker.Result.retry();
+            return Result.retry();
         }
 
         ShPBackup shPBackup = new ShPBackup(context);
@@ -92,13 +94,13 @@ public class PendingBackupUploadWorker extends Worker {
 
         if (userName == null || userName.trim().isEmpty() || backupFolderUriValue == null || fileNames.isEmpty()) {
             clearPendingWifiUploadMetadata(context);
-            return ListenableWorker.Result.failure();
+            return Result.failure();
         }
 
         DocumentFile backupFolder = DocumentFile.fromTreeUri(context, Uri.parse(backupFolderUriValue));
         if (backupFolder == null || !backupFolder.canRead()) {
             clearPendingWifiUploadMetadata(context);
-            return ListenableWorker.Result.failure();
+            return Result.failure();
         }
 
         GoogleDriveService googleDriveService = new GoogleDriveService(context, userName);
@@ -120,12 +122,14 @@ public class PendingBackupUploadWorker extends Worker {
 
         try {
             if (!latch.await(45, TimeUnit.SECONDS) || !serviceReady.get()) {
-                return ListenableWorker.Result.retry();
+                return Result.retry();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return ListenableWorker.Result.retry();
+            return Result.retry();
         }
+
+        clearPendingWifiUploadMetadata(context);
 
         int attempted = 0;
         ArrayList<String> failedFileNames = new ArrayList<>();
@@ -147,16 +151,17 @@ public class PendingBackupUploadWorker extends Worker {
 
         if (attempted == 0) {
             clearPendingWifiUploadMetadata(context);
-            return ListenableWorker.Result.failure();
+            return Result.failure();
         }
 
         if (!failedFileNames.isEmpty()) {
             persistPendingWifiUploadMetadata(context, userName, failedFileNames);
-            return ListenableWorker.Result.retry();
+            return Result.retry();
         }
 
         clearPendingWifiUploadMetadata(context);
-        return ListenableWorker.Result.success();
+        BackupNotice.showUploadSuccessNotice(context, context.getString(R.string.uploaded_file));
+        return Result.success();
     }
 
 

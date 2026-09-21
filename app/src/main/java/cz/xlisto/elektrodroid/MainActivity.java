@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupPendingUploadScheduler();
-        schedulePendingBackupUploadIfNeeded(true);
+        schedulePendingBackupUploadIfNeeded();
         setConfiguration(getResources().getConfiguration());
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         myNavigationView = findViewById(R.id.navigationView);
@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onResume();
         //nastavení viditelnosti levé a spodní lišty podle orientace obrazovky
         setVisibilityNavigation();
-        schedulePendingBackupUploadIfNeeded(false);
+        schedulePendingBackupUploadIfNeeded();
     }
 
 
@@ -708,13 +708,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         pendingUploadNetworkCallback = new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(@NonNull Network network) {
-                schedulePendingBackupUploadIfNeeded(true);
+                schedulePendingBackupUploadIfNeeded();
             }
 
             @Override
             public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
                 if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                    schedulePendingBackupUploadIfNeeded(true);
+                    schedulePendingBackupUploadIfNeeded();
                 }
             }
         };
@@ -729,11 +729,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     /**
      * Naplánuje čekající odesílání záloh centrálně z MainActivity.
      */
-    private void schedulePendingBackupUploadIfNeeded(boolean replaceExisting) {
+    private void schedulePendingBackupUploadIfNeeded() {
         if (!NetworkUtil.isInternetAllowedBySettings(getApplicationContext()))
             return;
 
-        PendingBackupUploadScheduler.scheduleIfNeeded(getApplicationContext(), replaceExisting);
+        PendingBackupUploadScheduler.scheduleIfNeeded(getApplicationContext(), false);
     }
     /**
      * Zpracuje kliknutí na HDO notifikaci: nastaví odběrné místo a otevře HDO fragment.

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,8 +34,12 @@ import java.util.TreeSet;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
+import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 
 /**
@@ -103,12 +108,13 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         TextView tvTyp;
         ImageView iconFile;
         ImageView iconMoreFolderAction;
+        ImageView ivPendingUpload;
         RelativeLayout rl;
         LinearLayout ln;
         Button btnRestore;
         Button btnDelete;
         Button btnUpload;
-        android.widget.CheckBox cbSelect;
+        CheckBox cbSelect;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -230,6 +236,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         vh.tvTyp = v.findViewById(R.id.tvTypeBackup);
         vh.iconFile = v.findViewById(R.id.imgIconFile);
         vh.iconMoreFolderAction = v.findViewById(R.id.ivMoreOptions);
+        vh.ivPendingUpload = v.findViewById(R.id.ivPendingUpload);
         vh.rl = v.findViewById(R.id.rlBackupItem);
         vh.ln = v.findViewById(R.id.lnButtonsBackup);
         vh.btnRestore = v.findViewById(R.id.btnRestoreBackup);
@@ -264,6 +271,8 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.btnUpload.setVisibility(View.VISIBLE);
             holder.btnUpload.setText(R.string.save_to_local_storage);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
+            if (holder.ivPendingUpload != null)
+                holder.ivPendingUpload.setVisibility(View.GONE);
         } else {
             file = null;
             documentFile = documentFiles.get(position);
@@ -272,11 +281,20 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.tvTyp.setText(IconFileHelper.getType(documentFile.getName(), context));
             holder.btnUpload.setText(R.string.google_drive);
             boolean isUserLoggedIn = !shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "").isEmpty();
-            if (isUserLoggedIn && NetworkUtil.isInternetAvailable(context))
+            if (isUserLoggedIn)
                 holder.btnUpload.setVisibility(View.VISIBLE);
             else
                 holder.btnUpload.setVisibility(View.GONE);
             holder.iconMoreFolderAction.setVisibility(View.GONE);
+
+            if (holder.ivPendingUpload != null) {
+                List<String> pendingFiles = getPendingFileNames();
+                boolean isPending = documentFile.getName() != null && pendingFiles.contains(documentFile.getName());
+                if (isPending)
+                    holder.ivPendingUpload.setVisibility(View.VISIBLE);
+                else
+                    holder.ivPendingUpload.setVisibility(View.GONE);
+            }
         }
 
         holder.cbSelect.setVisibility(multiSelectMode ? View.VISIBLE : View.GONE);
@@ -728,6 +746,30 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
             holder.ln.setVisibility(View.VISIBLE);
         else
             holder.ln.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Načte seznam názvů souborů čekajících na upload z perzistentní fronty.
+     */
+    @NonNull
+    private List<String> getPendingFileNames() {
+        List<String> fileNames = new ArrayList<>();
+        ShPBackup shPBackup = new ShPBackup(context);
+        String fileNamesJson = shPBackup.get(ShPBackup.PENDING_WIFI_UPLOAD_FILE_NAMES, "");
+        if (fileNamesJson.isEmpty())
+            return fileNames;
+
+        try {
+            JSONArray jsonArray = new JSONArray(fileNamesJson);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String fileName = jsonArray.optString(i, "");
+                if (!fileName.isEmpty() && !fileNames.contains(fileName))
+                    fileNames.add(fileName);
+            }
+        } catch (JSONException ignored) {
+        }
+        return fileNames;
     }
 
 

@@ -54,6 +54,7 @@ import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.permission.Files;
+import cz.xlisto.elektrodroid.services.BackupNotice;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
@@ -286,19 +287,19 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                         return true;
                     }
                     if (backupAdapter != null) {
-                        List<androidx.documentfile.provider.DocumentFile> filesToUpload = backupAdapter.getSelectedDocumentFiles();
+                        List<DocumentFile> filesToUpload = backupAdapter.getSelectedDocumentFiles();
                         ShPGoogleDrive shPGoogleDrive = new ShPGoogleDrive(requireContext());
                         String userName = shPGoogleDrive.get(ShPGoogleDrive.USER_NAME, "");
                         if (userName.isEmpty()) {
                             Snackbar.make(requireView(), getString(R.string.google_drive_signed_out_warning), Snackbar.LENGTH_SHORT).show();
                             return true;
                         }
-                        if (!NetworkUtil.isInternetAvailable(requireContext())) {
-                            showQueueUploadOnWifiDialog(userName, filesToUpload, getString(R.string.queue_upload_offline_message));
-                            return true;
-                        }
-                        if (NetworkUtil.shouldWarnWifiRequired(requireContext())) {
-                            showQueueUploadOnWifiDialog(userName, filesToUpload, getString(R.string.wifi_required_mobile_disabled_message));
+                        if (!NetworkUtil.isInternetAvailable(requireContext()) || !NetworkUtil.isInternetAllowedBySettings(requireContext())) {
+                            setPendingWifiUpload(userName, filesToUpload);
+                            enqueuePendingWifiUpload();
+                            BackupNotice.showPendingUploadNotice(requireContext(), getString(R.string.pending_upload_waiting_wifi_alert));
+                            if (backupAdapter != null)
+                                backupAdapter.cancelMultiSelect();
                             return true;
                         }
                         checkExistingFilesAndStartUpload(userName, filesToUpload);
@@ -367,6 +368,13 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             restoreSelectionIfNeeded();
             showLnProgressBar(false);
         });
+
+        WorkManager.getInstance(requireContext())
+                .getWorkInfosByTagLiveData(PendingBackupUploadWorker.WORK_TAG_PENDING_UPLOAD_WIFI)
+                .observe(getViewLifecycleOwner(), workInfos -> {
+                    if (backupAdapter != null)
+                        backupAdapter.notifyDataChanged();
+                });
         backupViewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLnProgressBar);
         backupViewModel.getHasPermission().observe(getViewLifecycleOwner(), has -> {
             updateBackupActionEnabled(Boolean.TRUE.equals(has));
@@ -576,7 +584,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     public void onNetworkAvailable() {
         Log.w(TAG, "Network is available");
         notifyDataChanged();
-        resumePendingWifiUploadIfPossible();
         if (isAdded())
             requireActivity().runOnUiThread(() -> updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible));
     }
@@ -910,13 +917,10 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         ArrayList<DocumentFile> singleFile = new ArrayList<>();
         singleFile.add(documentFile);
 
-        if (!NetworkUtil.isInternetAvailable(requireContext())) {
-            showQueueUploadOnWifiDialog(userName, singleFile, getString(R.string.queue_upload_offline_message));
-            return;
-        }
-
-        if (NetworkUtil.shouldWarnWifiRequired(requireContext())) {
-            showQueueUploadOnWifiDialog(userName, singleFile, getString(R.string.wifi_required_mobile_disabled_message));
+        if (!NetworkUtil.isInternetAvailable(requireContext()) || !NetworkUtil.isInternetAllowedBySettings(requireContext())) {
+            setPendingWifiUpload(userName, singleFile);
+            enqueuePendingWifiUpload();
+            BackupNotice.showPendingUploadNotice(requireContext(), getString(R.string.pending_upload_waiting_wifi_alert));
             return;
         }
 
@@ -924,24 +928,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     }
 
 
-    /**
-     * Zobrazí varování při vypnutých mobilních datech a nabídne zařazení uploadu do čekající úlohy na WiFi.
-     */
-    private void showQueueUploadOnWifiDialog(@NonNull String userName,
-                                             @NonNull List<DocumentFile> filesToUpload,
-                                             @NonNull String message) {
-        if (filesToUpload.isEmpty())
-            return;
 
-        setPendingWifiUpload(userName, filesToUpload);
-        YesNoDialogFragment.newInstance(
-                getString(R.string.wifi_required_title),
-                FLAG_DIALOG_FRAGMENT_QUEUE_UPLOAD_WIFI,
-                message,
-                getString(R.string.queue_upload_on_wifi),
-                getString(R.string.zrusit)
-        ).show(requireActivity().getSupportFragmentManager(), FLAG_DIALOG_FRAGMENT_QUEUE_UPLOAD_WIFI);
-    }
 
 
     /**
@@ -1042,66 +1029,5 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
             Log.e(TAG, "Failed to parse persisted pending WiFi upload file names", e);
         }
         return fileNames;
-    }
-
-
-    /**
-     * Vyčistí perzistentně uložený pending WiFi upload.
-     */
-    private void clearPersistedPendingWifiUpload() {
-        if (!isAdded())
-            return;
-
-        ShPBackup shPBackupLocal = new ShPBackup(requireContext());
-        shPBackupLocal.set(ShPBackup.PENDING_WIFI_UPLOAD_USER_NAME, "");
-        shPBackupLocal.set(ShPBackup.PENDING_WIFI_UPLOAD_FILE_NAMES, "");
-    }
-
-
-    /**
-     * Po obnovení připojení naváže na čekající upload a použije stávající flow s kontrolou kolizí.
-     */
-    private void resumePendingWifiUploadIfPossible() {
-        if (!isAdded())
-            return;
-        if (!NetworkUtil.isInternetAllowedBySettings(requireContext()))
-            return;
-
-        ShPBackup shPBackupLocal = new ShPBackup(requireContext());
-        String userName = shPBackupLocal.get(ShPBackup.PENDING_WIFI_UPLOAD_USER_NAME, "");
-        String fileNamesJson = shPBackupLocal.get(ShPBackup.PENDING_WIFI_UPLOAD_FILE_NAMES, "");
-        if (userName.isEmpty() || fileNamesJson.isEmpty())
-            return;
-
-        Uri backupUri = Uri.parse(shPBackupLocal.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
-        DocumentFile backupFolder = DocumentFile.fromTreeUri(requireContext(), backupUri);
-        if (backupFolder == null || !backupFolder.canRead())
-            return;
-
-        ArrayList<DocumentFile> filesToUpload = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(fileNamesJson);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String fileName = jsonArray.optString(i, "");
-                if (fileName.isEmpty())
-                    continue;
-                DocumentFile file = backupFolder.findFile(fileName);
-                if (file != null && file.isFile())
-                    filesToUpload.add(file);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse pending WiFi upload file names", e);
-            clearPersistedPendingWifiUpload();
-            WorkManager.getInstance(requireContext()).cancelAllWorkByTag(PendingBackupUploadWorker.WORK_TAG_PENDING_UPLOAD_WIFI);
-            return;
-        }
-
-        WorkManager.getInstance(requireContext()).cancelAllWorkByTag(PendingBackupUploadWorker.WORK_TAG_PENDING_UPLOAD_WIFI);
-        clearPersistedPendingWifiUpload();
-
-        if (filesToUpload.isEmpty())
-            return;
-
-        checkExistingFilesAndStartUpload(userName, filesToUpload);
     }
 }

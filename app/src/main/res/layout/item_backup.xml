@@ -25,6 +25,18 @@
         android:maxHeight="50dp"
         android:src="@mipmap/ic_odecet_new" />
 
+    <ImageView
+        android:id="@+id/ivPendingUpload"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignBottom="@id/imgIconFile"
+        android:layout_alignEnd="@id/imgIconFile"
+        android:background="@drawable/dialog_rounded_background"
+        android:padding="2dp"
+        android:src="@drawable/ic_backup_to_tray"
+        android:contentDescription="@string/wifi_required_title"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/lnButtonsBackup"
         style="?android:attr/buttonBarStyle"
