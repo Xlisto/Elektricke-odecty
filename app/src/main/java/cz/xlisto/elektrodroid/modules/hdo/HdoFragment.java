@@ -3,6 +3,7 @@ package cz.xlisto.elektrodroid.modules.hdo;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,8 @@ import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
-import cz.xlisto.elektrodroid.utils.DetectNightMode;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.NotificationHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.UIHelper;
 
@@ -102,7 +103,7 @@ public class HdoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(cz.xlisto.elektrodroid.R.layout.fragment_hdo, container, false);
+        return inflater.inflate(R.layout.fragment_hdo, container, false);
     }
 
 
@@ -118,11 +119,11 @@ public class HdoFragment extends Fragment {
         requireActivity().invalidateOptionsMenu();
 
         // ...existing code...
-        tvTimeHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.tvTimeHdo);
-        tvTimeDifference = view.findViewById(cz.xlisto.elektrodroid.R.id.tvTimeDifference);
-        tvAlertHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.tvAlertHdo);
+        tvTimeHdo = view.findViewById(R.id.tvTimeHdo);
+        tvTimeDifference = view.findViewById(R.id.tvTimeDifference);
+        tvAlertHdo = view.findViewById(R.id.tvAlertHdo);
         tvDateHdo = view.findViewById(R.id.tvHdoDate);
-        rvHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.rvHdo);
+        rvHdo = view.findViewById(R.id.rvHdo);
         rvHdo.setItemAnimator(null);
         swHdoService = view.findViewById(R.id.swHdoService);
         // HDO tray služba byla odstraněna, přepínač proto nezobrazujeme.
@@ -131,14 +132,14 @@ public class HdoFragment extends Fragment {
         new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
-        fab = view.findViewById(cz.xlisto.elektrodroid.R.id.fabHdo);
-        btnAddHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.btnAddHdo);
-        btnAddHour = view.findViewById(cz.xlisto.elektrodroid.R.id.btnAddHour);
-        btnRemoveHour = view.findViewById(cz.xlisto.elektrodroid.R.id.btnRemoveHour);
-        btnAddMinute = view.findViewById(cz.xlisto.elektrodroid.R.id.btnAddMinute);
-        btnRemoveMinute = view.findViewById(cz.xlisto.elektrodroid.R.id.btnRemoveMinute);
-        Button btnHdoLoad = view.findViewById(cz.xlisto.elektrodroid.R.id.btnHdoLoad);
-        btnAddHdo = view.findViewById(cz.xlisto.elektrodroid.R.id.btnAddHdo);
+        fab = view.findViewById(R.id.fabHdo);
+        btnAddHdo = view.findViewById(R.id.btnAddHdo);
+        btnAddHour = view.findViewById(R.id.btnAddHour);
+        btnRemoveHour = view.findViewById(R.id.btnRemoveHour);
+        btnAddMinute = view.findViewById(R.id.btnAddMinute);
+        btnRemoveMinute = view.findViewById(R.id.btnRemoveMinute);
+        Button btnHdoLoad = view.findViewById(R.id.btnHdoLoad);
+        btnAddHdo = view.findViewById(R.id.btnAddHdo);
         btnAddMinute.setOnClickListener(v -> changeTimeShift(timeDifferent += minute));
         btnRemoveMinute.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute));
         btnAddHour.setOnClickListener(v -> changeTimeShift(timeDifferent += minute * 60));
@@ -210,6 +211,24 @@ public class HdoFragment extends Fragment {
         loadReles();
         swHdoService.setChecked(false);
         new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
+        checkNotificationPermissionWarning();
+    }
+
+
+    /**
+     * Zkontroluje, zda jsou nastavená HDO upozornění a jsou-li vypnuté notifikace, zobrazí varování.
+     */
+    private void checkNotificationPermissionWarning() {
+        boolean hasNotification = false;
+        for (HdoModel model : hdoModels) {
+            if (model.getNotifyStart() == 1 || model.getNotifyEnd() == 1) {
+                hasNotification = true;
+                break;
+            }
+        }
+        if (hasNotification && !NotificationHelper.isNotificationPermissionGranted(requireContext())) {
+            NotificationHelper.showNotificationWarningSnackbar(getView(), getString(R.string.notification_disabled_warning));
+        }
     }
 
 
@@ -287,16 +306,29 @@ public class HdoFragment extends Fragment {
     private void setTextHdoColor(boolean show) {
         if (isAdded()) {
             if (show) {
-                tvTimeHdo.setTextColor(Color.parseColor("#187e34"));
+                tvTimeHdo.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_yes));
                 imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_on));
             } else {
-                if (DetectNightMode.isNightMode(requireActivity()))
-                    tvTimeHdo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.secondary_text_dark));
-                else
-                    tvTimeHdo.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.secondary_text_light));
+                tvTimeHdo.setTextColor(getTextColorSecondary());
                 imageViewIconNT.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.nt_off));
             }
         }
+    }
+
+
+    /**
+     * Vrátí sekundární barvu textu podle aktuálního tématu.
+     */
+    private int getTextColorSecondary() {
+        TypedValue typedValue = new TypedValue();
+        if (requireContext().getTheme().resolveAttribute(android.R.attr.textColorSecondary, typedValue, true)) {
+            if (typedValue.resourceId != 0) {
+                return ContextCompat.getColor(requireContext(), typedValue.resourceId);
+            } else {
+                return typedValue.data;
+            }
+        }
+        return Color.GRAY;
     }
 
 

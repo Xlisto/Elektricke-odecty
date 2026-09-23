@@ -670,7 +670,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="reading_notification_monthly">Měsíčně</string>
     <string name="reading_notification_weekly">Týdně</string>
     <string name="reading_notification_day_of_month">Den v měsíci (1–31):</string>
-    <string name="reading_notification_day_of_month_hint">1-31</string>
+    <string name="reading_notification_day_of_month_hint">1–31</string>
     <string name="reading_notification_day_of_week">Den v týdnu:</string>
     <string name="reading_notification_time">Čas notifikace:</string>
     <string name="reading_notification_time_default">08:00</string>
@@ -687,4 +687,8 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="day_sunday">Neděle</string>
 
 
+    <!-- Upozornění na notifikace -->
+    <string name="enable">Povolit</string>
+    <string name="notification_disabled_warning">Notifikace jsou zakázané. Chcete je povolit v nastavení?</string>
+    <string name="pending_upload_no_notification_warning">Záloha čeká na Wi-Fi, ale notifikace jsou zakázané. Chcete je povolit?</string>
 </resources>

@@ -60,6 +60,7 @@ import cz.xlisto.elektrodroid.shp.ShPGoogleDrive;
 import cz.xlisto.elektrodroid.utils.MainActivityHelper;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
+import cz.xlisto.elektrodroid.utils.NotificationHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -976,8 +977,13 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         clearPendingWifiUpload();
 
         View root = getView();
-        if (root != null)
-            Snackbar.make(root, getString(R.string.pending_upload_queued_for_wifi), Snackbar.LENGTH_LONG).show();
+        if (root != null) {
+            if (NotificationHelper.isNotificationPermissionGranted(requireContext())) {
+                Snackbar.make(root, getString(R.string.pending_upload_queued_for_wifi), Snackbar.LENGTH_LONG).show();
+            } else {
+                NotificationHelper.showNotificationWarningSnackbar(root, getString(R.string.pending_upload_no_notification_warning));
+            }
+        }
     }
 
 

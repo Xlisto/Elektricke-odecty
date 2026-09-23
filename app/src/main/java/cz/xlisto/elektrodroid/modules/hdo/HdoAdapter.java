@@ -26,6 +26,7 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.NotificationHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 /**
@@ -92,7 +93,7 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
      */
     @NonNull
     @Override
-    public HdoAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hdo, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
 
@@ -127,7 +128,7 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
      * v náhledovém režimu skryje celou notifikační oblast.
      */
     @Override
-    public void onBindViewHolder(@NonNull HdoAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         HdoModel item = items.get(position);
 
         if ((item.getMon() == 0)) {
@@ -191,11 +192,13 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
             holder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 item.setNotifyStart(isChecked ? 1 : 0);
                 updateNotifyFlags(item);
+                checkNotificationPermission(holder.itemView);
             });
 
             holder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 item.setNotifyEnd(isChecked ? 1 : 0);
                 updateNotifyFlags(item);
+                checkNotificationPermission(holder.itemView);
             });
         } else {
             // Rezim nahledu (HdoSiteFragment): notifikace se zde nenastavuji.
@@ -240,6 +243,15 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
     }
 
+
+    /**
+     * Zkontroluje oprávnění notifikací a pokud nejsou povolené, zobrazí varování.
+     */
+    private void checkNotificationPermission(View view) {
+        if (!NotificationHelper.isNotificationPermissionGranted(view.getContext())) {
+            NotificationHelper.showNotificationWarningSnackbar(view, view.getContext().getString(R.string.notification_disabled_warning));
+        }
+    }
 
     /**
      * Vrátí počet položek v adapteru.
