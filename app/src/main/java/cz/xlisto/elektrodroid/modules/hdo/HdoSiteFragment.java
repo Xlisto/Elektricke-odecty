@@ -37,7 +37,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.SelectHdoCategoryDialogFragment;
@@ -629,7 +628,8 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
-     * Uloží aktuálně načtený seznam HDO do lokální databáze.
+     * Uloží aktuálně načtený seznam HDO do lokální databáze pomocí inteligentního uložení
+     * (smartSaveHdo), které zohledňuje platnost, budoucí kódy a přenos notifikací.
      * <p>
      * Metoda ověří, že existují načtená data a že je k dispozici odběrné místo
      * s definovanou tabulkou pro HDO. V případě chyb vypíše krátké Toast hlášení.
@@ -646,8 +646,15 @@ public class HdoSiteFragment extends Fragment {
                 Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
                 return;
             }
-            DataHdoSource dataHdoSource = new DataHdoSource(requireActivity());
-            dataHdoSource.saveHdo(hdoList, tableHdo);
+            HdoUpdateHelper.smartSaveHdo(requireActivity(), hdoList, tableHdo, (oldModel, newModel, diffMinutes) -> {
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        String msg = getString(R.string.hdo_time_diff_dialog_message, oldModel.getRele(), diffMinutes);
+                        OwnAlertDialog.showDialog(requireActivity(), getString(R.string.hdo_time_diff_dialog_title), msg);
+                    });
+                }
+            });
+            Toast.makeText(requireActivity(), R.string.saved, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(requireActivity(), "Nejprve načtěte data", Toast.LENGTH_SHORT).show();
         }

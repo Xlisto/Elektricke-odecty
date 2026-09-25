@@ -374,31 +374,36 @@ public class Connections {
         String page = CodeWeb.htmlPage.replace("***12345***", apiToken);
 
         ((FragmentActivity) context).runOnUiThread(() -> {
-            final String[] urlHdo = {""};
-            WebView webView = new WebView(context);
-            //LinearLayoutCompat.LayoutParams params = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            //webView.setLayoutParams(params);
-            WebViewClientImpl webViewClient = new WebViewClientImpl();
-            WebAppInterface webAppInterface = new WebAppInterface();
-            webAppInterface.setOnSaveUrlListener(url -> urlHdo[0] = urlHdo[0] + url);
+            try {
+                final String[] urlHdo = {""};
+                WebView webView = new WebView(context);
+                WebViewClientImpl webViewClient = new WebViewClientImpl();
+                WebAppInterface webAppInterface = new WebAppInterface();
+                webAppInterface.setOnSaveUrlListener(url -> urlHdo[0] = urlHdo[0] + url);
 
-            webView.setWebViewClient(webViewClient);
-            webView.setWebChromeClient(new WebChromeClient());
-            webView.getSettings().setDomStorageEnabled(true);
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.clearCache(true);
-            webView.clearHistory();
-            webView.clearMatches();
-            webView.clearFormData();
-            webView.addJavascriptInterface(webAppInterface, "Android");
-            webView.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
+                webView.setWebViewClient(webViewClient);
+                webView.setWebChromeClient(new WebChromeClient());
+                webView.getSettings().setDomStorageEnabled(true);
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.clearCache(true);
+                webView.clearHistory();
+                webView.clearMatches();
+                webView.clearFormData();
+                webView.addJavascriptInterface(webAppInterface, "Android");
+                webView.loadDataWithBaseURL(null, page, "text/html", "UTF-8", null);
 
-            webViewClient.setOnPageFinishedListener(() ->
-                    searchKod(urlHdo[0], code, context, districtName, districtIndex)
-            );
+                webViewClient.setOnPageFinishedListener(() ->
+                        searchKod(urlHdo[0], code, context, districtName, districtIndex)
+                );
 
-            root.addView(webView);
-            webView.setVisibility(View.GONE);
+                root.addView(webView);
+                webView.setVisibility(View.GONE);
+            } catch (Throwable e) {
+                Log.e(TAG, "onLoadToken: Inicializace WebView selhala (chybí balíček WebView v systému)", e);
+                if (handler != null) {
+                    handler.sendEmptyMessage(101);
+                }
+            }
         });
     }
 
@@ -551,35 +556,11 @@ public class Connections {
      */
     private String getCategoryEgd(int districtIndex) {
         //int itemSelectedPosition = spDistrict.getSelectedItemPosition();
-        switch (districtIndex) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 22:
-            case 23:
-                return "VYCHOD";
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-            case 20:
-            case 21:
-                return "ZAPAD";
-        }
-        return "";
+        return switch (districtIndex) {
+            case 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 22, 23 -> "VYCHOD";
+            case 14, 15, 16, 17, 18, 19, 20, 21 -> "ZAPAD";
+            default -> "";
+        };
     }
 
 

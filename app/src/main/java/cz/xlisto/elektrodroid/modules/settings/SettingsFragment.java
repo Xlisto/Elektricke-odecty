@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
+import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
@@ -95,6 +96,11 @@ public class SettingsFragment extends Fragment {
         switchShowLeftNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true));
         switchAllowMobileData.setChecked(shPSettings.get(ShPSettings.ALLOW_MOBILE_DATA, true));
         chUseSetAlarm.setChecked(shPSettings.get(ShPSettings.USE_HDO_SET_ALARM, false));
+
+        CheckBox chHdoOldReminderEnabled = view.findViewById(R.id.chHdoOldReminderEnabled);
+        final ShPHdo shPHdo = new ShPHdo(requireContext());
+        chHdoOldReminderEnabled.setChecked(!shPHdo.get(ShPHdo.HDO_OLD_REMINDER_DISABLED, false));
+        chHdoOldReminderEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> shPHdo.set(ShPHdo.HDO_OLD_REMINDER_DISABLED, !isChecked));
 
         chUseSetAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.USE_HDO_SET_ALARM, isChecked);

@@ -538,6 +538,21 @@
     <string name="hdo_notification_end_message">Nyní končí období nízké sazby.</string>
     <string name="hdo_notification_start_message_place">%1$s: nyní začíná období nízké sazby.</string>
     <string name="hdo_notification_end_message_place">%1$s: nyní končí období nízké sazby.</string>
+    <string name="hdo_notification_expired_title">Platnost HDO kódu vypršela</string>
+    <string name="hdo_notification_expired_message">Platnost uložených časů HDO vypršela. Aktualizujte prosím časy na nový kód.</string>
+    <string name="hdo_notification_expired_message_place">%1$s: Platnost uložených časů HDO vypršela. Aktualizujte prosím časy na nový kód.</string>
+    <string name="hdo_notification_last_day_title">Dnes končí platnost HDO kódu</string>
+    <string name="hdo_notification_last_day_message">Platnost aktuálních časů HDO končí dnes. Nyní je možné stáhnout a aktualizovat nové časy.</string>
+    <string name="hdo_notification_last_day_message_place">%1$s: Platnost aktuálních časů HDO končí dnes. Nyní je možné stáhnout a aktualizovat nové časy.</string>
+    <string name="hdo_time_diff_dialog_title">Změna časů HDO</string>
+    <string name="hdo_time_diff_dialog_message">Byly nalezeny nové časy pro relé %1$s s časovým posunem %2$d minut oproti původnímu nastavení.\nPřesto přenést stávající nastavení upozornění na nové časy?</string>
+    <string name="hdo_old_reminder_title">Staré časy HDO</string>
+    <string name="hdo_old_reminder_message">Platnost uložených časů HDO vypršela. Chcete stáhnout aktuální časy?</string>
+    <string name="hdo_old_reminder_message_place">%1$s: Platnost uložených časů HDO vypršela. Chcete stáhnout aktuální časy?</string>
+    <string name="hdo_download_now">Stáhnout hned</string>
+    <string name="hdo_snooze_1_day">Odložit o 1 den</string>
+    <string name="hdo_never_show">Nikdy nezobrazovat</string>
+    <string name="hdo_old_reminder_setting_title">Upozornění na staré časy HDO</string>
 
     <string name="no_data_alert">Nepodařilo se stáhnout žádná data. Zkontrolujte připojení k internetu. Může se také jednat o chybu v aplikaci nebo změnu formátu dat na straně serveru. Zkuste zobrazit čas HDO ve webovém prohlížeči.</string>
 

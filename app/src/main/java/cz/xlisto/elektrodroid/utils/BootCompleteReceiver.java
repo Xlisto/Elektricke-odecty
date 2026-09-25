@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
+import cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 
@@ -32,6 +33,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             HdoAlarmScheduler.rescheduleAll(context);
             MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
         }
+
+        // --- Kontrola platnosti HDO kódů ---
+        HdoUpdateHelper.checkAllHdoValidityAndNotify(context);
 
         // --- Čekající zálohy na Google Drive ---
         // Naplánuje upload přes WorkManager; worker počká na připojení k síti
