@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (savedInstanceState != null) {
             actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
             selectedItemIndex = savedInstanceState.getInt(ACTUAL_SELECTED_ITEM_INDEX);
-            if (selectedItemIndex >= 0)
+            if (selectedItemIndex >= 0 && selectedItemIndex < myNavigationView.getMenu().size())
                 myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true));
         } else {
             actualFragment = MonthlyReadingFragment.newInstance();

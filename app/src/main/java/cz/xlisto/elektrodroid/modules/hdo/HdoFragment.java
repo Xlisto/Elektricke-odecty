@@ -2,27 +2,37 @@ package cz.xlisto.elektrodroid.modules.hdo;
 
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,6 +43,7 @@ import java.util.TimerTask;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
+import cz.xlisto.elektrodroid.dialogs.TimeShiftDialogFragment;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
@@ -65,18 +76,17 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  */
 public class HdoFragment extends Fragment {
 
-    private static final long minute = 60000;
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
-    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo;
+    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo, tvActiveRelay;
+    private LinearLayout llRelaysStatusContainer;
     private ImageView imageViewIconNT;
-    private SwitchMaterial swHdoService;
     private Spinner spReleSettings;
     private RecyclerView rvHdo;
     private long idSubscriptionPoint, timeDifferent;
     private ArrayList<HdoModel> hdoModels = new ArrayList<>();
     private HdoAdapter hdoAdapter;
-    private Button btnAddMinute, btnRemoveMinute, btnRemoveHour, btnAddHour, btnAddHdo;
+    private Button btnAddHdo;
     private FloatingActionButton fab;
 
     //překreslení gui
@@ -104,6 +114,31 @@ public class HdoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_hdo, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_hdo_load) {
+                    HdoSiteFragment hdoSite = HdoSiteFragment.newInstance();
+                    FragmentChange.replace(requireActivity(), hdoSite, FragmentChange.Transaction.MOVE, true);
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_hdo_time_shift) {
+                    if (idSubscriptionPoint != -1L) {
+                        TimeShiftDialogFragment dialog = TimeShiftDialogFragment.newInstance(idSubscriptionPoint, timeDifferent);
+                        dialog.show(requireActivity().getSupportFragmentManager(), "TimeShiftDialogFragment");
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_hdo, container, false);
     }
 
@@ -119,39 +154,37 @@ public class HdoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
 
-        // ...existing code...
         tvTimeHdo = view.findViewById(R.id.tvTimeHdo);
         tvTimeDifference = view.findViewById(R.id.tvTimeDifference);
         tvAlertHdo = view.findViewById(R.id.tvAlertHdo);
         tvDateHdo = view.findViewById(R.id.tvHdoDate);
+        tvActiveRelay = view.findViewById(R.id.tvActiveRelay);
+        llRelaysStatusContainer = view.findViewById(R.id.llRelaysStatusContainer);
         rvHdo = view.findViewById(R.id.rvHdo);
         rvHdo.setItemAnimator(null);
-        swHdoService = view.findViewById(R.id.swHdoService);
-        // HDO tray služba byla odstraněna, přepínač proto nezobrazujeme.
-        swHdoService.setVisibility(View.GONE);
-        swHdoService.setChecked(false);
         new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         fab = view.findViewById(R.id.fabHdo);
         btnAddHdo = view.findViewById(R.id.btnAddHdo);
-        btnAddHour = view.findViewById(R.id.btnAddHour);
-        btnRemoveHour = view.findViewById(R.id.btnRemoveHour);
-        btnAddMinute = view.findViewById(R.id.btnAddMinute);
-        btnRemoveMinute = view.findViewById(R.id.btnRemoveMinute);
-        Button btnHdoLoad = view.findViewById(R.id.btnHdoLoad);
-        btnAddHdo = view.findViewById(R.id.btnAddHdo);
-        btnAddMinute.setOnClickListener(v -> changeTimeShift(timeDifferent += minute));
-        btnRemoveMinute.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute));
-        btnAddHour.setOnClickListener(v -> changeTimeShift(timeDifferent += minute * 60));
-        btnRemoveHour.setOnClickListener(v -> changeTimeShift(timeDifferent -= minute * 60));
+
+        ImageView btnMinimizeHdo = view.findViewById(R.id.btnMinimizeHdo);
+        LinearLayout llHdoClockDetails = view.findViewById(R.id.llHdoClockDetails);
+
+        ShPHdo shPHdo = new ShPHdo(requireContext());
+        boolean isMinimized = shPHdo.get(ShPHdo.ARG_HDO_CLOCK_MINIMIZED, false);
+        applyClockMinimizedState(isMinimized);
+
+        btnMinimizeHdo.setOnClickListener(v -> {
+            boolean currentlyMinimized = llHdoClockDetails.getVisibility() == View.GONE;
+            boolean newMinimized = !currentlyMinimized;
+            shPHdo.set(ShPHdo.ARG_HDO_CLOCK_MINIMIZED, newMinimized);
+            applyClockMinimizedState(newMinimized);
+        });
+
         fab.setOnClickListener(v -> showAddDialog());
         btnAddHdo.setOnClickListener(v -> showAddDialog());
-        btnHdoLoad.setOnClickListener(v -> {
-            HdoSiteFragment hdoSite = new HdoSiteFragment();
-            FragmentChange.replace(requireActivity(), hdoSite, FragmentChange.Transaction.MOVE, true);
-        });
-        // Přepínač služby je vypnutý z produktu, listener není potřeba.
+
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -178,6 +211,20 @@ public class HdoFragment extends Fragment {
         //posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true)));
+
+        //posluchač pro změnu časového posunu v dialogu
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("TIME_SHIFT_CHANGED", this, (requestKey, result) -> {
+            if (idSubscriptionPoint != -1L) {
+                DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+                dataSettingsSource.open();
+                timeDifferent = dataSettingsSource.loadTimeShift(idSubscriptionPoint);
+                dataSettingsSource.close();
+                setTimeDifferent();
+                if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null) {
+                    HdoAlarmScheduler.rescheduleForTable(requireContext(), subscriptionPoint.getTableHDO());
+                }
+            }
+        });
     }
 
 
@@ -194,10 +241,6 @@ public class HdoFragment extends Fragment {
             idSubscriptionPoint = subscriptionPoint.getId();
         else {
             idSubscriptionPoint = -1L;
-            btnAddMinute.setEnabled(false);
-            btnRemoveMinute.setEnabled(false);
-            btnAddHour.setEnabled(false);
-            btnRemoveHour.setEnabled(false);
             imageViewIconNT.setVisibility(View.GONE);
             return;
         }
@@ -210,8 +253,9 @@ public class HdoFragment extends Fragment {
         showAlert();
         loadData();
         loadReles();
-        swHdoService.setChecked(false);
         new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
+        ShPHdo shPHdo = new ShPHdo(requireContext());
+        applyClockMinimizedState(shPHdo.get(ShPHdo.ARG_HDO_CLOCK_MINIMIZED, false));
         checkNotificationPermissionWarning();
     }
 
@@ -248,11 +292,14 @@ public class HdoFragment extends Fragment {
      * Aktualizuje UI každou sekundu s aktuálním časem a HDO stavem.
      */
     private void startTimer() {
+        endTimer();
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                requireActivity().runOnUiThread(timerTick);//zavolání překreslení GUI
+                if (isAdded() && getActivity() != null) {
+                    getActivity().runOnUiThread(timerTick);
+                }
             }
         }, 0, 1000);
     }
@@ -262,23 +309,37 @@ public class HdoFragment extends Fragment {
      * Zastaví a zruší časovač, aby se zabránilo zbytečnému spotřebování paměti.
      */
     private void endTimer() {
-        if (timer != null) timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
     }
 
 
     /**
-     * Nastaví a zobrazí časový posun s korektní češtinou (hodin/hodina/hodiny, minut/minuta/minuty).
-     * Aktualizuje TextView s formátovaným rozdílem času.
+     * Nastaví a zobrazí časový posun s korektní češtinou.
+     * Pokud je časový posun 0, zobrazovaný prvek skryje.
      */
     private void setTimeDifferent() {
-        String hours = "hodin";
-        if (timeDifferent / 3600000 == 1) hours = "hodina";
-        if ((timeDifferent / 3600000 >= 2) && (timeDifferent / 3600000) <= 4) hours = "hodiny";
-        String minutes = "minut";
-        if (((timeDifferent % 3600000) / 60000) == 1) minutes = "minuta";
-        if ((((timeDifferent % 3600000) / 60000) >= 2) && (((timeDifferent % 3600000) / 60000) <= 4))
-            minutes = "minuty";
-        tvTimeDifference.setText(String.format(Locale.GERMANY, "Rozdíl %01d %s a %02d %s ", timeDifferent / 3600000, hours, (timeDifferent % 3600000) / 60000, minutes));
+        if (tvTimeDifference == null) return;
+        if (timeDifferent == 0L) {
+            tvTimeDifference.setVisibility(View.GONE);
+        } else {
+            tvTimeDifference.setVisibility(View.VISIBLE);
+            String hours = "hodin";
+            long h = timeDifferent / 3600000;
+            long absH = Math.abs(h);
+            if (absH == 1) hours = "hodina";
+            else if (absH >= 2 && absH <= 4) hours = "hodiny";
+
+            String minutes = "minut";
+            long m = (Math.abs(timeDifferent) % 3600000) / 60000;
+            if (m == 1) minutes = "minuta";
+            else if (m >= 2 && m <= 4) minutes = "minuty";
+
+            tvTimeDifference.setText(String.format(Locale.GERMANY, "Rozdíl %01d %s a %02d %s ", h, hours, m, minutes));
+        }
         setTime();
     }
 
@@ -288,12 +349,94 @@ public class HdoFragment extends Fragment {
      * Aplikuje časový posun a kontroluje, zda se jedná o HDO čas.
      */
     private void setTime() {
+        if (!isAdded() || getView() == null) return;
         Calendar calendar = Calendar.getInstance();//získání aktuálního času
         calendar.setTimeInMillis(calendar.getTimeInMillis() + timeDifferent);//nastavení kalendáře na aktuální čas + časový posun
         long miliseconds = calendar.getTimeInMillis();//aktuální čas v milisekundách s časovým posunem
-        tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
-        if (hdoModels.isEmpty()) return;
-        setTextHdoColor(HdoTime.checkHdo(hdoModels, calendar));
+        if (tvTimeHdo != null) {
+            tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
+        }
+        if (hdoModels.isEmpty()) {
+            if (tvActiveRelay != null) tvActiveRelay.setVisibility(View.GONE);
+            if (llRelaysStatusContainer != null) llRelaysStatusContainer.setVisibility(View.GONE);
+            return;
+        }
+        boolean isHdo = HdoTime.checkHdo(hdoModels, calendar);
+        setTextHdoColor(isHdo);
+
+        if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null && tvActiveRelay != null && llRelaysStatusContainer != null && getContext() != null) {
+            DataHdoSource dataHdoSource = new DataHdoSource(requireContext());
+            dataHdoSource.open();
+            ArrayList<String> allReles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
+
+            StringBuilder activeRelesNames = new StringBuilder();
+            llRelaysStatusContainer.removeAllViews();
+
+            if (!allReles.isEmpty()) {
+                llRelaysStatusContainer.setVisibility(View.VISIBLE);
+                for (String rele : allReles) {
+                    ArrayList<HdoModel> releModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null, rele);
+                    boolean isReleActive = HdoTime.checkHdo(releModels, calendar);
+                    long nowMillis = System.currentTimeMillis();
+                    long targetMillis;
+                    String statusFormat;
+                    boolean hasReleName = rele != null && !rele.trim().isEmpty();
+
+                    if (isReleActive) {
+                        if (hasReleName) {
+                            if (isStringBuilderNotEmpty(activeRelesNames))
+                                activeRelesNames.append(", ");
+                            activeRelesNames.append(rele);
+                        }
+                        targetMillis = HdoAlarmScheduler.findNextTriggerForModels(releModels, HdoAlarmScheduler.TYPE_END, nowMillis, timeDifferent);
+                        String durationStr = formatDuration(targetMillis - nowMillis);
+                        statusFormat = hasReleName
+                                ? getString(R.string.hdo_relay_active_status, rele, durationStr)
+                                : getString(R.string.hdo_active_status_no_relay, durationStr);
+                    } else {
+                        targetMillis = HdoAlarmScheduler.findNextTriggerForModels(releModels, HdoAlarmScheduler.TYPE_START, nowMillis, timeDifferent);
+                        String durationStr = formatDuration(targetMillis - nowMillis);
+                        statusFormat = hasReleName
+                                ? getString(R.string.hdo_relay_inactive_status, rele, durationStr)
+                                : getString(R.string.hdo_inactive_status_no_relay, durationStr);
+                    }
+
+                    View rowView = LayoutInflater.from(requireContext()).inflate(R.layout.item_relay_status, llRelaysStatusContainer, false);
+                    TextView tvStatus = rowView.findViewById(R.id.tvRelayStatusText);
+                    View viewLed = rowView.findViewById(R.id.viewRelayLed);
+                    tvStatus.setText(statusFormat);
+
+                    GradientDrawable drawable = (GradientDrawable) viewLed.getBackground();
+                    if (drawable != null) {
+                        drawable.setColor(isReleActive ? ContextCompat.getColor(requireContext(), R.color.color_yes) : ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+                    }
+                    llRelaysStatusContainer.addView(rowView);
+                }
+            } else {
+                llRelaysStatusContainer.setVisibility(View.GONE);
+            }
+            dataHdoSource.close();
+
+            if (isHdo && isStringBuilderNotEmpty(activeRelesNames)) {
+                tvActiveRelay.setVisibility(View.VISIBLE);
+                tvActiveRelay.setText(getString(R.string.hdo_active_relay_label, activeRelesNames.toString()));
+                tvActiveRelay.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_yes));
+            } else {
+                tvActiveRelay.setVisibility(View.GONE);
+            }
+        }
+    }
+
+
+    /**
+     * Formátuje milisekundy na tvar HH:mm:ss.
+     */
+    private String formatDuration(long millis) {
+        if (millis <= 0) return "00:00:00";
+        long seconds = (millis / 1000) % 60;
+        long minutes = (millis / (1000 * 60)) % 60;
+        long hours = millis / (1000 * 60 * 60);
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
     }
 
 
@@ -433,23 +576,6 @@ public class HdoFragment extends Fragment {
     private void deleteHdo() {
         hdoAdapter.deleteItem();
     }
-    /**
-     * Uloží do databáze nový časový posun, aktualizuje UI a HDO službu.
-     * Volá se při kliknutí na tlačítka +/- pro přidání/odečtení času.
-     *
-     * @param timeShift Nový časový posun v milisekundách
-     */
-    private void changeTimeShift(long timeShift) {
-        if (idSubscriptionPoint == -1L) return;
-        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
-        dataSettingsSource.open();
-        dataSettingsSource.changeTimeShift(idSubscriptionPoint, timeShift);
-        dataSettingsSource.close();
-        setTimeDifferent();
-        if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null) {
-            HdoAlarmScheduler.rescheduleForTable(requireContext(), subscriptionPoint.getTableHDO());
-        }
-    }
 
 
     /**
@@ -459,6 +585,44 @@ public class HdoFragment extends Fragment {
     private void showAddDialog() {
         HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
         FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
+    }
+
+
+    /**
+     * Pomocná metoda pro kontrolu, zda StringBuilder není prázdný (s ohledem na verzi Androidu).
+     */
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
+    private boolean isStringBuilderNotEmpty(StringBuilder sb) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            return !sb.isEmpty();
+        } else {
+            return sb.length() > 0;
+        }
+    }
+
+
+    /**
+     * Aplikuje stav minimalizace/maximalizace HDO hodinové karty s plynulou animací.
+     */
+    private void applyClockMinimizedState(boolean minimized) {
+        if (getView() instanceof ViewGroup) {
+            TransitionManager.beginDelayedTransition((ViewGroup) getView(), new AutoTransition());
+        }
+
+        assert getView() != null;
+        ImageView btnMinimizeHdo = getView().findViewById(R.id.btnMinimizeHdo);
+        LinearLayout llHdoClockDetails = getView().findViewById(R.id.llHdoClockDetails);
+        if (btnMinimizeHdo == null || llHdoClockDetails == null) return;
+
+        if (minimized) {
+            llHdoClockDetails.setVisibility(View.GONE);
+            btnMinimizeHdo.setImageResource(R.drawable.ic_expand_less_24);
+            btnMinimizeHdo.setContentDescription(getString(R.string.maximize));
+        } else {
+            llHdoClockDetails.setVisibility(View.VISIBLE);
+            btnMinimizeHdo.setImageResource(R.drawable.ic_expand_more_24);
+            btnMinimizeHdo.setContentDescription(getString(R.string.minimize));
+        }
     }
 
 

@@ -557,6 +557,17 @@
     <string name="hdo_snooze_1_day">Odložit o 1 den</string>
     <string name="hdo_never_show">Nikdy nezobrazovat</string>
     <string name="hdo_old_reminder_setting_title">Upozornění na staré časy HDO</string>
+    <string name="hdo_relay_active_status">Relé %1$s: zbývá %2$s do vypnutí</string>
+    <string name="hdo_relay_inactive_status">Relé %1$s: zbývá %2$s do sepnutí</string>
+    <string name="hdo_active_status_no_relay">Zbývá %1$s do vypnutí</string>
+    <string name="hdo_inactive_status_no_relay">Zbývá %1$s do sepnutí</string>
+    <string name="hdo_active_relay_label">Aktivní relé: %1$s</string>
+    <string name="minimize">Minimalizovat</string>
+    <string name="maximize">Maximalizovat</string>
+    <string name="arrow_down">▼</string>
+    <string name="arrow_up">▲</string>
+    <string name="device_time_label">Čas zařízení: %1$s</string>
+    <string name="meter_time_label">Čas elektroměru: %1$s</string>
 
     <string name="no_data_alert">Nepodařilo se stáhnout žádná data. Zkontrolujte připojení k internetu. Může se také jednat o chybu v aplikaci nebo změnu formátu dat na straně serveru. Zkuste zobrazit čas HDO ve webovém prohlížeči.</string>
 

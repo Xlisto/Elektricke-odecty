@@ -297,6 +297,23 @@ public final class HdoAlarmScheduler {
         return timeShift;
     }
 
+
+    /**
+     * Najde nejbližší čas spuštění ze seznamu HDO modelů (např. pro dané relé).
+     */
+    public static long findNextTriggerForModels(List<HdoModel> models, int type, long nowMillis, long timeShift) {
+        long earliest = -1L;
+        for (HdoModel model : models) {
+            long trigger = findNextTrigger(model, type, nowMillis, timeShift);
+            if (trigger > 0L) {
+                if (earliest < 0L || trigger < earliest) {
+                    earliest = trigger;
+                }
+            }
+        }
+        return earliest;
+    }
+
     /**
      * Vrátí, zda je požadovaný typ notifikace pro záznam aktivní.
      */
