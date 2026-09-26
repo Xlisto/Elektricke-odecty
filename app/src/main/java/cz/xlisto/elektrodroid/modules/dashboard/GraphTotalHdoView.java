@@ -302,38 +302,63 @@ public class GraphTotalHdoView extends View {
 
         int smallerUnit = (int) (radius * 0.3);
 
-        // 1. Vykreslení TUV (Největší poloměr / vnější prstenec)
-        for (HdoModel model : tuvModels) {
-            float startAngle = convertTimeToAngle(model.getTimeFrom());
-            float endAngle = convertTimeToAngle(model.getTimeUntil());
-            float sweepAngle = endAngle - startAngle;
-            if (sweepAngle <= 0) sweepAngle += 360;
+        int tuvOffset = 0;
+        int tarOffset = 0;
+        int pvOffset = 0;
 
-            RectF oval = new RectF(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding);
-            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
+        int activeTypesCount = (showTUV ? 1 : 0) + (showTAR ? 1 : 0) + (showPV ? 1 : 0);
+
+        if (activeTypesCount > 1) {
+            int currentOffsetIndex = 0;
+            if (showTUV) {
+                currentOffsetIndex++;
+            }
+            if (showTAR) {
+                tarOffset = currentOffsetIndex * smallerUnit;
+                currentOffsetIndex++;
+            }
+            if (showPV) {
+                pvOffset = currentOffsetIndex * smallerUnit;
+            }
         }
 
-        // 2. Vykreslení TAR (Střední poloměr / prostřední prstenec)
-        for (HdoModel model : tarModels) {
-            float startAngle = convertTimeToAngle(model.getTimeFrom());
-            float endAngle = convertTimeToAngle(model.getTimeUntil());
-            float sweepAngle = endAngle - startAngle;
-            if (sweepAngle <= 0) sweepAngle += 360;
+        // 1. Vykreslení TUV
+        if (showTUV) {
+            for (HdoModel model : tuvModels) {
+                float startAngle = convertTimeToAngle(model.getTimeFrom());
+                float endAngle = convertTimeToAngle(model.getTimeUntil());
+                float sweepAngle = endAngle - startAngle;
+                if (sweepAngle <= 0) sweepAngle += 360;
 
-            RectF oval = new RectF(padding + smallerUnit, padding + smallerUnit, (float) size / 2 - padding - smallerUnit, (float) size / 2 - padding - smallerUnit);
-            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
+                RectF oval = new RectF(padding + tuvOffset, padding + tuvOffset, (float) size / 2 - padding - tuvOffset, (float) size / 2 - padding - tuvOffset);
+                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
+            }
         }
 
-        // 3. Vykreslení PV (Nejmenší poloměr / vnitřní prstenec)
-        int pvSmaller = smallerUnit * 2;
-        for (HdoModel model : pvModels) {
-            float startAngle = convertTimeToAngle(model.getTimeFrom());
-            float endAngle = convertTimeToAngle(model.getTimeUntil());
-            float sweepAngle = endAngle - startAngle;
-            if (sweepAngle <= 0) sweepAngle += 360;
+        // 2. Vykreslení TAR
+        if (showTAR) {
+            for (HdoModel model : tarModels) {
+                float startAngle = convertTimeToAngle(model.getTimeFrom());
+                float endAngle = convertTimeToAngle(model.getTimeUntil());
+                float sweepAngle = endAngle - startAngle;
+                if (sweepAngle <= 0) sweepAngle += 360;
 
-            RectF oval = new RectF(padding + pvSmaller, padding + pvSmaller, (float) size / 2 - padding - pvSmaller, (float) size / 2 - padding - pvSmaller);
-            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
+                RectF oval = new RectF(padding + tarOffset, padding + tarOffset, (float) size / 2 - padding - tarOffset, (float) size / 2 - padding - tarOffset);
+                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
+            }
+        }
+
+        // 3. Vykreslení PV
+        if (showPV) {
+            for (HdoModel model : pvModels) {
+                float startAngle = convertTimeToAngle(model.getTimeFrom());
+                float endAngle = convertTimeToAngle(model.getTimeUntil());
+                float sweepAngle = endAngle - startAngle;
+                if (sweepAngle <= 0) sweepAngle += 360;
+
+                RectF oval = new RectF(padding + pvOffset, padding + pvOffset, (float) size / 2 - padding - pvOffset, (float) size / 2 - padding - pvOffset);
+                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
+            }
         }
     }
 
