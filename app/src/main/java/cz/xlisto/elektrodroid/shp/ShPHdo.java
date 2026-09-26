@@ -9,6 +9,7 @@ public class ShPHdo extends ShP{
 
     public static final String ARG_RUNNING_SERVICE = "hdoRunningService";
     public static final String ARG_HDO_CLOCK_MINIMIZED = "hdoClockMinimized";
+    public static final String ARG_MAIN_HDO_RELAY = "mainHdoRelay";
     public static final String HDO_OLD_REMINDER_DISABLED = "hdoOldReminderDisabled";
     public static final String HDO_OLD_REMINDER_SNOOZE_UNTIL = "hdoOldReminderSnoozeUntil";
 

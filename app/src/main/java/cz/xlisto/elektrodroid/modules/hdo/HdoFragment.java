@@ -3,7 +3,6 @@ package cz.xlisto.elektrodroid.modules.hdo;
 
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
@@ -19,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -78,7 +78,7 @@ public class HdoFragment extends Fragment {
 
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
-    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo, tvActiveRelay;
+    private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo;
     private LinearLayout llRelaysStatusContainer;
     private ImageView imageViewIconNT;
     private Spinner spReleSettings;
@@ -158,7 +158,6 @@ public class HdoFragment extends Fragment {
         tvTimeDifference = view.findViewById(R.id.tvTimeDifference);
         tvAlertHdo = view.findViewById(R.id.tvAlertHdo);
         tvDateHdo = view.findViewById(R.id.tvHdoDate);
-        tvActiveRelay = view.findViewById(R.id.tvActiveRelay);
         llRelaysStatusContainer = view.findViewById(R.id.llRelaysStatusContainer);
         rvHdo = view.findViewById(R.id.rvHdo);
         rvHdo.setItemAnimator(null);
@@ -356,20 +355,30 @@ public class HdoFragment extends Fragment {
         if (tvTimeHdo != null) {
             tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
         }
-        if (hdoModels.isEmpty()) {
-            if (tvActiveRelay != null) tvActiveRelay.setVisibility(View.GONE);
-            if (llRelaysStatusContainer != null) llRelaysStatusContainer.setVisibility(View.GONE);
-            return;
-        }
-        boolean isHdo = HdoTime.checkHdo(hdoModels, calendar);
-        setTextHdoColor(isHdo);
 
-        if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null && tvActiveRelay != null && llRelaysStatusContainer != null && getContext() != null) {
+        if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null && llRelaysStatusContainer != null && getContext() != null) {
             DataHdoSource dataHdoSource = new DataHdoSource(requireContext());
             dataHdoSource.open();
             ArrayList<String> allReles = dataHdoSource.getReles(subscriptionPoint.getTableHDO());
 
-            StringBuilder activeRelesNames = new StringBuilder();
+            ShPHdo shPHdo = new ShPHdo(requireContext());
+            String selectedMainRelay = shPHdo.get(ShPHdo.ARG_MAIN_HDO_RELAY, "");
+
+            if ((selectedMainRelay.isEmpty() || !allReles.contains(selectedMainRelay)) && !allReles.isEmpty()) {
+                selectedMainRelay = allReles.get(0);
+                shPHdo.set(ShPHdo.ARG_MAIN_HDO_RELAY, selectedMainRelay);
+            }
+
+            // Nastavení stavu hlavních hodin a žárovky podle zvoleného relé
+            if (!selectedMainRelay.isEmpty()) {
+                ArrayList<HdoModel> mainRelayModels = dataHdoSource.loadHdo(subscriptionPoint.getTableHDO(), null, selectedMainRelay);
+                boolean isMainRelayActive = HdoTime.checkHdo(mainRelayModels, calendar);
+                setTextHdoColor(isMainRelayActive);
+            } else if (!hdoModels.isEmpty()) {
+                boolean isHdo = HdoTime.checkHdo(hdoModels, calendar);
+                setTextHdoColor(isHdo);
+            }
+
             llRelaysStatusContainer.removeAllViews();
 
             if (!allReles.isEmpty()) {
@@ -383,11 +392,6 @@ public class HdoFragment extends Fragment {
                     boolean hasReleName = rele != null && !rele.trim().isEmpty();
 
                     if (isReleActive) {
-                        if (hasReleName) {
-                            if (isStringBuilderNotEmpty(activeRelesNames))
-                                activeRelesNames.append(", ");
-                            activeRelesNames.append(rele);
-                        }
                         targetMillis = HdoAlarmScheduler.findNextTriggerForModels(releModels, HdoAlarmScheduler.TYPE_END, nowMillis, timeDifferent);
                         String durationStr = formatDuration(targetMillis - nowMillis);
                         statusFormat = hasReleName
@@ -402,9 +406,21 @@ public class HdoFragment extends Fragment {
                     }
 
                     View rowView = LayoutInflater.from(requireContext()).inflate(R.layout.item_relay_status, llRelaysStatusContainer, false);
+                    RadioButton rbSelectMainRelay = rowView.findViewById(R.id.rbSelectMainRelay);
                     TextView tvStatus = rowView.findViewById(R.id.tvRelayStatusText);
                     View viewLed = rowView.findViewById(R.id.viewRelayLed);
+
                     tvStatus.setText(statusFormat);
+                    assert rele != null;
+                    rbSelectMainRelay.setChecked(rele.equals(selectedMainRelay));
+
+                    View.OnClickListener onSelectRelayListener = v -> {
+                        shPHdo.set(ShPHdo.ARG_MAIN_HDO_RELAY, rele);
+                        setTime();
+                    };
+
+                    rbSelectMainRelay.setOnClickListener(onSelectRelayListener);
+                    rowView.setOnClickListener(onSelectRelayListener);
 
                     GradientDrawable drawable = (GradientDrawable) viewLed.getBackground();
                     if (drawable != null) {
@@ -416,14 +432,6 @@ public class HdoFragment extends Fragment {
                 llRelaysStatusContainer.setVisibility(View.GONE);
             }
             dataHdoSource.close();
-
-            if (isHdo && isStringBuilderNotEmpty(activeRelesNames)) {
-                tvActiveRelay.setVisibility(View.VISIBLE);
-                tvActiveRelay.setText(getString(R.string.hdo_active_relay_label, activeRelesNames.toString()));
-                tvActiveRelay.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_yes));
-            } else {
-                tvActiveRelay.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -585,19 +593,6 @@ public class HdoFragment extends Fragment {
     private void showAddDialog() {
         HdoAddFragment hdoAddFragment = HdoAddFragment.newInstance();
         FragmentChange.replace(requireActivity(), hdoAddFragment, FragmentChange.Transaction.MOVE, true);
-    }
-
-
-    /**
-     * Pomocná metoda pro kontrolu, zda StringBuilder není prázdný (s ohledem na verzi Androidu).
-     */
-    @SuppressWarnings("SizeReplaceableByIsEmpty")
-    private boolean isStringBuilderNotEmpty(StringBuilder sb) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            return !sb.isEmpty();
-        } else {
-            return sb.length() > 0;
-        }
     }
 
 
