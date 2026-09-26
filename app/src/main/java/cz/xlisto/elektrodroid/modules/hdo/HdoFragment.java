@@ -412,15 +412,19 @@ public class HdoFragment extends Fragment {
 
                     tvStatus.setText(statusFormat);
                     assert rele != null;
-                    rbSelectMainRelay.setChecked(rele.equals(selectedMainRelay));
 
-                    View.OnClickListener onSelectRelayListener = v -> {
-                        shPHdo.set(ShPHdo.ARG_MAIN_HDO_RELAY, rele);
-                        setTime();
-                    };
-
-                    rbSelectMainRelay.setOnClickListener(onSelectRelayListener);
-                    rowView.setOnClickListener(onSelectRelayListener);
+                    if (allReles.size() > 1) {
+                        rbSelectMainRelay.setVisibility(View.VISIBLE);
+                        rbSelectMainRelay.setChecked(rele.equals(selectedMainRelay));
+                        View.OnClickListener onSelectRelayListener = v -> {
+                            shPHdo.set(ShPHdo.ARG_MAIN_HDO_RELAY, rele);
+                            setTime();
+                        };
+                        rbSelectMainRelay.setOnClickListener(onSelectRelayListener);
+                        rowView.setOnClickListener(onSelectRelayListener);
+                    } else {
+                        rbSelectMainRelay.setVisibility(View.GONE);
+                    }
 
                     GradientDrawable drawable = (GradientDrawable) viewLed.getBackground();
                     if (drawable != null) {
