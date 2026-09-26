@@ -274,12 +274,6 @@ public class GraphTotalHdoView extends View {
         Calendar todayCal = Calendar.getInstance();
         todayCal.setTimeInMillis(System.currentTimeMillis() + timeShift);
 
-        Calendar yesterdayCal = (Calendar) todayCal.clone();
-        yesterdayCal.add(Calendar.DAY_OF_YEAR, -1);
-
-        Calendar tomorrowCal = (Calendar) todayCal.clone();
-        tomorrowCal.add(Calendar.DAY_OF_YEAR, 1);
-
         showTUV = false;
         showTAR = false;
         showPV = false;
@@ -289,49 +283,20 @@ public class GraphTotalHdoView extends View {
         ArrayList<HdoModel> pvModels = new ArrayList<>();
 
         for (HdoModel model : modelsForAllWeek) {
-            Calendar modelCal = model.getCalendarStart();
-            boolean isToday = isSameDay(modelCal, todayCal);
-            boolean isYesterday = isSameDay(modelCal, yesterdayCal);
-            boolean isTomorrow = isSameDay(modelCal, tomorrowCal);
-
-            boolean shouldDraw = false;
-
-            if (isToday) {
-                shouldDraw = true;
-            } else if (isTomorrow && (model.getTimeFrom().equals("00:00") || model.getTimeFrom().equals("0:00"))) {
-                // Kontrola zda má dnešní den navazující model končící o půlnoci pro stejný typ relé
-                for (HdoModel mToday : modelsForAllWeek) {
-                    if (isSameDay(mToday.getCalendarStart(), todayCal) &&
-                            (mToday.getTimeUntil().equals("00:00") || mToday.getTimeUntil().equals("0:00") || mToday.getTimeUntil().equals("24:00")) &&
-                            getRelayType(mToday.getRele()) == getRelayType(model.getRele())) {
-                        shouldDraw = true;
-                        break;
-                    }
-                }
-            } else if (isYesterday && (model.getTimeUntil().equals("00:00") || model.getTimeUntil().equals("0:00") || model.getTimeUntil().equals("24:00"))) {
-                // Kontrola zda má dnešní den navazující model začínající o půlnoci pro stejný typ relé
-                for (HdoModel mToday : modelsForAllWeek) {
-                    if (isSameDay(mToday.getCalendarStart(), todayCal) &&
-                            (mToday.getTimeFrom().equals("00:00") || mToday.getTimeFrom().equals("0:00")) &&
-                            getRelayType(mToday.getRele()) == getRelayType(model.getRele())) {
-                        shouldDraw = true;
-                        break;
-                    }
-                }
+            if (!isSameDay(model.getCalendarStart(), todayCal)) {
+                continue;
             }
 
-            if (shouldDraw) {
-                RelayType type = getRelayType(model.getRele());
-                if (type == RelayType.TUV) {
-                    tuvModels.add(model);
-                    showTUV = true;
-                } else if (type == RelayType.TAR) {
-                    tarModels.add(model);
-                    showTAR = true;
-                } else if (type == RelayType.PV) {
-                    pvModels.add(model);
-                    showPV = true;
-                }
+            RelayType type = getRelayType(model.getRele());
+            if (type == RelayType.TUV) {
+                tuvModels.add(model);
+                showTUV = true;
+            } else if (type == RelayType.TAR) {
+                tarModels.add(model);
+                showTAR = true;
+            } else if (type == RelayType.PV) {
+                pvModels.add(model);
+                showPV = true;
             }
         }
 
