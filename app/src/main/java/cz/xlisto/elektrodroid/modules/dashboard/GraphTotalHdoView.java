@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -32,7 +33,6 @@ import cz.xlisto.elektrodroid.utils.BuilderHDOStack;
  * Xlisto 03.01.2024 12:18
  */
 public class GraphTotalHdoView extends View {
-    private static final String TAG = "GraphTotalHdoView";
     private int size;
     private int padding;
     private int centerX;
@@ -48,7 +48,7 @@ public class GraphTotalHdoView extends View {
     private TimeHdo timeHdoTAR;
     private TimeHdo timeHdoPV;
     private boolean showTAR, showPV, showTUV;
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -92,8 +92,8 @@ public class GraphTotalHdoView extends View {
         runnable.run();
         builderHDOLists();
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, cz.xlisto.elektrodroid.R.styleable.GraphTotalHdoView);
-        int colorClock = a.getColor(cz.xlisto.elektrodroid.R.styleable.GraphTotalHdoView_colorClock, Color.BLACK);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.GraphTotalHdoView);
+        int colorClock = a.getColor(R.styleable.GraphTotalHdoView_colorClock, Color.BLACK);
         int colorTimeTUV = a.getColor(R.styleable.GraphTotalHdoView_colorTimeTUV, Color.GREEN);
         int colorTimeTAR = a.getColor(R.styleable.GraphTotalHdoView_colorTimeTAR, Color.BLUE);
         int colorTimePV = a.getColor(R.styleable.GraphTotalHdoView_colorTimePV, Color.CYAN);
@@ -223,6 +223,36 @@ public class GraphTotalHdoView extends View {
     }
 
 
+    private enum RelayType {
+        TUV,
+        TAR,
+        PV,
+        UNKNOWN
+    }
+
+
+    /**
+     * Určí typ relé podle názvu pro účely vykreslení a výpočtu odpočtu
+     */
+    private RelayType getRelayType(String rele) {
+        if (rele == null || rele.isEmpty()) {
+            return RelayType.UNKNOWN;
+        }
+        String upper = rele.toUpperCase(Locale.ROOT);
+
+        boolean isPV = upper.contains("PV") || upper.contains("FVE") || upper.contains("FOTOVOLT");
+        boolean isTUV = upper.contains("TUV") || upper.contains("AKU") || upper.contains("BOJLER");
+
+        if (isPV && !isTUV) {
+            return RelayType.PV;
+        }
+        if (isTUV) {
+            return RelayType.TUV;
+        }
+        return RelayType.TAR;
+    }
+
+
     /**
      * Vykreslí časové intervaly
      *
@@ -236,46 +266,66 @@ public class GraphTotalHdoView extends View {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
 
+        showTUV = false;
+        showTAR = false;
+        showPV = false;
+
+        ArrayList<HdoModel> tuvModels = new ArrayList<>();
+        ArrayList<HdoModel> tarModels = new ArrayList<>();
+        ArrayList<HdoModel> pvModels = new ArrayList<>();
+
         for (HdoModel model : modelsForAllWeek) {
             // Přeskočí modely, které nejsou pro dnešní den
             if (model.getCalendarStart().get(Calendar.DAY_OF_MONTH) != calendar.get(Calendar.DAY_OF_MONTH))
                 continue;
 
-            // Převod času na úhly, úhly se vykreslují podle textové hodnoty timeFrom a timeUntil. Pokud zasahuje do druhého dne, bude výseč překrytá
-            float startAngle = convertTimeToAngle(model.getTimeFrom()); // Převod času začátku na úhel
-            float endAngle = convertTimeToAngle(model.getTimeUntil()); // Převod času konce na úhel
-
-            // Výpočet rozpětí úhlů pro výseč
-            float sweepAngle = endAngle - startAngle;
-            if (sweepAngle < 0) sweepAngle += 360; // Korekce pro přesah přes půlnoc
-            int smaller = (int) (radius * 0.3);
-
-            if (model.getRele().contains("TUV") || !model.getRele().contains("TAR") && !model.getRele().contains("PV")) {
-                // Vykreslení výseče
-                RectF oval = new RectF(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding);
-                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
-            } else if (model.getRele().contains("TAR")) {
-                // Vykreslení výseče
-                RectF oval = new RectF(padding + smaller, padding + smaller, (float) size / 2 - padding - smaller, (float) size / 2 - padding - smaller);
-                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
-            } else if (model.getRele().contains("PV")) {
-                // Vykreslení výseče
-                smaller *= 2;
-                RectF oval = new RectF(padding + smaller, padding + smaller, (float) size / 2 - padding - smaller, (float) size / 2 - padding - smaller);
-                canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
-            }
-
-            if (model.getRele().isEmpty()) {
-                showTUV = false;
-                showTAR = false;
-                showPV = false;
-            }
-            if (model.getRele().contains("TUV"))
+            RelayType type = getRelayType(model.getRele());
+            if (type == RelayType.TUV) {
+                tuvModels.add(model);
                 showTUV = true;
-            if (model.getRele().contains("TAR"))
+            } else if (type == RelayType.TAR) {
+                tarModels.add(model);
                 showTAR = true;
-            if (model.getRele().contains("PV"))
+            } else if (type == RelayType.PV) {
+                pvModels.add(model);
                 showPV = true;
+            }
+        }
+
+        int smallerUnit = (int) (radius * 0.3);
+
+        // 1. Vykreslení TUV (Největší poloměr / vnější prstenec)
+        for (HdoModel model : tuvModels) {
+            float startAngle = convertTimeToAngle(model.getTimeFrom());
+            float endAngle = convertTimeToAngle(model.getTimeUntil());
+            float sweepAngle = endAngle - startAngle;
+            if (sweepAngle < 0) sweepAngle += 360;
+
+            RectF oval = new RectF(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding);
+            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
+        }
+
+        // 2. Vykreslení TAR (Střední poloměr / prostřední prstenec)
+        for (HdoModel model : tarModels) {
+            float startAngle = convertTimeToAngle(model.getTimeFrom());
+            float endAngle = convertTimeToAngle(model.getTimeUntil());
+            float sweepAngle = endAngle - startAngle;
+            if (sweepAngle < 0) sweepAngle += 360;
+
+            RectF oval = new RectF(padding + smallerUnit, padding + smallerUnit, (float) size / 2 - padding - smallerUnit, (float) size / 2 - padding - smallerUnit);
+            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
+        }
+
+        // 3. Vykreslení PV (Nejmenší poloměr / vnitřní prstenec)
+        int pvSmaller = smallerUnit * 2;
+        for (HdoModel model : pvModels) {
+            float startAngle = convertTimeToAngle(model.getTimeFrom());
+            float endAngle = convertTimeToAngle(model.getTimeUntil());
+            float sweepAngle = endAngle - startAngle;
+            if (sweepAngle < 0) sweepAngle += 360;
+
+            RectF oval = new RectF(padding + pvSmaller, padding + pvSmaller, (float) size / 2 - padding - pvSmaller, (float) size / 2 - padding - pvSmaller);
+            canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
         }
     }
 
@@ -391,19 +441,15 @@ public class GraphTotalHdoView extends View {
         canvas.drawArc(oval, 0, 360, true, pTickLegend);
         canvas.drawText("Aktuální čas", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
 
-
-        legendY += legendSize + legendPadding;
-
-        oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
-        canvas.drawArc(oval, 0, 360, true, pTimeTUV);
-        if (showTUV)
+        if (showTUV) {
+            legendY += legendSize + legendPadding;
+            oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
+            canvas.drawArc(oval, 0, 360, true, pTimeTUV);
             canvas.drawText("Čas TUV", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
-        else
-            canvas.drawText("Čas NT", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
+        }
 
         if (showTAR) {
             legendY += legendSize + legendPadding;
-
             oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
             canvas.drawArc(oval, 0, 360, true, pTimeTAR);
             canvas.drawText("Čas TAR", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
@@ -411,10 +457,16 @@ public class GraphTotalHdoView extends View {
 
         if (showPV) {
             legendY += legendSize + legendPadding;
-
             oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
             canvas.drawArc(oval, 0, 360, true, pTimePV);
             canvas.drawText("Čas PV", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
+        }
+
+        if (!showTUV && !showTAR && !showPV && modelsForAllWeek != null && !modelsForAllWeek.isEmpty()) {
+            legendY += legendSize + legendPadding;
+            oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
+            canvas.drawArc(oval, 0, 360, true, pTimeTUV);
+            canvas.drawText("Čas NT", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
         }
     }
 
@@ -435,22 +487,28 @@ public class GraphTotalHdoView extends View {
 
         if (modelsForAllWeek == null || modelsForAllWeek.isEmpty()) {
             autoSizeTextAndDraw(getContext().getString(R.string.no_found_hdo), getWidth() - 2 * textPadding, canvas, x, y, pTimeLeft);
-
             return;
         }
 
-        String text;
-        if (showTUV)
-            text = buildTextHdoState(timeHdoTUV, "TUV");
-        else
-            text = buildTextHdoState(timeHdoNT, "NT");
-        autoSizeTextAndDraw(text, getWidth() - 2 * textPadding, canvas, x, y, pTextTime);
+        int currentY = y;
+        if (showTUV) {
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoTUV, "TUV"), getWidth() - 2 * textPadding, canvas, x, currentY, pTextTime);
+            currentY += line;
+        }
 
-        if (showTAR)
-            autoSizeTextAndDraw(buildTextHdoState(timeHdoTAR, "TAR"), getWidth() - 2 * textPadding, canvas, x, y + line, pTextTime);
+        if (showTAR) {
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoTAR, "TAR"), getWidth() - 2 * textPadding, canvas, x, currentY, pTextTime);
+            currentY += line;
+        }
 
-        if (showPV)
-            autoSizeTextAndDraw(buildTextHdoState(timeHdoPV, "PV  "), getWidth() - 2 * textPadding, canvas, x, y + line * 2, pTextTime);
+        if (showPV) {
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoPV, "PV  "), getWidth() - 2 * textPadding, canvas, x, currentY, pTextTime);
+            currentY += line;
+        }
+
+        if (!showTUV && !showTAR && !showPV) {
+            autoSizeTextAndDraw(buildTextHdoState(timeHdoNT, "NT  "), getWidth() - 2 * textPadding, canvas, x, currentY, pTextTime);
+        }
     }
 
 
@@ -469,18 +527,16 @@ public class GraphTotalHdoView extends View {
             if (i == modelsForAllWeek.size() - 1)
                 break;
             HdoModel hdoModelCurrent = modelsForAllWeek.get(i);
+            RelayType type = getRelayType(hdoModelCurrent.getRele());
 
-            if (!(hdoModelCurrent.getRele().contains("TUV") || !(hdoModelCurrent.getRele().contains("TAR") || !(hdoModelCurrent.getRele().contains("PV")))))
-                compareTime(hdoModelCurrent, calendar, timeHdoNT);
-
-            if (hdoModelCurrent.getRele().contains("TUV"))
+            if (type == RelayType.TUV) {
                 compareTime(hdoModelCurrent, calendar, timeHdoTUV);
-
-            if ((hdoModelCurrent.getRele().contains("TAR")))
+            } else if (type == RelayType.TAR) {
                 compareTime(hdoModelCurrent, calendar, timeHdoTAR);
-
-            if ((hdoModelCurrent.getRele().contains("PV")))
+            } else if (type == RelayType.PV) {
                 compareTime(hdoModelCurrent, calendar, timeHdoPV);
+            }
+            compareTime(hdoModelCurrent, calendar, timeHdoNT);
         }
     }
 
