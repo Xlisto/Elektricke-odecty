@@ -538,6 +538,10 @@
     <string name="hdo_notification_end_message">Nyní končí období nízké sazby.</string>
     <string name="hdo_notification_start_message_place">%1$s: nyní začíná období nízké sazby.</string>
     <string name="hdo_notification_end_message_place">%1$s: nyní končí období nízké sazby.</string>
+    <string name="hdo_notification_start_message_relay">Relé %1$s: nyní začíná období nízké sazby.</string>
+    <string name="hdo_notification_end_message_relay">Relé %1$s: nyní končí období nízké sazby.</string>
+    <string name="hdo_notification_start_message_place_relay">%1$s (relé %2$s): nyní začíná období nízké sazby.</string>
+    <string name="hdo_notification_end_message_place_relay">%1$s (relé %2$s): nyní končí období nízké sazby.</string>
     <string name="hdo_notification_expired_title">Platnost HDO kódu vypršela</string>
     <string name="hdo_notification_expired_message">Platnost uložených časů HDO vypršela. Aktualizujte prosím časy na nový kód.</string>
     <string name="hdo_notification_expired_message_place">%1$s: Platnost uložených časů HDO vypršela. Aktualizujte prosím časy na nový kód.</string>

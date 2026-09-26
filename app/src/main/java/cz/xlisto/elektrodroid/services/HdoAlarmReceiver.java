@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.models.HdoModel;
@@ -47,6 +49,7 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
         DataHdoSource source = new DataHdoSource(context);
         source.open();
         HdoModel model = source.loadHdoById(table, hdoId);
+        ArrayList<String> reles = source.getReles(table);
         source.close();
         if (model == null) {
             HdoAlarmScheduler.cancelForModel(context, table, hdoId);
@@ -61,18 +64,32 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
 
         String placeName = HdoAlarmScheduler.findSubscriptionPointNameByTable(context, table);
         long subscriptionPointId = HdoAlarmScheduler.findSubscriptionPointIdByTable(context, table);
+        boolean showRelay = reles.size() > 1 && model.getRele() != null && !model.getRele().trim().isEmpty();
+
         String title;
         String content;
         if (type == HdoAlarmScheduler.TYPE_START) {
             title = context.getString(R.string.hdo_notification_start_title);
-            content = placeName.isEmpty()
-                    ? context.getString(R.string.hdo_notification_start_message)
-                    : context.getString(R.string.hdo_notification_start_message_place, placeName);
+            if (showRelay) {
+                content = placeName.isEmpty()
+                        ? context.getString(R.string.hdo_notification_start_message_relay, model.getRele())
+                        : context.getString(R.string.hdo_notification_start_message_place_relay, placeName, model.getRele());
+            } else {
+                content = placeName.isEmpty()
+                        ? context.getString(R.string.hdo_notification_start_message)
+                        : context.getString(R.string.hdo_notification_start_message_place, placeName);
+            }
         } else {
             title = context.getString(R.string.hdo_notification_end_title);
-            content = placeName.isEmpty()
-                    ? context.getString(R.string.hdo_notification_end_message)
-                    : context.getString(R.string.hdo_notification_end_message_place, placeName);
+            if (showRelay) {
+                content = placeName.isEmpty()
+                        ? context.getString(R.string.hdo_notification_end_message_relay, model.getRele())
+                        : context.getString(R.string.hdo_notification_end_message_place_relay, placeName, model.getRele());
+            } else {
+                content = placeName.isEmpty()
+                        ? context.getString(R.string.hdo_notification_end_message)
+                        : context.getString(R.string.hdo_notification_end_message_place, placeName);
+            }
         }
 
         HdoNotice.setNotice(context, title, context.getString(R.string.hdo_service_name), content, subscriptionPointId);
