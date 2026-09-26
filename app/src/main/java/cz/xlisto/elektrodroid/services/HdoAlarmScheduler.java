@@ -387,7 +387,9 @@ public final class HdoAlarmScheduler {
             boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
 
             if (isHolidayDay) {
-                if (!modelIsHoliday) continue;
+                if (!modelIsHoliday && model.getSun() == 0) {
+                    continue;
+                }
             } else {
                 if (modelIsHoliday) continue;
                 if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {

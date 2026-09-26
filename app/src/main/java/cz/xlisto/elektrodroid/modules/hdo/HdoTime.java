@@ -29,7 +29,7 @@ public class HdoTime {
             boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
 
             if (isHolidayToday) {
-                if (!modelIsHoliday) {
+                if (!modelIsHoliday && model.getSun() == 0) {
                     continue;
                 }
             } else {

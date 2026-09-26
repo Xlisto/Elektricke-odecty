@@ -56,7 +56,7 @@ public class BuilderHDOStack {
             boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
 
             if (isHolidayToday) {
-                if (!modelIsHoliday) continue;
+                if (!modelIsHoliday && model.getSun() == 0) continue;
             } else {
                 if (modelIsHoliday) continue;
                 switch (day) {
