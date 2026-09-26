@@ -322,7 +322,7 @@ public final class HdoAlarmScheduler {
                 }
             }
 
-            if (activeModel != null && activeEnd > 0L) {
+            if (activeModel != null) {
                 long currentEnd = activeEnd;
                 boolean extended = true;
 

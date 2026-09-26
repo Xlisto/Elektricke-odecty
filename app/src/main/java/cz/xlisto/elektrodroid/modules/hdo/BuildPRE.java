@@ -1,5 +1,8 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +21,6 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 11.01.2024 14:35
  */
 public class BuildPRE {
-    private static final String TAG = "BuildPRE";
     private static final String KOD_POVELU = "kodPovelu";
     private static final String PLATNOST = "platnost";
     private static final String CAS_ZAP = "casZap";
@@ -106,7 +108,7 @@ public class BuildPRE {
                 for (int j = 0; j < 10; j++) {
                     String timeOn = jsonObject.optString(CAS_ZAP + j, "");
                     String timeOff = jsonObject.optString(CAS_VYP + j, "");
-                    if (timeOn.isEmpty() || timeOff.isEmpty() || timeOn.equals(EMPTY) || timeOff.equals(EMPTY)) {
+                    if (timeOn.isEmpty() || timeOff.isEmpty()) {
                         break;
                     }
 
@@ -211,7 +213,7 @@ public class BuildPRE {
             hdoListContainers.add(hdoListContainer);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("BuildPRE", "JSON parsing error", e);
         }
         return hdoListContainers;
     }
