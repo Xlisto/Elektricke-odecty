@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.LinkedHashSet;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
+import cz.xlisto.elektrodroid.modules.hdo.Connections;
 
 
 /**
@@ -12,8 +13,6 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 06.02.2024 12:09
  */
 public class BuilderHDOStack {
-    private static final String TAG = "BuilderHDOStack";
-
 
     /**
      * Sestaví týdenní seznam HDO modelů
@@ -38,18 +37,6 @@ public class BuilderHDOStack {
             }
         }
 
-        for (HdoModel model : modelsWithDate) {
-            if (model.getTimeFrom().equals("00:00")) {
-                for (HdoModel model2 : modelsWithDate) {
-                    if (model.getCalendarStart().getTimeInMillis() == model2.getCalendarEnd().getTimeInMillis() && model.getRele().equals(model2.getRele())) {
-                        model.setCalendarStart(model2.getCalendarStart().getTimeInMillis());
-                        model2.setCalendarEnd(model.getCalendarEnd().getTimeInMillis());
-                    }
-                }
-
-            }
-        }
-
         //odstranění duplicit převodem do LinkedHashSet (HdoModel musí mít implementovaný equals a hashCode, podle kterých se hodnotí duplicita)
         LinkedHashSet<HdoModel> uniqueModels = new LinkedHashSet<>(modelsWithDate);
 
@@ -63,38 +50,45 @@ public class BuilderHDOStack {
      */
     private static ArrayList<HdoModel> createHDOStack(int day, Calendar calendar, ArrayList<HdoModel> models) {
         ArrayList<HdoModel> hdoModels = new ArrayList<>();
+        boolean isHolidayToday = Connections.isCzechHoliday(calendar);
 
         for (HdoModel model : models) {
-            // Procházení seznamu a kreslení výsečí
-            switch (day) {
-                case Calendar.MONDAY:
-                    if (model.getMon() == 0)
-                        continue;
-                    break;
-                case Calendar.TUESDAY:
-                    if (model.getTue() == 0)
-                        continue;
-                    break;
-                case Calendar.WEDNESDAY:
-                    if (model.getWed() == 0)
-                        continue;
-                    break;
-                case Calendar.THURSDAY:
-                    if (model.getThu() == 0)
-                        continue;
-                    break;
-                case Calendar.FRIDAY:
-                    if (model.getFri() == 0)
-                        continue;
-                    break;
-                case Calendar.SATURDAY:
-                    if (model.getSat() == 0)
-                        continue;
-                    break;
-                case Calendar.SUNDAY:
-                    if (model.getSun() == 0)
-                        continue;
-                    break;
+            boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
+
+            if (isHolidayToday) {
+                if (!modelIsHoliday) continue;
+            } else {
+                if (modelIsHoliday) continue;
+                switch (day) {
+                    case Calendar.MONDAY:
+                        if (model.getMon() == 0)
+                            continue;
+                        break;
+                    case Calendar.TUESDAY:
+                        if (model.getTue() == 0)
+                            continue;
+                        break;
+                    case Calendar.WEDNESDAY:
+                        if (model.getWed() == 0)
+                            continue;
+                        break;
+                    case Calendar.THURSDAY:
+                        if (model.getThu() == 0)
+                            continue;
+                        break;
+                    case Calendar.FRIDAY:
+                        if (model.getFri() == 0)
+                            continue;
+                        break;
+                    case Calendar.SATURDAY:
+                        if (model.getSat() == 0)
+                            continue;
+                        break;
+                    case Calendar.SUNDAY:
+                        if (model.getSun() == 0)
+                            continue;
+                        break;
+                }
             }
 
             calendar.set(Calendar.HOUR_OF_DAY, 0);

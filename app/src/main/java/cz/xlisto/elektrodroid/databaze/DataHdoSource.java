@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
@@ -65,19 +67,7 @@ public class DataHdoSource extends DataSource {
         String distributionArea = getDistributionArea(table);
 
         String selection = "";
-        String selectionDayOfWeek = "";
-        if (dayOfWeek != null) {
-            selectionDayOfWeek = switch (dayOfWeek - 1) {
-                case 0 -> DbHelper.COLUMN_SUN;
-                case 1 -> DbHelper.COLUMN_MON;
-                case 2 -> DbHelper.COLUMN_TUE;
-                case 3 -> DbHelper.COLUMN_WED;
-                case 4 -> DbHelper.COLUMN_THU;
-                case 5 -> DbHelper.COLUMN_FRI;
-                case 6 -> DbHelper.COLUMN_SAT;
-                default -> selectionDayOfWeek;
-            };
-        }
+        String selectionDayOfWeek = getString(dayOfWeek);
 
         ArrayList<String> selectionArgsList = new ArrayList<>();
         //vyhledávání podle datumu - používá PRE
@@ -132,10 +122,30 @@ public class DataHdoSource extends DataSource {
                     getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_START),
                     getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_END)
             );
+            hdoModel.setSv(getOptionalInt(cursor, DbHelper.SV));
             hdoModels.add(hdoModel);
         }
         cursor.close();
         return hdoModels;
+    }
+
+
+    @NonNull
+    private static String getString(Integer dayOfWeek) {
+        String selectionDayOfWeek = "";
+        if (dayOfWeek != null) {
+            selectionDayOfWeek = switch (dayOfWeek - 1) {
+                case 0 -> DbHelper.COLUMN_SUN;
+                case 1 -> DbHelper.COLUMN_MON;
+                case 2 -> DbHelper.COLUMN_TUE;
+                case 3 -> DbHelper.COLUMN_WED;
+                case 4 -> DbHelper.COLUMN_THU;
+                case 5 -> DbHelper.COLUMN_FRI;
+                case 6 -> DbHelper.COLUMN_SAT;
+                default -> selectionDayOfWeek;
+            };
+        }
+        return selectionDayOfWeek;
     }
 
 
@@ -180,6 +190,7 @@ public class DataHdoSource extends DataSource {
                 getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_START),
                 getOptionalInt(cursor, DbHelper.COLUMN_NOTIFY_END)
         );
+        hdoModel.setSv(getOptionalInt(cursor, DbHelper.SV));
         cursor.close();
         return hdoModel;
     }
@@ -326,6 +337,7 @@ public class DataHdoSource extends DataSource {
         values.put(DbHelper.COLUMN_FRI, hdoModel.getFri());
         values.put(DbHelper.COLUMN_SAT, hdoModel.getSat());
         values.put(DbHelper.COLUMN_SUN, hdoModel.getSun());
+        values.put(DbHelper.SV, hdoModel.getSv());
         values.put(DbHelper.COLUMN_DISTRIBUTION_AREA, hdoModel.getDistributionArea());
         values.put(DbHelper.COLUMN_NOTIFY_START, hdoModel.getNotifyStart());
         values.put(DbHelper.COLUMN_NOTIFY_END, hdoModel.getNotifyEnd());

@@ -171,9 +171,18 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         holder.tvRele.setText(item.getRele());
 
         if (item.getDistributionArea().equals(DistributionArea.PRE.toString())) {
-            holder.tvDate.setVisibility(View.VISIBLE);
-            holder.lnHdoDays.setVisibility(View.GONE);
-            holder.tvDate.setText(item.getDateFrom());
+            if (item.getSv() == 1 || (item.getDateFrom() != null && item.getDateFrom().equalsIgnoreCase("SVÁTEK"))) {
+                holder.tvDate.setVisibility(View.VISIBLE);
+                holder.lnHdoDays.setVisibility(View.GONE);
+                holder.tvDate.setText(R.string.holiday);
+            } else if (item.getMon() == 0 && item.getTue() == 0 && item.getWed() == 0 && item.getThu() == 0 && item.getFri() == 0 && item.getSat() == 0 && item.getSun() == 0) {
+                holder.tvDate.setVisibility(View.VISIBLE);
+                holder.lnHdoDays.setVisibility(View.GONE);
+                holder.tvDate.setText(item.getDateFrom());
+            } else {
+                holder.tvDate.setVisibility(View.GONE);
+                holder.lnHdoDays.setVisibility(View.VISIBLE);
+            }
         } else {
             holder.tvDate.setVisibility(View.GONE);
             holder.lnHdoDays.setVisibility(View.VISIBLE);

@@ -21,6 +21,7 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.hdo.Connections;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 /**
@@ -299,9 +300,50 @@ public final class HdoAlarmScheduler {
 
 
     /**
-     * Najde nejbližší čas spuštění ze seznamu HDO modelů (např. pro dané relé).
+     * Najde nejbližší čas spuštění ze seznamu HDO modelů (např. pro dané relé),
+     * s plynulým navazováním souvislých aktivních intervalů přes půlnoc.
      */
     public static long findNextTriggerForModels(List<HdoModel> models, int type, long nowMillis, long timeShift) {
+        if (models == null || models.isEmpty()) return -1L;
+
+        if (type == TYPE_END) {
+            HdoModel activeModel = null;
+            long activeEnd = -1L;
+
+            for (HdoModel model : models) {
+                long endTrigger = findNextTrigger(model, TYPE_END, nowMillis, timeShift);
+                long startTrigger = findNextTrigger(model, TYPE_START, nowMillis, timeShift);
+
+                if (endTrigger > 0L && (startTrigger <= 0L || endTrigger < startTrigger)) {
+                    if (activeEnd < 0L || endTrigger > activeEnd) {
+                        activeModel = model;
+                        activeEnd = endTrigger;
+                    }
+                }
+            }
+
+            if (activeModel != null && activeEnd > 0L) {
+                long currentEnd = activeEnd;
+                boolean extended = true;
+
+                while (extended) {
+                    extended = false;
+                    for (HdoModel model : models) {
+                        long startTrigger = findNextTrigger(model, TYPE_START, currentEnd - 60000L, timeShift);
+                        if (startTrigger > 0L && Math.abs(startTrigger - currentEnd) <= 60000L) {
+                            long nextEnd = findNextTrigger(model, TYPE_END, currentEnd + 1000L, timeShift);
+                            if (nextEnd > currentEnd) {
+                                currentEnd = nextEnd;
+                                extended = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                return currentEnd;
+            }
+        }
+
         long earliest = -1L;
         for (HdoModel model : models) {
             long trigger = findNextTrigger(model, type, nowMillis, timeShift);
@@ -341,11 +383,19 @@ public final class HdoAlarmScheduler {
             Calendar day = (Calendar) startOfToday.clone();
             day.add(Calendar.DAY_OF_YEAR, offset);
 
-            if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {
-                continue;
-            }
-            if (!isDayEnabled(model, day.get(Calendar.DAY_OF_WEEK))) {
-                continue;
+            boolean isHolidayDay = Connections.isCzechHoliday(day);
+            boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
+
+            if (isHolidayDay) {
+                if (!modelIsHoliday) continue;
+            } else {
+                if (modelIsHoliday) continue;
+                if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {
+                    continue;
+                }
+                if (!isDayEnabled(model, day.get(Calendar.DAY_OF_WEEK))) {
+                    continue;
+                }
             }
 
             Calendar start = applyTime(day, model.getTimeFrom());

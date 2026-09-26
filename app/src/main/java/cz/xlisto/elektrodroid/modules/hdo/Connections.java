@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedInputStream;
@@ -29,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -76,7 +78,7 @@ public class Connections {
     //handler obdrží  výsledek s Category a Group a spustí další dotaz na získání časů HDO
     private final Handler handlerOnGroupAndCategory = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(@NonNull android.os.Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             GroupAndCategoryContainer groupAndCategoryContainer = (GroupAndCategoryContainer) msg.obj;
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -278,7 +280,7 @@ public class Connections {
     private void parseJSONPRE(InputStream in) {
         String readerStream = readerStream(in);
 
-        org.jsoup.nodes.Document doc = Jsoup.parse(readerStream);//tagy www
+        Document doc = Jsoup.parse(readerStream);//tagy www
         Elements options = doc.getElementsByTag("option");//vyhledá všechny tagy option
         Elements selectedOption = options.select("[selected]");//vyhledá všechny tagy option s atributem selected
         Elements tbody = doc.getElementsByTag("tbody");//vyhledá tělo tabulky - je jen jedna, lze hledat podle tagu
@@ -293,12 +295,15 @@ public class Connections {
             JSONObject jsonObject = new JSONObject();
 
             Elements td = tr.get(i).select("td");//vyhledá buňky v řádku
+            String dayText = !td.isEmpty() ? td.get(0).text() : "";
             String[] times = td.get(1).text().split(", ");
             if (i > 0)
                 calendar.add(Calendar.DATE, 1);
             try {
                 jsonObject.put("platnost", ViewHelper.convertLongToDate(calendar.getTimeInMillis()));
                 jsonObject.put("kodPovelu", selectedOption.text());
+                jsonObject.put("denText", dayText);
+                jsonObject.put("isHoliday", isCzechHoliday(calendar) || dayText.toLowerCase(Locale.ROOT).contains("svátek"));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -329,6 +334,77 @@ public class Connections {
 
 
     /**
+     * Vypočítá datum Velikonoční neděle pro daný rok (Meeus/Jones/Butcher algoritmus).
+     */
+    public static Calendar getEasterSunday(int year) {
+        int a = year % 19;
+        int b = year / 100;
+        int c = year % 100;
+        int d = b / 4;
+        int e = b % 4;
+        int f = (b + 8) / 25;
+        int g = (b - f + 1) / 3;
+        int h = (19 * a + b - d - g + 15) % 30;
+        int i = c / 4;
+        int k = c % 4;
+        int l = (32 + 2 * e + 2 * i - h - k) % 7;
+        int m = (a + 11 * h + 22 * l) / 451;
+        int p = h + l - 7 * m + 114;
+        int month = p / 31; // 3 = Březen, 4 = Duben
+        int day = (p % 31) + 1;
+
+        Calendar easter = Calendar.getInstance();
+        easter.set(year, month - 1, day, 0, 0, 0);
+        easter.set(Calendar.MILLISECOND, 0);
+        return easter;
+    }
+
+
+    /**
+     * Zjistí, zda je zadané datum státním svátkem v ČR (včetně Velkého pátku a Velikonočního pondělí).
+     */
+    public static boolean isCzechHoliday(Calendar c) {
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int month = c.get(Calendar.MONTH) + 1;
+        int year = c.get(Calendar.YEAR);
+
+        // Pevné svátky
+        if (day == 1 && month == 1) return true;  // Nový rok
+        if (day == 1 && month == 5) return true;  // Svátek práce
+        if (day == 8 && month == 5) return true;  // Den vítězství
+        if (day == 5 && month == 7) return true;  // Cyril a Metoděj
+        if (day == 6 && month == 7) return true;  // Jan Hus
+        if (day == 28 && month == 9) return true; // Den české státnosti
+        if (day == 28 && month == 10) return true; // Den vzniku ČSR
+        if (day == 17 && month == 11) return true; // Den boje za svobodu a demokracii
+        if (day == 24 && month == 12) return true; // Štědrý den
+        if (day == 25 && month == 12) return true; // 1. svátek vánoční
+        if (day == 26 && month == 12) return true; // 2. svátek vánoční
+
+        // Pohyblivé velikonoční svátky (Velký pátek a Velikonoční pondělí)
+        Calendar easterSunday = getEasterSunday(year);
+
+        // Velikonoční pondělí (+1 den od Velikonoční neděle)
+        Calendar easterMonday = (Calendar) easterSunday.clone();
+        easterMonday.add(Calendar.DAY_OF_MONTH, 1);
+        if (c.get(Calendar.DAY_OF_MONTH) == easterMonday.get(Calendar.DAY_OF_MONTH) &&
+                c.get(Calendar.MONTH) == easterMonday.get(Calendar.MONTH)) {
+            return true;
+        }
+
+        // Velký pátek (-2 dny od Velikonoční neděle) - svátek v ČR od roku 2016
+        if (year >= 2016) {
+            Calendar goodFriday = (Calendar) easterSunday.clone();
+            goodFriday.add(Calendar.DAY_OF_MONTH, -2);
+            return c.get(Calendar.DAY_OF_MONTH) == goodFriday.get(Calendar.DAY_OF_MONTH) &&
+                    c.get(Calendar.MONTH) == goodFriday.get(Calendar.MONTH);
+        }
+
+        return false;
+    }
+
+
+    /**
      * Načte stream z EGD a nalezne token
      *
      * @param in InputStream
@@ -338,7 +414,7 @@ public class Connections {
 
         String apiToken;
 
-        org.jsoup.nodes.Document doc = Jsoup.parse(readerStream);//tagy www
+        Document doc = Jsoup.parse(readerStream);//tagy www
         Elements scripts = doc.getElementsByTag("script");//vyhledá všechny tagy scripty
 
         for (int i = 0; i < scripts.size(); i++) {

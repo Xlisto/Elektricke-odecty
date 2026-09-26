@@ -22,15 +22,15 @@ public class HdoModel implements Cloneable {
     private static final String TAG = "HdoModel";
     private long id;
     private final String rele;
-    private String timeFrom;
-    private String timeUntil;
+    private final String timeFrom;
+    private final String timeUntil;
     private final String dateFrom;
     private final String dateUntil;
     private final String distributionArea;
     private Calendar calendarStart;
     private Calendar calendarEnd;
 
-    private int mon, tue, wed, thu, fri, sat, sun;
+    private int mon, tue, wed, thu, fri, sat, sun, sv;
     private int notifyStart;
     private int notifyEnd;
 
@@ -281,6 +281,16 @@ public class HdoModel implements Cloneable {
     }
 
 
+    public int getSv() {
+        return sv;
+    }
+
+
+    public void setSv(int sv) {
+        this.sv = sv;
+    }
+
+
     /**
      * Nastaví aktuální datum a čas začátku a konce HDO
      *
@@ -310,28 +320,6 @@ public class HdoModel implements Cloneable {
         calendarStart.set(Calendar.MILLISECOND, 0);
         calendarEnd.set(Calendar.SECOND, 0);
         calendarEnd.set(Calendar.MILLISECOND, 0);
-    }
-
-
-    /**
-     * Nastaví datum a čas začátku HDO
-     *
-     * @param time datum a čas v milisekundách
-     */
-    public void setCalendarStart(long time) {
-        calendarStart.setTimeInMillis(time);
-        timeFrom = calendarStart.get(Calendar.HOUR_OF_DAY) + ":" + calendarStart.get(Calendar.MINUTE);
-    }
-
-
-    /**
-     * Nastaví datum a čas konce HDO
-     *
-     * @param time datum a čas v milisekundách
-     */
-    public void setCalendarEnd(long time) {
-        calendarEnd.setTimeInMillis(time);
-        timeUntil = calendarEnd.get(Calendar.HOUR_OF_DAY) + ":" + calendarEnd.get(Calendar.MINUTE);
     }
 
 
@@ -433,36 +421,40 @@ public class HdoModel implements Cloneable {
      * Nastaví dny v týdnu pro distribuční oblast PRE.
      */
     private void setDayOfWeekPRE() {
-        if (distributionArea.equals("PRE")) {
-            int dayOfMonth = Integer.parseInt(dateFrom.split("\\.")[0]);
-            int month = Integer.parseInt(dateFrom.split("\\.")[1]);
-            int year = Integer.parseInt(dateFrom.split("\\.")[2]);
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(year, month - 1, dayOfMonth);
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        if (distributionArea != null && distributionArea.equals("PRE") && mon == 0 && tue == 0 && wed == 0 && thu == 0 && fri == 0 && sat == 0 && sun == 0) {
+            if (dateFrom == null || dateFrom.isEmpty() || !dateFrom.contains(".")) return;
+            try {
+                int dayOfMonth = Integer.parseInt(dateFrom.split("\\.")[0]);
+                int month = Integer.parseInt(dateFrom.split("\\.")[1]);
+                int year = Integer.parseInt(dateFrom.split("\\.")[2]);
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month - 1, dayOfMonth);
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-            switch (dayOfWeek) {
-                case Calendar.MONDAY:
-                    mon = 1;
-                    break;
-                case Calendar.TUESDAY:
-                    tue = 1;
-                    break;
-                case Calendar.WEDNESDAY:
-                    wed = 1;
-                    break;
-                case Calendar.THURSDAY:
-                    thu = 1;
-                    break;
-                case Calendar.FRIDAY:
-                    fri = 1;
-                    break;
-                case Calendar.SATURDAY:
-                    sat = 1;
-                    break;
-                case Calendar.SUNDAY:
-                    sun = 1;
-                    break;
+                switch (dayOfWeek) {
+                    case Calendar.MONDAY:
+                        mon = 1;
+                        break;
+                    case Calendar.TUESDAY:
+                        tue = 1;
+                        break;
+                    case Calendar.WEDNESDAY:
+                        wed = 1;
+                        break;
+                    case Calendar.THURSDAY:
+                        thu = 1;
+                        break;
+                    case Calendar.FRIDAY:
+                        fri = 1;
+                        break;
+                    case Calendar.SATURDAY:
+                        sat = 1;
+                        break;
+                    case Calendar.SUNDAY:
+                        sun = 1;
+                        break;
+                }
+            } catch (Exception ignored) {
             }
         }
     }

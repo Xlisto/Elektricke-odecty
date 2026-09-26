@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Locale;
 
 import cz.xlisto.elektrodroid.R;
@@ -253,6 +254,13 @@ public class GraphTotalHdoView extends View {
     }
 
 
+    private boolean isSameDay(Calendar c1, Calendar c2) {
+        if (c1 == null || c2 == null) return false;
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR) &&
+                c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+
     /**
      * Vykreslí časové intervaly
      *
@@ -263,8 +271,14 @@ public class GraphTotalHdoView extends View {
 
         if (modelsForAllWeek == null) return;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis() + timeShift);
+        Calendar todayCal = Calendar.getInstance();
+        todayCal.setTimeInMillis(System.currentTimeMillis() + timeShift);
+
+        Calendar yesterdayCal = (Calendar) todayCal.clone();
+        yesterdayCal.add(Calendar.DAY_OF_YEAR, -1);
+
+        Calendar tomorrowCal = (Calendar) todayCal.clone();
+        tomorrowCal.add(Calendar.DAY_OF_YEAR, 1);
 
         showTUV = false;
         showTAR = false;
@@ -275,20 +289,49 @@ public class GraphTotalHdoView extends View {
         ArrayList<HdoModel> pvModels = new ArrayList<>();
 
         for (HdoModel model : modelsForAllWeek) {
-            // Přeskočí modely, které nejsou pro dnešní den
-            if (model.getCalendarStart().get(Calendar.DAY_OF_MONTH) != calendar.get(Calendar.DAY_OF_MONTH))
-                continue;
+            Calendar modelCal = model.getCalendarStart();
+            boolean isToday = isSameDay(modelCal, todayCal);
+            boolean isYesterday = isSameDay(modelCal, yesterdayCal);
+            boolean isTomorrow = isSameDay(modelCal, tomorrowCal);
 
-            RelayType type = getRelayType(model.getRele());
-            if (type == RelayType.TUV) {
-                tuvModels.add(model);
-                showTUV = true;
-            } else if (type == RelayType.TAR) {
-                tarModels.add(model);
-                showTAR = true;
-            } else if (type == RelayType.PV) {
-                pvModels.add(model);
-                showPV = true;
+            boolean shouldDraw = false;
+
+            if (isToday) {
+                shouldDraw = true;
+            } else if (isTomorrow && (model.getTimeFrom().equals("00:00") || model.getTimeFrom().equals("0:00"))) {
+                // Kontrola zda má dnešní den navazující model končící o půlnoci pro stejný typ relé
+                for (HdoModel mToday : modelsForAllWeek) {
+                    if (isSameDay(mToday.getCalendarStart(), todayCal) &&
+                            (mToday.getTimeUntil().equals("00:00") || mToday.getTimeUntil().equals("0:00") || mToday.getTimeUntil().equals("24:00")) &&
+                            getRelayType(mToday.getRele()) == getRelayType(model.getRele())) {
+                        shouldDraw = true;
+                        break;
+                    }
+                }
+            } else if (isYesterday && (model.getTimeUntil().equals("00:00") || model.getTimeUntil().equals("0:00") || model.getTimeUntil().equals("24:00"))) {
+                // Kontrola zda má dnešní den navazující model začínající o půlnoci pro stejný typ relé
+                for (HdoModel mToday : modelsForAllWeek) {
+                    if (isSameDay(mToday.getCalendarStart(), todayCal) &&
+                            (mToday.getTimeFrom().equals("00:00") || mToday.getTimeFrom().equals("0:00")) &&
+                            getRelayType(mToday.getRele()) == getRelayType(model.getRele())) {
+                        shouldDraw = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldDraw) {
+                RelayType type = getRelayType(model.getRele());
+                if (type == RelayType.TUV) {
+                    tuvModels.add(model);
+                    showTUV = true;
+                } else if (type == RelayType.TAR) {
+                    tarModels.add(model);
+                    showTAR = true;
+                } else if (type == RelayType.PV) {
+                    pvModels.add(model);
+                    showPV = true;
+                }
             }
         }
 
@@ -299,7 +342,7 @@ public class GraphTotalHdoView extends View {
             float startAngle = convertTimeToAngle(model.getTimeFrom());
             float endAngle = convertTimeToAngle(model.getTimeUntil());
             float sweepAngle = endAngle - startAngle;
-            if (sweepAngle < 0) sweepAngle += 360;
+            if (sweepAngle <= 0) sweepAngle += 360;
 
             RectF oval = new RectF(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding);
             canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTUV);
@@ -310,7 +353,7 @@ public class GraphTotalHdoView extends View {
             float startAngle = convertTimeToAngle(model.getTimeFrom());
             float endAngle = convertTimeToAngle(model.getTimeUntil());
             float sweepAngle = endAngle - startAngle;
-            if (sweepAngle < 0) sweepAngle += 360;
+            if (sweepAngle <= 0) sweepAngle += 360;
 
             RectF oval = new RectF(padding + smallerUnit, padding + smallerUnit, (float) size / 2 - padding - smallerUnit, (float) size / 2 - padding - smallerUnit);
             canvas.drawArc(oval, startAngle, sweepAngle, true, pTimeTAR);
@@ -322,7 +365,7 @@ public class GraphTotalHdoView extends View {
             float startAngle = convertTimeToAngle(model.getTimeFrom());
             float endAngle = convertTimeToAngle(model.getTimeUntil());
             float sweepAngle = endAngle - startAngle;
-            if (sweepAngle < 0) sweepAngle += 360;
+            if (sweepAngle <= 0) sweepAngle += 360;
 
             RectF oval = new RectF(padding + pvSmaller, padding + pvSmaller, (float) size / 2 - padding - pvSmaller, (float) size / 2 - padding - pvSmaller);
             canvas.drawArc(oval, startAngle, sweepAngle, true, pTimePV);
@@ -513,6 +556,37 @@ public class GraphTotalHdoView extends View {
 
 
     /**
+     * Sloučí navazující souvislé intervaly (např. přes půlnoc) pro účely výpočtu odpočtů
+     */
+    private ArrayList<HdoModel> mergeContiguousIntervals(ArrayList<HdoModel> models) {
+        if (models == null || models.isEmpty()) return new ArrayList<>();
+
+        ArrayList<HdoModel> sorted = new ArrayList<>();
+        for (HdoModel m : models) {
+            sorted.add(m.clone());
+        }
+        sorted.sort(Comparator.comparingLong(a -> a.getCalendarStart().getTimeInMillis()));
+
+        ArrayList<HdoModel> merged = new ArrayList<>();
+        if (sorted.isEmpty()) return merged;
+
+        HdoModel current = sorted.get(0);
+        for (int i = 1; i < sorted.size(); i++) {
+            HdoModel next = sorted.get(i);
+            if (next.getCalendarStart().getTimeInMillis() <= current.getCalendarEnd().getTimeInMillis()
+                    && next.getCalendarEnd().getTimeInMillis() > current.getCalendarEnd().getTimeInMillis()) {
+                current.getCalendarEnd().setTimeInMillis(next.getCalendarEnd().getTimeInMillis());
+            } else if (next.getCalendarStart().getTimeInMillis() > current.getCalendarEnd().getTimeInMillis()) {
+                merged.add(current);
+                current = next;
+            }
+        }
+        merged.add(current);
+        return merged;
+    }
+
+
+    /**
      * Provede výpočet doby časů začátku a konce časů k současnému času
      */
     private void buildTimeHDO() {
@@ -523,20 +597,37 @@ public class GraphTotalHdoView extends View {
         timeHdoTUV = new TimeHdo();
         timeHdoTAR = new TimeHdo();
         timeHdoPV = new TimeHdo();
-        for (int i = 0; i < modelsForAllWeek.size(); i++) {
-            if (i == modelsForAllWeek.size() - 1)
-                break;
-            HdoModel hdoModelCurrent = modelsForAllWeek.get(i);
-            RelayType type = getRelayType(hdoModelCurrent.getRele());
 
+        if (modelsForAllWeek == null) return;
+
+        ArrayList<HdoModel> tuvModels = new ArrayList<>();
+        ArrayList<HdoModel> tarModels = new ArrayList<>();
+        ArrayList<HdoModel> pvModels = new ArrayList<>();
+
+        for (HdoModel model : modelsForAllWeek) {
+            RelayType type = getRelayType(model.getRele());
             if (type == RelayType.TUV) {
-                compareTime(hdoModelCurrent, calendar, timeHdoTUV);
+                tuvModels.add(model);
             } else if (type == RelayType.TAR) {
-                compareTime(hdoModelCurrent, calendar, timeHdoTAR);
+                tarModels.add(model);
             } else if (type == RelayType.PV) {
-                compareTime(hdoModelCurrent, calendar, timeHdoPV);
+                pvModels.add(model);
             }
-            compareTime(hdoModelCurrent, calendar, timeHdoNT);
+        }
+
+        for (HdoModel model : mergeContiguousIntervals(tuvModels)) {
+            compareTime(model, calendar, timeHdoTUV);
+            compareTime(model, calendar, timeHdoNT);
+        }
+
+        for (HdoModel model : mergeContiguousIntervals(tarModels)) {
+            compareTime(model, calendar, timeHdoTAR);
+            compareTime(model, calendar, timeHdoNT);
+        }
+
+        for (HdoModel model : mergeContiguousIntervals(pvModels)) {
+            compareTime(model, calendar, timeHdoPV);
+            compareTime(model, calendar, timeHdoNT);
         }
     }
 

@@ -32,7 +32,11 @@ public class HdoClipData {
             return textClip;
         }
 
-        if (distributionArea.equals(DistributionArea.PRE.toString()))
+        if (distributionArea.equals(DistributionArea.PRE.toString())
+                && hdoList.get(0).getMon() == 0 && hdoList.get(0).getTue() == 0
+                && hdoList.get(0).getWed() == 0 && hdoList.get(0).getThu() == 0
+                && hdoList.get(0).getFri() == 0 && hdoList.get(0).getSat() == 0
+                && hdoList.get(0).getSun() == 0)
             textClip = createPRE(hdoList, distributionArea);
         else
             textClip = createOther(hdoList, distributionArea);

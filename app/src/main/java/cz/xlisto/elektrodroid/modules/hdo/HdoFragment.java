@@ -527,24 +527,25 @@ public class HdoFragment extends Fragment {
         dataHdoSource.close();
         String date = "";
         String distributionArea = "";
-        for (int i = 0; i < hdoModels.size(); i++) {
-            distributionArea = hdoModels.get(i).getDistributionArea();
-            if (i == 0)
-                date = hdoModels.get(i).getDateFrom();
-            if (i == hdoModels.size() - 1) {
-                if (hdoModels.get(i).getDistributionArea().equals(DistributionArea.PRE.toString()))
-                    date = date + " - " + hdoModels.get(i).getDateFrom();
-                else
-                    date = date + " - " + hdoModels.get(i).getDateUntil();
+        if (!hdoModels.isEmpty()) {
+            distributionArea = hdoModels.get(0).getDistributionArea();
+            String dateFrom = hdoModels.get(0).getDateFrom();
+            String dateUntil = hdoModels.get(hdoModels.size() - 1).getDateUntil();
+            if (dateFrom.equals(dateUntil)) {
+                date = dateFrom;
+            } else {
+                date = dateFrom + " - " + dateUntil;
             }
         }
         setAdapter();
-        if (distributionArea.isEmpty()) {
+        if (distributionArea.isEmpty() || date.trim().isEmpty()) {
             tvDateHdo.setVisibility(View.GONE);
+            tvDateHdo.setText("");
         } else {
             tvDateHdo.setVisibility(View.VISIBLE);
             tvDateHdo.setText(date);
         }
+        updateCardHdoFilterVisibility();
     }
 
 
@@ -564,6 +565,26 @@ public class HdoFragment extends Fragment {
             spReleSettings.setVisibility(View.VISIBLE);
         else
             spReleSettings.setVisibility(View.GONE);
+        updateCardHdoFilterVisibility();
+    }
+
+
+    /**
+     * Zobrazí nebo skryje kartu filtru (cardHdoFilter) podle toho, zda je viditelný spinner nebo datum platnosti.
+     */
+    private void updateCardHdoFilterVisibility() {
+        if (getView() == null) return;
+        View cardHdoFilter = getView().findViewById(R.id.cardHdoFilter);
+        if (cardHdoFilter == null) return;
+
+        boolean isSpinnerVisible = spReleSettings != null && spReleSettings.getVisibility() == View.VISIBLE;
+        boolean isDateVisible = tvDateHdo != null && tvDateHdo.getVisibility() == View.VISIBLE && tvDateHdo.getText() != null && !tvDateHdo.getText().toString().trim().isEmpty();
+
+        if (isSpinnerVisible || isDateVisible) {
+            cardHdoFilter.setVisibility(View.VISIBLE);
+        } else {
+            cardHdoFilter.setVisibility(View.GONE);
+        }
     }
 
 
