@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
@@ -105,7 +106,8 @@ public final class HdoAlarmScheduler {
             return;
         }
 
-        long triggerAtMillis = findNextTrigger(model, type, System.currentTimeMillis());
+        long timeShift = findTimeShiftByTable(context, table);
+        long triggerAtMillis = findNextTrigger(model, type, System.currentTimeMillis(), timeShift);
         if (triggerAtMillis <= 0L) {
             cancelForType(context, table, model.getId(), type);
             return;
@@ -275,6 +277,26 @@ public final class HdoAlarmScheduler {
         return -1L;
     }
 
+
+    /**
+     * Dohledá časový posun (time shift) pro zadanou HDO tabulku.
+     *
+     * @param context kontext aplikace
+     * @param table   název HDO tabulky
+     * @return časový posun v milisekundách nebo 0
+     */
+    public static long findTimeShiftByTable(Context context, String table) {
+        long subscriptionPointId = findSubscriptionPointIdByTable(context, table);
+        if (subscriptionPointId <= 0) {
+            return 0L;
+        }
+        DataSettingsSource source = new DataSettingsSource(context);
+        source.open();
+        long timeShift = source.loadTimeShift(subscriptionPointId);
+        source.close();
+        return timeShift;
+    }
+
     /**
      * Vrátí, zda je požadovaný typ notifikace pro záznam aktivní.
      */
@@ -283,21 +305,20 @@ public final class HdoAlarmScheduler {
     }
 
     /**
-     * Najde nejbližší čas spuštění alarmu od aktuálního času.
+     * Najde nejbližší čas spuštění alarmu od aktuálního času, zohledňující časový posun (time shift) elektroměru.
      */
-    private static long findNextTrigger(HdoModel model, int type, long nowMillis) {
-        Calendar now = Calendar.getInstance();
-        now.setTimeInMillis(nowMillis);
-
-        Date dateFrom = parseDate(model.getDateFrom());
-        Date dateUntil = parseDate(model.getDateUntil());
+    private static long findNextTrigger(HdoModel model, int type, long nowMillis, long timeShift) {
+        long meterNowMillis = nowMillis + timeShift;
 
         Calendar startOfToday = Calendar.getInstance();
-        startOfToday.setTimeInMillis(nowMillis);
+        startOfToday.setTimeInMillis(meterNowMillis);
         startOfToday.set(Calendar.HOUR_OF_DAY, 0);
         startOfToday.set(Calendar.MINUTE, 0);
         startOfToday.set(Calendar.SECOND, 0);
         startOfToday.set(Calendar.MILLISECOND, 0);
+
+        Date dateFrom = parseDate(model.getDateFrom());
+        Date dateUntil = parseDate(model.getDateUntil());
 
         for (int offset = 0; offset <= MAX_DAYS_LOOKAHEAD; offset++) {
             Calendar day = (Calendar) startOfToday.clone();
@@ -321,8 +342,9 @@ public final class HdoAlarmScheduler {
                 }
             }
 
-            if (candidate.getTimeInMillis() > nowMillis) {
-                return candidate.getTimeInMillis();
+            long meterCandidateMillis = candidate.getTimeInMillis();
+            if (meterCandidateMillis > meterNowMillis) {
+                return meterCandidateMillis - timeShift;
             }
         }
         return -1L;

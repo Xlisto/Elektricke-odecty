@@ -33,6 +33,7 @@ import java.util.TimerTask;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
+import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -445,6 +446,9 @@ public class HdoFragment extends Fragment {
         dataSettingsSource.changeTimeShift(idSubscriptionPoint, timeShift);
         dataSettingsSource.close();
         setTimeDifferent();
+        if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null) {
+            HdoAlarmScheduler.rescheduleForTable(requireContext(), subscriptionPoint.getTableHDO());
+        }
     }
 
 
