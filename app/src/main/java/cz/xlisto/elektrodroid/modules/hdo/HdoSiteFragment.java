@@ -732,7 +732,7 @@ public class HdoSiteFragment extends Fragment {
      * Enum Distribution:
      * - Představuje různé distribuční oblasti (CEZ, EGD, PRE).
      */
-    static class HdoListContainer {
+    public static class HdoListContainer {
 
         ArrayList<HdoModel> hdoList;
         String validityDate;
@@ -776,7 +776,7 @@ public class HdoSiteFragment extends Fragment {
         /**
          * Enum představující různé distribuční oblasti.
          */
-        enum Distribution {
+        public enum Distribution {
             CEZ, EGD, PRE
         }
 

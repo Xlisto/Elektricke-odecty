@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
 
@@ -21,6 +20,7 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 11.01.2024 14:35
  */
 public class BuildPRE {
+
     private static final String KOD_POVELU = "kodPovelu";
     private static final String PLATNOST = "platnost";
     private static final String CAS_ZAP = "casZap";
@@ -29,33 +29,7 @@ public class BuildPRE {
     private static final String IS_HOLIDAY = "isHoliday";
 
 
-    private static class TimeSlotKey {
-
-        final String rele;
-        final String timeOn;
-        final String timeOff;
-
-
-        TimeSlotKey(String rele, String timeOn, String timeOff) {
-            this.rele = rele;
-            this.timeOn = timeOn;
-            this.timeOff = timeOff;
-        }
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TimeSlotKey that = (TimeSlotKey) o;
-            return Objects.equals(rele, that.rele) && Objects.equals(timeOn, that.timeOn) && Objects.equals(timeOff, that.timeOff);
-        }
-
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(rele, timeOn, timeOff);
-        }
+    private record TimeSlotKey(String rele, String timeOn, String timeOff) {
 
     }
 
@@ -231,4 +205,5 @@ public class BuildPRE {
             return -1;
         }
     }
+
 }
