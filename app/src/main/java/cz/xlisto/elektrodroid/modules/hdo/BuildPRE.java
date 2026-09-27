@@ -27,7 +27,6 @@ public class BuildPRE {
     private static final String CAS_VYP = "casVyp";
     private static final String DEN_TEXT = "denText";
     private static final String IS_HOLIDAY = "isHoliday";
-    private static final String EMPTY = "";
 
 
     private static class TimeSlotKey {
