@@ -119,12 +119,42 @@ public class HdoFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_hdo, menu);
+                ShPHdo shPHdo = new ShPHdo(requireContext());
+                boolean isGraphic = shPHdo.isGraphicMode();
+                MenuItem toggleItem = menu.findItem(R.id.menu_hdo_toggle_view);
+                if (toggleItem != null) {
+                    toggleItem.setIcon(isGraphic ? R.drawable.ic_list_24 : R.drawable.ic_clock_24);
+                    toggleItem.setTitle(isGraphic ? R.string.show_as_list : R.string.show_as_graphic);
+                }
             }
 
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_hdo_load) {
+                if (menuItem.getItemId() == R.id.menu_hdo_toggle_view) {
+                    ShPHdo shPHdo = new ShPHdo(requireContext());
+                    boolean currentGraphic = shPHdo.isGraphicMode();
+                    boolean newGraphic = !currentGraphic;
+                    shPHdo.setGraphicMode(newGraphic);
+
+                    if (newGraphic) {
+                        if (spReleSettings != null) {
+                            spReleSettings.setVisibility(View.GONE);
+                        }
+                        updateCardHdoFilterVisibility();
+                        loadData(null);
+                    } else {
+                        loadReles();
+                        String selectedRele = null;
+                        if (spReleSettings != null && spReleSettings.getSelectedItem() != null) {
+                            selectedRele = spReleSettings.getSelectedItem().toString();
+                        }
+                        loadData(selectedRele);
+                    }
+
+                    requireActivity().invalidateOptionsMenu();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_hdo_load) {
                     HdoSiteFragment hdoSite = HdoSiteFragment.newInstance();
                     FragmentChange.replace(requireActivity(), hdoSite, FragmentChange.Transaction.MOVE, true);
                     return true;
@@ -187,7 +217,10 @@ public class HdoFragment extends Fragment {
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadData(spReleSettings.getAdapter().getItem(position).toString());
+                ShPHdo shPHdo = new ShPHdo(requireContext());
+                if (!shPHdo.isGraphicMode()) {
+                    loadData(spReleSettings.getAdapter().getItem(position).toString());
+                }
             }
 
 
@@ -250,10 +283,23 @@ public class HdoFragment extends Fragment {
         setTimeDifferent();
         startTimer();
         showAlert();
-        loadData();
-        loadReles();
-        new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
         ShPHdo shPHdo = new ShPHdo(requireContext());
+        boolean isGraphic = shPHdo.isGraphicMode();
+        loadReles();
+        if (isGraphic) {
+            if (spReleSettings != null) {
+                spReleSettings.setVisibility(View.GONE);
+            }
+            updateCardHdoFilterVisibility();
+            loadData(null);
+        } else {
+            String selectedRele = null;
+            if (spReleSettings != null && spReleSettings.getSelectedItem() != null) {
+                selectedRele = spReleSettings.getSelectedItem().toString();
+            }
+            loadData(selectedRele);
+        }
+        shPHdo.set(ShPHdo.ARG_RUNNING_SERVICE, false);
         applyClockMinimizedState(shPHdo.get(ShPHdo.ARG_HDO_CLOCK_MINIMIZED, false));
         checkNotificationPermissionWarning();
     }
@@ -437,6 +483,10 @@ public class HdoFragment extends Fragment {
             }
             dataHdoSource.close();
         }
+
+        if (hdoAdapter != null && hdoAdapter.isGraphicMode()) {
+            hdoAdapter.updateClockHandPosition();
+        }
     }
 
 
@@ -498,14 +548,6 @@ public class HdoFragment extends Fragment {
         } else {
             tvAlertHdo.setVisibility(View.GONE);
         }
-    }
-
-
-    /**
-     * Načte všechna HDO data z databáze bez filtrování podle relé.
-     */
-    private void loadData() {
-        loadData(null);
     }
 
 
@@ -596,7 +638,10 @@ public class HdoFragment extends Fragment {
      * takže jsou viditelné checkboxy pro nastavení notifikací při změně NT i akce editace/mazání.
      */
     private void setAdapter() {
+        ShPHdo shPHdo = new ShPHdo(requireContext());
+        boolean isGraphic = shPHdo.isGraphicMode();
         hdoAdapter = new HdoAdapter(hdoModels, rvHdo, true);
+        hdoAdapter.setGraphicMode(isGraphic);
         rvHdo.setAdapter(hdoAdapter);
         rvHdo.setLayoutManager(new LinearLayoutManager(requireActivity()));
         rvHdo.scheduleLayoutAnimation();

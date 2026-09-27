@@ -3,28 +3,31 @@ package cz.xlisto.elektrodroid.modules.hdo;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.animation.ValueAnimator;
-import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.NotificationHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
@@ -34,22 +37,25 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * <p>
  * Adapter podporuje dva režimy zobrazení:
  * <ul>
- *     <li><b>Interaktivní režim</b> ({@code clickables=true}) pro {@link HdoFragment}:
- *     zobrazuje checkboxy notifikací NT a umožňuje editaci/smazání záznamů.</li>
- *     <li><b>Náhledový režim</b> ({@code clickables=false}) pro {@link HdoSiteFragment}:
- *     skrývá notifikační checkboxy i editační akce a slouží pouze k náhledu stažených časů.</li>
+ *     <li><b>Seznamové zobrazení</b> (textový seznam jednotlivých záznamů).</li>
+ *     <li><b>Grafické zobrazení</b> (hodinové ciferníky pro skupiny dní: Po-Pá, Víkend, Svátek).</li>
  * </ul>
- * Obsahuje také animaci rozbalení/sbalení editačních tlačítek.
  */
-public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
+public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "HdoAdapter";
+
+    public static final int VIEW_TYPE_LIST = 0;
+    public static final int VIEW_TYPE_GRAPHIC = 1;
+
     private final ArrayList<HdoModel> items;
+    private ArrayList<HdoGraphicGroupModel> graphicGroups = new ArrayList<>();
     private final RecyclerView recyclerView;
     private int showButtons = -1;
     public static final String FLAG_HDO_ADAPTER_DELETE = "flagHdoAdapterDelete";
     private long selectedId;
     private int selectedPosition;
     private final boolean clickables;
+    private boolean isGraphicMode = false;
 
 
     /**
@@ -62,13 +68,24 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         Button btnEdit, btnDelete;
         ValueAnimator buttonsAnimator;
 
-        /**
-         * Vytvoří držák view pro položku RecyclerView.
-         *
-         * @param itemView kořenový view položky
-         */
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+        }
+
+    }
+
+
+    /**
+     * ViewHolder pro skupinu HDO časů v grafickém zobrazení.
+     */
+    public static class GraphicViewHolder extends RecyclerView.ViewHolder {
+
+        GraphHdoClockView graphHdoClockView;
+
+
+        public GraphicViewHolder(@NonNull View itemView) {
+            super(itemView);
+            graphHdoClockView = itemView.findViewById(R.id.graphHdoClockView);
         }
     }
 
@@ -76,10 +93,9 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     /**
      * Vytvoří adapter HDO položek.
      *
-     * @param items       seznam HDO záznamů
+     * @param items        seznam HDO záznamů
      * @param recyclerView RecyclerView, ve kterém se seznam zobrazuje
-     * @param clickables  {@code true} = interaktivní režim (editace, mazání, checkboxy notifikací),
-     *                    {@code false} = náhledový režim (bez checkboxů a bez akcí)
+     * @param clickables   {@code true} = interaktivní režim, {@code false} = náhledový režim
      */
     public HdoAdapter(ArrayList<HdoModel> items, RecyclerView recyclerView, boolean clickables) {
         this.items = items;
@@ -89,196 +105,286 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
 
 
     /**
-     * Vytvoří nový ViewHolder pro položku seznamu.
+     * Nastaví režim zobrazení (seznam vs grafické zobrazení)
+     *
+     * @param isGraphic true pro grafické zobrazení, false pro seznam
      */
+    @SuppressLint("NotifyDataSetChanged")
+    public void setGraphicMode(boolean isGraphic) {
+        this.isGraphicMode = isGraphic;
+        if (isGraphic) {
+            this.graphicGroups = HdoGraphicGroupModel.buildGraphicGroups(items);
+        } else {
+            this.graphicGroups.clear();
+        }
+        notifyDataSetChanged();
+    }
+
+
+    public boolean isGraphicMode() {
+        return isGraphicMode;
+    }
+
+
+    /**
+     * Aktualizuje pozici hodinové ručičky na grafických cifernících podle aktuálního času elektroměru.
+     */
+    public void updateClockHandPosition() {
+        if (!isGraphicMode || recyclerView == null || graphicGroups == null || graphicGroups.isEmpty())
+            return;
+
+        Context context = recyclerView.getContext();
+        SubscriptionPointModel sp = SubscriptionPoint.load(context);
+        long timeShift = 0;
+        if (sp != null) {
+            timeShift = HdoAlarmScheduler.findTimeShiftByTable(context, sp.getTableHDO());
+        }
+
+        Calendar meterCal = Calendar.getInstance();
+        meterCal.setTimeInMillis(System.currentTimeMillis() + timeShift);
+
+        boolean isHolidayToday = Connections.isCzechHoliday(meterCal);
+        int dayOfWeek = meterCal.get(Calendar.DAY_OF_WEEK);
+        int currentMinutes = meterCal.get(Calendar.HOUR_OF_DAY) * 60 + meterCal.get(Calendar.MINUTE);
+
+        for (int i = 0; i < graphicGroups.size(); i++) {
+            RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (holder instanceof GraphicViewHolder gHolder) {
+                boolean isGroupForToday = isIsGroupForToday(i, isHolidayToday, dayOfWeek);
+
+                gHolder.graphHdoClockView.setClockHand(isGroupForToday, currentMinutes);
+            }
+        }
+    }
+
+
+    private boolean isIsGroupForToday(int i, boolean isHolidayToday, int dayOfWeek) {
+        HdoGraphicGroupModel group = graphicGroups.get(i);
+        boolean isGroupForToday;
+        if (isHolidayToday) {
+            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.HOLIDAY);
+        } else if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKEND);
+        } else {
+            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKDAYS);
+        }
+        return isGroupForToday;
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return isGraphicMode ? VIEW_TYPE_GRAPHIC : VIEW_TYPE_LIST;
+    }
+
+
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hdo, parent, false);
-        MyViewHolder vh = new MyViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_GRAPHIC) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hdo_graphic_group, parent, false);
+            return new GraphicViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hdo, parent, false);
+            MyViewHolder vh = new MyViewHolder(v);
 
-        vh.lnHdoOut = v.findViewById(R.id.lnHdoOut);
-        vh.lnHdoContent = v.findViewById(R.id.lnHdoContent);
-        vh.lnNotifyArea = v.findViewById(R.id.lnNotifyArea);
-        vh.lnHdoButtons = v.findViewById(R.id.lnButtonsHdo);
-        vh.tvRele = v.findViewById(R.id.tvRele);
-        vh.tvDate = v.findViewById(R.id.tvDateHdoSite);
-        vh.tvTime = v.findViewById(R.id.tvTime);
-        vh.btnEdit = v.findViewById(R.id.btnEditHdo);
-        vh.btnDelete = v.findViewById(R.id.btnDeleteHdo);
-        vh.lnHdoDays = v.findViewById(R.id.lnHdoDays);
-        vh.tvDayMon = v.findViewById(R.id.tvDayMon);
-        vh.tvDayTue = v.findViewById(R.id.tvDayTue);
-        vh.tvDayWed = v.findViewById(R.id.tvDayWed);
-        vh.tvDayThu = v.findViewById(R.id.tvDayThu);
-        vh.tvDayFri = v.findViewById(R.id.tvDayFri);
-        vh.tvDaySat = v.findViewById(R.id.tvDaySat);
-        vh.tvDaySun = v.findViewById(R.id.tvDaySun);
-        vh.cbNotifyStart = v.findViewById(R.id.cbNotifyStart);
-        vh.cbNotifyEnd = v.findViewById(R.id.cbNotifyEnd);
+            vh.lnHdoOut = v.findViewById(R.id.lnHdoOut);
+            vh.lnHdoContent = v.findViewById(R.id.lnHdoContent);
+            vh.lnNotifyArea = v.findViewById(R.id.lnNotifyArea);
+            vh.lnHdoButtons = v.findViewById(R.id.lnButtonsHdo);
+            vh.tvRele = v.findViewById(R.id.tvRele);
+            vh.tvDate = v.findViewById(R.id.tvDateHdoSite);
+            vh.tvTime = v.findViewById(R.id.tvTime);
+            vh.btnEdit = v.findViewById(R.id.btnEditHdo);
+            vh.btnDelete = v.findViewById(R.id.btnDeleteHdo);
+            vh.lnHdoDays = v.findViewById(R.id.lnHdoDays);
+            vh.tvDayMon = v.findViewById(R.id.tvDayMon);
+            vh.tvDayTue = v.findViewById(R.id.tvDayTue);
+            vh.tvDayWed = v.findViewById(R.id.tvDayWed);
+            vh.tvDayThu = v.findViewById(R.id.tvDayThu);
+            vh.tvDayFri = v.findViewById(R.id.tvDayFri);
+            vh.tvDaySat = v.findViewById(R.id.tvDaySat);
+            vh.tvDaySun = v.findViewById(R.id.tvDaySun);
+            vh.cbNotifyStart = v.findViewById(R.id.cbNotifyStart);
+            vh.cbNotifyEnd = v.findViewById(R.id.cbNotifyEnd);
 
-        return vh;
+            return vh;
+        }
     }
 
 
-    /**
-     * Naplní položku daty a nastaví UI podle režimu adapteru.
-     * <p>
-     * V interaktivním režimu nastaví checkboxy notifikací a jejich posluchače,
-     * v náhledovém režimu skryje celou notifikační oblast.
-     */
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        HdoModel item = items.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        if (holder instanceof GraphicViewHolder gHolder) {
+            HdoGraphicGroupModel group = graphicGroups.get(position);
 
-        if ((item.getMon() == 0)) {
-            holder.tvDayMon.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDayMon.setVisibility(View.VISIBLE);
-        }
-        if ((item.getTue() == 0)) {
-            holder.tvDayTue.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDayTue.setVisibility(View.VISIBLE);
-        }
-        if ((item.getWed() == 0)) {
-            holder.tvDayWed.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDayWed.setVisibility(View.VISIBLE);
-        }
-        if ((item.getThu() == 0)) {
-            holder.tvDayThu.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDayThu.setVisibility(View.VISIBLE);
-        }
-        if ((item.getFri() == 0)) {
-            holder.tvDayFri.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDayFri.setVisibility(View.VISIBLE);
-        }
-        if ((item.getSat() == 0)) {
-            holder.tvDaySat.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDaySat.setVisibility(View.VISIBLE);
-        }
-        if ((item.getSun() == 0)) {
-            holder.tvDaySun.setVisibility(View.INVISIBLE);
-        } else {
-            holder.tvDaySun.setVisibility(View.VISIBLE);
-        }
+            gHolder.graphHdoClockView.setGroupTitle(group.title());
+            gHolder.graphHdoClockView.setModels(group.models());
 
-
-        holder.tvRele.setText(item.getRele());
-
-        if (item.getDistributionArea().equals(DistributionArea.PRE.toString())) {
-            if (item.getSv() == 1 || (item.getDateFrom() != null && item.getDateFrom().equalsIgnoreCase("SVÁTEK"))) {
-                holder.tvDate.setVisibility(View.VISIBLE);
-                holder.lnHdoDays.setVisibility(View.GONE);
-                holder.tvDate.setText(R.string.holiday);
-            } else if (item.getMon() == 0 && item.getTue() == 0 && item.getWed() == 0 && item.getThu() == 0 && item.getFri() == 0 && item.getSat() == 0 && item.getSun() == 0) {
-                holder.tvDate.setVisibility(View.VISIBLE);
-                holder.lnHdoDays.setVisibility(View.GONE);
-                holder.tvDate.setText(item.getDateFrom());
-            } else {
-                holder.tvDate.setVisibility(View.GONE);
-                holder.lnHdoDays.setVisibility(View.VISIBLE);
+            // Výpočet času elektroměru a určení, zda ručička patří do tohoto ciferníku
+            SubscriptionPointModel sp = SubscriptionPoint.load(gHolder.itemView.getContext());
+            long timeShift = 0;
+            if (sp != null) {
+                timeShift = HdoAlarmScheduler.findTimeShiftByTable(gHolder.itemView.getContext(), sp.getTableHDO());
             }
-        } else {
-            holder.tvDate.setVisibility(View.GONE);
-            holder.lnHdoDays.setVisibility(View.VISIBLE);
-        }
 
-        holder.tvTime.setText(holder.itemView.getContext().getResources().getString(R.string.time, item.getTimeFrom(), item.getTimeUntil()));
+            Calendar meterCal = Calendar.getInstance();
+            meterCal.setTimeInMillis(System.currentTimeMillis() + timeShift);
 
-        holder.cbNotifyStart.setOnCheckedChangeListener(null);
-        holder.cbNotifyEnd.setOnCheckedChangeListener(null);
+            boolean isHolidayToday = Connections.isCzechHoliday(meterCal);
+            int dayOfWeek = meterCal.get(Calendar.DAY_OF_WEEK);
 
-        if (clickables) {
-            holder.lnNotifyArea.setVisibility(View.VISIBLE);
-            holder.cbNotifyStart.setChecked(item.getNotifyStart() == 1);
-            holder.cbNotifyEnd.setChecked(item.getNotifyEnd() == 1);
-
-            holder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                item.setNotifyStart(isChecked ? 1 : 0);
-                updateNotifyFlags(item);
-                checkNotificationPermission(holder.itemView);
-            });
-
-            holder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                item.setNotifyEnd(isChecked ? 1 : 0);
-                updateNotifyFlags(item);
-                checkNotificationPermission(holder.itemView);
-            });
-        } else {
-            // Rezim nahledu (HdoSiteFragment): notifikace se zde nenastavuji.
-            holder.lnNotifyArea.setVisibility(View.GONE);
-        }
-
-        holder.lnHdoContent.setOnClickListener(v1 -> {
-            if (!clickables) return;
-            if (showButtons >= 0 && showButtons == position) {
-                collapseButtons(holder);
-                showButtons = -1;
+            boolean isGroupForToday;
+            if (isHolidayToday) {
+                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.HOLIDAY);
+            } else if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKEND);
             } else {
-                if (showButtons >= 0) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                    if (viewHolder instanceof MyViewHolder) {
-                        collapseButtons((MyViewHolder) viewHolder);
-                    } else if (viewHolder != null) {
-                        viewHolder.itemView.findViewById(R.id.lnButtonsHdo).setVisibility(View.GONE);
-                    }
+                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKDAYS);
+            }
+
+            int currentMinutes = meterCal.get(Calendar.HOUR_OF_DAY) * 60 + meterCal.get(Calendar.MINUTE);
+            gHolder.graphHdoClockView.setClockHand(isGroupForToday, currentMinutes);
+
+        } else if (holder instanceof MyViewHolder myHolder) {
+            HdoModel item = items.get(position);
+
+            if ((item.getMon() == 0)) {
+                myHolder.tvDayMon.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDayMon.setVisibility(View.VISIBLE);
+            }
+            if ((item.getTue() == 0)) {
+                myHolder.tvDayTue.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDayTue.setVisibility(View.VISIBLE);
+            }
+            if ((item.getWed() == 0)) {
+                myHolder.tvDayWed.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDayWed.setVisibility(View.VISIBLE);
+            }
+            if ((item.getThu() == 0)) {
+                myHolder.tvDayThu.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDayThu.setVisibility(View.VISIBLE);
+            }
+            if ((item.getFri() == 0)) {
+                myHolder.tvDayFri.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDayFri.setVisibility(View.VISIBLE);
+            }
+            if ((item.getSat() == 0)) {
+                myHolder.tvDaySat.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDaySat.setVisibility(View.VISIBLE);
+            }
+            if ((item.getSun() == 0)) {
+                myHolder.tvDaySun.setVisibility(View.INVISIBLE);
+            } else {
+                myHolder.tvDaySun.setVisibility(View.VISIBLE);
+            }
+
+            myHolder.tvRele.setText(item.getRele());
+
+            if (item.getDistributionArea().equals(DistributionArea.PRE.toString())) {
+                if (item.getSv() == 1 || (item.getDateFrom() != null && item.getDateFrom().equalsIgnoreCase("SVÁTEK"))) {
+                    myHolder.tvDate.setVisibility(View.VISIBLE);
+                    myHolder.lnHdoDays.setVisibility(View.GONE);
+                    myHolder.tvDate.setText(R.string.holiday);
+                } else if (item.getMon() == 0 && item.getTue() == 0 && item.getWed() == 0 && item.getThu() == 0 && item.getFri() == 0 && item.getSat() == 0 && item.getSun() == 0) {
+                    myHolder.tvDate.setVisibility(View.VISIBLE);
+                    myHolder.lnHdoDays.setVisibility(View.GONE);
+                    myHolder.tvDate.setText(item.getDateFrom());
+                } else {
+                    myHolder.tvDate.setVisibility(View.GONE);
+                    myHolder.lnHdoDays.setVisibility(View.VISIBLE);
                 }
-                showButtons = position;
-                expandButtons(holder);
+            } else {
+                myHolder.tvDate.setVisibility(View.GONE);
+                myHolder.lnHdoDays.setVisibility(View.VISIBLE);
             }
-        });
 
-        holder.btnEdit.setOnClickListener(v -> {
-            HdoModel hdoModel = items.get(position);
-            selectedId = hdoModel.getId();
-            selectedPosition = position;
-            HdoEditFragment hdoEditFragment = HdoEditFragment.newInstance(hdoModel);
-            FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE, true);
-        });
+            myHolder.tvTime.setText(myHolder.itemView.getContext().getResources().getString(R.string.time, item.getTimeFrom(), item.getTimeUntil()));
 
-        holder.btnDelete.setOnClickListener(v -> {
-            HdoModel hdoModel = items.get(position);
-            selectedId = hdoModel.getId();
-            selectedPosition = position;
-            YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
-        });
-        bindButtonsState(holder, position);
+            myHolder.cbNotifyStart.setOnCheckedChangeListener(null);
+            myHolder.cbNotifyEnd.setOnCheckedChangeListener(null);
 
+            if (clickables) {
+                myHolder.lnNotifyArea.setVisibility(View.VISIBLE);
+                myHolder.cbNotifyStart.setChecked(item.getNotifyStart() == 1);
+                myHolder.cbNotifyEnd.setChecked(item.getNotifyEnd() == 1);
 
+                myHolder.cbNotifyStart.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    item.setNotifyStart(isChecked ? 1 : 0);
+                    updateNotifyFlags(item);
+                    checkNotificationPermission(myHolder.itemView);
+                });
+
+                myHolder.cbNotifyEnd.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    item.setNotifyEnd(isChecked ? 1 : 0);
+                    updateNotifyFlags(item);
+                    checkNotificationPermission(myHolder.itemView);
+                });
+            } else {
+                myHolder.lnNotifyArea.setVisibility(View.GONE);
+            }
+
+            myHolder.lnHdoContent.setOnClickListener(v1 -> {
+                if (!clickables) return;
+                if (showButtons >= 0 && showButtons == position) {
+                    collapseButtons(myHolder);
+                    showButtons = -1;
+                } else {
+                    if (showButtons >= 0) {
+                        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
+                        if (viewHolder instanceof MyViewHolder) {
+                            collapseButtons((MyViewHolder) viewHolder);
+                        } else if (viewHolder != null) {
+                            viewHolder.itemView.findViewById(R.id.lnButtonsHdo).setVisibility(View.GONE);
+                        }
+                    }
+                    showButtons = position;
+                    expandButtons(myHolder);
+                }
+            });
+
+            myHolder.btnEdit.setOnClickListener(v -> {
+                HdoModel hdoModel = items.get(position);
+                selectedId = hdoModel.getId();
+                selectedPosition = position;
+                HdoEditFragment hdoEditFragment = HdoEditFragment.newInstance(hdoModel);
+                FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE, true);
+            });
+
+            myHolder.btnDelete.setOnClickListener(v -> {
+                HdoModel hdoModel = items.get(position);
+                selectedId = hdoModel.getId();
+                selectedPosition = position;
+                YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
+            });
+            bindButtonsState(myHolder, position);
+        }
     }
 
 
-    /**
-     * Zkontroluje oprávnění notifikací a pokud nejsou povolené, zobrazí varování.
-     */
     private void checkNotificationPermission(View view) {
         if (!NotificationHelper.isNotificationPermissionGranted(view.getContext())) {
             NotificationHelper.showNotificationWarningSnackbar(view, view.getContext().getString(R.string.notification_disabled_warning));
         }
     }
 
-    /**
-     * Vrátí počet položek v adapteru.
-     */
     @Override
     public int getItemCount() {
+        if (isGraphicMode) {
+            return graphicGroups != null ? graphicGroups.size() : 0;
+        }
         if (items == null)
             return 0;
         return items.size();
     }
 
 
-    /**
-     * Skryje/zobrazí tlačítka pro smazání a editaci
-     *
-     * @param holder   MyViewHolder
-     * @param position pozice
-     */
     private void bindButtonsState(MyViewHolder holder, int position) {
         cancelButtonsAnimator(holder);
         ViewGroup.LayoutParams params = holder.lnHdoButtons.getLayoutParams();
@@ -296,9 +402,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Rozbalí sekci tlačítek dvoufázově: nejdřív výška, pak fade-in.
-     */
     private void expandButtons(MyViewHolder holder) {
         cancelButtonsAnimator(holder);
         final LinearLayout buttons = holder.lnHdoButtons;
@@ -342,9 +445,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Spustí zobrazení tlačítek z transparentního stavu.
-     */
     private void startButtonsFadeIn(MyViewHolder holder, LinearLayout buttons) {
         holder.buttonsAnimator = null;
         holder.buttonsAnimator = ValueAnimator.ofFloat(0f, 1f);
@@ -367,9 +467,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Sbalí sekci tlačítek dvoufázově: nejdřív fade-out, pak výška.
-     */
     private void collapseButtons(MyViewHolder holder) {
         cancelButtonsAnimator(holder);
         final LinearLayout buttons = holder.lnHdoButtons;
@@ -404,9 +501,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Sbalí výšku sekce tlačítek na nulu.
-     */
     private void collapseButtonsHeight(MyViewHolder holder, LinearLayout buttons) {
         final ViewGroup.LayoutParams params = buttons.getLayoutParams();
         int currentHeight = buttons.getHeight();
@@ -442,9 +536,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Zruší běžící animaci tlačítek pro konkrétní ViewHolder.
-     */
     private void cancelButtonsAnimator(MyViewHolder holder) {
         if (holder.buttonsAnimator != null) {
             holder.buttonsAnimator.cancel();
@@ -453,9 +544,6 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Změří cílovou výšku sekce tlačítek pro animaci rozbalení.
-     */
     private int measureViewHeight(LinearLayout view, int parentWidth) {
         int width = parentWidth;
         if (width <= 0) {
@@ -478,17 +566,12 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
     }
 
 
-    /**
-     * Odstraní záznam HDO z databáze a z recycler view
-     */
     public void deleteItem() {
         deleteHdo();
     }
 
 
-    /**
-     * Odstraní záznam HDO z databáze a z recycler view
-     */
+    @SuppressLint("NotifyDataSetChanged")
     private void deleteHdo() {
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(recyclerView.getContext());
         DataHdoSource dataHdoSource = new DataHdoSource(recyclerView.getContext());
@@ -497,18 +580,18 @@ public class HdoAdapter extends RecyclerView.Adapter<HdoAdapter.MyViewHolder> {
         dataHdoSource.deleteHdo(selectedId, subscriptionPointModel.getTableHDO());
         dataHdoSource.close();
         items.remove(selectedPosition);
-        notifyItemRemoved(selectedPosition);
-        notifyItemRangeChanged(selectedPosition, items.size());
+        if (isGraphicMode) {
+            this.graphicGroups = HdoGraphicGroupModel.buildGraphicGroups(items);
+            notifyDataSetChanged();
+        } else {
+            notifyItemRemoved(selectedPosition);
+            notifyItemRangeChanged(selectedPosition, items.size());
+        }
         selectedPosition = -1;
         showButtons = -1;
     }
 
 
-    /**
-     * Uloží stav notifikačních voleb HDO záznamu do databáze.
-     *
-     * @param hdoModel upravený HDO model
-     */
     private void updateNotifyFlags(HdoModel hdoModel) {
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(recyclerView.getContext());
         if (subscriptionPointModel == null) {
