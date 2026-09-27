@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper;
+import cz.xlisto.elektrodroid.modules.hdo.PreCodesUpdateScheduler;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 
@@ -14,7 +15,6 @@ import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 /**
  * Posluchač restartu zařízení a aktualizace aplikace.
  * Naplánuje odeslání čekajících záloh na Google Drive, pokud fronta není prázdná.
- * Xlisto 13.06.2023 9:21
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
 
@@ -40,6 +40,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         // --- Čekající zálohy na Google Drive ---
         // Naplánuje upload přes WorkManager; worker počká na připojení k síti
         PendingBackupUploadScheduler.scheduleIfNeeded(context, false);
+
+        // --- Aktualizace PRE kódů ---
+        PreCodesUpdateScheduler.schedulePreCodesUpdate(context);
     }
 
 }

@@ -46,6 +46,7 @@ import cz.xlisto.elektrodroid.modules.graphcolor.GraphColorFragment;
 import cz.xlisto.elektrodroid.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper;
+import cz.xlisto.elektrodroid.modules.hdo.PreCodesUpdateScheduler;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingDetailFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingFragment;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         setupPendingUploadScheduler();
         schedulePendingBackupUploadIfNeeded();
         HdoUpdateHelper.checkHdoValidityAndShowDialogIfNeeded(this);
+        PreCodesUpdateScheduler.schedulePreCodesUpdate(this);
         setConfiguration(getResources().getConfiguration());
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         myNavigationView = findViewById(R.id.navigationView);

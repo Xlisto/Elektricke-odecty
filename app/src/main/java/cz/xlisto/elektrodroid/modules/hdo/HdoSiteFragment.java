@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
+import cz.xlisto.elektrodroid.shp.ShPPreCodes;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.SelectHdoCategoryDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -708,7 +709,9 @@ public class HdoSiteFragment extends Fragment {
                 spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_egd)));
                 break;
             case DIST_PRE:
-                spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.area_pre)));
+                ShPPreCodes shPPreCodes = new ShPPreCodes(requireContext());
+                ArrayList<String> preCodes = shPPreCodes.getPreCodes();
+                spDistrict.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, preCodes));
                 break;
         }
     }

@@ -16,7 +16,6 @@ import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 
 /**
  * Třída pro přístup k datum HDO
- * Xlisto 26.05.2023 18:52
  */
 public class DataHdoSource extends DataSource {
 
@@ -201,7 +200,7 @@ public class DataHdoSource extends DataSource {
      *
      * @param table Tabulka se záznamy HDO
      */
-    private String getDistributionArea(String table) {
+    public String getDistributionArea(String table) {
         String distributionArea;
         Cursor cursor = database.query(table,
                 new String[]{DbHelper.COLUMN_DISTRIBUTION_AREA},
