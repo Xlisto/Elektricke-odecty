@@ -150,7 +150,7 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         for (int i = 0; i < graphicGroups.size(); i++) {
             RecyclerView.ViewHolder holder = recyclerView.findViewHolderForAdapterPosition(i);
             if (holder instanceof GraphicViewHolder gHolder) {
-                boolean isGroupForToday = isIsGroupForToday(i, isHolidayToday, dayOfWeek);
+                boolean isGroupForToday = isGroupForToday(graphicGroups.get(i), isHolidayToday, dayOfWeek);
 
                 gHolder.graphHdoClockView.setClockHand(isGroupForToday, currentMinutes);
             }
@@ -158,17 +158,20 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
-    private boolean isIsGroupForToday(int i, boolean isHolidayToday, int dayOfWeek) {
-        HdoGraphicGroupModel group = graphicGroups.get(i);
-        boolean isGroupForToday;
+    private boolean isGroupForToday(HdoGraphicGroupModel group, boolean isHolidayToday, int dayOfWeek) {
         if (isHolidayToday) {
-            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.HOLIDAY);
-        } else if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKEND);
-        } else {
-            isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKDAYS);
+            return group.sv();
         }
-        return isGroupForToday;
+        return switch (dayOfWeek) {
+            case Calendar.MONDAY -> group.mon();
+            case Calendar.TUESDAY -> group.tue();
+            case Calendar.WEDNESDAY -> group.wed();
+            case Calendar.THURSDAY -> group.thu();
+            case Calendar.FRIDAY -> group.fri();
+            case Calendar.SATURDAY -> group.sat();
+            case Calendar.SUNDAY -> group.sun();
+            default -> false;
+        };
     }
 
 
@@ -234,14 +237,7 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             boolean isHolidayToday = Connections.isCzechHoliday(meterCal);
             int dayOfWeek = meterCal.get(Calendar.DAY_OF_WEEK);
 
-            boolean isGroupForToday;
-            if (isHolidayToday) {
-                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.HOLIDAY);
-            } else if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKEND);
-            } else {
-                isGroupForToday = (group.groupType() == HdoGraphicGroupModel.GroupType.WEEKDAYS);
-            }
+            boolean isGroupForToday = isGroupForToday(group, isHolidayToday, dayOfWeek);
 
             int currentMinutes = meterCal.get(Calendar.HOUR_OF_DAY) * 60 + meterCal.get(Calendar.MINUTE);
             gHolder.graphHdoClockView.setClockHand(isGroupForToday, currentMinutes);

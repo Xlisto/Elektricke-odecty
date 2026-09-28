@@ -400,9 +400,27 @@ public class HdoModel implements Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HdoModel hdoModel = (HdoModel) o;
-        return calendarStart.getTimeInMillis() == hdoModel.calendarStart.getTimeInMillis() &&
-                calendarEnd.getTimeInMillis() == hdoModel.calendarEnd.getTimeInMillis() &&
-                rele.equals(hdoModel.rele);
+
+        if (id > 0 && hdoModel.id > 0 && id == hdoModel.id) {
+            return true;
+        }
+
+        long start1 = calendarStart != null ? calendarStart.getTimeInMillis() : 0L;
+        long start2 = hdoModel.calendarStart != null ? hdoModel.calendarStart.getTimeInMillis() : 0L;
+        long end1 = calendarEnd != null ? calendarEnd.getTimeInMillis() : 0L;
+        long end2 = hdoModel.calendarEnd != null ? hdoModel.calendarEnd.getTimeInMillis() : 0L;
+
+        return id == hdoModel.id &&
+                mon == hdoModel.mon && tue == hdoModel.tue && wed == hdoModel.wed &&
+                thu == hdoModel.thu && fri == hdoModel.fri && sat == hdoModel.sat &&
+                sun == hdoModel.sun && sv == hdoModel.sv &&
+                start1 == start2 && end1 == end2 &&
+                Objects.equals(rele, hdoModel.rele) &&
+                Objects.equals(timeFrom, hdoModel.timeFrom) &&
+                Objects.equals(timeUntil, hdoModel.timeUntil) &&
+                Objects.equals(dateFrom, hdoModel.dateFrom) &&
+                Objects.equals(dateUntil, hdoModel.dateUntil) &&
+                Objects.equals(distributionArea, hdoModel.distributionArea);
     }
 
 
@@ -413,7 +431,9 @@ public class HdoModel implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(calendarStart.getTimeInMillis(), calendarEnd.getTimeInMillis(), rele);
+        long start = calendarStart != null ? calendarStart.getTimeInMillis() : 0L;
+        long end = calendarEnd != null ? calendarEnd.getTimeInMillis() : 0L;
+        return Objects.hash(id, rele, dateFrom, dateUntil, timeFrom, timeUntil, mon, tue, wed, thu, fri, sat, sun, sv, distributionArea, start, end);
     }
 
 
