@@ -158,9 +158,24 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
+    private boolean hasExplicitHolidayGroup() {
+        if (graphicGroups == null) return false;
+        for (HdoGraphicGroupModel g : graphicGroups) {
+            if (g.sv()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     private boolean isGroupForToday(HdoGraphicGroupModel group, boolean isHolidayToday, int dayOfWeek) {
         if (isHolidayToday) {
-            return group.sv();
+            if (hasExplicitHolidayGroup()) {
+                return group.sv();
+            } else {
+                return group.sun();
+            }
         }
         return switch (dayOfWeek) {
             case Calendar.MONDAY -> group.mon();
