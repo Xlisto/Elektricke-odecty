@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -23,9 +22,9 @@ import java.util.Locale;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.HdoModel;
 
-
 /**
  * Zvětšené 24hodinové grafické zobrazení ciferníku hodin pro konkrétní skupinu HDO časů.
+ * Xlisto 30.01.2026
  */
 public class GraphHdoClockView extends View {
 
@@ -50,34 +49,34 @@ public class GraphHdoClockView extends View {
     private boolean showTUV;
     private boolean showTAR;
     private boolean showPV;
+    private int activeTypesCount = 0;
+    private int tuvOffset;
+    private int tarOffset;
+    private int pvOffset;
+    private int smallerUnit;
 
     private boolean showClockHand = false;
     private int currentMeterMinutes = -1;
     private Drawable bellDrawable;
 
-
     private enum RelayType {
         TUV, TAR, PV, UNKNOWN
     }
-
 
     public GraphHdoClockView(Context context) {
         super(context);
         init();
     }
 
-
     public GraphHdoClockView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-
     public GraphHdoClockView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
-
 
     private void init() {
         int primaryTextColor = Color.BLACK;
@@ -145,35 +144,77 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Nastaví název skupiny (např. Všední dny, Víkend, Svátek)
+     *
+     * @param title název skupiny
+     */
     public void setGroupTitle(String title) {
         this.groupTitle = title != null ? title : "";
         invalidate();
     }
 
 
+    /**
+     * Nastaví seznam HDO modelů pro vykreslení
+     *
+     * @param newModels seznam HDO modelů
+     */
     public void setModels(List<HdoModel> newModels) {
         this.models.clear();
         if (newModels != null) {
             this.models.addAll(newModels);
         }
+        updateActiveTypesCount();
+        requestLayout();
         invalidate();
     }
 
 
+    /**
+     * Přepočítá počet aktivních typů relé (TUV, TAR, PV)
+     */
+    private void updateActiveTypesCount() {
+        showTUV = false;
+        showTAR = false;
+        showPV = false;
+        for (HdoModel model : models) {
+            RelayType type = getRelayType(model.getRele());
+            if (type == RelayType.TUV) showTUV = true;
+            else if (type == RelayType.TAR) showTAR = true;
+            else if (type == RelayType.PV) showPV = true;
+            else showTAR = true;
+        }
+        activeTypesCount = (showTUV ? 1 : 0) + (showTAR ? 1 : 0) + (showPV ? 1 : 0);
+    }
+
+
+    /**
+     * Nastaví zobrazení hodinové ručičky a minutový čas elektroměru
+     *
+     * @param show    {@code true} pro zobrazení ručičky, {@code false} pro skrytí
+     * @param minutes aktuální čas elektroměru v minutách od půlnoci
+     */
     public void setClockHand(boolean show, int minutes) {
         this.showClockHand = show;
         this.currentMeterMinutes = minutes;
         invalidate();
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
+        int targetHeight = (activeTypesCount == 1) ? dpToPx(160f) : dpToPx(220f);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (heightMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.AT_MOST) {
+            height = targetHeight;
+        } else if (activeTypesCount == 1) {
+            height = targetHeight;
+        }
         setMeasuredDimension(width, height);
     }
-
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -184,6 +225,7 @@ public class GraphHdoClockView extends View {
 
         int padding = dpToPx(4);
         int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.65f));
+
         radius = dialDiameter / 2;
         centerX = padding + radius;
         centerY = availableHeight / 2;
@@ -213,6 +255,11 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí obvodovou kružnici a 48 rysek (24 hodinových + 24 půlhodinových)
+     *
+     * @param canvas plátno pro kreslení
+     */
     private void drawClock(Canvas canvas) {
         int tickCount = 48; // 24 hodinových rysek + 24 půlhodinových rysek
 
@@ -235,6 +282,11 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí čísla obvodu ciferníku (0 až 23)
+     *
+     * @param canvas plátno pro kreslení
+     */
     private void drawNumbers(Canvas canvas) {
         int textRadius = radius - dpToPx(11);
         pNumbers.setTextSize(dpToPx(9.5f));
@@ -248,6 +300,11 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí časové výseče HDO pro jednotlivá relé (TUV, TAR, PV)
+     *
+     * @param canvas plátno pro kreslení
+     */
     private void drawTimeArcs(Canvas canvas) {
         if (models.isEmpty()) return;
 
@@ -276,27 +333,7 @@ public class GraphHdoClockView extends View {
             }
         }
 
-        int smallerUnit = (int) (radius * 0.28);
-
-        int tuvOffset = 0;
-        int tarOffset = 0;
-        int pvOffset = 0;
-
-        int activeTypesCount = (showTUV ? 1 : 0) + (showTAR ? 1 : 0) + (showPV ? 1 : 0);
-
-        if (activeTypesCount > 1) {
-            int currentOffsetIndex = 0;
-            if (showTUV) {
-                currentOffsetIndex++;
-            }
-            if (showTAR) {
-                tarOffset = currentOffsetIndex * smallerUnit;
-                currentOffsetIndex++;
-            }
-            if (showPV) {
-                pvOffset = currentOffsetIndex * smallerUnit;
-            }
-        }
+        calculateRingOffsets();
 
         if (showTUV) {
             for (HdoModel model : tuvModels) {
@@ -318,25 +355,14 @@ public class GraphHdoClockView extends View {
     }
 
 
-    private void drawSingleArc(Canvas canvas, HdoModel model, int offset, Paint paint) {
-        float startAngle = convertTimeToAngle(model.getTimeFrom());
-        float endAngle = convertTimeToAngle(model.getTimeUntil());
-        float sweepAngle = endAngle - startAngle;
-        if (sweepAngle <= 0) sweepAngle += 360f;
-
-        RectF oval = new RectF(centerX - radius + offset, centerY - radius + offset, centerX + radius - offset, centerY + radius - offset);
-        canvas.drawArc(oval, startAngle, sweepAngle, true, paint);
-    }
-
-
-    private void drawNotificationBells(Canvas canvas) {
-        if (models.isEmpty() || bellDrawable == null) return;
-
-        int smallerUnit = (int) (radius * 0.28);
-        int tarOffset = 0;
-        int pvOffset = 0;
-
-        int activeTypesCount = (showTUV ? 1 : 0) + (showTAR ? 1 : 0) + (showPV ? 1 : 0);
+    /**
+     * Vypočítá odsazení prstenců pro jednotlivé typy relé
+     */
+    private void calculateRingOffsets() {
+        tuvOffset = 0;
+        tarOffset = 0;
+        pvOffset = 0;
+        smallerUnit = (int) (radius * 0.28);
 
         if (activeTypesCount > 1) {
             int currentOffsetIndex = 0;
@@ -351,7 +377,37 @@ public class GraphHdoClockView extends View {
                 pvOffset = currentOffsetIndex * smallerUnit;
             }
         }
+    }
 
+
+    /**
+     * Vykreslí jednu kruhovou výseč pro daný HDO interval
+     *
+     * @param canvas plátno pro kreslení
+     * @param model  HDO model
+     * @param offset odsazení prstence od vnějšího obvodu
+     * @param paint  štětec s příslušnou barvou relé
+     */
+    private void drawSingleArc(Canvas canvas, HdoModel model, int offset, Paint paint) {
+        float startAngle = convertTimeToAngle(model.getTimeFrom());
+        float endAngle = convertTimeToAngle(model.getTimeUntil());
+        float sweepAngle = endAngle - startAngle;
+        if (sweepAngle <= 0) sweepAngle += 360f;
+
+        RectF oval = new RectF(centerX - radius + offset, centerY - radius + offset, centerX + radius - offset, centerY + radius - offset);
+        canvas.drawArc(oval, startAngle, sweepAngle, true, paint);
+    }
+
+
+    /**
+     * Vykreslí ikony zvonečků u začátků a konců HDO intervalů, které mají aktivní notifikaci
+     *
+     * @param canvas plátno pro kreslení
+     */
+    private void drawNotificationBells(Canvas canvas) {
+        if (models.isEmpty() || bellDrawable == null) return;
+
+        calculateRingOffsets();
         int bellSize = dpToPx(14);
 
         for (HdoModel model : models) {
@@ -362,21 +418,12 @@ public class GraphHdoClockView extends View {
             RelayType type = getRelayType(model.getRele());
             int offset = 0;
             if (activeTypesCount > 1) {
-                if (type == RelayType.TAR) offset = tarOffset;
+                if (type == RelayType.TUV) offset = tuvOffset;
+                else if (type == RelayType.TAR) offset = tarOffset;
                 else if (type == RelayType.PV) offset = pvOffset;
             }
 
-            float ringCenterRadius;
-            if (activeTypesCount > 1) {
-                if (offset == 0) {
-                    // Na vnějším prstenci posunout zvoneček více ke středu, aby nepřekrýval čísla hodin
-                    ringCenterRadius = radius - smallerUnit * 0.72f;
-                } else {
-                    ringCenterRadius = radius - offset - smallerUnit / 2f;
-                }
-            } else {
-                ringCenterRadius = radius * 0.65f;
-            }
+            float ringCenterRadius = getRingCenterRadius(activeTypesCount, offset, smallerUnit);
 
             if (model.getNotifyStart() == 1) {
                 float angle = convertTimeToAngle(model.getTimeFrom());
@@ -391,6 +438,39 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vypočítá středový poloměr prstence pro umístění ikony zvonečku
+     *
+     * @param activeTypesCount počet aktivních typů relé
+     * @param offset           odsazení prstence od okraje
+     * @param smallerUnit      krok zmenšení prstence
+     * @return středový poloměr prstence v pixelech
+     */
+    private float getRingCenterRadius(int activeTypesCount, int offset, int smallerUnit) {
+        float ringCenterRadius;
+        if (activeTypesCount > 1) {
+            if (offset == 0) {
+                // Na vnějším prstenci posunout zvoneček více ke středu, aby nepřekrýval čísla hodin
+                ringCenterRadius = radius - smallerUnit * 0.72f;
+            } else {
+                ringCenterRadius = radius - offset - smallerUnit / 2f;
+            }
+        } else {
+            // V režimu jednoho relé posunout zvoneček více ke středu
+            ringCenterRadius = radius * 0.50f;
+        }
+        return ringCenterRadius;
+    }
+
+
+    /**
+     * Vykreslí ikonu zvonečku na zadaném úhlu a poloměru prstence
+     *
+     * @param canvas     plátno pro kreslení
+     * @param angle      úhel v stupních
+     * @param ringRadius poloměr umístění zvonečku
+     * @param bellSize   velikost zvonečku v pixelech
+     */
     private void drawBellAtAngle(Canvas canvas, float angle, float ringRadius, int bellSize) {
         double radians = Math.toRadians(angle);
         float bellX = (float) (centerX + ringRadius * Math.cos(radians));
@@ -407,6 +487,11 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí červenou hodinovou ručičku ukazuící aktuální čas elektroměru
+     *
+     * @param canvas plátno pro kreslení
+     */
     private void drawHand(Canvas canvas) {
         if (!showClockHand || currentMeterMinutes < 0) return;
 
@@ -425,6 +510,11 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí název skupiny a barevnou legendu typů relé vpravo od ciferníku
+     *
+     * @param canvas plátno pro kreslení
+     */
     private void drawLegend(Canvas canvas) {
         int legendSize = dpToPx(10);
         int legendPadding = dpToPx(8);
@@ -461,6 +551,12 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Přepočítá časový řetězec HH:mm na úhel ve stupních (00:00 = 270°)
+     *
+     * @param time čas ve formátu HH:mm
+     * @return úhel ve stupních
+     */
     private float convertTimeToAngle(String time) {
         if (time == null || time.isEmpty()) return 270f;
         try {
@@ -474,6 +570,12 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Určí typ relé podle názvu pro účely barevného odlišení a zařazení do prstenců
+     *
+     * @param rele název relé
+     * @return typ relé {@link RelayType}
+     */
     private RelayType getRelayType(String rele) {
         if (rele == null || rele.isEmpty()) {
             return RelayType.UNKNOWN;
@@ -493,8 +595,13 @@ public class GraphHdoClockView extends View {
     }
 
 
+    /**
+     * Přepočítá hodnutu dp na pixely
+     *
+     * @param dp hodnota v dp
+     * @return hodnota v pixelech
+     */
     private int dpToPx(float dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density);
     }
-
 }
