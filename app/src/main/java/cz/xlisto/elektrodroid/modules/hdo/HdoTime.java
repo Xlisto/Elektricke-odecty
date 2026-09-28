@@ -24,12 +24,20 @@ public class HdoTime {
         boolean isHdo = false;
         boolean isHolidayToday = Connections.isCzechHoliday(calendar);
 
+        boolean hasExplicitHolidayModel = false;
+        for (HdoModel model : hdoModels) {
+            if (model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom())) {
+                hasExplicitHolidayModel = true;
+                break;
+            }
+        }
+
         for (int i = 0; i < hdoModels.size(); i++) {
             HdoModel model = hdoModels.get(i);
             boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
 
-            if (isHolidayToday) {
-                if (!modelIsHoliday && model.getSun() == 0) {
+            if (isHolidayToday && hasExplicitHolidayModel) {
+                if (!modelIsHoliday) {
                     continue;
                 }
             } else {

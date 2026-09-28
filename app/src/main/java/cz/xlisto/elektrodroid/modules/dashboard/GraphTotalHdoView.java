@@ -7,6 +7,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -40,7 +41,7 @@ public class GraphTotalHdoView extends View {
     private int centerY;
     private int radius;
     private int currentTime, lastTime, showTime;
-    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pTickLegend, pClock, pClockLegend, pLegend, pTimeLeft, pTextTime;
+    private Paint pTimeTUV, pTimeTAR, pTimePV, pNumbers, pTick, pTickLegend, pClock, pClockLegend, pLegend, pTimeLeft, pTextTime, pBackground;
     private ArrayList<HdoModel> modelsFromDatabase;
     private ArrayList<HdoModel> modelsForAllWeek;
     private long timeShift;
@@ -178,6 +179,10 @@ public class GraphTotalHdoView extends View {
         pClockLegend.setStrokeWidth(dpToPx(getContext(), 1));
         pClockLegend.setAntiAlias(antiAliasing);
 
+        pBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pBackground.setStyle(Paint.Style.FILL);
+        pBackground.setColor(Color.BLACK);
+
         lastTime = 0;
         getCurrentTime();
 
@@ -196,6 +201,11 @@ public class GraphTotalHdoView extends View {
         centerX = size / 4; // Střed kruhu
         centerY = size / 4;
         radius = size / 4 - padding; // Poloměr kruhu
+
+        boolean isDarkMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        if (isDarkMode) {
+            canvas.drawCircle(centerX, centerY, radius, pBackground);
+        }
 
 
         drawTime(canvas);
@@ -364,26 +374,21 @@ public class GraphTotalHdoView extends View {
 
 
     /**
-     * Vykreslí čísla ciferníku
+     * Vykreslí čísla ciferníku (násobky 3)
      *
      * @param canvas plátno
      */
     private void drawNumbers(Canvas canvas) {
-        //vykreslení čísel
-        // Poloměr pro umístění textu (mírně menší než poloměr ciferníku)
-        int textRadius = radius - dpToPx(getContext(), 9); // Rádius pro umístění číslic ciferníku
-        pNumbers.setTextSize(dpToPx(getContext(), 10));// Nastavení velikosti textu číslic ciferníku
-        // Čísla a jejich odpovídající hodiny
+        int textRadius = radius - dpToPx(getContext(), 9);
+        pNumbers.setTextSize(dpToPx(getContext(), 10));
+
         int[] hoursToShow = {0, 3, 6, 9, 12, 15, 18, 21};
         String[] numbersToShow = {"0", "3", "6", "9", "12", "15", "18", "21"};
 
         for (int i = 0; i < hoursToShow.length; i++) {
-            // Výpočet úhlu pro každé číslo
             double angle = Math.toRadians(270 + hoursToShow[i] * 15);
-            // Výpočet souřadnic pro text
             float x = (float) (centerX + textRadius * Math.cos(angle));
-            float y = (float) (centerY + textRadius * Math.sin(angle)) + (pNumbers.getTextSize() / 2); // Posun pro vertikální zarovnání
-            // Kreslení textu
+            float y = (float) (centerY + textRadius * Math.sin(angle)) + (pNumbers.getTextSize() / 3f);
             canvas.drawText(numbersToShow[i], x, y, pNumbers);
         }
     }
@@ -420,22 +425,20 @@ public class GraphTotalHdoView extends View {
      * @param canvas plátno
      */
     private void drawClock(Canvas canvas) {
-
-        int tickLength = dpToPx(getContext(), 3); // Délka každé úsečky (tick)
-        int tickCount = 24; // Počet úseček (například 12 pro hodinové značky)
+        int tickLength = dpToPx(getContext(), 3);
+        int tickCount = 24;
 
         for (int i = 0; i < tickCount; i++) {
-            // Výpočet úhlu pro každou úsečku
-            double angle = Math.toRadians(i * ((double) 360 / tickCount));
+            double angle = Math.toRadians(i * (360.0 / tickCount));
             int startX = (int) (centerX + radius * Math.cos(angle));
             int startY = (int) (centerY + radius * Math.sin(angle));
             int endX = (int) (centerX + (radius - tickLength) * Math.cos(angle));
             int endY = (int) (centerY + (radius - tickLength) * Math.sin(angle));
 
-            // Kreslení úseček
             canvas.drawLine(startX, startY, endX, endY, pClock);
         }
 
+        pClock.setStrokeWidth(dpToPx(getContext(), 1.5f));
         canvas.drawArc(padding, padding, (float) size / 2 - padding, (float) size / 2 - padding, 0, 360, false, pClock);
     }
 

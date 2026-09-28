@@ -52,11 +52,19 @@ public class BuilderHDOStack {
         ArrayList<HdoModel> hdoModels = new ArrayList<>();
         boolean isHolidayToday = Connections.isCzechHoliday(calendar);
 
+        boolean hasExplicitHolidayModel = false;
+        for (HdoModel model : models) {
+            if (model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom())) {
+                hasExplicitHolidayModel = true;
+                break;
+            }
+        }
+
         for (HdoModel model : models) {
             boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
 
-            if (isHolidayToday) {
-                if (!modelIsHoliday && model.getSun() == 0) continue;
+            if (isHolidayToday && hasExplicitHolidayModel) {
+                if (!modelIsHoliday) continue;
             } else {
                 if (modelIsHoliday) continue;
                 switch (day) {
