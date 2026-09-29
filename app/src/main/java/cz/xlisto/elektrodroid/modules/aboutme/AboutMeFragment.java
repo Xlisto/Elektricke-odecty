@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.VersionModel;
+import cz.xlisto.elektrodroid.utils.AppReviewHelper;
 
 
 /**
@@ -84,6 +86,20 @@ public class AboutMeFragment extends Fragment {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://elektrodroid.xlisto.com/privacy-policy/"));
             startActivity(browserIntent);
         });
+
+        TextView tvRateApp = view.findViewById(R.id.tvRateApp);
+        if (tvRateApp != null) {
+            tvRateApp.setOnClickListener(v -> AppReviewHelper.requestReview(requireActivity(), true));
+        }
+
+        TextView tvCheckUpdate = view.findViewById(R.id.tvCheckUpdate);
+        if (tvCheckUpdate != null) {
+            tvCheckUpdate.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).getAppUpdateHelper().checkForUpdate(true);
+                }
+            });
+        }
 
         return view;
     }

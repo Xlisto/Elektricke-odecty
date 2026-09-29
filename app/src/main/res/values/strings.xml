@@ -727,4 +727,17 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="enable">Povolit</string>
     <string name="notification_disabled_warning">Notifikace jsou zakázané. Chcete je povolit v nastavení?</string>
     <string name="pending_upload_no_notification_warning">Záloha čeká na Wi-Fi, ale notifikace jsou zakázané. Chcete je povolit?</string>
+
+    <!-- Hodnocení aplikace -->
+    <string name="rate_app">Ohodnotit aplikaci</string>
+    <string name="rate_app_description">Líbí se vám aplikace? Ohodnoťte ji v Google Play!</string>
+    <string name="rate_app_button">Ohodnotit v Google Play</string>
+    <string name="error_opening_play_store">Nepodařilo se otevřít Google Play</string>
+
+    <!-- Aktualizace aplikace -->
+    <string name="update_downloaded_message">Nová verze aplikace je stažena.</string>
+    <string name="update_restart_button">RESTARTOVAT</string>
+    <string name="app_is_up_to_date">Aplikace je aktuální.</string>
+    <string name="update_check_error">Nepodařilo se zkontrolovat aktualizace.</string>
+    <string name="update_check_button">Zkontrolovat aktualizace</string>
 </resources>

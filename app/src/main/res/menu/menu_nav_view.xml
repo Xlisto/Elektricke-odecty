@@ -7,73 +7,98 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/menu_dashboard"
+            android:icon="@drawable/ic_dashboard"
             android:title="@string/dashboard"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_price_list"
+            android:icon="@drawable/ic_price_list"
             android:title="@string/price_lists"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_compare_price_list"
+            android:icon="@drawable/ic_compare_24"
             android:title="@string/compare_price_list"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_monthly_reads"
+            android:icon="@drawable/ic_monthly_reading"
             android:title="@string/month_reads"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_subscription_points"
+            android:icon="@drawable/ic_subscription_point"
             android:title="@string/subscription_points"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_invoices"
+            android:icon="@drawable/baseline_auto_stories_24"
             android:title="@string/invoices"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_hdo"
+            android:icon="@drawable/ic_clock_24"
             android:title="@string/hdo_times"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_backup"
+            android:icon="@drawable/ic_backup_to_tray"
             android:title="@string/backup1"
             app:showAsAction="ifRoom" />
+
         <item
             android:id="@+id/menu_google_drive"
+            android:icon="@drawable/ic_cloud_24"
             android:title="@string/google_drive"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_graph_month"
+            android:icon="@drawable/ic_bar_chart_24"
             android:title="@string/graph_month"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_graph_color"
+            android:icon="@drawable/ic_palette_24"
             android:title="@string/graph_color"
             app:showAsAction="ifRoom" />
 
         <item
             android:id="@+id/menu_import_price_list"
+            android:icon="@drawable/ic_file_download_24"
             android:title="@string/import_price_list"
             app:showAsAction="ifRoom" />
+
         <item
             android:id="@+id/menu_export_price_list"
+            android:icon="@drawable/ic_file_upload_24"
             android:title="@string/export_price_list"
             app:showAsAction="ifRoom" />
+
         <item
             android:id="@+id/menu_help"
+            android:icon="@drawable/ic_help_24"
             android:title="@string/help"
             app:showAsAction="ifRoom" />
+
         <item
             android:id="@+id/menu_about_me"
+            android:icon="@drawable/ic_info_24"
             android:title="@string/about_me"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_rate_app"
+            android:icon="@drawable/ic_star_24"
+            android:title="@string/rate_app"
             app:showAsAction="ifRoom" />
 
     </group>

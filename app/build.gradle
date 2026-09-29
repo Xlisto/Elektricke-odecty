@@ -38,6 +38,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        disable += ['PlaySdkIndex', 'GooglePlayServices']
     }
 
     defaultConfig {
@@ -158,5 +159,7 @@ dependencies {
 
 
     implementation libs.play.services.drive
+    implementation libs.play.review
+    implementation libs.play.app.update
     implementation libs.re2j
 }

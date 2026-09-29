@@ -58,6 +58,14 @@ import cz.xlisto.elektrodroid.ownview.MyBottomNavigationView;
 import cz.xlisto.elektrodroid.services.HdoNotice;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderNotice;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
+import cz.xlisto.elektrodroid.utils.AppReviewHelper;
+import cz.xlisto.elektrodroid.utils.AppUpdateHelper;
+
+import android.util.Log;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
@@ -98,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     private boolean selectionNavigationActive = false;
     @Nullable
     private Runnable selectionNavigationAction;
+    private AppUpdateHelper appUpdateHelper;
 
 
     @Override
@@ -108,6 +117,18 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         schedulePendingBackupUploadIfNeeded();
         HdoUpdateHelper.checkHdoValidityAndShowDialogIfNeeded(this);
         PreCodesUpdateScheduler.schedulePreCodesUpdate(this);
+        AppReviewHelper.checkAndPromptReview(this);
+
+        ActivityResultLauncher<IntentSenderRequest> updateActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartIntentSenderForResult(),
+                result -> {
+                    if (result.getResultCode() != RESULT_OK) {
+                        Log.w("MainActivity", "Update flow failed code: " + result.getResultCode());
+                    }
+                }
+        );
+        appUpdateHelper = new AppUpdateHelper(this, updateActivityResultLauncher);
+        appUpdateHelper.checkForUpdate(false);
         setConfiguration(getResources().getConfiguration());
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
         myNavigationView = findViewById(R.id.navigationView);
@@ -348,6 +369,10 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 selectedItemIndex = 14;
                 b = true;
             }
+            if (itemId == R.id.menu_rate_app) {
+                AppReviewHelper.requestReview(MainActivity.this, true);
+                b = true;
+            }
             if (actualFragment != null)
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
             drawerLayout.closeDrawer(GravityCompat.START, true);
@@ -434,6 +459,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         //nastavení viditelnosti levé a spodní lišty podle orientace obrazovky
         setVisibilityNavigation();
         schedulePendingBackupUploadIfNeeded();
+        if (appUpdateHelper != null) {
+            appUpdateHelper.checkResumeUpdate();
+        }
     }
 
 
@@ -443,6 +471,14 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (connectivityManager != null && pendingUploadNetworkCallback != null) {
             connectivityManager.unregisterNetworkCallback(pendingUploadNetworkCallback);
         }
+        if (appUpdateHelper != null) {
+            appUpdateHelper.unregisterListener();
+        }
+    }
+
+
+    public AppUpdateHelper getAppUpdateHelper() {
+        return appUpdateHelper;
     }
 
 
