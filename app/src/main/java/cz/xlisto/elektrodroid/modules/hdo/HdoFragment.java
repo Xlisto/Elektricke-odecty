@@ -29,6 +29,7 @@ import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,7 +53,10 @@ import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
+import cz.xlisto.elektrodroid.utils.DensityUtils;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.GridSpacingItemDecoration;
+import cz.xlisto.elektrodroid.utils.LinearSpacingItemDecoration;
 import cz.xlisto.elektrodroid.utils.NotificationHelper;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.UIHelper;
@@ -143,6 +147,7 @@ public class HdoFragment extends Fragment {
                         }
                         updateCardHdoFilterVisibility();
                         loadData(null);
+                        setupRecyclerViewLayoutManager(true);
                     } else {
                         loadReles();
                         String selectedRele = null;
@@ -150,6 +155,7 @@ public class HdoFragment extends Fragment {
                             selectedRele = spReleSettings.getSelectedItem().toString();
                         }
                         loadData(selectedRele);
+                        setupRecyclerViewLayoutManager(false);
                     }
 
                     requireActivity().invalidateOptionsMenu();
@@ -643,8 +649,32 @@ public class HdoFragment extends Fragment {
         hdoAdapter = new HdoAdapter(hdoModels, rvHdo, true);
         hdoAdapter.setGraphicMode(isGraphic);
         rvHdo.setAdapter(hdoAdapter);
-        rvHdo.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        setupRecyclerViewLayoutManager(isGraphic);
         rvHdo.scheduleLayoutAnimation();
+    }
+
+
+    /**
+     * Nastaví LayoutManager a ItemDecoration pro RecyclerView podle režimu zobrazení (mřížka vs seznam).
+     *
+     * @param isGraphic true pokud je aktivní grafický režim
+     */
+    private void setupRecyclerViewLayoutManager(boolean isGraphic) {
+        if (rvHdo == null) return;
+
+        while (rvHdo.getItemDecorationCount() > 0) {
+            rvHdo.removeItemDecorationAt(0);
+        }
+
+        int spacingPx = DensityUtils.dpToPx(requireContext(), 6);
+
+        if (isGraphic && hdoAdapter != null && hdoAdapter.getActiveTypesCount() == 1) {
+            rvHdo.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
+            rvHdo.addItemDecoration(new GridSpacingItemDecoration(2, spacingPx, false));
+        } else {
+            rvHdo.setLayoutManager(new LinearLayoutManager(requireActivity()));
+            rvHdo.addItemDecoration(new LinearSpacingItemDecoration(spacingPx));
+        }
     }
 
 

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
@@ -80,11 +81,13 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      */
     public static class GraphicViewHolder extends RecyclerView.ViewHolder {
 
+        TextView tvGroupTitleGraphic;
         GraphHdoClockView graphHdoClockView;
 
 
         public GraphicViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvGroupTitleGraphic = itemView.findViewById(R.id.tvGroupTitleGraphic);
             graphHdoClockView = itemView.findViewById(R.id.graphHdoClockView);
         }
     }
@@ -123,6 +126,29 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public boolean isGraphicMode() {
         return isGraphicMode;
+    }
+
+
+    /**
+     * Vrátí počet aktivních typů relé (TUV, TAR, PV) pro aktuální seznam položek.
+     */
+    public int getActiveTypesCount() {
+        if (items == null || items.isEmpty()) return 0;
+        boolean showTUV = false, showTAR = false, showPV = false;
+        for (HdoModel model : items) {
+            String rele = model.getRele();
+            if (rele != null && !rele.isEmpty()) {
+                String upper = rele.toUpperCase(Locale.ROOT);
+                boolean isPV = upper.contains("PV") || upper.contains("FVE") || upper.contains("FOTOVOLT");
+                boolean isTUV = upper.contains("TUV") || upper.contains("AKU") || upper.contains("BOJLER");
+                if (isPV && !isTUV) showPV = true;
+                else if (isTUV) showTUV = true;
+                else showTAR = true;
+            } else {
+                showTAR = true;
+            }
+        }
+        return (showTUV ? 1 : 0) + (showTAR ? 1 : 0) + (showPV ? 1 : 0);
     }
 
 
@@ -236,7 +262,15 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (holder instanceof GraphicViewHolder gHolder) {
             HdoGraphicGroupModel group = graphicGroups.get(position);
 
-            gHolder.graphHdoClockView.setGroupTitle(group.title());
+            if (isGraphicMode() && getActiveTypesCount() == 1) {
+                gHolder.tvGroupTitleGraphic.setVisibility(View.VISIBLE);
+                gHolder.tvGroupTitleGraphic.setText(group.title());
+                gHolder.graphHdoClockView.setGroupTitle("");
+            } else {
+                gHolder.tvGroupTitleGraphic.setVisibility(View.GONE);
+                gHolder.graphHdoClockView.setGroupTitle(group.title());
+            }
+
             gHolder.graphHdoClockView.setModels(group.models());
 
             // Výpočet času elektroměru a určení, zda ručička patří do tohoto ciferníku

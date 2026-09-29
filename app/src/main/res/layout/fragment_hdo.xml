@@ -162,9 +162,10 @@
         android:layout_above="@id/btnAddHdo"
         android:layout_below="@id/cardHdoFilter"
         android:layout_alignParentStart="true"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="-3dp"
         android:contentDescription="@string/description_hdo_list"
-        android:padding="2dp" />
+        android:layoutAnimation="@anim/layout_animation_fall_down" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabHdo"

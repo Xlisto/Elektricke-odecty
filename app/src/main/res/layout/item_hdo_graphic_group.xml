@@ -2,11 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="4dp"
     android:background="@drawable/shape_monthly_reading_gray"
     android:orientation="vertical"
     android:padding="2dp">
+
+    <TextView
+        android:id="@+id/tvGroupTitleGraphic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,9 +28,7 @@
         <cz.xlisto.elektrodroid.modules.hdo.GraphHdoClockView
             android:id="@+id/graphHdoClockView"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp" />
+            android:layout_height="200dp" />
 
     </LinearLayout>
 </LinearLayout>

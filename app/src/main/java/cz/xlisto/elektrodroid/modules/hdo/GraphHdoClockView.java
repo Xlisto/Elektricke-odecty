@@ -204,7 +204,7 @@ public class GraphHdoClockView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int targetHeight = (activeTypesCount == 1) ? dpToPx(160f) : dpToPx(220f);
+        int targetHeight = (activeTypesCount == 1) ? dpToPx(175f) : dpToPx(220f);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
@@ -216,6 +216,7 @@ public class GraphHdoClockView extends View {
         setMeasuredDimension(width, height);
     }
 
+
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
@@ -224,11 +225,20 @@ public class GraphHdoClockView extends View {
         if (availableHeight <= 0 || availableWidth <= 0) return;
 
         int padding = dpToPx(4);
-        int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.65f));
 
-        radius = dialDiameter / 2;
-        centerX = padding + radius;
-        centerY = availableHeight / 2;
+        if (activeTypesCount == 1) {
+            // Režim 1 relé: Ciferník vystředěný v buňce (název je v horní liště karty v XML)
+            int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.85f));
+            radius = dialDiameter / 2;
+            centerX = availableWidth / 2;
+            centerY = availableHeight / 2;
+        } else {
+            // Režim více relé: Ciferník vlevo, legenda a název vpravo
+            int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.65f));
+            radius = dialDiameter / 2;
+            centerX = padding + radius;
+            centerY = availableHeight / 2;
+        }
 
         // V tmavém režimu vyplnit vnitřní plochu ciferníku černou barvou
         if (isDarkMode) {
@@ -250,8 +260,10 @@ public class GraphHdoClockView extends View {
         // 5. Vykreslení ručičky času (pokud je pro danou skupinu aktivní)
         drawHand(canvas);
 
-        // 6. Vykreslení legendy vpravo od ciferníku
-        drawLegend(canvas);
+        // 6. Vykreslení legendy vpravo od ciferníku (pouze pro více relé)
+        if (activeTypesCount > 1) {
+            drawLegend(canvas);
+        }
     }
 
 
@@ -337,19 +349,19 @@ public class GraphHdoClockView extends View {
 
         if (showTUV) {
             for (HdoModel model : tuvModels) {
-                drawSingleArc(canvas, model, tuvOffset, pTimeTUV);
+                drawSingleArc(canvas, model, tuvOffset, pTimeTUV, tuvModels);
             }
         }
 
         if (showTAR) {
             for (HdoModel model : tarModels) {
-                drawSingleArc(canvas, model, tarOffset, pTimeTAR);
+                drawSingleArc(canvas, model, tarOffset, pTimeTAR, tarModels);
             }
         }
 
         if (showPV) {
             for (HdoModel model : pvModels) {
-                drawSingleArc(canvas, model, pvOffset, pTimePV);
+                drawSingleArc(canvas, model, pvOffset, pTimePV, pvModels);
             }
         }
     }
@@ -381,21 +393,62 @@ public class GraphHdoClockView extends View {
 
 
     /**
-     * Vykreslí jednu kruhovou výseč pro daný HDO interval
+     * Vykreslí jednu kruhovou výseč pro daný HDO interval s plynulým navázáním v půlnoci
      *
-     * @param canvas plátno pro kreslení
-     * @param model  HDO model
-     * @param offset odsazení prstence od vnějšího obvodu
-     * @param paint  štětec s příslušnou barvou relé
+     * @param canvas         plátno pro kreslení
+     * @param model          HDO model
+     * @param offset         odsazení prstence od vnějšího obvodu
+     * @param paint          štětec s příslušnou barvou relé
+     * @param categoryModels seznam modelů stejné kategorie relé
      */
-    private void drawSingleArc(Canvas canvas, HdoModel model, int offset, Paint paint) {
+    private void drawSingleArc(Canvas canvas, HdoModel model, int offset, Paint paint, List<HdoModel> categoryModels) {
         float startAngle = convertTimeToAngle(model.getTimeFrom());
         float endAngle = convertTimeToAngle(model.getTimeUntil());
         float sweepAngle = endAngle - startAngle;
         if (sweepAngle <= 0) sweepAngle += 360f;
 
+        boolean seamlessStart = isSeamlessAdjoining(model, categoryModels, false);
+        boolean seamlessEnd = isSeamlessAdjoining(model, categoryModels, true);
+
+        float gapStart = seamlessStart ? 0f : 0.3f;
+        float gapEnd = seamlessEnd ? 0f : 0.3f;
+
+        if (sweepAngle > (gapStart + gapEnd)) {
+            startAngle += gapStart;
+            sweepAngle -= (gapStart + gapEnd);
+        }
+
+        if (seamlessEnd) {
+            sweepAngle += 0.3f;
+        }
+
         RectF oval = new RectF(centerX - radius + offset, centerY - radius + offset, centerX + radius - offset, centerY + radius - offset);
         canvas.drawArc(oval, startAngle, sweepAngle, true, paint);
+    }
+
+
+    private boolean isSeamlessAdjoining(HdoModel model, List<HdoModel> categoryModels, boolean isEnd) {
+        if (categoryModels == null || model == null) return false;
+        String timeToCheck = isEnd ? model.getTimeUntil() : model.getTimeFrom();
+        if (timeToCheck == null || timeToCheck.isEmpty()) return false;
+
+        boolean isMidnight = "24:00".equals(timeToCheck) || "00:00".equals(timeToCheck) || "0:00".equals(timeToCheck);
+
+        for (HdoModel other : categoryModels) {
+            if (other == model) continue;
+            String otherTime = isEnd ? other.getTimeFrom() : other.getTimeUntil();
+            if (otherTime == null) continue;
+
+            boolean otherIsMidnight = "24:00".equals(otherTime) || "00:00".equals(otherTime) || "0:00".equals(otherTime);
+
+            if (isMidnight && otherIsMidnight) {
+                return true;
+            }
+            if (timeToCheck.equalsIgnoreCase(otherTime)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -516,6 +569,8 @@ public class GraphHdoClockView extends View {
      * @param canvas plátno pro kreslení
      */
     private void drawLegend(Canvas canvas) {
+        pTitle.setTextAlign(Paint.Align.LEFT);
+
         int legendSize = dpToPx(10);
         int legendPadding = dpToPx(8);
         int legendTextPadding = dpToPx(6);
