@@ -10,6 +10,12 @@
     <string name="hdo_click">Klikněte pro spuštění služby hlídání HDO</string>
     <string name="default_web_client_id">634320309725-9a1qp280hkm6a2bsqip9l6t4epdm65lp.apps.googleusercontent.com</string>
 
+    <string name="no_data_available">Není dostatek dat pro zobrazení grafu</string>
+    <string name="graph_legend_vt">VT spotřeba (%s)</string>
+    <string name="graph_legend_nt">NT spotřeba (%s)</string>
+    <string name="graph_legend_fixed_cost">Fixní měsíční náklady</string>
+    <string name="detail_title_year">Přehled za rok %1$d</string>
+
     <string name="datum_cislem">01.01.2025</string>
     <string name="pomlka">-</string>
     <string name="no_date">XX.XX.XXXX</string>
@@ -701,6 +707,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="reading_notification_enabled">Povolit notifikaci pro zápis odečtu</string>
     <string name="reading_notification_settings">Nastavení notifikace pro zápis odečtu</string>
     <string name="subscription_point_tab_management">Správa odběrného místa</string>
+    <string name="subscription_point_tab_graph">Graf roční spotřeby</string>
     <string name="subscription_point_tab_notifications">Notifikace</string>
     <string name="reading_notification_frequency">Frekvence notifikace</string>
     <string name="reading_notification_monthly">Měsíčně</string>

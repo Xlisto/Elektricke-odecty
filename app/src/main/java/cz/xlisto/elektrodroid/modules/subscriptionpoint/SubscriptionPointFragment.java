@@ -1,115 +1,103 @@
 package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
-
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import android.app.TimePickerDialog;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextWatcher;
-import android.text.format.DateFormat;
-
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
-import java.util.ArrayList;
-
 import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
-import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
-import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
-import cz.xlisto.elektrodroid.shp.ShPDashBoard;
-import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
+import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
+import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
-import cz.xlisto.elektrodroid.utils.MainActivityHelper;
-import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 import cz.xlisto.elektrodroid.utils.UIHelper;
 
-
 /**
- * Fragment pro správu a zobrazení odběrných míst.
- *
- * <p>Tento fragment zobrazuje seznam dostupných odběrných míst ve spinneru a podrobné
- * informace o aktuálně vybraném místě (popis, počet fází, číslo elektroměru atd.).</p>
- *
- * <p>Klíčové funkce:</p>
- * <ul>
- *   <li><strong>Výběr místa</strong> - Spinner pro přepnutí mezi dostupnými místy</li>
- *   <li><strong>Persistence výběru</strong> - Automaticky ukládá vybrané místo do SharedPreferences a databáze</li>
- *   <li><strong>Správa míst</strong> - Tlačítka pro úpravu nebo smazání současného místa</li>
- *   <li><strong>Vytvoření nového místa</strong> - FloatingActionButton a tlačítko pro přidání nového místa</li>
- *   <li><strong>Zobrazení stavu</strong> - Pokud nejsou místa dostupná, zobrazí výzvu k vytvoření</li>
- * </ul>
- * </p>
- *
- * <p>Integrace s feature:</p>
- * <ul>
- *   <li>Při změně výběru ve spinneru se volá </li>
- *   <li>Příjímá aktualizace z {@link SubscriptionPointDialogFragment} skrz fragment result listener</li>
- * </ul>
- * </p>
- *
- * @see SubscriptionPointDialogFragment
- * @see cz.xlisto.elektrodroid.utils.SubscriptionPoint
+ * Fragment pro zobrazení a správu vybraného odběrného místa.
+ * Zajišťuje načtení seznamu míst ze SQLite databáze, reakci na změny výběru v rozbalovacím seznamu (Spinner),
+ * předání vybraných dat do ostatních modulů aplikace přes {@link ShPSubscriptionPoint}
+ * a spuštění dialogu pro úpravu detailů.
  */
 public class SubscriptionPointFragment extends Fragment {
 
-    private static final String TAG = "SubscriptionPointFragment";
     private static final String FLAG_DELETE_SUBSCRIPTION_POINT = "flagDeleteSubscriptionPoint";
+    private static final String PREF_READING_NOTIFICATION_ENABLED = "reading_notification_enabled";
+    private static final String PREF_READING_NOTIFICATION_FREQUENCY = "reading_notification_frequency";
+    private static final String PREF_READING_NOTIFICATION_TIME = "reading_notification_time";
+    private static final String PREF_READING_NOTIFICATION_DAY_OF_MONTH = "reading_notification_day_of_month";
+    private static final String PREF_READING_NOTIFICATION_DAY_OF_WEEK = "reading_notification_day_of_week";
+    private static final int FREQUENCY_MONTHLY = 0;
+    private static final int FREQUENCY_WEEKLY = 1;
+    private static final String TIME_DEFAULT = "09:00";
+    private static final String DAY_OF_MONTH_DEFAULT = "1";
     private static final int DAY_OF_MONTH_MIN = 1;
     private static final int DAY_OF_MONTH_MAX = 31;
-    private Spinner spSubscriptionPoint, spSubscriptionPointNotification;
-    private TextView tvDescription, tvPhaze, tvNumberElectricMeter, tvNumberSubscriptionPoint, tvNewSubscriptionPoint;
-    private LinearLayout lnSpinner, lnDescription, lnPhaze, lnNumberElectricMeter, lnNumberSubscriptionPoint;
-    private LinearLayout layoutSubscriptionPointManagement;
-    private LinearLayout lnReadingNotification, layoutMonthlyDay, layoutWeeklyDay, layoutNotificationTime;
-    private CheckBox chReadingNotificationEnabled;
-    private Spinner spinnerReadingNotificationFrequency, spinnerDayOfWeek;
-    private EditText etDayOfMonth;
-    private TextView tvNotificationTime;
-    private Button btnEdit, btnDelete, btnAddSubscriptionPoint;
+
     private FloatingActionButton fab;
+    private Button btnAddSubscriptionPoint;
+    private Spinner spSubscriptionPoint;
+    private Spinner spSubscriptionPointNotification;
+    private TextView tvDescription, tvPhaze, tvNumberElectricMeter, tvNumberSubscriptionPoint, tvNewSubscriptionPoint, tvNotificationTime;
+    private View lnSpinner, lnDescription, lnPhaze, lnNumberElectricMeter, lnNumberSubscriptionPoint;
+    private LinearLayout layoutSubscriptionPointManagement;
+    private GraphAnnualOverviewView graphAnnualOverview;
+    private View lnReadingNotification;
+    private View layoutMonthlyDay;
+    private View layoutWeeklyDay;
+    private View layoutNotificationTime;
+    private CheckBox chReadingNotificationEnabled;
+    private Spinner spinnerReadingNotificationFrequency;
+    private Spinner spinnerDayOfWeek;
+    private EditText etDayOfMonth;
     private ScrollView sc;
     private TabLayout tabLayout;
-    private long itemId, milins;
-    private boolean suppressReadingNotificationCallbacks;
-    private boolean suppressSubscriptionPointSpinnerCallbacks;
-    //TODO: Doplnit další detaily o počtu údaju odběrného místa a ukládat id odběrného místa do sharedprefences
 
-
-    public SubscriptionPointFragment() {
-    }
-
+    private SubscriptionPointModel selectedSubscriptionPoint;
+    private long itemId = 0L;
+    private boolean suppressReadingNotificationCallbacks = false;
+    private boolean suppressSubscriptionPointSpinnerCallbacks = false;
 
     /**
-     * Fragment zobrazení odběrných míst
+     * Vytvoří novou instanci fragmentu {@link SubscriptionPointFragment}.
      *
      * @return Nová instance fragmentu SubscriptionPointFragment.
      */
@@ -117,13 +105,36 @@ public class SubscriptionPointFragment extends Fragment {
         return new SubscriptionPointFragment();
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_subscription_point, menu);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_subscription_point_edit) {
+                    if (itemId > 0) {
+                        edit();
+                    }
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_subscription_point_delete) {
+                    if (itemId > 0) {
+                        showDeleteDialog();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_subscription_point, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -137,8 +148,6 @@ public class SubscriptionPointFragment extends Fragment {
         tvNumberElectricMeter = view.findViewById(R.id.tvNumberElectrometer);
         tvNumberSubscriptionPoint = view.findViewById(R.id.tvNumberSubscriptionPoint);
         tvNewSubscriptionPoint = view.findViewById(R.id.tvCreateNewSubscriptionPoint);
-        btnEdit = view.findViewById(R.id.btnEdit);
-        btnDelete = view.findViewById(R.id.btnDelete);
         btnAddSubscriptionPoint = view.findViewById(R.id.btnAddSubscriptionPoint);
         layoutSubscriptionPointManagement = view.findViewById(R.id.layoutSubscriptionPointManagement);
         lnSpinner = view.findViewById(R.id.lnSpinner);
@@ -147,6 +156,7 @@ public class SubscriptionPointFragment extends Fragment {
         lnNumberElectricMeter = view.findViewById(R.id.lnNumberElectrometer);
         lnNumberSubscriptionPoint = view.findViewById(R.id.lnNumberSubscriptionPoint);
         sc = view.findViewById(R.id.scrollView);
+        graphAnnualOverview = view.findViewById(R.id.graphAnnualOverview);
         lnReadingNotification = view.findViewById(R.id.lnReadingNotification);
         chReadingNotificationEnabled = view.findViewById(R.id.chReadingNotificationEnabled);
         spinnerReadingNotificationFrequency = view.findViewById(R.id.spinnerReadingNotificationFrequency);
@@ -159,13 +169,21 @@ public class SubscriptionPointFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         fab.setOnClickListener(v -> addSubcsriptionPoint());
         btnAddSubscriptionPoint.setOnClickListener(v -> addSubcsriptionPoint());
-        btnEdit.setOnClickListener(v -> edit());
-        btnDelete.setOnClickListener(v -> showDeleteDialog());
 
         setupTabs();
 
         if (etDayOfMonth != null) {
-            etDayOfMonth.setFilters(new InputFilter[]{new DayOfMonthInputFilter(DAY_OF_MONTH_MIN, DAY_OF_MONTH_MAX)});
+            InputFilter minMaxFilter = (source, start, end, dest, dstart, dend) -> {
+                try {
+                    String newVal = dest.subSequence(0, dstart).toString() + source.subSequence(start, end) + dest.subSequence(dend, dest.length());
+                    if (newVal.isEmpty()) return null;
+                    int input = Integer.parseInt(newVal);
+                    if (input >= DAY_OF_MONTH_MIN && input <= DAY_OF_MONTH_MAX) return null;
+                } catch (NumberFormatException ignored) {
+                }
+                return "";
+            };
+            etDayOfMonth.setFilters(new InputFilter[]{minMaxFilter});
         }
 
         if (chReadingNotificationEnabled != null) {
@@ -195,7 +213,6 @@ public class SubscriptionPointFragment extends Fragment {
                     }
                 }
 
-
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -215,7 +232,6 @@ public class SubscriptionPointFragment extends Fragment {
                     }
                 }
 
-
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
@@ -226,16 +242,13 @@ public class SubscriptionPointFragment extends Fragment {
             etDayOfMonth.addTextChangedListener(new TextWatcher() {
                 private boolean selfChange;
 
-
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 }
 
-
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                 }
-
 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -277,7 +290,7 @@ public class SubscriptionPointFragment extends Fragment {
             });
         }
 
-        //posluchač na odstranění odběrného místa
+        // posluchač na odstranění odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DELETE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -285,17 +298,16 @@ public class SubscriptionPointFragment extends Fragment {
                     }
                 });
 
-        //posluchač na změnu odběrného místa
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
+        // posluchač na změnu odběrného místa
+        requireActivity().getSupportFragmentManager().setFragmentResultListener("invoiceDialogFragment", this,
                 (requestKey, result) -> onResume()
         );
 
-        //posluchač na zavření dialogového okna s nastavením
+        // posluchač na zavření dialogového okna s nastavením
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, result) -> updateAddControlsVisibility()
         );
     }
-
 
     @Override
     public void onResume() {
@@ -324,7 +336,6 @@ public class SubscriptionPointFragment extends Fragment {
         updateAddControlsVisibility();
     }
 
-
     private void setupSubscriptionPointSpinnerListeners(ArrayList<SubscriptionPointModel> subscriptionPoints) {
         AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
             @Override
@@ -341,7 +352,6 @@ public class SubscriptionPointFragment extends Fragment {
                 applySubscriptionPointSelection(subscriptionPoints, position);
             }
 
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -352,7 +362,6 @@ public class SubscriptionPointFragment extends Fragment {
         }
     }
 
-
     private int resolveSubscriptionPointIndex(ArrayList<SubscriptionPointModel> subscriptionPoints, long selectedId) {
         for (int i = 0; i < subscriptionPoints.size(); i++) {
             if (subscriptionPoints.get(i).getId() == selectedId) {
@@ -361,7 +370,6 @@ public class SubscriptionPointFragment extends Fragment {
         }
         return 0;
     }
-
 
     private void setSubscriptionPointSelection(int position) {
         suppressSubscriptionPointSpinnerCallbacks = true;
@@ -374,7 +382,6 @@ public class SubscriptionPointFragment extends Fragment {
             suppressSubscriptionPointSpinnerCallbacks = false;
         }
     }
-
 
     private void syncSubscriptionPointSpinners(int position) {
         if (!hasMultipleSubscriptionPointSpinners()) {
@@ -393,82 +400,56 @@ public class SubscriptionPointFragment extends Fragment {
         }
     }
 
-
     private boolean hasMultipleSubscriptionPointSpinners() {
-        return spSubscriptionPoint != null
-                && spSubscriptionPointNotification != null
-                && spSubscriptionPoint != spSubscriptionPointNotification;
+        return spSubscriptionPointNotification != null;
     }
-
 
     private void applySubscriptionPointSelection(ArrayList<SubscriptionPointModel> subscriptionPoints, int position) {
-        SubscriptionPointModel selectedSubscriptionPoint = subscriptionPoints.get(position);
-        setText(selectedSubscriptionPoint);
-        SubscriptionPoint.setCurrentSelection(requireContext(), selectedSubscriptionPoint.getId());
-        MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+        SubscriptionPointModel subscriptionPointModel = subscriptionPoints.get(position);
+        itemId = subscriptionPointModel.getId();
+
+        ShPSubscriptionPoint shp = new ShPSubscriptionPoint(getActivity());
+        shp.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, subscriptionPointModel.getId());
+
+        selectedSubscriptionPoint = subscriptionPointModel;
+
+        tvDescription.setText(subscriptionPointModel.getDescription());
+        SpannableStringBuilder builderPhaze = new SpannableStringBuilder();
+        builderPhaze.append(String.valueOf(subscriptionPointModel.getCountPhaze()));
+        builderPhaze.append(" x ");
+        builderPhaze.append(String.valueOf(subscriptionPointModel.getPhaze()));
+        builderPhaze.append(" A");
+        tvPhaze.setText(builderPhaze);
+
+        tvNumberElectricMeter.setText(subscriptionPointModel.getNumberElectricMeter());
+        tvNumberSubscriptionPoint.setText(subscriptionPointModel.getNumberSubscriptionPoint());
+
+        bindReadingNotificationSettings(subscriptionPointModel);
+
+        if (graphAnnualOverview != null) {
+            AnnualOverviewDataBuilder builder = new AnnualOverviewDataBuilder(requireContext());
+            ArrayList<AnnualYearData> annualData = builder.buildAnnualData(subscriptionPointModel);
+            graphAnnualOverview.setData(annualData);
+        }
     }
 
-
     /**
-     * Z objektu odběrného místa nastaví popisky do textview
-     *
-     * @param subscriptionPoint Objekt odběrného místa
-     */
-    private void setText(SubscriptionPointModel subscriptionPoint) {
-        itemId = subscriptionPoint.getId();
-        milins = subscriptionPoint.getMilins();
-        tvDescription.setText(subscriptionPoint.getDescription());
-        tvPhaze.setText(getResources().getString(R.string.power, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze()));
-        tvNumberElectricMeter.setText(subscriptionPoint.getNumberElectricMeter());
-        tvNumberSubscriptionPoint.setText(subscriptionPoint.getNumberSubscriptionPoint());
-        bindReadingNotificationSettings(subscriptionPoint);
-    }
-
-
-    /**
-     * Zobrazí fragment na editaci odběrného místa
-     */
-    private void edit() {
-        FragmentChange.replace(requireActivity(), SubscriptionPointEditFragment.newInstance(itemId), MOVE, true);
-    }
-
-
-    /**
-     * Zobrazí dialogové okno s dotazem na smazání
-     */
-    private void showDeleteDialog() {
-        YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.smazat_odberne_misto2), FLAG_DELETE_SUBSCRIPTION_POINT);
-        yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), TAG);
-    }
-
-
-    /**
-     * Smaže odběrné místo
-     */
-    private void deleteItemSubscriptionPoint() {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
-        dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, milins);
-        dataSubscriptionPointSource.close();
-        MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
-        //nastavení prvního odběrného místa v Přehledu
-        ShPDashBoard shp = new ShPDashBoard(requireContext());
-        shp.set(ShPDashBoard.SHOW_INVOICE_SUM, 0);
-        onResume();
-    }
-
-
-    /**
-     * Zobrazí fragment pro přidání odběrného místa
+     * Otevře okno pro přidání odběrného místa
      */
     private void addSubcsriptionPoint() {
-        SubscriptionPointAddFragment subscriptionPointAddFragment = new SubscriptionPointAddFragment();
-        FragmentChange.replace(requireActivity(), subscriptionPointAddFragment, MOVE, true);
+        FragmentChange.replace(requireActivity(), SubscriptionPointAddFragment.newInstance(), FragmentChange.Transaction.MOVE, true);
     }
 
 
     /**
-     * Při žádném odběrném místě zobrazí výzvu k založení nového místa
+     * Otevře okno pro úpravu odběrného místa
+     */
+    private void edit() {
+        FragmentChange.replace(requireActivity(), SubscriptionPointEditFragment.newInstance(itemId), FragmentChange.Transaction.MOVE, true);
+    }
+
+    /**
+     * Zobrazí výzvu pro vytvoření odběrného místa v případě, že žádné neexistuje
      *
      * @param show true - zobrazí výzvu, false - skryje výzvu
      */
@@ -480,26 +461,36 @@ public class SubscriptionPointFragment extends Fragment {
             if (layoutSubscriptionPointManagement != null) {
                 layoutSubscriptionPointManagement.setVisibility(GONE);
             }
-            lnSpinner.setVisibility(GONE);
-            lnDescription.setVisibility(GONE);
-            lnPhaze.setVisibility(GONE);
-            lnNumberElectricMeter.setVisibility(GONE);
-            lnNumberSubscriptionPoint.setVisibility(GONE);
+            if (graphAnnualOverview != null) {
+                graphAnnualOverview.setVisibility(GONE);
+            }
+            if (lnSpinner != null) lnSpinner.setVisibility(GONE);
+            if (lnDescription != null) lnDescription.setVisibility(GONE);
+            if (lnPhaze != null) lnPhaze.setVisibility(GONE);
+            if (lnNumberElectricMeter != null) lnNumberElectricMeter.setVisibility(GONE);
+            if (lnNumberSubscriptionPoint != null) lnNumberSubscriptionPoint.setVisibility(GONE);
             if (lnReadingNotification != null) {
                 lnReadingNotification.setVisibility(GONE);
             }
-            btnEdit.setVisibility(GONE);
-            btnDelete.setVisibility(GONE);
             tvNewSubscriptionPoint.setVisibility(VISIBLE);
         } else {
             if (tabLayout != null) {
                 tabLayout.setVisibility(VISIBLE);
             }
-            tvNewSubscriptionPoint.setVisibility(View.GONE);
+            if (lnSpinner != null) lnSpinner.setVisibility(VISIBLE);
+            if (lnDescription != null) lnDescription.setVisibility(VISIBLE);
+            if (lnPhaze != null) lnPhaze.setVisibility(VISIBLE);
+            if (lnNumberElectricMeter != null) lnNumberElectricMeter.setVisibility(VISIBLE);
+            if (lnNumberSubscriptionPoint != null) lnNumberSubscriptionPoint.setVisibility(VISIBLE);
+            tvNewSubscriptionPoint.setVisibility(GONE);
             applySectionVisibility();
         }
     }
 
+
+    private boolean isLandscape() {
+        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
 
     private void setupTabs() {
         if (tabLayout == null) {
@@ -512,8 +503,14 @@ public class SubscriptionPointFragment extends Fragment {
         }
 
         tabLayout.removeAllTabs();
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_management), true);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_notifications));
+        if (isLandscape()) {
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_graph), true);
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_notifications));
+        } else {
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_management), true);
+            tabLayout.addTab(tabLayout.newTab().setText(R.string.subscription_point_tab_notifications));
+        }
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -527,11 +524,9 @@ public class SubscriptionPointFragment extends Fragment {
                 }
             }
 
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
-
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
@@ -540,10 +535,12 @@ public class SubscriptionPointFragment extends Fragment {
         applySectionVisibility();
     }
 
-
     private void showManagementSection() {
         if (layoutSubscriptionPointManagement != null) {
             layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+        }
+        if (graphAnnualOverview != null) {
+            graphAnnualOverview.setVisibility(VISIBLE);
         }
         if (lnReadingNotification != null) {
             lnReadingNotification.setVisibility(GONE);
@@ -551,10 +548,18 @@ public class SubscriptionPointFragment extends Fragment {
         updateAddControlsVisibility();
     }
 
-
     private void showNotificationSection() {
-        if (layoutSubscriptionPointManagement != null) {
-            layoutSubscriptionPointManagement.setVisibility(GONE);
+        if (isLandscape()) {
+            if (layoutSubscriptionPointManagement != null) {
+                layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+            }
+            if (graphAnnualOverview != null) {
+                graphAnnualOverview.setVisibility(GONE);
+            }
+        } else {
+            if (layoutSubscriptionPointManagement != null) {
+                layoutSubscriptionPointManagement.setVisibility(GONE);
+            }
         }
         if (lnReadingNotification != null) {
             lnReadingNotification.setVisibility(VISIBLE);
@@ -566,7 +571,6 @@ public class SubscriptionPointFragment extends Fragment {
             fab.setVisibility(GONE);
         }
     }
-
 
     private void updateAddControlsVisibility() {
         if (tabLayout != null && tabLayout.getVisibility() == VISIBLE && tabLayout.getSelectedTabPosition() == 1) {
@@ -581,11 +585,9 @@ public class SubscriptionPointFragment extends Fragment {
         UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc, false);
     }
 
-
     private boolean isTabbedMode() {
         return tabLayout != null && tabLayout.getVisibility() == VISIBLE && tabLayout.getTabCount() >= 2;
     }
-
 
     private void applySectionVisibility() {
         if (layoutSubscriptionPointManagement == null || lnReadingNotification == null) {
@@ -595,12 +597,6 @@ public class SubscriptionPointFragment extends Fragment {
         if (!isTabbedMode()) {
             layoutSubscriptionPointManagement.setVisibility(VISIBLE);
             lnReadingNotification.setVisibility(VISIBLE);
-            if (btnEdit != null) {
-                btnEdit.setVisibility(VISIBLE);
-            }
-            if (btnDelete != null) {
-                btnDelete.setVisibility(VISIBLE);
-            }
             updateAddControlsVisibility();
             return;
         }
@@ -612,7 +608,6 @@ public class SubscriptionPointFragment extends Fragment {
             showManagementSection();
         }
     }
-
 
     private void bindReadingNotificationSettings(SubscriptionPointModel subscriptionPoint) {
         if (lnReadingNotification == null || subscriptionPoint == null) {
@@ -629,239 +624,195 @@ public class SubscriptionPointFragment extends Fragment {
             int frequency = loadReadingNotificationFrequency(subscriptionPointId);
             spinnerReadingNotificationFrequency.setSelection(frequency);
 
-            String dayOfMonth = clampDayOfMonth(loadReadingNotificationDayOfMonth(subscriptionPointId));
+            updateReadingNotificationVisibility(enabled);
+            updateReadingNotificationFields(frequency);
+
+            String notificationTime = loadReadingNotificationTime(subscriptionPointId);
+            tvNotificationTime.setText(notificationTime);
+
+            String dayOfMonth = loadReadingNotificationDayOfMonth(subscriptionPointId);
             etDayOfMonth.setText(dayOfMonth);
 
             int dayOfWeek = loadReadingNotificationDayOfWeek(subscriptionPointId);
             spinnerDayOfWeek.setSelection(dayOfWeek);
-
-            tvNotificationTime.setText(loadReadingNotificationTime(subscriptionPointId));
-            updateReadingNotificationVisibility(enabled);
-            if (enabled) {
-                updateReadingNotificationFields(frequency);
-            }
         } finally {
             suppressReadingNotificationCallbacks = false;
         }
     }
 
-
     private void updateReadingNotificationVisibility(boolean enabled) {
-        if (lnReadingNotification == null) {
+        if (chReadingNotificationEnabled == null) {
             return;
         }
-        spinnerReadingNotificationFrequency.setVisibility(enabled ? VISIBLE : GONE);
-        layoutNotificationTime.setVisibility(enabled ? VISIBLE : GONE);
-        if (!enabled) {
-            layoutMonthlyDay.setVisibility(GONE);
-            layoutWeeklyDay.setVisibility(GONE);
+        chReadingNotificationEnabled.setChecked(enabled);
+        if (spinnerReadingNotificationFrequency != null) {
+            spinnerReadingNotificationFrequency.setVisibility(enabled ? VISIBLE : GONE);
+        }
+        if (enabled) {
+            int frequency = spinnerReadingNotificationFrequency != null ? spinnerReadingNotificationFrequency.getSelectedItemPosition() : FREQUENCY_MONTHLY;
+            updateReadingNotificationFields(frequency);
         } else {
-            updateReadingNotificationFields(spinnerReadingNotificationFrequency.getSelectedItemPosition());
+            if (layoutNotificationTime != null) {
+                layoutNotificationTime.setVisibility(GONE);
+            }
+            if (layoutMonthlyDay != null) {
+                layoutMonthlyDay.setVisibility(GONE);
+            }
+            if (layoutWeeklyDay != null) {
+                layoutWeeklyDay.setVisibility(GONE);
+            }
         }
     }
 
 
-    private void updateReadingNotificationFields(int frequencyIndex) {
-        if (layoutMonthlyDay == null || layoutWeeklyDay == null) {
+    private void updateReadingNotificationFields(int frequency) {
+        if (chReadingNotificationEnabled == null || !chReadingNotificationEnabled.isChecked()) {
             return;
         }
-        if (frequencyIndex == 0) {
-            layoutMonthlyDay.setVisibility(VISIBLE);
-            layoutWeeklyDay.setVisibility(GONE);
-        } else if (frequencyIndex == 1) {
-            layoutMonthlyDay.setVisibility(GONE);
-            layoutWeeklyDay.setVisibility(VISIBLE);
+
+        if (layoutNotificationTime != null) {
+            layoutNotificationTime.setVisibility(VISIBLE);
+        }
+
+        if (frequency == FREQUENCY_WEEKLY) {
+            if (layoutMonthlyDay != null) {
+                layoutMonthlyDay.setVisibility(GONE);
+            }
+            if (layoutWeeklyDay != null) {
+                layoutWeeklyDay.setVisibility(VISIBLE);
+            }
+        } else {
+            if (layoutMonthlyDay != null) {
+                layoutMonthlyDay.setVisibility(VISIBLE);
+            }
+            if (layoutWeeklyDay != null) {
+                layoutWeeklyDay.setVisibility(GONE);
+            }
         }
     }
-
 
     private void showNotificationTimePicker() {
-        int[] time = parseTime(tvNotificationTime.getText().toString());
+        if (itemId <= 0 || tvNotificationTime == null) {
+            return;
+        }
+        String currentTime = tvNotificationTime.getText().toString();
+        int hour = 9;
+        int minute = 0;
+        String[] parts = currentTime.split(":");
+        if (parts.length == 2) {
+            try {
+                hour = Integer.parseInt(parts[0]);
+                minute = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
         TimePickerDialog dialog = new TimePickerDialog(
                 requireContext(),
-                (TimePicker view, int hourOfDay, int minute) -> {
-                    String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
-                    tvNotificationTime.setText(formattedTime);
-                    setReadingNotificationTime(itemId, formattedTime);
+                (view, selectedHour, selectedMinute) -> {
+                    String timeString = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+                    tvNotificationTime.setText(timeString);
+                    setReadingNotificationTime(itemId, timeString);
                     MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
                 },
-                time[0],
-                time[1],
-                DateFormat.is24HourFormat(requireContext())
+                hour,
+                minute,
+                true
         );
         dialog.show();
     }
 
 
-    private int[] parseTime(String timeText) {
-        int hour = 8;
-        int minute = 0;
-        if (timeText != null) {
-            String[] parts = timeText.trim().split(":");
-            if (parts.length == 2) {
-                try {
-                    hour = Integer.parseInt(parts[0]);
-                    minute = Integer.parseInt(parts[1]);
-                } catch (NumberFormatException ignored) {
-                    hour = 8;
-                }
-            }
-        }
-        return new int[]{hour, minute};
+    private SharedPreferences getNotificationPrefs() {
+        return requireContext().getSharedPreferences("subscription_point_notifications", Context.MODE_PRIVATE);
     }
 
 
-    private String clampDayOfMonth(String dayText) {
-        if (dayText == null || dayText.trim().isEmpty()) {
+    private boolean loadReadingNotificationEnabled(long id) {
+        return getNotificationPrefs().getBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, false);
+    }
+
+
+    private void setReadingNotificationEnabled(long id, boolean enabled) {
+        getNotificationPrefs().edit().putBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, enabled).apply();
+    }
+
+
+    private int loadReadingNotificationFrequency(long id) {
+        return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, FREQUENCY_MONTHLY);
+    }
+
+
+    private void setReadingNotificationFrequency(long id, int frequency) {
+        getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, frequency).apply();
+    }
+
+
+    private String loadReadingNotificationTime(long id) {
+        return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_TIME + "_" + id, TIME_DEFAULT);
+    }
+
+
+    private void setReadingNotificationTime(long id, String time) {
+        getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_TIME + "_" + id, time).apply();
+    }
+
+
+    private String loadReadingNotificationDayOfMonth(long id) {
+        return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, DAY_OF_MONTH_DEFAULT);
+    }
+
+
+    private void setReadingNotificationDayOfMonth(long id, String dayOfMonth) {
+        getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, dayOfMonth).apply();
+    }
+
+
+    private int loadReadingNotificationDayOfWeek(long id) {
+        return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, Calendar.MONDAY);
+    }
+
+
+    private void setReadingNotificationDayOfWeek(long id, int dayOfWeek) {
+        getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, dayOfWeek).apply();
+    }
+
+
+    private String clampDayOfMonth(String raw) {
+        if (raw == null || raw.trim().isEmpty()) {
             return String.valueOf(DAY_OF_MONTH_MIN);
         }
         try {
-            int value = Integer.parseInt(dayText.trim());
-            if (value < DAY_OF_MONTH_MIN) {
-                return String.valueOf(DAY_OF_MONTH_MIN);
-            }
-            if (value > DAY_OF_MONTH_MAX) {
-                return String.valueOf(DAY_OF_MONTH_MAX);
-            }
-            return String.valueOf(value);
+            int val = Integer.parseInt(raw.trim());
+            if (val < DAY_OF_MONTH_MIN) val = DAY_OF_MONTH_MIN;
+            if (val > DAY_OF_MONTH_MAX) val = DAY_OF_MONTH_MAX;
+            return String.valueOf(val);
         } catch (NumberFormatException e) {
             return String.valueOf(DAY_OF_MONTH_MIN);
         }
     }
 
 
-    private boolean loadReadingNotificationEnabled(long subscriptionPointId) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            return settingsSource.loadReadingNotificationEnabled(subscriptionPointId);
-        } finally {
-            settingsSource.close();
+    /**
+     * Smaže vybrané odběrné místo
+     */
+    private void deleteItemSubscriptionPoint() {
+        if (selectedSubscriptionPoint == null) {
+            return;
         }
+        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
+        dataSubscriptionPointSource.open();
+        dataSubscriptionPointSource.deleteSubscriptionPoint(itemId, selectedSubscriptionPoint.getMilins());
+        dataSubscriptionPointSource.close();
+        onResume();
     }
 
 
-    private int loadReadingNotificationFrequency(long subscriptionPointId) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            return settingsSource.loadReadingNotificationFrequency(subscriptionPointId);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private String loadReadingNotificationDayOfMonth(long subscriptionPointId) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            return settingsSource.loadReadingNotificationDayOfMonth(subscriptionPointId);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private int loadReadingNotificationDayOfWeek(long subscriptionPointId) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            return settingsSource.loadReadingNotificationDayOfWeek(subscriptionPointId);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private String loadReadingNotificationTime(long subscriptionPointId) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            return settingsSource.loadReadingNotificationTime(subscriptionPointId);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private void setReadingNotificationEnabled(long subscriptionPointId, boolean enabled) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            settingsSource.setReadingNotificationEnabled(subscriptionPointId, enabled);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private void setReadingNotificationFrequency(long subscriptionPointId, int frequency) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            settingsSource.setReadingNotificationFrequency(subscriptionPointId, frequency);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private void setReadingNotificationDayOfMonth(long subscriptionPointId, String dayOfMonth) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            settingsSource.setReadingNotificationDayOfMonth(subscriptionPointId, dayOfMonth);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private void setReadingNotificationDayOfWeek(long subscriptionPointId, int dayOfWeek) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            settingsSource.setReadingNotificationDayOfWeek(subscriptionPointId, dayOfWeek);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private void setReadingNotificationTime(long subscriptionPointId, String time) {
-        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
-        settingsSource.open();
-        try {
-            settingsSource.setReadingNotificationTime(subscriptionPointId, time);
-        } finally {
-            settingsSource.close();
-        }
-    }
-
-
-    private record DayOfMonthInputFilter(int min, int max) implements InputFilter {
-
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            StringBuilder builder = new StringBuilder(dest);
-            builder.replace(dstart, dend, source.subSequence(start, end).toString());
-            String newValue = builder.toString();
-
-            if (newValue.isEmpty()) {
-                return null;
-            }
-
-            try {
-                int input = Integer.parseInt(newValue);
-                if (input >= min && input <= max) {
-                    return null;
-                }
-            } catch (NumberFormatException ignored) {
-            }
-            return "";
-        }
-
+    /**
+     * Zobrazí dialogové okno pro smazání odběrného místa
+     */
+    private void showDeleteDialog() {
+        YesNoDialogFragment.newInstance(getString(R.string.smazat_odberne_misto2), FLAG_DELETE_SUBSCRIPTION_POINT).show(requireActivity().getSupportFragmentManager(), "yesNoDialog");
     }
 
 }

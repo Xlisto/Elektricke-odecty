@@ -312,11 +312,13 @@ public class DataInvoiceSource extends DataSource {
 
     /**
      * Sestaví objekt jednoho záznamu faktury z cursor
+     /**
+     * Sestaví objekt faktury z kurzoru
      *
      * @param cursor kurzor
      * @return záznam faktury
      */
-    private InvoiceModel createInvoice(Cursor cursor) {
+    public InvoiceModel createInvoice(Cursor cursor) {
         return new InvoiceModel(cursor.getLong(0),
                 cursor.getLong(1), cursor.getLong(2),
                 cursor.getDouble(3), cursor.getDouble(5),

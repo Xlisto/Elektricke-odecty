@@ -265,7 +265,7 @@ public class DataMonthlyReadingSource extends DataSource {
      * @param cursor kurzor
      * @return měsíční odečet
      */
-    private MonthlyReadingModel createMonthlyReading(Cursor cursor) {
+    public MonthlyReadingModel createMonthlyReading(Cursor cursor) {
         long id = cursor.getLong(0);
         double vt = cursor.getDouble(1);
         double nt = cursor.getDouble(2);

@@ -3,6 +3,8 @@ package cz.xlisto.elektrodroid.databaze;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 
 /**
  * Abstraktní třída pro přístup k databázi odečtů, odběrných míst atd.
@@ -28,11 +30,11 @@ public abstract class DataSource {
         try {
             database = dbHelper.getWritableDatabase();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, "DbHelper is null. Make sure to initialize it before calling open().");
             dbHelper = new DbHelper(context);
             database = dbHelper.getWritableDatabase();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error opening database: " + e.getMessage());
         }
     }
 
@@ -44,6 +46,11 @@ public abstract class DataSource {
         if (dbHelper != null) {
             database.close();
         }
+    }
+
+
+    public SQLiteDatabase getDatabase() {
+        return database;
     }
 
 }
