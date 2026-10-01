@@ -15,12 +15,61 @@ Aplikace pracuje s vysokým tarifem (VT), nízkým tarifem (NT), měsíčními z
 
 Odběrné místo představuje konkrétní místo spotřeby elektřiny, například byt, dům, garáž nebo chatu. V aplikaci lze vést více odběrných míst současně. Veškeré měsíční odečty, faktury, použité ceníky a další záznamy se vždy vztahují k aktuálně vybranému odběrnému místu.
 
-Obrazovka odběrných míst je rozdělena na dvě části: **Správa odběrného místa** a **Notifikace**. V
-části **Správa odběrného místa** se vybírá aktuální odběrné místo a zobrazují se jeho základní
-údaje. Aktuální odběrné místo se vybírá pomocí rozbalovacího seznamu v horní části obrazovky. Pod
-ním se zobrazují například poznámka, hodnota hlavního jističe, číslo elektroměru a číslo odběrného
-místa. Tyto údaje pomáhají odlišit jednotlivá místa a zároveň slouží jako podklad pro některé
-výpočty, zejména u hodnot souvisejících s hlavním jističem.
+Obrazovka odběrných míst je rozdělena na dvě části: **Správa odběrného místa** a **Notifikace** (v
+režimu na výšku) nebo na zobrazení detailů vlevo a záložek vpravo (v režimu na šířku). V části *
+*Správa odběrného místa** se vybírá aktuální odběrné místo a zobrazují se jeho základní údaje.
+Aktuální odběrné místo se vybírá pomocí rozbalovacího seznamu v horní části obrazovky. Pod ním se
+zobrazují například poznámka, hodnota hlavního jističe, číslo elektroměru a číslo odběrného místa.
+Tyto údaje pomáhají odlišit jednotlivá místa a zároveň slouží jako podklad pro některé výpočty,
+zejména u hodnot souvisejících s hlavním jističem.
+
+Součástí je také **Přehledový kombinovaný graf roční spotřeby a průměrných cen**, který zobrazuje 4
+po sobě jdoucí roky. Graf přehledně kombinuje skládané sloupce spotřeby vysokého (VT) a nízkého
+tarifu (NT), tenký sloupec fixních měsíčních nákladů a cenové čáry průměrných cen za MWh. Všechny
+číselné hodnoty spotřeby i cen jsou uspořádány do samostatných neprůhledných rámečků. V režimu na
+šířku lze záložkami v pravém sloupci pohodlně přepínat mezi zobrazením grafu a nastavením
+notifikací.
+
+### Graf roční spotřeby a průměrných cen
+
+V dolní části správy odběrného místa (nebo v pravé záložce v režimu na šířku) se zobrazuje
+přehledový kombinovaný graf roční spotřeby a průměrných cen. Graf automaticky zobrazuje **4 po sobě
+jdoucí roky** vztahující se k aktuálnímu roku (například 2023, 2024, 2025 a 2026 pro rok 2026).
+Pokud pro některý z roků ještě nejsou v aplikaci zadané odečty, zůstane pro daný rok vyhrazený
+prázdný slot na ose X.
+
+Graf kombinuje sloupcové ukazatele spotřeby a čárové ukazatele průměrných jednotkových cen:
+
+- **Spotřeba VT a NT**: Zobrazuje celkovou roční spotřebu v MWh, případně kWh, rozdělenou do
+  skládaných sloupců pro vysoký tarif (VT) a nízký tarif (NT). Nad sloupcem je zobrazen součet
+  celkové roční spotřeby.
+
+- **Fixní měsíční náklady**: Tenký sloupec vedle hlavního sloupce spotřeby znázorňuje průměrné stálé
+  měsíční platby. Patří sem stálý plat dodavatele, cena za jistič podle počtu fází a hodnoty jističe
+  odběrného místa, poplatek za OTE / činnost zúčtování a DPH.
+
+- **Cena VT a Cena NT**: Čáry v grafu zobrazují vážený průměr variabilních cen za 1 MWh včetně DPH v
+  daném roce. Obsahují kompletní variabilní složky ceny, tedy silovou elektřinu, distribuční
+  poplatky za kWh, daň z elektřiny, systémové služby a DPH. Pokud se v průběhu roku změní ceník,
+  cena se vypočítá jako vážený průměr podle odebraného množství elektřiny v jednotlivých obdobích.
+  Tyto ceny neobsahují stálé měsíční platby za jistič ani stálý plat dodavatele.
+
+- **Cena celkem**: Vyjadřuje skutečnou konečnou průměrnou cenu za 1 MWh včetně DPH. Udává reálný
+  náklad na každou spotřebovanou megawatthodinu. Tato cena vzniká sečtením všech variabilních i
+  fixních nákladů za celý rok a jejich rozpočítáním na celkovou roční spotřebu.
+
+  Výpočet:
+
+  **Cena celkem (Kč/MWh) = (variabilní náklady VT + variabilní náklady NT + celkové fixní náklady za
+  rok) / celková spotřeba v MWh**
+
+  Protože fixní měsíční platba vzniká bez ohledu na výši spotřeby, při menší roční spotřebě tvoří
+  fixní náklad větší podíl na celkovém účtu. Výsledná **Cena celkem** je proto vyšší než samostatné
+  variabilní ceny VT a NT. S rostoucí spotřebou se fixní náklad rozpočítá na více MWh a celková
+  průměrná cena se přibližuje k variabilním cenám.
+
+Klepnutím na kterýkoliv roční sloupec nebo datový bod v grafu se otevře podrobný dialog s přehledem
+spotřeby, měsíčních fixních nákladů a vážených průměrných cen pro vybraný rok.
 
 Nové odběrné místo lze přidat pomocí tlačítka **+** v pravé dolní části obrazovky. Stávající odběrné
 místo lze upravit tlačítkem **Upravit odběrné místo**. Při úpravě se zadává název odběrného místa,
@@ -39,9 +88,13 @@ nebo se zobrazují se zpožděním, je vhodné zkontrolovat nastavení aplikace 
 zejména oprávnění pro notifikace a přesné alarmy.
 
 <p align="center">
-  <img src="screenshots/odb_1.png" width="200" />
-  <img src="screenshots/odb_2.png" width="200" />
-  <img src="screenshots/odb_3.png" width="200" />
+  <img src="screenshots/odb_1.png" width="300" />
+  <img src="screenshots/odb_2.png" width="300" />
+</p>
+
+<p align="center">
+  <img src="screenshots/odb_3.png" width="300" />
+  <img src="screenshots/odb_4.png" width="300" />
 </p>
 
 ## Ceník
@@ -342,14 +395,25 @@ Výhodnost jednotlivých ceníků nemusí být vždy na první pohled zřejmá. 
 
 V aplikaci lze uložit časy nízkého tarifu (NT) a zobrazovat notifikace na jeho začátek a konec. Jednotlivé časy lze vložit nebo upravit ručně. Pokud je elektroměr vybaven spínačem HDO, lze podle HDO kódu načíst jednotlivé časy NT a uložit je v aplikaci.
 
+Aplikace nabízí přehledné **grafické zobrazení časů HDO**, které na 24hodinové časové ose vizuálně
+zvýrazňuje intervaly platnosti nízkého a vysokého tarifu během dne. Při zadávání nebo načítání HDO
+kódu probíhá automatická kontrola — v případě chybného formátu nebo nekompatibilního kódu
+distribuční sítě aplikace zobrazí **upozornění na neplatný HDO kód**.
+
 V horní části je zobrazen čas elektroměru. Pokud elektroměr není vybaven přijímačem HDO se synchronizací času, jeho čas se nemusí shodovat se skutečným časem. Pomocí tlačítek lze čas upravit tak, aby odpovídal času nastavenému na elektroměru.
 
 Nalezené seznamy časů je možné uložit do paměti aplikace. Touto akcí se přepíší původně uložené časy. Seznam časů lze také zkopírovat v textové podobě do schránky.
 
 <p align="center">
-  <img src="screenshots/hdo_1.jpg" width="200" />
-  <img src="screenshots/hdo_2.jpg" width="200" />
-  <img src="screenshots/hdo_3.jpg" width="200" />
+  <img src="screenshots/hdo_1.png" width="200" />
+  <img src="screenshots/hdo_4.png" width="200" />
+  <img src="screenshots/hdo_3.png" width="200" />
+</p>
+
+<p align="center">
+  <img src="screenshots/hdo_2.png" width="200" />
+  <img src="screenshots/hdo_5.jpg" width="200" />
+  <img src="screenshots/hdo_6.jpg" width="200" />
 </p>
 
 ## Statistika spotřeby
