@@ -71,6 +71,13 @@ Graf kombinuje sloupcové ukazatele spotřeby a čárové ukazatele průměrnýc
 Klepnutím na kterýkoliv roční sloupec nebo datový bod v grafu se otevře podrobný dialog s přehledem
 spotřeby, měsíčních fixních nákladů a vážených průměrných cen pro vybraný rok.
 
+Klepnutím na ikonu celoobrazovkového režimu v pravém horním rohu kartičky grafu lze otevřít *
+*Fullscreen zobrazení grafu**. V tomto celoobrazovkovém režimu se načte kompletní historie za
+všechna dostupná roční období v databázi (např. za posledních 10+ let). Graf obsahuje pevné svislé
+osy Y na okrajích obrazovky, pevnou spodní legendu a plynulé horizontální skrolování mezi
+jednotlivými roky, přičemž se po otevření automaticky přetočí na aktuální období. V režimu na výšku
+aplikace zobrazí doporučení pro otočení zařízení na šířku (Landscape) pro nejpohodlnější prohlížení.
+
 Nové odběrné místo lze přidat pomocí tlačítka **+** v pravé dolní části obrazovky. Stávající odběrné
 místo lze upravit tlačítkem **Upravit odběrné místo**. Při úpravě se zadává název odběrného místa,
 poznámka, počet fází, hodnota jističe, číslo elektroměru a číslo odběrného místa. Tlačítkem **Uložit
