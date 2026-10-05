@@ -104,6 +104,61 @@ public class AnnualOverviewDataBuilder {
 
 
     /**
+     * Sestaví seznam ročních dat pro zadané odběrné místo pro VŠECHNA dostupná historická období.
+     * Načte nejstarší rok z databáze a vytvoří roční řadu od nejstaršího roku po aktuální rok.
+     *
+     * @param subscriptionPoint Odběrné místo
+     * @return Seznam {@link AnnualYearData} pro zobrazení ve fullscreen grafu
+     */
+    public ArrayList<AnnualYearData> buildAllAnnualData(SubscriptionPointModel subscriptionPoint) {
+        ArrayList<AnnualYearData> resultList = new ArrayList<>();
+        if (subscriptionPoint == null) {
+            return resultList;
+        }
+
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+
+        ArrayList<PointEntry> allPoints = loadAllMeterPoints(subscriptionPoint);
+        if (!allPoints.isEmpty()) {
+            allPoints.sort(Comparator.comparingLong(p -> p.date));
+        }
+
+        int startYear = currentYear - 3;
+        if (!allPoints.isEmpty()) {
+            Calendar calEarliest = Calendar.getInstance();
+            calEarliest.setTimeInMillis(allPoints.get(0).date);
+            int earliestYear = calEarliest.get(Calendar.YEAR);
+            if (earliestYear < startYear) {
+                startYear = earliestYear;
+            }
+        }
+
+        for (int yr = startYear; yr <= currentYear; yr++) {
+            boolean isCurrent = (yr == currentYear);
+            AnnualYearData yearData = null;
+            if (!allPoints.isEmpty()) {
+                yearData = calculateForYear(subscriptionPoint, allPoints, yr, isCurrent);
+            }
+
+            if (yearData == null) {
+                yearData = new AnnualYearData(
+                        yr,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        isCurrent,
+                        false,
+                        isCurrent ? "(leden)" : null,
+                        false
+                );
+            }
+            resultList.add(yearData);
+        }
+
+        return resultList;
+    }
+
+
+    /**
      * Načte všechny odečty z databáze a stavy z faktur pro dané odběrné místo.
      */
     private ArrayList<PointEntry> loadAllMeterPoints(SubscriptionPointModel subscriptionPoint) {

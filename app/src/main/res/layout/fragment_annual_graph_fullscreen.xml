@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="@string/fullscreen_graph_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textStyle="bold" />
+
+    <!-- Střední část: Jednotný souvislý zaoblený rámeček pro celou plochu grafu -->
+    <RelativeLayout
+        android:id="@+id/layoutChartContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/shape_item">
+
+        <!-- Pevná levá Y osa (MWh) -->
+        <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphYAxisView
+            android:id="@+id/yAxisLeft"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true" />
+
+        <!-- Pevná pravá Y osa (Kč/MWh) -->
+        <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphYAxisView
+            android:id="@+id/yAxisRight"
+            android:layout_width="52dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true" />
+
+        <!-- Střední posuvný graf s hodnotami -->
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/yAxisLeft"
+            android:layout_toStartOf="@id/yAxisRight"
+            android:fillViewport="true">
+
+            <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphAnnualOverviewView
+                android:id="@+id/graphAnnualOverview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </HorizontalScrollView>
+
+    </RelativeLayout>
+
+    <!-- Pevná legenda dole pod grafem -->
+    <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphLegendView
+        android:id="@+id/graphLegend"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

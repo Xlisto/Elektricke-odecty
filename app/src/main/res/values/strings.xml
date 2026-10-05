@@ -137,6 +137,7 @@
     <string name="x">X</string>
     <string name="faze_x_prikon">Fáze x příkon:</string>
     <string name="jmeno_odberneho_mista">Jméno odběrného místa:</string>
+    <string name="jmeno_odberneho_mista_notification">Jméno odběrného místa pro notifikace</string>
     <string name="popis">Popis (poznámka) odběrného místa:</string>
     <string name="pocet_fazi">Počet fází:</string>
     <string name="max_prikon">Max. příkon:</string>
@@ -709,6 +710,9 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="subscription_point_tab_management">Správa odběrného místa</string>
     <string name="subscription_point_tab_graph">Graf roční spotřeby</string>
     <string name="subscription_point_tab_notifications">Notifikace</string>
+    <string name="fullscreen_graph_title">Celkový graf roční spotřeby</string>
+    <string name="rotate_to_landscape_message">Pro nejlepší zobrazení celkového grafu otočte zařízení na šířku (Landscape).</string>
+    <string name="fullscreen_icon_content_description">Zobrazit graf na celou obrazovku</string>
     <string name="reading_notification_frequency">Frekvence notifikace</string>
     <string name="reading_notification_monthly">Měsíčně</string>
     <string name="reading_notification_weekly">Týdně</string>

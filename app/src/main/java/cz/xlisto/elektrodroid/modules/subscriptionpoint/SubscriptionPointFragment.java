@@ -80,6 +80,7 @@ public class SubscriptionPointFragment extends Fragment {
     private View lnSpinner, lnDescription, lnPhaze, lnNumberElectricMeter, lnNumberSubscriptionPoint;
     private LinearLayout layoutSubscriptionPointManagement;
     private GraphAnnualOverviewView graphAnnualOverview;
+    private View btnFullscreenGraph;
     private View lnReadingNotification;
     private View layoutMonthlyDay;
     private View layoutWeeklyDay;
@@ -114,7 +115,6 @@ public class SubscriptionPointFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_subscription_point, menu);
             }
-
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
@@ -157,6 +157,7 @@ public class SubscriptionPointFragment extends Fragment {
         lnNumberSubscriptionPoint = view.findViewById(R.id.lnNumberSubscriptionPoint);
         sc = view.findViewById(R.id.scrollView);
         graphAnnualOverview = view.findViewById(R.id.graphAnnualOverview);
+        btnFullscreenGraph = view.findViewById(R.id.btnFullscreenGraph);
         lnReadingNotification = view.findViewById(R.id.lnReadingNotification);
         chReadingNotificationEnabled = view.findViewById(R.id.chReadingNotificationEnabled);
         spinnerReadingNotificationFrequency = view.findViewById(R.id.spinnerReadingNotificationFrequency);
@@ -167,6 +168,14 @@ public class SubscriptionPointFragment extends Fragment {
         spinnerDayOfWeek = view.findViewById(R.id.spinnerDayOfWeek);
         tvNotificationTime = view.findViewById(R.id.tvNotificationTime);
         tabLayout = view.findViewById(R.id.tabLayout);
+
+        if (btnFullscreenGraph != null) {
+            btnFullscreenGraph.setOnClickListener(v -> {
+                if (itemId > 0) {
+                    FragmentChange.replace(requireActivity(), AnnualGraphFullscreenFragment.newInstance(itemId), FragmentChange.Transaction.MOVE, true);
+                }
+            });
+        }
         fab.setOnClickListener(v -> addSubcsriptionPoint());
         btnAddSubscriptionPoint.setOnClickListener(v -> addSubcsriptionPoint());
 
@@ -330,6 +339,8 @@ public class SubscriptionPointFragment extends Fragment {
             applySubscriptionPointSelection(subscriptionPoints, selectedIndex);
             hideAlert(false);
         } else {
+            selectedSubscriptionPoint = null;
+            itemId = 0L;
             hideAlert(true);
         }
         applySectionVisibility();
@@ -440,7 +451,6 @@ public class SubscriptionPointFragment extends Fragment {
         FragmentChange.replace(requireActivity(), SubscriptionPointAddFragment.newInstance(), FragmentChange.Transaction.MOVE, true);
     }
 
-
     /**
      * Otevře okno pro úpravu odběrného místa
      */
@@ -455,6 +465,8 @@ public class SubscriptionPointFragment extends Fragment {
      */
     private void hideAlert(boolean show) {
         if (show) {
+            selectedSubscriptionPoint = null;
+            itemId = 0L;
             if (tabLayout != null) {
                 tabLayout.setVisibility(GONE);
             }
@@ -464,7 +476,13 @@ public class SubscriptionPointFragment extends Fragment {
             if (graphAnnualOverview != null) {
                 graphAnnualOverview.setVisibility(GONE);
             }
+            if (btnFullscreenGraph != null) {
+                btnFullscreenGraph.setVisibility(GONE);
+            }
             if (lnSpinner != null) lnSpinner.setVisibility(GONE);
+            if (spSubscriptionPoint != null) spSubscriptionPoint.setVisibility(GONE);
+            if (spSubscriptionPointNotification != null)
+                spSubscriptionPointNotification.setVisibility(GONE);
             if (lnDescription != null) lnDescription.setVisibility(GONE);
             if (lnPhaze != null) lnPhaze.setVisibility(GONE);
             if (lnNumberElectricMeter != null) lnNumberElectricMeter.setVisibility(GONE);
@@ -478,15 +496,18 @@ public class SubscriptionPointFragment extends Fragment {
                 tabLayout.setVisibility(VISIBLE);
             }
             if (lnSpinner != null) lnSpinner.setVisibility(VISIBLE);
+            if (spSubscriptionPoint != null) spSubscriptionPoint.setVisibility(VISIBLE);
+            if (spSubscriptionPointNotification != null)
+                spSubscriptionPointNotification.setVisibility(VISIBLE);
             if (lnDescription != null) lnDescription.setVisibility(VISIBLE);
             if (lnPhaze != null) lnPhaze.setVisibility(VISIBLE);
             if (lnNumberElectricMeter != null) lnNumberElectricMeter.setVisibility(VISIBLE);
             if (lnNumberSubscriptionPoint != null) lnNumberSubscriptionPoint.setVisibility(VISIBLE);
+            if (btnFullscreenGraph != null) btnFullscreenGraph.setVisibility(VISIBLE);
             tvNewSubscriptionPoint.setVisibility(GONE);
             applySectionVisibility();
         }
     }
-
 
     private boolean isLandscape() {
         return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
@@ -536,19 +557,47 @@ public class SubscriptionPointFragment extends Fragment {
     }
 
     private void showManagementSection() {
-        if (layoutSubscriptionPointManagement != null) {
-            layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+        if (selectedSubscriptionPoint == null || itemId <= 0) {
+            hideAlert(true);
+            return;
         }
-        if (graphAnnualOverview != null) {
-            graphAnnualOverview.setVisibility(VISIBLE);
-        }
-        if (lnReadingNotification != null) {
-            lnReadingNotification.setVisibility(GONE);
+
+        if (isLandscape()) {
+            if (layoutSubscriptionPointManagement != null) {
+                layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+            }
+            if (graphAnnualOverview != null) {
+                graphAnnualOverview.setVisibility(VISIBLE);
+            }
+            if (btnFullscreenGraph != null) {
+                btnFullscreenGraph.setVisibility(VISIBLE);
+            }
+            if (lnReadingNotification != null) {
+                lnReadingNotification.setVisibility(GONE);
+            }
+        } else {
+            if (layoutSubscriptionPointManagement != null) {
+                layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+            }
+            if (graphAnnualOverview != null) {
+                graphAnnualOverview.setVisibility(VISIBLE);
+            }
+            if (btnFullscreenGraph != null) {
+                btnFullscreenGraph.setVisibility(VISIBLE);
+            }
+            if (lnReadingNotification != null) {
+                lnReadingNotification.setVisibility(GONE);
+            }
         }
         updateAddControlsVisibility();
     }
 
     private void showNotificationSection() {
+        if (selectedSubscriptionPoint == null || itemId <= 0) {
+            hideAlert(true);
+            return;
+        }
+
         if (isLandscape()) {
             if (layoutSubscriptionPointManagement != null) {
                 layoutSubscriptionPointManagement.setVisibility(VISIBLE);
@@ -556,13 +605,19 @@ public class SubscriptionPointFragment extends Fragment {
             if (graphAnnualOverview != null) {
                 graphAnnualOverview.setVisibility(GONE);
             }
+            if (btnFullscreenGraph != null) {
+                btnFullscreenGraph.setVisibility(GONE);
+            }
+            if (lnReadingNotification != null) {
+                lnReadingNotification.setVisibility(VISIBLE);
+            }
         } else {
             if (layoutSubscriptionPointManagement != null) {
                 layoutSubscriptionPointManagement.setVisibility(GONE);
             }
-        }
-        if (lnReadingNotification != null) {
-            lnReadingNotification.setVisibility(VISIBLE);
+            if (lnReadingNotification != null) {
+                lnReadingNotification.setVisibility(VISIBLE);
+            }
         }
         if (btnAddSubscriptionPoint != null) {
             btnAddSubscriptionPoint.setVisibility(GONE);
@@ -594,9 +649,16 @@ public class SubscriptionPointFragment extends Fragment {
             return;
         }
 
+        if (selectedSubscriptionPoint == null || itemId <= 0) {
+            hideAlert(true);
+            return;
+        }
+
         if (!isTabbedMode()) {
             layoutSubscriptionPointManagement.setVisibility(VISIBLE);
             lnReadingNotification.setVisibility(VISIBLE);
+            if (graphAnnualOverview != null) graphAnnualOverview.setVisibility(VISIBLE);
+            if (btnFullscreenGraph != null) btnFullscreenGraph.setVisibility(VISIBLE);
             updateAddControlsVisibility();
             return;
         }
@@ -664,7 +726,6 @@ public class SubscriptionPointFragment extends Fragment {
         }
     }
 
-
     private void updateReadingNotificationFields(int frequency) {
         if (chReadingNotificationEnabled == null || !chReadingNotificationEnabled.isChecked()) {
             return;
@@ -722,61 +783,49 @@ public class SubscriptionPointFragment extends Fragment {
         dialog.show();
     }
 
-
     private SharedPreferences getNotificationPrefs() {
         return requireContext().getSharedPreferences("subscription_point_notifications", Context.MODE_PRIVATE);
     }
-
 
     private boolean loadReadingNotificationEnabled(long id) {
         return getNotificationPrefs().getBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, false);
     }
 
-
     private void setReadingNotificationEnabled(long id, boolean enabled) {
         getNotificationPrefs().edit().putBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, enabled).apply();
     }
-
 
     private int loadReadingNotificationFrequency(long id) {
         return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, FREQUENCY_MONTHLY);
     }
 
-
     private void setReadingNotificationFrequency(long id, int frequency) {
         getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, frequency).apply();
     }
-
 
     private String loadReadingNotificationTime(long id) {
         return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_TIME + "_" + id, TIME_DEFAULT);
     }
 
-
     private void setReadingNotificationTime(long id, String time) {
         getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_TIME + "_" + id, time).apply();
     }
-
 
     private String loadReadingNotificationDayOfMonth(long id) {
         return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, DAY_OF_MONTH_DEFAULT);
     }
 
-
     private void setReadingNotificationDayOfMonth(long id, String dayOfMonth) {
         getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, dayOfMonth).apply();
     }
-
 
     private int loadReadingNotificationDayOfWeek(long id) {
         return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, Calendar.MONDAY);
     }
 
-
     private void setReadingNotificationDayOfWeek(long id, int dayOfWeek) {
         getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, dayOfWeek).apply();
     }
-
 
     private String clampDayOfMonth(String raw) {
         if (raw == null || raw.trim().isEmpty()) {
@@ -792,7 +841,6 @@ public class SubscriptionPointFragment extends Fragment {
         }
     }
 
-
     /**
      * Smaže vybrané odběrné místo
      */
@@ -806,7 +854,6 @@ public class SubscriptionPointFragment extends Fragment {
         dataSubscriptionPointSource.close();
         onResume();
     }
-
 
     /**
      * Zobrazí dialogové okno pro smazání odběrného místa

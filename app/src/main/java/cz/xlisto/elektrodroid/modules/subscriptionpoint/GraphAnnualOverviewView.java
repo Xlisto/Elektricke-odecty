@@ -353,13 +353,80 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    private float customMinSlotWidthDp = 80f;
+
+
+    public void setCustomMinSlotWidthDp(float minSlotWidthDp) {
+        this.customMinSlotWidthDp = minSlotWidthDp;
+        requestLayout();
+        invalidate();
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int desiredHeight = DensityUtils.dpToPx(getContext(), 280);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        setMeasuredDimension(width, desiredHeight);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int calculatedHeight;
+        if (heightMode == MeasureSpec.EXACTLY) {
+            calculatedHeight = heightSize;
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            calculatedHeight = Math.min(desiredHeight, heightSize);
+        } else {
+            calculatedHeight = desiredHeight;
+        }
+
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int calculatedWidth = widthSize;
+        if (yearDataList != null && !yearDataList.isEmpty() && customMinSlotWidthDp > 0) {
+            float minSlotPx = DensityUtils.dpToPx(getContext(), customMinSlotWidthDp);
+            float padLeft = DensityUtils.dpToPx(getContext(), showYAxes ? 40 : 8);
+            float padRight = DensityUtils.dpToPx(getContext(), showYAxes ? 52 : 8);
+            int requiredWidth = (int) (padLeft + padRight + yearDataList.size() * minSlotPx);
+
+            if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED || requiredWidth > widthSize) {
+                calculatedWidth = requiredWidth;
+            }
+        }
+
+        setMeasuredDimension(calculatedWidth, calculatedHeight);
     }
 
+
+    private boolean showYAxes = true;
+    private boolean showLegend = true;
+
+
+    public void setShowYAxes(boolean showYAxes) {
+        this.showYAxes = showYAxes;
+        invalidate();
+    }
+
+
+    public void setShowLegend(boolean showLegend) {
+        this.showLegend = showLegend;
+        invalidate();
+    }
+
+
+    public boolean isMWh() {
+        return isMWh;
+    }
+
+
+    public boolean isDualTariff() {
+        return isDualTariff;
+    }
+
+
+    private boolean drawCardBackground = true;
+
+
+    public void setDrawCardBackground(boolean drawCardBackground) {
+        this.drawCardBackground = drawCardBackground;
+        invalidate();
+    }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -383,10 +450,12 @@ public class GraphAnnualOverviewView extends View {
         boolean isDark = DetectNightMode.isNightMode(getContext());
         int cardBgColor = isDark ? 0xFF1E1E1E : 0xFFF5F5F5;
 
-        // Nakreslit zaoblený rámeček grafu (shodný s poloměrem 5dp a šířkou jako u kartiček shape_item)
-        float rx = DensityUtils.dpToPx(getContext(), 5);
-        bgCardRect.set(0, 0, width, height);
-        canvas.drawRoundRect(bgCardRect, rx, rx, paintBgCard);
+        // Nakreslit zaoblený rámeček grafu (pouze pokud je povolený)
+        if (drawCardBackground) {
+            float rx = DensityUtils.dpToPx(getContext(), 5);
+            bgCardRect.set(0, 0, width, height);
+            canvas.drawRoundRect(bgCardRect, rx, rx, paintBgCard);
+        }
 
         if (yearDataList == null || yearDataList.isEmpty()) {
             paintText.setTextAlign(Paint.Align.CENTER);
@@ -395,21 +464,23 @@ public class GraphAnnualOverviewView extends View {
         }
 
         // Okraje grafu
-        float padLeft = DensityUtils.dpToPx(getContext(), 40);
-        float padRight = DensityUtils.dpToPx(getContext(), 52);
+        float padLeft = DensityUtils.dpToPx(getContext(), showYAxes ? 40 : 8);
+        float padRight = DensityUtils.dpToPx(getContext(), showYAxes ? 52 : 8);
         float padTop = DensityUtils.dpToPx(getContext(), 42); // Horní okraj pro celkovou spotřebu v jedné řadě
-        float padBottom = DensityUtils.dpToPx(getContext(), 80);
+        float padBottom = DensityUtils.dpToPx(getContext(), showLegend ? 80 : 56);
 
         chartArea.set(padLeft, padTop, width - padRight, height - padBottom);
 
-        // Názvy jednotek VÝŠE nad mřížkovým polem grafu
-        paintText.setTextAlign(Paint.Align.LEFT);
-        paintText.setFakeBoldText(true);
-        canvas.drawText(isMWh ? "MWh" : "kWh", padLeft, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
+        if (showYAxes) {
+            // Názvy jednotek VÝŠE nad mřížkovým polem grafu
+            paintText.setTextAlign(Paint.Align.LEFT);
+            paintText.setFakeBoldText(true);
+            canvas.drawText(isMWh ? "MWh" : "kWh", padLeft, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
 
-        paintText.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText("Kč/MWh", width - padRight, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
-        paintText.setFakeBoldText(false);
+            paintText.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText("Kč/MWh", width - padRight, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
+            paintText.setFakeBoldText(false);
+        }
 
         // Mřížka a popisky os Y
         int steps = 4;
@@ -422,17 +493,26 @@ public class GraphAnnualOverviewView extends View {
             // Mřížková čára
             canvas.drawLine(chartArea.left, y, chartArea.right, y, paintAxis);
 
-            float textY = (i == steps) ? (y + DensityUtils.dpToPx(getContext(), 10)) : (y + 4);
+            if (showYAxes) {
+                float textY;
+                if (i == steps) {
+                    textY = y + DensityUtils.dpToPx(getContext(), 10);
+                } else if (i == 0) {
+                    textY = y - DensityUtils.dpToPx(getContext(), 2);
+                } else {
+                    textY = y + DensityUtils.dpToPx(getContext(), 4);
+                }
 
-            // Leva osa - spotřeba
-            double consVal = (maxConsumption * i / steps);
-            paintText.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText(DecimalFormatHelper.df1.format(consVal), chartArea.left - axisGap, textY, paintText);
+                // Leva osa - spotřeba
+                double consVal = (maxConsumption * i / steps);
+                paintText.setTextAlign(Paint.Align.RIGHT);
+                canvas.drawText(DecimalFormatHelper.df1.format(consVal), chartArea.left - axisGap, textY, paintText);
 
-            // Prava osa - cena
-            double priceVal = (maxPrice * i / steps);
-            paintText.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(String.format(locale, "%.0f", priceVal), chartArea.right + axisGap, textY, paintText);
+                // Prava osa - cena
+                double priceVal = (maxPrice * i / steps);
+                paintText.setTextAlign(Paint.Align.LEFT);
+                canvas.drawText(String.format(locale, "%.0f", priceVal), chartArea.right + axisGap, textY, paintText);
+            }
         }
 
         // Osy X a Y
@@ -630,7 +710,7 @@ public class GraphAnnualOverviewView extends View {
         // 4. VYKRESLENÍ VŠECH 7 VÝSLEDNÝCH RÁMEČKŮ S GLOBÁLNÍ OCHRANOU ČÍSEL PROTI PŘEKRYTÍ (pouze pro roky s daty)
         float minCalloutGap = DensityUtils.dpToPx(getContext(), 14);
         float topCalloutLimit = chartArea.top + DensityUtils.dpToPx(getContext(), 4);
-        float bottomCalloutLimit = chartArea.bottom - DensityUtils.dpToPx(getContext(), 4);
+        float bottomCalloutLimit = chartArea.bottom - DensityUtils.dpToPx(getContext(), 2);
 
         int defaultTextColor = isDark ? 0xFFEEEEEE : 0xFF212121;
 
@@ -739,8 +819,10 @@ public class GraphAnnualOverviewView extends View {
             }
         }
 
-        // 5. Legenda pod grafem
-        drawLegend(canvas, height);
+        // 5. Legenda pod grafem (pouze pokud je povolená)
+        if (showLegend) {
+            drawLegend(canvas, height);
+        }
     }
 
 

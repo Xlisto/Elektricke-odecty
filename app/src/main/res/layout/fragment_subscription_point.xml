@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/fab"
         android:layout_marginStart="5dp"
         android:text="@string/add_subscriptionpoint" />
 
@@ -171,13 +173,32 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
-                <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphAnnualOverviewView
-                    android:id="@+id/graphAnnualOverview"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp" />
+                    android:layout_marginEnd="5dp">
+
+                    <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphAnnualOverviewView
+                        android:id="@+id/graphAnnualOverview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <ImageButton
+                        android:id="@+id/btnFullscreenGraph"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/fullscreen_icon_content_description"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_fullscreen_24"
+                        app:tint="?android:attr/textColorSecondary" />
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -200,7 +221,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:contentDescription="@string/jmeno_odberneho_mista"
+                        android:contentDescription="@string/jmeno_odberneho_mista_notification"
                         android:minHeight="48dp" />
                 </LinearLayout>
 
@@ -329,9 +350,11 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
-        android:contentDescription="@string/add"
+        android:contentDescription="@string/add_subscriptionpoint"
+        android:focusable="true"
         android:src="@drawable/ic_content_add"
         app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
+        app:tint="@color/floatingButtonBackground"
+        tools:ignore="RelativeLayout" />
 
 </RelativeLayout>

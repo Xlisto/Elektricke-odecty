@@ -11,6 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/fab"
         android:layout_marginStart="5dp"
         android:text="@string/add_subscriptionpoint" />
 
@@ -187,123 +189,135 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp" />
 
-                <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphAnnualOverviewView
-                    android:id="@+id/graphAnnualOverview"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp" />
+                    android:layout_marginTop="5dp">
+
+                    <cz.xlisto.elektrodroid.modules.subscriptionpoint.GraphAnnualOverviewView
+                        android:id="@+id/graphAnnualOverview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <ImageButton
+                        android:id="@+id/btnFullscreenGraph"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/fullscreen_icon_content_description"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_fullscreen_24"
+                        app:tint="?android:attr/textColorSecondary" />
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/lnReadingNotification"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/shape_item"
                     android:orientation="vertical"
-                    android:padding="0dp">
+                    android:padding="8dp">
 
-                    <LinearLayout
+                    <CheckBox
+                        android:id="@+id/chReadingNotificationEnabled"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/shape_item"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:minHeight="48dp"
+                        android:text="@string/reading_notification_enabled" />
 
-                        <CheckBox
-                            android:id="@+id/chReadingNotificationEnabled"
+                    <Spinner
+                        android:id="@+id/spinnerReadingNotificationFrequency"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/reading_notification_frequency"
+                        android:entries="@array/reading_notification_frequency_array"
+                        android:minHeight="48dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutNotificationTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="@string/reading_notification_time"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvNotificationTime"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:minHeight="48dp"
+                            android:padding="8dp"
+                            android:text="@string/reading_notification_time_default" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutMonthlyDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:text="@string/reading_notification_day_of_month"
+                            android:textSize="12sp" />
+
+                        <EditText
+                            android:id="@+id/etDayOfMonth"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="@null"
+                            android:hint="@string/reading_notification_day_of_month_hint"
+                            android:inputType="number"
+                            android:minHeight="48dp"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutWeeklyDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="48dp"
-                            android:text="@string/reading_notification_enabled" />
+                            android:text="@string/reading_notification_day_of_week"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
 
                         <Spinner
-                            android:id="@+id/spinnerReadingNotificationFrequency"
+                            android:id="@+id/spinnerDayOfWeek"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:contentDescription="@string/reading_notification_frequency"
-                            android:entries="@array/reading_notification_frequency_array"
+                            android:layout_marginTop="4dp"
+                            android:contentDescription="@string/reading_notification_day_of_week"
+                            android:entries="@array/day_of_week_array"
                             android:minHeight="48dp" />
-
-                        <LinearLayout
-                            android:id="@+id/layoutNotificationTime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:text="@string/reading_notification_time"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvNotificationTime"
-                                android:layout_width="100dp"
-                                android:layout_height="wrap_content"
-                                android:background="?android:attr/selectableItemBackground"
-                                android:gravity="center"
-                                android:minHeight="48dp"
-                                android:padding="8dp"
-                                android:text="@string/reading_notification_time_default" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/layoutMonthlyDay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                android:text="@string/reading_notification_day_of_month"
-                                android:textSize="12sp" />
-
-                            <EditText
-                                android:id="@+id/etDayOfMonth"
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:autofillHints="@null"
-                                android:hint="@string/reading_notification_day_of_month_hint"
-                                android:inputType="number"
-                                android:minHeight="48dp"
-                                android:textAlignment="center" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/layoutWeeklyDay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/reading_notification_day_of_week"
-                                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                            <Spinner
-                                android:id="@+id/spinnerDayOfWeek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:contentDescription="@string/reading_notification_day_of_week"
-                                android:entries="@array/day_of_week_array"
-                                android:minHeight="48dp" />
-                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -328,9 +342,11 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
-        android:contentDescription="@string/add"
+        android:contentDescription="@string/add_subscriptionpoint"
+        android:focusable="true"
         android:src="@drawable/ic_content_add"
         app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
+        app:tint="@color/floatingButtonBackground"
+        tools:ignore="RelativeLayout" />
 
 </RelativeLayout>
