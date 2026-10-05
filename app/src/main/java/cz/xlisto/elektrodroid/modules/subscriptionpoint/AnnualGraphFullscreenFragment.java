@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
-
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,13 +19,13 @@ import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 
-
 /**
  * Celoobrazovkový fragment pro zobrazení kompletní historie roční spotřeby a cen za všechna dostupná období.
  */
 public class AnnualGraphFullscreenFragment extends Fragment {
 
     private static final String ARG_SUBSCRIPTION_POINT_ID = "argSubscriptionPointId";
+    private static final String STATE_PORTRAIT_PROMPT_SHOWN = "portraitPromptShown";
 
     private long subscriptionPointId = 0L;
     private GraphYAxisView yAxisLeft;
@@ -37,10 +36,8 @@ public class AnnualGraphFullscreenFragment extends Fragment {
     private TextView tvTitle;
     private boolean portraitPromptShown = false;
 
-
     public AnnualGraphFullscreenFragment() {
     }
-
 
     public static AnnualGraphFullscreenFragment newInstance(long subscriptionPointId) {
         AnnualGraphFullscreenFragment fragment = new AnnualGraphFullscreenFragment();
@@ -50,22 +47,22 @@ public class AnnualGraphFullscreenFragment extends Fragment {
         return fragment;
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            portraitPromptShown = savedInstanceState.getBoolean(STATE_PORTRAIT_PROMPT_SHOWN, false);
+        }
         if (getArguments() != null) {
             subscriptionPointId = getArguments().getLong(ARG_SUBSCRIPTION_POINT_ID, 0L);
         }
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_annual_graph_fullscreen, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -96,7 +93,6 @@ public class AnnualGraphFullscreenFragment extends Fragment {
         loadAndDisplayData();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -104,13 +100,27 @@ public class AnnualGraphFullscreenFragment extends Fragment {
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_PORTRAIT_PROMPT_SHOWN, portraitPromptShown);
+    }
+
+
+    /**
+     * Zobrazí dialogové okno s výzvou k otočení zařízení do režimu na šířku (Landscape)
+     * výhradně v případě, kdy se zařízení nachází v režimu na výšku (Portrait).
+     */
     private void checkPortraitOrientationPrompt() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return; // V režimu na šířku (Landscape) upozornění nezobrazujeme
+        }
+
         if (!portraitPromptShown && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             portraitPromptShown = true;
             OwnAlertDialog.showDialog(requireActivity(), getString(R.string.fullscreen_graph_title), getString(R.string.rotate_to_landscape_message));
         }
     }
-
 
     private void loadAndDisplayData() {
         if (subscriptionPointId <= 0 || graphAnnualOverview == null) {
@@ -149,5 +159,4 @@ public class AnnualGraphFullscreenFragment extends Fragment {
             }
         }
     }
-
 }
