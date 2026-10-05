@@ -467,7 +467,7 @@ public class GraphAnnualOverviewView extends View {
         float padLeft = DensityUtils.dpToPx(getContext(), showYAxes ? 40 : 8);
         float padRight = DensityUtils.dpToPx(getContext(), showYAxes ? 52 : 8);
         float padTop = DensityUtils.dpToPx(getContext(), 42); // Horní okraj pro celkovou spotřebu v jedné řadě
-        float padBottom = DensityUtils.dpToPx(getContext(), showLegend ? 80 : 56);
+        float padBottom = DensityUtils.dpToPx(getContext(), showLegend ? 80 : 40);
 
         chartArea.set(padLeft, padTop, width - padRight, height - padBottom);
 

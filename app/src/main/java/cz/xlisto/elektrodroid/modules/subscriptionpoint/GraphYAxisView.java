@@ -162,7 +162,7 @@ public class GraphYAxisView extends View {
         }
 
         float padTop = DensityUtils.dpToPx(getContext(), 42);
-        float padBottom = DensityUtils.dpToPx(getContext(), 56);
+        float padBottom = DensityUtils.dpToPx(getContext(), 40);
 
         chartArea.set(0, padTop, width, height - padBottom);
 
