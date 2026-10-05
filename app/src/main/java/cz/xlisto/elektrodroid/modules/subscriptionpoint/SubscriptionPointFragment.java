@@ -562,32 +562,17 @@ public class SubscriptionPointFragment extends Fragment {
             return;
         }
 
-        if (isLandscape()) {
-            if (layoutSubscriptionPointManagement != null) {
-                layoutSubscriptionPointManagement.setVisibility(VISIBLE);
-            }
-            if (graphAnnualOverview != null) {
-                graphAnnualOverview.setVisibility(VISIBLE);
-            }
-            if (btnFullscreenGraph != null) {
-                btnFullscreenGraph.setVisibility(VISIBLE);
-            }
-            if (lnReadingNotification != null) {
-                lnReadingNotification.setVisibility(GONE);
-            }
-        } else {
-            if (layoutSubscriptionPointManagement != null) {
-                layoutSubscriptionPointManagement.setVisibility(VISIBLE);
-            }
-            if (graphAnnualOverview != null) {
-                graphAnnualOverview.setVisibility(VISIBLE);
-            }
-            if (btnFullscreenGraph != null) {
-                btnFullscreenGraph.setVisibility(VISIBLE);
-            }
-            if (lnReadingNotification != null) {
-                lnReadingNotification.setVisibility(GONE);
-            }
+        if (layoutSubscriptionPointManagement != null) {
+            layoutSubscriptionPointManagement.setVisibility(VISIBLE);
+        }
+        if (graphAnnualOverview != null) {
+            graphAnnualOverview.setVisibility(VISIBLE);
+        }
+        if (btnFullscreenGraph != null) {
+            btnFullscreenGraph.setVisibility(VISIBLE);
+        }
+        if (lnReadingNotification != null) {
+            lnReadingNotification.setVisibility(GONE);
         }
         updateAddControlsVisibility();
     }
@@ -608,16 +593,13 @@ public class SubscriptionPointFragment extends Fragment {
             if (btnFullscreenGraph != null) {
                 btnFullscreenGraph.setVisibility(GONE);
             }
-            if (lnReadingNotification != null) {
-                lnReadingNotification.setVisibility(VISIBLE);
-            }
         } else {
             if (layoutSubscriptionPointManagement != null) {
                 layoutSubscriptionPointManagement.setVisibility(GONE);
             }
-            if (lnReadingNotification != null) {
-                lnReadingNotification.setVisibility(VISIBLE);
-            }
+        }
+        if (lnReadingNotification != null) {
+            lnReadingNotification.setVisibility(VISIBLE);
         }
         if (btnAddSubscriptionPoint != null) {
             btnAddSubscriptionPoint.setVisibility(GONE);

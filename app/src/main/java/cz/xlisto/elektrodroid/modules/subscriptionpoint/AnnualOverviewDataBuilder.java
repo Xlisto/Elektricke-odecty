@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -24,7 +23,6 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
 
-
 /**
  * Agregátor a výpočetní logický modul pro přehledový kombinovaný graf roční spotřeby a průměrné ceny.
  */
@@ -33,15 +31,21 @@ public class AnnualOverviewDataBuilder {
     private final Context context;
 
 
+    /**
+     * Záznam jednoho merícího bodu (odečtu nebo faktury) pro výpočet roční spotřeby a nákladů.
+     *
+     * @param date        datum bodu v milisekundách
+     * @param vt          stav elektroměru VT
+     * @param nt          stav elektroměru NT
+     * @param priceListId id přiřazeného ceníku
+     * @param isInvoice   příznak, zda bod pochází z faktury
+     */
     public record PointEntry(long date, double vt, double nt, long priceListId, boolean isInvoice) {
-
     }
-
 
     public AnnualOverviewDataBuilder(Context context) {
         this.context = context;
     }
-
 
     /**
      * Sestaví seznam ročních dat pro zadané odběrné místo.
@@ -102,7 +106,6 @@ public class AnnualOverviewDataBuilder {
         return resultList;
     }
 
-
     /**
      * Sestaví seznam ročních dat pro zadané odběrné místo pro VŠECHNA dostupná historická období.
      * Načte nejstarší rok z databáze a vytvoří roční řadu od nejstaršího roku po aktuální rok.
@@ -127,7 +130,7 @@ public class AnnualOverviewDataBuilder {
         int startYear = currentYear - 3;
         if (!allPoints.isEmpty()) {
             Calendar calEarliest = Calendar.getInstance();
-            calEarliest.setTimeInMillis(allPoints.get(0).date);
+            calEarliest.setTimeInMillis(allPoints.get(0).date());
             int earliestYear = calEarliest.get(Calendar.YEAR);
             if (earliestYear < startYear) {
                 startYear = earliestYear;
@@ -157,9 +160,11 @@ public class AnnualOverviewDataBuilder {
         return resultList;
     }
 
-
     /**
      * Načte všechny odečty z databáze a stavy z faktur pro dané odběrné místo.
+     *
+     * @param subscriptionPoint Odběrné místo
+     * @return Seznam všech měřících bodů seřazených vzestupně
      */
     private ArrayList<PointEntry> loadAllMeterPoints(SubscriptionPointModel subscriptionPoint) {
         ArrayList<PointEntry> points = new ArrayList<>();
@@ -186,7 +191,7 @@ public class AnnualOverviewDataBuilder {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e("AnnualOverviewDataBuilder", "Error loading monthly readings", e);
+            Log.e("AnnualOverviewDataBuilder", "Error loading monthly readings: " + e.getMessage());
         } finally {
             readingSource.close();
         }
@@ -206,7 +211,7 @@ public class AnnualOverviewDataBuilder {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e("AnnualOverviewDataBuilder", "Error loading invoices", e);
+            Log.e("AnnualOverviewDataBuilder", "Error loading invoices: " + e.getMessage());
         } finally {
             invoiceSource.close();
         }
@@ -214,9 +219,14 @@ public class AnnualOverviewDataBuilder {
         return points;
     }
 
-
     /**
-     * Vypočítá roční spotřebu a váženou průměrnou cenu pro zadaný rok.
+     * Vypočítá roční spotřebu, celkové náklady a vážené průměrné ceny pro zadaný rok.
+     *
+     * @param subscriptionPoint Odběrné místo
+     * @param points            Seznam měřících bodů
+     * @param year              Požadovaný rok
+     * @param isCurrentYear     Zda se jedná o aktuální probíhající rok
+     * @return Vypočtená {@link AnnualYearData} nebo null při nedostatku dat
      */
     private AnnualYearData calculateForYear(SubscriptionPointModel subscriptionPoint,
                                             ArrayList<PointEntry> points,
@@ -241,7 +251,7 @@ public class AnnualOverviewDataBuilder {
         // Najdeme odečty v daném roce
         ArrayList<PointEntry> yearPoints = new ArrayList<>();
         for (PointEntry p : points) {
-            if (p.date >= startOfYear && p.date <= endOfYear) {
+            if (p.date() >= startOfYear && p.date() <= endOfYear) {
                 yearPoints.add(p);
             }
         }
@@ -250,7 +260,7 @@ public class AnnualOverviewDataBuilder {
             // Nemáme žádný odečet v daném roce, zkusíme zda existují odečty před a po
             PointEntry prev = findNearestBefore(points, startOfYear);
             PointEntry next = findNearestAfter(points, endOfYear);
-            if (prev == null || next == null || prev.date >= next.date) {
+            if (prev == null || next == null || prev.date() >= next.date()) {
                 return null; // Nedostatek dat pro tento rok
             }
             // Získat odhad k začátku a konci roku
@@ -265,9 +275,9 @@ public class AnnualOverviewDataBuilder {
             PointEntry maxPoint = yearPoints.get(yearPoints.size() - 1);
 
             // Zkontrolujeme, zda první bod je blízko začátku roku
-            if (Math.abs(minPoint.date - startOfYear) > 2 * 86400000L && !isCurrentYear) {
+            if (Math.abs(minPoint.date() - startOfYear) > 2 * 86400000L && !isCurrentYear) {
                 PointEntry prev = findNearestBefore(points, startOfYear);
-                if (prev != null && prev.date < minPoint.date) {
+                if (prev != null && prev.date() < minPoint.date()) {
                     PointEntry startEst = interpolatePoint(prev, minPoint, startOfYear);
                     yearPoints.add(0, startEst);
                     isEstimated = true;
@@ -276,9 +286,9 @@ public class AnnualOverviewDataBuilder {
 
             // Zkontrolujeme konec roku (pokud není aktuální rok)
             if (!isCurrentYear) {
-                if (Math.abs(maxPoint.date - endOfYear) > 2 * 86400000L) {
+                if (Math.abs(maxPoint.date() - endOfYear) > 2 * 86400000L) {
                     PointEntry next = findNearestAfter(points, endOfYear);
-                    if (next != null && next.date > maxPoint.date) {
+                    if (next != null && next.date() > maxPoint.date()) {
                         PointEntry endEst = interpolatePoint(maxPoint, next, endOfYear);
                         yearPoints.add(endEst);
                         isEstimated = true;
@@ -288,7 +298,7 @@ public class AnnualOverviewDataBuilder {
         }
 
         // Uspořádat body za rok
-        yearPoints.sort(Comparator.comparingLong(p -> p.date));
+        yearPoints.sort(Comparator.comparingLong(PointEntry::date));
 
         // Nyní z po sobě jdoucích dvojic bodů v `yearPoints` spočítáme spotřebu a náklady
         double totalVT = 0;
@@ -306,14 +316,14 @@ public class AnnualOverviewDataBuilder {
                 PointEntry p1 = yearPoints.get(i);
                 PointEntry p2 = yearPoints.get(i + 1);
 
-                double dVT = Math.max(0, p2.vt - p1.vt);
-                double dNT = Math.max(0, p2.nt - p1.nt);
-                if (dVT == 0 && dNT == 0 && p1.date == p2.date) continue;
+                double dVT = Math.max(0, p2.vt() - p1.vt());
+                double dNT = Math.max(0, p2.nt() - p1.nt());
+                if (dVT == 0 && dNT == 0 && p1.date() == p2.date()) continue;
 
                 totalVT += dVT;
                 totalNT += dNT;
 
-                long priceListId = p2.priceListId > 0 ? p2.priceListId : p1.priceListId;
+                long priceListId = p2.priceListId() > 0 ? p2.priceListId() : p1.priceListId();
                 PriceListModel rawPriceList = null;
                 if (priceListId > 0) {
                     rawPriceList = priceListSource.readPrice(priceListId);
@@ -333,10 +343,10 @@ public class AnnualOverviewDataBuilder {
                 }
 
                 // Výpočet délky úseku v měsících (využijeme MONTH pro měsíční odečty, INVOICE pro faktury)
-                DifferenceDate.TypeDate typeDate = (p1.isInvoice || p2.isInvoice) ? DifferenceDate.TypeDate.INVOICE : DifferenceDate.TypeDate.MONTH;
-                double durationMonths = Calculation.differentMonth(p1.date, p2.date, typeDate);
+                DifferenceDate.TypeDate typeDate = (p1.isInvoice() || p2.isInvoice()) ? DifferenceDate.TypeDate.INVOICE : DifferenceDate.TypeDate.MONTH;
+                double durationMonths = Calculation.differentMonth(p1.date(), p2.date(), typeDate);
                 if (durationMonths <= 0)
-                    durationMonths = (p2.date - p1.date) / (30.4375 * 86400000.0);
+                    durationMonths = (p2.date() - p1.date()) / (30.4375 * 86400000.0);
                 if (durationMonths <= 0) durationMonths = 0.001;
 
                 totalMonthsInYear += durationMonths;
@@ -417,11 +427,14 @@ public class AnnualOverviewDataBuilder {
     }
 
 
+    /**
+     * Vrací textové rozpětí měsíců v aktuálním roce (např. "(leden–září)").
+     */
     @Nullable
     private static String getCurrentYearMonthsRange(boolean isCurrentYear, ArrayList<PointEntry> yearPoints) {
         String currentYearMonthsRange = null;
-        if (isCurrentYear) {
-            long maxDateInYear = yearPoints.get(yearPoints.size() - 1).date;
+        if (isCurrentYear && !yearPoints.isEmpty()) {
+            long maxDateInYear = yearPoints.get(yearPoints.size() - 1).date();
             Calendar calMax = Calendar.getInstance();
             calMax.setTimeInMillis(maxDateInYear);
             int lastMonthIndex = calMax.get(Calendar.MONTH);
@@ -432,11 +445,14 @@ public class AnnualOverviewDataBuilder {
     }
 
 
+    /**
+     * Najde nejbližší měřící bod před zadaným datem.
+     */
     private PointEntry findNearestBefore(ArrayList<PointEntry> points, long targetDate) {
         PointEntry res = null;
         for (PointEntry p : points) {
-            if (p.date < targetDate) {
-                if (res == null || p.date > res.date) {
+            if (p.date() < targetDate) {
+                if (res == null || p.date() > res.date()) {
                     res = p;
                 }
             }
@@ -445,11 +461,14 @@ public class AnnualOverviewDataBuilder {
     }
 
 
+    /**
+     * Najde nejbližší měřící bod po zadaném datu.
+     */
     private PointEntry findNearestAfter(ArrayList<PointEntry> points, long targetDate) {
         PointEntry res = null;
         for (PointEntry p : points) {
-            if (p.date > targetDate) {
-                if (res == null || p.date < res.date) {
+            if (p.date() > targetDate) {
+                if (res == null || p.date() < res.date()) {
                     res = p;
                 }
             }
@@ -458,13 +477,15 @@ public class AnnualOverviewDataBuilder {
     }
 
 
+    /**
+     * Interpoluje nový měřící bod v požadovaném datu na základě dvou okolních bodů.
+     */
     private PointEntry interpolatePoint(PointEntry p1, PointEntry p2, long targetDate) {
-        if (p1.date >= p2.date) return p1;
-        double ratio = (double) (targetDate - p1.date) / (double) (p2.date - p1.date);
-        double estVT = p1.vt + (p2.vt - p1.vt) * ratio;
-        double estNT = p1.nt + (p2.nt - p1.nt) * ratio;
-        long priceId = ratio < 0.5 ? p1.priceListId : p2.priceListId;
+        if (p1.date() >= p2.date()) return p1;
+        double ratio = (double) (targetDate - p1.date()) / (double) (p2.date() - p1.date());
+        double estVT = p1.vt() + (p2.vt() - p1.vt()) * ratio;
+        double estNT = p1.nt() + (p2.nt() - p1.nt()) * ratio;
+        long priceId = ratio < 0.5 ? p1.priceListId() : p2.priceListId();
         return new PointEntry(targetDate, estVT, estNT, priceId, false);
     }
-
 }

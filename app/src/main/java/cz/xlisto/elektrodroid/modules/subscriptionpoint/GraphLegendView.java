@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
@@ -20,11 +19,12 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.utils.DensityUtils;
 import cz.xlisto.elektrodroid.utils.DetectNightMode;
 
-
 /**
  * Vlastní View komponenta pro samostatnou pevnou legendu ročního kombinovaného grafu.
  */
 public class GraphLegendView extends View {
+
+    private static final String TAG = "GraphLegendView";
 
     private int colorVT = 0xFF2E7D32;
     private int colorNT = 0xFF512DA8;
@@ -50,18 +50,15 @@ public class GraphLegendView extends View {
     private final RectF bgCardRect = new RectF();
     private final RectF tempRect = new RectF();
 
-
     public GraphLegendView(Context context) {
         super(context);
         init(context);
     }
 
-
     public GraphLegendView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
-
 
     public GraphLegendView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -69,6 +66,11 @@ public class GraphLegendView extends View {
     }
 
 
+    /**
+     * Inicializuje grafické nástroje Paint a načte uživatelské barvy.
+     *
+     * @param context Aplikační kontext
+     */
     private void init(Context context) {
         DataSettingsSource settingsSource = new DataSettingsSource(context);
         settingsSource.open();
@@ -79,7 +81,7 @@ public class GraphLegendView extends View {
                 colorNT = colors[1];
             }
         } catch (Exception e) {
-            Log.e("GraphLegendView", "Error loading colors from database", e);
+            Log.e(TAG, "Chyba při načítání barev legendy: " + e.getMessage());
         } finally {
             settingsSource.close();
         }
@@ -147,6 +149,12 @@ public class GraphLegendView extends View {
     }
 
 
+    /**
+     * Nastaví data a parametry pro zobrazení legendy (jednotka MWh/kWh a příznak dvoutarifní sazby).
+     *
+     * @param isMWh        true - spotřeba je v MWh, false - v kWh
+     * @param isDualTariff true - zobrazí se položky pro VT i NT, false - pouze jednorežim
+     */
     public void setLegendData(boolean isMWh, boolean isDualTariff) {
         this.isMWh = isMWh;
         this.isDualTariff = isDualTariff;
@@ -154,10 +162,12 @@ public class GraphLegendView extends View {
     }
 
 
+    /**
+     * Zjistí, zda je potřeba zvýraznit obrys položky kvůli nízkému kontrastu vůči pozadí.
+     */
     private boolean needsOutlineBorder(int color, int cardBgColor) {
         return ColorUtils.calculateContrast(color, cardBgColor) < 1.6;
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -165,7 +175,6 @@ public class GraphLegendView extends View {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         setMeasuredDimension(width, desiredHeight);
     }
-
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -205,8 +214,9 @@ public class GraphLegendView extends View {
         String labelVT = getContext().getString(R.string.graph_legend_vt, isMWh ? "MWh" : "kWh");
         canvas.drawText(labelVT, c0X + boxSize + 4, row1Y, paintText);
 
+        float c1X = startX + 1 * colW;
         if (isDualTariff) {
-            float c1X = startX + 1 * colW;
+
             tempRect.set(c1X, row1Y - boxSize + 2, c1X + boxSize, row1Y + 2);
             canvas.drawRect(tempRect, paintBarNT);
             if (needsOutlineBorder(colorNT, cardBgColor)) {
@@ -224,7 +234,6 @@ public class GraphLegendView extends View {
             String labelFixed = getContext().getString(R.string.graph_legend_fixed_cost);
             canvas.drawText(labelFixed, c2X + (boxSize * 0.5f) + 4, row1Y, paintText);
         } else {
-            float c1X = startX + 1 * colW;
             tempRect.set(c1X, row1Y - boxSize + 2, c1X + (boxSize * 0.5f), row1Y + 2);
             canvas.drawRect(tempRect, paintBarFixed);
             if (needsOutlineBorder(colorFixedCost, cardBgColor)) {
@@ -240,7 +249,6 @@ public class GraphLegendView extends View {
             canvas.drawCircle(c0X + sampleLength / 2f, row2Y - 3, markerR, paintMarkerVT);
             canvas.drawText("Cena VT", c0X + sampleLength + 6, row2Y, paintText);
 
-            float c1X = startX + 1 * colW;
             canvas.drawLine(c1X, row2Y - 3, c1X + sampleLength, row2Y - 3, paintLineNT);
             canvas.drawCircle(c1X + sampleLength / 2f, row2Y - 3, markerR, paintMarkerNT);
             canvas.drawText("Cena NT", c1X + sampleLength + 6, row2Y, paintText);
@@ -271,5 +279,4 @@ public class GraphLegendView extends View {
             canvas.drawText("Cena celkem", c0X + sampleLength + 6, row2Y, paintText);
         }
     }
-
 }
