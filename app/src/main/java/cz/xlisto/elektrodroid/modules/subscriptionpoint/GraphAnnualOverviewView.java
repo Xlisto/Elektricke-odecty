@@ -353,13 +353,47 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
-    private float customMinSlotWidthDp = 80f;
+    private float customMinSlotWidthDp = 0f;
 
 
     public void setCustomMinSlotWidthDp(float minSlotWidthDp) {
         this.customMinSlotWidthDp = minSlotWidthDp;
         requestLayout();
         invalidate();
+    }
+
+
+    private float calculateRequiredPadLeft() {
+        paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
+        paintText.setFakeBoldText(true);
+        float titleW = paintText.measureText(isMWh ? "MWh" : "kWh");
+        paintText.setFakeBoldText(false);
+
+        String maxConsStr = DecimalFormatHelper.df1.format(maxConsumption);
+        float maxNumW = paintText.measureText(maxConsStr);
+
+        float maxTextW = Math.max(titleW, maxNumW);
+        float axisGap = DensityUtils.dpToPx(getContext(), 6);
+        float marginEdge = DensityUtils.dpToPx(getContext(), 8);
+
+        return axisGap + maxTextW + marginEdge;
+    }
+
+
+    private float calculateRequiredPadRight(Locale locale) {
+        paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
+        paintText.setFakeBoldText(true);
+        float titleW = paintText.measureText("Kč/MWh");
+        paintText.setFakeBoldText(false);
+
+        String maxPriceStr = String.format(locale, "%.0f", maxPrice);
+        float maxNumW = paintText.measureText(maxPriceStr);
+
+        float maxTextW = Math.max(titleW, maxNumW);
+        float axisGap = DensityUtils.dpToPx(getContext(), 6);
+        float marginEdge = DensityUtils.dpToPx(getContext(), 8);
+
+        return axisGap + maxTextW + marginEdge;
     }
 
     @Override
@@ -381,8 +415,9 @@ public class GraphAnnualOverviewView extends View {
         int calculatedWidth = widthSize;
         if (yearDataList != null && !yearDataList.isEmpty() && customMinSlotWidthDp > 0) {
             float minSlotPx = DensityUtils.dpToPx(getContext(), customMinSlotWidthDp);
-            float padLeft = DensityUtils.dpToPx(getContext(), showYAxes ? 40 : 8);
-            float padRight = DensityUtils.dpToPx(getContext(), showYAxes ? 52 : 8);
+            Locale locale = getContext().getResources().getConfiguration().getLocales().get(0);
+            float padLeft = showYAxes ? calculateRequiredPadLeft() : DensityUtils.dpToPx(getContext(), 8);
+            float padRight = showYAxes ? calculateRequiredPadRight(locale) : DensityUtils.dpToPx(getContext(), 8);
             int requiredWidth = (int) (padLeft + padRight + yearDataList.size() * minSlotPx);
 
             if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED || requiredWidth > widthSize) {
@@ -463,29 +498,34 @@ public class GraphAnnualOverviewView extends View {
             return;
         }
 
-        // Okraje grafu
-        float padLeft = DensityUtils.dpToPx(getContext(), showYAxes ? 40 : 8);
-        float padRight = DensityUtils.dpToPx(getContext(), showYAxes ? 52 : 8);
+        Locale locale = getContext().getResources().getConfiguration().getLocales().get(0);
+
+        // Okraje grafu vypočtené dynamicky podle přesné šířky textu kót a jednotek
+        float padLeft = showYAxes ? calculateRequiredPadLeft() : DensityUtils.dpToPx(getContext(), 8);
+        float padRight = showYAxes ? calculateRequiredPadRight(locale) : DensityUtils.dpToPx(getContext(), 8);
         float padTop = DensityUtils.dpToPx(getContext(), 42); // Horní okraj pro celkovou spotřebu v jedné řadě
         float padBottom = DensityUtils.dpToPx(getContext(), showLegend ? 80 : 40);
 
         chartArea.set(padLeft, padTop, width - padRight, height - padBottom);
 
-        if (showYAxes) {
-            // Názvy jednotek VÝŠE nad mřížkovým polem grafu
-            paintText.setTextAlign(Paint.Align.LEFT);
-            paintText.setFakeBoldText(true);
-            canvas.drawText(isMWh ? "MWh" : "kWh", padLeft, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
-
-            paintText.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText("Kč/MWh", width - padRight, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
-            paintText.setFakeBoldText(false);
-        }
-
         // Mřížka a popisky os Y
         int steps = 4;
-        Locale locale = getContext().getResources().getConfiguration().getLocales().get(0);
-        float axisGap = DensityUtils.dpToPx(getContext(), 10); // Odstup čísel osy od svislé čáry osy Y
+        float axisGap = DensityUtils.dpToPx(getContext(), 6); // Odstup čísel osy od svislé čáry osy Y
+
+        if (showYAxes) {
+            // Názvy jednotek VÝŠE nad mřížkovým polem grafu
+            paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
+            paintText.setFakeBoldText(true);
+
+            // Levá jednotka MWh zarovnaná doprava k číslům levé osy
+            paintText.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText(isMWh ? "MWh" : "kWh", chartArea.left - axisGap, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
+
+            // Pravá jednotka Kč/MWh zarovnaná doleva k číslům pravé osy
+            paintText.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText("Kč/MWh", chartArea.right + axisGap, padTop - DensityUtils.dpToPx(getContext(), 20), paintText);
+            paintText.setFakeBoldText(false);
+        }
 
         for (int i = 0; i <= steps; i++) {
             float y = chartArea.bottom - (chartArea.height() * i / steps);
