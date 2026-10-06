@@ -104,6 +104,10 @@ zejména oprávnění pro notifikace a přesné alarmy.
   <img src="screenshots/odb_4.png" width="300" />
 </p>
 
+<p align="center">
+  <img src="screenshots/odb_5.png" height="300" />
+</p>
+
 ## Ceník
 
 Ceník je důležitou součástí výpočtu v aplikaci. Nesprávně nastavený ceník může způsobit výraznou odchylku ve výpočtech, proto je jeho vytvoření v aplikaci co nejvíce zjednodušeno.
