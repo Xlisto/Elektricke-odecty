@@ -6,33 +6,35 @@ package cz.xlisto.elektrodroid.models;
  */
 public class SubscriptionPointModel {
     private long _id;
-    private long milins;
+    private final long milins;
     private final String name;
     private final String description;
-    private String subscriptionPointId;
     private final int countPhaze;
     private final int phaze;
     private final String numberElectricMeter;
     private final String numberSubscriptionPoint;
-    public SubscriptionPointModel(long _id,String name, String description, long milins,int countPhaze, int phaze, String numberElectricMeter, String numberSubscriptionPoint) {
+
+
+    public SubscriptionPointModel(long _id, String name, String description, long milins, int countPhaze, int phaze, String numberElectricMeter, String numberSubscriptionPoint) {
         this._id = _id;
-        this.name = name;
-        this.description = description;
+        this.name = name != null ? name : "";
+        this.description = description != null ? description : "";
         this.milins = milins;
         this.countPhaze = countPhaze;
         this.phaze = phaze;
-        this.numberElectricMeter = numberElectricMeter;
-        this.numberSubscriptionPoint = numberSubscriptionPoint;
+        this.numberElectricMeter = numberElectricMeter != null ? numberElectricMeter : "";
+        this.numberSubscriptionPoint = numberSubscriptionPoint != null ? numberSubscriptionPoint : "";
     }
 
-    public SubscriptionPointModel(String name, String description, long milins,int countPhaze, int phaze, String numberElectricMeter, String numberSubscriptionPoint) {
-        this.name = name;
-        this.description = description;
+
+    public SubscriptionPointModel(String name, String description, long milins, int countPhaze, int phaze, String numberElectricMeter, String numberSubscriptionPoint) {
+        this.name = name != null ? name : "";
+        this.description = description != null ? description : "";
         this.milins = milins;
         this.countPhaze = countPhaze;
         this.phaze = phaze;
-        this.numberElectricMeter = numberElectricMeter;
-        this.numberSubscriptionPoint = numberSubscriptionPoint;
+        this.numberElectricMeter = numberElectricMeter != null ? numberElectricMeter : "";
+        this.numberSubscriptionPoint = numberSubscriptionPoint != null ? numberSubscriptionPoint : "";
     }
 
     public long getId() {
@@ -45,10 +47,6 @@ public class SubscriptionPointModel {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getSubscriptionPointId() {
-        return subscriptionPointId;
     }
 
     public int getCountPhaze() {
@@ -93,9 +91,6 @@ public class SubscriptionPointModel {
     }
     public String getTablePLATBY(){
         return "PLATBY"+milins;
-    }
-    public void setMilins(long milins){
-        this.milins = milins;
     }
 
 

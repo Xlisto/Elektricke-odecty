@@ -214,7 +214,12 @@ public class DataSettingsSource extends DataSource {
         dataSubscriptionPointSource.open();
         open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        String timeShift = PREFIX_TIME_SHIFT + subscriptionPoint.getIdMilins();
+        String timeShift;
+        if (subscriptionPoint != null) {
+            timeShift = PREFIX_TIME_SHIFT + subscriptionPoint.getIdMilins();
+        } else {
+            timeShift = PREFIX_TIME_SHIFT + idSubscriptionPoint;
+        }
         dataSubscriptionPointSource.close();
         return timeShift;
     }
@@ -232,7 +237,12 @@ public class DataSettingsSource extends DataSource {
         dataSubscriptionPointSource.open();
         open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        String firstMeter = PREFIX_FIRST_METER + subscriptionPoint.getIdMilins();
+        String firstMeter;
+        if (subscriptionPoint != null) {
+            firstMeter = PREFIX_FIRST_METER + subscriptionPoint.getIdMilins();
+        } else {
+            firstMeter = PREFIX_FIRST_METER + idSubscriptionPoint;
+        }
         dataSubscriptionPointSource.close();
         return firstMeter;
     }
@@ -398,7 +408,12 @@ public class DataSettingsSource extends DataSource {
         dataSubscriptionPointSource.open();
         open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        String name = PREFIX_HDO_WIDGETS + subscriptionPoint.getIdMilins();
+        String name;
+        if (subscriptionPoint != null) {
+            name = PREFIX_HDO_WIDGETS + subscriptionPoint.getIdMilins();
+        } else {
+            name = PREFIX_HDO_WIDGETS + idSubscriptionPoint;
+        }
         dataSubscriptionPointSource.close();
         return name;
     }

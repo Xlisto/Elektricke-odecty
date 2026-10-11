@@ -71,7 +71,10 @@ public class PaymentFragment extends Fragment {
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        table = subscriptionPoint.getTablePLATBY();
+        if (subscriptionPoint != null) {
+            table = subscriptionPoint.getTablePLATBY();
+        }
+        dataSubscriptionPointSource.close();
         if (getArguments() != null) {
             idFak = getArguments().getLong(ID_FAK);
             position = getArguments().getInt(POSITION);

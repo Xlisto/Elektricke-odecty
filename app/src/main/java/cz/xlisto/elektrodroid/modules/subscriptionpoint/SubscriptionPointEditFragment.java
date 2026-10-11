@@ -1,6 +1,7 @@
 package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +60,13 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         super.onViewCreated(view, savedInstanceState);
 
         btnSave.setOnClickListener(v -> {
-            update(itemId);
+            if (subscriptionPoint != null) {
+                update(itemId);
+            }
             Keyboard.hide(requireActivity());
-            getParentFragmentManager().popBackStack();
+            if (isAdded()) {
+                getParentFragmentManager().popBackStack();
+            }
         });
     }
 
@@ -72,7 +77,22 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
         if (isFirstLoad) {
             isFirstLoad = false;
             loadSubscriptionPoint(itemId);
-            setItems();
+            if (subscriptionPoint != null) {
+                setItems();
+            } else {
+                Log.w(TAG, "Subscription point with id " + itemId + " not found.");
+                if (isAdded()) {
+                    getParentFragmentManager().popBackStack();
+                }
+            }
+        } else if (subscriptionPoint == null) {
+            loadSubscriptionPoint(itemId);
+            if (subscriptionPoint == null) {
+                Log.w(TAG, "Subscription point with id " + itemId + " not found.");
+                if (isAdded()) {
+                    getParentFragmentManager().popBackStack();
+                }
+            }
         }
     }
 
@@ -93,6 +113,7 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
 
 
     private void update(long itemId) {
+        if (subscriptionPoint == null) return;
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
         dataSubscriptionPointSource.updateSubscriptionPoint(createSubscriptionPoint(subscriptionPoint.getMilins()), itemId);
@@ -101,6 +122,7 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
 
 
     private void setItems(){
+        if (subscriptionPoint == null) return;
         letName.setDefaultText(subscriptionPoint.getName());
         letDescription.setDefaultText(subscriptionPoint.getDescription());
         letNumberEletrometer.setDefaultText(subscriptionPoint.getNumberElectricMeter());

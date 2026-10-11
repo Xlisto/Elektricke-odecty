@@ -388,10 +388,12 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
-        tableFak = subscriptionPoint.getTableFAK();
-        tableNow = subscriptionPoint.getTableTED();
-        tablePay = subscriptionPoint.getTablePLATBY();
-        tableRead = subscriptionPoint.getTableO();
+        if (subscriptionPoint != null) {
+            tableFak = subscriptionPoint.getTableFAK();
+            tableNow = subscriptionPoint.getTableTED();
+            tablePay = subscriptionPoint.getTablePLATBY();
+            tableRead = subscriptionPoint.getTableO();
+        }
         dataSubscriptionPointSource.close();
     }
 

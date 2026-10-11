@@ -4,8 +4,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,11 +32,12 @@ import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
 
 import cz.xlisto.elektrodroid.R;
@@ -60,15 +59,8 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 public class SubscriptionPointFragment extends Fragment {
 
     private static final String FLAG_DELETE_SUBSCRIPTION_POINT = "flagDeleteSubscriptionPoint";
-    private static final String PREF_READING_NOTIFICATION_ENABLED = "reading_notification_enabled";
-    private static final String PREF_READING_NOTIFICATION_FREQUENCY = "reading_notification_frequency";
-    private static final String PREF_READING_NOTIFICATION_TIME = "reading_notification_time";
-    private static final String PREF_READING_NOTIFICATION_DAY_OF_MONTH = "reading_notification_day_of_month";
-    private static final String PREF_READING_NOTIFICATION_DAY_OF_WEEK = "reading_notification_day_of_week";
     private static final int FREQUENCY_MONTHLY = 0;
     private static final int FREQUENCY_WEEKLY = 1;
-    private static final String TIME_DEFAULT = "09:00";
-    private static final String DAY_OF_MONTH_DEFAULT = "1";
     private static final int DAY_OF_MONTH_MIN = 1;
     private static final int DAY_OF_MONTH_MAX = 31;
 
@@ -765,48 +757,79 @@ public class SubscriptionPointFragment extends Fragment {
         dialog.show();
     }
 
-    private SharedPreferences getNotificationPrefs() {
-        return requireContext().getSharedPreferences("subscription_point_notifications", Context.MODE_PRIVATE);
-    }
-
     private boolean loadReadingNotificationEnabled(long id) {
-        return getNotificationPrefs().getBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, false);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        boolean enabled = dataSettingsSource.loadReadingNotificationEnabled(id);
+        dataSettingsSource.close();
+        return enabled;
     }
 
     private void setReadingNotificationEnabled(long id, boolean enabled) {
-        getNotificationPrefs().edit().putBoolean(PREF_READING_NOTIFICATION_ENABLED + "_" + id, enabled).apply();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        dataSettingsSource.setReadingNotificationEnabled(id, enabled);
+        dataSettingsSource.close();
     }
 
     private int loadReadingNotificationFrequency(long id) {
-        return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, FREQUENCY_MONTHLY);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        int frequency = dataSettingsSource.loadReadingNotificationFrequency(id);
+        dataSettingsSource.close();
+        return frequency;
     }
 
     private void setReadingNotificationFrequency(long id, int frequency) {
-        getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_FREQUENCY + "_" + id, frequency).apply();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        dataSettingsSource.setReadingNotificationFrequency(id, frequency);
+        dataSettingsSource.close();
     }
 
     private String loadReadingNotificationTime(long id) {
-        return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_TIME + "_" + id, TIME_DEFAULT);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        String time = dataSettingsSource.loadReadingNotificationTime(id);
+        dataSettingsSource.close();
+        return time;
     }
 
     private void setReadingNotificationTime(long id, String time) {
-        getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_TIME + "_" + id, time).apply();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        dataSettingsSource.setReadingNotificationTime(id, time);
+        dataSettingsSource.close();
     }
 
     private String loadReadingNotificationDayOfMonth(long id) {
-        return getNotificationPrefs().getString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, DAY_OF_MONTH_DEFAULT);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        String day = dataSettingsSource.loadReadingNotificationDayOfMonth(id);
+        dataSettingsSource.close();
+        return day;
     }
 
     private void setReadingNotificationDayOfMonth(long id, String dayOfMonth) {
-        getNotificationPrefs().edit().putString(PREF_READING_NOTIFICATION_DAY_OF_MONTH + "_" + id, dayOfMonth).apply();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        dataSettingsSource.setReadingNotificationDayOfMonth(id, dayOfMonth);
+        dataSettingsSource.close();
     }
 
     private int loadReadingNotificationDayOfWeek(long id) {
-        return getNotificationPrefs().getInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, Calendar.MONDAY);
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        int day = dataSettingsSource.loadReadingNotificationDayOfWeek(id);
+        dataSettingsSource.close();
+        return day;
     }
 
     private void setReadingNotificationDayOfWeek(long id, int dayOfWeek) {
-        getNotificationPrefs().edit().putInt(PREF_READING_NOTIFICATION_DAY_OF_WEEK + "_" + id, dayOfWeek).apply();
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        dataSettingsSource.setReadingNotificationDayOfWeek(id, dayOfWeek);
+        dataSettingsSource.close();
     }
 
     private String clampDayOfMonth(String raw) {
