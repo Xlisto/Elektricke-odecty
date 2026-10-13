@@ -775,7 +775,10 @@ public class GraphAnnualOverviewView extends View {
 
             double vtVal = isMWh ? (data.consumptionVT() / 1000.0) : data.consumptionVT();
             double ntVal = isMWh ? (data.consumptionNT() / 1000.0) : data.consumptionNT();
-            double totalVal = vtVal + ntVal;
+
+            double vtRounded = Math.round(vtVal * 10.0) / 10.0;
+            double ntRounded = isDualTariff ? (Math.round(ntVal * 10.0) / 10.0) : 0.0;
+            double totalVal = vtRounded + ntRounded;
 
             RectF rectVT = vtBarRects[i];
             RectF rectNT = ntBarRects[i];
