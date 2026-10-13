@@ -363,6 +363,17 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    private void drawInnerBorder(Canvas canvas, RectF rect, Paint paint) {
+        float halfStroke = paint.getStrokeWidth() / 2f;
+        tempBoxRect.set(
+                rect.left + halfStroke,
+                rect.top + halfStroke,
+                rect.right - halfStroke,
+                rect.bottom - halfStroke
+        );
+        canvas.drawRect(tempBoxRect, paint);
+    }
+
     private float calculateRequiredPadLeft() {
         paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
         paintText.setFakeBoldText(true);
@@ -627,7 +638,7 @@ public class GraphAnnualOverviewView extends View {
                 rectVT.set(leftMain, yVtTop, rightMain, yBottom);
                 canvas.drawRect(rectVT, paintBarVT);
                 if (borderVT) {
-                    canvas.drawRect(rectVT, paintBarBorder);
+                    drawInnerBorder(canvas, rectVT, paintBarBorder);
                 }
 
                 // Sloupec NT (pokud je dvoutarif)
@@ -636,7 +647,7 @@ public class GraphAnnualOverviewView extends View {
                     rectNT.set(leftMain, yNtTop, rightMain, yVtTop);
                     canvas.drawRect(rectNT, paintBarNT);
                     if (borderNT) {
-                        canvas.drawRect(rectNT, paintBarBorder);
+                        drawInnerBorder(canvas, rectNT, paintBarBorder);
                     }
                 }
 
@@ -650,7 +661,7 @@ public class GraphAnnualOverviewView extends View {
                 rectFixed.set(leftFixed, yFixedTop, rightFixed, yBottom);
                 canvas.drawRect(rectFixed, paintBarFixed);
                 if (borderFixed) {
-                    canvas.drawRect(rectFixed, paintBarBorder);
+                    drawInnerBorder(canvas, rectFixed, paintBarBorder);
                 }
 
                 // Obnovení alpha

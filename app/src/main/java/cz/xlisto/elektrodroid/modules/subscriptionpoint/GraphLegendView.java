@@ -162,6 +162,17 @@ public class GraphLegendView extends View {
     }
 
 
+    private void drawInnerBorder(Canvas canvas, RectF rect, Paint paint) {
+        float halfStroke = paint.getStrokeWidth() / 2f;
+        tempRect.set(
+                rect.left + halfStroke,
+                rect.top + halfStroke,
+                rect.right - halfStroke,
+                rect.bottom - halfStroke
+        );
+        canvas.drawRect(tempRect, paint);
+    }
+
     /**
      * Zjistí, zda je potřeba zvýraznit obrys položky kvůli nízkému kontrastu vůči pozadí.
      */
@@ -209,7 +220,7 @@ public class GraphLegendView extends View {
         tempRect.set(c0X, row1Y - boxSize + 2, c0X + boxSize, row1Y + 2);
         canvas.drawRect(tempRect, paintBarVT);
         if (needsOutlineBorder(colorVT, cardBgColor)) {
-            canvas.drawRect(tempRect, paintBarBorder);
+            drawInnerBorder(canvas, tempRect, paintBarBorder);
         }
         String labelVT = getContext().getString(R.string.graph_legend_vt, isMWh ? "MWh" : "kWh");
         canvas.drawText(labelVT, c0X + boxSize + 4, row1Y, paintText);
@@ -220,7 +231,7 @@ public class GraphLegendView extends View {
             tempRect.set(c1X, row1Y - boxSize + 2, c1X + boxSize, row1Y + 2);
             canvas.drawRect(tempRect, paintBarNT);
             if (needsOutlineBorder(colorNT, cardBgColor)) {
-                canvas.drawRect(tempRect, paintBarBorder);
+                drawInnerBorder(canvas, tempRect, paintBarBorder);
             }
             String labelNT = getContext().getString(R.string.graph_legend_nt, isMWh ? "MWh" : "kWh");
             canvas.drawText(labelNT, c1X + boxSize + 4, row1Y, paintText);
@@ -229,7 +240,7 @@ public class GraphLegendView extends View {
             tempRect.set(c2X, row1Y - boxSize + 2, c2X + (boxSize * 0.5f), row1Y + 2);
             canvas.drawRect(tempRect, paintBarFixed);
             if (needsOutlineBorder(colorFixedCost, cardBgColor)) {
-                canvas.drawRect(tempRect, paintBarBorder);
+                drawInnerBorder(canvas, tempRect, paintBarBorder);
             }
             String labelFixed = getContext().getString(R.string.graph_legend_fixed_cost);
             canvas.drawText(labelFixed, c2X + (boxSize * 0.5f) + 4, row1Y, paintText);
@@ -237,7 +248,7 @@ public class GraphLegendView extends View {
             tempRect.set(c1X, row1Y - boxSize + 2, c1X + (boxSize * 0.5f), row1Y + 2);
             canvas.drawRect(tempRect, paintBarFixed);
             if (needsOutlineBorder(colorFixedCost, cardBgColor)) {
-                canvas.drawRect(tempRect, paintBarBorder);
+                drawInnerBorder(canvas, tempRect, paintBarBorder);
             }
             String labelFixed = getContext().getString(R.string.graph_legend_fixed_cost);
             canvas.drawText(labelFixed, c1X + (boxSize * 0.5f) + 4, row1Y, paintText);
