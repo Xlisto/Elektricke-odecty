@@ -297,7 +297,8 @@ public class GraphMonthFragment extends Fragment {
      * @return následující měsíc, který není prázdný
      */
     private int checkEmptyMonths(int compareMonth, boolean back) {
-        if (consuptionContainer == null) return 0;
+        if (consuptionContainer == null || consuptionContainer.getMonthsConsuptionsArray().isEmpty())
+            return 0;
         boolean allEmpty = true;
         for (int i = 0; i < consuptionContainer.getMonthsConsuptionsArray().size(); i++) {
             if (!consuptionContainer.getMonthsConsuptionsArray().get(i).isEmpty()) {
@@ -307,15 +308,21 @@ public class GraphMonthFragment extends Fragment {
         }
 
         if (!allEmpty) {
-            while (consuptionContainer.getMonthsConsuptionsArray().get(compareMonth).isEmpty()) {
+            int attempts = 0;
+            int size = consuptionContainer.getMonthsConsuptionsArray().size();
+            while (attempts < size && (compareMonth < 0 || compareMonth >= size || consuptionContainer.getMonthsConsuptionsArray().get(compareMonth).isEmpty())) {
                 if (back) {
                     compareMonth--;
-                    if (compareMonth < 0) compareMonth = 11;
+                    if (compareMonth < 0) compareMonth = size - 1;
                 } else {
                     compareMonth++;
-                    if (compareMonth > 11) compareMonth = 0;
+                    if (compareMonth >= size) compareMonth = 0;
                 }
+                attempts++;
             }
+        }
+        if (compareMonth < 0 || compareMonth >= consuptionContainer.getMonthsConsuptionsArray().size()) {
+            return 0;
         }
         return compareMonth;
     }
