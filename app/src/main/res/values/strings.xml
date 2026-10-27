@@ -317,8 +317,17 @@
     <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
     <string name="set_color_html">Nastavení barvy</string>
-    <string name="set_color_html_title">Výběr barvy podle notace HTML </string>
-    <string name="set">Nastav </string>
+    <string name="set_color_html_title">Výběr barvy podle notace HTML</string>
+    <string name="set">Nastavit</string>
+    <string name="graph_color_fine_tuning">Jemné doladění barev</string>
+    <string name="graph_color_preview">Náhled v grafu</string>
+    <string name="graph_color_recommended_themes">Doporučená témata</string>
+    <string name="graph_color_presets_light">Pro světlý režim</string>
+    <string name="graph_color_presets_dark">Pro tmavý režim</string>
+    <string name="graph_color_chip_vt">VT: %s</string>
+    <string name="graph_color_chip_nt">NT: %s</string>
+    <string name="graph_color_history_title">Historie použitých barev</string>
+    <string name="graph_color_saved">Barvy grafu byly uloženy</string>
 
     <string name="dist_uzemi">%s\nDist. území: %s</string>
     <string name="empty">&#160;</string>

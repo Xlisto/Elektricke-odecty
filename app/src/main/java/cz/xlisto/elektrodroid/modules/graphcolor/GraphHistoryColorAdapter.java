@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,7 +31,7 @@ public class GraphHistoryColorAdapter extends RecyclerView.Adapter<GraphHistoryC
     public static class ViewHolder extends RecyclerView.ViewHolder {
         View vVT, vNT;
         TextView tvVT, tvNT;
-        RelativeLayout rl;
+        View cardItem;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,7 +54,7 @@ public class GraphHistoryColorAdapter extends RecyclerView.Adapter<GraphHistoryC
         viewHolder.vNT = view.findViewById(R.id.vNT);
         viewHolder.tvVT = view.findViewById(R.id.tvVTHistoryColor);
         viewHolder.tvNT = view.findViewById(R.id.tvNTHistoryColor);
-        viewHolder.rl = view.findViewById(R.id.rlGraphHistoryItem);
+        viewHolder.cardItem = view.findViewById(R.id.rlGraphHistoryItem);
         return viewHolder;
     }
 
@@ -67,7 +66,7 @@ public class GraphHistoryColorAdapter extends RecyclerView.Adapter<GraphHistoryC
         holder.vNT.setBackgroundColor(htmlToColor(colors[1]));
         holder.tvVT.setText(colors[0]);
         holder.tvNT.setText(colors[1]);
-        holder.rl.setOnClickListener(v ->
+        holder.cardItem.setOnClickListener(v ->
                 graphColorDialogFragment.setColors(colors)
         );
     }

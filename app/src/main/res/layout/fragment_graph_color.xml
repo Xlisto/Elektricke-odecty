@@ -1,40 +1,378 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_main"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestedScrollViewGraphColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="0dp"
-    android:paddingEnd="0dp"
-    android:paddingTop="0dp"
-    android:paddingBottom="0dp">
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnSave"
-            style="?android:attr/buttonBarButtonStyle"
+        <!-- KARTA VT (Vysoký tarif) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardVT"
+            style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/description_vt_color"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipVTColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        app:chipCornerRadius="12dp"
+                        app:chipIconSize="20dp"
+                        tools:text="#A4F8C3" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/llSwatchesVT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- KARTA NT (Nízký tarif) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNT"
+            style="?attr/materialCardViewOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/description_nt_color"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNTColor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        app:chipCornerRadius="12dp"
+                        app:chipIconSize="20dp"
+                        tools:text="#F6F5BE" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/llSwatchesNT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- KARTA VÝBĚRU A JEMNÉHO DOLADĚNÍ -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/graph_color_fine_tuning"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipFineTuningVT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:textColor="?attr/colorOnSurface"
+                        app:chipCornerRadius="10dp"
+                        app:chipIconSize="16dp"
+                        tools:text="VT: #A4F8C3" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipFineTuningNT"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        app:chipCornerRadius="10dp"
+                        app:chipIconSize="16dp"
+                        tools:text="NT: #F6F5BE" />
+                </LinearLayout>
+
+                <cz.xlisto.elektrodroid.modules.graphcolor.GraphColorView
+                    android:id="@+id/graphColorView"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- KARTA ŽIVÝ NÁHLED GRAFU -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/graph_color_preview"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:background="?attr/colorSurfaceVariant"
+                    android:gravity="bottom|center_horizontal"
+                    android:orientation="horizontal"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:layout_width="28dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+
+                        <View
+                            android:id="@+id/previewBarVT1"
+                            android:layout_width="match_parent"
+                            android:layout_height="65dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="28dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="20dp"
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+
+                        <View
+                            android:id="@+id/previewBarNT1"
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="28dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="8dp"
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+
+                        <View
+                            android:id="@+id/previewBarVT2"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="28dp"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+
+                        <View
+                            android:id="@+id/previewBarNT2"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:id="@+id/previewLegendVT"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="VT"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                    <View
+                        android:id="@+id/previewLegendNT"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NT"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- KARTA DOPORUČENÁ TÉMATA (5x2 PRESETS GRID) -->
+        <com.google.android.material.card.MaterialCardView
+            style="?attr/materialCardViewOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/graph_color_recommended_themes"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold" />
+
+                <!-- Sekce pro Světlý režim (5x2 grid) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/graph_color_presets_light"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOutline" />
+
+                <LinearLayout
+                    android:id="@+id/llPresetsLight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="vertical" />
+
+                <!-- Sekce pro Tmavý režim (5x2 grid) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/graph_color_presets_dark"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorOutline" />
+
+                <LinearLayout
+                    android:id="@+id/llPresetsDark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TLAČÍTKO ULOŽIT -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
             android:text="@string/ulozit"
-            android:textColor="@color/primary_text_button_color" />
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            app:icon="@drawable/ic_save_24"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp" />
+
     </LinearLayout>
-
-    <cz.xlisto.elektrodroid.modules.graphcolor.GraphColorView
-        android:id="@+id/graphColorView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/buttons"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/color_graph_background"
-        android:paddingBottom="0dp"
-        android:paddingEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingTop="0dp" />
-
-</RelativeLayout>
+</androidx.core.widget.NestedScrollView>

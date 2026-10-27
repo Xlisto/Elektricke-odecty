@@ -14,27 +14,32 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
-import cz.xlisto.elektrodroid.R;
+import com.google.android.material.R;
 
 
 /**
  * View pro výběr barev VT a NT.
- * Vykresluje gradienty pro výběr odstínu, saturace a jasu pro obě sazby.
+ * Vykresluje gradienty pro výběr odstínu, saturace a jasu pro obě sazby s Material 3 stylizací.
  * Xlisto 17.10.2023 21:27
  */
 public class GraphColorView extends View {
+
+    public interface OnColorChangeListener {
+
+        void onColorChanged(int colorVT, int colorNT);
+
+    }
 
     private static final boolean DEBUG = false;
 
@@ -55,22 +60,23 @@ public class GraphColorView extends View {
     private final int[] mSelectedColorGradientNT = new int[]{Color.WHITE, Color.BLACK};
     private final Paint pVT = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintVT_B = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint pText = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pNT = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintNT_B = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pBackground = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pPointerOut = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pPointerIn = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pPointerShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
     Paint debugPaint = new Paint();
-    Paint debugPaint2 = new Paint();
     private int lastX = Integer.MIN_VALUE;
     private int lastY = Integer.MIN_VALUE;
     private final float[] mHSV_VT = new float[]{1f, 1f, 1f};
     private final float[] mHSV_NT = new float[]{1f, 1f, 1f};
-    private final int pointerRadius = (int) (10 * metrics.density);
+    private final int pointerRadius = (int) (12 * metrics.density);
+    private final float cornerRadius = 12 * metrics.density;
     private int orientation = 0;
     Shader mShaderVT, mShaderNT, mShaderVT_B, mShaderNT_B;
+    private OnColorChangeListener onColorChangeListener;
 
 
     public GraphColorView(Context context) {
@@ -85,19 +91,48 @@ public class GraphColorView extends View {
     }
 
 
+    public void setOnColorChangeListener(OnColorChangeListener listener) {
+        this.onColorChangeListener = listener;
+    }
+
+
     private void init() {
         pVT.setColor(Color.RED);
         pNT.setColor(Color.GREEN);
-        pText.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
-        pText.setTextSize(15 * (int) metrics.density);
-        pText.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        pBorder.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
-        pBackground.setColor(ContextCompat.getColor(getContext(), R.color.color_graph_background));
+
+        // Získání barev z Material 3 tématu
+        TypedValue typedValue = new TypedValue();
+        int outlineColor = Color.GRAY;
+        int surfaceColor = Color.TRANSPARENT;
+
+        if (getContext().getTheme().resolveAttribute(R.attr.colorOutline, typedValue, true)) {
+            outlineColor = typedValue.data;
+        }
+        if (getContext().getTheme().resolveAttribute(R.attr.colorSurface, typedValue, true)) {
+            surfaceColor = typedValue.data;
+        }
+
+        pBorder.setColor(outlineColor);
+        pBorder.setStyle(Paint.Style.STROKE);
+        pBorder.setStrokeWidth(1.5f * metrics.density);
+
+        pBackground.setColor(surfaceColor);
+
+        pPointerOut.setStyle(Paint.Style.STROKE);
+        pPointerOut.setStrokeWidth(3 * metrics.density);
+        pPointerOut.setColor(Color.WHITE);
+
+        pPointerIn.setStyle(Paint.Style.STROKE);
+        pPointerIn.setStrokeWidth(1.5f * metrics.density);
+        pPointerIn.setColor(Color.BLACK);
+
+        pPointerShadow.setStyle(Paint.Style.FILL);
+        pPointerShadow.setColor(Color.argb(80, 0, 0, 0));
+
         setLayerType(View.LAYER_TYPE_SOFTWARE, isInEditMode() ? null : pVT);
         selectedWindow = 0;
         orientation = getResources().getConfiguration().orientation;
         updateSelectedGradients();
-
     }
 
 
@@ -118,13 +153,11 @@ public class GraphColorView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        //minimální výška
-        int minContentHeight = 1000;
+        int minContentHeight = (int) (280 * metrics.density);
         int minHeight = minContentHeight + getPaddingTop() + getPaddingBottom();
         int height = resolveSizeAndState(minHeight, heightMeasureSpec, 0);
 
-        //minimální šířka
-        int minContentWidth = 800;
+        int minContentWidth = (int) (280 * metrics.density);
         int minWidth = minContentWidth - getPaddingLeft() - getPaddingRight();
         int width = resolveSizeAndState(minWidth, widthMeasureSpec, 0);
 
@@ -142,37 +175,28 @@ public class GraphColorView extends View {
         pNT.setShader(mShaderNT);
         paintVT_B.setShader(mShaderVT_B);
         paintNT_B.setShader(mShaderNT_B);
-        canvas.drawRect(rectVTBorder, pBorder);
-        canvas.drawRect(rectNTBorder, pBorder);
-        canvas.drawRect(rectVTSaturBorder, pBorder);
-        canvas.drawRect(rectNTSaturBorder, pBorder);
-        canvas.drawRect(rectVT, pBackground);
-        canvas.drawRect(rectNT, pBackground);
-        canvas.drawRect(rectVT, pVT);
-        canvas.drawRect(rectNT, pNT);
-        canvas.drawRect(rectVTSatur, paintVT_B);
-        canvas.drawRect(rectNTSatur, paintNT_B);
+
+        // Vykreslení pozadí a gradientů se zaoblenými rohy pro M3 vzhled
+        canvas.drawRoundRect(rectVT, cornerRadius, cornerRadius, pBackground);
+        canvas.drawRoundRect(rectNT, cornerRadius, cornerRadius, pBackground);
+
+        canvas.drawRoundRect(rectVT, cornerRadius, cornerRadius, pVT);
+        canvas.drawRoundRect(rectNT, cornerRadius, cornerRadius, pNT);
+        canvas.drawRoundRect(rectVTSatur, cornerRadius, cornerRadius, paintVT_B);
+        canvas.drawRoundRect(rectNTSatur, cornerRadius, cornerRadius, paintNT_B);
+
+        // Obrysy karet s M3 outline barvou
+        canvas.drawRoundRect(rectVTBorder, cornerRadius, cornerRadius, pBorder);
+        canvas.drawRoundRect(rectNTBorder, cornerRadius, cornerRadius, pBorder);
+        canvas.drawRoundRect(rectVTSaturBorder, cornerRadius, cornerRadius, pBorder);
+        canvas.drawRoundRect(rectNTSaturBorder, cornerRadius, cornerRadius, pBorder);
 
         if (DEBUG) {
             debugPaint.setColor(Color.BLACK);
             debugPaint.setTextSize(16f * metrics.density);
             canvas.drawText("Souřadnice tapnutí: X " + lastX + "  Y " + lastY, getPaddingLeft(), rectNT.top + (20 * metrics.density), debugPaint);
-            canvas.drawText("Souřadnice VT: H " + rectVT.top + "  D " + rectVT.bottom, getPaddingLeft(), rectNT.top + (40 * metrics.density), debugPaint);
-            canvas.drawText("Souřadnice NT: H " + rectNT.top + "  D " + rectNT.bottom, getPaddingLeft(), rectNT.top + (60 * metrics.density), debugPaint);
-            canvas.drawText("Vybrané okno:" + selectedWindow, getPaddingLeft(), rectNT.top + (80 * metrics.density), debugPaint);
-            canvas.drawText("Vybraná barva VT:" + Color.HSVToColor(mHSV_VT) + " | " + mHSV_VT[0] + " | " + mHSV_VT[1] + " | " + mHSV_VT[2], getPaddingLeft(), rectNT.top + (100 * metrics.density), debugPaint);
-            canvas.drawText("Vybraná barva NT:" + Color.HSVToColor(mHSV_NT) + " | " + mHSV_NT[0] + " | " + mHSV_NT[1] + " | " + mHSV_NT[2], getPaddingLeft(), rectNT.top + (120 * metrics.density), debugPaint);
-            debugPaint2.setStrokeWidth(10 * metrics.density);
-            debugPaint2.setColor(Color.HSVToColor(mHSV_VT));
-            canvas.drawLine(getPaddingLeft(), rectNT.top + (130 * metrics.density), 200 * metrics.density, rectNT.top + (130 * metrics.density),
-                    debugPaint2);
-            debugPaint2.setColor(Color.HSVToColor(mHSV_NT));
-            canvas.drawLine(getPaddingLeft(), rectNT.top + (140 * metrics.density), 200 * metrics.density, rectNT.top + (140 * metrics.density),
-                    debugPaint2);
         }
         onDrawPointer(canvas);
-        canvas.drawText("Barva sazby VT (" + colorToHtml(getColorVT()) + ")", rectVT.left, rectVT.top - (12 * metrics.density), pText);
-        canvas.drawText("Barva sazby NT (" + colorToHtml(getColorNT()) + ")", rectNT.left, rectNT.top - (12 * metrics.density), pText);
     }
 
 
@@ -180,32 +204,51 @@ public class GraphColorView extends View {
      * Vypočítá pozice všech obdélníků pro výběr barev podle orientace a rozměrů view.
      */
     private void updateLayoutRects() {
-        int border = (int) (1 * metrics.density);
-        int quarterVertically = (height - getPaddingTop() - getPaddingBottom()) / 4;
+        int padding = (int) (4 * metrics.density);
+        int sectionHeight = (height - getPaddingTop() - getPaddingBottom()) / 2;
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            rectVTBorder.set(getPaddingLeft(), getPaddingTop() + (30 * metrics.density), width - getPaddingRight(), (float) (quarterVertically * 1.5));
-            rectVT.set(getPaddingLeft() + border, getPaddingTop() + (30 * metrics.density) + border, width - getPaddingRight() - border, (float) (quarterVertically * 1.5 - border));
+            float vtTop = getPaddingTop() + padding;
+            float vtHueHeight = sectionHeight * 0.65f;
+            float vtSaturTop = vtTop + vtHueHeight + padding * 2;
+            float vtSaturHeight = sectionHeight * 0.25f;
 
-            rectNTBorder.set(getPaddingLeft(), quarterVertically * 2 + (30 * metrics.density), width - getPaddingRight(), (float) (quarterVertically * 2 + quarterVertically * 1.5));
-            rectNT.set(getPaddingLeft() + border, quarterVertically * 2 + getPaddingTop() + (30 * metrics.density) + border, width - getPaddingRight() - border, (float) (quarterVertically * 2 + quarterVertically * 1.5 - border));
+            rectVTBorder.set(getPaddingLeft(), vtTop, width - getPaddingRight(), vtTop + vtHueHeight);
+            rectVT.set(rectVTBorder);
 
-            rectVTSaturBorder.set(getPaddingLeft(), (float) (quarterVertically * 1.5) + (15 * metrics.density), width - getPaddingRight(), quarterVertically * 2 - (20 * metrics.density));
-            rectVTSatur.set(getPaddingLeft() + border, (float) (quarterVertically * 1.5) + border + (15 * metrics.density), width - getPaddingRight() - border, quarterVertically * 2 - border - (20 * metrics.density));
+            rectVTSaturBorder.set(getPaddingLeft(), vtSaturTop, width - getPaddingRight(), vtSaturTop + vtSaturHeight);
+            rectVTSatur.set(rectVTSaturBorder);
 
-            rectNTSaturBorder.set(getPaddingLeft(), quarterVertically * 2 + (float) (quarterVertically * 1.5) + (15 * metrics.density), width - getPaddingRight(), height - (20 * metrics.density));
-            rectNTSatur.set(getPaddingLeft() + border, quarterVertically * 2 + (float) (quarterVertically * 1.5) + border + (15 * metrics.density), width - getPaddingRight() - border, height - border - (20 * metrics.density));
+            float ntTop = getPaddingTop() + sectionHeight + padding;
+            float ntHueHeight = sectionHeight * 0.65f;
+            float ntSaturTop = ntTop + ntHueHeight + padding * 2;
+            float ntSaturHeight = sectionHeight * 0.25f;
+
+            rectNTBorder.set(getPaddingLeft(), ntTop, width - getPaddingRight(), ntTop + ntHueHeight);
+            rectNT.set(rectNTBorder);
+
+            rectNTSaturBorder.set(getPaddingLeft(), ntSaturTop, width - getPaddingRight(), ntSaturTop + ntSaturHeight);
+            rectNTSatur.set(rectNTSaturBorder);
+
         } else {
-            rectVTBorder.set(getPaddingLeft(), getPaddingTop() + (30 * metrics.density), (width / 2f) - (15 * metrics.density), quarterVertically * 3);
-            rectVT.set(getPaddingLeft() + border, getPaddingTop() + (30 * metrics.density) + border, (width / 2f) - (15 * metrics.density) - border, quarterVertically * 3 - border);
+            float halfWidth = (width - getPaddingLeft() - getPaddingRight()) / 2f;
 
-            rectNTBorder.set((width / 2f) + (15 * metrics.density), getPaddingTop() + (30 * metrics.density), width - getPaddingRight(), quarterVertically * 3);
-            rectNT.set((width / 2f) + (15 * metrics.density) + border, getPaddingTop() + (30 * metrics.density) + border, width - getPaddingRight() - border, quarterVertically * 3 - border);
+            float vtTop = getPaddingTop() + padding;
+            float vtHueHeight = (height - getPaddingTop() - getPaddingBottom()) * 0.65f;
+            float vtSaturTop = vtTop + vtHueHeight + padding * 2;
+            float vtSaturHeight = (height - getPaddingTop() - getPaddingBottom()) * 0.25f;
 
-            rectVTSaturBorder.set(getPaddingLeft(), (quarterVertically * 3) + (30 * metrics.density), (width / 2f) - (15 * metrics.density), height - getPaddingBottom());
-            rectVTSatur.set(getPaddingLeft() + border, (quarterVertically * 3) + border + (30 * metrics.density), (width / 2f) - (15 * metrics.density) - border, height - getPaddingBottom() - border);
+            rectVTBorder.set(getPaddingLeft(), vtTop, getPaddingLeft() + halfWidth - padding, vtTop + vtHueHeight);
+            rectVT.set(rectVTBorder);
 
-            rectNTSaturBorder.set((width / 2f) + (15 * metrics.density), quarterVertically * 3 + (30 * metrics.density), width - getPaddingRight(), height - getPaddingBottom());
-            rectNTSatur.set((width / 2f) + (15 * metrics.density) + border, quarterVertically * 3 + border + (30 * metrics.density), width - getPaddingRight() - border, height - getPaddingBottom() - border);
+            rectVTSaturBorder.set(getPaddingLeft(), vtSaturTop, getPaddingLeft() + halfWidth - padding, vtSaturTop + vtSaturHeight);
+            rectVTSatur.set(rectVTSaturBorder);
+
+            rectNTBorder.set(getPaddingLeft() + halfWidth + padding, vtTop, width - getPaddingRight(), vtTop + vtHueHeight);
+            rectNT.set(rectNTBorder);
+
+            rectNTSaturBorder.set(getPaddingLeft() + halfWidth + padding, vtSaturTop, width - getPaddingRight(), vtSaturTop + vtSaturHeight);
+            rectNTSatur.set(rectNTSaturBorder);
         }
     }
 
@@ -221,7 +264,6 @@ public class GraphColorView extends View {
 
     /**
      * Znovu vytvoří shadery pro horní i spodní výběrové plochy.
-     * Volá se pouze při změně rozměrů nebo změně zvolených barev.
      */
     private void rebuildShaders() {
         LinearGradient gradientShaderVT = new LinearGradient(rectVT.left, rectVT.top, rectVT.right, rectVT.top, GRAD_COLORS, null, Shader.TileMode.CLAMP);
@@ -238,44 +280,53 @@ public class GraphColorView extends View {
 
 
     private void onDrawPointer(Canvas canvas) {
-        //vykreslení ukazatele
-        pPointerOut.setColor(Color.BLACK);
-        pPointerIn.setColor(Color.YELLOW);
-        pPointerOut.setStyle(Paint.Style.STROKE);//nastavení linky
-        pPointerIn.setStyle(Paint.Style.STROKE);//nastavení linky
-        pPointerOut.setStrokeWidth(3 * metrics.density);//nastavení tloušťky čáry
-        pPointerIn.setStrokeWidth(1 * metrics.density);//nastavení tloušťky čáry
-        canvas.drawCircle(hueToPoint(mHSV_VT[0], 1), saturationToPoint(mHSV_VT[1], 1), pointerRadius, pPointerOut);//ukazatel barvy VT
-        canvas.drawCircle(hueToPoint(mHSV_VT[0], 1), saturationToPoint(mHSV_VT[1], 1), pointerRadius + 2, pPointerIn);//ukazatel barvy VT
-        canvas.drawCircle(hueToPoint(mHSV_NT[0], 3), saturationToPoint(mHSV_NT[1], 3), pointerRadius, pPointerOut);//ukazatel barvy NT
-        canvas.drawCircle(hueToPoint(mHSV_NT[0], 3), saturationToPoint(mHSV_NT[1], 3), pointerRadius + 2, pPointerIn);//ukazatel barvy NT
-        canvas.drawCircle(brightnessToPoint(mHSV_VT[2], 2), rectVTSatur.bottom - (rectVTSatur.height() / 2), pointerRadius, pPointerOut);//ukazatel brightnes VT
-        canvas.drawCircle(brightnessToPoint(mHSV_VT[2], 2), rectVTSatur.bottom - (rectVTSatur.height() / 2), pointerRadius + 2, pPointerIn);//ukazatel brightnes VT
-        canvas.drawCircle(brightnessToPoint(mHSV_NT[2], 4), rectNTSatur.bottom - (rectNTSatur.height() / 2), pointerRadius, pPointerOut);//ukazatel brightnes NT
-        canvas.drawCircle(brightnessToPoint(mHSV_NT[2], 4), rectNTSatur.bottom - (rectNTSatur.height() / 2), pointerRadius + 2, pPointerIn);//ukazatel brightnes NT
+        // Souřadnice ukazatelů pro VT a NT
+        float vtX = hueToPoint(mHSV_VT[0], 1);
+        float vtY = saturationToPoint(mHSV_VT[1], 1);
+
+        float ntX = hueToPoint(mHSV_NT[0], 3);
+        float ntY = saturationToPoint(mHSV_NT[1], 3);
+
+        float vtSaturX = brightnessToPoint(mHSV_VT[2], 2);
+        float vtSaturY = rectVTSatur.centerY();
+
+        float ntSaturX = brightnessToPoint(mHSV_NT[2], 4);
+        float ntSaturY = rectNTSatur.centerY();
+
+        drawPointerCircle(canvas, vtX, vtY);
+        drawPointerCircle(canvas, ntX, ntY);
+        drawPointerCircle(canvas, vtSaturX, vtSaturY);
+        drawPointerCircle(canvas, ntSaturX, ntSaturY);
+    }
+
+
+    private void drawPointerCircle(Canvas canvas, float x, float y) {
+        canvas.drawCircle(x, y + 2 * metrics.density, pointerRadius, pPointerShadow);
+        canvas.drawCircle(x, y, pointerRadius, pPointerOut);
+        canvas.drawCircle(x, y, pointerRadius - 2 * metrics.density, pPointerIn);
     }
 
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //pozice tápnutí
         lastX = (int) event.getX();
         lastY = (int) event.getY();
-        if ((lastY > rectVTBorder.top) && (lastY < rectVTBorder.bottom) && (lastX < rectVTBorder.right)) {
+
+        if ((lastY >= rectVTBorder.top) && (lastY <= rectVTBorder.bottom) && (lastX >= rectVTBorder.left) && (lastX <= rectVTBorder.right)) {
             selectedWindow = 1;
-        } else if ((lastY > rectNTBorder.top) && (lastY < rectNTBorder.bottom) && (lastX > rectNTBorder.left)) {
+        } else if ((lastY >= rectNTBorder.top) && (lastY <= rectNTBorder.bottom) && (lastX >= rectNTBorder.left) && (lastX <= rectNTBorder.right)) {
             selectedWindow = 3;
-
-        } else if ((lastY > rectVTSaturBorder.top) && (lastY < rectVTSaturBorder.bottom) && (lastX < rectVTBorder.right)) {
+        } else if ((lastY >= rectVTSaturBorder.top) && (lastY <= rectVTSaturBorder.bottom) && (lastX >= rectVTSaturBorder.left) && (lastX <= rectVTSaturBorder.right)) {
             selectedWindow = 2;
-
-        } else if ((lastY > rectNTSaturBorder.top) && (lastY < rectNTSaturBorder.bottom) && (lastX > rectNTBorder.left)) {
+        } else if ((lastY >= rectNTSaturBorder.top) && (lastY <= rectNTSaturBorder.bottom) && (lastX >= rectNTSaturBorder.left) && (lastX <= rectNTSaturBorder.right)) {
             selectedWindow = 4;
+        }
 
-        } else selectedWindow = 0;
         selectColor(lastX, lastY);
         updateSelectedGradients();
         rebuildShaders();
+
+        notifyColorChanged();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -283,9 +334,6 @@ public class GraphColorView extends View {
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                getParent().requestDisallowInterceptTouchEvent(false);
-                break;
-
             case MotionEvent.ACTION_UP:
                 getParent().requestDisallowInterceptTouchEvent(false);
                 performClick();
@@ -296,11 +344,13 @@ public class GraphColorView extends View {
     }
 
 
-    /**
-     * Obslouží kliknutí na view kvůli správné kompatibilitě s přístupností.
-     *
-     * @return vždy true, protože kliknutí je zpracováno
-     */
+    private void notifyColorChanged() {
+        if (onColorChangeListener != null) {
+            onColorChangeListener.onColorChanged(getColorVT(), getColorNT());
+        }
+    }
+
+
     @Override
     public boolean performClick() {
         super.performClick();
@@ -308,52 +358,35 @@ public class GraphColorView extends View {
     }
 
 
-    /**
-     * Vyberte barvu na základě poskytnutých souřadnic (x, y) ve zobrazení.
-     *
-     * @param x X-souřadnice dotyku
-     * @param y Y-souřadnice dotyku
-     */
     private void selectColor(int x, int y) {
-        //vrátí souřadnice kliknutí nebo minimální či maximální hodnotu
-
-        //jsou obsaženy dva obdélníky, tedy budu muset rozlišovat ke kterému se přiřadit
         if (selectedWindow == 1) {
-            y = (int) Math.max(rectVT.top, Math.min(y, rectVT.bottom));//porovnává souřadnice kliknutí s kliknutím do obdelníku
-            //souřadnice x (vodorovné) porovnává dvě čísla a vrátí menší či větší podle min nebo max; zde se porovnávají souřadnice kliknutí s souřadnicemi obdélníku
-            x = (int) Math.max(rectVT.left, Math.min(x, rectVT.right));//porovnávání čísel, funkci ještě odzkoušet na externím projektu
+            y = (int) Math.max(rectVT.top, Math.min(y, rectVT.bottom));
+            x = (int) Math.max(rectVT.left, Math.min(x, rectVT.right));
         }
         if (selectedWindow == 3) {
-            y = (int) Math.max(rectNT.top, Math.min(y, rectNT.bottom));//porovnává souřadnice kliknutí s kliknutím do obdelníku
-            //souřadnice x (vodorovné) porovnává dvě čísla a vrátí menší či větší podle min nebo max; zde se porovnávají souřadnice kliknutí s souřadnicemi obdélníku
-            x = (int) Math.max(rectNT.left, Math.min(x, rectNT.right));//porovnávání čísel, funkci ještě odzkoušet na externím projektu
+            y = (int) Math.max(rectNT.top, Math.min(y, rectNT.bottom));
+            x = (int) Math.max(rectNT.left, Math.min(x, rectNT.right));
         }
         if (selectedWindow == 2) {
-            y = (int) Math.max(rectVTSatur.top, Math.min(y, rectVTSatur.bottom));//porovnává souřadnice kliknutí s kliknutím do obdelníku
-            //souřadnice x (vodorovné) porovnává dvě čísla a vrátí menší či větší podle min nebo max; zde se porovnávají souřadnice kliknutí s souřadnicemi obdélníku
-            x = (int) Math.max(rectVTSatur.left, Math.min(x, rectVTSatur.right));//porovnávání čísel, funkci ještě odzkoušet na externím projektu
+            y = (int) Math.max(rectVTSatur.top, Math.min(y, rectVTSatur.bottom));
+            x = (int) Math.max(rectVTSatur.left, Math.min(x, rectVTSatur.right));
         }
         if (selectedWindow == 4) {
-            y = (int) Math.max(rectNTSatur.top, Math.min(y, rectNTSatur.bottom));//porovnává souřadnice kliknutí s kliknutím do obdelníku
-            //souřadnice x (vodorovné) porovnává dvě čísla a vrátí menší či větší podle min nebo max; zde se porovnávají souřadnice kliknutí s souřadnicemi obdélníku
-
-            x = (int) Math.max(rectNTSatur.left, Math.min(x, rectNTSatur.right));//porovnávání čísel, funkci ještě odzkoušet na externím projektu
-
+            y = (int) Math.max(rectNTSatur.top, Math.min(y, rectNTSatur.bottom));
+            x = (int) Math.max(rectNTSatur.left, Math.min(x, rectNTSatur.right));
         }
 
         if (selectedWindow == 1) {
-            float hue = pointToHue(x, 1);//vrací číslo 0 - 360
+            float hue = pointToHue(x, 1);
             float sat = pointToSaturation(y);
             mHSV_VT[0] = hue;
             mHSV_VT[1] = sat;
-            //mHSV_VT[2] = pointToValueBrightness(x);
         }
         if (selectedWindow == 3) {
-            float hue = pointToHue(x, 3);//vrací číslo 0 - 360
+            float hue = pointToHue(x, 3);
             float sat = pointToSaturation(y);
             mHSV_NT[0] = hue;
             mHSV_NT[1] = sat;
-            //mHSV_NT[2] = 1.f;
         }
         if (selectedWindow == 2) {
             float b = pointToValueBrightness(x, 2);
@@ -363,38 +396,22 @@ public class GraphColorView extends View {
             float b = pointToValueBrightness(x, 4);
             mHSV_NT[2] = b;
         }
-
     }
 
 
-    /**
-     * Převádí X-ovou souřadnici na hodnotu odstínu v zadaném okně.
-     *
-     * @param x              X-ová souřadnice dotyku.
-     * @param selectedWindow Vybrané okno (1 pro VT, 3 pro NT).
-     * @return Pohotovostní hodnota v rozsahu [0, 360].
-     */
     private float pointToHue(float x, int selectedWindow) {
-
         if (selectedWindow == 1) {
             x = x - rectVT.left;
-            return x * 360f / rectVT.width();
+            return x * 360f / Math.max(1, rectVT.width());
         }
         if (selectedWindow == 3) {
             x = x - rectNT.left;
-            return x * 360f / rectNT.width();
+            return x * 360f / Math.max(1, rectNT.width());
         }
         return 0;
     }
 
 
-    /**
-     * Převádí hodnotu odstínu na X-ovou souřadnici v zadaném okně.
-     *
-     * @param hue            Hodnota odstínu.
-     * @param selectedWindow Vybrané okno (1 pro VT, 3 pro NT).
-     * @return X-ová souřadnice v zadaném okně.
-     */
     private int hueToPoint(float hue, int selectedWindow) {
         if (selectedWindow == 1)
             return (int) (rectVT.left + ((hue * rectVT.width()) / 360));
@@ -404,120 +421,65 @@ public class GraphColorView extends View {
     }
 
 
-    /**
-     * Nastaví barvu VT a NT v RGB formátu.
-     *
-     * @param colors Pole obsahující barvy VT a NT v RGB formátu.
-     */
     protected void setColors(int[] colors) {
         setColor(colors[0], colors[1]);
     }
 
 
-    /**
-     * Nastaví barvu VT a NT v RGB formátu.
-     *
-     * @param colorVT Barva VT v RGB formátu.
-     * @param colorNT Barva NT v RGB formátu.
-     */
     private void setColor(int colorVT, int colorNT) {
         Color.colorToHSV(colorVT, mHSV_VT);
         Color.colorToHSV(colorNT, mHSV_NT);
-        mSelectedColorGradientVT[0] = colorVT;//nastavuji brightnes u okna 2
+        mSelectedColorGradientVT[0] = colorVT;
         mSelectedColorGradientNT[0] = colorNT;
         rebuildShaders();
         invalidate();
+        notifyColorChanged();
     }
 
 
-    /**
-     * Vrátí barvu VT v RGB formátu.
-     *
-     * @return Barva VT v RGB formátu.
-     */
     int getColorVT() {
         return Color.HSVToColor(mHSV_VT);
     }
 
 
-    /**
-     * Vrátí barvu NT v RGB formátu.
-     *
-     * @return Barva NT v RGB formátu.
-     */
     int getColorNT() {
         return Color.HSVToColor(mHSV_NT);
     }
 
 
-    /**
-     * Vrátí barvu VT v HTML formátu.
-     *
-     * @return Barva VT v HTML formátu.
-     */
     public String getColorVTHTML() {
         return colorToHtml(Color.HSVToColor(mHSV_VT));
     }
 
 
-    /**
-     * Nastaví barvu VT a NT v HTML formátu.
-     *
-     * @param colorVT Barva VT v HTML formátu.
-     * @param colorNT Barva NT v HTML formátu.
-     */
     public void setColorsHTML(String colorVT, String colorNT) {
         setColor(htmlToColor(colorVT), htmlToColor(colorNT));
     }
 
 
-    /**
-     * Vrátí barvu NT v HTML formátu.
-     *
-     * @return Barva NT v HTML formátu.
-     */
     public String getColorNTHTML() {
         return colorToHtml(Color.HSVToColor(mHSV_NT));
     }
 
 
-    /**
-     * Vrátí barvy VT a NT v poli.
-     *
-     * @return Pole obsahující barvy VT a NT v RGB formátu.
-     */
     int[] getColors() {
         return new int[]{getColorVT(), getColorNT()};
     }
 
 
-    /**
-     * Vrátí barvu v RGB formátu.
-     *
-     * @param x           souřadnice X
-     * @param vybraneOkno vybrané okno
-     * @return Barva v RGB formátu.
-     */
     private float pointToValueBrightness(float x, int vybraneOkno) {
         if (vybraneOkno == 2) {
             x = x - rectVTSaturBorder.left;
-            return 1 - (1.f / rectVTSaturBorder.width() * x);
+            return 1 - (1.f / Math.max(1, rectVTSaturBorder.width()) * x);
         }
         if (vybraneOkno == 4) {
             x = x - rectNTSaturBorder.left;
-            return 1 - (1.f / rectNTSaturBorder.width() * x);
+            return 1 - (1.f / Math.max(1, rectNTSaturBorder.width()) * x);
         }
         return 1.f;
     }
 
 
-    /**
-     * Vrátí barvu v RGB formátu.
-     *
-     * @param val   hodnota
-     * @param sazba vybrané okno
-     * @return Barva v RGB formátu.
-     */
     private int brightnessToPoint(float val, int sazba) {
         val = 1 - val;
         if (sazba == 2 || sazba == 1)
@@ -527,35 +489,20 @@ public class GraphColorView extends View {
         return 0;
     }
 
-    //transparentnost do svisla
 
-
-    /**
-     * Vrátí barvu v RGB formátu.
-     *
-     * @param y souřadnice Y
-     * @return Barva v RGB formátu.
-     */
     private float pointToSaturation(float y) {
         if (selectedWindow == 1) {
             y = y - rectVT.top;
-            return 1 - (1.f / rectVT.height() * y);
+            return 1 - (1.f / Math.max(1, rectVT.height()) * y);
         }
         if (selectedWindow == 3) {
             y = y - rectNT.top;
-            return 1 - (1.f / rectNT.height() * y);
+            return 1 - (1.f / Math.max(1, rectNT.height()) * y);
         }
         return 0.5f;
     }
 
 
-    /**
-     * Vrátí Y-souřadnici na základě hodnoty saturace.
-     *
-     * @param sat   Hodnota saturace.
-     * @param sazba Vybrané okno (1 pro VT, 3 pro NT).
-     * @return Y-souřadnice v zadaném okně.
-     */
     private int saturationToPoint(float sat, int sazba) {
         sat = 1 - sat;
         if (sazba == 1)
@@ -566,12 +513,6 @@ public class GraphColorView extends View {
     }
 
 
-    /**
-     * Převede barvu v RGB formátu na číselný formát.
-     *
-     * @param hsv barva v RGB formátu
-     * @return Barva v číselném formátu.
-     */
     private int getColorForGradient(float[] hsv) {
         if (hsv[2] != 1f) {
             float oldV = hsv[2];
@@ -640,7 +581,6 @@ public class GraphColorView extends View {
         }
 
 
-        //required field that makes Parcelables from a Parcel
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<>() {
                     public SavedState createFromParcel(Parcel in) {

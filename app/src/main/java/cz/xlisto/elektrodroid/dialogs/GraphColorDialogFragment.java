@@ -1,15 +1,12 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -17,6 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -28,15 +28,13 @@ import cz.xlisto.elektrodroid.modules.graphcolor.GraphHistoryColorAdapter;
 
 
 /**
- * Dialog pro úpravu barev grafu (VT/NT) pomocí HTML hex formátu.
+ * Dialog pro úpravu barev grafu (VT/NT) pomocí HTML hex formátu v Material 3 provedení.
  *
- * <p>Fragment zobrazuje vstupní pole pro barvy VT a NT, průběžný náhled,
+ * <p>Fragment zobrazuje vstupní pole s TextInputLayout pro barvy VT a NT, průběžný náhled,
  * validaci formátu {@code #RRGGBB} a historii dříve použitých barev.
  * Po potvrzení vrací vybrané hodnoty přes Fragment Result API pod klíčem
  * {@link #RESULT_GRAPH_COLOR_DIALOG_FRAGMENT}.</p>
  *
- * <p>Součástí je i podpora převzetí barvy z historie
- * (viz {@link GraphHistoryColorAdapter} a metoda {@link #setColors(String[])}).</p>
  * Xlisto 27.10.2023 19:48
  */
 public class GraphColorDialogFragment extends DialogFragment {
@@ -45,19 +43,12 @@ public class GraphColorDialogFragment extends DialogFragment {
     public static final String ARG_VT_COLOR = "vtColor";
     public static final String ARG_NT_COLOR = "ntColor";
     public static final String RESULT_GRAPH_COLOR_DIALOG_FRAGMENT = "resultGraphColorDialogFragment";
-    private Drawable drawableEditText;
     private View vVT, vNT;
     private EditText etVT, etNT;
+    private TextInputLayout tilVT, tilNT;
     private ArrayList<String> items = new ArrayList<>();
 
 
-    /**
-     * Vytvoří novou instanci dialogu s předanými výchozími barvami VT/NT.
-     *
-     * @param vtColor barva VT ve formátu HTML (např. {@code #FF0000})
-     * @param ntColor barva NT ve formátu HTML (např. {@code #0000FF})
-     * @return připravená instance dialogu
-     */
     public static GraphColorDialogFragment newInstance(String vtColor, String ntColor) {
         Bundle bundle = new Bundle();
         bundle.putString(ARG_VT_COLOR, vtColor);
@@ -68,15 +59,9 @@ public class GraphColorDialogFragment extends DialogFragment {
     }
 
 
-    /**
-     * Načte historii dříve použitých barev z databáze.
-     *
-     * @param savedInstanceState uložený stav instance (může být null)
-     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //načítám historii barev
         DataGraphColor dataGraphColor = new DataGraphColor(getContext());
         dataGraphColor.open();
         items = dataGraphColor.loadColorsHistory();
@@ -84,12 +69,6 @@ public class GraphColorDialogFragment extends DialogFragment {
     }
 
 
-    /**
-     * Vytvoří a nakonfiguruje dialog s validací barev, náhledy a historií.
-     *
-     * @param savedInstanceState uložený stav instance (může být null)
-     * @return sestavený dialog
-     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -98,33 +77,22 @@ public class GraphColorDialogFragment extends DialogFragment {
         String vtColor = bundle.getString(ARG_VT_COLOR);
         String ntColor = bundle.getString(ARG_NT_COLOR);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         View view = getLayoutInflater().inflate(R.layout.dialog_fragment_graph_color, null);
 
         etVT = view.findViewById(R.id.etVTDialogFragment);
         etNT = view.findViewById(R.id.etNTDialogFragment);
-        Button btnOK = view.findViewById(R.id.btnSave);
-        Button btnCancel = view.findViewById(R.id.btnCancel);
+        tilVT = view.findViewById(R.id.tilVT);
+        tilNT = view.findViewById(R.id.tilNT);
         vVT = view.findViewById(R.id.vVT);
         vNT = view.findViewById(R.id.vNT);
         RecyclerView rv = view.findViewById(R.id.recycleViewColor);
-
-        drawableEditText = etVT.getBackground();
 
         etVT.setText(vtColor);
         etNT.setText(ntColor);
 
         setViewsColors(vVT, vtColor);
         setViewsColors(vNT, ntColor);
-
-        btnOK.setOnClickListener(v -> {
-            Bundle b = new Bundle();
-            b.putString(ARG_VT_COLOR, etVT.getText().toString());
-            b.putString(ARG_NT_COLOR, etNT.getText().toString());
-            getParentFragmentManager().setFragmentResult(GraphColorDialogFragment.RESULT_GRAPH_COLOR_DIALOG_FRAGMENT, b);
-            dismiss();
-        });
-        btnCancel.setOnClickListener(v -> dismiss());
 
         etVT.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,8 +107,7 @@ public class GraphColorDialogFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                isValidHtmlColor(etVT);
-                if (isValidHtmlColor(etVT)) {
+                if (isValidHtmlColor(etVT, tilVT)) {
                     setViewsColors(vVT, etVT.getText().toString());
                 }
             }
@@ -149,20 +116,17 @@ public class GraphColorDialogFragment extends DialogFragment {
         etNT.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
 
             @Override
             public void afterTextChanged(Editable s) {
-                isValidHtmlColor(etNT);
-                if (isValidHtmlColor(etNT)) {
+                if (isValidHtmlColor(etNT, tilNT)) {
                     setViewsColors(vNT, etNT.getText().toString());
                 }
             }
@@ -174,66 +138,57 @@ public class GraphColorDialogFragment extends DialogFragment {
 
         builder.setView(view);
         builder.setTitle(R.string.set_color_html_title);
+        builder.setPositiveButton(R.string.set, (dialog, which) -> {
+            Bundle b = new Bundle();
+            b.putString(ARG_VT_COLOR, etVT.getText().toString());
+            b.putString(ARG_NT_COLOR, etNT.getText().toString());
+            getParentFragmentManager().setFragmentResult(GraphColorDialogFragment.RESULT_GRAPH_COLOR_DIALOG_FRAGMENT, b);
+        });
+        builder.setNegativeButton(R.string.zrusit, (dialog, which) -> dialog.dismiss());
+
         return builder.create();
     }
 
 
-    /**
-     * Ověří, zda je vstupní řetězec platným kódem barvy v HTML formátu.
-     *
-     * @param et Kontrolovaný EditText
-     * @return true pokud je vstupní řetězec platným kódem barvy v HTML formátu
-     */
-    private boolean isValidHtmlColor(EditText et) {
-        String htmlColor = et.getText().toString(); // Získá text z EditText
+    private boolean isValidHtmlColor(EditText et, TextInputLayout til) {
+        String htmlColor = et.getText().toString();
         if (!htmlColor.startsWith("#")) {
-            // Pokud nezačíná křížkem, přidá ho zpět
             htmlColor = "#" + htmlColor;
-            et.setText(htmlColor); // Nastaví text s křížkem zpět do EditText
-            et.setSelection(1); // Nastaví kurzor na konec
+            et.setText(htmlColor);
+            et.setSelection(htmlColor.length());
         }
         Pattern htmlColorPattern = Pattern.compile("^#([A-Fa-f0-9]{6})$");
         Matcher matcher = htmlColorPattern.matcher(htmlColor);
 
         if (matcher.matches()) {
-            // Platný kód barvy
-            et.setBackground(drawableEditText);
+            til.setError(null);
+            til.setErrorEnabled(false);
+            return true;
         } else {
-            // Neplatný kód barvy
-            et.setBackgroundColor(Color.RED);
+            til.setError("Neznámý HEX kód (#RRGGBB)");
+            return false;
         }
-        return matcher.matches();
     }
 
 
-    /**
-     * Nastaví barvu pozadí zadaného view.
-     *
-     * @param v     View, kterému se nastaví barva pozadí
-     * @param color Barva pozadí ve formátu HTML
-     */
     private void setViewsColors(View v, String color) {
-        v.setBackgroundColor(Color.parseColor(color));
+        try {
+            v.setBackgroundColor(Color.parseColor(color));
+        } catch (Exception ignored) {
+        }
     }
 
 
-    /**
-     * Nastaví barvy do EditTextů a View.
-     *
-     * @param colors pole s barvami ve formátu HTML
-     */
     public void setColors(String[] colors) {
-        vVT.setBackgroundColor(Color.parseColor(colors[0]));
-        vNT.setBackgroundColor(Color.parseColor(colors[1]));
-        etVT.setText(colors[0]);
-        etNT.setText(colors[1]);
+        if (colors != null && colors.length >= 2) {
+            setViewsColors(vVT, colors[0]);
+            setViewsColors(vNT, colors[1]);
+            etVT.setText(colors[0]);
+            etNT.setText(colors[1]);
+        }
     }
 
 
-    /**
-     * Lifecycle callback po zobrazení dialogu.
-     * Aplikuje jednotné barvy tlačítek.
-     */
     @Override
     public void onStart() {
         super.onStart();

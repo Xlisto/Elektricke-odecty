@@ -71,9 +71,10 @@
 
     <!-- NavigationView -->
     <color name="nav_menu_background">#F9F9FF</color>
-    <color name="nav_menu_item_color">#191C20</color>
-    <color name="nav_menu_item_color_checked">#001A43</color>
-    <color name="nav_menu_item_color_pressed">#DBE2F9</color>
+    <color name="nav_menu_item_color">#44474E</color>
+    <color name="nav_menu_item_color_checked">#D8E2FF</color>
+    <color name="nav_menu_item_text_checked">#001A43</color>
+    <color name="nav_menu_item_color_pressed">#E0E8FF</color>
 
     <color name="text_link">#005CBB</color>
 

@@ -25,6 +25,7 @@
         android:theme="@style/NavigationItemNoRipple"
         app:headerLayout="@layout/nav_header"
         app:itemBackground="@drawable/nav_item_background"
+        app:itemIconTint="@drawable/nav_item_text"
         app:itemTextColor="@drawable/nav_item_text"
         app:menu="@menu/menu_nav_view" />
 
