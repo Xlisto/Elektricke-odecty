@@ -936,6 +936,8 @@ public class GraphAnnualOverviewView extends View {
         if (needsOutlineBorder(accentColor, boxBgColor)) {
             strokeColor = isDark ? 0xFF888888 : 0xFF757575;
             textColor = isDark ? 0xFFEEEEEE : 0xFF212121;
+        } else {
+            textColor = cz.xlisto.elektrodroid.utils.ColorUtils.ensureContrastForText(accentColor, boxBgColor, 4.5);
         }
 
         // 1. Plně neprůhledná výplň pozadí rámečku
@@ -1029,6 +1031,8 @@ public class GraphAnnualOverviewView extends View {
         if (needsOutlineBorder(accentColor, boxBgColor)) {
             strokeColor = isDark ? 0xFF888888 : 0xFF757575;
             textColor = isDark ? 0xFFEEEEEE : 0xFF212121;
+        } else {
+            textColor = cz.xlisto.elektrodroid.utils.ColorUtils.ensureContrastForText(accentColor, boxBgColor, 4.5);
         }
 
         // 1. Plně neprůhledná výplň pozadí rámečku

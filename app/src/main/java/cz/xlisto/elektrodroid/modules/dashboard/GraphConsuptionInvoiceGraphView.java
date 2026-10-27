@@ -98,7 +98,9 @@ public class GraphConsuptionInvoiceGraphView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        pText.setColor(colorGraph);
+        int surfaceBg = androidx.core.content.ContextCompat.getColor(getContext(), R.color.color_graph_background);
+        int textCol = cz.xlisto.elektrodroid.utils.ColorUtils.ensureContrastForText(colorGraph, surfaceBg, 4.5);
+        pText.setColor(textCol);
         pGraph.setColor(colorGraph);
         pGraphBackground.setColor(lighterColor(colorGraph));
         pGraphBorder.setColor(darkerColor(colorGraph));

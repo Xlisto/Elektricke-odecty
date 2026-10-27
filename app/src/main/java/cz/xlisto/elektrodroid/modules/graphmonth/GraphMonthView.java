@@ -429,30 +429,34 @@ public class GraphMonthView extends View {
      * @param canvas plátno
      */
     private void drawLineVTNT(Canvas canvas) {
-        int strokeWidth = 3;
+        int surfaceBg = ContextCompat.getColor(getContext(), R.color.color_graph_background);
+        int effectiveColorVT = ColorUtils.ensureContrastForText(colorVT, surfaceBg, 3.5);
+        int effectiveColorNT = ColorUtils.ensureContrastForText(colorNT, surfaceBg, 3.5);
+
+        int strokeWidth = dipToPx(2.5f);
         Paint.Style style = Paint.Style.FILL;
-        Paint lineVT = new Paint();
-        Paint lineNT = new Paint();
-        Paint lineVTBorder = new Paint();
-        Paint lineNTBorder = new Paint();
-        Paint line = new Paint();
-        lineVT.setColor(colorVT);
-        lineNT.setColor(colorNT);
-        lineVTBorder.setColor(ColorUtils.darkerColor(colorVT));
-        lineNTBorder.setColor(ColorUtils.darkerColor(colorNT));
+        Paint lineVT = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint lineNT = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint lineVTBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint lineNTBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
+        Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
+        lineVT.setColor(effectiveColorVT);
+        lineNT.setColor(effectiveColorNT);
+        lineVTBorder.setColor(ColorUtils.darkerColor(effectiveColorVT));
+        lineNTBorder.setColor(ColorUtils.darkerColor(effectiveColorNT));
         line.setColor(ContextCompat.getColor(getContext(), R.color.color_axis));
         lineVT.setStrokeWidth(strokeWidth);
         lineNT.setStrokeWidth(strokeWidth);
         int borderGraph = DensityUtils.dpToPx(getContext(), 1);
         lineVTBorder.setStrokeWidth(borderGraph);
         lineNTBorder.setStrokeWidth(borderGraph);
-        line.setStrokeWidth(1);
+        line.setStrokeWidth(dipToPx(1));
         lineVT.setStyle(style);
         lineNT.setStyle(style);
         line.setStyle(style);
         lineVTBorder.setStyle(Paint.Style.STROKE);
         lineNTBorder.setStyle(Paint.Style.STROKE);
-        line.setPathEffect(new DashPathEffect(new float[]{15f, 30f}, 0f));
+        line.setPathEffect(new DashPathEffect(new float[]{dipToPx(5), dipToPx(5)}, 0f));
 
         ArrayList<ConsuptionModel> consuption = new ArrayList<>();
         int xMoveGraph = switch (period) {
