@@ -15,6 +15,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.FragmentActivity;
 
@@ -159,7 +160,7 @@ public class GraphAnnualOverviewView extends View {
         }
 
         boolean isDark = DetectNightMode.isNightMode(context);
-        int bgColor = isDark ? 0xFF1E1E1E : 0xFFF5F5F5;
+        int bgColor = ContextCompat.getColor(context, R.color.color_graph_background);
 
         colorFixedCost = isDark ? 0xFF26A69A : 0xFF00796B; // Tyrkysově-zelená pro tenký sloupec fixních nákladů
 
@@ -927,7 +928,7 @@ public class GraphAnnualOverviewView extends View {
         tempBoxRect.set(rectLeft, rectTop, rectRight, rectBottom);
 
         boolean isDark = DetectNightMode.isNightMode(getContext());
-        int boxBgColor = isDark ? 0xFF1E1E1E : 0xFFFFFFFF;
+        int boxBgColor = isDark ? 0xFF282A2F : 0xFFECECEE;
 
         int strokeColor = accentColor;
         int textColor = accentColor;
@@ -1020,7 +1021,7 @@ public class GraphAnnualOverviewView extends View {
         tempBoxRect.set(rectLeft, rectTop, rightX, rectBottom);
 
         boolean isDark = DetectNightMode.isNightMode(getContext());
-        int boxBgColor = isDark ? 0xFF1E1E1E : 0xFFFFFFFF;
+        int boxBgColor = isDark ? 0xFF282A2F : 0xFFECECEE;
 
         int strokeColor = accentColor;
         int textColor = accentColor;

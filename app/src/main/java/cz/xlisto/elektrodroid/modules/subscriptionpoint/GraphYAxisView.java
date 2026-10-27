@@ -10,9 +10,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import cz.xlisto.elektrodroid.R;
 
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.utils.DensityUtils;
@@ -60,7 +63,7 @@ public class GraphYAxisView extends View {
 
     private void init(Context context) {
         boolean isDark = DetectNightMode.isNightMode(context);
-        int bgColor = isDark ? 0xFF1E1E1E : 0xFFF5F5F5;
+        int bgColor = ContextCompat.getColor(context, R.color.color_graph_background);
         int textColor = isDark ? 0xFFEEEEEE : 0xFF212121;
 
         paintText = new Paint(Paint.ANTI_ALIAS_FLAG);

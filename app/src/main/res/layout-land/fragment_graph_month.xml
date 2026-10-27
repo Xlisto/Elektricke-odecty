@@ -12,7 +12,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_toStartOf="@id/ln_buttons_monthly_graph"
-        android:background="?android:attr/colorBackground" />
+        android:background="@color/color_graph_background" />
 
     <LinearLayout
         android:id="@+id/ln_buttons_monthly_graph"
@@ -21,68 +21,87 @@
         android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="false"
+        android:background="?attr/colorSurfaceContainer"
+        android:padding="2dp"
         android:orientation="vertical">
 
         <ImageButton
             android:id="@+id/imgBtnType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:adjustViewBounds="false"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_type"
             android:cropToPadding="false"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_column" />
 
         <ImageButton
             android:id="@+id/imgBtnPeriod"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_period"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_year" />
 
         <ImageButton
             android:id="@+id/imgBtnVT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_vt"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_vt_off" />
 
         <ImageButton
             android:id="@+id/imgBtnNT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_nt"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_nt_off" />
 
         <ImageButton
             android:id="@+id/imgBtnLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_zoom_in"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_month_left_gray" />
 
         <ImageButton
             android:id="@+id/imgBtnRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#FEFEFE"
+            android:layout_margin="1dp"
+            android:adjustViewBounds="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_zoom_out"
-            android:padding="1dp"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_graph_month_right_gray" />
     </LinearLayout>
 

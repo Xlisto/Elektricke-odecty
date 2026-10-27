@@ -51,7 +51,7 @@
     <color name="color_bar">#F3F3FA</color>
     <color name="color_bar_dark">#ECECEE</color>
     <color name="color_axis">#44474F</color>
-    <color name="color_graph_background">#FFFFFF</color>
+    <color name="color_graph_background">#F9F9FF</color>
     <color name="color_hdo_time_TUV">#E08153</color>
     <color name="color_hdo_time_TAR">#5B9E43</color>
     <color name="color_hdo_time_PV">#4A6B92</color>
