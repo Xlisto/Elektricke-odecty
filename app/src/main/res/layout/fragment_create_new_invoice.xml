@@ -44,7 +44,8 @@
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:maxWidth="320dp"
-            android:text="@string/zrusit" />
+            android:text="@string/zrusit"
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnCreateInvoice"
@@ -55,7 +56,8 @@
             android:layout_marginStart="15dp"
             android:layout_weight="1"
             android:maxWidth="320dp"
-            android:text="@string/create" />
+            android:text="@string/create"
+            android:textColor="@color/color_primary" />
 
     </LinearLayout>
 </RelativeLayout>

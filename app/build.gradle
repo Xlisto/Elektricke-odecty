@@ -36,6 +36,12 @@ android {
         }
     }
 
+    // Poznámka k varování Google Play Console / Lint:
+    // "Provide valid, English-language login credentials in Play Console to ensure Google Play can fully review all app features and content."
+    // - Jedná se o administrativní připomínku pro publikaci v Google Play Console (Obsah aplikace -> Přístup k aplikacím / App Access).
+    // - Aplikace využívá pouze systémový Google Sign-In pro zálohy na vyžádání (uživatel se přihlašuje ke svému účtu Google).
+    // - V Google Play Console zvolte: "Všechny funkce jsou dostupné bez omezení přístupu" (All functionality is available without access restrictions).
+    // - Není potřeba do Play Console zadávat žádná přihlašovací jména ani hesla.
     lint {
         baseline = file("lint-baseline.xml")
         disable += ['PlaySdkIndex', 'GooglePlayServices']

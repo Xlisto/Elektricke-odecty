@@ -28,7 +28,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:maxWidth="320dp"
-                android:text="@string/zrusit" />
+                android:text="@string/zrusit"
+                android:textColor="@color/color_primary" />
 
             <Button
                 android:id="@+id/btnJoin"
@@ -39,7 +40,8 @@
                 android:layout_marginStart="15dp"
                 android:layout_weight="1"
                 android:maxWidth="320dp"
-                android:text="@string/join" />
+                android:text="@string/join"
+                android:textColor="@color/color_primary" />
 
         </LinearLayout>
 

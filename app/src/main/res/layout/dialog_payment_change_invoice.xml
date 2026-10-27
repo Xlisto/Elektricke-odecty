@@ -20,7 +20,8 @@
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:maxWidth="320dp"
-            android:text="@string/zrusit" />
+            android:text="@string/zrusit"
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnOk"
@@ -31,7 +32,8 @@
             android:layout_marginStart="15dp"
             android:layout_weight="1"
             android:maxWidth="320dp"
-            android:text="@string/btn_move_payment" />
+            android:text="@string/btn_move_payment"
+            android:textColor="@color/color_primary" />
 
 
     </LinearLayout>

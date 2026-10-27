@@ -868,7 +868,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="200dp"
             android:text="@string/zpet"
-            android:textColor="@color/colorButtonText" />
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnUloz"

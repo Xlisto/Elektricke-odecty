@@ -56,7 +56,8 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:clickable="false"
-            android:text="@string/restore" />
+            android:text="@string/restore"
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnUploadBackup"
@@ -67,7 +68,8 @@
             android:layout_marginStart="5dp"
             android:layout_weight="1"
             android:clickable="false"
-            android:text="@string/google_drive" />
+            android:text="@string/google_drive"
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnDeleteBackup"
@@ -78,7 +80,8 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:clickable="false"
-            android:text="@string/delete" />
+            android:text="@string/delete"
+            android:textColor="@color/color_primary" />
     </LinearLayout>
 
     <TextView

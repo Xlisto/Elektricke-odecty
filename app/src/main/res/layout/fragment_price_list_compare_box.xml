@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/vyberteCenikLevy"
-            android:textColor="@color/colorButtonText" />
+            android:textColor="@color/color_primary" />
 
         <Button
             android:id="@+id/btnRight"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/vyberteCenikPravy"
-            android:textColor="@color/colorButtonText" />
+            android:textColor="@color/color_primary" />
     </LinearLayout>
 
     <FrameLayout

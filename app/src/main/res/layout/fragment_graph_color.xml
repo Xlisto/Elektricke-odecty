@@ -6,8 +6,7 @@
     android:paddingStart="0dp"
     android:paddingEnd="0dp"
     android:paddingTop="0dp"
-    android:paddingBottom="0dp"
-    >
+    android:paddingBottom="0dp">
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -22,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/ulozit"
-            android:textColor="@color/colorButtonText" />
+            android:textColor="@color/color_primary" />
     </LinearLayout>
 
     <cz.xlisto.elektrodroid.modules.graphcolor.GraphColorView
@@ -37,7 +36,5 @@
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
         android:paddingTop="0dp" />
-
-
 
 </RelativeLayout>
