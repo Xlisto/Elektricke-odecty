@@ -23,9 +23,9 @@
     <color name="md_theme_onSurface">#191C20</color>
     <color name="md_theme_surfaceVariant">#E1E2EC</color>
     <color name="md_theme_onSurfaceVariant">#44474F</color>
-    <color name="md_theme_surfaceContainer">#F3F3FA</color>
+    <color name="md_theme_surfaceContainer">#F9F9FF</color>
     <color name="md_theme_surfaceContainerLow">#F9F9FF</color>
-    <color name="md_theme_surfaceContainerHigh">#ECECEE</color>
+    <color name="md_theme_surfaceContainerHigh">#F3F3FA</color>
     <color name="md_theme_surfaceContainerHighest">#E2E2E9</color>
     <color name="md_theme_outline">#74777F</color>
     <color name="md_theme_outlineVariant">#C4C6D0</color>
@@ -39,7 +39,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#FF222222</color>
-    <color name="l_gray">#F3F3FA</color>
+    <color name="l_gray">#F9F9FF</color>
     <color name="l_gray1">#C4C6D0</color>
     <color name="l_gray2">#74777F</color>
 
@@ -48,7 +48,7 @@
     <color name="color_no">#BA1A1A</color>
     <color name="color_red_alert">#BA1A1A</color>
     <color name="color_yes">#1B5E20</color>
-    <color name="color_bar">#F3F3FA</color>
+    <color name="color_bar">#F9F9FF</color>
     <color name="color_bar_dark">#ECECEE</color>
     <color name="color_axis">#44474F</color>
     <color name="color_graph_background">#F9F9FF</color>
@@ -56,7 +56,7 @@
     <color name="color_hdo_time_TAR">#5B9E43</color>
     <color name="color_hdo_time_PV">#4A6B92</color>
 
-    <color name="menuBackgroundColor">#F3F3FA</color>
+    <color name="menuBackgroundColor">#F9F9FF</color>
 
     <color name="labelEditBackgroundEditText">#1ABA1A1A</color>
 
@@ -70,7 +70,7 @@
     <color name="colorDialogButtonText">#005CBB</color>
 
     <!-- NavigationView -->
-    <color name="nav_menu_background">#F3F3FA</color>
+    <color name="nav_menu_background">#F9F9FF</color>
     <color name="nav_menu_item_color">#191C20</color>
     <color name="nav_menu_item_color_checked">#001A43</color>
     <color name="nav_menu_item_color_pressed">#DBE2F9</color>
