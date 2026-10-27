@@ -52,7 +52,7 @@
     <color name="colorHint">#8E909A</color>
     <color name="colorLabelEditText">#E2E2E9</color>
     <color name="colorButtonText">#001A43</color>
-    <color name="colorOnDisabled">#808E909A</color>
+    <color name="colorOnDisabled">#8E909A</color>
     <color name="colorDialogButtonText">#ADC6FF</color>
 
     <!-- NavigationView -->
@@ -78,5 +78,5 @@
     <color name="dialog_border">#44474F</color>
     <color name="dialog_text_primary">#E2E2E9</color>
     <color name="dialog_button_text">#ADC6FF</color>
-    <color name="dialog_button_text_disabled">#808E909A</color>
+    <color name="dialog_button_text_disabled">#8E909A</color>
 </resources>

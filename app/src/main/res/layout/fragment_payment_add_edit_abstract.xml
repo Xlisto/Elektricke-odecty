@@ -178,7 +178,7 @@
             android:gravity="end"
             android:maxWidth="300dp"
             android:text="@string/zpet"
-            android:textColor="@color/color_primary"
+            android:textColor="@color/primary_text_button_color"
             tools:ignore="TouchTargetSizeCheck,VisualLintBounds" />
 
         <Button
@@ -187,7 +187,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ulozit"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
 
     </LinearLayout>
 

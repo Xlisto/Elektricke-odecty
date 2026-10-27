@@ -21,16 +21,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/zpet"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
 
         <Button
             android:id="@+id/btnUloz"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_bg"
             android:text="@string/ulozit"
-            android:textColor="@color/button_text_color" />
+            android:textColor="@color/primary_text_button_color" />
     </LinearLayout>
 
     <ScrollView

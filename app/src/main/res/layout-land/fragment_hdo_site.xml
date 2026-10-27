@@ -128,7 +128,7 @@
                 android:layout_weight="1"
                 android:minWidth="90dp"
                 android:text="@string/load_www"
-                android:textColor="@color/color_primary" />
+                android:textColor="@color/primary_text_button_color" />
 
             <Button
                 android:id="@+id/btnHdoLoadData"
@@ -138,7 +138,7 @@
                 android:layout_weight="1"
                 android:minWidth="90dp"
                 android:text="@string/load_time"
-                android:textColor="@color/color_primary" />
+                android:textColor="@color/primary_text_button_color" />
 
 
         </LinearLayout>
@@ -159,7 +159,7 @@
                 android:layout_weight="1"
                 android:minWidth="90dp"
                 android:text="@string/save_time"
-                android:textColor="@color/color_primary" />
+                android:textColor="@color/primary_text_button_color" />
 
             <Button
                 android:id="@+id/btnClipData"
@@ -170,7 +170,7 @@
                 android:maxWidth="200dp"
                 android:minWidth="90dp"
                 android:text="@string/save_to_clipboard"
-                android:textColor="@color/color_primary" />
+                android:textColor="@color/primary_text_button_color" />
 
         </LinearLayout>
 

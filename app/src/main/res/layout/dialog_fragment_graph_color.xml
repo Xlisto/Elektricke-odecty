@@ -64,7 +64,7 @@
                     android:layout_centerHorizontal="true"
                     android:maxWidth="200dp"
                     android:text="@string/zrusit"
-                    android:textColor="@color/color_primary" />
+                    android:textColor="@color/primary_text_button_color" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -81,7 +81,7 @@
                     android:layout_centerHorizontal="true"
                     android:maxWidth="200dp"
                     android:text="@string/set"
-                    android:textColor="@color/color_primary" />
+                    android:textColor="@color/primary_text_button_color" />
             </RelativeLayout>
 
         </LinearLayout>

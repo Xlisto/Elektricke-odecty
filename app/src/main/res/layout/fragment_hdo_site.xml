@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/load_www"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
 
         <Button
             android:id="@+id/btnHdoLoadData"
@@ -128,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/load_time"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
 
         <Button
             android:id="@+id/btnSaveHdo"
@@ -137,7 +137,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/save_time"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
 
         <Button
             android:id="@+id/btnClipData"
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/save_to_clipboard"
-            android:textColor="@color/color_primary" />
+            android:textColor="@color/primary_text_button_color" />
     </LinearLayout>
 
     <include layout="@layout/layout_progress_bar" />

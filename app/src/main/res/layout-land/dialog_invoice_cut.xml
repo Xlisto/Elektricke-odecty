@@ -127,7 +127,7 @@
                     android:layout_weight="1"
                     android:maxWidth="320dp"
                     android:text="@string/zrusit"
-                    android:textColor="@color/color_primary" />
+                    android:textColor="@color/primary_text_button_color" />
 
                 <Button
                     android:id="@+id/btnCut"
@@ -139,7 +139,7 @@
                     android:layout_weight="1"
                     android:maxWidth="320dp"
                     android:text="@string/cut"
-                    android:textColor="@color/color_primary" />
+                    android:textColor="@color/primary_text_button_color" />
 
 
             </LinearLayout>
