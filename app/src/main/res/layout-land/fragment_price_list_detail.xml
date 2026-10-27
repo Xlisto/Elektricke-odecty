@@ -130,7 +130,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="@string/cena_za_dodavku"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/text_primary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -236,7 +236,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="@string/cena_za_distribuci"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/text_primary" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -443,7 +443,7 @@
                     android:layout_marginTop="5dp"
                     android:gravity="center"
                     android:text="@string/cena_za_ostatni_regulovane_sluzby"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/text_primary" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -549,7 +549,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/dane"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@color/text_primary" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
