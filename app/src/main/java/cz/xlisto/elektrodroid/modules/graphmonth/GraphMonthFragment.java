@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -156,6 +158,7 @@ public class GraphMonthFragment extends Fragment {
             compareMonth = savedInstanceState.getInt(ShPGraphMonth.ARG_COMPARE_MONTH);
             setGraphMonthView();
         }
+        setupTooltips();
         return view;
     }
 
@@ -226,13 +229,13 @@ public class GraphMonthFragment extends Fragment {
     private void setImageIconPeriod() {
         switch (showPeriod) {
             case 0:
-                btnChangePeriod.setImageResource(R.mipmap.ic_graph_month);
+                btnChangePeriod.setImageResource(R.drawable.ic_graph_month);
                 break;
             case 1:
-                btnChangePeriod.setImageResource(R.mipmap.ic_graph_year);
+                btnChangePeriod.setImageResource(R.drawable.ic_graph_year);
                 break;
             case 2:
-                btnChangePeriod.setImageResource(R.mipmap.ic_graph_month_compare);
+                btnChangePeriod.setImageResource(R.drawable.ic_graph_month_compare);
                 break;
         }
     }
@@ -243,9 +246,9 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconVT() {
         if (showVT) {
-            btnShowVT.setImageResource(R.mipmap.ic_graph_vt_off);
+            btnShowVT.setImageResource(R.drawable.ic_graph_vt_on);
         } else {
-            btnShowVT.setImageResource(R.mipmap.ic_graph_vt_on);
+            btnShowVT.setImageResource(R.drawable.ic_graph_vt_off);
         }
     }
 
@@ -255,9 +258,9 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconNT() {
         if (showNT) {
-            btnShowNT.setImageResource(R.mipmap.ic_graph_nt_off);
+            btnShowNT.setImageResource(R.drawable.ic_graph_nt_on);
         } else {
-            btnShowNT.setImageResource(R.mipmap.ic_graph_nt_on);
+            btnShowNT.setImageResource(R.drawable.ic_graph_nt_off);
         }
     }
 
@@ -268,9 +271,9 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconTypeGraph() {
         if (showTypeGraph) {
-            btnTypeGraph.setImageResource(R.mipmap.ic_graph_column);
+            btnTypeGraph.setImageResource(R.drawable.ic_graph_column);
         } else {
-            btnTypeGraph.setImageResource(R.mipmap.ic_graph_line);
+            btnTypeGraph.setImageResource(R.drawable.ic_graph_line);
         }
     }
 
@@ -280,11 +283,52 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconZoom() {
         if (showPeriod == 2) {
-            btnLeft.setImageResource(R.mipmap.ic_graph_month_left_gray);
-            btnRight.setImageResource(R.mipmap.ic_graph_month_right_gray);
+            btnLeft.setImageResource(R.drawable.ic_graph_month_left);
+            btnRight.setImageResource(R.drawable.ic_graph_month_right);
         } else {
-            btnLeft.setImageResource(R.mipmap.ic_graph_zoom_minus);
-            btnRight.setImageResource(R.mipmap.ic_graph_zoom_plus);
+            btnLeft.setImageResource(R.drawable.ic_graph_zoom_minus);
+            btnRight.setImageResource(R.drawable.ic_graph_zoom_plus);
+        }
+        updateZoomTooltips();
+    }
+
+
+    /**
+     * Nastaví nápovědu (Tooltip / Toast fallback pro Samsung One UI) pro zadané tlačítko.
+     */
+    private void setButtonTooltip(View view, String tooltipText) {
+        if (view == null || tooltipText == null) return;
+        TooltipCompat.setTooltipText(view, tooltipText);
+        view.setContentDescription(tooltipText);
+        view.setOnLongClickListener(v -> {
+            Toast.makeText(v.getContext(), tooltipText, Toast.LENGTH_SHORT).show();
+            return true;
+        });
+    }
+
+
+    /**
+     * Nastaví nápovědy (Tooltips) pro navigační tlačítka grafu.
+     */
+    private void setupTooltips() {
+        setButtonTooltip(btnTypeGraph, getString(R.string.description_btn_type));
+        setButtonTooltip(btnChangePeriod, getString(R.string.description_btn_period));
+        setButtonTooltip(btnShowVT, getString(R.string.description_btn_vt));
+        setButtonTooltip(btnShowNT, getString(R.string.description_btn_nt));
+        updateZoomTooltips();
+    }
+
+
+    /**
+     * Aktualizuje text nápovědy u tlačítek lupy / posunu podle zvoleného období.
+     */
+    private void updateZoomTooltips() {
+        if (showPeriod == 2) {
+            setButtonTooltip(btnLeft, getString(R.string.description_btn_previous_month));
+            setButtonTooltip(btnRight, getString(R.string.description_btn_next_month));
+        } else {
+            setButtonTooltip(btnLeft, getString(R.string.description_btn_zoom_in));
+            setButtonTooltip(btnRight, getString(R.string.description_btn_zoom_out));
         }
     }
 

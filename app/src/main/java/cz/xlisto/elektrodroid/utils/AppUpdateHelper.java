@@ -31,7 +31,7 @@ public class AppUpdateHelper {
     private static final String TAG = "AppUpdateHelper";
 
     private final Activity activity;
-    private final AppUpdateManager appUpdateManager;
+    private AppUpdateManager appUpdateManager;
     private final ActivityResultLauncher<IntentSenderRequest> updateLauncher;
     private InstallStateUpdatedListener installStateUpdatedListener;
 
@@ -45,9 +45,13 @@ public class AppUpdateHelper {
     public AppUpdateHelper(@NonNull Activity activity,
                            @NonNull ActivityResultLauncher<IntentSenderRequest> updateLauncher) {
         this.activity = activity;
-        this.appUpdateManager = AppUpdateManagerFactory.create(activity.getApplicationContext());
         this.updateLauncher = updateLauncher;
-        setupInstallListener();
+        try {
+            this.appUpdateManager = AppUpdateManagerFactory.create(activity.getApplicationContext());
+            setupInstallListener();
+        } catch (Exception e) {
+            Log.w(TAG, "Google Play App Update manager nelze vytvořit: " + e.getMessage());
+        }
     }
 
 
@@ -55,12 +59,17 @@ public class AppUpdateHelper {
      * Nastaví listener pro sledování stavu stahování na pozadí.
      */
     private void setupInstallListener() {
-        installStateUpdatedListener = state -> {
-            if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                showUpdateDownloadedSnackbar();
-            }
-        };
-        appUpdateManager.registerListener(installStateUpdatedListener);
+        if (appUpdateManager == null) return;
+        try {
+            installStateUpdatedListener = state -> {
+                if (state.installStatus() == InstallStatus.DOWNLOADED) {
+                    showUpdateDownloadedSnackbar();
+                }
+            };
+            appUpdateManager.registerListener(installStateUpdatedListener);
+        } catch (Exception e) {
+            Log.w(TAG, "Nelze zaregistrovat posluchače aktualizací: " + e.getMessage());
+        }
     }
 
 
@@ -68,8 +77,12 @@ public class AppUpdateHelper {
      * Odregistruje posluchače stavu instalace (volat v onDestroy).
      */
     public void unregisterListener() {
-        if (installStateUpdatedListener != null) {
-            appUpdateManager.unregisterListener(installStateUpdatedListener);
+        if (appUpdateManager != null && installStateUpdatedListener != null) {
+            try {
+                appUpdateManager.unregisterListener(installStateUpdatedListener);
+            } catch (Exception e) {
+                Log.w(TAG, "Chyba při odregistrování posluchače: " + e.getMessage());
+            }
         }
     }
 
@@ -80,26 +93,40 @@ public class AppUpdateHelper {
      * @param isManualCheck {@code true} pokud kontrolu vyvolal uživatel tlačítkem (zobrazí informace/chyby)
      */
     public void checkForUpdate(boolean isManualCheck) {
-        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                showUpdateDownloadedSnackbar();
-                return;
-            }
-
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                startFlexibleUpdate(appUpdateInfo);
-            } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                startFlexibleUpdate(appUpdateInfo);
-            } else if (isManualCheck) {
-                Toast.makeText(activity, R.string.app_is_up_to_date, Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Chyba při kontrole aktualizací", e);
+        if (appUpdateManager == null) {
             if (isManualCheck) {
                 Toast.makeText(activity, R.string.update_check_error, Toast.LENGTH_SHORT).show();
             }
-        });
+            return;
+        }
+
+        try {
+            appUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    showUpdateDownloadedSnackbar();
+                    return;
+                }
+
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                        && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                    startFlexibleUpdate(appUpdateInfo);
+                } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                    startFlexibleUpdate(appUpdateInfo);
+                } else if (isManualCheck) {
+                    Toast.makeText(activity, R.string.app_is_up_to_date, Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(e -> {
+                Log.w(TAG, "Služba Google Play App Update není k dispozici: " + e.getMessage());
+                if (isManualCheck) {
+                    Toast.makeText(activity, R.string.update_check_error, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "Chyba při spuštění kontroly aktualizací: " + e.getMessage());
+            if (isManualCheck) {
+                Toast.makeText(activity, R.string.update_check_error, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
@@ -107,11 +134,16 @@ public class AppUpdateHelper {
      * Kontroluje v onResume, zda nebyl stažen update během běhu aplikace na pozadí.
      */
     public void checkResumeUpdate() {
-        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                showUpdateDownloadedSnackbar();
-            }
-        });
+        if (appUpdateManager == null) return;
+        try {
+            appUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
+                if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                    showUpdateDownloadedSnackbar();
+                }
+            }).addOnFailureListener(e -> Log.w(TAG, "CheckResumeUpdate nebylo možné dokončit: " + e.getMessage()));
+        } catch (Exception e) {
+            Log.w(TAG, "Chyba v checkResumeUpdate: " + e.getMessage());
+        }
     }
 
 
@@ -119,11 +151,12 @@ public class AppUpdateHelper {
      * Spustí kaskádu stažení aktualizace na pozadí (Flexible Update).
      */
     private void startFlexibleUpdate(AppUpdateInfo appUpdateInfo) {
+        if (appUpdateManager == null) return;
         try {
             AppUpdateOptions options = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build();
             appUpdateManager.startUpdateFlowForResult(appUpdateInfo, updateLauncher, options);
         } catch (Exception e) {
-            Log.e(TAG, "Chyba při spuštění aktualizace", e);
+            Log.w(TAG, "Chyba při spuštění aktualizace: " + e.getMessage());
         }
     }
 
@@ -145,7 +178,15 @@ public class AppUpdateHelper {
                 R.string.update_downloaded_message,
                 Snackbar.LENGTH_INDEFINITE
         );
-        snackbar.setAction(R.string.update_restart_button, v -> appUpdateManager.completeUpdate());
+        snackbar.setAction(R.string.update_restart_button, v -> {
+            if (appUpdateManager != null) {
+                try {
+                    appUpdateManager.completeUpdate();
+                } catch (Exception e) {
+                    Log.w(TAG, "Chyba při dokončení aktualizace: " + e.getMessage());
+                }
+            }
+        });
         snackbar.show();
     }
 

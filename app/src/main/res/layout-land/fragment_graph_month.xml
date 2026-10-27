@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -34,10 +35,12 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_type"
+            android:tooltipText="@string/description_btn_type"
+            tools:targetApi="o"
             android:cropToPadding="false"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_column" />
+            android:src="@drawable/ic_graph_column" />
 
         <ImageButton
             android:id="@+id/imgBtnPeriod"
@@ -48,9 +51,11 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_period"
+            android:tooltipText="@string/description_btn_period"
+            tools:targetApi="o"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_year" />
+            android:src="@drawable/ic_graph_year" />
 
         <ImageButton
             android:id="@+id/imgBtnVT"
@@ -61,9 +66,11 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_vt"
+            android:tooltipText="@string/description_btn_vt"
+            tools:targetApi="o"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_vt_off" />
+            android:src="@drawable/ic_graph_vt_on" />
 
         <ImageButton
             android:id="@+id/imgBtnNT"
@@ -74,9 +81,11 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_nt"
+            android:tooltipText="@string/description_btn_nt"
+            tools:targetApi="o"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_nt_off" />
+            android:src="@drawable/ic_graph_nt_on" />
 
         <ImageButton
             android:id="@+id/imgBtnLeft"
@@ -87,9 +96,11 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_zoom_in"
+            android:tooltipText="@string/description_btn_zoom_in"
+            tools:targetApi="o"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_month_left_gray" />
+            android:src="@drawable/ic_graph_zoom_minus" />
 
         <ImageButton
             android:id="@+id/imgBtnRight"
@@ -100,9 +111,11 @@
             android:adjustViewBounds="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/description_btn_zoom_out"
+            android:tooltipText="@string/description_btn_zoom_out"
+            tools:targetApi="o"
             android:padding="2dp"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_graph_month_right_gray" />
+            android:src="@drawable/ic_graph_zoom_plus" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -931,7 +931,7 @@ public class GraphAnnualOverviewView extends View {
         int boxBgColor = isDark ? 0xFF282A2F : 0xFFECECEE;
 
         int strokeColor = accentColor;
-        int textColor = accentColor;
+        int textColor;
 
         if (needsOutlineBorder(accentColor, boxBgColor)) {
             strokeColor = isDark ? 0xFF888888 : 0xFF757575;
@@ -1026,7 +1026,7 @@ public class GraphAnnualOverviewView extends View {
         int boxBgColor = isDark ? 0xFF282A2F : 0xFFECECEE;
 
         int strokeColor = accentColor;
-        int textColor = accentColor;
+        int textColor;
 
         if (needsOutlineBorder(accentColor, boxBgColor)) {
             strokeColor = isDark ? 0xFF888888 : 0xFF757575;

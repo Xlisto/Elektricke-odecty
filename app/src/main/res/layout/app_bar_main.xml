@@ -47,16 +47,18 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
-        android:layout_width="70dp"
+        android:layout_width="72dp"
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
-        app:labelVisibilityMode="labeled"
+        android:layout_alignParentBottom="true"
         android:theme="@style/NavigationItemNoRipple"
         android:background="?attr/colorSurfaceContainer"
         app:itemTextColor="@color/bnv"
         app:itemIconTint="@color/bnv"
         app:itemBackground="@drawable/nav_item_background"
+        app:itemIconSize="24dp"
+        app:itemHorizontalPadding="12dp"
+        app:itemIconPadding="0dp"
         app:menu="@menu/menu_main_left" />
-
 
 </RelativeLayout>

@@ -308,6 +308,8 @@
     <string name="description_btn_nt">Zobrazí/skryje nízký tarif</string>
     <string name="description_btn_zoom_in">Zvětší graf</string>
     <string name="description_btn_zoom_out">Zmenší graf</string>
+    <string name="description_btn_previous_month">Předchozí porovnávaný měsíc</string>
+    <string name="description_btn_next_month">Následující porovnávaný měsíc</string>
 
 
     <string name="description_vt_color">Barva VT</string>

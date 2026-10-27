@@ -3,16 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
         android:layout_toEndOf="@id/navigationView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         tools:layout="@layout/fragment_price_list" />
 
     <com.google.android.material.appbar.AppBarLayout
@@ -48,15 +50,18 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
-        android:layout_width="70dp"
+        android:layout_width="72dp"
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
+        android:layout_alignParentBottom="true"
         android:theme="@style/NavigationItemNoRipple"
         android:background="?attr/colorSurfaceContainer"
         app:itemTextColor="@color/bnv"
         app:itemIconTint="@color/bnv"
         app:itemBackground="@drawable/nav_item_background"
+        app:itemIconSize="24dp"
+        app:itemHorizontalPadding="12dp"
+        app:itemIconPadding="0dp"
         app:menu="@menu/menu_main_left" />
-
 
 </RelativeLayout>
