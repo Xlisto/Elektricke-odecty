@@ -226,19 +226,19 @@ public class GraphHdoClockView extends View {
 
         int padding = dpToPx(4);
 
+        int dialDiameter;
         if (activeTypesCount == 1) {
             // Režim 1 relé: Ciferník vystředěný v buňce (název je v horní liště karty v XML)
-            int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.85f));
+            dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.85f));
             radius = dialDiameter / 2;
             centerX = availableWidth / 2;
-            centerY = availableHeight / 2;
         } else {
             // Režim více relé: Ciferník vlevo, legenda a název vpravo
-            int dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.65f));
+            dialDiameter = Math.min(availableHeight - padding * 2, (int) (availableWidth * 0.65f));
             radius = dialDiameter / 2;
             centerX = padding + radius;
-            centerY = availableHeight / 2;
         }
+        centerY = availableHeight / 2;
 
         // V tmavém režimu vyplnit vnitřní plochu ciferníku černou barvou
         if (isDarkMode) {
