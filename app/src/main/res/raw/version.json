@@ -1,7 +1,18 @@
 [
   {
+    "version": 164,
+    "date": "27.10.2026",
+    "changes": [
+      "<b>Vylepšení a redesign:</b>",
+      "Kompletní redesign nastavení barev tarifů (VT/NT) do Material 3.",
+      "Živý náhled barev v grafu a mřížka doporučených barevných témat pro světlý a tmavý režim.",
+      "Vylepšená čitelnost vybraných položek v navigačním menu.",
+      "Podpora dvousloupcového zobrazení na šířku a oprava zachování neuložených barev při rotaci obrazovky."
+    ]
+  },
+  {
     "version": 163,
-    "date": "1.2.2026",
+    "date": "1.10.2026",
     "changes": [
       "<b>Nové funkce:</b>",
       "Grafické zobrazení HDO.",
