@@ -19,17 +19,18 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Odecty.AppBarOverlay">
+        android:theme="@style/Theme.Odecty.AppBarOverlay"
+        app:elevation="0dp">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/color_bar"
+            android:background="?attr/colorSurfaceContainer"
             app:popupTheme="@style/Theme.Odecty.PopupOverlay">
 
             <include layout="@layout/my_toolbar" />
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -40,6 +41,7 @@
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
         android:visibility="gone"
+        android:background="?attr/colorSurfaceContainer"
         app:itemIconTint="@color/bnv"
         app:itemTextColor="@color/bnv"
         app:menu="@menu/menu_main_bottom" />
@@ -50,7 +52,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
         android:theme="@style/NavigationItemNoRipple"
-        android:background="@color/nav_menu_background"
+        android:background="?attr/colorSurfaceContainer"
         app:itemTextColor="@color/bnv"
         app:itemIconTint="@color/bnv"
         app:itemBackground="@drawable/nav_item_background"

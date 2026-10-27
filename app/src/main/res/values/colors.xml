@@ -1,66 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- Material 3 Light Palette Tokens -->
+    <color name="md_theme_primary">#005CBB</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_primaryContainer">#D8E2FF</color>
+    <color name="md_theme_onPrimaryContainer">#001A43</color>
+    <color name="md_theme_secondary">#565E71</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_secondaryContainer">#DBE2F9</color>
+    <color name="md_theme_onSecondaryContainer">#131B2C</color>
+    <color name="md_theme_tertiary">#715573</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_tertiaryContainer">#FBD7FC</color>
+    <color name="md_theme_onTertiaryContainer">#29132D</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_errorContainer">#FFDAD6</color>
+    <color name="md_theme_onErrorContainer">#410002</color>
+    <color name="md_theme_background">#F9F9FF</color>
+    <color name="md_theme_onBackground">#191C20</color>
+    <color name="md_theme_surface">#F9F9FF</color>
+    <color name="md_theme_onSurface">#191C20</color>
+    <color name="md_theme_surfaceVariant">#E1E2EC</color>
+    <color name="md_theme_onSurfaceVariant">#44474F</color>
+    <color name="md_theme_surfaceContainer">#F3F3FA</color>
+    <color name="md_theme_surfaceContainerLow">#F9F9FF</color>
+    <color name="md_theme_surfaceContainerHigh">#ECECEE</color>
+    <color name="md_theme_surfaceContainerHighest">#E2E2E9</color>
+    <color name="md_theme_outline">#74777F</color>
+    <color name="md_theme_outlineVariant">#C4C6D0</color>
+
+    <!-- Legacy / Compatibility Colors Mapped to M3 Light -->
+    <color name="purple_200">#A0C6FF</color>
+    <color name="purple_500">#005CBB</color>
+    <color name="purple_700">#004491</color>
+    <color name="teal_200">#565E71</color>
+    <color name="teal_700">#3E4759</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#FF222222</color>
-    <color name="l_gray">#FFf5f5f5</color>
-    <color name="l_gray1">#B8B7B7</color>
-    <color name="l_gray2">#707070</color>
+    <color name="l_gray">#F3F3FA</color>
+    <color name="l_gray1">#C4C6D0</color>
+    <color name="l_gray2">#74777F</color>
 
-    <color name="color_primary">#374FD8</color>
+    <color name="color_primary">#005CBB</color>
 
-    <color name="color_no">#D0960101</color>
-    <color name="color_red_alert">#960101</color>
-    <color name="color_yes">#D0008000</color>
-    <color name="color_bar">#012587</color>
-    <color name="color_bar_dark">#295EEE</color>
-    <color name="color_axis">#FF222222</color>
-    <color name="color_graph_background">#FFFFFFFF</color>
-    <color name="color_hdo_time_TUV">#F8B189</color>
-    <color name="color_hdo_time_TAR">#96D777</color>
-    <color name="color_hdo_time_PV">#607EA3</color>
+    <color name="color_no">#BA1A1A</color>
+    <color name="color_red_alert">#BA1A1A</color>
+    <color name="color_yes">#1B5E20</color>
+    <color name="color_bar">#F3F3FA</color>
+    <color name="color_bar_dark">#ECECEE</color>
+    <color name="color_axis">#44474F</color>
+    <color name="color_graph_background">#FFFFFF</color>
+    <color name="color_hdo_time_TUV">#E08153</color>
+    <color name="color_hdo_time_TAR">#5B9E43</color>
+    <color name="color_hdo_time_PV">#4A6B92</color>
 
-    <color name="menuBackgroundColor">#FFFFFFFF</color>
+    <color name="menuBackgroundColor">#F3F3FA</color>
 
-    <color name="labelEditBackgroundEditText">#1AF71919</color>
+    <color name="labelEditBackgroundEditText">#1ABA1A1A</color>
 
-    <color name="floatingButtonTint">#FF018786</color>
-    <color name="floatingButtonBackground">#FFFFFF</color>
+    <color name="floatingButtonTint">#001A43</color>
+    <color name="floatingButtonBackground">#D8E2FF</color>
 
-    <color name="colorHint">#707070</color>
-    <color name="colorLabelEditText">#000000</color>
-    <color name="colorButtonText">#FFAF174F</color>
-    <color name="colorOnDisabled">#808A8A8A</color>
-    <color name="colorDialogButtonText">#FF6200EE</color>
+    <color name="colorHint">#74777F</color>
+    <color name="colorLabelEditText">#191C20</color>
+    <color name="colorButtonText">#FFFFFF</color>
+    <color name="colorOnDisabled">#8074777F</color>
+    <color name="colorDialogButtonText">#005CBB</color>
 
     <!-- NavigationView -->
-    <color name="nav_menu_background">#FFFFFF</color> <!-- Background color -->
-    <color name="nav_menu_item_color">#000000</color> <!-- Item text color -->
-    <color name="nav_menu_item_color_checked">#E3CEFE</color> <!-- Item checked text color -->
-    <color name="nav_menu_item_color_pressed">#D5CCE1</color> <!-- Item presed background color -->
+    <color name="nav_menu_background">#F3F3FA</color>
+    <color name="nav_menu_item_color">#191C20</color>
+    <color name="nav_menu_item_color_checked">#001A43</color>
+    <color name="nav_menu_item_color_pressed">#DBE2F9</color>
 
-    <color name="text_link">#012587</color>
+    <color name="text_link">#005CBB</color>
 
     <!-- Alert card (light) -->
-    <color name="alert_bg_light">#FFF3F3</color>       <!-- velmi jemná červená / růžová -->
-    <color name="alert_border_light">#FFE0E0</color>   <!-- decentní okraj -->
-    <color name="invoice_balance_positive_bg">#EEF8EE</color>
-    <color name="invoice_balance_positive_border">#B7E0B7</color>
-    <color name="invoice_balance_negative_bg">#FFF3F3</color>
-    <color name="invoice_balance_negative_border">#F0C6C6</color>
-    <color name="text_primary">#FF000000</color>      <!-- primární text -->
-    <color name="text_secondary">#FF222222</color>    <!-- sekundární text (tvoje "gray") -->
+    <color name="alert_bg_light">#FFDAD6</color>
+    <color name="alert_border_light">#FFB4AB</color>
+    <color name="invoice_balance_positive_bg">#E8F5E9</color>
+    <color name="invoice_balance_positive_border">#A5D6A7</color>
+    <color name="invoice_balance_negative_bg">#FFDAD6</color>
+    <color name="invoice_balance_negative_border">#FFB4AB</color>
+    <color name="text_primary">#191C20</color>
+    <color name="text_secondary">#44474F</color>
 
     <!-- Dialogs (light) -->
-    <color name="dialog_bg">#FFFFFFFF</color>
-    <color name="dialog_border">#26000000</color>
-    <color name="dialog_text_primary">#FF000000</color>
-    <color name="dialog_button_text">#FF6200EE</color>
-    <color name="dialog_button_text_disabled">#FFB0B0B0</color>
-
+    <color name="dialog_bg">#F3F3FA</color>
+    <color name="dialog_border">#C4C6D0</color>
+    <color name="dialog_text_primary">#191C20</color>
+    <color name="dialog_button_text">#005CBB</color>
+    <color name="dialog_button_text_disabled">#8074777F</color>
 </resources>
