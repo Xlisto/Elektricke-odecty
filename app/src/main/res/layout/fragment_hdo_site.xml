@@ -115,7 +115,7 @@
         <Button
             android:id="@+id/btnHdoSite"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/load_www"
@@ -124,16 +124,24 @@
         <Button
             android:id="@+id/btnHdoLoadData"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/load_time"
             android:textColor="@color/primary_text_button_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnHdoButtons2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lnHdoButtons1"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnSaveHdo"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/save_time"
@@ -142,7 +150,7 @@
         <Button
             android:id="@+id/btnClipData"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/save_to_clipboard"
@@ -155,7 +163,7 @@
         android:id="@+id/spDateEgd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lnHdoButtons1"
+        android:layout_below="@id/lnHdoButtons2"
         android:minHeight="48dp" />
 
     <TextView
