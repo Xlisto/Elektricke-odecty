@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -86,7 +87,7 @@ public class InvoiceTabFragment extends Fragment {
             tableRead = getArguments().getString(TABLE_READ);
             idFak = getArguments().getLong(ID_FAK);
             positionItem = getArguments().getInt(POSITION_ITEM);
-            typeTabs = (MyViewPagerAdapter.TypeTabs) getArguments().get(TYPE_TAB);
+            typeTabs = BundleCompat.getSerializable(getArguments(), TYPE_TAB, MyViewPagerAdapter.TypeTabs.class);
         }
     }
 
