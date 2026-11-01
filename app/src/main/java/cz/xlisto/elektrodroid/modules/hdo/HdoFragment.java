@@ -668,7 +668,7 @@ public class HdoFragment extends Fragment {
 
         int spacingPx = DensityUtils.dpToPx(requireContext(), 6);
 
-        if (isGraphic && hdoAdapter != null && hdoAdapter.getActiveTypesCount() == 1) {
+        if (isGraphic && hdoAdapter != null && hdoAdapter.getItemCount() > 1) {
             rvHdo.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
             rvHdo.addItemDecoration(new GridSpacingItemDecoration(2, spacingPx, false));
         } else {
