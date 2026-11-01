@@ -9,11 +9,10 @@ import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 public class PriceListRegulBuilderTest extends TestCase {
-    private PriceListRegulBuilder priceListRegulBuilder;
 
     @Test
     public void testMaxVT_NT_2022_2023() {
-        priceListRegulBuilder = new PriceListRegulBuilder(new PriceListModel(), 2022);
+        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(new PriceListModel(), 2022);
         assertEquals(null, priceListRegulBuilder.getMaxVT());
         assertEquals(null, priceListRegulBuilder.getMaxNT());
         assertEquals("Zrušení poplatku POZE od října 2022: 0,00", priceListRegulBuilder.getMaxPOZE());

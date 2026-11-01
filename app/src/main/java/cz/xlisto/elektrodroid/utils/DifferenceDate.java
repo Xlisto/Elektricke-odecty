@@ -12,11 +12,6 @@ public class DifferenceDate {
     private int dayR, monthR, yearR;*/
     private boolean reverse = false;//true pokud je první datum dřívější
     private Calendar cal1, cal2;
-    //deklarace a inicializace pomocných proměnných
-    private double months = 0;
-    private double totalDaysCal1 = 0;//maximální počet dní v měsící
-    private double totalDaysCal2 = 0;//maximální počet dní v měsíci
-    private double countDaysCal1 = 0;//počet dní v měsíci
     private double countDaysCal2 = 0;//počet dní v měsíci
     private TypeDate typeDate;
 
@@ -34,14 +29,18 @@ public class DifferenceDate {
         }*/
 
         //výpočet poměrné části v každém z měsíců
-        totalDaysCal1 = cal1.getActualMaximum(Calendar.DAY_OF_MONTH);
-        totalDaysCal2 = cal2.getActualMaximum(Calendar.DAY_OF_MONTH);
-        countDaysCal1 = (totalDaysCal1 - cal1.get(Calendar.DATE)+1) / totalDaysCal1;
+        //maximální počet dní v měsící
+        double totalDaysCal1 = cal1.getActualMaximum(Calendar.DAY_OF_MONTH);
+        //maximální počet dní v měsíci
+        double totalDaysCal2 = cal2.getActualMaximum(Calendar.DAY_OF_MONTH);
+        //počet dní v měsíci
+        double countDaysCal1 = (totalDaysCal1 - cal1.get(Calendar.DATE) + 1) / totalDaysCal1;
         if (typeDate == TypeDate.INVOICE)//při zobrazení faktur - počíátm včetně posledního data
             countDaysCal2 = (cal2.get(Calendar.DATE) ) / totalDaysCal2;
         if(typeDate == TypeDate.MONTH)//při zobrazení měsíčních odečtů - poslední datum nezahrnuji do výpočtu
             countDaysCal2 = (cal2.get(Calendar.DATE)-1) / totalDaysCal2;
-        months = countDaysCal1 + countDaysCal2;
+        //deklarace a inicializace pomocných proměnných
+        double months = countDaysCal1 + countDaysCal2;
 
         //výpočet rozdílů měsíců, odečítám 1, protože jeden měsíc se počítá v předchozím odstavci
         int differentOfMonths = cal2.get(Calendar.MONTH) - cal1.get(Calendar.MONTH);

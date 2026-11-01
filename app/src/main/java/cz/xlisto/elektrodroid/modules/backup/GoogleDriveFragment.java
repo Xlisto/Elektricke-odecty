@@ -106,9 +106,6 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
     private boolean multiSelectMode;
     private boolean suppressSelectionCanceledSnackbar;
     private boolean credentialActionInProgress;
-    private MenuItem menuItemDeleteSelected;
-    private MenuItem menuItemSaveSelected;
-    private MenuItem menuItemToastMenu;
     private GoogleDriveDeleteProgressDialogFragment deleteProgressDialog;
     private GoogleDriveSaveProgressDialogFragment saveProgressDialog;
     private PendingBackupUploadProgressDialogFragment pendingUploadProgressDialog;
@@ -458,9 +455,9 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
             @Override
             public void onPrepareMenu(@NonNull Menu menu) {
-                menuItemDeleteSelected = menu.findItem(R.id.menu_action_google_delete_selected);
-                menuItemSaveSelected = menu.findItem(R.id.menu_action_google_save_selected);
-                menuItemToastMenu = menu.findItem(R.id.menu_action_toast_menu);
+                MenuItem menuItemDeleteSelected = menu.findItem(R.id.menu_action_google_delete_selected);
+                MenuItem menuItemSaveSelected = menu.findItem(R.id.menu_action_google_save_selected);
+                MenuItem menuItemToastMenu = menu.findItem(R.id.menu_action_toast_menu);
                 MenuItem signItem = menu.findItem(MENU_ACTION_GOOGLE_SIGN);
                 if (signItem == null || shPGoogleDrive == null)
                     return;

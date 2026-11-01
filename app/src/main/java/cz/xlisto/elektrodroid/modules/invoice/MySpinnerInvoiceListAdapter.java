@@ -22,12 +22,10 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class MySpinnerInvoiceListAdapter extends ArrayAdapter<InvoiceListModel> {
     private static final String TAG = "MySpinnerInvoiceListAdapter";
-    private int resource;
     private ArrayList<InvoiceListModel> invoicesList;
 
     public MySpinnerInvoiceListAdapter(@NonNull Context context, int resource, @NonNull ArrayList<InvoiceListModel> objects) {
         super(context, resource, objects);
-        this.resource = resource;
         this.invoicesList = objects;
     }
 

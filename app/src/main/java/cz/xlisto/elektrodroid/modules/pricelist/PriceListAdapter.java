@@ -50,7 +50,6 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
     public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList";
     private final OnClickItemListener onClickItemListener;
     private final boolean showSelectItem;
-    private int selectedItem = -1;
     private long idSelectedPriceList;
     private final ArrayList<PriceListModel> items;
     private final SubscriptionPointModel subscriptionPoint;
@@ -174,11 +173,11 @@ public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyVi
             holder.rbSelectItem.setVisibility(View.VISIBLE);
             holder.relativeLayout.setTag(position);
             holder.relativeLayout.setOnClickListener(v -> {
-                selectedItem = (int) v.getTag();
                 idSelectedPriceList = priceList.getId();
                 notifyItemRangeChanged(0, getItemCount());
                 onClickItemListener.setClickPriceListListener(priceList);
             });
+            int selectedItem = -1;
             holder.rbSelectItem.setChecked(selectedItem == position);
             if (priceList.getId() == idSelectedPriceList) {
                 holder.rbSelectItem.setChecked(true);

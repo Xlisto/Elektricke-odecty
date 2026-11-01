@@ -96,11 +96,8 @@ public class DBHelperPriceList extends SQLiteOpenHelper {
             REZERVA2 + " TEXT);";
 
 
-    private Context context;
-
     public DBHelperPriceList(@Nullable Context context) {
         super(context, DATABASE_NAME_PRICE_LIST, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     @Override

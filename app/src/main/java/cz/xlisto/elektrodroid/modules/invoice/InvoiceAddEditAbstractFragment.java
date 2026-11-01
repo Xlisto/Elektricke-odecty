@@ -55,7 +55,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     static final String SELECTED_TEXT_PRICE_LIST = "selectedTextPriceList";
     static final String IS_CHANGED_ELECTROMETER = "isChangedElectrometer";
     static boolean loadFromDatabase = true;
-    private PriceListModel selectedPriceList;
     long selectedIdPrice = -1L;
     long selectedIdInvoice = -1L;
     String selectedTextPrice = "";
@@ -152,7 +151,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
 
         //listener pro výběr ceníku
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            selectedPriceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
+            PriceListModel selectedPriceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
             btnSave.setEnabled(false);
             if (selectedPriceList != null) {
                 deactivateNT(selectedPriceList.getSazba().equals(InvoiceAbstract.D01) || selectedPriceList.getSazba().equals(InvoiceAbstract.D02));

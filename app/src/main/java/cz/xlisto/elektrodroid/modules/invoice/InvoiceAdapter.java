@@ -64,7 +64,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
     private ColorStateList originalTextViewColors;
     private final boolean showNT = true;
     private PriceListModel priceList;
-    private InvoiceJoinDialogFragment invoiceJoinDialogFragment;
     private boolean showCheckBoxSelect = false;
     private final InvoiceViewModel viewModel;
 
@@ -314,7 +313,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         InvoiceModel finalInvoicePrevious = invoicePrevious;
         holder.btnJoin.setOnClickListener(v -> {
             if (finalInvoicePrevious != null) {
-                invoiceJoinDialogFragment = InvoiceJoinDialogFragment.newInstance(invoice.getId(), finalInvoicePrevious.getId(), table, position);
+                InvoiceJoinDialogFragment invoiceJoinDialogFragment = InvoiceJoinDialogFragment.newInstance(invoice.getId(), finalInvoicePrevious.getId(), table, position);
                 invoiceJoinDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), InvoiceJoinDialogFragment.TAG);
             }
         });
