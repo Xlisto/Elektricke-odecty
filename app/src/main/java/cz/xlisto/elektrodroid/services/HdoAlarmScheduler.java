@@ -376,9 +376,6 @@ public final class HdoAlarmScheduler {
         startOfToday.set(Calendar.SECOND, 0);
         startOfToday.set(Calendar.MILLISECOND, 0);
 
-        Date dateFrom = parseDate(model.getDateFrom());
-        Date dateUntil = parseDate(model.getDateUntil());
-
         for (int offset = 0; offset <= MAX_DAYS_LOOKAHEAD; offset++) {
             Calendar day = (Calendar) startOfToday.clone();
             day.add(Calendar.DAY_OF_YEAR, offset);
@@ -388,6 +385,9 @@ public final class HdoAlarmScheduler {
 
             if (!modelIsHoliday || !isHolidayDay) {
                 if (modelIsHoliday) continue;
+                Date[] range = cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDateRange(model.getDateFrom(), model.getDateUntil(), day.getTime());
+                Date dateFrom = range != null ? range[0] : null;
+                Date dateUntil = range != null ? range[1] : null;
                 if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {
                     continue;
                 }
@@ -463,16 +463,7 @@ public final class HdoAlarmScheduler {
      * Parsuje textové datum ve formátu dd.MM.yyyy.
      */
     private static Date parseDate(String value) {
-        if (value == null || value.trim().isEmpty() || "0".equals(value)) {
-            return null;
-        }
-        try {
-            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-            format.setLenient(false);
-            return format.parse(value);
-        } catch (ParseException ignored) {
-            return null;
-        }
+        return cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDate(value);
     }
 
     /**

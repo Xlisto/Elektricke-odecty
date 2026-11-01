@@ -96,12 +96,13 @@ public class HdoUpdateHelper {
                     continue;
                 }
 
+                String dateFromStr = models.get(0).getDateFrom();
                 String dateUntilStr = models.get(0).getDateUntil();
-                Log.d(TAG, "HDO dateUntilStr=" + dateUntilStr);
-                Date dateUntil = parseDate(dateUntilStr);
-                if (dateUntil != null) {
+                Log.d(TAG, "HDO dateFromStr=" + dateFromStr + ", dateUntilStr=" + dateUntilStr);
+                Date[] range = parseDateRange(dateFromStr, dateUntilStr);
+                if (range != null && range[1] != null) {
                     Calendar untilCal = Calendar.getInstance();
-                    untilCal.setTime(dateUntil);
+                    untilCal.setTime(range[1]);
                     setStartOfDay(untilCal);
 
                     Calendar todayCal = Calendar.getInstance();
@@ -122,7 +123,7 @@ public class HdoUpdateHelper {
                         break;
                     }
                 } else {
-                    Log.d(TAG, "Failed to parse dateUntilStr: " + dateUntilStr);
+                    Log.d(TAG, "Failed to parse date range: " + dateFromStr + " - " + dateUntilStr);
                 }
             }
         }
@@ -174,15 +175,16 @@ public class HdoUpdateHelper {
         }
 
         // Získáme datum konce platnosti z prvního záznamu (případně projdeme všechny)
+        String dateFromStr = models.get(0).getDateFrom();
         String dateUntilStr = models.get(0).getDateUntil();
-        Date dateUntil = parseDate(dateUntilStr);
-        if (dateUntil == null) {
+        Date[] range = parseDateRange(dateFromStr, dateUntilStr);
+        if (range == null || range[1] == null) {
             return;
         }
 
         Calendar now = Calendar.getInstance();
         Calendar untilCal = Calendar.getInstance();
-        untilCal.setTime(dateUntil);
+        untilCal.setTime(range[1]);
         setStartOfDay(untilCal);
 
         Calendar todayCal = Calendar.getInstance();
@@ -235,10 +237,10 @@ public class HdoUpdateHelper {
         // Zjistíme, zda nové modely jsou pro budoucí období
         boolean isFuture = false;
         if (!newModels.isEmpty()) {
-            Date newDateFrom = parseDate(newModels.get(0).getDateFrom());
-            if (newDateFrom != null) {
+            Date[] newRange = parseDateRange(newModels.get(0).getDateFrom(), newModels.get(0).getDateUntil());
+            if (newRange != null && newRange[0] != null) {
                 Calendar fromCal = Calendar.getInstance();
-                fromCal.setTime(newDateFrom);
+                fromCal.setTime(newRange[0]);
                 setStartOfDay(fromCal);
                 if (fromCal.after(today)) {
                     isFuture = true;
@@ -276,10 +278,10 @@ public class HdoUpdateHelper {
         // Rozhodnutí o uložení:
         boolean hasValidOldCodes = false;
         for (HdoModel old : oldModels) {
-            Date until = parseDate(old.getDateUntil());
-            if (until != null) {
+            Date[] oldRange = parseDateRange(old.getDateFrom(), old.getDateUntil());
+            if (oldRange != null && oldRange[1] != null) {
                 Calendar untilCal = Calendar.getInstance();
-                untilCal.setTime(until);
+                untilCal.setTime(oldRange[1]);
                 setStartOfDay(untilCal);
                 if (!untilCal.before(today)) {
                     hasValidOldCodes = true;
@@ -335,6 +337,233 @@ public class HdoUpdateHelper {
 
 
     /**
+     * Parsuje dvojici dat platnosti HDO (začátek a konec) s použitím aktuálního data jako referenčního.
+     *
+     * @param dateFromStr  Datum od (např. "01.11.", "01.09.2026", "SVÁTEK")
+     * @param dateUntilStr Datum do (např. "31.01.", "31.10.2026")
+     * @return Pole Date[] o dvou prvcích [dateFrom, dateUntil], nebo null pokud obě data chybí
+     */
+    public static Date[] parseDateRange(String dateFromStr, String dateUntilStr) {
+        return parseDateRange(dateFromStr, dateUntilStr, null);
+    }
+
+
+    /**
+     * Parsuje dvojici dat platnosti HDO (začátek a konec) s ohledem na referenční datum.
+     * Vyhodnocuje správně formáty bez roku (např. u EGD "01.11." až "31.01.") a ošetřuje přechod přes konec roku.
+     *
+     * @param dateFromStr   Datum od (např. "01.11.", "01.09.2026", "SVÁTEK")
+     * @param dateUntilStr  Datum do (např. "31.01.", "31.10.2026")
+     * @param referenceDate Referenční datum k určení příslušného roku, nebo null pro aktuální datum
+     * @return Pole Date[] o dvou prvcích [dateFrom, dateUntil], nebo null pokud obě data chybí
+     */
+    public static Date[] parseDateRange(String dateFromStr, String dateUntilStr, Date referenceDate) {
+        if ((dateFromStr == null || dateFromStr.trim().isEmpty() || "0".equals(dateFromStr) || "SVÁTEK".equalsIgnoreCase(dateFromStr))
+                && (dateUntilStr == null || dateUntilStr.trim().isEmpty() || "0".equals(dateUntilStr))) {
+            return null;
+        }
+
+        Date refDate = referenceDate != null ? referenceDate : new Date();
+        Calendar refCal = Calendar.getInstance();
+        refCal.setTime(refDate);
+
+        Date fromExact = parseSingleDateWithYear(dateFromStr);
+        Date untilExact = parseSingleDateWithYear(dateUntilStr);
+
+        if (fromExact != null && untilExact != null) {
+            return new Date[]{fromExact, untilExact};
+        }
+
+        int[] fromDM = extractDayAndMonth(dateFromStr);
+        int[] untilDM = extractDayAndMonth(dateUntilStr);
+
+        if (fromDM == null && untilDM == null) {
+            Date f = fromExact != null ? fromExact : parseDateSingle(dateFromStr, refCal);
+            Date u = untilExact != null ? untilExact : parseDateSingle(dateUntilStr, refCal);
+            if (f == null && u == null) return null;
+            return new Date[]{f, u};
+        }
+
+        if (fromExact != null && untilDM != null) {
+            Calendar cFrom = Calendar.getInstance();
+            cFrom.setTime(fromExact);
+            int yearFrom = cFrom.get(Calendar.YEAR);
+            int monthFrom = cFrom.get(Calendar.MONTH) + 1;
+            int dayFrom = cFrom.get(Calendar.DAY_OF_MONTH);
+
+            boolean crossesNewYear = (monthFrom > untilDM[1]) || (monthFrom == untilDM[1] && dayFrom > untilDM[0]);
+            int yearUntil = crossesNewYear ? yearFrom + 1 : yearFrom;
+
+            Calendar cUntil = Calendar.getInstance();
+            cUntil.set(yearUntil, untilDM[1] - 1, untilDM[0], 23, 59, 59);
+            cUntil.set(Calendar.MILLISECOND, 999);
+            return new Date[]{fromExact, cUntil.getTime()};
+        }
+
+        if (untilExact != null && fromDM != null) {
+            Calendar cUntil = Calendar.getInstance();
+            cUntil.setTime(untilExact);
+            int yearUntil = cUntil.get(Calendar.YEAR);
+            int monthUntil = cUntil.get(Calendar.MONTH) + 1;
+            int dayUntil = cUntil.get(Calendar.DAY_OF_MONTH);
+
+            boolean crossesNewYear = (fromDM[1] > monthUntil) || (fromDM[1] == monthUntil && fromDM[0] > dayUntil);
+            int yearFrom = crossesNewYear ? yearUntil - 1 : yearUntil;
+
+            Calendar cFrom = Calendar.getInstance();
+            cFrom.set(yearFrom, fromDM[1] - 1, fromDM[0], 0, 0, 0);
+            cFrom.set(Calendar.MILLISECOND, 0);
+            return new Date[]{cFrom.getTime(), untilExact};
+        }
+
+        if (fromDM != null && untilDM != null) {
+            int monthFrom = fromDM[1];
+            int dayFrom = fromDM[0];
+            int monthUntil = untilDM[1];
+            int dayUntil = untilDM[0];
+
+            boolean crossesNewYear = (monthFrom > monthUntil) || (monthFrom == monthUntil && dayFrom > dayUntil);
+
+            int currentYear = refCal.get(Calendar.YEAR);
+            int[] candidateYears = new int[]{currentYear - 1, currentYear, currentYear + 1};
+
+            Calendar bestFrom = null;
+            Calendar bestUntil = null;
+            long minDistance = Long.MAX_VALUE;
+
+            long refMs = refCal.getTimeInMillis();
+
+            for (int Y : candidateYears) {
+                Calendar cFrom = Calendar.getInstance();
+                cFrom.set(Y, monthFrom - 1, dayFrom, 0, 0, 0);
+                cFrom.set(Calendar.MILLISECOND, 0);
+
+                Calendar cUntil = Calendar.getInstance();
+                int Yuntil = crossesNewYear ? Y + 1 : Y;
+                cUntil.set(Yuntil, monthUntil - 1, dayUntil, 23, 59, 59);
+                cUntil.set(Calendar.MILLISECOND, 999);
+
+                long fromMs = cFrom.getTimeInMillis();
+                long untilMs = cUntil.getTimeInMillis();
+
+                if (fromMs <= refMs && refMs <= untilMs) {
+                    bestFrom = cFrom;
+                    bestUntil = cUntil;
+                    break;
+                }
+
+                long dist;
+                if (refMs < fromMs) {
+                    dist = fromMs - refMs;
+                } else {
+                    dist = refMs - untilMs;
+                }
+
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestFrom = cFrom;
+                    bestUntil = cUntil;
+                }
+            }
+
+            return new Date[]{bestFrom != null ? bestFrom.getTime() : null, bestUntil != null ? bestUntil.getTime() : null};
+        }
+
+        Date f = fromDM != null ? parseDayMonthWithRefYear(fromDM[0], fromDM[1], refCal, false) : parseDateSingle(dateFromStr, refCal);
+        Date u = untilDM != null ? parseDayMonthWithRefYear(untilDM[0], untilDM[1], refCal, true) : parseDateSingle(dateUntilStr, refCal);
+        return new Date[]{f, u};
+    }
+
+
+    private static Date parseDayMonthWithRefYear(int day, int month, Calendar refCal, boolean isEnd) {
+        int year = refCal.get(Calendar.YEAR);
+        Calendar c = Calendar.getInstance();
+        if (isEnd) {
+            c.set(year, month - 1, day, 23, 59, 59);
+            c.set(Calendar.MILLISECOND, 999);
+        } else {
+            c.set(year, month - 1, day, 0, 0, 0);
+            c.set(Calendar.MILLISECOND, 0);
+        }
+        return c.getTime();
+    }
+
+
+    private static Date parseSingleDateWithYear(String value) {
+        if (value == null || value.trim().isEmpty() || "0".equals(value) || "SVÁTEK".equalsIgnoreCase(value)) {
+            return null;
+        }
+
+        String cleaned = value.trim()
+                .replace(".9999", "")
+                .replace(".1900", "")
+                .replace("9999", "")
+                .replace("1900", "");
+
+        String[] parts = cleaned.split("\\.");
+        if (parts.length < 3 || parts[2].trim().isEmpty()) {
+            return null;
+        }
+
+        String[] formatsWithYear = {"d.M.yyyy", "d. M. yyyy", "yyyy-MM-dd", "d.M.yy", "d. M. yy"};
+        for (String fmt : formatsWithYear) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
+                sdf.setLenient(false);
+                Date d = sdf.parse(cleaned);
+                if (d != null) {
+                    return d;
+                }
+            } catch (ParseException ignored) {
+            }
+        }
+        return null;
+    }
+
+
+    private static int[] extractDayAndMonth(String value) {
+        if (value == null || value.trim().isEmpty() || "0".equals(value) || "SVÁTEK".equalsIgnoreCase(value)) {
+            return null;
+        }
+
+        String cleaned = value.trim()
+                .replace(".9999", ".")
+                .replace(".1900", ".")
+                .replace("9999", "")
+                .replace("1900", "");
+
+        String[] formatsNoYear = {"d.M.", "d. M.", "d.M", "d. M", "dd.MM", "dd. MM"};
+        for (String fmt : formatsNoYear) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(fmt, Locale.getDefault());
+                sdf.setLenient(false);
+                Date d = sdf.parse(cleaned);
+                if (d != null) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(d);
+                    return new int[]{c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1};
+                }
+            } catch (ParseException ignored) {
+            }
+        }
+
+        try {
+            String[] parts = cleaned.split("\\.");
+            if (parts.length >= 2) {
+                int day = Integer.parseInt(parts[0].trim());
+                int month = Integer.parseInt(parts[1].trim());
+                if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
+                    return new int[]{day, month};
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        return null;
+    }
+
+
+    /**
      * Parsuje textové datum ve formátu dd.MM.yyyy, dd.MM, dd.M. atd.
      * Pokud rok chybí (např. u EGD ve tvaru "31.08", "31.8." nebo "31.8.9999"),
      * odvodí správný rok na základě aktuálního data.
@@ -342,12 +571,23 @@ public class HdoUpdateHelper {
      * @param value Textový řetězec data
      * @return Objekt Date nebo null při chybě
      */
-    private static Date parseDate(String value) {
+    public static Date parseDate(String value) {
+        if (value == null || value.trim().isEmpty() || "0".equals(value)) {
+            return null;
+        }
+        Date[] range = parseDateRange(value, null, null);
+        if (range != null && range[0] != null) {
+            return range[0];
+        }
+        return parseDateSingle(value, Calendar.getInstance());
+    }
+
+
+    private static Date parseDateSingle(String value, Calendar refCal) {
         if (value == null || value.trim().isEmpty() || "0".equals(value)) {
             return null;
         }
 
-        // Ošetření EGD formátů bez roku nebo s placeholder rokem (9999, 1900)
         String cleanedValue = value.trim()
                 .replace(".9999", ".")
                 .replace(".1900", ".")
@@ -363,18 +603,9 @@ public class HdoUpdateHelper {
                 if (date != null) {
                     if (!format.contains("yyyy") && !format.contains("yy")) {
                         Calendar cal = Calendar.getInstance();
-                        int currentYear = cal.get(Calendar.YEAR);
+                        int currentYear = refCal.get(Calendar.YEAR);
                         cal.setTime(date);
                         cal.set(Calendar.YEAR, currentYear);
-
-                        // Heuristika pro data bez roku: pokud je datum v aktuálním roce
-                        // více než 6 měsíců v budoucnosti, pravděpodobně patřilo do předchozího roku.
-                        Calendar today = Calendar.getInstance();
-                        long diffMillis = cal.getTimeInMillis() - today.getTimeInMillis();
-                        long sixMonthsMillis = 180L * 24L * 60L * 60L * 1000L;
-                        if (diffMillis > sixMonthsMillis) {
-                            cal.set(Calendar.YEAR, currentYear - 1);
-                        }
                         return cal.getTime();
                     }
                     return date;
@@ -382,7 +613,7 @@ public class HdoUpdateHelper {
             } catch (ParseException ignored) {
             }
         }
-        Log.e(TAG, "parseDate: Nelze parsovat datum " + value);
+        Log.e(TAG, "parseDateSingle: Nelze parsovat datum " + value);
         return null;
     }
 
