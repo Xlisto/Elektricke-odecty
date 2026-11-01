@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -37,8 +38,11 @@ public class GraphHdoClockView extends View {
     private Paint pTimePV;
     private Paint pLegend;
     private Paint pTitle;
-    private Paint pTick;
     private Paint pBackground;
+    private Paint pHandFill;
+    private Paint pHandStroke;
+    private Paint pCapInner;
+    private final Path handPath = new Path();
 
     private boolean isDarkMode;
     private String groupTitle = "";
@@ -114,11 +118,18 @@ public class GraphHdoClockView extends View {
         pTitle.setFakeBoldText(true);
         pTitle.setTextAlign(Paint.Align.LEFT);
 
-        pTick = new Paint(Paint.ANTI_ALIAS_FLAG);
-        pTick.setColor(Color.RED);
-        pTick.setStyle(Paint.Style.FILL_AND_STROKE);
-        pTick.setStrokeWidth(dpToPx(2f));
-        pTick.setStrokeCap(Paint.Cap.ROUND);
+        pHandFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pHandFill.setColor(Color.parseColor("#D32F2F"));
+        pHandFill.setStyle(Paint.Style.FILL);
+
+        pHandStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pHandStroke.setColor(Color.parseColor("#B71C1C"));
+        pHandStroke.setStyle(Paint.Style.STROKE);
+        pHandStroke.setStrokeWidth(dpToPx(1f));
+
+        pCapInner = new Paint(Paint.ANTI_ALIAS_FLAG);
+        pCapInner.setColor(Color.WHITE);
+        pCapInner.setStyle(Paint.Style.FILL);
 
         pTimeTUV = new Paint(Paint.ANTI_ALIAS_FLAG);
         pTimeTUV.setColor(ContextCompat.getColor(getContext(), R.color.color_hdo_time_TUV));
@@ -541,7 +552,7 @@ public class GraphHdoClockView extends View {
 
 
     /**
-     * Vykreslí červenou hodinovou ručičku ukazuící aktuální čas elektroměru
+     * Vykreslí červenou hodinovou ručičku ukazující aktuální čas elektroměru.
      *
      * @param canvas plátno pro kreslení
      */
@@ -552,14 +563,50 @@ public class GraphHdoClockView extends View {
         int minutes = currentMeterMinutes % 60;
 
         float angle = 270f + (hours * 15f) + (minutes * 0.25f);
-        double radians = Math.toRadians(angle);
+        double rad = Math.toRadians(angle);
+        double perpRad = Math.toRadians(angle + 90);
 
-        int handLength = radius - dpToPx(6);
-        float endX = (float) (centerX + handLength * Math.cos(radians));
-        float endY = (float) (centerY + handLength * Math.sin(radians));
+        float cosRad = (float) Math.cos(rad);
+        float sinRad = (float) Math.sin(rad);
+        float cosPerp = (float) Math.cos(perpRad);
+        float sinPerp = (float) Math.sin(perpRad);
 
-        canvas.drawLine(centerX, centerY, endX, endY, pTick);
-        canvas.drawCircle(centerX, centerY, dpToPx(3), pTick);
+        float handLength = radius - dpToPx(8f);
+        float tailLength = dpToPx(12f);
+        float baseHalfWidth = dpToPx(3.5f);
+
+        // Špička ručičky
+        float tipX = centerX + handLength * cosRad;
+        float tipY = centerY + handLength * sinRad;
+
+        // Protiváha / přesah za střed
+        float tailX = centerX - tailLength * cosRad;
+        float tailY = centerY - tailLength * sinRad;
+
+        // Pravé a levé rozšíření u středu
+        float rightX = centerX + baseHalfWidth * cosPerp;
+        float rightY = centerY + baseHalfWidth * sinPerp;
+
+        float leftX = centerX - baseHalfWidth * cosPerp;
+        float leftY = centerY - baseHalfWidth * sinPerp;
+
+        handPath.reset();
+        handPath.moveTo(tipX, tipY);
+        handPath.lineTo(rightX, rightY);
+        handPath.lineTo(tailX, tailY);
+        handPath.lineTo(leftX, leftY);
+        handPath.close();
+
+        canvas.drawPath(handPath, pHandFill);
+        canvas.drawPath(handPath, pHandStroke);
+
+        // Středový čep (středová čepička s nýtem)
+        float capRadius = dpToPx(5f);
+        float innerCapRadius = dpToPx(2f);
+
+        canvas.drawCircle(centerX, centerY, capRadius, pHandFill);
+        canvas.drawCircle(centerX, centerY, capRadius, pHandStroke);
+        canvas.drawCircle(centerX, centerY, innerCapRadius, pCapInner);
     }
 
 
