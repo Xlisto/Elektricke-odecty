@@ -20,7 +20,6 @@ import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 
 public class PriceListViewModel extends AndroidViewModel {
 
-    private static final String TAG = "PriceListViewModel";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final MutableLiveData<Event<Boolean>> saveResultEvent = new MutableLiveData<>();
 
@@ -131,7 +130,6 @@ public class PriceListViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        super.onCleared();
         executor.shutdownNow();
     }
 
