@@ -7,13 +7,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
@@ -457,13 +454,6 @@ public final class HdoAlarmScheduler {
         out.set(Calendar.SECOND, 0);
         out.set(Calendar.MILLISECOND, 0);
         return out;
-    }
-
-    /**
-     * Parsuje textové datum ve formátu dd.MM.yyyy.
-     */
-    private static Date parseDate(String value) {
-        return cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDate(value);
     }
 
     /**
