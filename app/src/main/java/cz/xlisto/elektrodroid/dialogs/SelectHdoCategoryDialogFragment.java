@@ -1,7 +1,6 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,11 +8,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -48,8 +47,7 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     private ArrayList<String> codes, codesException;
     private ArrayList<String[]> groupsList, groupExceptionList;
     private Spinner spinner;
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch swExceptionArea;
+    private SwitchCompat swExceptionArea;
     private String exceptionArea;
     private String flagResultDialogFragment;
     private int selectedPosition;
