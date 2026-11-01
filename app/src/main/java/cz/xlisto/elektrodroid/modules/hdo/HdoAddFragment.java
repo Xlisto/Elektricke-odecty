@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -15,7 +14,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Xlisto 26.05.2023 21:13
  */
 public class HdoAddFragment extends HdoAddEditFragmentAbstract{
-    private static final String TAG = "HdoAddFragment";
 
     public static HdoAddFragment newInstance() {
         return new HdoAddFragment();
@@ -25,13 +23,8 @@ public class HdoAddFragment extends HdoAddEditFragmentAbstract{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            timePickerFrom.setMinute(0);
-            timePickerUntil.setMinute(0);
-        } else {
-            timePickerFrom.setCurrentMinute(0);
-            timePickerUntil.setCurrentMinute(0);
-        }
+        timePickerFrom.setMinute(0);
+        timePickerUntil.setMinute(0);
 
         btnSave.setOnClickListener(v -> onSaveClicked());
     }
