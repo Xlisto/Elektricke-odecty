@@ -43,7 +43,6 @@ public class PriceListCompareBoxFragment extends Fragment {
     private static final String ARG_CONSUPTION_CONTAINER = "consuptionContainer";
     private static long idPriceListLeft = -1L, idPriceListRight = -1L;
     private PriceListModel priceListLeftNERegul, priceListRightNERegul;
-    private PriceListModel priceListLeft, priceListRight;
     private SelectedPriceListsInterface selectedPriceListsInterface;
     private PriceListsViewModel priceListsViewModel;
     private Button btnLeft;
@@ -237,27 +236,35 @@ public class PriceListCompareBoxFragment extends Fragment {
         super.onResume();
         //posluchač pro aktualizaci dat levého ceníku
         priceListsViewModel.getPriceListLeft().observe(getViewLifecycleOwner(), priceList -> {
-            priceListLeft = priceList;
-            if (priceListLeft != null)
-                btnLeft.setText(priceListLeft.getName());
-           //selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul);
+            if (priceList != null)
+                btnLeft.setText(priceList.getName());
+            updateSelectedPriceLists();
         });
 
         //posluchač pro aktualizaci dat pravého ceníku
         priceListsViewModel.getPriceListRight().observe(getViewLifecycleOwner(), priceList -> {
-            priceListRight = priceList;
-            if (priceListRight != null)
-                btnRight.setText(priceListRight.getName());
-            //selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul);
+            if (priceList != null)
+                btnRight.setText(priceList.getName());
+            updateSelectedPriceLists();
         });
 
         //posluchač pro aktualizaci dat parametrů
         priceListsViewModel.getConsuptionContainer().observe(getViewLifecycleOwner(), consuptionContainer -> {
             this.consuptionContainer = consuptionContainer;
-            //selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul, consuptionContainer);
+            updateSelectedPriceLists();
         });
 
-        selectedPriceListsInterface.onPriceListsSelected(priceListLeft, priceListRight, consuptionContainer);
+        updateSelectedPriceLists();
+    }
+
+
+    private void updateSelectedPriceLists() {
+        if (selectedPriceListsInterface != null) {
+            selectedPriceListsInterface.onPriceListsSelected(
+                    priceListsViewModel.getPriceListLeft().getValue(),
+                    priceListsViewModel.getPriceListRight().getValue(),
+                    consuptionContainer);
+        }
     }
 
 
