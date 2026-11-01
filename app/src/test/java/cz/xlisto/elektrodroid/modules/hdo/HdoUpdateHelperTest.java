@@ -177,4 +177,29 @@ public class HdoUpdateHelperTest {
         assertEquals(Calendar.JANUARY, cUntil2.get(Calendar.MONTH));
     }
 
+
+    @Test
+    public void testFindActivePeriodIndex() {
+        java.util.ArrayList<HdoSiteFragment.HdoListContainer> containers = new java.util.ArrayList<>();
+
+        java.util.ArrayList<cz.xlisto.elektrodroid.models.HdoModel> list0 = new java.util.ArrayList<>();
+        list0.add(new cz.xlisto.elektrodroid.models.HdoModel(1, "Relé1", "01.09.", "31.10.", "00:00", "06:00", 1, 1, 1, 1, 1, 0, 0, "EGD"));
+        containers.add(new HdoSiteFragment.HdoListContainer(list0, "01.09 - 31.10", HdoSiteFragment.HdoListContainer.Distribution.EGD));
+
+        java.util.ArrayList<cz.xlisto.elektrodroid.models.HdoModel> list1 = new java.util.ArrayList<>();
+        list1.add(new cz.xlisto.elektrodroid.models.HdoModel(2, "Relé1", "01.04.", "31.08.", "00:00", "06:00", 1, 1, 1, 1, 1, 0, 0, "EGD"));
+        containers.add(new HdoSiteFragment.HdoListContainer(list1, "01.04 - 31.08", HdoSiteFragment.HdoListContainer.Distribution.EGD));
+
+        java.util.ArrayList<cz.xlisto.elektrodroid.models.HdoModel> list2 = new java.util.ArrayList<>();
+        list2.add(new cz.xlisto.elektrodroid.models.HdoModel(3, "Relé1", "01.02.", "31.03.", "00:00", "06:00", 1, 1, 1, 1, 1, 0, 0, "EGD"));
+        containers.add(new HdoSiteFragment.HdoListContainer(list2, "01.02 - 31.03", HdoSiteFragment.HdoListContainer.Distribution.EGD));
+
+        java.util.ArrayList<cz.xlisto.elektrodroid.models.HdoModel> list3 = new java.util.ArrayList<>();
+        list3.add(new cz.xlisto.elektrodroid.models.HdoModel(4, "Relé1", "01.11.", "31.01.", "00:00", "06:00", 1, 1, 1, 1, 1, 0, 0, "EGD"));
+        containers.add(new HdoSiteFragment.HdoListContainer(list3, "01.11 - 31.01", HdoSiteFragment.HdoListContainer.Distribution.EGD));
+
+        int activeIndex = HdoSiteFragment.findActivePeriodIndex(containers);
+        assertEquals("Active period index for current date should be 3 (01.11 - 31.01)", 3, activeIndex);
+    }
+
 }

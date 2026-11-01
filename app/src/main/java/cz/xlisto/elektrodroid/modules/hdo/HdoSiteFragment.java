@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
@@ -366,25 +367,41 @@ public class HdoSiteFragment extends Fragment {
 
         viewModel.getValidityDates().observe(getViewLifecycleOwner(), validityDates -> {
             if (validityDates.length == 0) return;
-            setTvValidityDate(validityDates[0]);
             spDateEgd.setAdapter(new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_dropdown_item, validityDates));
+            if (!hdoListContainer.isEmpty()) {
+                int activeIndex = findActivePeriodIndex(hdoListContainer);
+                if (spDateEgd.getAdapter() != null && activeIndex < spDateEgd.getAdapter().getCount()) {
+                    spDateEgd.setSelection(activeIndex);
+                }
+                setTvValidityDate(validityDates[activeIndex]);
+            } else {
+                setTvValidityDate(validityDates[0]);
+            }
         });
 
         viewModel.getHdoListModels().observe(getViewLifecycleOwner(), hdoListModels -> {
             hdoListContainer.clear();
             hdoListContainer.addAll(hdoListModels);
             if (!hdoListModels.isEmpty()) {
-                setAdapter(hdoListModels.get(0).getHdoList());
-                hdoList.clear();
-
-                if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD)
-                    hdoList.addAll(hdoListModels.get(spDateEgd.getSelectedItemPosition()).getHdoList());
-                else
-                    hdoList.addAll(hdoListModels.get(0).getHdoList());
+                int activeIndex = findActivePeriodIndex(hdoListModels);
 
                 if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD) {
+                    if (spDateEgd.getAdapter() != null && activeIndex < spDateEgd.getAdapter().getCount()) {
+                        spDateEgd.setSelection(activeIndex);
+                    }
+                    String[] currentValidityDates = viewModel.getValidityDates().getValue();
+                    if (currentValidityDates != null && activeIndex < currentValidityDates.length) {
+                        setTvValidityDate(currentValidityDates[activeIndex]);
+                    } else {
+                        setTvValidityDate(hdoListModels.get(activeIndex).getValidityDate());
+                    }
+                    hdoList.clear();
+                    hdoList.addAll(hdoListModels.get(activeIndex).getHdoList());
                     spDateEgd.setVisibility(View.VISIBLE);
                 } else {
+                    setTvValidityDate(hdoListModels.get(0).getValidityDate());
+                    hdoList.clear();
+                    hdoList.addAll(hdoListModels.get(0).getHdoList());
                     tvValidityDate.setVisibility(View.VISIBLE);
                 }
             }
@@ -395,9 +412,11 @@ public class HdoSiteFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (hdoListContainer.isEmpty()) return;
-                setAdapter(hdoListContainer.get(position).getHdoList());
-                hdoList.clear();
-                hdoList.addAll(hdoListContainer.get(position).getHdoList());
+                if (position >= 0 && position < hdoListContainer.size()) {
+                    setAdapter(hdoListContainer.get(position).getHdoList());
+                    hdoList.clear();
+                    hdoList.addAll(hdoListContainer.get(position).getHdoList());
+                }
             }
 
 
@@ -718,6 +737,36 @@ public class HdoSiteFragment extends Fragment {
 
 
     /**
+     * Vyhledá index v seznamu HdoListContainer, jehož období platnosti je aktuálně platné k dnešnímu dni.
+     * Pokud žádné neobsahuje dnešní den, vyhledá nejbližší neprošlé období nebo vrátí 0.
+     *
+     * @param containers Seznam HdoListContainer z EGD
+     * @return Index aktivního období, nebo 0
+     */
+    public static int findActivePeriodIndex(ArrayList<HdoListContainer> containers) {
+        if (containers == null || containers.isEmpty()) return 0;
+
+        Date today = new Date();
+
+        for (int i = 0; i < containers.size(); i++) {
+            ArrayList<HdoModel> list = containers.get(i).getHdoList();
+            if (list != null && !list.isEmpty()) {
+                HdoModel model = list.get(0);
+                Date[] range = HdoUpdateHelper.parseDateRange(model.getDateFrom(), model.getDateUntil(), today);
+                if (range != null && range[0] != null && range[1] != null) {
+                    long t = today.getTime();
+                    if (t >= range[0].getTime() && t <= range[1].getTime()) {
+                        return i;
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+
+    /**
      * Třída HdoListContainer slouží k ukládání seznamu HDO, data platnosti a distribuční oblasti.
      * <p>
      * Tato třída poskytuje metody pro získání seznamu HDO a distribuční oblasti.
@@ -763,6 +812,16 @@ public class HdoSiteFragment extends Fragment {
          */
         public ArrayList<HdoModel> getHdoList() {
             return hdoList;
+        }
+
+
+        /**
+         * Vrací datum platnosti HDO.
+         *
+         * @return Datum platnosti HDO.
+         */
+        public String getValidityDate() {
+            return validityDate;
         }
 
 

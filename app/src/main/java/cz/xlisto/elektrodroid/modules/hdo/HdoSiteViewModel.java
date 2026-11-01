@@ -425,9 +425,10 @@ public class HdoSiteViewModel extends ViewModel {
                 for (int i = 0; i < hdoListContainer.size(); i++) {
                     validityDate[i] = hdoListContainer.get(i).validityDate;
                 }
+                int activeIndex = HdoSiteFragment.findActivePeriodIndex(hdoListContainer);
                 validityDates.postValue(validityDate);
                 hdoListModels.postValue(hdoListContainer);
-                hdoModels.postValue(hdoListContainer.get(0).hdoList);
+                hdoModels.postValue(hdoListContainer.get(activeIndex).hdoList);
             }
         } else if (distributionAreaIndex == 2) {
             //PRE
