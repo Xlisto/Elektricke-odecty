@@ -94,18 +94,18 @@ Chování notifikací závisí také na systémových oprávněních Androidu. P
 nebo se zobrazují se zpožděním, je vhodné zkontrolovat nastavení aplikace v části **Nastavení**,
 zejména oprávnění pro notifikace a přesné alarmy.
 
-<p align="center">
-  <img src="screenshots/odb_1.png" width="300" />
-  <img src="screenshots/odb_2.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/odb_1.png" alt="Odběrné místo 1" style="width: 300px;" />
+  <img src="screenshots/odb_2.png" alt="Odběrné místo 2" style="width: 300px;" />
 </p>
 
-<p align="center">
-  <img src="screenshots/odb_3.png" width="300" />
-  <img src="screenshots/odb_4.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/odb_3.png" alt="Odběrné místo 3" style="width: 300px;" />
+  <img src="screenshots/odb_4.png" alt="Odběrné místo 4" style="width: 300px;" />
 </p>
 
-<p align="center">
-  <img src="screenshots/odb_5.png" height="300" />
+<p style="text-align: center;">
+  <img src="screenshots/odb_5.png" alt="Odběrné místo 5" style="height: 300px;" />
 </p>
 
 ## Ceník
@@ -130,8 +130,8 @@ Nový ceník se přidává tlačítkem **+**. Při vytváření ceníku se zadá
 
 Cena za 1 kWh se zobrazuje jako celková cena včetně DPH, tedy jako součet obchodní části, regulovaných položek a daně. Stálá měsíční platba se zobrazuje jako celková částka včetně DPH. Zahrnuje stálý plat dodavatele, cenu za jistič a cenu za provoz nesíťové infrastruktury. Pro ceníky platné pro rok 2023 se zobrazuje dvojí cena. Vyšší cena zobrazuje platné ceny od dodavatele a nižší cena zobrazuje zastropované ceny státem.
 
-<p align="center">
-  <img src="screenshots/cena_2.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/cena_2.png" alt="Ceník 2" style="width: 300px;" />
 </p>
 
 U jednotarifních sazeb, například D01d nebo D02d, se nízký tarif nepoužívá. Položku nízkého tarifu tedy není nutné vyplňovat podle samostatné ceny NT.
@@ -144,14 +144,14 @@ Datum platnosti je důležité pro správné přiřazení ceníku k měsíčním
 
 Tlačítkem **Uložit** se ceník uloží. Tlačítkem **Zpět** se provedené změny zahodí a zobrazí se seznam ceníků.
 
-<p align="center">
-  <img src="screenshots/cena_4.png" width="300" />
-  <img src="screenshots/cena_5.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/cena_4.png" alt="Ceník 4" style="width: 300px;" />
+  <img src="screenshots/cena_5.png" alt="Ceník 5" style="width: 300px;" />
 </p>
 
-<p align="center">
-  <img src="screenshots/cena_1.png" width="300" />
-  <img src="screenshots/cena_3.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/cena_1.png" alt="Ceník 1" style="width: 300px;" />
+  <img src="screenshots/cena_3.png" alt="Ceník 3" style="width: 300px;" />
 </p>
 
 ### Úprava ceníků
@@ -176,18 +176,18 @@ V horní části obrazovky je možné přepínat režim **Zkrácený**. Ve zkrá
 
 Přepínač **Zastropované ceny v r. 2023** slouží pro přepočet záznamů podle pravidel platných pro rok 2023. U běžných novějších záznamů zůstává vypnutý.
 
-<p align="center">
-  <img src="screenshots/mes_1.png" width="300" />
-  <img src="screenshots/mes_2.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/mes_1.png" alt="Měsíční odečty 1" style="width: 300px;" />
+  <img src="screenshots/mes_2.png" alt="Měsíční odečty 2" style="width: 300px;" />
 </p>
 
 Pravidelným používáním aplikace vzniká delší seznam odečtů. Pro lepší orientaci lze použít tlačítko **Filtr odečtů**. Filtr umožňuje zobrazit pouze záznamy v určitém období. Nastavuje se počáteční datum v části **Měsíční odečty OD** a koncové datum v části **Měsíční odečty DO**. Tlačítkem **Filtrovat** se filtr použije, tlačítkem **Vynulovat filtr** se omezení zruší a znovu se zobrazí všechny záznamy. Tlačítkem **Zrušit** se dialog zavře bez použití změn.
 
 Pokud je aplikován filtr, v horní části obrazovky se zobrazí souhrnná informace o vybraném období a celkové bilanci. V měsíčních záznamech se vždy počítá s dražší variantou POZE, tedy s částkou 495 Kč/MWh bez DPH. Výjimkou je rok 2026, kdy je tato část ceny snížena na 0 Kč/MWh.
 
-<p align="center">
-  <img src="screenshots/mes_3.png" width="300" />
-  <img src="screenshots/mes_12.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/mes_3.png" alt="Měsíční odečty 3" style="width: 300px;" />
+  <img src="screenshots/mes_12.png" alt="Měsíční odečty 12" style="width: 300px;" />
 </p>
 
 ### Přidání měsíčního záznamu
@@ -211,10 +211,10 @@ Tlačítkem **Uložit** se záznam uloží. Tlačítkem **Zpět** se formulář 
 
 Při ukládání prvních měsíčních záznamů se může zobrazit upozornění na chybějící poslední fakturu. Toto upozornění souvisí s přesnějším navázáním měsíčních odečtů na fakturaci. Pokud aplikaci teprve začínáte používat a fakturu ještě nemáte zadanou, lze upozornění potvrdit a v zadávání pokračovat.
 
-<p align="center">
-  <img src="screenshots/mes_4.png" width="200" />
-  <img src="screenshots/mes_5.png" width="200" />
-  <img src="screenshots/mes_6.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/mes_4.png" alt="Měsíční odečty 4" style="width: 200px;" />
+  <img src="screenshots/mes_5.png" alt="Měsíční odečty 5" style="width: 200px;" />
+  <img src="screenshots/mes_6.png" alt="Měsíční odečty 6" style="width: 200px;" />
 </p>
 
 ### Další měsíční záznamy
@@ -237,10 +237,10 @@ Ceník lze změnit tlačítkem pro výběr ceníku. Po jeho stisknutí se zobraz
 
 Pokud je v aplikaci uloženo větší množství ceníků, je vhodné použít [filtraci ceníků](#filtrace-ceniku). Pomocí filtru lze rychle zobrazit pouze ceníky odpovídající požadované distribuční sazbě, dodavateli, distribučnímu území nebo datu platnosti.
 
-<p align="center">
-  <img src="screenshots/mes_7.png" width="200" />
-  <img src="screenshots/mes_8.png" width="200" />
-  <img src="screenshots/mes_9.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/mes_7.png" alt="Měsíční odečty 7" style="width: 200px;" />
+  <img src="screenshots/mes_8.png" alt="Měsíční odečty 8" style="width: 200px;" />
+  <img src="screenshots/mes_9.png" alt="Měsíční odečty 9" style="width: 200px;" />
 </p>
 
 ## Záznam faktur
@@ -253,11 +253,11 @@ Pokud v aplikaci není zadána žádná starší faktura, lze pro výpočet obdo
 
 Režim generování období bez faktury lze nastavit v menu. Dostupný je automatický a poloautomatický režim. Pokud jsou v poloautomatickém režimu provedeny ruční změny, přepnutím zpět do automatického režimu se tyto změny přepíší podle měsíčních odečtů.
 
-<p align="center">
-  <img src="screenshots/fak_5.png" width="200" />
-  <img src="screenshots/fak_7.png" width="200" />
-  <img src="screenshots/fak_8.png" width="200" />
-  <img src="screenshots/fak_6.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_5.png" alt="Faktura 5" style="width: 200px;" />
+  <img src="screenshots/fak_7.png" alt="Faktura 7" style="width: 200px;" />
+  <img src="screenshots/fak_8.png" alt="Faktura 8" style="width: 200px;" />
+  <img src="screenshots/fak_6.png" alt="Faktura 6" style="width: 200px;" />
 </p>
 
 ### Automatický režim
@@ -278,11 +278,11 @@ Rozdělení období na jednotlivé části je v tomto režimu plně na uživatel
 - **Rozděl** – rozdělí jeden záznam na dvě části. V dialogu lze nastavit dělicí datum a stav měřičů VT a NT. Výchozí hodnota je nastavena přibližně na polovinu období. Hodnoty lze změnit posuvníky nebo zadáním do textových polí. V horní části dialogu je zobrazen náhled rozdělení. Tlačítkem **Rozděl** se záznam rozdělí na dvě navazující části.
 - **Spoj s předchozím** – sloučí záznam se záznamem, který je v seznamu pod ním. V dialogu je zobrazen náhled slučovaných záznamů i výsledku po sloučení.
 
-<p align="center">
-  <img src="screenshots/fak_9.png" width="200" />
-  <img src="screenshots/fak_10.png" width="200" />
-  <img src="screenshots/fak_11.png" width="200" />
-  <img src="screenshots/fak_12.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_9.png" alt="Faktura 9" style="width: 200px;" />
+  <img src="screenshots/fak_10.png" alt="Faktura 10" style="width: 200px;" />
+  <img src="screenshots/fak_11.png" alt="Faktura 11" style="width: 200px;" />
+  <img src="screenshots/fak_12.png" alt="Faktura 12" style="width: 200px;" />
 </p>
 
 ### Detail faktury
@@ -311,11 +311,11 @@ Druhá záložka **Detaily** zobrazuje dílčí výpočty faktury. Tuto část l
 
 Třetí záložka **Platby** slouží k evidenci zálohových plateb, doplatků a přeplatků. Tyto platby slouží výhradně k výpočtu bilance za celé fakturační období a nesouvisí se zálohami zadávanými u měsíčních odečtů.
 
-<p align="center">
-  <img src="screenshots/fak_1.png" width="200" />
-  <img src="screenshots/fak_2.png" width="200" />
-  <img src="screenshots/fak_3.png" width="200" />
-  <img src="screenshots/fak_4.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_1.png" alt="Faktura 1" style="width: 200px;" />
+  <img src="screenshots/fak_2.png" alt="Faktura 2" style="width: 200px;" />
+  <img src="screenshots/fak_3.png" alt="Faktura 3" style="width: 200px;" />
+  <img src="screenshots/fak_4.png" alt="Faktura 4" style="width: 200px;" />
 </p>
 
 ### Přidání a úprava uložených faktur
@@ -325,9 +325,9 @@ V seznamu faktur lze přidávat již existující vyúčtovací faktury. Dialog 
 Nejprve se zadá číslo faktury nebo jiné označení pro lepší orientaci. Po potvrzení se na konci seznamu vytvoří nová položka faktury. Nová faktura zatím nemá vyplněná data ani stavy měřičů, proto se u ní může zobrazit upozornění na nenavazující nebo neúplné záznamy.
 
 Klepnutím na položku faktury se zobrazí její ovládací tlačítka. Lze změnit číslo faktury, přidat odečtové záznamy, přidat zálohové platby nebo celou fakturu smazat.
-<p align="center">
-  <img src="screenshots/fak_18.png" width="300" />
-  <img src="screenshots/fak_14.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_18.png" alt="Faktura 18" style="width: 300px;" />
+  <img src="screenshots/fak_14.png" alt="Faktura 14" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava zálohové platby
@@ -338,10 +338,10 @@ U platby se zadává datum zaúčtování, výše platby a typ platby. Doplatek 
 
 Již zadané platby lze upravovat. Klepnutím na položku platby se zobrazí tlačítka pro úpravu, odstranění nebo přiřazení platby k jiné faktuře. Dialog pro úpravu je stejný jako dialog pro přidání, pouze jsou v něm předvyplněné původní hodnoty. Smazání platby se provede po potvrzení dialogu.
 
-<p align="center">
-  <img src="screenshots/fak_15.png" width="300" />
-  <img src="screenshots/fak_16.png" width="300" />
-  <img src="screenshots/fak_17.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_15.png" alt="Faktura 15" style="width: 300px;" />
+  <img src="screenshots/fak_16.png" alt="Faktura 16" style="width: 300px;" />
+  <img src="screenshots/fak_17.png" alt="Faktura 17" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava záznamů faktury
@@ -354,12 +354,12 @@ Tlačítkem **Uprav** lze záznam změnit, pokud některá položka nesouhlasí.
 
 Po návratu do seznamu faktur je nově přidaná faktura zobrazena na konci seznamu. Pokud jsou údaje zadány správně a záznamy na sebe navazují, nezobrazuje se u faktury varování o nekonzistenci údajů.
 
-<p align="center">
-  <img src="screenshots/fak_19.png" width="200" />
-  <img src="screenshots/fak_20.png" width="200" />
-  <img src="screenshots/fak_21.png" width="200" />
-  <img src="screenshots/fak_22.png" width="200" />
-  <img src="screenshots/fak_23.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/fak_19.png" alt="Faktura 19" style="width: 200px;" />
+  <img src="screenshots/fak_20.png" alt="Faktura 20" style="width: 200px;" />
+  <img src="screenshots/fak_21.png" alt="Faktura 21" style="width: 200px;" />
+  <img src="screenshots/fak_22.png" alt="Faktura 22" style="width: 200px;" />
+  <img src="screenshots/fak_23.png" alt="Faktura 23" style="width: 200px;" />
 </p>
 
 <a id="filtrace-ceniku"></a>
@@ -389,17 +389,17 @@ Po použití filtru se ve spodní části seznamu zobrazí počet uložených a 
 
 Ceník se vybere označením příslušné položky v seznamu a potvrzením tlačítkem **Vybrat**. Po návratu do měsíčního záznamu se vybraný ceník zobrazí ve formuláři odečtu a použije se pro výpočet spotřeby.
 
-<p align="center">
-  <img src="screenshots/mes_10.png" width="200" />
-  <img src="screenshots/mes_11.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/mes_10.png" alt="Měsíční odečty 10" style="width: 200px;" />
+  <img src="screenshots/mes_11.png" alt="Měsíční odečty 11" style="width: 200px;" />
 </p>
 
 ## Porovnání ceníků
 
 Výhodnost jednotlivých ceníků nemusí být vždy na první pohled zřejmá. Proto aplikace umožňuje porovnání dvou ceníků mezi sebou. Porovnání probíhá formou výpočtu, kdy se zpravidla zadává období 12 měsíců a přibližná roční spotřeba ve vysokém (VT) a nízkém tarifu (NT). V porovnání se zobrazují rozdíly v jednotlivých částech i v celkovém výpočtu.
 
-<p align="center">
-  <img src="screenshots/por_1.png" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/por_1.png" alt="Porovnání ceníků 1" style="width: 300px;" />
 </p>
 
 ## Čas HDO
@@ -411,20 +411,22 @@ zvýrazňuje intervaly platnosti nízkého a vysokého tarifu během dne. Při z
 kódu probíhá automatická kontrola — v případě chybného formátu nebo nekompatibilního kódu
 distribuční sítě aplikace zobrazí **upozornění na neplatný HDO kód**.
 
-V horní části je zobrazen čas elektroměru. Pokud elektroměr není vybaven přijímačem HDO se synchronizací času, jeho čas se nemusí shodovat se skutečným časem. Pomocí tlačítek lze čas upravit tak, aby odpovídal času nastavenému na elektroměru.
+V horní části je zobrazen čas elektroměru. Pokud elektroměr není vybaven přijímačem HDO se
+synchronizací času, jeho čas se nemusí shodovat se skutečným časem. Pomocí tlačítka lze čas upravit
+tak, aby odpovídal času nastavenému na elektroměru.
 
 Nalezené seznamy časů je možné uložit do paměti aplikace. Touto akcí se přepíší původně uložené časy. Seznam časů lze také zkopírovat v textové podobě do schránky.
 
-<p align="center">
-  <img src="screenshots/hdo_1.png" width="200" />
-  <img src="screenshots/hdo_4.png" width="200" />
-  <img src="screenshots/hdo_3.png" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/hdo_1.png" alt="HDO 1" style="width: 200px;" />
+  <img src="screenshots/hdo_4.png" alt="HDO 4" style="width: 200px;" />
+  <img src="screenshots/hdo_3.png" alt="HDO 3" style="width: 200px;" />
 </p>
 
-<p align="center">
-  <img src="screenshots/hdo_2.png" width="200" />
-  <img src="screenshots/hdo_5.jpg" width="200" />
-  <img src="screenshots/hdo_6.jpg" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/hdo_2.png" alt="HDO 2" style="width: 200px;" />
+  <img src="screenshots/hdo_5.jpg" alt="HDO 5" style="width: 200px;" />
+  <img src="screenshots/hdo_6.jpg" alt="HDO 6" style="width: 200px;" />
 </p>
 
 ## Statistika spotřeby
@@ -435,8 +437,8 @@ Prvním tlačítkem se přepíná mezi sloupcovým a čárovým grafem. Ikona tl
 
 Tlačítky **+** a **-** lze měnit hustotu vodorovných os pro zobrazení spotřeby.
 
-<p align="center">
-  <img src="screenshots/graf_1.jpg" width="600" />
+<p style="text-align: center;">
+  <img src="screenshots/graf_1.jpg" alt="Graf spotřeby 1" style="width: 600px;" />
 </p>
 
 ## Záloha lokální
@@ -453,10 +455,10 @@ Pro přenos záložních souborů do počítače nebo cloudu lze použít kabel 
 
 Pokud zvolíte odeslání na Google Drive, vybraná záloha nebo skupina záloh se odešle do systémové části Google Drive určené pro konfigurační soubory aplikací. Odeslání proběhne pouze v případě, že jste přihlášeni Google účtem a udělili jste aplikaci potřebné oprávnění. Pokud není dostupné internetové připojení, úloha odeslání počká na dostupné mobilní nebo Wi-Fi připojení.
 
-<p align="center">
-  <img src="screenshots/zal_1.jpg" width="200" />
-  <img src="screenshots/zal_2.jpg" width="200" />
-  <img src="screenshots/zal_3.jpg" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/zal_1.jpg" alt="Záloha 1" style="width: 200px;" />
+  <img src="screenshots/zal_2.jpg" alt="Záloha 2" style="width: 200px;" />
+  <img src="screenshots/zal_3.jpg" alt="Záloha 3" style="width: 200px;" />
 </p>
 
 ## Záloha Google
@@ -469,10 +471,10 @@ Pro používání záloh na Google Drive je vyžadováno přihlášení Google �
 
 Funkce jsou podobné jako u lokální zálohy. Krátkým klepnutím na položku se zobrazí tlačítka pro obnovení zálohy, uložení záložního souboru do lokálního úložiště a smazání. Dlouhým klepnutím lze aktivovat vícenásobný výběr.
 
-<p align="center">
-  <img src="screenshots/gog_1.jpg" width="200" />
-  <img src="screenshots/gog_2.jpg" width="200" />
-  <img src="screenshots/gog_3.jpg" width="200" />
+<p style="text-align: center;">
+  <img src="screenshots/gog_1.jpg" alt="Google Drive záloha 1" style="width: 200px;" />
+  <img src="screenshots/gog_2.jpg" alt="Google Drive záloha 2" style="width: 200px;" />
+  <img src="screenshots/gog_3.jpg" alt="Google Drive záloha 3" style="width: 200px;" />
 </p>
 
 ## Export ceníků
@@ -483,8 +485,8 @@ Ceníky se ukládají ve formátu JSON. Seznam obsahuje ceníky uložené v apli
 
 Kliknutím na položku ceníku a potvrzením dialogu se ceník uloží do vybrané složky. Takto uložený soubor lze přenést do jiné instalace aplikace na jiném zařízení.
 
-<p align="center">
-  <img src="screenshots/exp_1.jpg" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/exp_1.jpg" alt="Export ceníků 1" style="width: 300px;" />
 </p>
 
 ## Import ceníků
@@ -493,8 +495,8 @@ Import ceníků slouží k rychlému nahrání ceníku do aplikace. Importovaný
 
 Ceník přidáte krátkým klepnutím na položku. V zobrazeném dialogu vyberete distribuční sazby, které chcete přidat, a potvrdíte výběr tlačítkem **OK**. Pokud již v aplikaci existuje ceník se stejným názvem, aplikace se zeptá, zda jej chcete přepsat.
 
-<p align="center">
-  <img src="screenshots/imp_1.jpg" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/imp_1.jpg" alt="Import ceníků 1" style="width: 300px;" />
 </p>
 
 ## Přehled
@@ -503,6 +505,6 @@ Přehled zobrazuje celkový výpočet ceny spotřeby, zaplacených záloh a rozd
 
 Pomocí šipek je možné přepínat mezi jednotlivými odběrnými místy. Dolní seznam zobrazuje historickou spotřebu podle již uložených faktur.
 
-<p align="center">
-  <img src="screenshots/prehled_1.jpg" width="300" />
+<p style="text-align: center;">
+  <img src="screenshots/prehled_1.jpg" alt="Přehled 1" style="width: 300px;" />
 </p>
