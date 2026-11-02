@@ -711,6 +711,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - Pro lepší kontrolu životního cyklu a zrušení úloh lze místo `new Thread` použít `ExecutorService`
      * nebo jiný mechanismus správy asynchronních úloh.
      */
+    // Potlačení varování pro StringBuilder.isEmpty() – metoda CharSequence.isEmpty() vyžaduje API level 35 (Android 15), změna je možná od SDK 35
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
     void evaluateRegulatedPriceAvailability() {
         String startDate = btnFrom.getText().toString();
         String endDate = btnUntil.getText().toString();
@@ -965,8 +967,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         Calendar fromDate = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
         Calendar untilDate = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
-        boolean isValid2024 = isValid(2024, 1, JULY, fromDate, untilDate);
-        boolean isValid2025 = isValid(2025, 1, SEPTEMBER, fromDate, untilDate);
+        boolean isValid2024 = isValid(2024, JULY, fromDate, untilDate);
+        boolean isValid2025 = isValid(2025, SEPTEMBER, fromDate, untilDate);
 
         if (!isValid2024) {
             String title = requireContext().getString(R.string.alert_title);
@@ -1012,13 +1014,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - Hranice jsou explicitně nastaveny: začátky dne na 00:00:00.000, konec dne na 23:59:59.000.
      *
      * @param year      cílový rok pro validaci
-     * @param newDay    den začátku nového ceníku (1-31)
      * @param newMonth  měsíc začátku nového ceníku (0-11)
      * @param fromDate  počáteční datum intervalu (včetně času)
      * @param untilDate konečné datum intervalu (včetně času)
      * @return true pokud interval splňuje pravidla pro zadaný rok, jinak false
      */
-    private static boolean isValid(int year, int newDay, int newMonth, Calendar fromDate, Calendar untilDate) {
+    private static boolean isValid(int year, int newMonth, Calendar fromDate, Calendar untilDate) {
         //začátek platnosti ceníku
         Calendar start = getInstance();
         start.set(year, JANUARY, 1, 0, 0, 0);
@@ -1026,7 +1027,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
         //Datum platnosti nového ceníku
         Calendar startNewPrice = getInstance();
-        startNewPrice.set(year, newMonth, newDay, 0, 0, 0);
+        startNewPrice.set(year, newMonth, 1, 0, 0, 0);
         startNewPrice.set(MILLISECOND, 0);
 
         //konec platnosti ceníku

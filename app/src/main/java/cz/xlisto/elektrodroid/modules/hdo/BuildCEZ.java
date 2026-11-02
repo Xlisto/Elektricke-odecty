@@ -1,5 +1,8 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,10 +14,12 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
 /**
- * Sestaví z JSON dat ArrayList<HdoModel>
+ * Třída pro sestavení seznamu {@link HdoModel} z JSON dat ČEZ Distribuce.
+ * <p>
  * Xlisto 11.01.2024 14:52
  */
 public class BuildCEZ {
+
     private static final String TAG = "BuildCEZ";
     private static final String VALID_FROM = "VALID_FROM";
     private static final String VALID_TO = "VALID_TO";
@@ -28,6 +33,12 @@ public class BuildCEZ {
     private static final String SO_NE = "So - Ne";
 
 
+    /**
+     * Sestaví kontejner seznamů HDO ze zadaných JSON dat ČEZ Distribuce.
+     *
+     * @param jsonData JSON data ČEZ Distribuce
+     * @return seznam kontejnerů s HDO modely
+     */
     public static ArrayList<HdoSiteFragment.HdoListContainer> build(String jsonData) {
         ArrayList<HdoSiteFragment.HdoListContainer> hdoListContainers = new ArrayList<>();
         ArrayList<HdoModel> hdoList = new ArrayList<>();
@@ -45,7 +56,7 @@ public class BuildCEZ {
                         .replace("sazba", "")
                         .replace("+", "");
                 String rele = sazba;
-                if (info.length() > 0) {
+                if (!info.isEmpty()) {
                     rele += " + " + info;
                 }
                 for (int j = 1; j < 11; j++) {
@@ -57,7 +68,6 @@ public class BuildCEZ {
                     HdoModel hdo = null;
                     if (day.equals(PO_PA)) {
                         hdo = new HdoModel(rele, validFrom, validTo, timeOn, timeOff, 1, 1, 1, 1, 1, 0, 0, DistributionArea.CEZ.toString());
-
                     }
                     if (day.equals(SO_NE)) {
                         hdo = new HdoModel(rele, validFrom, validTo, timeOn, timeOff, 0, 0, 0, 0, 0, 1, 1, DistributionArea.CEZ.toString());
@@ -70,8 +80,9 @@ public class BuildCEZ {
                 hdoListContainers.add(hdoListContainer);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Chyba při zpracování ČEZ JSON dat", e);
         }
         return hdoListContainers;
     }
+
 }
