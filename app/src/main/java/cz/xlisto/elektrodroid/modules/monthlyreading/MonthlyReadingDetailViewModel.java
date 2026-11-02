@@ -15,8 +15,6 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
  */
 public class MonthlyReadingDetailViewModel extends ViewModel {
 
-    private static final String TAG = "MonthlyReadingDetailViewModel";
-
     private final MutableLiveData<MonthlyReadingModel> monthlyReadingCurrently = new MutableLiveData<>();
     private final MutableLiveData<MonthlyReadingModel> monthlyReadingPrevious = new MutableLiveData<>();
     private final MutableLiveData<PriceListModel> priceList = new MutableLiveData<>();

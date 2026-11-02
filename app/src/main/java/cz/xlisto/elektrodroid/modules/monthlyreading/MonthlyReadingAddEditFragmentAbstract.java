@@ -82,7 +82,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     boolean internetAvailable;
     private static boolean restoredSharedPreferences = false;
     DocumentFile backupFile;
-    View view;
     protected MonthlyReadingViewModel viewModel;
     //handler pro zálohu na google drive, spouští se po vytvoření záložního ZIP souboru
     protected Handler handlerSaveToGoogleDrive = new Handler(Looper.getMainLooper()) {
@@ -184,7 +183,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        this.view = view;
         requireActivity().invalidateOptionsMenu();
         shPAddEditMonthlyReading = new ShPAddEditMonthlyReading(requireActivity());
         internetAvailable = NetworkUtil.isInternetAvailable(requireContext());

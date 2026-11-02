@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 
 public class MySpinnerSubscriptionPointAdapter extends ArrayAdapter<SubscriptionPointModel> {
-    private final String TAG = "MySpinnerSubscriptionPointAdapter";
     private final int resource;
 
     private final ArrayList<SubscriptionPointModel> subscriptionPoints;

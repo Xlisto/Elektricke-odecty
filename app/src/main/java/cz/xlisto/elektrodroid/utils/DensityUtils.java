@@ -1,14 +1,14 @@
 package cz.xlisto.elektrodroid.utils;
 
+
 import android.content.Context;
+
 
 /**
  * Převádí hodnoty z px na dp a opačně
  * Xlisto 01.01.2024 14:38
  */
 public class DensityUtils {
-    private static final String TAG = "DensityUtils";
-
 
     /**
      * Převede hodnotu v dp na px
@@ -34,4 +34,5 @@ public class DensityUtils {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round(px / density);
     }
+
 }

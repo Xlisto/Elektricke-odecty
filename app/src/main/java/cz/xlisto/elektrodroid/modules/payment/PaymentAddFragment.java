@@ -1,16 +1,16 @@
 package cz.xlisto.elektrodroid.modules.payment;
 
+
 import android.os.Bundle;
 
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+
 
 /**
  * Abstraktní třída fragmentu pro přidání/editaci platby
  * Xlisto 15.02.2023 20:31
  */
-public class PaymentAddFragment extends PaymentAddEditFragmentAbstract{
-    private static final String TAG = "PaymentAddFragment";
-
+public class PaymentAddFragment extends PaymentAddEditFragmentAbstract {
 
     public static PaymentAddFragment newInstance(long idFak, String table) {
         PaymentAddFragment fragment = new PaymentAddFragment();
@@ -27,8 +27,9 @@ public class PaymentAddFragment extends PaymentAddEditFragmentAbstract{
         super.save();
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getContext());
         dataSubscriptionPointSource.open();
-        dataSubscriptionPointSource.insertPayment(table,payment);
+        dataSubscriptionPointSource.insertPayment(table, payment);
         dataSubscriptionPointSource.close();
         closeFragment();
     }
+
 }

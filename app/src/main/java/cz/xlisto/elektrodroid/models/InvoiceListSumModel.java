@@ -10,7 +10,6 @@ import java.util.ArrayList;
  */
 public class InvoiceListSumModel {
 
-    private static final String TAG = "InvoiceListSumModel";
     private final ArrayList<String> names;
     private final ArrayList<double[]> maxValues;
     private final ArrayList<Double> meterValuesVT;

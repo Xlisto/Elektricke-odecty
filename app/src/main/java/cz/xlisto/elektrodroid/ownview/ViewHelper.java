@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.ownview;
 
+
 import android.content.Context;
 import android.util.Log;
 
@@ -86,16 +87,6 @@ public class ViewHelper {
 
 
     /**
-     * Vrátí instanci SimpleDateFormat s výchozím vzorem HH:mm:ss.
-     *
-     * @return SimpleDateFormat s vzorem HH:mm:ss
-     */
-    public static SimpleDateFormat getSimpleTimeFormat() {
-        return new SimpleDateFormat("HH:mm:ss", Locale.GERMANY);
-    }
-
-
-    /**
      * Vrátí instanci SimpleDateFormat s možností definovat svůj vlastní vzor.
      * příklad: dd.MM.yyyy (25.12.2020)
      *
@@ -126,17 +117,6 @@ public class ViewHelper {
 
 
     /**
-     * Převede objekt Calendar na textové datum formátu dd.MM.yyyy.
-     *
-     * @param calendar objekt Calendar
-     * @return String datum ve formátu dd.MM.yyyy
-     */
-    public static String parseStringFromCalendar(Calendar calendar) {
-        return getSimpleDateFormat().format(calendar.getTime());
-    }
-
-
-    /**
      * Vrátí objekt Calendar jako pole int v tomto pořadí {dd, MM, YYYY}.
      *
      * @param calendar objekt Calendar
@@ -144,17 +124,6 @@ public class ViewHelper {
      */
     public static int[] parseIntsFromCalendar(Calendar calendar) {
         return new int[]{calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR)};
-    }
-
-
-    /**
-     * Vrátí dnešní datum jako string ve formátu dd.MM.yyyy.
-     *
-     * @return String datum ve formátu dd.MM.yyyy
-     */
-    public static String getTodayDate() {
-        Calendar calendar = Calendar.getInstance();
-        return parseStringFromCalendar(calendar);
     }
 
 
@@ -171,18 +140,6 @@ public class ViewHelper {
 
 
     /**
-     * Převede číslo long na textový čas ve formátu HH:mm:ss.
-     *
-     * @param l datum v milisekundách
-     * @return String čas ve formátu HH:mm:ss
-     */
-    public static String convertLongToTime(long l) {
-        long offset = getOffsetTimeZones(l);
-        return getSimpleTimeFormat().format(l + offset);
-    }
-
-
-    /**
      * Převede textové datum ve formátu ISO s časovým posunem na datum dd.MM.yyyy.
      *
      * @param isoDateTime datum ve formátu ISO s časovým posunem
@@ -195,18 +152,6 @@ public class ViewHelper {
         LocalDateTime dateTime = LocalDateTime.parse(isoDateTime, inputFormatter);
 
         return dateTime.format(outputFormatter);
-    }
-
-
-    /**
-     * Vrátí rok z data v milisekundách jako řetězec yyyy.
-     *
-     * @param l datum v milisekundách
-     * @return rok jako String
-     */
-    public static String yearOfLong(long l) {
-        long offset = getOffsetTimeZones(l);
-        return getSimpleDateFormat("yyyy").format(l + offset);
     }
 
 

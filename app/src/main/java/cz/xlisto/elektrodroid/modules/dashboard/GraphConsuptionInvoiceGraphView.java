@@ -23,7 +23,7 @@ import cz.xlisto.elektrodroid.R;
  * Xlisto 27.12.2023 9:47
  */
 public class GraphConsuptionInvoiceGraphView extends View {
-    private static final String TAG = "GraphDashBoardView";
+
     private int width;
     private double consuption, consuptionMax;
     private String textConsuption;
@@ -183,6 +183,5 @@ public class GraphConsuptionInvoiceGraphView extends View {
     public int getBaseline() {
         return dpToPx(getContext(), 26);
     }
-
 
 }

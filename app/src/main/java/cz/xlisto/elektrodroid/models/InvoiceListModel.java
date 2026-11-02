@@ -4,7 +4,6 @@ package cz.xlisto.elektrodroid.models;
  * Xlisto 01.02.2023 19:35
  */
 public class InvoiceListModel {
-    private static final String TAG = "InvoiceModel";
 
     private long idFak;
     private final String numberInvoice;

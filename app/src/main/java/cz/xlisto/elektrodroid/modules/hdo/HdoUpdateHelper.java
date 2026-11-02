@@ -563,26 +563,6 @@ public class HdoUpdateHelper {
     }
 
 
-    /**
-     * Parsuje textové datum ve formátu dd.MM.yyyy, dd.MM, dd.M. atd.
-     * Pokud rok chybí (např. u EGD ve tvaru "31.08", "31.8." nebo "31.8.9999"),
-     * odvodí správný rok na základě aktuálního data.
-     *
-     * @param value Textový řetězec data
-     * @return Objekt Date nebo null při chybě
-     */
-    public static Date parseDate(String value) {
-        if (value == null || value.trim().isEmpty() || "0".equals(value)) {
-            return null;
-        }
-        Date[] range = parseDateRange(value, null, null);
-        if (range != null && range[0] != null) {
-            return range[0];
-        }
-        return parseDateSingle(value, Calendar.getInstance());
-    }
-
-
     private static Date parseDateSingle(String value, Calendar refCal) {
         if (value == null || value.trim().isEmpty() || "0".equals(value)) {
             return null;

@@ -21,8 +21,7 @@ public record HdoGraphicGroupModel(GroupType groupType, String title, ArrayList<
     public enum GroupType {
         WEEKDAYS,
         WEEKEND,
-        HOLIDAY,
-        OTHER
+        HOLIDAY
     }
 
 

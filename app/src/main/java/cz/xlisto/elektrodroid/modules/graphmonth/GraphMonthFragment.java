@@ -25,7 +25,6 @@ import cz.xlisto.elektrodroid.shp.ShPGraphMonth;
  */
 public class GraphMonthFragment extends Fragment {
 
-    private static final String TAG = "GraphMonthFragment";
     private final String ARG_IS_SHOW_PERIOD = "isShowPeriod";
     private final String ARG_IS_SHOW_VT = "isShowVT";
     private final String ARG_IS_SHOW_NT = "isShowNT";

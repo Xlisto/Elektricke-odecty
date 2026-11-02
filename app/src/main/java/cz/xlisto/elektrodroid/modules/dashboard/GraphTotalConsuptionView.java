@@ -35,7 +35,6 @@ import cz.xlisto.elektrodroid.R;
  */
 public class GraphTotalConsuptionView extends View {
 
-    private static final String TAG = "GraphTotalConsuptionView";
     private int size;
     private int paymentAngle = 170;
     private final int colorStart = Color.parseColor("#808080"); // Šedá barva

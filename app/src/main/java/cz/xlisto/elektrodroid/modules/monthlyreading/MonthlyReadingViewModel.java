@@ -87,15 +87,6 @@ public class MonthlyReadingViewModel extends ViewModel {
         this.isChangeMeter.postValue(isChangeMeter);
     }
 
-    /**
-     * Nastaví hodnotu indikující, zda byla přidána platba.
-     *
-     * @param isAddedPayment boolean hodnota, která určuje, zda byla přidána platba
-     */
-    public void setIsAddedPayment(boolean isAddedPayment) {
-        this.isAddedPayment.postValue(isAddedPayment);
-    }
-
 
     /**
      * Nastaví hodnotu indikující, zda se jedná o první načtení.
@@ -119,6 +110,7 @@ public class MonthlyReadingViewModel extends ViewModel {
 
     /**
      * Nastaví objekt s aktualními hodnotami widgetů.
+     *
      * @param monthlyReadingWidgetContainer objekt s hodnotami widgetů
      */
     public void setWidgetContainer(MonthlyReadingWidgetContainer monthlyReadingWidgetContainer) {
@@ -135,14 +127,6 @@ public class MonthlyReadingViewModel extends ViewModel {
         return isChangeMeter;
     }
 
-    /**
-     * Vrací LiveData objekt, který indikuje, zda byla přidána platba.
-     *
-     * @return LiveData\<Boolean\> objekt indikující přidání platby
-     */
-    public LiveData<Boolean> getAddedPayment() {
-        return isAddedPayment;
-    }
 
     /**
      * Vrací LiveData objekt, který indikuje, zda se jedná o první načtení.
@@ -166,6 +150,7 @@ public class MonthlyReadingViewModel extends ViewModel {
 
     /**
      * Vrací LiveData objekt s hodnotami widgetů
+     *
      * @return LiveData<WidgetContainer> objekt s hodnotami widgetů
      */
     public LiveData<MonthlyReadingWidgetContainer> getWidgetContainer() {

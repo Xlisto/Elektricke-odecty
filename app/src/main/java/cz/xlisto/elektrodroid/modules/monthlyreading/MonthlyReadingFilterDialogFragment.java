@@ -20,7 +20,6 @@ import cz.xlisto.elektrodroid.R;
  * Xlisto 19.05.2023 11:21
  */
 public class MonthlyReadingFilterDialogFragment extends DialogFragment {
-    private static final String TAG = "MonthlyReadingFilterDialogFragment";
     public static final String MONTHLY_READING_FILTER = "monthlyReadingFilter";
     public static final String FROM = "from";
     public static final String TO = "to";

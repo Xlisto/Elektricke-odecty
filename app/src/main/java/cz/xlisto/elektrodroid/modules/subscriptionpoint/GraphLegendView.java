@@ -195,7 +195,6 @@ public class GraphLegendView extends View {
         int width = getWidth();
         int height = getHeight();
 
-        boolean isDark = DetectNightMode.isNightMode(getContext());
         int cardBgColor = ContextCompat.getColor(getContext(), R.color.color_graph_background);
 
         // Pozadí karty legendy
