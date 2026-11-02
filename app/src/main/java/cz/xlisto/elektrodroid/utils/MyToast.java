@@ -1,5 +1,7 @@
 package cz.xlisto.elektrodroid.utils;
 
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -22,31 +24,33 @@ import cz.xlisto.elektrodroid.R;
  * @see <a href="https://stackoverflow.com/questions/6888664/android-toast-doesnt-fit-text">stackoverflow.com</a>
  */
 public class MyToast extends Toast {
-    private static final String TAG = "MyToast";
 
     /**
-     * Construct an empty Toast object.  You must call {@link #setView} before you
-     * can call {@link #show}.
+     * Construct an empty Toast object. You must call setView before you
+     * can call show.
      *
-     * @param context The context to use.  Usually your {@link Application}
+     * @param context The context to use. Usually your {@link Application}
      *                or {@link Activity} object.
      */
     public MyToast(Context context) {
         super(context);
     }
 
+
+    @SuppressLint("InflateParams")
+    @SuppressWarnings("deprecation")
     public static Toast makeText(Context context, CharSequence text, @BaseTransientBottomBar.Duration int duration) {
         Toast toast = Toast.makeText(context, text, duration);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.my_toast, null);
 
-        TextView textView = (TextView) layout.findViewById(R.id.text);
+        TextView textView = layout.findViewById(R.id.text);
         textView.setText(text);
 
         toast.setView(layout);
 
-
         return toast;
     }
+
 }
