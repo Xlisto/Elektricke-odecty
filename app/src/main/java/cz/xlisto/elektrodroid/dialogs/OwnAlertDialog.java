@@ -79,7 +79,7 @@ public class OwnAlertDialog extends DialogFragment {
         }
 
         String positiveButtonText = (positiveText == null || positiveText.trim().isEmpty())
-                ? getString(android.R.string.yes)
+                ? getString(R.string.ok)
                 : positiveText;
 
         return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)

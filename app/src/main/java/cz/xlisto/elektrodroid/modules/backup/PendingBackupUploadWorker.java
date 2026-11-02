@@ -83,7 +83,7 @@ public class PendingBackupUploadWorker extends Worker {
         String backupFolderUriValue = getInputData().getString(KEY_BACKUP_FOLDER_URI);
         ArrayList<String> fileNames = loadPendingFileNames(shPBackup);
         if (fileNames.isEmpty()) {
-            String[] inputFileNames = getInputData().getStringArray(KEY_FILE_NAMES);
+            String[] inputFileNames = getInputData().getNullableStringArray(KEY_FILE_NAMES);
             if (inputFileNames != null) {
                 for (String inputFileName : inputFileNames) {
                     if (inputFileName != null && !inputFileName.trim().isEmpty() && !fileNames.contains(inputFileName))
