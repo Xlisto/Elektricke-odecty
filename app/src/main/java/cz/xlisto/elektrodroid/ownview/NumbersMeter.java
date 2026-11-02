@@ -133,7 +133,6 @@ public class NumbersMeter extends View {
      */
     private Bitmap getDigitBitmap(int digit) {
         return switch (digit) {
-            case 0 -> numbers[0];
             case 1 -> numbers[1];
             case 2 -> numbers[2];
             case 3 -> numbers[3];
