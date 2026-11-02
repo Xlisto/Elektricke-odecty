@@ -2,6 +2,7 @@ package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,13 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
+
+/**
+ * Abstraktní třída pro přidávání a úpravu odběrného místa.
+ */
 public abstract class SubscriptionPointAddEditAbstract extends Fragment {
-    private final String TAG = "SubscriptionPointAddEditAbstract";
+
+    private static final String TAG = "SubscriptionPointAddEditAbstract";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
     private static final String ELECTROMETER = "electroMeter";
@@ -78,7 +84,6 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(NAME, letName.getText());
         outState.putString(DESCRIPTION, letDescription.getText());
         outState.putString(ELECTROMETER, letNumberEletrometer.getText());
         outState.putString(SUBSCRIPTION_POINT, letNumberSubscriptionPoint.getText());
@@ -88,7 +93,7 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
 
 
     /**
-     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije aktuální čas (long)
+     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije aktuální čas (long).
      *
      * @return SubscriptionPointModel - odběrné místo
      */
@@ -99,7 +104,7 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
 
 
     /**
-     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije zadaný čas (long)
+     * Vytvoří objekt odběrné místo, jako jedinečnou identifikaci záznamu v databázi použije zadaný čas (long).
      *
      * @param milins long čas
      * @return SubscriptionPointModel - odběrné místo
@@ -108,16 +113,17 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
         int countPhaze = 3, phaze = 25;
         try {
             countPhaze = Integer.parseInt(etCountPhaze.getText().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Chyba při parsování počtu fází", e);
         }
         try {
             phaze = Integer.parseInt(etPhaze.getText().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Chyba při parsování hodnoty jističe", e);
         }
         return new SubscriptionPointModel(letName.getText(),
                 letDescription.getText(), milins, countPhaze, phaze,
                 letNumberEletrometer.getText(), letNumberSubscriptionPoint.getText());
     }
+
 }
