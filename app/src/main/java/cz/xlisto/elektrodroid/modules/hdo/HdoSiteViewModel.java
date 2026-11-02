@@ -128,48 +128,28 @@ public class HdoSiteViewModel extends ViewModel {
                                 groupsList.add(new String[]{group, category});
                             }
 
-                            if (resultData.area.equals("Brno - venkov") && category.equals("VERSACOM")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Jihlava") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Třebíč") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Jindřichův Hradec") && category.equals("VYCHOD")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Hodonín") && category.equals("VERSACOM")) {
-                                codesException.add(jsonCodes.toString());
-                                groupsExceptionList.add(new String[]{group, category});
-                            } else if (resultData.area.equals("Břeclav") && category.equals("VERSACOM")) {
+                            boolean isException = switch (resultData.area) {
+                                case "Brno - venkov", "Hodonín", "Břeclav" ->
+                                        category.equals("VERSACOM");
+                                case "Jihlava", "Třebíč", "Jindřichův Hradec" ->
+                                        category.equals("VYCHOD");
+                                default -> false;
+                            };
+                            if (isException) {
                                 codesException.add(jsonCodes.toString());
                                 groupsExceptionList.add(new String[]{group, category});
                             }
                         }
                         if (!codes.isEmpty()) {
-                            String exceptionAreaList = "";
-                            switch (resultData.area) {
-                                case "Brno - venkov":
-                                    exceptionAreaList = exceptionBrno;
-                                    break;
-                                case "Jihlava":
-                                    exceptionAreaList = exceptionJihlava;
-                                    break;
-                                case "Třebíč":
-                                    exceptionAreaList = exceptionTrebic;
-                                    break;
-                                case "Jindřichův Hradec":
-                                    exceptionAreaList = exceptionJindrichuvHradec;
-                                    break;
-                                case "Hodonín":
-                                    exceptionAreaList = exceptionHodonin;
-                                    break;
-                                case "Břeclav":
-                                    exceptionAreaList = exceptionBreclav;
-                                    break;
-                            }
+                            String exceptionAreaList = switch (resultData.area) {
+                                case "Brno - venkov" -> exceptionBrno;
+                                case "Jihlava" -> exceptionJihlava;
+                                case "Třebíč" -> exceptionTrebic;
+                                case "Jindřichův Hradec" -> exceptionJindrichuvHradec;
+                                case "Hodonín" -> exceptionHodonin;
+                                case "Břeclav" -> exceptionBreclav;
+                                default -> "";
+                            };
                             CodesContainer codesContainer = new CodesContainer(codes, groupsList, codesException, groupsExceptionList, resultData.area, exceptionAreaList, resultData.urlString);
                             containerMutableLiveData.postValue(codesContainer);
                         }
@@ -224,11 +204,6 @@ public class HdoSiteViewModel extends ViewModel {
      */
     public LiveData<Boolean> shouldShowProgress() {
         return showProgress;
-    }
-
-
-    public MutableLiveData<ArrayList<HdoModel>> getHdoModel() {
-        return hdoModels;
     }
 
 
@@ -408,6 +383,7 @@ public class HdoSiteViewModel extends ViewModel {
      *
      * @param jsonData JSON data
      */
+    // Potlačení varování pro getFirst() – metoda getFirst() z SequencedCollection vyžaduje vyšší API level a není kompatibilní s minSdk 24
     private void buildRecyclerView(String jsonData) {
         if (distributionAreaIndex == 0) {
             //CEZ
@@ -443,7 +419,7 @@ public class HdoSiteViewModel extends ViewModel {
     /**
      * Kontejner pro kódy HDO u EGD
      */
-    static class CodesContainer {
+    public static class CodesContainer {
 
         ArrayList<String> codes;
         ArrayList<String[]> groupsList;
