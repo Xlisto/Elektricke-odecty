@@ -1,9 +1,13 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+
 import java.util.Calendar;
+
 
 /**
  * Sestaví URL pro zobrazení stránky s HDO. Volbu distribuční sítě provádí podle nastavení spinneru
@@ -14,11 +18,13 @@ public class UrlBuilder {
     final private Spinner spDistributionArea, spDistrict;
     final private EditText etHdoCode;
 
+
     public UrlBuilder(Spinner spDistributionArea, Spinner spDistrict, EditText etHdoCode) {
         this.spDistributionArea = spDistributionArea;
         this.spDistrict = spDistrict;
         this.etHdoCode = etHdoCode;
     }
+
 
     public String buildUrl() {
         String url = "";
@@ -28,22 +34,7 @@ public class UrlBuilder {
 
         switch (distributionArea) {
             case "ČEZ":
-                String region = "";
-                if (district.equals("Střed")) {
-                    region = "stred";
-                }
-                if (district.equals("Sever")) {
-                    region = "sever";
-                }
-                if (district.equals("Západ")) {
-                    region = "zapad";
-                }
-                if (district.equals("Východ")) {
-                    region = "vychod";
-                }
-                if (district.equals("Morava")) {
-                    region = "morava";
-                }
+                String region = getRegion(district);
                 url = "https://www.cezdistribuce.cz/webpublic/distHdo/adam/containers/" + region + "?code=" + hdoCode;
 
                 break;
@@ -57,7 +48,6 @@ public class UrlBuilder {
                 int denZacatek = calendar.get(Calendar.DAY_OF_MONTH);
                 int mesicZacatek = calendar.get(Calendar.MONTH) + 1;
                 int rokZacatek = calendar.get(Calendar.YEAR);
-                int year = calendar.get(Calendar.YEAR);
                 calendar.add(Calendar.DAY_OF_MONTH, 13);
                 int denKonec = calendar.get(Calendar.DAY_OF_MONTH);
                 int mesicKonec = calendar.get(Calendar.MONTH) + 1;
@@ -71,4 +61,27 @@ public class UrlBuilder {
         }
         return url;
     }
+
+
+    @NonNull
+    private static String getRegion(String district) {
+        String region = "";
+        if (district.equals("Střed")) {
+            region = "stred";
+        }
+        if (district.equals("Sever")) {
+            region = "sever";
+        }
+        if (district.equals("Západ")) {
+            region = "zapad";
+        }
+        if (district.equals("Východ")) {
+            region = "vychod";
+        }
+        if (district.equals("Morava")) {
+            region = "morava";
+        }
+        return region;
+    }
+
 }
