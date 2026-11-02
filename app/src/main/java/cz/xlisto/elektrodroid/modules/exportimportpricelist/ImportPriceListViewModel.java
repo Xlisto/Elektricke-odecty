@@ -27,43 +27,56 @@ import cz.xlisto.elektrodroid.permission.Files;
  * <p>
  * Poskytuje lifecycle-aware stav a data pro UI komponenty při načítání souborů ceníků
  * z vybraného adresáře (URI). Hlavní odpovědnosti:
- * - Udržovat a vystavovat seznam nalezených souborů jako `LiveData<ArrayList<DocumentFile>>`.
- * - Indikovat stav načítání přes `LiveData<Boolean> isLoading`.
- * - Informovat o dostupnosti oprávnění k vybranému adresáři přes `LiveData<Boolean> hasPermission`.
+ * - Udržovat a vystavovat seznam nalezených souborů jako {@code LiveData<ArrayList<DocumentFile>>}.
+ * - Indikovat stav načítání přes {@code LiveData<Boolean> isLoading}.
+ * - Informovat o dostupnosti oprávnění k vybranému adresáři přes {@code LiveData<Boolean> hasPermission}.
  * <p>
  * Implementační poznámky:
- * - Asynchronní načítání souborů je prováděno pomocí pomocné třídy `Files` a `Handleru`,
- * výsledky jsou publikovány do `documentFilesLiveData`.
- * - Metoda `checkPermission(Activity, Uri)` kontroluje oprávnění a nastavuje `hasPermission`
- * pomocí `setValue`, proto ji volat z UI vlákna nebo lifecycle-aware kontextu.
- * - UI by mělo pozorovat `getDocumentFiles()`, `getIsLoading()` a `getHasPermission()` a
- * reagovat na změny (např. povolit tlačítka, zobrazit spinner, nebo spustit `loadFiles`).
+ * - Asynchronní načítání souborů je prováděno pomocí pomocné třídy {@link Files} a {@link Handler},
+ * výsledky jsou publikovány do {@code documentFilesLiveData}.
+ * - Metoda {@link #checkPermission(Activity, Uri)} kontroluje oprávnění a nastavuje {@code hasPermission}
+ * pomocí {@code setValue}, proto ji volat z UI vlákna nebo lifecycle-aware kontextu.
+ * - UI by mělo pozorovat {@link #getDocumentFiles()}, {@link #getIsLoading()} a {@link #getHasPermission()} a
+ * reagovat na změny (např. povolit tlačítka, zobrazit spinner, nebo spustit {@link #loadFiles(Activity, Uri, ActivityResultLauncher)}).
  * <p>
  * Použití (stručně):
- * 1. Zavolat `checkPermission(...)` a pozorovat `getHasPermission()`.
- * 2. Po potvrzení oprávnění zavolat `loadFiles(...)`.
- * 3. Pozorovat `getDocumentFiles()` pro zobrazení výsledků a `getIsLoading()` pro indikaci stavu.
+ * 1. Zavolat {@link #checkPermission(Activity, Uri)} a pozorovat {@link #getHasPermission()}.
+ * 2. Po potvrzení oprávnění zavolat {@link #loadFiles(Activity, Uri, ActivityResultLauncher)}.
+ * 3. Pozorovat {@link #getDocumentFiles()} pro zobrazení výsledků a {@link #getIsLoading()} pro indikaci stavu.
  */
 public class ImportPriceListViewModel extends ViewModel {
 
+    /**
+     * Tag pro logování.
+     */
     private static final String TAG = "ImportPriceListViewModel";
+
+    /** Filtry přípon souborů pro vyhledávání ceníků (podporovány soubory s příponou .json). */
     private static final String[] filtersFileName = {".json"};
+
+    /** Identifikátor zprávy pro {@link Handler} při načítání souborů. */
     private static final int MSG_LOAD_FILES = 22;
+
+    /** LiveData držící seznam nalezených souborů ceníků. */
     private final MutableLiveData<ArrayList<DocumentFile>> documentFilesLiveData = new MutableLiveData<>();
+
+    /** LiveData indikující, zda právě probíhá asynchronní načítání souborů. */
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+
+    /** LiveData indikující, zda aplikace má oprávnění k vybranému adresáři URI. */
     private final MutableLiveData<Boolean> hasPermission = new MutableLiveData<>(false);
 
     /**
      * Handler pro načtení souborů na hlavním vlákně.
      * <p>
-     * - Běží na hlavním vlákně (`Looper.getMainLooper()`).
-     * - Očekává `msg.obj` typu `ArrayList<DocumentFile>`. Pokud je `msg` nebo `msg.obj` null
-     * nebo `msg.obj` jiného typu, zpráva se bezpečně ignoruje (stále se provede úklid).
-     * - V `handleMessage` provádí tyto kroky:
-     * 1. bezpečná kontrola typu a volání `setDocumentFiles(...)` pro aktualizaci `LiveData`,
-     * 2. nastavení `isLoading` na `false` přes `postValue(false)`,
+     * - Běží na hlavním vlákně ({@link Looper#getMainLooper()}).
+     * - Očekává {@code msg.obj} typu {@link List} obsahující {@link DocumentFile}. Pokud je {@code msg} nebo {@code msg.obj} null
+     * nebo {@code msg.obj} jiného typu, zpráva se bezpečně ignoruje.
+     * - V {@code handleMessage} provádí tyto kroky:
+     * 1. bezpečná kontrola typu a volání {@link #setDocumentFiles(ArrayList)} pro aktualizaci {@code LiveData},
+     * 2. nastavení {@code isLoading} na {@code false} přes {@code postValue(false)},
      * 3. odstranění všech plánovaných callbacků a zpráv a odstranění specifické zprávy
-     * s kódem `MSG_LOAD_FILES`.
+     * s kódem {@code MSG_LOAD_FILES}.
      * <p>
      * Účel: předat výsledky načítání na UI vlákno, zajistit thread-safe aktualizaci LiveData
      * a provést úklid handleru po dokončení nebo při chybě.
@@ -107,12 +120,12 @@ public class ImportPriceListViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData` objekt obsahující seznam souborů dokumentů.
+     * Vrátí {@link LiveData} objekt obsahující seznam souborů dokumentů.
      * <p>
-     * Tato metoda vrací `LiveData` objekt, který obsahuje aktuální seznam souborů dokumentů.
-     * Tento seznam je aktualizován metodou `setDocumentFiles`.
+     * Tato metoda vrací {@link LiveData} objekt, který obsahuje aktuální seznam souborů dokumentů.
+     * Tento seznam je aktualizován metodou {@link #setDocumentFiles(ArrayList)}.
      *
-     * @return `LiveData` objekt obsahující seznam souborů dokumentů.
+     * @return {@link LiveData} objekt obsahující seznam souborů dokumentů.
      */
     public LiveData<ArrayList<DocumentFile>> getDocumentFiles() {
         return documentFilesLiveData;
@@ -122,7 +135,7 @@ public class ImportPriceListViewModel extends ViewModel {
     /**
      * Nastaví seznam souborů dokumentů.
      * <p>
-     * Tato metoda aktualizuje `LiveData` objekt `documentFilesLiveData` s novým seznamem souborů dokumentů.
+     * Tato metoda aktualizuje {@link LiveData} objekt {@code documentFilesLiveData} s novým seznamem souborů dokumentů.
      *
      * @param files Seznam souborů dokumentů, které mají být nastaveny.
      */
@@ -134,8 +147,8 @@ public class ImportPriceListViewModel extends ViewModel {
     /**
      * Načte soubory z daného URI.
      * <p>
-     * Tato metoda spustí načítání souborů z daného URI pomocí třídy `Files`.
-     * Aktualizuje stav načítání na `true` a po dokončení načítání nastaví seznam souborů.
+     * Tato metoda spustí načítání souborů z daného URI pomocí třídy {@link Files}.
+     * Aktualizuje stav načítání na {@code true} a po dokončení načítání nastaví seznam souborů.
      *
      * @param activity   Aktivita, ze které je metoda volána.
      * @param uri        URI adresář, ze kterého se mají soubory načíst.
@@ -148,12 +161,12 @@ public class ImportPriceListViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData` objekt obsahující stav načítání.
+     * Vrátí {@link LiveData} objekt obsahující stav načítání.
      * <p>
-     * Tato metoda vrací `LiveData` objekt, který obsahuje aktuální stav načítání.
-     * Stav načítání je aktualizován metodou `loadFiles`.
+     * Tato metoda vrací {@link LiveData} objekt, který obsahuje aktuální stav načítání.
+     * Stav načítání je aktualizován metodou {@link #loadFiles(Activity, Uri, ActivityResultLauncher)}.
      *
-     * @return `LiveData` objekt obsahující stav načítání.
+     * @return {@link LiveData} objekt obsahující stav načítání.
      */
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
@@ -161,12 +174,12 @@ public class ImportPriceListViewModel extends ViewModel {
 
 
     /**
-     * Vrátí `LiveData<Boolean>` indikující, zda aplikace má oprávnění k vybranému URI.
+     * Vrátí {@link LiveData} indikující, zda aplikace má oprávnění k vybranému URI.
+     * <p>
+     * Hodnota je lifecycle-aware a měla by být pozorována z UI komponent (Activity/Fragment).
+     * Aktualizuje se voláním {@link #checkPermission(Activity, Uri)} a poskytuje bezpečný způsob, jak reagovat na změny oprávnění.
      *
-     * <p>Hodnota je lifecycle\-aware a měla by být pozorována z UI komponent (Activity/Fragment).
-     * Aktualizuje se voláním `checkPermission` a poskytuje bezpečný způsob, jak reagovat na změny oprávnění.</p>
-     *
-     * @return `LiveData<Boolean>` s informací o oprávnění k adresáři.
+     * @return {@link LiveData} s informací o oprávnění k adresáři.
      */
     public LiveData<Boolean> getHasPermission() {
         return hasPermission;
@@ -175,12 +188,12 @@ public class ImportPriceListViewModel extends ViewModel {
 
     /**
      * Zkontroluje oprávnění aplikace k zadanému adresáři (URI) a aktualizuje
-     * interní `LiveData<Boolean>` `hasPermission`.
-     *
-     * <p>Metoda používá `Files.permissions(Activity, Uri)` pro ověření přístupu.
+     * interní {@link LiveData} {@code hasPermission}.
+     * <p>
+     * Metoda používá {@link Files#permissions(Activity, Uri)} pro ověření přístupu.
      * Výsledek (true = má oprávnění, false = nemá) je nastaven pomocí
-     * `hasPermission.setValue(...)`, proto by měla být volána z UI vlákna
-     * nebo z lifecycle-aware kontextu (Activity/Fragment).</p>
+     * {@code hasPermission.setValue(...)}, proto by měla být volána z UI vlákna
+     * nebo z lifecycle-aware kontextu (Activity/Fragment).
      *
      * @param activity Activity použitá pro kontrolu oprávnění
      * @param uri      URI adresáře, jehož oprávnění se kontroluje
