@@ -267,8 +267,7 @@ public class ReadRawJSON {
                 priceListModel.setPoze2(((JSONObject) otherPrice).getDouble(POZE2));
                 priceListModel.setDph(((JSONObject) otherPrice).getDouble(DPH));
                 priceListModel.setDan(((JSONObject) otherPrice).getDouble(DAN));
-            } else if (otherPrice instanceof JSONArray) {
-                JSONArray otherPriceArr = (JSONArray) otherPrice;
+            } else if (otherPrice instanceof JSONArray otherPriceArr) {
 
                 for (int i = 0; i < otherPriceArr.length(); i++) {
                     JSONObject otherPriceObj = otherPriceArr.optJSONObject(i);

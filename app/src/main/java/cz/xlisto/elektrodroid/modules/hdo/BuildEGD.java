@@ -1,5 +1,8 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,10 +13,13 @@ import cz.xlisto.elektrodroid.models.HdoModel;
 
 
 /**
- * Sestaví z JSON dat ArrayList<HdoModel>
+ * Třída pro sestavení seznamu {@link HdoModel} z JSON dat EG.D.
+ * <p>
  * Xlisto 11.01.2024 17:27
  */
 public class BuildEGD {
+
+    private static final String TAG = "BuildEGD";
     private static final String OD = "od";
     private static final String DO = "do";
     private static final String SAZBY = "sazby";
@@ -30,12 +36,16 @@ public class BuildEGD {
     private static final String DEN_7 = "7";
 
 
+    /**
+     * Sestaví kontejner seznamů HDO ze zadaných JSON dat EG.D.
+     *
+     * @param jsonData JSON data EG.D
+     * @return seznam kontejnerů s HDO modely nebo null při chybě
+     */
     public static ArrayList<HdoSiteFragment.HdoListContainer> build(String jsonData) {
         ArrayList<HdoSiteFragment.HdoListContainer> hdoListContainers = new ArrayList<>();
-        //první průchod vrací objekt s kody - přeskakuji
 
         try {
-
             JSONArray jsonRoot = new JSONArray(jsonData);
             for (int i = 0; i < jsonRoot.length(); i++) {
                 ArrayList<HdoModel> hdoList = new ArrayList<>();
@@ -53,8 +63,7 @@ public class BuildEGD {
                         jsonDaysObj[k] = jsonDays.getJSONObject(k);
                     }
                     ArrayList<JSONObject> jsonObjectArrayList = JsonHdoEgdMerge.init(jsonDaysObj);
-                    for (int l = 0; l < jsonObjectArrayList.size(); l++) {
-                        JSONObject jsonObject = jsonObjectArrayList.get(l);
+                    for (JSONObject jsonObject : jsonObjectArrayList) {
                         JSONArray day = jsonObject.getJSONArray(DEN_V_TYDNU);
                         JSONArray times = jsonObject.getJSONArray(CASY);
                         for (int m = 0; m < times.length(); m++) {
@@ -78,7 +87,7 @@ public class BuildEGD {
                 hdoListContainers.add(hdoListContainer);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Chyba při zpracování EG.D JSON dat", e);
             return null;
         }
         return hdoListContainers;
@@ -89,7 +98,7 @@ public class BuildEGD {
      * Sestaví text data z objektu json
      *
      * @param jsonObject objekt json s datem platnosti HDO
-     * @return textový řetězec s datem platnosti HDO, např. 1.1.2020 - 31.12.2020, Datumy platnosti jako 9999 odstraní
+     * @return textový řetězec s datem platnosti HDO, např. 1.1.2020 - 31.12.2020
      */
     private static String parseEgdDate(JSONObject jsonObject) {
         String date = "";
@@ -97,16 +106,24 @@ public class BuildEGD {
             date = jsonObject.get("den") + "." + jsonObject.get("mesic") + "." + jsonObject.get("rok");
             date = date.replace(".9999", "").replace("1900", "");
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Chyba při parsování EG.D data", e);
         }
         return date;
     }
 
 
+    /**
+     * Zjistí, zda pole dnů obsahuje konkrétní den.
+     *
+     * @param jsonArray pole dnů v týdnu
+     * @param day       hledaný den
+     * @return 1 pokud obsahuje, jinak 0
+     */
     private static int containsDay(JSONArray jsonArray, String day) {
         if (jsonArray.toString().contains(day))
             return 1;
         else
             return 0;
     }
+
 }
