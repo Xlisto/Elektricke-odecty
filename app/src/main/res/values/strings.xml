@@ -198,10 +198,17 @@
     <string name="pocet_mesicu">Počet měsíců:</string>
     <string name="dalsi_sluzby_neuvedene">Další služby/slevy v ceníku neuvedené:</string>
     <string name="nastaveni_parametru">Nastavení parametrů pro porovnání</string>
+    <string name="vstupni_hodnoty">Vstupní hodnoty</string>
     <string name="reset_all_forms">Vymaž všechna pole</string>
     <string name="souhrn">Souhrn</string>
     <string name="zobrazit_regulovan_ceny">Zobrazit regulované ceny</string>
     <string name="cislo">Číslo:</string>
+    <string name="obdobi_label">Období:</string>
+    <string name="btn_number_invoice">Číslo faktury</string>
+    <string name="btn_show_invoice">Zobrazit fakturu</string>
+    <string name="btn_advance_payments">Zálohové platby</string>
+    <string name="btn_delete_invoice">Smazat fakturu</string>
+    <string name="warning">Varování</string>
     <string name="invoice_list">Seznam faktur</string>
 
     <string name="ikona">ikona</string>

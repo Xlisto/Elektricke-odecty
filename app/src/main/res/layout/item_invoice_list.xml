@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_invoice_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
-        android:text="Období:"
+        android:text="@string/obdobi_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="14sp" />
 
@@ -27,9 +28,9 @@
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListDescription"
-        android:text="OD"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="OD" />
 
     <TextView
         android:id="@+id/tvDateInvoiceListDash"
@@ -37,9 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListOf"
-        android:text="-"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="-" />
 
     <TextView
         android:id="@+id/tvDateInvoiceListTo"
@@ -49,9 +50,9 @@
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListDash"
-        android:text="DO"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="DO" />
 
     <TextView
         android:id="@+id/tvDateInvoiceListDifferent"
@@ -69,6 +70,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="-3dp"
+        android:contentDescription="@string/warning"
         android:visibility="gone"
         app:srcCompat="@drawable/ic_warning" />
 
@@ -95,7 +97,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="Číslo faktury" />
+                android:text="@string/btn_number_invoice" />
 
             <Button
                 android:id="@+id/btnShowInvoiceList"
@@ -104,7 +106,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="Zobrazit fakturu" />
+                android:text="@string/btn_show_invoice" />
 
         </LinearLayout>
 
@@ -123,7 +125,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="Zálohové platby" />
+                android:text="@string/btn_advance_payments" />
 
             <Button
                 android:id="@+id/btnDeleteInvoiceList"
@@ -132,7 +134,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="Smazat fakturu" />
+                android:text="@string/btn_delete_invoice" />
         </LinearLayout>
 
         <TextView
@@ -186,7 +188,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/tvPayments"
             android:layout_marginTop="3dp"
-            android:text="VT:" />
+            android:text="@string/vt" />
 
         <TextView
             android:id="@+id/tvInvoiceListVTMin"
@@ -199,7 +201,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
             android:layout_toEndOf="@id/tvInvoiceListVTDescription"
-            android:text="VTMIN" />
+            tools:text="VTMIN" />
 
         <TextView
             android:id="@+id/tvInvoiceListVTDash"
@@ -209,7 +211,7 @@
             android:layout_below="@id/tvPayments"
             android:layout_marginTop="3dp"
             android:layout_toEndOf="@id/tvInvoiceListVTMin"
-            android:text="-" />
+            tools:text="-" />
 
         <TextView
             android:id="@+id/tvInvoiceListVTMax"
@@ -217,11 +219,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="false"
             android:layout_below="@id/tvPayments"
-            android:layout_marginRight="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
             android:layout_toEndOf="@id/tvInvoiceListVTDash"
-            android:text="VTMAX" />
+            tools:text="VTMAX" />
 
 
         <TextView
@@ -232,7 +233,7 @@
             android:layout_below="@id/tvReads"
             android:layout_marginTop="3dp"
             android:layout_toStartOf="@id/tvInvoiceListNTMin"
-            android:text="NT:" />
+            android:text="@string/nt" />
 
         <TextView
             android:id="@+id/tvInvoiceListNTMin"
@@ -245,7 +246,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
             android:layout_toStartOf="@id/tvInvoiceListNTDash"
-            android:text="NTMIN" />
+            tools:text="NTMIN" />
 
         <TextView
             android:id="@+id/tvInvoiceListNTDash"
@@ -255,7 +256,7 @@
             android:layout_below="@id/tvReads"
             android:layout_marginTop="3dp"
             android:layout_toStartOf="@id/tvInvoiceListNTMax"
-            android:text="-" />
+            tools:text="-" />
 
         <TextView
             android:id="@+id/tvInvoiceListNTMax"
@@ -264,10 +265,9 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="false"
             android:layout_below="@id/tvReads"
-            android:layout_marginRight="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
-            android:text="NTMAX" />
+            tools:text="NTMAX" />
 
 
     </RelativeLayout>

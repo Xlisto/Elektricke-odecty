@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="2dp"
-            android:text="TextView"
             android:visibility="gone" />
 
         <TextView
@@ -32,7 +31,6 @@
             android:layout_below="@id/tvTitle"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="2dp"
-            android:text="TextView"
             android:textSize="16sp" />
 
         <TextView
@@ -43,7 +41,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_toEndOf="@id/tvAmount"
-            android:text="TextView"
             android:textSize="16sp" />
 
         <TextView
@@ -54,7 +51,6 @@
             android:layout_below="@id/tvTitle"
             android:layout_marginEnd="2dp"
             android:layout_marginStart="5dp"
-            android:text="TextView"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -65,7 +61,6 @@
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:paddingBottom="2dp"
-        android:text="TextView"
         android:textSize="14sp"
         android:textStyle="bold" />
 
