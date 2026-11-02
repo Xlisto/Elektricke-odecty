@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.models;
 
+
 import androidx.annotation.NonNull;
 
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -12,7 +13,6 @@ import cz.xlisto.elektrodroid.utils.DifferenceDate;
  * Xlisto 02.02.2023 3:40
  */
 public class InvoiceModel {
-    private static final String TAG = "InvoiceModel";
 
     private long id;
     private long dateFrom;
@@ -26,9 +26,7 @@ public class InvoiceModel {
     private final double otherServices;
     private final String numberInvoice;
     private final boolean isChangedElectricMeter;
-    private TypePoze typePoze;
     private boolean isSelected;
-    private long idMonthlyReading = -1L;
 
 
     public InvoiceModel(long id, long dateOf, long dateTo, double vtStart, double vtEnd, double ntStart, double ntEnd, long idInvoice, long idPriceList, double otherServices, String numberInvoice, boolean isChangedElectricMeter) {
@@ -106,19 +104,6 @@ public class InvoiceModel {
     public String getNumberInvoice() {
         return numberInvoice;
     }
-
-
-    public TypePoze getTypePoze() {
-        return typePoze;
-    }
-
-
-    /**
-     * Vrátí id měsíčního odečtu, který je nastaven jako "První odečet"
-     *
-     * @return
-     */
-    public long getIdMonthlyReading() {return idMonthlyReading;}
 
 
     public void setId(long id) {
@@ -238,16 +223,6 @@ public class InvoiceModel {
     }
 
 
-    /**
-     * Nastaví id na měsíční odečet, který je nastaven jako "První odečet"
-     *
-     * @param idMonthlyReading id měsíčního odečtu
-     */
-    public void setIdMonthlyReading(long idMonthlyReading) {
-        this.idMonthlyReading = idMonthlyReading;
-    }
-
-
     @NonNull
     @Override
     public String toString() {
@@ -264,14 +239,8 @@ public class InvoiceModel {
                 ", otherServices=" + otherServices +
                 ", numberInvoice='" + numberInvoice + '\'' +
                 ", isChangedElectricMeter=" + isChangedElectricMeter +
-                ", typePoze=" + typePoze +
                 ", isSelected=" + isSelected +
                 '}';
     }
 
-
-    enum TypePoze {
-        POZE1,
-        POZE2
-    }
 }

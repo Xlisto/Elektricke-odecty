@@ -25,7 +25,6 @@ import cz.xlisto.elektrodroid.utils.DifferenceDate;
  * Xlisto 26.12.2023 21:30
  */
 public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.MyViewHolder> {
-    private static final String TAG = "InvoiceSumAdapter";
     private final Context context;
     private final ArrayList<InvoiceSumModel> items;
     private final int colorVT, colorNT;
@@ -33,7 +32,7 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
     private final boolean isShowTotal;
 
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvSum, tvDate, tvVtConsuption, tvNtConsuption;
         GraphConsuptionInvoiceGraphView graphConsuptionInvoiceGraphViewVT, graphConsuptionInvoiceGraphViewNT;
 

@@ -24,12 +24,12 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  * Xlisto 20.02.2024 16:56
  */
 public class PaymentChangeInvoiceAdapter extends RecyclerView.Adapter<PaymentChangeInvoiceAdapter.MyViewHolder> {
-    private static final String TAG = "PaymentChangeInvoiceAdapter";
     private final ArrayList<InvoiceListModel> items;
     private long selectedId;
     private int selectedPosition = -1;
 
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate, tvNumberInvoice;
         RadioButton rbSelect;
         RelativeLayout rlRoot;

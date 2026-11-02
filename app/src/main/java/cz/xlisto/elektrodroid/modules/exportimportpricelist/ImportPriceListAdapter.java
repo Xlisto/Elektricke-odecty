@@ -98,7 +98,7 @@ public class ImportPriceListAdapter extends RecyclerView.Adapter<ImportPriceList
      * - {@code FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_BACKUP} – flag pro dialog nahrání ceníku.
      * - {@code FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_DELETE} – flag pro dialog smazání souboru.
      */
-    static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName, tvTyp, tvTyp2;
         RelativeLayout rl;
