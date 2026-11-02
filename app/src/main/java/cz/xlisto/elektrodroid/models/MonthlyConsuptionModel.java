@@ -13,25 +13,21 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class MonthlyConsuptionModel implements ConsuptionModel {
 
-    private static final String TAG = "MonthlyConsuptionModel";
-
     private final ArrayList<Double> VT = new ArrayList<>();
     private final ArrayList<Double> NT = new ArrayList<>();
     private final ArrayList<Long> dates = new ArrayList<>();
-    private final ArrayList<Integer> firstReader = new ArrayList<>();
     private Double consuptionVT;
     private Double consuptionNT;
     private int anim;
     private int max;
 
 
-    public MonthlyConsuptionModel(Double actualVT, Double actualNT, Double previousVT, Double previousNT, Long actualDate, int firstReading) {
+    public MonthlyConsuptionModel(Double actualVT, Double actualNT, Double previousVT, Double previousNT, Long actualDate) {
         this.VT.add(actualVT);
         this.NT.add(actualNT);
         this.consuptionVT = actualVT - previousVT;
         this.consuptionNT = actualNT - previousNT;
         this.dates.add(actualDate);
-        this.firstReader.add(firstReading);
     }
 
 
@@ -51,36 +47,21 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      * @return Čísla měsíců měsíční spotřeby jako římské číslo
      */
     public String getDateMonthAsStringShort() {
-        switch (getDateMonth()) {
-            case "01":
-                return "I.";
-            case "02":
-                return "II.";
-            case "03":
-                return "III.";
-            case "04":
-                return "IV.";
-            case "05":
-                return "V.";
-            case "06":
-                return "VI.";
-            case "07":
-                return "VII.";
-            case "08":
-                return "VIII.";
-            case "09":
-                return "IX.";
-            case "10":
-                return "X.";
-            case "11":
-                return "XI.";
-            case "12":
-                return "XII.";
-
-            default:
-                return "";
-
-        }
+        return switch (getDateMonth()) {
+            case "01" -> "I.";
+            case "02" -> "II.";
+            case "03" -> "III.";
+            case "04" -> "IV.";
+            case "05" -> "V.";
+            case "06" -> "VI.";
+            case "07" -> "VII.";
+            case "08" -> "VIII.";
+            case "09" -> "IX.";
+            case "10" -> "X.";
+            case "11" -> "XI.";
+            case "12" -> "XII.";
+            default -> "";
+        };
     }
 
 
@@ -90,36 +71,21 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      * @return Čísla měsíců měsíční spotřeby jako text
      */
     public String getDateMonthAsStringLong() {
-        switch (getDateMonth()) {
-            case "01":
-                return "Leden";
-            case "02":
-                return "Únor";
-            case "03":
-                return "Březen";
-            case "04":
-                return "Duben";
-            case "05":
-                return "Květen";
-            case "06":
-                return "Červen";
-            case "07":
-                return "Červenec";
-            case "08":
-                return "Srpen";
-            case "09":
-                return "Září";
-            case "10":
-                return "Říjen";
-            case "11":
-                return "Listopad";
-            case "12":
-                return "Prosinec";
-
-            default:
-                return "";
-
-        }
+        return switch (getDateMonth()) {
+            case "01" -> "Leden";
+            case "02" -> "Únor";
+            case "03" -> "Březen";
+            case "04" -> "Duben";
+            case "05" -> "Květen";
+            case "06" -> "Červen";
+            case "07" -> "Červenec";
+            case "08" -> "Srpen";
+            case "09" -> "Září";
+            case "10" -> "Říjen";
+            case "11" -> "Listopad";
+            case "12" -> "Prosinec";
+            default -> "";
+        };
     }
 
 
@@ -229,8 +195,8 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      *
      * @param i 0 = není první odečet; 1 = je první odečet
      */
+    @Override
     public void setFirstReader(int i) {
-        this.firstReader.add(i);
     }
 
 

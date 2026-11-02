@@ -21,7 +21,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public class DataGraphMonth extends DataSource {
 
-    private static final String TAG = "DataGraphMonth";
     private final ArrayList<ConsuptionModel> monthlyConsuptions = new ArrayList<>();//seznam měsíčních spotřeb
     private final ArrayList<ConsuptionModel> yearConsuptions = new ArrayList<>();//seznam ročních spotřeb
     private final ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray = new ArrayList<>();//seznam seřazený podle měsíců
@@ -83,7 +82,7 @@ public class DataGraphMonth extends DataSource {
                     monthlyConsuptions.get(monthlyConsuptions.size() - 1).setFirstReader(firstReader);
                 } else {
                     //proč potřebuji předchozí datum v modelu spotřeby?
-                    monthlyConsuptions.add(new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate, firstReader));
+                    monthlyConsuptions.add(new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate));
                 }
             }
         }
