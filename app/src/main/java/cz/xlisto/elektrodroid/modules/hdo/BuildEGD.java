@@ -14,7 +14,6 @@ import cz.xlisto.elektrodroid.models.HdoModel;
  * Xlisto 11.01.2024 17:27
  */
 public class BuildEGD {
-    private static final String TAG = "BuildEGD";
     private static final String OD = "od";
     private static final String DO = "do";
     private static final String SAZBY = "sazby";

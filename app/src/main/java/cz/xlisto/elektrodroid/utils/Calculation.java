@@ -36,7 +36,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class Calculation {
 
-    public static final String TAG = "Calculation";
     private static int countPhaze = 3;
     private static int power = 25;
 

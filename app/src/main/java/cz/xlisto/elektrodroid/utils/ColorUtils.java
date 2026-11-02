@@ -7,7 +7,6 @@ import android.graphics.Color;
  * Xlisto 01.01.2024 16:50
  */
 public class ColorUtils {
-    private static final String TAG = "ColorUtils";
 
 
     /**
