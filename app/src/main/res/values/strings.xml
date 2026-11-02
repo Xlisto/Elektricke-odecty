@@ -421,6 +421,7 @@
     <string name="total">"Celkem: %s Kč bez DPH"</string>
     <string name="total_with_tax">%s Kč s DPH</string>
     <string name="string_dash_string">%s - %s</string>
+    <string name="string_dash_string_months">%1$s - %2$s (%3$s)</string>
     <string name="string_dash_string_kwh">%s kWh - %s kWh, Sp.: %s kWh</string>
     <string name="advances">Zálohy: %d</string>
     <string name="records">Záznamy: %d</string>

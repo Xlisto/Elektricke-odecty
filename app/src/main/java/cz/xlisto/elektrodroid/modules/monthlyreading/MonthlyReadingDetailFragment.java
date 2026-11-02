@@ -265,7 +265,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
         }
 
         tvDate.setText(String.valueOf(ViewHelper.convertLongToDate(monthlyReadingCurrently.getDate())));
-        tvDateScope.setText(String.format(getResources().getString(R.string.string_dash_string) + " (" + month + ")", dateFrom, dateTo));
+        tvDateScope.setText(getString(R.string.string_dash_string_months, dateFrom, dateTo, String.valueOf(month)));
 
         tvVTMetersStart.setText(df2.format(monthlyReadingPrevious.getVt()));
         tvNTMetersStart.setText(df2.format(monthlyReadingPrevious.getNt()));
