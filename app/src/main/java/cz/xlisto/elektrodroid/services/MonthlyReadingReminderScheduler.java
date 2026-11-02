@@ -90,7 +90,7 @@ public final class MonthlyReadingReminderScheduler {
             settingsSource.close();
         }
 
-        long triggerAtMillis = findNextTrigger(context, subscriptionPoint.getTableO(), frequency, dayOfMonth, dayOfWeek, time[0], time[1], System.currentTimeMillis());
+        long triggerAtMillis = findNextTrigger(frequency, dayOfMonth, dayOfWeek, time[0], time[1], System.currentTimeMillis());
         if (triggerAtMillis <= 0L) {
             cancel(context);
             return;
@@ -101,7 +101,7 @@ public final class MonthlyReadingReminderScheduler {
 
 
     /**
-     * Zjistí, zda už pro cílový den připomínky existuje zapsaný odečet.
+     * Zjistí, zda už pro cílový den/období připomínky existuje zapsaný odečet.
      */
     public static boolean hasReadingForScheduledDay(Context context, SubscriptionPointModel subscriptionPoint, long scheduledAtMillis) {
         if (subscriptionPoint == null) {
@@ -113,7 +113,21 @@ public final class MonthlyReadingReminderScheduler {
         try {
             Calendar targetDay = Calendar.getInstance();
             targetDay.setTimeInMillis(scheduledAtMillis > 0 ? scheduledAtMillis : System.currentTimeMillis());
-            return hasReadingOnDay(source, subscriptionPoint.getTableO(), targetDay);
+
+            DataSettingsSource settingsSource = new DataSettingsSource(context);
+            settingsSource.open();
+            int frequency;
+            try {
+                frequency = settingsSource.loadReadingNotificationFrequency(subscriptionPoint.getId());
+            } finally {
+                settingsSource.close();
+            }
+
+            if (frequency == FREQUENCY_WEEKLY) {
+                return hasReadingInWeek(source, subscriptionPoint.getTableO(), targetDay);
+            } else {
+                return hasReadingInMonth(source, subscriptionPoint.getTableO(), targetDay);
+            }
         } finally {
             source.close();
         }
@@ -137,79 +151,84 @@ public final class MonthlyReadingReminderScheduler {
     }
 
 
-    static long findNextTrigger(Context context, String table, int frequency, int dayOfMonth, int dayOfWeek, int hourOfDay, int minute, long nowMillis) {
+    static long findNextTrigger(int frequency, int dayOfMonth, int dayOfWeek, int hourOfDay, int minute, long nowMillis) {
         if (frequency == FREQUENCY_WEEKLY) {
-            return findNextWeeklyTrigger(context, table, dayOfWeek, hourOfDay, minute, nowMillis);
+            return findNextWeeklyTrigger(dayOfWeek, hourOfDay, minute, nowMillis);
         }
-        return findNextMonthlyTrigger(context, table, dayOfMonth, hourOfDay, minute, nowMillis);
+        return findNextMonthlyTrigger(dayOfMonth, hourOfDay, minute, nowMillis);
     }
 
 
-    private static long findNextMonthlyTrigger(Context context, String table, int requestedDayOfMonth, int hourOfDay, int minute, long nowMillis) {
-        DataMonthlyReadingSource source = new DataMonthlyReadingSource(context);
-        source.open();
-        try {
-            Calendar cursor = Calendar.getInstance();
-            cursor.setTimeInMillis(nowMillis);
-            cursor.set(Calendar.DAY_OF_MONTH, 1);
-            setStartOfDay(cursor);
+    private static long findNextMonthlyTrigger(int requestedDayOfMonth, int hourOfDay, int minute, long nowMillis) {
+        Calendar cursor = Calendar.getInstance();
+        cursor.setTimeInMillis(nowMillis);
+        cursor.set(Calendar.DAY_OF_MONTH, 1);
+        setStartOfDay(cursor);
 
-            for (int i = 0; i < LOOKAHEAD_MONTHS; i++) {
-                Calendar trigger = createMonthlyCandidate(cursor, requestedDayOfMonth, hourOfDay, minute);
+        for (int i = 0; i < LOOKAHEAD_MONTHS; i++) {
+            Calendar trigger = createMonthlyCandidate(cursor, requestedDayOfMonth, hourOfDay, minute);
 
-                if (trigger.getTimeInMillis() <= nowMillis || hasReadingOnDay(source, table, trigger)) {
-                    cursor.add(Calendar.MONTH, 1);
-                    cursor.set(Calendar.DAY_OF_MONTH, 1);
-                    setStartOfDay(cursor);
-                    continue;
-                }
-                return trigger.getTimeInMillis();
+            if (trigger.getTimeInMillis() <= nowMillis) {
+                cursor.add(Calendar.MONTH, 1);
+                cursor.set(Calendar.DAY_OF_MONTH, 1);
+                setStartOfDay(cursor);
+                continue;
             }
-            return -1L;
-        } finally {
-            source.close();
+            return trigger.getTimeInMillis();
         }
+        return -1L;
     }
 
 
-    private static long findNextWeeklyTrigger(Context context, String table, int dayOfWeekIndex, int hourOfDay, int minute, long nowMillis) {
-        DataMonthlyReadingSource source = new DataMonthlyReadingSource(context);
-        source.open();
-        try {
-            Calendar trigger = Calendar.getInstance();
-            trigger.setTimeInMillis(nowMillis);
-            trigger.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            trigger.set(Calendar.MINUTE, minute);
-            trigger.set(Calendar.SECOND, 0);
-            trigger.set(Calendar.MILLISECOND, 0);
+    private static long findNextWeeklyTrigger(int dayOfWeekIndex, int hourOfDay, int minute, long nowMillis) {
+        Calendar trigger = Calendar.getInstance();
+        trigger.setTimeInMillis(nowMillis);
+        trigger.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        trigger.set(Calendar.MINUTE, minute);
+        trigger.set(Calendar.SECOND, 0);
+        trigger.set(Calendar.MILLISECOND, 0);
 
-            int wanted = mapDayOfWeek(dayOfWeekIndex);
-            int current = trigger.get(Calendar.DAY_OF_WEEK);
-            int delta = wanted - current;
-            if (delta < 0 || (delta == 0 && trigger.getTimeInMillis() <= nowMillis)) {
-                delta += 7;
-            }
-            trigger.add(Calendar.DAY_OF_YEAR, delta);
-
-            for (int i = 0; i < LOOKAHEAD_WEEKS; i++) {
-                if (trigger.getTimeInMillis() <= nowMillis || hasReadingOnDay(source, table, trigger)) {
-                    trigger.add(Calendar.DAY_OF_YEAR, 7);
-                    continue;
-                }
-                return trigger.getTimeInMillis();
-            }
-            return -1L;
-        } finally {
-            source.close();
+        int wanted = mapDayOfWeek(dayOfWeekIndex);
+        int current = trigger.get(Calendar.DAY_OF_WEEK);
+        int delta = wanted - current;
+        if (delta < 0 || (delta == 0 && trigger.getTimeInMillis() <= nowMillis)) {
+            delta += 7;
         }
+        trigger.add(Calendar.DAY_OF_YEAR, delta);
+
+        for (int i = 0; i < LOOKAHEAD_WEEKS; i++) {
+            if (trigger.getTimeInMillis() <= nowMillis) {
+                trigger.add(Calendar.DAY_OF_YEAR, 7);
+                continue;
+            }
+            return trigger.getTimeInMillis();
+        }
+        return -1L;
     }
 
 
-    private static boolean hasReadingOnDay(DataMonthlyReadingSource source, String table, Calendar trigger) {
-        Calendar from = (Calendar) trigger.clone();
+    private static boolean hasReadingInMonth(DataMonthlyReadingSource source, String table, Calendar targetDay) {
+        Calendar from = (Calendar) targetDay.clone();
+        from.set(Calendar.DAY_OF_MONTH, 1);
+        setStartOfDay(from);
+
+        Calendar to = (Calendar) targetDay.clone();
+        to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
+        setEndOfDay(to);
+
+        return source.hasMonthlyReadingInPeriod(table, from.getTimeInMillis(), to.getTimeInMillis());
+    }
+
+
+    private static boolean hasReadingInWeek(DataMonthlyReadingSource source, String table, Calendar targetDay) {
+        Calendar from = (Calendar) targetDay.clone();
+        int dayOfWeek = from.get(Calendar.DAY_OF_WEEK);
+        int daysFromMonday = (dayOfWeek + 5) % 7;
+        from.add(Calendar.DAY_OF_YEAR, -daysFromMonday);
         setStartOfDay(from);
 
         Calendar to = (Calendar) from.clone();
+        to.add(Calendar.DAY_OF_YEAR, 6);
         setEndOfDay(to);
 
         return source.hasMonthlyReadingInPeriod(table, from.getTimeInMillis(), to.getTimeInMillis());

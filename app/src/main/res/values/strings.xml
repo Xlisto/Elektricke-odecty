@@ -736,6 +736,9 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="monthly_reading_reminder_title">Připomenutí zápisu odečtu</string>
     <string name="monthly_reading_reminder_message">Nezapomeňte provést měsíční zápis odečtu.</string>
     <string name="monthly_reading_reminder_message_place">%1$s: nezapomeňte provést měsíční zápis odečtu.</string>
+    <string name="monthly_reading_reminder_praise_title">Skvělá práce!</string>
+    <string name="monthly_reading_reminder_praise_message">Měsíční odečet už máte zapsaný.</string>
+    <string name="monthly_reading_reminder_praise_message_place">%1$s: měsíční odečet už máte zapsaný.</string>
     <string name="day_monday">Pondělí</string>
     <string name="day_tuesday">Úterý</string>
     <string name="day_wednesday">Středa</string>

@@ -41,16 +41,25 @@ public class MonthlyReadingReminderReceiver extends BroadcastReceiver {
             return;
         }
 
-        if (MonthlyReadingReminderScheduler.hasReadingForScheduledDay(context, currentSubscriptionPoint, scheduledAt)) {
-            MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
-            return;
+        boolean hasReading = MonthlyReadingReminderScheduler.hasReadingForScheduledDay(context, currentSubscriptionPoint, scheduledAt);
+
+        String title;
+        String content;
+        String placeName = currentSubscriptionPoint.getName();
+        boolean hasPlaceName = placeName != null && !placeName.trim().isEmpty();
+
+        if (hasReading) {
+            title = context.getString(R.string.monthly_reading_reminder_praise_title);
+            content = hasPlaceName
+                    ? context.getString(R.string.monthly_reading_reminder_praise_message_place, placeName)
+                    : context.getString(R.string.monthly_reading_reminder_praise_message);
+        } else {
+            title = context.getString(R.string.monthly_reading_reminder_title);
+            content = hasPlaceName
+                    ? context.getString(R.string.monthly_reading_reminder_message_place, placeName)
+                    : context.getString(R.string.monthly_reading_reminder_message);
         }
 
-        String title = context.getString(R.string.monthly_reading_reminder_title);
-        String placeName = currentSubscriptionPoint.getName();
-        String content = placeName == null || placeName.trim().isEmpty()
-                ? context.getString(R.string.monthly_reading_reminder_message)
-                : context.getString(R.string.monthly_reading_reminder_message_place, placeName);
         MonthlyReadingReminderNotice.setNotice(context, title, content, currentSubscriptionPoint.getId());
         MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
     }

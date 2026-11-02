@@ -33,5 +33,63 @@ public class MonthlyReadingReminderSchedulerTest {
         assertEquals(15, candidate.get(Calendar.MINUTE));
     }
 
+
+    @Test
+    public void findNextTrigger_monthlyUpcomingInCurrentMonth() {
+        Calendar now = Calendar.getInstance();
+        now.clear();
+        now.set(2026, Calendar.MAY, 5, 10, 0, 0); // May 5, 2026 10:00
+
+        long trigger = MonthlyReadingReminderScheduler.findNextTrigger(0, 15, 0, 8, 0, now.getTimeInMillis());
+
+        Calendar triggerCal = Calendar.getInstance();
+        triggerCal.setTimeInMillis(trigger);
+
+        assertEquals(2026, triggerCal.get(Calendar.YEAR));
+        assertEquals(Calendar.MAY, triggerCal.get(Calendar.MONTH));
+        assertEquals(15, triggerCal.get(Calendar.DAY_OF_MONTH));
+        assertEquals(8, triggerCal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(0, triggerCal.get(Calendar.MINUTE));
+    }
+
+
+    @Test
+    public void findNextTrigger_monthlyPassedInCurrentMonthMovesToNextMonth() {
+        Calendar now = Calendar.getInstance();
+        now.clear();
+        now.set(2026, Calendar.MAY, 20, 10, 0, 0); // May 20, 2026 10:00
+
+        long trigger = MonthlyReadingReminderScheduler.findNextTrigger(0, 15, 0, 8, 0, now.getTimeInMillis());
+
+        Calendar triggerCal = Calendar.getInstance();
+        triggerCal.setTimeInMillis(trigger);
+
+        assertEquals(2026, triggerCal.get(Calendar.YEAR));
+        assertEquals(Calendar.JUNE, triggerCal.get(Calendar.MONTH));
+        assertEquals(15, triggerCal.get(Calendar.DAY_OF_MONTH));
+        assertEquals(8, triggerCal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(0, triggerCal.get(Calendar.MINUTE));
+    }
+
+
+    @Test
+    public void findNextTrigger_weeklyUpcomingInCurrentWeek() {
+        Calendar now = Calendar.getInstance();
+        now.clear();
+        now.set(2026, Calendar.MAY, 11, 10, 0, 0); // Monday May 11, 2026 10:00
+
+        // Wednesday is index 2
+        long trigger = MonthlyReadingReminderScheduler.findNextTrigger(MonthlyReadingReminderScheduler.FREQUENCY_WEEKLY, 1, 2, 8, 0, now.getTimeInMillis());
+
+        Calendar triggerCal = Calendar.getInstance();
+        triggerCal.setTimeInMillis(trigger);
+
+        assertEquals(2026, triggerCal.get(Calendar.YEAR));
+        assertEquals(Calendar.MAY, triggerCal.get(Calendar.MONTH));
+        assertEquals(13, triggerCal.get(Calendar.DAY_OF_MONTH)); // Wednesday May 13
+        assertEquals(8, triggerCal.get(Calendar.HOUR_OF_DAY));
+        assertEquals(0, triggerCal.get(Calendar.MINUTE));
+    }
+
 }
 
