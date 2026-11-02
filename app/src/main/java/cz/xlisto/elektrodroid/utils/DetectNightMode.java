@@ -1,29 +1,22 @@
 package cz.xlisto.elektrodroid.utils;
 
 import android.content.Context;
+import android.content.res.Configuration;
 
 /**
- * Detekce nočního režimu
- * Xlisto 28.05.2023 21:55
+ * Detekce nočního režimu (dark theme).
  */
 public class DetectNightMode {
-    private static final String TAG = "DetectNightMode";
 
     /**
-     * Detekce nočního režimu
+     * Zjistí, zda je aktivní noční režim (dark theme).
      *
-     * @param context Context
-     * @return boolean
+     * @param context Context aplikace nebo aktivity
+     * @return {@code true}, pokud je aktivní noční režim, jinak {@code false}
      */
     public static boolean isNightMode(Context context) {
-        int currentNightMode = context.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case android.content.res.Configuration.UI_MODE_NIGHT_NO:
-            case android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED:
-                return false;
-            case android.content.res.Configuration.UI_MODE_NIGHT_YES:
-                return true;
-        }
-        return false;
+        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
     }
+
 }
