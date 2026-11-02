@@ -964,9 +964,10 @@ public class GraphAnnualOverviewView extends View {
 
             // C) Pravé rámečky (Cena celkem, Cena VT, Cena NT, Fixní náklady)
             rightCallouts.clear();
+            rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceTotal()), yPtsTotal[i], lineColors.colorPriceTotal(), true, false));
             if (isDualTariff) {
-                rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceVT()), yPtsVT[i], lineColors.colorPriceVT(), true, false));
-                rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceNT()), yPtsNT[i], lineColors.colorPriceNT(), true, false));
+                rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceVT()), yPtsVT[i], lineColors.colorPriceVT(), false, false));
+                rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceNT()), yPtsNT[i], lineColors.colorPriceNT(), false, false));
             }
 
             // Fixní měsíční náklady umístěné POD cenovými kótami
