@@ -6,15 +6,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.xlisto.elektrodroid.permission.Files;
 
@@ -22,7 +25,7 @@ import cz.xlisto.elektrodroid.permission.Files;
 /**
  * ViewModel pro importování ceníků.
  * <p>
- * Poskytuje lifecycle\-aware stav a data pro UI komponenty při načítání souborů ceníků
+ * Poskytuje lifecycle-aware stav a data pro UI komponenty při načítání souborů ceníků
  * z vybraného adresáře (URI). Hlavní odpovědnosti:
  * - Udržovat a vystavovat seznam nalezených souborů jako `LiveData<ArrayList<DocumentFile>>`.
  * - Indikovat stav načítání přes `LiveData<Boolean> isLoading`.
@@ -32,7 +35,7 @@ import cz.xlisto.elektrodroid.permission.Files;
  * - Asynchronní načítání souborů je prováděno pomocí pomocné třídy `Files` a `Handleru`,
  * výsledky jsou publikovány do `documentFilesLiveData`.
  * - Metoda `checkPermission(Activity, Uri)` kontroluje oprávnění a nastavuje `hasPermission`
- * pomocí `setValue`, proto ji volat z UI vlákna nebo lifecycle\-aware kontextu.
+ * pomocí `setValue`, proto ji volat z UI vlákna nebo lifecycle-aware kontextu.
  * - UI by mělo pozorovat `getDocumentFiles()`, `getIsLoading()` a `getHasPermission()` a
  * reagovat na změny (např. povolit tlačítka, zobrazit spinner, nebo spustit `loadFiles`).
  * <p>
@@ -69,12 +72,38 @@ public class ImportPriceListViewModel extends ViewModel {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);
-            setDocumentFiles((ArrayList<DocumentFile>) msg.obj);
+            setDocumentFiles(extractDocumentFiles(msg.obj));
             isLoading.postValue(false);
             handlerLoadFile.removeCallbacksAndMessages(null);
             handlerLoadFile.removeMessages(MSG_LOAD_FILES);
         }
     };
+
+
+    /**
+     * Bezpečně převede payload zprávy na seznam {@link DocumentFile} bez unchecked castu.
+     *
+     * @param payload data přijatá v {@code Message.obj}
+     * @return seznam souborů; při neplatném formátu prázdný seznam
+     */
+    private ArrayList<DocumentFile> extractDocumentFiles(@Nullable Object payload) {
+        ArrayList<DocumentFile> files = new ArrayList<>();
+        if (!(payload instanceof List<?> rawList)) {
+            if (payload != null) {
+                Log.w(TAG, "Unexpected loadFiles payload type: " + payload.getClass().getName());
+            }
+            return files;
+        }
+
+        for (Object item : rawList) {
+            if (item instanceof DocumentFile documentFile) {
+                files.add(documentFile);
+            } else if (item != null) {
+                Log.w(TAG, "Ignoring non-DocumentFile item in payload: " + item.getClass().getName());
+            }
+        }
+        return files;
+    }
 
 
     /**
