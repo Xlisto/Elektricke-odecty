@@ -125,16 +125,16 @@ public class ExportPriceListFragment extends Fragment {
 
                 DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
                 dataPriceListSource.open();
-                ArrayList<PriceListModel> priceListModels = dataPriceListSource.readPriceList(priceListSumModel.getRada(), "%", "%",
-                        priceListSumModel.getFirma(), priceListSumModel.getArea(), String.valueOf(priceListSumModel.getDatum()), "%");
+                ArrayList<PriceListModel> priceListModels = dataPriceListSource.readPriceList(priceListSumModel.rada(), "%", "%",
+                        priceListSumModel.firma(), priceListSumModel.area(), String.valueOf(priceListSumModel.datum()), "%");
                 dataPriceListSource.close();
 
                 JSONPriceList jsonPriceList = new JSONPriceList();
                 json = jsonPriceList.buildJSON(priceListSumModel, priceListModels);
                 Files files = new Files();
-                fileName = priceListSumModel.getFirma() + " "
-                        + priceListSumModel.getRada() + " "
-                        + ViewHelper.getSimpleDateFormat().format(priceListSumModel.getDatum()) + " "
+                fileName = priceListSumModel.firma() + " "
+                        + priceListSumModel.rada() + " "
+                        + ViewHelper.getSimpleDateFormat().format(priceListSumModel.datum()) + " "
                         + priceListModels.get(0).getDistribuce() + ".json";
 
                 if (files.existJSONFile(requireActivity(), fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)))) {

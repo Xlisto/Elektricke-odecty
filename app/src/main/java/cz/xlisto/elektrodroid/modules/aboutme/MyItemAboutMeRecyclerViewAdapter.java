@@ -57,14 +57,14 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.versionModel = items.get(position);
-        holder.tvDate.setText(holder.versionModel.getDate());
-        holder.tvVersion.setText(holder.itemView.getContext().getString(R.string.version, holder.versionModel.getVersion()));
+        holder.tvDate.setText(holder.versionModel.date());
+        holder.tvVersion.setText(holder.itemView.getContext().getString(R.string.version, holder.versionModel.version()));
         // Převede pole změn na HTML
         StringBuilder changesHtml = new StringBuilder("<ul>");
-        for (int i = 0; i < holder.versionModel.getChanges().length; i++) {
-            String change = holder.versionModel.getChanges()[i];
+        for (int i = 0; i < holder.versionModel.changes().length; i++) {
+            String change = holder.versionModel.changes()[i];
             changesHtml.append(change);
-            if (i < holder.versionModel.getChanges().length - 1)
+            if (i < holder.versionModel.changes().length - 1)
                 changesHtml.append("<br><br>");
         }
         // Nastaví HTML řetězec do TextView

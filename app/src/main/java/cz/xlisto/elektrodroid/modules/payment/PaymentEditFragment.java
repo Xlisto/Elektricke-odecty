@@ -52,10 +52,10 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
 
         if (loadDatabase) {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(payment.getDate());
-            labPayment.setDefaultText(DecimalFormatHelper.df2.format(payment.getPayment()));
+            calendar.setTimeInMillis(payment.date());
+            labPayment.setDefaultText(DecimalFormatHelper.df2.format(payment.payment()));
             dp.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            int typePayment = payment.getTypePayment();
+            int typePayment = payment.typePayment();
             if (typePayment == 0) chPayment.setChecked(true);
             if (typePayment == 1) chSupplement.setChecked(true);
             if (typePayment == 3) chDiscount.setChecked(true);

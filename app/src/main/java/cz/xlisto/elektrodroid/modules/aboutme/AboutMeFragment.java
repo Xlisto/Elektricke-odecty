@@ -75,9 +75,9 @@ public class AboutMeFragment extends Fragment {
         recyclerView.setAdapter(new MyItemAboutMeRecyclerViewAdapter(versions));
 
         for(VersionModel version : versions) {
-            System.out.println(version.getVersion());
-            System.out.println(version.getDate());
-            for(String change : version.getChanges()) {
+            System.out.println(version.version());
+            System.out.println(version.date());
+            for (String change : version.changes()) {
                 System.out.println(change);
             }
         }

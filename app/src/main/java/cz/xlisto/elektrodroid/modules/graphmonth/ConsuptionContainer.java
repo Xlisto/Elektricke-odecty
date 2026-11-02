@@ -5,32 +5,23 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.models.ConsuptionModel;
 
+
 /**
  * Kontejner pro seznam mesíční, roční spotřeby a seznam měsíčních spotřeb v listu podle měsíců
  * <p>
  * Xlisto 28.08.2023 12:53
  */
-public class ConsuptionContainer {
-    private static final String TAG = "ConsuptionContainer";
-    private final ArrayList<ConsuptionModel> monthlyConsuption;
-    private final ArrayList<ConsuptionModel> yearConsuption;
-    private final ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray;
-
-
-    public ConsuptionContainer(ArrayList<ConsuptionModel> monthlyConsuption, ArrayList<ConsuptionModel> yearConsuption, ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray) {
-        this.monthlyConsuption = monthlyConsuption;
-        this.yearConsuption = yearConsuption;
-        this.monthsConsuptionsArray = monthsConsuptionsArray;
-
-    }
-
+public record ConsuptionContainer(ArrayList<ConsuptionModel> monthlyConsuption,
+                                  ArrayList<ConsuptionModel> yearConsuption,
+                                  ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray) {
 
     /**
      * Vrátí měsíční spotřebu
      *
      * @return ArrayList s měsíční spotřebou
      */
-    public ArrayList<ConsuptionModel> getMonthlyConsuption() {
+    @Override
+    public ArrayList<ConsuptionModel> monthlyConsuption() {
         return monthlyConsuption;
     }
 
@@ -40,7 +31,8 @@ public class ConsuptionContainer {
      *
      * @return ArrayList s roční spotřebou
      */
-    public ArrayList<ConsuptionModel> getYearConsuption() {
+    @Override
+    public ArrayList<ConsuptionModel> yearConsuption() {
         return yearConsuption;
     }
 
@@ -50,7 +42,9 @@ public class ConsuptionContainer {
      *
      * @return ArrayList s měsíční spotřebou v listu podle měsíců
      */
-    public ArrayList<ArrayList<ConsuptionModel>> getMonthsConsuptionsArray() {
+    @Override
+    public ArrayList<ArrayList<ConsuptionModel>> monthsConsuptionsArray() {
         return monthsConsuptionsArray;
     }
+
 }

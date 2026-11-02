@@ -198,8 +198,8 @@ public class DashBoardFragment extends Fragment {
                 max, isShowTotal);
         rv.setAdapter(null);
         if (!invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).isEmpty()) {
-            if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateStart() > 0
-                    && invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).getDateEnd() > 0)
+            if (invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).dateStart() > 0
+                    && invoiceListSumModel.getInvoiceSumModels(showInvoiceSum).get(0).dateEnd() > 0)
                 rv.setAdapter(invoiceSumAdapter);
         }
 
@@ -256,31 +256,31 @@ public class DashBoardFragment extends Fragment {
         switch (typeCompare) {
             case DATE_FROM:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Long.compare(o1.getDateStart(), o2.getDateStart()));
+                        (o1, o2) -> Long.compare(o1.dateStart(), o2.dateStart()));
                 break;
             case DATE_TO:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Long.compare(o2.getDateStart(), o1.getDateStart()));
+                        (o1, o2) -> Long.compare(o2.dateStart(), o1.dateStart()));
                 break;
             case NUMBER:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Long.compare(o1.getNumber(), o2.getNumber()));
+                        (o1, o2) -> Long.compare(o1.number(), o2.number()));
                 break;
             case VT_FROM:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Double.compare(o1.getTotalVT(), o2.getTotalVT()));
+                        (o1, o2) -> Double.compare(o1.totalVT(), o2.totalVT()));
                 break;
             case VT_TO:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Double.compare(o2.getTotalVT(), o1.getTotalVT()));
+                        (o1, o2) -> Double.compare(o2.totalVT(), o1.totalVT()));
                 break;
             case NT_FROM:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Double.compare(o1.getTotalNT(), o2.getTotalNT()));
+                        (o1, o2) -> Double.compare(o1.totalNT(), o2.totalNT()));
                 break;
             case NT_TO:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),
-                        (o1, o2) -> Double.compare(o2.getTotalNT(), o1.getTotalNT()));
+                        (o1, o2) -> Double.compare(o2.totalNT(), o1.totalNT()));
                 break;
             case TOTAL_FROM:
                 Collections.sort(invoiceListSumModel.getInvoiceSumModels(showInvoiceSum),

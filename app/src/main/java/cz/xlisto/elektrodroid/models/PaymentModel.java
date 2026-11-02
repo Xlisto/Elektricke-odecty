@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Calendar;
 
+import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
@@ -17,14 +18,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  * Obsahuje identifikátory, datum, částku a typ platby spolu s pomocnými metodami
  * pro převod typu na text a výpočet případné slevy na DPH pro listopad a prosinec 2021.
  */
-public class PaymentModel {
-
-    private final long id;
-    private final long idFak;
-    private final long date;
-    private final double payment;
-    private final int typePayment;
-
+public record PaymentModel(long id, long idFak, long date, double payment, int typePayment) {
 
     /**
      * Konstruktor modelu platby.
@@ -35,12 +29,7 @@ public class PaymentModel {
      * @param payment     částka platby
      * @param typePayment typ platby (číselná konstanta používaná v aplikaci)
      */
-    public PaymentModel(long id, long idFak, long date, double payment, int typePayment) {
-        this.id = id;
-        this.idFak = idFak;
-        this.date = date;
-        this.payment = payment;
-        this.typePayment = typePayment;
+    public PaymentModel {
     }
 
 
@@ -49,7 +38,8 @@ public class PaymentModel {
      *
      * @return id platby
      */
-    public long getId() {
+    @Override
+    public long id() {
         return id;
     }
 
@@ -59,7 +49,8 @@ public class PaymentModel {
      *
      * @return id faktury
      */
-    public long getIdFak() {
+    @Override
+    public long idFak() {
         return idFak;
     }
 
@@ -69,7 +60,8 @@ public class PaymentModel {
      *
      * @return datum platby (long)
      */
-    public long getDate() {
+    @Override
+    public long date() {
         return date;
     }
 
@@ -79,7 +71,8 @@ public class PaymentModel {
      *
      * @return částka platby jako double
      */
-    public double getPayment() {
+    @Override
+    public double payment() {
         return payment;
     }
 
@@ -89,7 +82,8 @@ public class PaymentModel {
      *
      * @return typ platby (int)
      */
-    public int getTypePayment() {
+    @Override
+    public int typePayment() {
         return typePayment;
     }
 
@@ -141,7 +135,7 @@ public class PaymentModel {
     @NonNull
     @Override
     public String toString() {
-        return "PaymentModel\nID: " + getId() + "\nČástka: " + getPayment() + "\nID_faktury: " + getIdFak() + "\nDatum: " + ViewHelper.convertLongToDate(getDate()) + " (" + getDate() + ")\nType payment: " + getTypePayment();
+        return "PaymentModel\nID: " + id() + "\nČástka: " + payment() + "\nID_faktury: " + idFak() + "\nDatum: " + ViewHelper.convertLongToDate(date()) + " (" + date() + ")\nType payment: " + typePayment();
     }
 
 
@@ -155,7 +149,7 @@ public class PaymentModel {
      */
     public static void getDiscountDPHText(double discount, TextView tv) {
         if (discount > 0) {
-            tv.setText(tv.getContext().getResources().getString(cz.xlisto.elektrodroid.R.string.discount_number, DecimalFormatHelper.df2.format(discount)));
+            tv.setText(tv.getContext().getResources().getString(R.string.discount_number, DecimalFormatHelper.df2.format(discount)));
             tv.setVisibility(View.VISIBLE);
         } else
             tv.setVisibility(View.GONE);

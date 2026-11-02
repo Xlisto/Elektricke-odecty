@@ -431,10 +431,10 @@ public class DataSubscriptionPointSource extends DataSource {
      */
     private ContentValues createContentValue(PaymentModel payment) {
         ContentValues values = new ContentValues();
-        values.put(CASTKA, payment.getPayment());
-        values.put(ID_FAK, payment.getIdFak());
-        values.put(MIMORADNA, payment.getTypePayment());
-        values.put(DATUM, payment.getDate());
+        values.put(CASTKA, payment.payment());
+        values.put(ID_FAK, payment.idFak());
+        values.put(MIMORADNA, payment.typePayment());
+        values.put(DATUM, payment.date());
         return values;
     }
 

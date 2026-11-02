@@ -63,15 +63,15 @@ public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceList
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PriceListSumModel priceListSumModel = priceListSumModels.get(position);
-        holder.tvRada.setText(priceListSumModel.getRada());
-        holder.tvArea.setText(context.getResources().getString(R.string.dist_area, priceListSumModel.getArea()));
-        holder.tvDate.setText(context.getResources().getString(R.string.validity, ViewHelper.convertLongToDate(priceListSumModel.getDatum())));
-        holder.tvFirma.setText(priceListSumModel.getFirma());
+        holder.tvRada.setText(priceListSumModel.rada());
+        holder.tvArea.setText(context.getResources().getString(R.string.dist_area, priceListSumModel.area()));
+        holder.tvDate.setText(context.getResources().getString(R.string.validity, ViewHelper.convertLongToDate(priceListSumModel.datum())));
+        holder.tvFirma.setText(priceListSumModel.firma());
 
         holder.rl.setOnClickListener(v -> {
             selectedPriceListSumModel = priceListSumModel;
             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.export_price_list_title), FLAG_DIALOG_FRAGMENT_EXPORT
-                    , context.getResources().getString(R.string.export_price_list_title_message, priceListSumModel.getRada(), priceListSumModel.getCount()));
+                    , context.getResources().getString(R.string.export_price_list_title_message, priceListSumModel.rada(), priceListSumModel.count()));
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
         });
     }

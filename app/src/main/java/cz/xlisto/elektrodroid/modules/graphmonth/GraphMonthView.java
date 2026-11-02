@@ -247,9 +247,9 @@ public class GraphMonthView extends View {
      */
     public void setConsuption(ConsuptionContainer consuption) {
         if (consuption != null) {
-            this.monthlyConsuption = consuption.getMonthlyConsuption();
-            this.yearConsuption = consuption.getYearConsuption();
-            this.monthsConsuption = consuption.getMonthsConsuptionsArray();
+            this.monthlyConsuption = consuption.monthlyConsuption();
+            this.yearConsuption = consuption.yearConsuption();
+            this.monthsConsuption = consuption.monthsConsuptionsArray();
         }
         shouldScrollToEndMonth = true;
         shouldScrollToEndYear = true;

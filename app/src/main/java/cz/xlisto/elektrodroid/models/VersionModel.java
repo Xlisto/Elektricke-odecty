@@ -9,19 +9,15 @@ import java.util.Arrays;
 /**
  * Třída představující model popisu změn verze.
  */
-public class VersionModel {
-
-    private final int version;
-    private final String date;
-    private final String[] changes;
-
+public record VersionModel(int version, String date, String[] changes) {
 
     /**
      * Vrací verzi.
      *
      * @return verze
      */
-    public int getVersion() {
+    @Override
+    public int version() {
         return version;
     }
 
@@ -31,7 +27,8 @@ public class VersionModel {
      *
      * @return datum
      */
-    public String getDate() {
+    @Override
+    public String date() {
         return date;
     }
 
@@ -41,7 +38,8 @@ public class VersionModel {
      *
      * @return změny
      */
-    public String[] getChanges() {
+    @Override
+    public String[] changes() {
         return changes;
     }
 
@@ -53,10 +51,7 @@ public class VersionModel {
      * @param date    datum
      * @param changes změny
      */
-    public VersionModel(int version, String date, String[] changes) {
-        this.version = version;
-        this.date = date;
-        this.changes = changes;
+    public VersionModel {
     }
 
 

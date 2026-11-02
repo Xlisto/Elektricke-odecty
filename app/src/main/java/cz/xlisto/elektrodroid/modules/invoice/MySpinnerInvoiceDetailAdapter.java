@@ -23,7 +23,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceModel.Title> {
 
-    private static final String TAG = "MySpinnerInvoiceDetailAdapter";
     private final SummaryInvoiceModel.Title[] titles;
     private Boolean hideNt;
     private final DatesInvoiceContainer datesInvoice;
@@ -102,7 +101,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
         }
 
         //skrytí položky Provoz nesíťové infrastruktory, pokud je datum faktury menší než 1.7.2024
-        if (datesInvoice.getMaxDate() < ViewHelper.parseCalendarFromString("1.07.2024").getTimeInMillis()) {
+        if (datesInvoice.maxDate() < ViewHelper.parseCalendarFromString("1.07.2024").getTimeInMillis()) {
             if (position == 9) {
                 TextView tv = new TextView(getContext());
                 tv.setVisibility(View.GONE);
@@ -113,7 +112,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
         }
 
         //skrytí položky cena za Činnost operátora trhu, pokud je datum faktury větší než 1.7.2024
-        if (datesInvoice.getMinDate() >= ViewHelper.parseCalendarFromString("1.07.2024").getTimeInMillis()) {
+        if (datesInvoice.minDate() >= ViewHelper.parseCalendarFromString("1.07.2024").getTimeInMillis()) {
             if (position == 8) {
                 TextView tv = new TextView(getContext());
                 tv.setVisibility(View.GONE);
@@ -134,8 +133,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
      * @param position Pozice, na kterou se má výběr nastavit.
      */
     private void setAdapterViewSelection(ViewGroup parent, int position) {
-        if (parent instanceof AdapterView) {
-            AdapterView<?> adapterView = (AdapterView<?>) parent;
+        if (parent instanceof AdapterView<?> adapterView) {
             adapterView.setSelection(position);
         }
     }
@@ -167,11 +165,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
     /**
      * Třída pro uchování minimálního a maximálního data faktury.
      */
-    public static class DatesInvoiceContainer {
-
-        private final long minDate;
-        private final long maxDate;
-
+    public record DatesInvoiceContainer(long minDate, long maxDate) {
 
         /**
          * Konstruktor pro vytvoření instance dateInvoiceContainer.
@@ -179,9 +173,7 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
          * @param minDate minimální datum faktury
          * @param maxDate maximální datum faktury
          */
-        public DatesInvoiceContainer(long minDate, long maxDate) {
-            this.minDate = minDate;
-            this.maxDate = maxDate;
+        public DatesInvoiceContainer {
         }
 
 
@@ -190,19 +182,21 @@ public class MySpinnerInvoiceDetailAdapter extends ArrayAdapter<SummaryInvoiceMo
          *
          * @return minimální datum faktury
          */
-        public long getMinDate() {
+        @Override
+        public long minDate() {
             return minDate;
         }
 
 
-        /**
-         * Vrátí maximální datum faktury.
-         *
-         * @return maximální datum faktury
-         */
-        public long getMaxDate() {
-            return maxDate;
-        }
+            /**
+             * Vrátí maximální datum faktury.
+             *
+             * @return maximální datum faktury
+             */
+            @Override
+            public long maxDate() {
+                return maxDate;
+            }
 
     }
 

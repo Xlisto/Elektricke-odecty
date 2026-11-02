@@ -88,8 +88,8 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         PaymentModel payment = items.get(position);
-        holder.tvDate.setText(ViewHelper.convertLongToDate(payment.getDate()));
-        holder.tvPayment.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(payment.getPayment())));
+        holder.tvDate.setText(ViewHelper.convertLongToDate(payment.date()));
+        holder.tvPayment.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(payment.payment())));
         holder.tvType.setText(payment.getTypePaymentString());
         PaymentModel.getDiscountDPHText(payment.getDiscountDPH(), holder.tvDescription);
 
@@ -110,10 +110,10 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
             showButtons(holder, position);
         });
 
-        holder.btnEdit.setOnClickListener(v -> FragmentChange.replace((FragmentActivity) context, PaymentEditFragment.newInstance(payment.getIdFak(), payment.getId(), table), FragmentChange.Transaction.MOVE, true));
+        holder.btnEdit.setOnClickListener(v -> FragmentChange.replace((FragmentActivity) context, PaymentEditFragment.newInstance(payment.idFak(), payment.id(), table), FragmentChange.Transaction.MOVE, true));
 
         holder.btnDelete.setOnClickListener(v -> {
-            selectedId = payment.getId();
+            selectedId = payment.id();
             selectedPosition = position;
             selectedTable = table;
             YesNoDialogFragment.newInstance(context.getResources().getString(R.string.remove_record_payment),
@@ -123,7 +123,7 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.MyViewHo
         holder.btnChangeInvoice.setOnClickListener(v -> {
             selectedTable = table;
             selectedPosition = position;
-            PaymentChangeInvoiceDialogFragment.newInstance(payment.getIdFak(), payment.getId()).show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
+            PaymentChangeInvoiceDialogFragment.newInstance(payment.idFak(), payment.id()).show(((FragmentActivity) context).getSupportFragmentManager(), TAG);
         });
 
         showButtons(holder, position);

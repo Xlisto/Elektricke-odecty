@@ -163,10 +163,10 @@ public class JSONPriceList {
         String createDateTime = ViewHelper.getSimpleDateTimeFormat().format(cal.getTimeInMillis());
         String email = "";
         String author = "";
-        StringBuilder json = new StringBuilder("{\"Cenik\":{\"Produktova rada\":\"" + priceListSumModel.getRada()
-                + "\",\"Distribucni firma\":\"" + priceListSumModel.getFirma()
-                + "\",\"Platnost\":\"" + priceListSumModel.getDatum()
-                + "\",\"Datum\":\"" + ViewHelper.getSimpleDateFormat().format(priceListSumModel.getDatum())
+        StringBuilder json = new StringBuilder("{\"Cenik\":{\"Produktova rada\":\"" + priceListSumModel.rada()
+                + "\",\"Distribucni firma\":\"" + priceListSumModel.firma()
+                + "\",\"Platnost\":\"" + priceListSumModel.datum()
+                + "\",\"Datum\":\"" + ViewHelper.getSimpleDateFormat().format(priceListSumModel.datum())
                 + "\",\"Pocet\":\"" + priceListModels.size() + "\",\"Autor\":\""
                 + author + "\",\"Datum vytvoreni\":\""
                 + createDateTime + "\",\"Email\":\"" + email + "\"}");

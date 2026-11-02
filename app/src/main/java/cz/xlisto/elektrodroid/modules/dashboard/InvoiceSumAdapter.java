@@ -70,22 +70,22 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
     @Override
     public void onBindViewHolder(@NonNull InvoiceSumAdapter.MyViewHolder holder, int position) {
         InvoiceSumModel is = items.get(position);
-        holder.tvSum.setText(context.getResources().getString(R.string.number_sum_invoce, is.getNumber()));
-        if(is.getNumber() == -1)
+        holder.tvSum.setText(context.getResources().getString(R.string.number_sum_invoce, is.number()));
+        if (is.number() == -1)
             holder.tvSum.setText(context.getResources().getString(R.string.number_sum_no_invoce));
         holder.tvDate.setText(context.getResources().getString(R.string.date_sum_invoce,
-                ViewHelper.convertLongToDate(is.getDateStart()), ViewHelper.convertLongToDate(is.getDateEnd())));
+                ViewHelper.convertLongToDate(is.dateStart()), ViewHelper.convertLongToDate(is.dateEnd())));
 
-        double dif = differentMonth(is.getDateStart(),is.getDateEnd(), DifferenceDate.TypeDate.INVOICE);//počet měsíců
-        double averageVT = is.getTotalVT()/dif;
-        double averageNT = is.getTotalNT()/dif;
+        double dif = differentMonth(is.dateStart(), is.dateEnd(), DifferenceDate.TypeDate.INVOICE);//počet měsíců
+        double averageVT = is.totalVT() / dif;
+        double averageNT = is.totalNT() / dif;
         double averageTotal = is.getTotal()/dif;
 
-        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(is.getTotalVT());
+        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(is.totalVT());
         holder.graphConsuptionInvoiceGraphViewVT.setConsuptionMax(max);
         holder.graphConsuptionInvoiceGraphViewVT.setColorGraph(colorVT);
-        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(context.getResources().getString(R.string.vt_text_consuption,is.getTotalVT(),averageVT));
-        holder.tvVtConsuption.setText(context.getResources().getString(R.string.vt_consuption, is.getTotalVT()));
+        holder.graphConsuptionInvoiceGraphViewVT.setConsuption(context.getResources().getString(R.string.vt_text_consuption, is.totalVT(), averageVT));
+        holder.tvVtConsuption.setText(context.getResources().getString(R.string.vt_consuption, is.totalVT()));
 
         if (isShowTotal) {
             holder.graphConsuptionInvoiceGraphViewVT.setConsuption(is.getTotal());
@@ -96,11 +96,11 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
         }
 
         if(!isShowTotal) {
-            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(is.getTotalNT());
+            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(is.totalNT());
             holder.graphConsuptionInvoiceGraphViewNT.setConsuptionMax(max);
             holder.graphConsuptionInvoiceGraphViewNT.setColorGraph(colorNT);
-            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(context.getResources().getString(R.string.nt_text_consuption,is.getTotalNT(),averageNT));
-            holder.tvNtConsuption.setText(context.getResources().getString(R.string.nt_consuption, is.getTotalNT()));
+            holder.graphConsuptionInvoiceGraphViewNT.setConsuption(context.getResources().getString(R.string.nt_text_consuption, is.totalNT(), averageNT));
+            holder.tvNtConsuption.setText(context.getResources().getString(R.string.nt_consuption, is.totalNT()));
         }
     }
 
