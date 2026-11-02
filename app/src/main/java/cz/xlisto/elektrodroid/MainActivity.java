@@ -710,7 +710,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
             drawerToggle.setDrawerIndicatorEnabled(false);
             toolbar.setNavigationIcon(R.drawable.ic_close_24);
-            drawerToggle.setToolbarNavigationClickListener(v -> selectionNavigationAction.run());
+            drawerToggle.setToolbarNavigationClickListener(v -> {
+                if (selectionNavigationAction != null) {
+                    selectionNavigationAction.run();
+                }
+            });
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             drawerToggle.syncState();
             return;
