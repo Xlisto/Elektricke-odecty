@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Rozšířený RecyclerView o kontextové menu
  * pro správný údaj id po vybrané položky je potřeba přepsat metodu getItemId v adaptéru
- * Použitý zdroj: https://stackoverflow.com/questions/40989863/set-and-get-item-id-of-recycler-view
+ * Použitý zdroj: <a href="https://stackoverflow.com/questions/40989863/set-and-get-item-id-of-recycler-view">...</a>
  */
 public class ContextMenuRecyclerView extends RecyclerView {
     private RecyclerViewContextMenuInfo mContextMenuInfo;
