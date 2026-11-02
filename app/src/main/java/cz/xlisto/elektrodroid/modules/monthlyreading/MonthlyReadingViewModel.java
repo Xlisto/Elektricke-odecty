@@ -20,7 +20,6 @@ public class MonthlyReadingViewModel extends ViewModel {
     private final MutableLiveData<Boolean> uploadResult = new MutableLiveData<>();
     private final MutableLiveData<Boolean> showingProgressBar = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isChangeMeter = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isAddedPayment = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFirst = new MutableLiveData<>();
     private final MutableLiveData<PriceListModel> selectedPriceList = new MutableLiveData<>();
     private final MutableLiveData<MonthlyReadingWidgetContainer> widgetContainer = new MutableLiveData<>();
@@ -28,6 +27,7 @@ public class MonthlyReadingViewModel extends ViewModel {
 
     public MonthlyReadingViewModel() {
         isChangeMeter.setValue(false);
+        MutableLiveData<Boolean> isAddedPayment = new MutableLiveData<>();
         isAddedPayment.setValue(false);
         isFirst.setValue(false);
         selectedPriceList.setValue(new PriceListModel());
