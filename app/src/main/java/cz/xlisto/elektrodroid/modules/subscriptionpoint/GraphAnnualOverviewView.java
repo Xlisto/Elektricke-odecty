@@ -375,6 +375,7 @@ public class GraphAnnualOverviewView extends View {
         canvas.drawRect(tempBoxRect, paint);
     }
 
+
     private float calculateRequiredPadLeft() {
         paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
         paintText.setFakeBoldText(true);
@@ -407,6 +408,7 @@ public class GraphAnnualOverviewView extends View {
 
         return axisGap + maxTextW + marginEdge;
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -474,6 +476,7 @@ public class GraphAnnualOverviewView extends View {
         this.drawCardBackground = drawCardBackground;
         invalidate();
     }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -1189,12 +1192,6 @@ public class GraphAnnualOverviewView extends View {
             }
         }
         return true;
-    }
-
-
-    @Override
-    public boolean performClick() {
-        return super.performClick();
     }
 
 

@@ -35,6 +35,7 @@ import cz.xlisto.elektrodroid.utils.BuilderHDOStack;
  * Xlisto 03.01.2024 12:18
  */
 public class GraphTotalHdoView extends View {
+
     private int size;
     private int padding;
     private int centerX;
@@ -62,7 +63,7 @@ public class GraphTotalHdoView extends View {
 
     public GraphTotalHdoView(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
 
@@ -84,12 +85,7 @@ public class GraphTotalHdoView extends View {
     }
 
 
-    private void init() {
-        //colorClock = Color.BLACK;
-    }
-
-
-    private void init(AttributeSet attrs) {
+    private void init(@Nullable AttributeSet attrs) {
         setSaveEnabled(true);
         runnable.run();
         builderHDOLists();
@@ -206,7 +202,6 @@ public class GraphTotalHdoView extends View {
         if (isDarkMode) {
             canvas.drawCircle(centerX, centerY, radius, pBackground);
         }
-
 
         drawTime(canvas);
         drawNumbers(canvas);
@@ -464,12 +459,10 @@ public class GraphTotalHdoView extends View {
             pLegend.setTextSize(sizeText);
         }
 
-
         // Vykreslení legendy
         RectF oval = new RectF(legendX, legendY, legendX + legendSize, legendY + legendSize);
         canvas.drawArc(oval, 0, 360, true, pClockLegend);
         canvas.drawText("Čas VT", legendX + legendSize + legendTextPadding, legendY + legendSize, pLegend);
-
 
         legendY += legendSize + legendPadding;
 
@@ -519,7 +512,6 @@ public class GraphTotalHdoView extends View {
         x += textPadding;
         int line = dpToPx(getContext(), 17);
         int y = size / 2 + line;
-
 
         if (modelsForAllWeek == null || modelsForAllWeek.isEmpty()) {
             autoSizeTextAndDraw(getContext().getString(R.string.no_found_hdo), getWidth() - 2 * textPadding, canvas, x, y, pTimeLeft);
@@ -837,6 +829,7 @@ public class GraphTotalHdoView extends View {
      * Kontejner pro čas začátku a konce HDO
      */
     static class TimeHdo {
+
         int start, end;
 
 
@@ -844,5 +837,7 @@ public class GraphTotalHdoView extends View {
             start = Integer.MAX_VALUE;
             end = Integer.MAX_VALUE;
         }
+
     }
+
 }

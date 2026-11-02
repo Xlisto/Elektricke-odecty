@@ -187,12 +187,6 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
     /**
      * Doplní platné datum podle zadaného data platby do tvResultDate
      */

@@ -147,12 +147,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
     /**
      * Načte z databáze objekt měsíčního odečtu.
      */
@@ -183,6 +177,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
     }
 
+
     /**
      * Metoda, která se volá, když je dostupné internetové připojení.
      */
@@ -191,6 +186,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         internetAvailable = true;
         setShowCbSendBackup();
     }
+
 
     /**
      * Metoda, která se volá, když je ztraceno internetové připojení.

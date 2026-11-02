@@ -83,15 +83,7 @@ public class YearConsuptionModel implements ConsuptionModel {
     }
 
 
-    /**
-     * Nastaví příznak prvního odečtu
-     *
-     * @param i 1 - první odečet; 0 - není první odečet
-     */
-    @Override
-    public void setFirstReader(int i) {
 
-    }
 
 
     /**

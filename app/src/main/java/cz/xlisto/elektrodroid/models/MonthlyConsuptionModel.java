@@ -191,16 +191,6 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
 
     /**
-     * Nastaví jestli se jedná o první odečet či nikoliv. U prvních odečtů se nepočítá spotřeba
-     *
-     * @param i 0 = není první odečet; 1 = je první odečet
-     */
-    @Override
-    public void setFirstReader(int i) {
-    }
-
-
-    /**
      * Vrátí spotřebu VT
      *
      * @return spotřeba VT

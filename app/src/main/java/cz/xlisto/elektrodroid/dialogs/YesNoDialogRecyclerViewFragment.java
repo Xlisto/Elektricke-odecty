@@ -25,6 +25,7 @@ import cz.xlisto.elektrodroid.utils.JSONPriceList;
  * přes Fragment Result API.
  */
 public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
+
     public static final String SELECTED_ARRAYLIST = "selectedArrayList";
     public static final String PRICE_ARRAYLIST = "priceArrayList";
     private static DocumentFile documentFile;
@@ -47,6 +48,7 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         YesNoDialogRecyclerViewFragment.documentFile = documentFile;
         return yesNoDialogRecyclerViewFragment;
     }
+
 
     /**
      * Sestaví dialog s výběrem více položek ceníku.
@@ -105,15 +107,6 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
 
 
     /**
-     * Lifecycle callback po zobrazení dialogu.
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Parent class (YesNoDialogFragment) aplikuje DialogButtonColorHelper.
-    }
-
-    /**
      * Uloží seznam ceníků pro obnovu dialogu po změně konfigurace.
      *
      * @param outState výstupní bundle pro persistenci stavu
@@ -123,4 +116,5 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(PRICE_ARRAYLIST, priceLists);
     }
+
 }
