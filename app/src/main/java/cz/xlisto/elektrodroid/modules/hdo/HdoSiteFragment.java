@@ -385,7 +385,7 @@ public class HdoSiteFragment extends Fragment {
             if (!hdoListModels.isEmpty()) {
                 int activeIndex = findActivePeriodIndex(hdoListModels);
 
-                if (hdoListModels.get(0).getDistribution() == HdoListContainer.Distribution.EGD) {
+                if (hdoListModels.get(0).distribution() == HdoListContainer.Distribution.EGD) {
                     if (spDateEgd.getAdapter() != null && activeIndex < spDateEgd.getAdapter().getCount()) {
                         spDateEgd.setSelection(activeIndex);
                     }
@@ -393,15 +393,15 @@ public class HdoSiteFragment extends Fragment {
                     if (currentValidityDates != null && activeIndex < currentValidityDates.length) {
                         setTvValidityDate(currentValidityDates[activeIndex]);
                     } else {
-                        setTvValidityDate(hdoListModels.get(activeIndex).getValidityDate());
+                        setTvValidityDate(hdoListModels.get(activeIndex).validityDate());
                     }
                     hdoList.clear();
-                    hdoList.addAll(hdoListModels.get(activeIndex).getHdoList());
+                    hdoList.addAll(hdoListModels.get(activeIndex).hdoList());
                     spDateEgd.setVisibility(View.VISIBLE);
                 } else {
-                    setTvValidityDate(hdoListModels.get(0).getValidityDate());
+                    setTvValidityDate(hdoListModels.get(0).validityDate());
                     hdoList.clear();
-                    hdoList.addAll(hdoListModels.get(0).getHdoList());
+                    hdoList.addAll(hdoListModels.get(0).hdoList());
                     tvValidityDate.setVisibility(View.VISIBLE);
                 }
             }
@@ -413,9 +413,9 @@ public class HdoSiteFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (hdoListContainer.isEmpty()) return;
                 if (position >= 0 && position < hdoListContainer.size()) {
-                    setAdapter(hdoListContainer.get(position).getHdoList());
+                    setAdapter(hdoListContainer.get(position).hdoList());
                     hdoList.clear();
-                    hdoList.addAll(hdoListContainer.get(position).getHdoList());
+                    hdoList.addAll(hdoListContainer.get(position).hdoList());
                 }
             }
 
@@ -749,7 +749,7 @@ public class HdoSiteFragment extends Fragment {
         Date today = new Date();
 
         for (int i = 0; i < containers.size(); i++) {
-            ArrayList<HdoModel> list = containers.get(i).getHdoList();
+            ArrayList<HdoModel> list = containers.get(i).hdoList();
             if (list != null && !list.isEmpty()) {
                 HdoModel model = list.get(0);
                 Date[] range = HdoUpdateHelper.parseDateRange(model.getDateFrom(), model.getDateUntil(), today);
@@ -784,24 +784,17 @@ public class HdoSiteFragment extends Fragment {
      * Enum Distribution:
      * - Představuje různé distribuční oblasti (CEZ, EGD, PRE).
      */
-    public static class HdoListContainer {
-
-        final ArrayList<HdoModel> hdoList;
-        final String validityDate;
-        final Distribution distribution;
-
+    public record HdoListContainer(ArrayList<HdoModel> hdoList, String validityDate,
+                                   Distribution distribution) {
 
         /**
          * Konstruktor pro inicializaci seznamu HDO, data platnosti a distribuční oblasti.
          *
-         * @param hdoList          Seznam HDO modelů.
-         * @param validityDate     Datum platnosti HDO.
-         * @param distributionArea Distribuční oblast (CEZ, EGD, PRE).
+         * @param hdoList      Seznam HDO modelů.
+         * @param validityDate Datum platnosti HDO.
+         * @param distribution Distribuční oblast (CEZ, EGD, PRE).
          */
-        public HdoListContainer(ArrayList<HdoModel> hdoList, String validityDate, Distribution distributionArea) {
-            this.hdoList = hdoList;
-            this.validityDate = validityDate;
-            this.distribution = distributionArea;
+        public HdoListContainer {
         }
 
 
@@ -810,19 +803,21 @@ public class HdoSiteFragment extends Fragment {
          *
          * @return Seznam HDO modelů.
          */
-        public ArrayList<HdoModel> getHdoList() {
+        @Override
+        public ArrayList<HdoModel> hdoList() {
             return hdoList;
         }
 
 
-        /**
-         * Vrací datum platnosti HDO.
-         *
-         * @return Datum platnosti HDO.
-         */
-        public String getValidityDate() {
-            return validityDate;
-        }
+            /**
+             * Vrací datum platnosti HDO.
+             *
+             * @return Datum platnosti HDO.
+             */
+            @Override
+            public String validityDate() {
+                return validityDate;
+            }
 
 
         /**
@@ -830,7 +825,8 @@ public class HdoSiteFragment extends Fragment {
          *
          * @return Distribuční oblast.
          */
-        public Distribution getDistribution() {
+        @Override
+        public Distribution distribution() {
             return distribution;
         }
 

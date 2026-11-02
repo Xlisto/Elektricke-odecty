@@ -389,7 +389,7 @@ public class HdoSiteViewModel extends ViewModel {
             //CEZ
             ArrayList<HdoSiteFragment.HdoListContainer> hdoList = BuildCEZ.build(jsonData);
             hdoListModels.postValue(hdoList);
-            validityDates.postValue(new String[]{hdoList.get(0).validityDate});
+            validityDates.postValue(new String[]{hdoList.get(0).validityDate()});
         } else if (distributionAreaIndex == 1) {
             //EGD
             ArrayList<HdoSiteFragment.HdoListContainer> hdoListContainer = BuildEGD.build(jsonData);
@@ -399,19 +399,19 @@ public class HdoSiteViewModel extends ViewModel {
             if (!hdoListContainer.isEmpty()) {
                 String[] validityDate = new String[hdoListContainer.size()];
                 for (int i = 0; i < hdoListContainer.size(); i++) {
-                    validityDate[i] = hdoListContainer.get(i).validityDate;
+                    validityDate[i] = hdoListContainer.get(i).validityDate();
                 }
                 int activeIndex = HdoSiteFragment.findActivePeriodIndex(hdoListContainer);
                 validityDates.postValue(validityDate);
                 hdoListModels.postValue(hdoListContainer);
-                hdoModels.postValue(hdoListContainer.get(activeIndex).hdoList);
+                hdoModels.postValue(hdoListContainer.get(activeIndex).hdoList());
             }
         } else if (distributionAreaIndex == 2) {
             //PRE
             ArrayList<HdoSiteFragment.HdoListContainer> hdoList = BuildPRE.build(jsonData);
             hdoListModels.postValue(hdoList);
-            hdoModels.postValue(hdoList.get(0).hdoList);
-            validityDates.postValue(new String[]{hdoList.get(0).validityDate});
+            hdoModels.postValue(hdoList.get(0).hdoList());
+            validityDates.postValue(new String[]{hdoList.get(0).validityDate()});
         }
     }
 
