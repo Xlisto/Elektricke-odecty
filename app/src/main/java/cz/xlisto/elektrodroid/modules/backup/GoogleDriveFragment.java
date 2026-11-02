@@ -1229,7 +1229,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             for (int i = 0; i < filesSnapshot.size(); i++) {
                 File fileToSave = filesSnapshot.get(i);
                 GoogleDriveService.ResultAction result = googleDriveService.saveFileToLocalStorage(backupFolderUri, fileToSave, overwriteExisting);
-                if (result.result == GoogleDriveService.ResultAction.RESULT_OK)
+                if (result.result() == GoogleDriveService.ResultAction.RESULT_OK)
                     savedCount++;
                 if (googleDriveViewModel != null)
                     googleDriveViewModel.setSaveProgress(i + 1, savedCount, totalCount);

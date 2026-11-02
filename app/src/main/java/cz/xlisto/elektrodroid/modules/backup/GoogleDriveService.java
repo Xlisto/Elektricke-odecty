@@ -524,12 +524,10 @@ public class GoogleDriveService {
      * <p>
      * Tato třída obsahuje konstanty pro různé výsledky akce a zprávu popisující výsledek.
      */
-    public static class ResultAction {
+    public record ResultAction(String message, int result) {
 
         public static final int RESULT_OK = 1;
         public static final int RESULT_ERROR = 3;
-        final public String message;
-        final public int result;
 
 
         /**
@@ -539,8 +537,7 @@ public class GoogleDriveService {
          * @param message textová zpráva pro UI
          */
         public ResultAction(int result, String message) {
-            this.message = message;
-            this.result = result;
+            this(message, result);
         }
 
     }

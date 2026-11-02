@@ -87,15 +87,15 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             GoogleDriveService.ResultAction result = (GoogleDriveService.ResultAction) msg.obj;
-            if (result.result == GoogleDriveService.ResultAction.RESULT_OK) {
+            if (result.result() == GoogleDriveService.ResultAction.RESULT_OK) {
                 files.remove(selectedPosition);
                 notifyItemRemoved(selectedPosition);
                 notifyItemRangeChanged(selectedPosition, files.size());
                 selectedDocumentFile = null;
                 showButtons = -1;
                 Snackbar.make(recyclerView, context.getString(R.string.deleted_file), Snackbar.LENGTH_SHORT).show();
-            } else if (result.result == GoogleDriveService.ResultAction.RESULT_ERROR)
-                Snackbar.make(recyclerView, result.message, Snackbar.LENGTH_SHORT).show();
+            } else if (result.result() == GoogleDriveService.ResultAction.RESULT_ERROR)
+                Snackbar.make(recyclerView, result.message(), Snackbar.LENGTH_SHORT).show();
             else
                 Snackbar.make(recyclerView, context.getString(R.string.not_deleted_file), Snackbar.LENGTH_SHORT).show();
         }
@@ -591,7 +591,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                 for (int i = 0; i < selectedFiles.size(); i++) {
                     File file = selectedFiles.get(i);
                     GoogleDriveService.ResultAction result = googleDriveService.deleteFile(file.getId());
-                    if (result != null && result.result == GoogleDriveService.ResultAction.RESULT_OK)
+                    if (result != null && result.result() == GoogleDriveService.ResultAction.RESULT_OK)
                         deletedCount++;
                     dispatchDeleteProgress(i + 1, totalCount);
                 }
