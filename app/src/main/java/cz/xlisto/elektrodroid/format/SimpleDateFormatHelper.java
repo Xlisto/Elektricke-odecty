@@ -1,7 +1,9 @@
 package cz.xlisto.elektrodroid.format;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
 
 /**
  * Pomocná třída poskytující předpřipravené instance SimpleDateFormat
@@ -20,7 +22,8 @@ import java.util.Locale;
 public class SimpleDateFormatHelper {
 
     public static SimpleDateFormat onlyTime = new SimpleDateFormat("HH:mm:ss EE", Locale.getDefault());
-    public static SimpleDateFormat month = new SimpleDateFormat("MM",Locale.getDefault());
-    public static SimpleDateFormat year = new SimpleDateFormat("yyyy",Locale.getDefault());
+    public static SimpleDateFormat month = new SimpleDateFormat("MM", Locale.getDefault());
+    public static SimpleDateFormat year = new SimpleDateFormat("yyyy", Locale.getDefault());
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+
 }

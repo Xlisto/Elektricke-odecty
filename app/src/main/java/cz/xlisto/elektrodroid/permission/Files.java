@@ -39,7 +39,7 @@ public class Files {
     private static final String TAG = "Files";
     public static final String DEF_URI = "content://com.android.externalstorage.documents/document/primary%3A";
     //"content://com.android.externalstorage.documents/document/primary:"
-    public ExecutorService executorService = Executors.newSingleThreadExecutor();
+    final public ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
     /**

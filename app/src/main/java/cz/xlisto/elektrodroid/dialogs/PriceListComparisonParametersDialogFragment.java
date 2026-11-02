@@ -31,8 +31,9 @@ import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
  * Uložené hodnoty vrací přes FragmentResult API.
  */
 public class PriceListComparisonParametersDialogFragment extends DialogFragment {
-    public static String TAG = "PriceListAddParametersDialogFragment";
-    public static String CONSUPTION_CONTAINER = "consuptionContainer";
+
+    final public static String TAG = "PriceListAddParametersDialogFragment";
+    final public static String CONSUPTION_CONTAINER = "consuptionContainer";
     private final String VT = "vt";
     private final String NT = "nt";
     private final String MONTH = "month";
@@ -53,13 +54,13 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
     public static PriceListComparisonParametersDialogFragment newInstance(ConsuptionContainer container) {
         PriceListComparisonParametersDialogFragment frag = new PriceListComparisonParametersDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putDouble(frag.VT, container.vt);
-        bundle.putDouble(frag.NT, container.nt);
-        bundle.putDouble(frag.MONTH, container.month);
-        bundle.putDouble(frag.PHAZE, container.phaze);
-        bundle.putDouble(frag.POWER, container.power);
-        bundle.putDouble(frag.SERVICES_L, container.servicesL);
-        bundle.putDouble(frag.SERVICES_R, container.servicesR);
+        bundle.putDouble(frag.VT, container.vt());
+        bundle.putDouble(frag.NT, container.nt());
+        bundle.putDouble(frag.MONTH, container.month());
+        bundle.putDouble(frag.PHAZE, container.phaze());
+        bundle.putDouble(frag.POWER, container.power());
+        bundle.putDouble(frag.SERVICES_L, container.servicesL());
+        bundle.putDouble(frag.SERVICES_R, container.servicesR());
         frag.setArguments(bundle);
         return frag;
     }
@@ -221,13 +222,13 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
 
         try {
             JSONObject json = new JSONObject();
-            json.put(VT, container.vt);
-            json.put(NT, container.nt);
-            json.put(MONTH, container.month);
-            json.put(PHAZE, container.phaze);
-            json.put(POWER, container.power);
-            json.put(SERVICES_L, container.servicesL);
-            json.put(SERVICES_R, container.servicesR);
+            json.put(VT, container.vt());
+            json.put(NT, container.nt());
+            json.put(MONTH, container.month());
+            json.put(PHAZE, container.phaze());
+            json.put(POWER, container.power());
+            json.put(SERVICES_L, container.servicesL());
+            json.put(SERVICES_R, container.servicesR());
 
             DataSettingsSource dataSettingsSource = new DataSettingsSource(getActivity());
             dataSettingsSource.open();

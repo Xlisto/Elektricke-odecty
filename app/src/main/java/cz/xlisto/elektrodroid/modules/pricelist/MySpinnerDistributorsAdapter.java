@@ -21,9 +21,9 @@ import cz.xlisto.elektrodroid.R;
  */
 public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
-    int resource;
-    String[] objects;
-    int year;
+    final int resource;
+    final String[] objects;
+    final int year;
 
 
     /**

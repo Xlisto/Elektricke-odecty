@@ -81,8 +81,8 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      */
     public static class GraphicViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvGroupTitleGraphic;
-        GraphHdoClockView graphHdoClockView;
+        final TextView tvGroupTitleGraphic;
+        final GraphHdoClockView graphHdoClockView;
 
 
         public GraphicViewHolder(@NonNull View itemView) {

@@ -421,13 +421,13 @@ public class HdoSiteViewModel extends ViewModel {
      */
     public static class CodesContainer {
 
-        ArrayList<String> codes;
-        ArrayList<String[]> groupsList;
-        ArrayList<String> codesException;
-        ArrayList<String[]> groupsExceptionList;
-        String area;
-        String exceptionAreaList;
-        String urlHdo;
+        final ArrayList<String> codes;
+        final ArrayList<String[]> groupsList;
+        final ArrayList<String> codesException;
+        final ArrayList<String[]> groupsExceptionList;
+        final String area;
+        final String exceptionAreaList;
+        final String urlHdo;
 
 
         public CodesContainer(ArrayList<String> codes, ArrayList<String[]> groupsList, ArrayList<String> codesException, ArrayList<String[]> groupsExceptionList, String area, String exceptionAreaList, String urlHdo) {

@@ -786,9 +786,9 @@ public class HdoSiteFragment extends Fragment {
      */
     public static class HdoListContainer {
 
-        ArrayList<HdoModel> hdoList;
-        String validityDate;
-        Distribution distribution;
+        final ArrayList<HdoModel> hdoList;
+        final String validityDate;
+        final Distribution distribution;
 
 
         /**

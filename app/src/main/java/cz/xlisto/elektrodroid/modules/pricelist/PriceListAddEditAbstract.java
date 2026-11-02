@@ -53,7 +53,7 @@ import cz.xlisto.elektrodroid.utils.ReadRawJSON;
  */
 public abstract class PriceListAddEditAbstract extends Fragment {
 
-    public static String TAG = "PriceListAddEditAbstract";
+    final public static String TAG = "PriceListAddEditAbstract";
     static final String BTN_FROM = "btnFrom";
     static final String BTN_UNTIL = "btnUntil";
     static final String RADA = "ivRada";

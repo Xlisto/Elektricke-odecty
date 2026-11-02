@@ -84,7 +84,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     DocumentFile backupFile;
     protected MonthlyReadingViewModel viewModel;
     //handler pro zálohu na google drive, spouští se po vytvoření záložního ZIP souboru
-    protected Handler handlerSaveToGoogleDrive = new Handler(Looper.getMainLooper()) {
+    final protected Handler handlerSaveToGoogleDrive = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull android.os.Message msg) {
             super.handleMessage(msg);

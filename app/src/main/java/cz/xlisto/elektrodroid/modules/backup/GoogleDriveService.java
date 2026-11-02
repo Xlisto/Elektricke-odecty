@@ -528,8 +528,8 @@ public class GoogleDriveService {
 
         public static final int RESULT_OK = 1;
         public static final int RESULT_ERROR = 3;
-        public String message;
-        public int result;
+        final public String message;
+        final public int result;
 
 
         /**

@@ -28,7 +28,7 @@ public class InvoiceSumAdapter extends RecyclerView.Adapter<InvoiceSumAdapter.My
     private final Context context;
     private final ArrayList<InvoiceSumModel> items;
     private final int colorVT, colorNT;
-    double max;
+    final double max;
     private final boolean isShowTotal;
 
 

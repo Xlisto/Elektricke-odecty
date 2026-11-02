@@ -32,8 +32,9 @@ public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceList
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRada, tvArea, tvDate, tvFirma;
-        RelativeLayout rl;
+
+        final TextView tvRada, tvArea, tvDate, tvFirma;
+        final RelativeLayout rl;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);

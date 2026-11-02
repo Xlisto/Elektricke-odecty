@@ -259,13 +259,13 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
             swRight.setVisibility(priceListRightRegulBuilder.isRegulPrice() ? View.VISIBLE : View.GONE);
         }
 
-        this.vt = container.vt;
-        this.nt = container.nt;
-        this.month = container.month;
-        this.phaze = container.phaze;
-        this.power = container.power;
-        this.servicesL = container.servicesL;
-        this.servicesR = container.servicesR;
+        this.vt = container.vt();
+        this.nt = container.nt();
+        this.month = container.month();
+        this.phaze = container.phaze();
+        this.power = container.power();
+        this.servicesL = container.servicesL();
+        this.servicesR = container.servicesR();
         updateTable();
         showTvDescription();
     }

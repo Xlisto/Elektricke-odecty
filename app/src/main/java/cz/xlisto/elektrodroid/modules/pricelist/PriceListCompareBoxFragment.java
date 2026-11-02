@@ -111,13 +111,13 @@ public class PriceListCompareBoxFragment extends Fragment {
         try {
             JSONObject jsonObject = new JSONObject(json);
             return new ConsuptionContainer(
-                    jsonObject.optDouble("vt", defaults.vt),
-                    jsonObject.optDouble("nt", defaults.nt),
-                    jsonObject.optDouble("month", defaults.month),
-                    jsonObject.optDouble("phaze", defaults.phaze),
-                    jsonObject.optDouble("power", defaults.power),
-                    jsonObject.optDouble("ser_l", defaults.servicesL),
-                    jsonObject.optDouble("ser_r", defaults.servicesR));
+                    jsonObject.optDouble("vt", defaults.vt()),
+                    jsonObject.optDouble("nt", defaults.nt()),
+                    jsonObject.optDouble("month", defaults.month()),
+                    jsonObject.optDouble("phaze", defaults.phaze()),
+                    jsonObject.optDouble("power", defaults.power()),
+                    jsonObject.optDouble("ser_l", defaults.servicesL()),
+                    jsonObject.optDouble("ser_r", defaults.servicesR()));
         } catch (JSONException ignored) {
             return defaults;
         }

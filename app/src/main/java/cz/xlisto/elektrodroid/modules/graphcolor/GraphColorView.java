@@ -67,7 +67,7 @@ public class GraphColorView extends View {
     private final Paint pPointerOut = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pPointerIn = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pPointerShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Paint debugPaint = new Paint();
+    final Paint debugPaint = new Paint();
     private int lastX = Integer.MIN_VALUE;
     private int lastY = Integer.MIN_VALUE;
     private final float[] mHSV_VT = new float[]{1f, 1f, 1f};
