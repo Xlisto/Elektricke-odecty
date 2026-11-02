@@ -1,5 +1,8 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
+
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,29 +10,33 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
+ * Třída pro slučování a porovnávání HDO časů z distribuční sítě EG.D.
+ * <p>
  * Xlisto 08.07.2023 21:31
  */
 public class JsonHdoEgdMerge {
+
     private static final String TAG = "JsonHdoEgdMerge";
-    private static ArrayList<JSONObject> jsonMergeObjects = new ArrayList<>();
+
 
     /**
-     * Porovná pole JSON objektů a vrátí pole JSON objektů, které obsahují indexy stejných časů HDO.
-     * @param jsonObjects
-     * @return
+     * Porovná pole JSON objektů a vrátí seznam sloučených JSON objektů, které obsahují indexy stejných časů HDO.
+     *
+     * @param jsonObjects pole JSON objektů s časy HDO pro jednotlivé dny
+     * @return seznam sloučených JSON objektů
      */
     public static ArrayList<JSONObject> init(JSONObject[] jsonObjects) {
-        jsonMergeObjects.clear();
-        ArrayList<ArrayList<Integer>> sameIndexesList = new ArrayList<>();//seznam seznamů indexů stejných časů HDO
-        ArrayList<Integer> excludedIndexesList = new ArrayList<>();//vyloučení indexy, které se již nebudou prohledávat
+        ArrayList<JSONObject> jsonMergeObjects = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> sameIndexesList = new ArrayList<>(); // seznam seznamů indexů stejných časů HDO
+        ArrayList<Integer> excludedIndexesList = new ArrayList<>(); // vyloučené indexy, které se již nebudou prohledávat
 
-        //první iterace pole JSON objektů
-        for (int i = 0; i < jsonObjects.length; i++) {
-            //druhá iterace pole JSON objektů pro porovnání každého prvku s každým
+        // první iterace pole JSON objektů
+        for (JSONObject jsonObjectI : jsonObjects) {
+            // druhá iterace pole JSON objektů pro porovnání každého prvku s každým
             ArrayList<Integer> sameIndexesList2 = new ArrayList<>();
             for (int j = 0; j < jsonObjects.length; j++) {
-                //pokud se nalezne shoda, přidá se index do seznamu, který se bude přeskakovat
-                if (compareJsonHdoTime(jsonObjects[i], jsonObjects[j])) {
+                // pokud se nalezne shoda, přidá se index do seznamu, který se bude přeskakovat
+                if (compareJsonHdoTime(jsonObjectI, jsonObjects[j])) {
                     if (excludedIndexesList.contains(j)) {
                         break;
                     }
@@ -40,23 +47,21 @@ public class JsonHdoEgdMerge {
             sameIndexesList.add(sameIndexesList2);
         }
 
-
-        //výpis seznamu seznamů indexů stejných časů HDO s sestavení JSON objektu HDO s upravenými odexy dny platností
-        for (int i = 0; i < sameIndexesList.size(); i++) {
-            ArrayList<Integer> sameIndexesList2 = sameIndexesList.get(i);
-            if (sameIndexesList2.size() > 0) {
+        // výpis seznamu seznamů indexů stejných časů HDO a sestavení JSON objektu HDO s upravenými dny platnosti
+        for (ArrayList<Integer> sameIndexesList2 : sameIndexesList) {
+            if (!sameIndexesList2.isEmpty()) {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     ArrayList<Integer> denVTydnu = new ArrayList<>();
-                    for(int j=0;j<sameIndexesList2.size();j++){
-                        int x = jsonObjects[sameIndexesList2.get(j)].getInt("denVTydnu");
+                    for (int index : sameIndexesList2) {
+                        int x = jsonObjects[index].getInt("denVTydnu");
                         denVTydnu.add(x);
                     }
                     jsonObject.put("denVTydnu", new JSONArray(denVTydnu));
                     jsonObject.put("casy", jsonObjects[sameIndexesList2.get(0)].getJSONArray("casy"));
                     jsonMergeObjects.add(jsonObject);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Chyba při sestavování sloučeného JSON objektu HDO", e);
                 }
             }
         }
@@ -66,6 +71,7 @@ public class JsonHdoEgdMerge {
 
     /**
      * Porovná dva JSON objekty časů HDO a vrátí true, pokud jsou stejné.
+     *
      * @param json1 HDO časy z EGD
      * @param json2 HDO časy z EGD
      * @return true, pokud jsou časy stejné
@@ -95,9 +101,10 @@ public class JsonHdoEgdMerge {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Chyba při porovnávání HDO časů", e);
         }
 
         return result == totalLength;
     }
+
 }
