@@ -27,7 +27,6 @@ import cz.xlisto.elektrodroid.utils.DetectScreenMode;
  */
 public class PriceListDetailFragment extends Fragment {
 
-    private final static String TAG = "PriceListDetailFragment";
     public final static String PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment";
     public final static String PRICE_LIST_ID = "price_list_id";
     private LabelPriceDetail ldnDatum;

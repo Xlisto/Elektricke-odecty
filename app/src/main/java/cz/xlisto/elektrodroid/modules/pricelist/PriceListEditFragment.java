@@ -43,7 +43,6 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  */
 public class PriceListEditFragment extends PriceListAddEditAbstract {
 
-    private final static String TAG = "PriceListEditFragment";
     private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
     private static final String ARG_ID = "id";

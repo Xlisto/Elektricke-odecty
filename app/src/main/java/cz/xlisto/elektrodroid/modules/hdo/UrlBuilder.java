@@ -11,7 +11,6 @@ import java.util.Calendar;
  */
 public class UrlBuilder {
 
-    private static final String TAG = "UrlBuilder";
     final private Spinner spDistributionArea, spDistrict;
     final private EditText etHdoCode;
 

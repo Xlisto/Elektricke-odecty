@@ -42,7 +42,6 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  */
 public class PriceListAddFragment extends PriceListAddEditAbstract {
 
-    private final static String TAG = PriceListAddFragment.class.getSimpleName();
     private ShPAddPriceList shPAddPriceList;
 
 

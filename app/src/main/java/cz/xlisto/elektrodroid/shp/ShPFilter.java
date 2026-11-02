@@ -11,7 +11,6 @@ public class ShPFilter extends ShP {
     public static final String DATE_START = "filtrDateStart";
     public static final String DATE_END = "filtrDateEnd";
     public static final String DEFAULT = "%";
-    public static final String POSITION = "position";
 
 
     public ShPFilter(Context context) {

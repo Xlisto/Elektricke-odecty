@@ -70,15 +70,4 @@ public class ShPPreCodes extends ShP {
         return defaultList;
     }
 
-
-    /**
-     * Vrátí, zda již existuje uložený dynamický seznam kódů PRE
-     *
-     * @return true pokud existuje uložený seznam, jinak false
-     */
-    public boolean hasSavedPreCodes() {
-        String json = get(KEY_PRE_CODES_JSON, "");
-        return json != null && !json.isEmpty();
-    }
-
 }

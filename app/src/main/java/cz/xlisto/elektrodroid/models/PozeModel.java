@@ -1,25 +1,22 @@
 package cz.xlisto.elektrodroid.models;
 
+
 import androidx.annotation.NonNull;
+
 
 /**
  * Model pro poze
  * Xlisto 15.02.2023 14:19
  */
 public class PozeModel {
-    private static final String TAG = "PozeModel";
-    double poze1,poze2;
+
+    double poze1, poze2;
     TypePoze typePoze;
 
 
     public PozeModel(double poze1, double poze2) {
         this.poze1 = poze1;
         this.poze2 = poze2;
-    }
-
-
-    public PozeModel(TypePoze typePoze) {
-        this.typePoze = typePoze;
     }
 
 
@@ -108,4 +105,5 @@ public class PozeModel {
         POZE1,
         POZE2
     }
+
 }

@@ -9,7 +9,7 @@ import cz.xlisto.elektrodroid.utils.Round;
  * Xlisto 19.03.2023 13:49
  */
 public class SummaryInvoiceModel {
-    private static final String TAG = "SummaryInvoiceModel";
+
     private final long dateOf, dateTo;
     private double amount;
     private final double unitPrice;
