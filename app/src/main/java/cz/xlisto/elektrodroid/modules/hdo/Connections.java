@@ -522,9 +522,6 @@ public class Connections {
             String jsonData = "{\"query\":{\"kind\":\"Document\",\"definitions\":[{\"kind\":\"OperationDefinition\",\"operation\":\"query\",\"name\":{\"kind\":\"Name\",\"value\":\"searchKod\"},\"variableDefinitions\":[{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"HdoSearchKodInput\"}}},\"directives\":[]}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"hdo\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"searchKod\"},\"arguments\":[{\"kind\":\"Argument\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"}}}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"kod\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"varianta\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"kategorieSkupiny\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"kategorie\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"skupina\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"kody\"},\"arguments\":[],\"directives\":[]}]}}]}}]}}]}}],\"loc\":{\"start\":0,\"end\":315}}," +
                     "\"variables\":{\"input\":{\"kod\":\"" + code + "\",\"limit\":10}}}";
 
-            String urlParameters = "{\"operationName\":\"searchKod\",\"variables\":{\"input\":{\"kod\":\"" + code + "\",\"limit\":10}}," +
-                    "\"query\":\"query searchKod($input: HdoSearchKodInput!) {hdo { searchKod(input: $input) {kod varianta kategorieSkupiny {kategorie skupina kody __typename}__typename}__typename}}\"}";
-
             String urlParametersEncoded = "{\n" +
                     "    \"operationName\": \"searchKod\",\n" +
                     "    \"variables\": {\n" +
@@ -609,9 +606,6 @@ public class Connections {
             String jsonData = "{\"query\":{\"kind\":\"Document\",\"definitions\":[{\"kind\":\"OperationDefinition\",\"operation\":\"query\",\"name\":{\"kind\":\"Name\",\"value\":\"search\"},\"variableDefinitions\":[{\"kind\":\"VariableDefinition\",\"variable\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"}},\"type\":{\"kind\":\"NonNullType\",\"type\":{\"kind\":\"NamedType\",\"name\":{\"kind\":\"Name\",\"value\":\"HdoSearchInput\"}}},\"directives\":[]}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"hdo\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"search\"},\"arguments\":[{\"kind\":\"Argument\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"},\"value\":{\"kind\":\"Variable\",\"name\":{\"kind\":\"Name\",\"value\":\"input\"}}}],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"od\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"den\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"mesic\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"rok\"},\"arguments\":[],\"directives\":[]}]}},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"do\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"den\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"mesic\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"rok\"},\"arguments\":[],\"directives\":[]}]}},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"sazby\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"sazba\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"dny\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"denVTydnu\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"casy\"},\"arguments\":[],\"directives\":[],\"selectionSet\":{\"kind\":\"SelectionSet\",\"selections\":[{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"od\"},\"arguments\":[],\"directives\":[]},{\"kind\":\"Field\",\"name\":{\"kind\":\"Name\",\"value\":\"do\"},\"arguments\":[],\"directives\":[]}]}}]}}]}}]}}]}}]}}],\"loc\":{\"start\":0,\"end\":620}}," +
                     "\"variables\":{\"input\":{\"kategorie\":\"" + category + "\",\"skupina\":\"" + group + "\"}}}";
 
-            String urlParameters = "{\"operationName\": \"search\",\"variables\": {\"input\": {\"kategorie\": \"" + category + "\",\"skupina\": \"" + group + "\"}}," +
-                    "\"query\": \"query search($input: HdoSearchInput!) { hdo { search(input: $input) { od { den mesic rok __typename}do{den mesic rok __typename}sazby{sazba dny{ denVTydnu casy { od do __typename}__typename} __typename}__typename} __typename}}\"}";
-
             String urlParametersEncoded = "{\n" +
                     "    \"operationName\": \"search\",\n" +
                     "    \"variables\": {\n" +
@@ -643,11 +637,8 @@ public class Connections {
     /**
      * Kontejner pro návratová data
      */
-    static class ResultData {
-
-        String result, areaEgd, area, urlString;
-        ResultType resultType;
-
+    record ResultData(String result, String areaEgd, String area, String urlString,
+                      ResultType resultType) {
 
         public ResultData(String result, ResultType resultType, String area) {
             this(result, resultType, area, "", "");
@@ -655,11 +646,7 @@ public class Connections {
 
 
         public ResultData(String result, ResultType resultType, String area, String areaEgd, String urlString) {
-            this.result = result;
-            this.resultType = resultType;
-            this.areaEgd = areaEgd;
-            this.urlString = urlString;
-            this.area = area;
+            this(result, areaEgd, area, urlString, resultType);
         }
 
     }
@@ -676,20 +663,11 @@ public class Connections {
     }
 
 
-    static class GroupAndCategoryContainer {
-
-        String urlHdo, urlParameters, code, districtName;
-        Context context;
-        int districtIndex;
-
+    record GroupAndCategoryContainer(String urlHdo, String urlParameters, String code,
+                                     String districtName, Context context, int districtIndex) {
 
         public GroupAndCategoryContainer(String urlHdo, String urlParameters, String code, Context context, String districtName, int districtIndex) {
-            this.urlHdo = urlHdo;
-            this.urlParameters = urlParameters;
-            this.code = code;
-            this.context = context;
-            this.districtName = districtName;
-            this.districtIndex = districtIndex;
+            this(urlHdo, urlParameters, code, districtName, context, districtIndex);
         }
 
 

@@ -5,7 +5,7 @@ package cz.xlisto.elektrodroid.modules.hdo;
  */
 public abstract class CodeWeb {
 
-    public static String htmlPage = """
+    public final static String htmlPage = """
             <!DOCTYPE html>
             <html lang="cs">
             <head>

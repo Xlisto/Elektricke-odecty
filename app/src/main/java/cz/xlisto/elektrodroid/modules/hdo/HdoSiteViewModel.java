@@ -96,19 +96,19 @@ public class HdoSiteViewModel extends ViewModel {
                 return;//kod 101 znamená, že se nepodařilo získat data; skryje progress a ukončí se
             }
             Connections.ResultData resultData = (Connections.ResultData) msg.obj;
-            if (resultData.result.equals("[]")) {
+            if (resultData.result().equals("[]")) {
                 showAlert.postValue(true);
                 showAlertDialog.postValue(true);
                 return;
             }
-            if (resultData.resultType.equals(Connections.ResultType.CODES)) {
+            if (resultData.resultType().equals(Connections.ResultType.CODES)) {
                 final ArrayList<String> codes = new ArrayList<>();
                 final ArrayList<String[]> groupsList = new ArrayList<>();
                 final ArrayList<String> codesException = new ArrayList<>();
                 final ArrayList<String[]> groupsExceptionList = new ArrayList<>();
                 //zobrazené kodu z EGD
                 try {
-                    JSONArray jsonArray = new JSONArray(resultData.result);
+                    JSONArray jsonArray = new JSONArray(resultData.result());
                     if (jsonArray.length() == 0) {
                         showAlert.postValue(true);
                         return;
@@ -123,12 +123,12 @@ public class HdoSiteViewModel extends ViewModel {
                             String category = jsonCategoryGroup.getString("kategorie");//ZAPAD;VYCHOD;VERSACOM
                             String group = jsonCategoryGroup.getString("skupina");
 
-                            if (category.equals(resultData.areaEgd)) {
+                            if (category.equals(resultData.areaEgd())) {
                                 codes.add(jsonCodes.toString());
                                 groupsList.add(new String[]{group, category});
                             }
 
-                            boolean isException = switch (resultData.area) {
+                            boolean isException = switch (resultData.area()) {
                                 case "Brno - venkov", "Hodonín", "Břeclav" ->
                                         category.equals("VERSACOM");
                                 case "Jihlava", "Třebíč", "Jindřichův Hradec" ->
@@ -141,7 +141,7 @@ public class HdoSiteViewModel extends ViewModel {
                             }
                         }
                         if (!codes.isEmpty()) {
-                            String exceptionAreaList = switch (resultData.area) {
+                            String exceptionAreaList = switch (resultData.area()) {
                                 case "Brno - venkov" -> exceptionBrno;
                                 case "Jihlava" -> exceptionJihlava;
                                 case "Třebíč" -> exceptionTrebic;
@@ -150,7 +150,7 @@ public class HdoSiteViewModel extends ViewModel {
                                 case "Břeclav" -> exceptionBreclav;
                                 default -> "";
                             };
-                            CodesContainer codesContainer = new CodesContainer(codes, groupsList, codesException, groupsExceptionList, resultData.area, exceptionAreaList, resultData.urlString);
+                            CodesContainer codesContainer = new CodesContainer(codes, groupsList, codesException, groupsExceptionList, resultData.area(), exceptionAreaList, resultData.urlString());
                             containerMutableLiveData.postValue(codesContainer);
                         }
                         showDialog.postValue(true);
@@ -161,7 +161,7 @@ public class HdoSiteViewModel extends ViewModel {
                 }
 
             } else {
-                buildRecyclerView(resultData.result);
+                buildRecyclerView(resultData.result());
             }
         }
     };
