@@ -36,6 +36,8 @@ import cz.xlisto.elektrodroid.utils.DetectNightMode;
  */
 public class GraphAnnualOverviewView extends View {
 
+    private static final String TAG = "GraphAnnualOverviewView";
+
     private ArrayList<AnnualYearData> yearDataList = new ArrayList<>();
     private int colorVT = 0xFF2E7D32; // Výchozí tmavě zelená
     private int colorNT = 0xFF512DA8; // Výchozí fialová
@@ -57,7 +59,6 @@ public class GraphAnnualOverviewView extends View {
     private Paint paintAxis;
     private Paint paintBadgeBg;
     private Paint paintBgCard;
-    private Paint paintLeaderLine;
 
     private boolean isMWh = true;
     private double maxConsumption = 4.0;
@@ -98,6 +99,9 @@ public class GraphAnnualOverviewView extends View {
     private final RectF tempBoxRect = new RectF();
 
 
+    /**
+     * Vnitřní třída reprezentující popisek (callout) v grafu.
+     */
     private static class GraphCallout {
 
         String text;
@@ -108,11 +112,29 @@ public class GraphAnnualOverviewView extends View {
         boolean isSmall;
 
 
+        /**
+         * Vytvoří novou instanci popisku.
+         *
+         * @param text        Text popisku
+         * @param targetY     Cílová pozice Y
+         * @param accentColor Barva akcentu
+         * @param isBold      Zda má být text tučný
+         * @param isSmall     Zda má být text zmenšený
+         */
         GraphCallout(String text, float targetY, int accentColor, boolean isBold, boolean isSmall) {
             reset(text, targetY, accentColor, isBold, isSmall);
         }
 
 
+        /**
+         * Resetuje hodnoty popisku pro opakované použití v bazénu objektů.
+         *
+         * @param text        Text popisku
+         * @param targetY     Cílová pozice Y
+         * @param accentColor Barva akcentu
+         * @param isBold      Zda má být text tučný
+         * @param isSmall     Zda má být text zmenšený
+         */
         void reset(String text, float targetY, int accentColor, boolean isBold, boolean isSmall) {
             this.text = text;
             this.targetY = targetY;
@@ -125,24 +147,47 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Konstruktor pro programové vytvoření instance komponenty.
+     *
+     * @param context Kontext aplikace
+     */
     public GraphAnnualOverviewView(Context context) {
         super(context);
         init(context);
     }
 
 
+    /**
+     * Konstruktor pro nafouknutí z XML souboru.
+     *
+     * @param context Kontext aplikace
+     * @param attrs   Množina atributů z XML
+     */
     public GraphAnnualOverviewView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
 
+    /**
+     * Konstruktor pro nafouknutí z XML souboru s definovaným stylem.
+     *
+     * @param context      Kontext aplikace
+     * @param attrs        Množina atributů z XML
+     * @param defStyleAttr Atribut výchozího stylu
+     */
     public GraphAnnualOverviewView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
 
+    /**
+     * Inicializuje barvy, štětce a nastavení grafického rozhraní.
+     *
+     * @param context Kontext aplikace
+     */
     private void init(Context context) {
         // Načteme nastavené barvy z DataSettingsSource
         DataSettingsSource settingsSource = new DataSettingsSource(context);
@@ -154,7 +199,7 @@ public class GraphAnnualOverviewView extends View {
                 colorNT = colors[1];
             }
         } catch (Exception e) {
-            Log.e("GraphAnnualOverviewView", "Chyba při načítání barev VT/NT: " + e.getMessage());
+            Log.e(TAG, "Chyba při načítání barev VT/NT: " + e.getMessage());
         } finally {
             settingsSource.close();
         }
@@ -228,14 +273,14 @@ public class GraphAnnualOverviewView extends View {
         paintBgCard = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintBgCard.setColor(bgColor);
         paintBgCard.setStyle(Paint.Style.FILL);
-
-        paintLeaderLine = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paintLeaderLine.setColor(isDark ? 0xFF888888 : 0xFFAAAAAA);
-        paintLeaderLine.setStrokeWidth(DensityUtils.dpToPx(context, 1));
-        paintLeaderLine.setStyle(Paint.Style.STROKE);
     }
 
 
+    /**
+     * Nastaví seznam ročních dat pro zobrazení v grafu a zahájí přepočet os.
+     *
+     * @param data Seznam objektů {@link AnnualYearData}
+     */
     public void setData(ArrayList<AnnualYearData> data) {
         if (data == null) {
             this.yearDataList.clear();
@@ -248,6 +293,9 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Přepočítá měřítka os Y pro spotřebu, ceny a fixní náklady na základě obsažených dat.
+     */
     private void recalculateScales() {
         if (yearDataList.isEmpty()) {
             return;
@@ -284,7 +332,7 @@ public class GraphAnnualOverviewView extends View {
         // Nastavíme rozsah osy Y pro spotřebu
         double maxVal = isMWh ? (maxConsKwh / 1000.0) : maxConsKwh;
         if (maxVal <= 0) maxVal = 1.0;
-        maxConsumption = Math.ceil(maxVal * 1.15); // Add 15% margin
+        maxConsumption = Math.ceil(maxVal * 1.15); // Přidat 15% rezervu
 
         // Nastavíme rozsah osy Y pro cenu
         if (maxPriceVal <= 0) maxPriceVal = 5000;
@@ -297,12 +345,24 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Ověří, zda daná barva vyžaduje vykreslení obrysové čáry kvůli nízkému kontrastu vůči pozadí.
+     *
+     * @param color       Barva k posouzení
+     * @param cardBgColor Barva pozadí karty
+     * @return {@code true}, pokud je kontrast nízký a je potřeba obrys
+     */
     private boolean needsOutlineBorder(int color, int cardBgColor) {
         double contrast = ColorUtils.calculateContrast(color, cardBgColor);
         return contrast < 1.6; // Pokud barva splývá s pozadím (kontrast < 1.6:1), zvýrazníme obrys
     }
 
 
+    /**
+     * Zajistí, že pole pro souřadnice a geometrii mají dostatečnou kapacitu pro zadaný počet prvků.
+     *
+     * @param count Požadovaná kapacita polí
+     */
     private void ensureArraysSized(int count) {
         if (columnXCenters.length < count) {
             columnXCenters = new float[count];
@@ -326,6 +386,16 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vrací novou nebo recyklovanou instanci {@link GraphCallout} z bazénu objektů.
+     *
+     * @param text        Text popisku
+     * @param targetY     Cílová Y souřadnice
+     * @param accentColor Barva akcentu
+     * @param isBold      Příznak tučného písma
+     * @param isSmall     Příznak malého písma
+     * @return Instance {@link GraphCallout}
+     */
     private GraphCallout obtainGraphCallout(String text, float targetY, int accentColor, boolean isBold, boolean isSmall) {
         if (calloutPoolIndex < calloutPool.size()) {
             GraphCallout c = calloutPool.get(calloutPoolIndex++);
@@ -340,6 +410,15 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vrací novou nebo recyklovanou instanci {@link RectF} z bazénu objektů.
+     *
+     * @param left   Levý okraj
+     * @param top    Horní okraj
+     * @param right  Pravý okraj
+     * @param bottom Dolní okraj
+     * @return Instance {@link RectF}
+     */
     private RectF obtainRectF(float left, float top, float right, float bottom) {
         if (rectPoolIndex < rectPool.size()) {
             RectF r = rectPool.get(rectPoolIndex++);
@@ -357,6 +436,11 @@ public class GraphAnnualOverviewView extends View {
     private float customMinSlotWidthDp = 0f;
 
 
+    /**
+     * Nastaví vlastní minimální šířku slotu pro jeden rok v dp (využívá se při skrolování).
+     *
+     * @param minSlotWidthDp Minimální šířka slotu v dp
+     */
     public void setCustomMinSlotWidthDp(float minSlotWidthDp) {
         this.customMinSlotWidthDp = minSlotWidthDp;
         requestLayout();
@@ -364,6 +448,13 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vykreslí vnitřní obrys obdélníku.
+     *
+     * @param canvas Plátno pro kreslení
+     * @param rect   Obdélník pro obrys
+     * @param paint  Štětec s nastavenou barvou a šířkou čáry
+     */
     private void drawInnerBorder(Canvas canvas, RectF rect, Paint paint) {
         float halfStroke = paint.getStrokeWidth() / 2f;
         tempBoxRect.set(
@@ -376,6 +467,11 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vypočítá potřebný levý okraj grafu pro zobrazení levé osy Y (spotřeby).
+     *
+     * @return Šířka levého okraje v pixelech
+     */
     private float calculateRequiredPadLeft() {
         paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
         paintText.setFakeBoldText(true);
@@ -393,6 +489,12 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vypočítá potřebný pravý okraj grafu pro zobrazení pravé osy Y (ceny).
+     *
+     * @param locale Lokalizace pro formátování čísel
+     * @return Šířka pravého okraje v pixelech
+     */
     private float calculateRequiredPadRight(Locale locale) {
         paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
         paintText.setFakeBoldText(true);
@@ -447,23 +549,43 @@ public class GraphAnnualOverviewView extends View {
     private boolean showLegend = true;
 
 
+    /**
+     * Nastaví, zda se mají zobrazovat osy Y (spotřeba vlevo, ceny vpravo).
+     *
+     * @param showYAxes {@code true} pro zobrazení os
+     */
     public void setShowYAxes(boolean showYAxes) {
         this.showYAxes = showYAxes;
         invalidate();
     }
 
 
+    /**
+     * Nastaví, zda se má pod grafem vykreslovat legenda.
+     *
+     * @param showLegend {@code true} pro zobrazení legendy
+     */
     public void setShowLegend(boolean showLegend) {
         this.showLegend = showLegend;
         invalidate();
     }
 
 
+    /**
+     * Vrátí informaci, zda jsou hodnoty spotřeby udávány v MWh.
+     *
+     * @return {@code true} pro MWh, {@code false} pro kWh
+     */
     public boolean isMWh() {
         return isMWh;
     }
 
 
+    /**
+     * Vrátí informaci, zda data obsahují dvoutarifní sazbu (VT i NT).
+     *
+     * @return {@code true} pokud je přítomen i nízký tarif NT
+     */
     public boolean isDualTariff() {
         return isDualTariff;
     }
@@ -472,6 +594,11 @@ public class GraphAnnualOverviewView extends View {
     private boolean drawCardBackground = true;
 
 
+    /**
+     * Nastaví, zda se má pod grafem vykreslovat podkladový zaoblený rámeček karty.
+     *
+     * @param drawCardBackground {@code true} pro vykreslení pozadí karty
+     */
     public void setDrawCardBackground(boolean drawCardBackground) {
         this.drawCardBackground = drawCardBackground;
         invalidate();
@@ -558,12 +685,12 @@ public class GraphAnnualOverviewView extends View {
                     textY = y + DensityUtils.dpToPx(getContext(), 4);
                 }
 
-                // Leva osa - spotřeba
+                // Levá osa - spotřeba
                 double consVal = (maxConsumption * i / steps);
                 paintText.setTextAlign(Paint.Align.RIGHT);
                 canvas.drawText(DecimalFormatHelper.df1.format(consVal), chartArea.left - axisGap, textY, paintText);
 
-                // Prava osa - cena
+                // Pravá osa - cena
                 double priceVal = (maxPrice * i / steps);
                 paintText.setTextAlign(Paint.Align.LEFT);
                 canvas.drawText(String.format(locale, "%.0f", priceVal), chartArea.right + axisGap, textY, paintText);
@@ -841,7 +968,6 @@ public class GraphAnnualOverviewView extends View {
                 rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceVT()), yPtsVT[i], lineColors.colorPriceVT(), true, false));
                 rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceNT()), yPtsNT[i], lineColors.colorPriceNT(), true, false));
             }
-            rightCallouts.add(obtainGraphCallout(String.format(locale, "%.0f", data.avgPriceTotal()), yPtsTotal[i], lineColors.colorPriceTotal(), true, false));
 
             // Fixní měsíční náklady umístěné POD cenovými kótami
             float yFixedVal = (float) (chartArea.bottom - (chartArea.height() * 0.65f * (data.avgMonthlyFixedCost() / maxMonthlyFixed)));
@@ -870,7 +996,7 @@ public class GraphAnnualOverviewView extends View {
 
                 // Spojovací čárka, pokud byl pravý rámeček výrazně posunut od datového bodu
                 if (!c.isSmall && Math.abs(c.currentY - c.targetY) > DensityUtils.dpToPx(getContext(), 8)) {
-                    canvas.drawLine(cxMarker, c.targetY, xCallout, c.currentY, paintLeaderLine);
+                    canvas.drawLine(cxMarker, c.targetY, xCallout, c.currentY, paintLineTotal);
                 }
                 RectF digitsRect = drawCalloutBox(canvas, xCallout, c.currentY, c.text, c.accentColor, c.isBold, c.isSmall, false, placedTextDigitsRects);
                 placedTextDigitsRects.add(digitsRect);
@@ -884,6 +1010,20 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vykreslí obdélníkový rámeček s textovým popiskem zarovnaným vlevo nebo na střed.
+     *
+     * @param canvas              Plátno pro kreslení
+     * @param leftX               X souřadnice levého okraje nebo středu
+     * @param cy                  Y souřadnice středu
+     * @param text                Zobrazovaný text
+     * @param accentColor         Barva akcentu obrysu
+     * @param isBold              Příznak tučného písma
+     * @param isSmall             Příznak zmenšeného písma
+     * @param isCentered          Příznak vycentrování
+     * @param existingDigitsRects Seznam existujících obdélníků pro detekci kolizí
+     * @return Obdélník plochy textu
+     */
     private RectF drawCalloutBox(Canvas canvas, float leftX, float cy, String text, int accentColor, boolean isBold, boolean isSmall, boolean isCentered, ArrayList<RectF> existingDigitsRects) {
         if (isSmall) {
             paintText.setTextSize(DensityUtils.dpToPx(getContext(), 8.5f));
@@ -980,6 +1120,19 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vykreslí obdélníkový rámeček s textovým popiskem zarovnaným vpravo.
+     *
+     * @param canvas               Plátno pro kreslení
+     * @param rightX               X souřadnice pravého okraje
+     * @param cy                   Y souřadnice středu
+     * @param text                 Zobrazovaný text
+     * @param accentColor          Barva akcentu obrysu
+     * @param isBold               Příznak tučného písma
+     * @param isSmall              Příznak zmenšeného písma
+     * @param existingDigitsRects  Seznam existujících obdélníků pro detekci kolizí
+     * @return Obdélník plochy textu
+     */
     private RectF drawCalloutBoxRightAligned(Canvas canvas, float rightX, float cy, String text, int accentColor, boolean isBold, boolean isSmall, ArrayList<RectF> existingDigitsRects) {
         if (isSmall) {
             paintText.setTextSize(DensityUtils.dpToPx(getContext(), 8.5f));
@@ -1070,6 +1223,12 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    /**
+     * Vykreslí legendu v dolní části grafu.
+     *
+     * @param canvas Plátno pro kreslení
+     * @param height Celková výška pohledu
+     */
     private void drawLegend(Canvas canvas, int height) {
         float row1Y = height - DensityUtils.dpToPx(getContext(), 34);
         float row2Y = height - DensityUtils.dpToPx(getContext(), 14);
@@ -1195,6 +1354,17 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
+
+    /**
+     * Zobrazí detailní dialog s rozpisem spotřeby a cen pro vybrané roční období.
+     *
+     * @param data Roční data
+     */
     private void showDetailDialog(AnnualYearData data) {
         String unit = isMWh ? "MWh" : "kWh";
         double factor = isMWh ? 1000.0 : 1.0;
