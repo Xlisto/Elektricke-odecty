@@ -329,7 +329,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
                     viewHolder.itemView.findViewById(R.id.lnButtonsBackup).setVisibility(View.GONE);
             }
 
-            // Check if the item is a folder and display its contents
+            // Kontrola, zda je položka složkou, a zobrazení jejího obsahu
             if (isGoogleDrive) {
 
                 selectedFileId = file.getId();

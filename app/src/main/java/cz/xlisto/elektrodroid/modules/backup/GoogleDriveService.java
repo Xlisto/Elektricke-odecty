@@ -115,7 +115,7 @@ public class GoogleDriveService {
                     if (isTokenValid(token)) {
                         Log.d(TAG, "Token is valid and has the required permission.");
                     }
-                    // Check if the token is valid and has the required permission
+                    // Kontrola, zda je token platný a má požadovaná oprávnění
                     drive = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, request -> request.getHeaders().setAuthorization("Bearer " + token)).setApplicationName(context.getString(R.string.app_name)).build();
 
                     if (onFilesLoadedListener != null)

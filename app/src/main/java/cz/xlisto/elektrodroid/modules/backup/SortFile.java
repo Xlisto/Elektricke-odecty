@@ -29,11 +29,11 @@ public class SortFile {
         if (low >= high)
             return;
 
-        // pick the pivot
+        // Výběr pivota
         int middle = low + (high - low) / 2;
         DocumentFile pivot = list.get(middle);
 
-        // make left < pivot and right > pivot
+        // Rozdělení: prvky s větším časovým razítkem vlevo, s menším vpravo (pro sestupné řazení)
         int i = low, j = high;
         while (i <= j) {
             while (getEffectiveTimestamp(list.get(i)) > getEffectiveTimestamp(pivot)) {
@@ -53,7 +53,7 @@ public class SortFile {
             }
         }
 
-        // recursively sort two sub parts
+        // Rekurzivní seřazení obou podčástí
         if (low < j)
             quickSortDate(list, low, j);
 
@@ -72,12 +72,15 @@ public class SortFile {
 
 
     /**
-     * Vrátí čas použitelný pro řazení záloh.
+     * Vrátí čas použitelný pro řazení záloh.
      *
      * <p>Primárně se pokusí vyčíst datum a čas přímo z názvu souboru zálohy,
      * protože při kopírování přes SAF nemusí provider spolehlivě zachovat metadata
      * vytvoření/poslední změny. Pokud název neodpovídá očekávanému formátu,
      * použije se fallback na {@link DocumentFile#lastModified()}.</p>
+     *
+     * @param documentFile dokumentový soubor k získání časového razítka
+     * @return časové razítko v milisekundách nebo {@link Long#MIN_VALUE}, pokud je soubor null
      */
     private static long getEffectiveTimestamp(DocumentFile documentFile) {
         if (documentFile == null)
