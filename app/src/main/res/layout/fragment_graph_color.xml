@@ -2,7 +2,6 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nestedScrollViewGraphColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -16,7 +15,6 @@
 
         <!-- KARTA VT (Vysoký tarif) -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardVT"
             style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,7 +71,6 @@
 
         <!-- KARTA NT (Nízký tarif) -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardNT"
             style="?attr/materialCardViewOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

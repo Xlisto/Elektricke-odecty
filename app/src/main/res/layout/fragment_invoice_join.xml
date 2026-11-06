@@ -6,13 +6,11 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/rlInvoiceJoinRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp">
 
         <LinearLayout
-            android:id="@+id/rlButtonsJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/rlJoinOuter3"
@@ -55,7 +53,6 @@
             android:background="@drawable/shape_monthly_reading_gray">
 
             <RelativeLayout
-                android:id="@+id/rlJoinInner2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvJoinDate2"
@@ -68,7 +65,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDescription2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -77,7 +73,6 @@
 
 
                     <TextView
-                        android:id="@+id/tvJoinNTDescription2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -113,7 +108,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDash2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -122,7 +116,6 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/tvJoinNTDash2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -132,7 +125,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/llJoinInnerEnd2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toEndOf="@id/llJoinInnerDash2"
@@ -177,7 +169,6 @@
             android:background="@drawable/shape_monthly_reading_gray">
 
             <RelativeLayout
-                android:id="@+id/rlJoinInner3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvJoinDate3"
@@ -191,7 +182,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDescription3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -200,7 +190,6 @@
 
 
                     <TextView
-                        android:id="@+id/tvJoinNTDescription3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -236,7 +225,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDash3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -245,7 +233,6 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/tvJoinNTDash3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -255,7 +242,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/llJoinInnerEnd3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toEndOf="@+id/llJoinInnerDash3"
@@ -299,7 +285,6 @@
             android:background="@drawable/shape_monthly_reading_gray">
 
             <RelativeLayout
-                android:id="@+id/rlJoinInner1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvJoinDate1"
@@ -313,7 +298,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDescription1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -322,7 +306,6 @@
 
 
                     <TextView
-                        android:id="@+id/tvJoinNTDescription1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -358,7 +341,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvJoinVTDash1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -367,7 +349,6 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/tvJoinNTDash1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="5dp"
@@ -377,7 +358,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/llJoinInnerEnd1"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toEndOf="@id/llJoinInnerDash1"

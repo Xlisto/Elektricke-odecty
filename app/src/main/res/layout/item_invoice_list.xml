@@ -75,7 +75,6 @@
         app:srcCompat="@drawable/ic_warning" />
 
     <RelativeLayout
-        android:id="@+id/item_invoice_list_cell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvDateInvoiceListDescription"

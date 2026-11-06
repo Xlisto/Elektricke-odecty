@@ -28,7 +28,6 @@
         android:minHeight="48dp" />
 
     <LinearLayout
-        android:id="@+id/rlButtonsJoin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/etNumber"

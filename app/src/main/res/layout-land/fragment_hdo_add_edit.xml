@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_hdo_add_edit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false">
 
 
     <RelativeLayout
-        android:id="@+id/rlDayOut"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -132,7 +130,6 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/rlDateOut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/lnButtons"
@@ -142,14 +139,12 @@
             android:padding="2dp">
 
             <RelativeLayout
-                android:id="@+id/rlDayIn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/shape_item"
                 android:gravity="center">
 
                 <LinearLayout
-                    android:id="@+id/lnDatePickersLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -195,7 +190,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/lnTimes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/lnDatePickers"

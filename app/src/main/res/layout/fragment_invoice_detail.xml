@@ -19,7 +19,6 @@
         android:visibility="visible">
 
         <LinearLayout
-            android:id="@+id/lnInSp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_item"

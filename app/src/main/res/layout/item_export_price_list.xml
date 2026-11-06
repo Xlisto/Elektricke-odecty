@@ -9,7 +9,6 @@
     android:background="@drawable/shape_monthly_reading_gray">
 
     <RelativeLayout
-        android:id="@+id/rlExportExportItemIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_item">

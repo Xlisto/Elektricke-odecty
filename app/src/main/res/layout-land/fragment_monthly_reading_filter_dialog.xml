@@ -23,7 +23,6 @@
 
 
             <RelativeLayout
-                android:id="@+id/rlItemMonthlyReadingFilterDialogInFrom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFilterMonthlyReadingFrom"
@@ -64,7 +63,6 @@
             android:background="@drawable/shape_monthly_reading_gray">
 
             <RelativeLayout
-                android:id="@+id/rlItemMonthlyReadingFilterDialogInTo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvFilterMonthlyReadingTo"

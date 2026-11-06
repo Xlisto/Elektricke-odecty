@@ -21,7 +21,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/lnInSp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/shape_item"
@@ -146,7 +145,6 @@
             android:padding="6dp">
 
             <TextView
-                android:id="@+id/tvInvoiceTotalCardTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="12dp"

@@ -22,7 +22,6 @@
         app:srcCompat="@drawable/ic_warning" />
 
     <RelativeLayout
-        android:id="@+id/item_invoice_cell"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvDash"
@@ -50,7 +49,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvVtDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"
@@ -100,7 +98,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvVtDash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"

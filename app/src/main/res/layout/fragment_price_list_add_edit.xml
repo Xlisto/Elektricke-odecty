@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="false"
@@ -39,13 +38,11 @@
         android:layout_above="@id/buttons">
 
         <LinearLayout
-            android:id="@+id/lr1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/layoutDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -88,14 +85,12 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/layoutName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="@dimen/price_list_editor_card_spacing"
                 android:background="@drawable/shape_item">
 
                 <RelativeLayout
-                    android:id="@+id/rl_"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_below="@id/ivDodavatel"
@@ -131,7 +126,6 @@
                         android:text="@string/distribucni_uzemi" />
 
                     <TextView
-                        android:id="@+id/tvSazbaSeznam"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -247,7 +241,6 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/layoutNeregul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/price_list_editor_card_spacing"
@@ -257,7 +250,6 @@
                 android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
-                    android:id="@+id/tvCenaZaDodavku"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/price_list_editor_content_spacing"
@@ -268,7 +260,6 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/lnNeregulPrices"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -319,7 +310,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layoutRegul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/price_list_editor_card_spacing"
@@ -329,7 +319,6 @@
                 android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
-                    android:id="@+id/tvCenaZaDistribuci"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/price_list_editor_content_spacing"
@@ -377,7 +366,6 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/layoutJistic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/price_list_editor_card_spacing"
@@ -385,7 +373,6 @@
                 android:background="@drawable/shape_item">
 
                 <LinearLayout
-                    android:id="@+id/ln"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/swJistic"
@@ -626,7 +613,6 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/layoutOZE"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/price_list_editor_card_spacing"
@@ -636,7 +622,6 @@
                 android:paddingBottom="@dimen/price_list_editor_field_spacing">
 
                 <TextView
-                    android:id="@+id/tvCenaZaOstatniSluzby"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/price_list_editor_content_spacing"
@@ -749,7 +734,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layoutDan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/price_list_editor_card_spacing"

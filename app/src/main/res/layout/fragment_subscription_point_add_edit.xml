@@ -67,7 +67,6 @@
                     android:text="@string/pocet_fazi" />
 
                 <TextView
-                    android:id="@+id/tvFazeZadaní2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignStart="@id/etPhaze"

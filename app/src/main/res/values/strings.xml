@@ -5,9 +5,6 @@
     <string name="toggle_hdo_view_mode">Přepnout zobrazení HDO</string>
     <string name="show_as_graphic">Grafické zobrazení</string>
     <string name="show_as_list">Seznamové zobrazení</string>
-    <string name="weekdays">Všední dny</string>
-    <string name="weekend">Víkend</string>
-    <string name="hdo_click">Klikněte pro spuštění služby hlídání HDO</string>
     <string name="default_web_client_id">634320309725-9a1qp280hkm6a2bsqip9l6t4epdm65lp.apps.googleusercontent.com</string>
 
     <string name="no_data_available">Není dostatek dat pro zobrazení grafu</string>
@@ -125,8 +122,6 @@
     <string name="delete_unused_pricelist_content">Touto akcí nevratně smažete všechny ceníky, které nejsou použity v měsíčních odečtech, ani ve fakturách.</string>
     <string name="ano">ANO</string>
     <string name="ne">NE</string>
-    <string name="hdo_restart_notification_title">HDO služba po restartu čeká na zapnutí</string>
-    <string name="hdo_restart_notification_message">Po restartu se služba HDO nespustí automaticky. Klepněte sem a v aplikaci bude přepínač připravený k zapnutí.</string>
 
     <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: %d/%d</string>
 
@@ -154,7 +149,6 @@
 
     <string name="kc">Kč</string>
     <string name="ok">OK</string>
-    <string name="to_settings">Přejít na nastavení</string>
     <string name="datum">Datum:</string>
     <string name="tarif">Tarif:</string>
     <string name="pomlcky">========</string>
@@ -280,7 +274,6 @@
     <string name="about_me">O aplikaci</string>
     <string name="load_hdo">Načti HDO z internetu</string>
     <string name="different_time">Rozdíl hodin</string>
-    <string name="watch_low_tarif">Sledování nízkého tarifu</string>
     <string name="hdo_rele">Rele</string>
     <string name="hdo_day">Den</string>
     <string name="hdo_notifications_header">Upozornění</string>
@@ -320,8 +313,6 @@
 
 
     <string name="description_vt_color">Barva VT</string>
-    <string name="hint_vt_color">#0c5292</string>
-    <string name="hint_nt_color">#b42016</string>
     <string name="description_nt_color">Barva NT</string>
     <string name="set_color_html">Nastavení barvy</string>
     <string name="set_color_html_title">Výběr barvy podle notace HTML</string>
@@ -429,7 +420,6 @@
     <string name="total_with_tax">%s Kč s DPH</string>
     <string name="string_dash_string">%s - %s</string>
     <string name="string_dash_string_months">%1$s - %2$s (%3$s)</string>
-    <string name="parentheses_string_dash_string"> (%1$s - %2$s)</string>
     <string name="string_dash_string_kwh">%s kWh - %s kWh, Sp.: %s kWh</string>
     <string name="advances">Zálohy: %d</string>
     <string name="records">Záznamy: %d</string>
@@ -463,7 +453,6 @@
     <string name="number_sum_invoce">Faktura: %d</string>
     <string name="number_sum_no_invoce">Bez faktury</string>
     <string name="date_sum_invoce">%s - %s</string>
-    <string name="power">%d x %d A</string>
     <string name="count_months_html">Počet měsíců:  &lt;b&gt;%s&lt;/b&gt;</string>
     <string name="total_price_html">Celkem:  &lt;b&gt;%s&lt;/b&gt; %s</string>
     <string name="total_different_html">Rozdíl: &lt;b&gt;&lt;font color=&quot;%s&quot;&gt;%s&lt;/b&gt; Kč</string>
@@ -514,7 +503,6 @@
     <string name="button_subscription_point_3">Vybere třetí odběrné místo</string>
     <string name="button_subscription_point_4">Vybere čtvrté odběrné místo</string>
     <string name="settings_app">Nastavení aplikace</string>
-    <string name="settings_view">Nastavení zobrazení</string>
 
     <string name="icon_monthly_result">Zobrazí ikonu podle toho, zda-li je záloha dostatečná či nikoliv.</string>
     <string name="icon_monthly_alert">Zvýraznění záznamu, ve kterém se nachází nějaká chyba.</string>
@@ -554,9 +542,6 @@
     <string name="start_year_is_smaller_message">Ceník proto musí mít platnost omezenou na jeden rok a nesmí překračovat hranici 31. 12. / 1. 1.</string>
     <string name="end_year_is_smaller">Konečné datum musí být pozdější než počáteční datum.</string>
 
-    <string name="allow_notification_title">Povolení oznámení</string>
-    <string name="allow_notification_message">Aplikace potřebuje povolení k zasílání oznámení, aby vás mohla informovat o stavu HDO</string>
-    <string name="ask_notification_to_allow_notice">Oprávnění k zasílání oznámení bylo zakázáno. Povolte prosím toto oprávnění v nastavení aplikace.</string>
     <string name="settings_group_notifications">Upozornění</string>
     <string name="settings_group_navigation">Zobrazení navigace</string>
     <string name="settings_group_connection">Připojení</string>
@@ -594,11 +579,8 @@
     <string name="hdo_relay_inactive_status">Relé %1$s: zbývá %2$s do sepnutí</string>
     <string name="hdo_active_status_no_relay">Zbývá %1$s do vypnutí</string>
     <string name="hdo_inactive_status_no_relay">Zbývá %1$s do sepnutí</string>
-    <string name="hdo_active_relay_label">Aktivní relé: %1$s</string>
     <string name="minimize">Minimalizovat</string>
     <string name="maximize">Maximalizovat</string>
-    <string name="arrow_down">▼</string>
-    <string name="arrow_up">▲</string>
     <string name="device_time_label">Čas zařízení: %1$s</string>
     <string name="meter_time_label">Čas elektroměru: %1$s</string>
 
@@ -690,10 +672,8 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="pending_upload_waiting_wifi_alert">Čekají soubory na nahrání přes Wi‑Fi</string>
     <string name="google_drive_signed_out_warning">Nejste přihlášeni ke Google Drive</string>
     <string name="internet_is_not_available">Internet není dostupný</string>
-    <string name="queue_upload_offline_message">Internet nyní není dostupný. Chcete nahrání odložit a spustit jej po připojení k Wi‑Fi?</string>
     <string name="wifi_required_title">Vyžadována Wi‑Fi</string>
     <string name="wifi_required_mobile_disabled_message">Mobilní data nejsou pro tuto akci povolena. Chcete nahrání odložit do připojení k Wi‑Fi?</string>
-    <string name="queue_upload_on_wifi">Zařadit na Wi‑Fi</string>
     <string name="save_google_drive_file_failed">Soubor se nepodařilo uložit</string>
     <string name="save_google_drive_file_already_exists">Soubor již v lokálním úložišti existuje</string>
     <string name="save_google_drive_file_success">Soubor byl uložen</string>
@@ -726,7 +706,6 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
 
     <!-- Notifikace pro zápis odečtu -->
     <string name="reading_notification_enabled">Povolit notifikaci pro zápis odečtu</string>
-    <string name="reading_notification_settings">Nastavení notifikace pro zápis odečtu</string>
     <string name="subscription_point_tab_management">Správa odběrného místa</string>
     <string name="subscription_point_tab_graph">Graf roční spotřeby</string>
     <string name="subscription_point_tab_notifications">Notifikace</string>
@@ -764,8 +743,6 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
 
     <!-- Hodnocení aplikace -->
     <string name="rate_app">Ohodnotit aplikaci</string>
-    <string name="rate_app_description">Líbí se vám aplikace? Ohodnoťte ji v Google Play!</string>
-    <string name="rate_app_button">Ohodnotit v Google Play</string>
     <string name="error_opening_play_store">Nepodařilo se otevřít Google Play</string>
 
     <!-- Aktualizace aplikace -->

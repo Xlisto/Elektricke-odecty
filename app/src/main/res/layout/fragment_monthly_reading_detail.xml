@@ -35,7 +35,6 @@
             android:background="@drawable/shape_monthly_reading_gray">
 
             <TableLayout
-                android:id="@+id/tvTableConsuptionMonthDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape_item">
@@ -45,28 +44,11 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/textView8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView9"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/meric"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textView10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textView11"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -74,7 +56,19 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/meric"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"

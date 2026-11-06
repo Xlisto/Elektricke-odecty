@@ -24,7 +24,6 @@
     <color name="md_theme_surfaceVariant">#44474F</color>
     <color name="md_theme_onSurfaceVariant">#C5C6D0</color>
     <color name="md_theme_surfaceContainer">#111318</color>
-    <color name="md_theme_surfaceContainerLow">#111318</color>
     <color name="md_theme_surfaceContainerHigh">#1E2025</color>
     <color name="md_theme_surfaceContainerHighest">#282A2F</color>
     <color name="md_theme_outline">#8E909A</color>
@@ -51,7 +50,6 @@
 
     <color name="colorHint">#8E909A</color>
     <color name="colorLabelEditText">#E2E2E9</color>
-    <color name="colorButtonText">#001A43</color>
     <color name="colorOnDisabled">#8E909A</color>
     <color name="colorDialogButtonText">#ADC6FF</color>
 
@@ -67,16 +65,11 @@
     <!-- Alert card (dark) -->
     <color name="alert_bg_light">#3B0909</color>
     <color name="alert_border_light">#93000A</color>
-    <color name="invoice_balance_positive_bg">#0F2F16</color>
-    <color name="invoice_balance_positive_border">#1E5E2E</color>
-    <color name="invoice_balance_negative_bg">#3B0909</color>
-    <color name="invoice_balance_negative_border">#93000A</color>
     <color name="text_primary">#E2E2E9</color>
     <color name="text_secondary">#C5C6D0</color>
 
     <!-- Dialogs (dark) -->
     <color name="dialog_bg">#1E2025</color>
-    <color name="dialog_border">#44474F</color>
     <color name="dialog_text_primary">#E2E2E9</color>
     <color name="dialog_button_text">#ADC6FF</color>
     <color name="dialog_button_text_disabled">#8E909A</color>

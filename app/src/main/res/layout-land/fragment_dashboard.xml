@@ -8,7 +8,6 @@
     android:padding="2dp">
 
     <RelativeLayout
-        android:id="@+id/rlDashBoardSumLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="1dp"
@@ -61,7 +60,6 @@
             android:layout_below="@id/llMeter">
 
             <RelativeLayout
-                android:id="@+id/rlgraphTotalConsuptionView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -79,7 +77,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rlgraphTotalHdoView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
@@ -184,7 +181,6 @@
 
 
     <RelativeLayout
-        android:id="@+id/rlGraphTotalConsuptionInvoicesSum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"

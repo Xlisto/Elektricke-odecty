@@ -18,7 +18,6 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/rlItem2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -64,7 +63,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rlItem1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -154,7 +152,6 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/rlDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp">
@@ -181,7 +178,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rlVT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 

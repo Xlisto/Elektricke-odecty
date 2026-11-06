@@ -12,7 +12,6 @@
     android:clickable="false">
 
     <RelativeLayout
-        android:id="@+id/rlImportItemIn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/shape_item">

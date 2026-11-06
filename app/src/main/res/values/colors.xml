@@ -24,7 +24,6 @@
     <color name="md_theme_surfaceVariant">#E1E2EC</color>
     <color name="md_theme_onSurfaceVariant">#44474F</color>
     <color name="md_theme_surfaceContainer">#F9F9FF</color>
-    <color name="md_theme_surfaceContainerLow">#F9F9FF</color>
     <color name="md_theme_surfaceContainerHigh">#F3F3FA</color>
     <color name="md_theme_surfaceContainerHighest">#E2E2E9</color>
     <color name="md_theme_outline">#74777F</color>
@@ -32,10 +31,7 @@
 
     <!-- Legacy / Compatibility Colors Mapped to M3 Light -->
     <color name="purple_200">#A0C6FF</color>
-    <color name="purple_500">#005CBB</color>
     <color name="purple_700">#004491</color>
-    <color name="teal_200">#565E71</color>
-    <color name="teal_700">#3E4759</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#FF222222</color>
@@ -49,7 +45,6 @@
     <color name="color_red_alert">#BA1A1A</color>
     <color name="color_yes">#1B5E20</color>
     <color name="color_bar">#F9F9FF</color>
-    <color name="color_bar_dark">#ECECEE</color>
     <color name="color_axis">#44474F</color>
     <color name="color_graph_background">#F9F9FF</color>
     <color name="color_hdo_time_TUV">#E08153</color>
@@ -65,7 +60,6 @@
 
     <color name="colorHint">#74777F</color>
     <color name="colorLabelEditText">#191C20</color>
-    <color name="colorButtonText">#FFFFFF</color>
     <color name="colorOnDisabled">#74777F</color>
     <color name="colorDialogButtonText">#005CBB</color>
 
@@ -81,16 +75,11 @@
     <!-- Alert card (light) -->
     <color name="alert_bg_light">#FFDAD6</color>
     <color name="alert_border_light">#FFB4AB</color>
-    <color name="invoice_balance_positive_bg">#E8F5E9</color>
-    <color name="invoice_balance_positive_border">#A5D6A7</color>
-    <color name="invoice_balance_negative_bg">#FFDAD6</color>
-    <color name="invoice_balance_negative_border">#FFB4AB</color>
     <color name="text_primary">#191C20</color>
     <color name="text_secondary">#44474F</color>
 
     <!-- Dialogs (light) -->
     <color name="dialog_bg">#F3F3FA</color>
-    <color name="dialog_border">#C4C6D0</color>
     <color name="dialog_text_primary">#191C20</color>
     <color name="dialog_button_text">#005CBB</color>
     <color name="dialog_button_text_disabled">#74777F</color>
