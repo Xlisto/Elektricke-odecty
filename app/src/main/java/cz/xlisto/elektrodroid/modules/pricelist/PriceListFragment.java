@@ -45,9 +45,10 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link PriceListFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment pro zobrazení, filtrování a výběr ceníků elektřiny.
+ *
+ * <p>Umožňuje procházet uložené ceníky, aplikovat filtry, mazat nevyužité ceníky
+ * a vybírat konkrétní ceník pro faktury nebo srovnání v dvoupanelovém rozvržení.</p>
  */
 public class PriceListFragment extends Fragment {
 
@@ -61,7 +62,7 @@ public class PriceListFragment extends Fragment {
     private static final String SHOW_SELECT_ITEM = "param1";
     private static final String ID_SELECTED_PRICE_LIST = "param2";
     private static final String ARG_ID_FRAGMENT = "idFragment";
-    private boolean showSelectItem; //true = zobrazí radiobutton pro výběr ceníku
+    private boolean showSelectItem;
     private static long idSelectedPriceList;
     private RecyclerView rv;
     private TextView tvCountPriceItem;
@@ -70,47 +71,36 @@ public class PriceListFragment extends Fragment {
     private SubscriptionPointModel subscriptionPoint;
     private PriceListAdapter priceListAdapter;
     private ArrayList<PriceListModel> priceListModels;
-    private int idFragment = 0; //id fragmentu pro zobrazení detailu ceníku v land režimu
+    private int idFragment = 0;
     private Side side;
 
 
-    public PriceListFragment() {
-        // Required empty public constructor
-    }
-
-
     /**
-     * Fragment pro zobrazení ceníků
-     *
-     * @param selectedItem Volba zobrazení výběrového radiobuttonu.
-     *                     true = zobrazí radiobutton pro výběr ceníku
-     *                     false = skryje radiobutton pro výběr ceníku
-     * @return Nová instance fragmentu PriceListFragment.
+     * Vytvoří novou instanci {@link PriceListFragment}.
+     * Vyžadováno architekturou {@link Fragment}.
      */
-    public static PriceListFragment newInstance(boolean selectedItem) {
-        return newInstance(selectedItem, -1L);
+    public PriceListFragment() {
+        // Vyžadovaný prázdný veřejný konstruktor
     }
 
-
     /**
-     * Fragment pro zobrazení ceníků s možností výběru ceníku
+     * Vytvoří novou instanci fragmentu pro zobrazení nebo výběr ceníků.
      *
-     * @param selectedItem        Volba zobrazení výběrového radiobuttonu
-     * @param idSelectedPriceList ID vybraného ceníku, -1 nic nevybráno.
-     * @return Nová instance fragmentu PriceListFragment
+     * @param selectedItem        {@code true} pro zobrazení režimu výběru ceníku (s výběrovým tlačítkem)
+     * @param idSelectedPriceList ID vybraného ceníku, nebo {@code -1L}, pokud není vybrán žádný
+     * @return nová instance {@link PriceListFragment}
      */
     public static PriceListFragment newInstance(boolean selectedItem, long idSelectedPriceList) {
         return newInstance(selectedItem, idSelectedPriceList, null);
     }
 
-
     /**
-     * Fragment pro zobrazení ceníků s možností výběru ceníku
+     * Vytvoří novou instanci fragmentu pro výběr ceníku s určením strany při srovnání ceníků.
      *
-     * @param selectedItem        Volba zobrazení výběrového radiobuttonu
-     * @param idSelectedPriceList ID vybraného ceníku, -1 nic nevybráno.
-     * @param side                Strana, pro kterou se vybírá ceník pro porovnání ceníků
-     * @return Nová instance fragmentu PriceListFragment
+     * @param selectedItem        {@code true} pro zobrazení režimu výběru ceníku
+     * @param idSelectedPriceList ID vybraného ceníku, nebo {@code -1L}, pokud není vybrán žádný
+     * @param side                strana ({@link Side}), pro kterou se ceník vybírá v režimu srovnání
+     * @return nová instance {@link PriceListFragment}
      */
     public static PriceListFragment newInstance(boolean selectedItem, long idSelectedPriceList, Side side) {
         PriceListFragment fragment = new PriceListFragment();
@@ -121,7 +111,6 @@ public class PriceListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,7 +130,6 @@ public class PriceListFragment extends Fragment {
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -152,7 +140,6 @@ public class PriceListFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_price_list, menu);
             }
-
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
@@ -172,7 +159,6 @@ public class PriceListFragment extends Fragment {
 
         return inflater.inflate(R.layout.fragment_price_list, container, false);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -195,7 +181,7 @@ public class PriceListFragment extends Fragment {
             getParentFragmentManager().popBackStack();
         });
 
-        //listener při potvrzení filtru ceníku
+        // Posluchač při potvrzení filtru ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListFilterDialogFragment.FLAG_RESULT_FILTER_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -206,19 +192,19 @@ public class PriceListFragment extends Fragment {
                     }
                 }));
 
-        //listener při potvrzení smazání ceníku
+        // Posluchač při potvrzení smazání ceníku
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PriceListAdapter.FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
                         priceListAdapter.deleteItemPrice();
                         onLoadData();
                         priceListAdapter.setHideButtons();
-                        idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku
+                        idSelectedPriceList = -1; // Nastavení na skrytí fragmentu detailu ceníku
                         showDetailPriceFragment(false);
                     }
                 }));
 
-        //listener při potvrzení smazání nevyužitých ceníků
+        // Posluchač při potvrzení smazání nevyužitých ceníků
         requireActivity().getSupportFragmentManager().setFragmentResultListener(YesNoDialogFragment.FLAG_RESULT_DIALOG_FRAGMENT, this,
                 ((requestKey, result) -> {
                     if (result.getBoolean(YesNoDialogFragment.RESULT)) {
@@ -229,12 +215,12 @@ public class PriceListFragment extends Fragment {
                         onLoadData();
                         setAdapter();
                         priceListAdapter.setHideButtons();
-                        idSelectedPriceList = -1; //nastavení na skrytí fragmentu detailu ceníku
+                        idSelectedPriceList = -1; // Nastavení na skrytí fragmentu detailu ceníku
                         showDetailPriceFragment(false);
                     }
                 }));
 
-        //listener při zavření dialogového okna nastavení
+        // Posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> {
                     UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
@@ -250,14 +236,12 @@ public class PriceListFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
         btnShowBack();
     }
-
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -270,9 +254,8 @@ public class PriceListFragment extends Fragment {
             outState.putString(BTN_BACK_TEXT, btnBack.getText().toString());
     }
 
-
     /**
-     * Načte seznam ceníků podle vybraných parametrů
+     * Načte seznam ceníků z databáze podle nastavených filtrů a aktualizuje počet zobrazených položek.
      */
     public void onLoadData() {
         btnBack.setText(getResources().getString(R.string.zpet));
@@ -296,9 +279,8 @@ public class PriceListFragment extends Fragment {
         tvCountPriceItem.setText(getResources().getString(R.string.pocet_ceniku, totalCountPriceList, priceListModels.size()));
     }
 
-
     /**
-     * Nastaví adapter pro zobrazení ceníků
+     * Inicializuje a nastaví {@link PriceListAdapter} pro zobrazení seznamu ceníků v {@link RecyclerView}.
      */
     private void setAdapter() {
         priceListAdapter = new PriceListAdapter(priceListModels, subscriptionPoint, showSelectItem, idSelectedPriceList,
@@ -318,11 +300,10 @@ public class PriceListFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-
     /**
-     * Zobrazí fragment detailu ceníku
+     * Zobrazí nebo aktualizuje fragment s detailem ceníku v režimu na šířku (landscape).
      *
-     * @param showAfterRotation true = zobrazí fragment po rotaci
+     * @param showAfterRotation {@code true}, pokud se jedná o obnovení detailu po rotaci obrazovky
      */
     private void showDetailPriceFragment(boolean showAfterRotation) {
         PriceListDetailFragment fragment;
@@ -359,33 +340,30 @@ public class PriceListFragment extends Fragment {
         }
     }
 
-
     /**
-     * Zobrazí tlačítka pro přidání nového ceníku podle zvoleného režimu zobrazení
+     * Řídí viditelnost tlačítka Zpět a plovoucího tlačítka FAB podle režimu výběru ceníku.
      */
     private void btnShowBack() {
         if (showSelectItem) {
-            //zobrazení tlačítek ve výběru ceníku
+            // Zobrazení tlačítek ve výběru ceníku
             btnBack.setVisibility(View.VISIBLE);
             fab.setVisibility(View.GONE);
         } else {
-            //zobrazení tlačítek v seznamu ceníků
+            // Zobrazení tlačítek v seznamu ceníků
             btnBack.setVisibility(View.GONE);
         }
     }
 
-
     /**
-     * Zobrazí fragment pro přidání nového ceníku
+     * Otevře fragment pro přidání nového ceníku.
      */
     private void addNewPriceList() {
         Fragment priceListAddFragment = PriceListAddFragment.newInstance();
         FragmentChange.replace(requireActivity(), priceListAddFragment, MOVE, true);
     }
 
-
     /**
-     * Strana, pro kterou se vybírá ceník pro porovnání ceníků
+     * Určení strany v režimu porovnávání ceníků (levá nebo pravá strana).
      */
     public enum Side {
         LEFT, RIGHT
