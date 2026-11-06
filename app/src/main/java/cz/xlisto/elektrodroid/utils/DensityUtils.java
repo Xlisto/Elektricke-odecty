@@ -22,17 +22,4 @@ public class DensityUtils {
         return Math.round(dp * density);
     }
 
-
-    /**
-     * Převede hodnotu v px na dp
-     *
-     * @param context kontext aplikace
-     * @param px      hodnota v px
-     * @return hodnota v dp
-     */
-    public static int pxToDp(Context context, float px) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(px / density);
-    }
-
 }
