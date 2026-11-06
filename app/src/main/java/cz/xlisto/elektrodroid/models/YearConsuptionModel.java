@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
  */
 public class YearConsuptionModel implements ConsuptionModel {
 
-    private static final String TAG = "YearConsuptionModel";
     private Double consuptionVT;
     private Double consuptionNT;
     private int year;
