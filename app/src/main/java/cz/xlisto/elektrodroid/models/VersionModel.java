@@ -45,17 +45,6 @@ public record VersionModel(int version, String date, String[] changes) {
 
 
     /**
-     * Konstruktor třídy VersionModel.
-     *
-     * @param version verze
-     * @param date    datum
-     * @param changes změny
-     */
-    public VersionModel {
-    }
-
-
-    /**
      * Vrací řetězcovou reprezentaci objektu VersionModel.
      *
      * @return řetězcová reprezentace objektu VersionModel

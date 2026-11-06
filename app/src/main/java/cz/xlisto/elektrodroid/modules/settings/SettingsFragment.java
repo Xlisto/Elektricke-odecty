@@ -38,7 +38,6 @@ public class SettingsFragment extends Fragment {
     private CheckBox chExactAlarmPermission;
     private Boolean wasExactAlarmEnabled;
 
-    public static final String TAG = "SettingsViewDialogFragment";
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
     public static final String FLAG_UPDATE_SETTINGS_FOR_ACTIVITY = "SettingsViewDialogFragment2";
 
