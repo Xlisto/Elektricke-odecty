@@ -5,17 +5,20 @@ import android.content.Context;
 
 
 /**
- * Převádí hodnoty z px na dp a opačně
- * Xlisto 01.01.2024 14:38
+ * Pomocná třída pro přepočet rozměrových jednotek hustoty obrazovky (z dp na pixely).
  */
 public class DensityUtils {
 
+    private DensityUtils() {
+        // Soukromý konstruktor pro zabránění instanciace nástrojové třídy
+    }
+
     /**
-     * Převede hodnotu v dp na px
+     * Převede hodnotu z nezávislých pixelů (dp) na fyzické pixely (px) podle hustoty displeje zařízení.
      *
-     * @param context kontext aplikace
-     * @param dp      hodnota v dp
-     * @return hodnota v px
+     * @param context kontext aplikace pro získání metrik displeje ({@link Context})
+     * @param dp      hodnota v dp k převodu
+     * @return přepočítaná hodnota v pixelech (px) zaokrouhlená na celé číslo
      */
     public static int dpToPx(Context context, float dp) {
         float density = context.getResources().getDisplayMetrics().density;
