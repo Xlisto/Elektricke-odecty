@@ -36,19 +36,6 @@ public class HdoNotice {
 
 
     /**
-     * Zobrazí dočasnou notifikaci s daným titulkem a textem. Vhodná pro vyžádání pozornosti uživatele pro znovuspuštění služby
-     *
-     * @param context     Kontext aplikace
-     * @param title       Titulek notifikace
-     * @param noticeTitle Název kanálu notifikace
-     * @param contentText Text notifikace
-     */
-    public static void setNotice(Context context, String title, String noticeTitle, String contentText) {
-        setNotice(context, title, noticeTitle, contentText, -1L);
-    }
-
-
-    /**
      * Zobrazí HDO notifikaci. Pro jedno odběrné místo vždy přepíše předchozí notifikaci.
      *
      * @param context             Kontext aplikace
