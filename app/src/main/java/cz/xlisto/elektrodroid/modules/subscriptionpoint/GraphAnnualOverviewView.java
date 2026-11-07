@@ -1355,6 +1355,7 @@ public class GraphAnnualOverviewView extends View {
     }
 
 
+    @SuppressWarnings("RedundantOverride")
     @Override
     public boolean performClick() {
         return super.performClick();
