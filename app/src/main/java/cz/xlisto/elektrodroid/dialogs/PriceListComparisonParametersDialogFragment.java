@@ -27,13 +27,23 @@ import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 /**
- * Dialog pro zadání vstupních parametrů porovnání ceníků.
- * Uložené hodnoty vrací přes FragmentResult API.
+ * Dialogové okno pro nastavení a úpravu parametrů porovnání ceníků elektřiny.
+ *
+ * <p>Umožňuje zadat spotřebu ve vysokém a nízkém tarifu (VT, NT), počet měsíců,
+ * počet fází, velikost hlavního jističe a ostatní služby pro obě srovnávané strany.
+ * Výsledné parametry předává zpět pomocí FragmentResult API a ukládá je do nastavení
+ * pro aktuální odběrné místo.</p>
  */
 public class PriceListComparisonParametersDialogFragment extends DialogFragment {
 
+    /**
+     * Tag pro identifikaci dialogového okna ve FragmentManageru.
+     */
     final public static String TAG = "PriceListAddParametersDialogFragment";
+
+    /** Klíč pro předání objektu {@link ConsuptionContainer} ve výsledném {@link Bundle}. */
     final public static String CONSUPTION_CONTAINER = "consuptionContainer";
+
     private final String VT = "vt";
     private final String NT = "nt";
     private final String MONTH = "month";
@@ -46,10 +56,10 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
 
 
     /**
-     * Vytvoří dialog s předvyplněnými hodnotami z aktuálního kontejneru parametrů.
+     * Vytvoří dialog s předvyplněnými hodnotami z zadaného kontejneru parametrů.
      *
-     * @param container aktuální parametry porovnání
-     * @return nová instance dialogu
+     * @param container kontejner s aktuálními parametry porovnání ({@link ConsuptionContainer})
+     * @return nová instance dialogu {@link PriceListComparisonParametersDialogFragment}
      */
     public static PriceListComparisonParametersDialogFragment newInstance(ConsuptionContainer container) {
         PriceListComparisonParametersDialogFragment frag = new PriceListComparisonParametersDialogFragment();
@@ -66,15 +76,19 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
     }
 
 
+    /**
+     * Vytvoří novou instanci {@link PriceListComparisonParametersDialogFragment}.
+     * Vyžadováno architekturou {@link DialogFragment}.
+     */
     public PriceListComparisonParametersDialogFragment() {
     }
 
 
     /**
-     * Vytvoří a inicializuje dialog pro úpravu parametrů výpočtu.
+     * Vytvoří a inicializuje dialogové okno s formulářovými prvky pro nastavení parametrů porovnání.
      *
-     * @param savedInstanceState uložený stav instance (může být null)
-     * @return sestavený dialog
+     * @param savedInstanceState uložený stav instance při obnovení (může být {@code null})
+     * @return sestavená instance {@link Dialog}
      */
     @NonNull
     @Override
@@ -147,9 +161,9 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
 
 
     /**
-     * Uloží rozpracované hodnoty při změně konfigurace.
+     * Uloží aktuálně zadané hodnoty z formulářových polí při změně konfigurace.
      *
-     * @param outState cílový bundle pro uložení stavu
+     * @param outState cílový {@link Bundle} pro uložení stavu
      */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -165,10 +179,9 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
 
 
     /**
-     * Nastaví výchozí fázi a příkon z aktuálního odběrného místa.
+     * Načte a nastaví výchozí hodnoty fází a příkonu podle aktuálně vybraného odběrného místa.
      *
-     * <p>Hodnoty se nastaví pouze pokud jsou vstupní pole prázdná,
-     * aby nedošlo k přepsání již načtených/uživatelem zadaných dat.</p>
+     * <p>Hodnoty se zapíší jako nápověda (hint) a do prázdných polí, pokud uživatel dosud nezadal jiné hodnoty.</p>
      */
     private void setPhazeAndPowerDefaults() {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
@@ -193,11 +206,13 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
         }
     }
 
+
     /**
-     * Bezpečně převede obsah vstupního pole na číslo.
+     * Bezpečně převede obsah vstupního pole na číselnou hodnotu typu {@code double}.
+     * Nahrazuje čárku za tečku pro podporu českého formátování čísel.
      *
-     * @param editText vstupní pole
-     * @return číselná hodnota; při prázdném vstupu vrací 0
+     * @param editText vstupní pole k převedení ({@link EditText})
+     * @return číselná hodnota; při prázdném vstupu vrací {@code 0.0}
      */
     private double parseInput(EditText editText) {
         String value = editText.getText().toString().trim();
@@ -207,11 +222,12 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
         return Double.parseDouble(value.replace(",", "."));
     }
 
+
     /**
-     * Uloží parametry porovnání ceníků jako JSON do tabulky nastavení
-     * pro aktuálně vybrané odběrné místo.
+     * Uloží parametry porovnání ceníků ve formátu JSON do databáze nastavení
+     * svázané s aktuálně vybraným odběrným místem.
      *
-     * @param container kontejner parametrů porovnání
+     * @param container kontejner uchovávající parametry porovnání ({@link ConsuptionContainer})
      */
     private void persistCompareParameters(ConsuptionContainer container) {
         ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(getActivity());
@@ -238,9 +254,9 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
         }
     }
 
+
     /**
-     * Lifecycle callback po zobrazení dialogu.
-     * Aplikuje jednotné barvy tlačítek.
+     * Po zobrazení dialogu aplikuje jednotný barevný styl na tlačítka dialogu.
      */
     @Override
     public void onStart() {
