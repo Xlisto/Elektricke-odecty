@@ -2,13 +2,10 @@ package cz.xlisto.elektrodroid.modules.monthlyreading;
 
 
 import static cz.xlisto.elektrodroid.shp.ShPMonthlyReading.REGUL_PRICE;
-import static cz.xlisto.elektrodroid.shp.ShPMonthlyReading.SHORT_LIST;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,12 +26,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Objects;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
@@ -62,42 +57,86 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 
 
 /**
- * Fragment pro zobrazení měsíčních odečtů.
+ * Fragment pro zobrazení a správy měsíčních odečtů spotřeby elektřiny.
+ * <p>
+ * Načítá záznamy odečtů pro aktuální odběrné místo v zadaném časovém rozmezí, zobrazuje
+ * souhrnnou bilanci záloh oproti spotřebě, umožňuje přechod do podrobností odečtu nebo
+ * nastavení zobrazení a kontroluje potřebu rozdělení ceníků pro roky 2024 a 2025.
  */
 public class MonthlyReadingFragment extends Fragment {
 
+    /**
+     * Tag pro logování zpráv z {@link MonthlyReadingFragment}.
+     */
     public final String TAG = "MonthlyReadingFragment";
+    /** Klíč pro uložení horní hranice období do stavu instance. */
     private final String TO = "to";
+    /** Klíč pro uložení dolní hranice období do stavu instance. */
     private final String FROM = "from";
+    /** Klíč pro uložení ID aktuálně vybraného odečtu do stavu instance. */
     private final String ID_CURRENTLY_READING = "idCurrentlyReading";
+    /** Klíč pro uložení ID předchozího odečtu do stavu instance. */
     private final String ID_PREVIOUS_READING = "idPreviousReading";
+    /** Klíč výsledku dialogu aktualizace ceníku pro rok 2024. */
     private final String FLAG_RESULT_DIALOG_FRAGMENT_2024 = "2024";
+    /** Klíč výsledku dialogu aktualizace ceníku pro rok 2025. */
     private final String FLAG_RESULT_DIALOG_FRAGMENT_2025 = "2025";
+    /** Aktuální odběrné místo. */
     private SubscriptionPointModel subscriptionPoint;
+    /** Plovoucí tlačítko pro přidání nového odečtu. */
     private FloatingActionButton fab;
+    /** Spodní tlačítko pro přidání nového odečtu. */
     private Button btnAddMonthlyReading;
+    /** Textová zobrazení pro upozornění, label filtru a stav bilance. */
     private TextView tvAlert, tvMonthlyReadingFilter, tvBalanceStatus;
+    /** Seznam {@link RecyclerView} pro zobrazení měsíčních odečtů. */
     private RecyclerView rv;
-    private SwitchMaterial swSimplyView, swRegulPrice;
+    /** Správce nastavení měsíčních odečtů v {@link ShPMonthlyReading}. */
     private ShPMonthlyReading shPMonthlyReading;
+    /** Adaptér pro zobrazení seznamu odečtů. */
     private MonthlyReadingAdapter monthlyReadingAdapter;
+    /** Dolní hranice vybraného období (čas v milisekundách). */
     private long from = 0;
+    /** Horní hranice vybraného období (čas v milisekundách). */
     private long to = Long.MAX_VALUE;
-    private long idCurrentlyReading = -1, idPreviousReading = -1;
+    /**
+     * Identifikátor aktuálně vybraného měsíčního odečtu.
+     */
+    private long idCurrentlyReading = -1;
+    /**
+     * Identifikátor předchozího měsíčního odečtu.
+     */
+    private long idPreviousReading = -1;
+    /** Posluchač pro volbu položky odečtu v seznamu. */
     private MonthlyReadingAdapter.OnClickItemListener onClickItemListener;
+    /** Posluchač události změny zobrazení regulované ceny. */
     private OnShowRegulPriceListener onShowRegulPriceListener;
 
 
+    /**
+     * Výchozí prázdný konstruktor fragmentu vyžadovaný architekturou Android.
+     */
     public MonthlyReadingFragment() {
         // Required empty public constructor
     }
 
 
+    /**
+     * Tovární metoda pro vytvoření nové instance {@link MonthlyReadingFragment}.
+     *
+     * @return nová instance {@link MonthlyReadingFragment}
+     */
     public static MonthlyReadingFragment newInstance() {
         return new MonthlyReadingFragment();
     }
 
 
+    /**
+     * Inicializuje fragment a registruje posluchače výsledků pro dialogy smazání,
+     * nastavení filtru, změny odběrného místa a aktualizace ceníků.
+     *
+     * @param savedInstanceState uložený stav instance (může být {@code null})
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +182,18 @@ public class MonthlyReadingFragment extends Fragment {
                     loadDataFromDatabase();
                 });
 
+        //posluchač změny nastavení zobrazení a filtru
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(MonthlyReadingSettingsFragment.FLAG_MONTHLY_READING_SETTINGS_CHANGED, this,
+                (requestKey, result) -> {
+                    from = result.getLong(MonthlyReadingSettingsFragment.ARG_FROM, 0);
+                    to = result.getLong(MonthlyReadingSettingsFragment.ARG_TO, Long.MAX_VALUE);
+                    updateFilterLabel();
+                    loadDataFromDatabase();
+                    if (shPMonthlyReading != null) {
+                        setOnShowRegulPriceListener(shPMonthlyReading.get(REGUL_PRICE, false));
+                    }
+                });
+
         //posluchač na zavření dialogového okna s upozorněním na změnu ceníku, které jsou přes 1.7.2024 platnosti
         getParentFragmentManager().setFragmentResultListener(FLAG_RESULT_DIALOG_FRAGMENT_2024, this,
                 (requestKey, result) -> {
@@ -169,6 +220,14 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Vytváří zobrazení fragmentu a inicializuje položky nabídky v Toolbaru.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          rodičovský kontejner (může být {@code null})
+     * @param savedInstanceState uložený stav instance (může být {@code null})
+     * @return zobrazení fragmentu {@link View}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -182,9 +241,9 @@ public class MonthlyReadingFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_filter_monthly_reading) {
-                    MonthlyReadingFilterDialogFragment monthlyReadingFilterDialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from, to);
-                    monthlyReadingFilterDialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
+                if (menuItem.getItemId() == R.id.menu_options_monthly_reading) {
+                    MonthlyReadingSettingsFragment monthlyReadingSettingsFragment = MonthlyReadingSettingsFragment.newInstance(from, to);
+                    FragmentChange.replace(requireActivity(), monthlyReadingSettingsFragment, MOVE, true);
                     return true;
                 }
 
@@ -196,6 +255,12 @@ public class MonthlyReadingFragment extends Fragment {
     }
 
 
+    /**
+     * Vyvoláno po vytvoření zobrazení fragmentu; obnovuje předchozí stav filtru a načítá ovládací prvky.
+     *
+     * @param view               vytvořené zobrazení
+     * @param savedInstanceState uložený stav instance (může být {@code null})
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -208,43 +273,21 @@ public class MonthlyReadingFragment extends Fragment {
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
         fab = view.findViewById(R.id.fab);
         btnAddMonthlyReading = view.findViewById(R.id.btnAddMonthlyReading);
-        swSimplyView = view.findViewById(R.id.swSimplyView);
-        swRegulPrice = view.findViewById(R.id.swRegulPrice);
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
         tvBalanceStatus = view.findViewById(R.id.tvBalanceStatus);
         updateFilterLabel();
-        swSimplyView.setChecked(shPMonthlyReading.get(SHORT_LIST, false));
-        swRegulPrice.setChecked(shPMonthlyReading.get(REGUL_PRICE, false));
-        swSimplyView.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            TransitionManager.beginDelayedTransition(rv);
-            if (rv.getLayoutManager() != null) {
-                Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-                shPMonthlyReading.set(SHORT_LIST, swSimplyView.isChecked());
-                monthlyReadingAdapter.showSimpleView(isChecked);
-                rv.getLayoutManager().onRestoreInstanceState(out);
-            }
-        });
-        swRegulPrice.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (rv != null) {
-                TransitionManager.beginDelayedTransition(rv);
-                if (rv.getLayoutManager() != null) {
-                    Parcelable out = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-                    shPMonthlyReading.set(REGUL_PRICE, swRegulPrice.isChecked());
-                    monthlyReadingAdapter.setShowRegulPrice(isChecked);
-                    rv.getLayoutManager().onRestoreInstanceState(out);
-                    setOnShowRegulPriceListener(isChecked);
-                    updateBalanceStatus(monthlyReadingAdapter.getItems());
-                }
-            }
-        });
+
         fab.setOnClickListener(v -> addMonthlyReading());
         btnAddMonthlyReading.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
     }
 
 
+    /**
+     * Při obnovení fragmentu zkontroluje ceníky, načte data z databáze a zobrazí ovládací tlačítka.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -252,17 +295,14 @@ public class MonthlyReadingFragment extends Fragment {
 
         loadDataFromDatabase();
         UIHelper.showButtons(btnAddMonthlyReading, fab, requireActivity(), true);
-        if (rv.getLayoutManager() == null) {
-            swRegulPrice.setEnabled(false);
-            swSimplyView.setEnabled(false);
-        } else {
-            swRegulPrice.setEnabled(true);
-            swSimplyView.setEnabled(true);
-        }
-
     }
 
 
+    /**
+     * Uloží stav hranic časového období a identifikátorů odečtů při zničení nebo změně konfigurace.
+     *
+     * @param outState {@link Bundle} pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -290,7 +330,7 @@ public class MonthlyReadingFragment extends Fragment {
                 dataInvoiceSource.insertFirstRecordWithoutInvoice(subscriptionPoint.getTableTED());
             dataInvoiceSource.close();
             monthlyReadingAdapter = new MonthlyReadingAdapter(monthlyReadings, subscriptionPoint,
-                    swSimplyView.isChecked(), swRegulPrice.isChecked(), rv);
+                    shPMonthlyReading.getDisplayMode(), shPMonthlyReading.get(REGUL_PRICE, false), rv);
             monthlyReadingAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
             monthlyReadingAdapter.setOnClickItemListener(onClickItemListener);
             rv.setAdapter(monthlyReadingAdapter);
@@ -362,7 +402,7 @@ public class MonthlyReadingFragment extends Fragment {
                 }
                 includedPeriods++;
 
-                if (swRegulPrice.isChecked()) {
+                if (shPMonthlyReading.get(REGUL_PRICE, false)) {
                     PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, previousReading);
                     priceList = priceListRegulBuilder.getRegulPriceList();
                 }
@@ -444,7 +484,8 @@ public class MonthlyReadingFragment extends Fragment {
      */
     private void showDetailFragment(long idCurrentlyReading, long idPreviousReading) {
         if (DetectScreenMode.isLandscape(requireActivity())) {
-            MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, swRegulPrice.isChecked());
+            boolean showRegul = shPMonthlyReading != null && shPMonthlyReading.get(REGUL_PRICE, false);
+            MonthlyReadingDetailFragment monthlyReadingDetailFragment = MonthlyReadingDetailFragment.newInstance(idCurrentlyReading, idPreviousReading, showRegul);
             if (idCurrentlyReading >= 0 && idPreviousReading >= 0)
                 getChildFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerViewDetail, monthlyReadingDetailFragment, MonthlyReadingDetailFragment.TAG)
@@ -616,12 +657,14 @@ public class MonthlyReadingFragment extends Fragment {
 
 
     /**
-     * Nastaví posluchače pro zobrazení regulované ceny.
+     * Oznámí posluchači (aktivitě) příznak zobrazení regulované ceny.
      *
      * @param isChecked boolean hodnota určující, zda zobrazit regulovanou cenu
      */
     public void setOnShowRegulPriceListener(boolean isChecked) {
-        this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
+        if (this.onShowRegulPriceListener != null) {
+            this.onShowRegulPriceListener.onShowRegulPrice(isChecked);
+        }
     }
 
 

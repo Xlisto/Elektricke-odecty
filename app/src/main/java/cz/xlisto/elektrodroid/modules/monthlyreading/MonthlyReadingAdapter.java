@@ -41,6 +41,7 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.invoice.WithOutInvoiceService;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DetectScreenMode;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
@@ -49,67 +50,55 @@ import cz.xlisto.elektrodroid.utils.TextSizeAdjuster;
 
 
 /**
- * Adapter pro zobrazení měsíčních odečtů v RecyclerView.
- * Tento adapter spravuje zobrazení a interakce s jednotlivými položkami měsíčních odečtů.
+ * Adaptér pro zobrazení měsíčních odečtů v {@link RecyclerView}.
+ * Spravuje zobrazení položek odečtů ve třech režimech (Podrobné, Stručné, Krátké),
+ * provádí výpočty spotřeby a finanční bilance a obsluhuje akce úpravy či smazání záznamu.
  */
 public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAdapter.MyViewHolder> {
 
     /**
-     * Tag pro logování v `MonthlyReadingAdapter`.
+     * Tag pro logování v {@link MonthlyReadingAdapter}.
      */
     private static final String TAG = "MonthlyReadingAdapter";
-    /**
-     * Konstantní hodnota pro označení akce smazání měsíčního odečtu.
-     */
+    /** Klíč příznaku pro potvrzení smazání měsíčního odečtu. */
     public static final String FLAG_DELETE_MONTHLY_READING = "flagDeleteMonthlyReading";
-    /**
-     * Index aktuálně zobrazených tlačítek.
-     * -1 znamená, že žádná tlačítka nejsou zobrazena.
-     */
+    /** Index položky s aktuálně zobrazenými tlačítky akcí (-1 značí, že tlačítka nejsou skryta). */
     private static int showButtons = -1;
-    /**
-     * Seznam měsíčních odečtů.
-     */
+    /** Seznam zobrazovaných měsíčních odečtů. */
     private final ArrayList<MonthlyReadingModel> items;
     /**
-     * Boolean hodnota pro zobrazení jednoduchého pohledu.
+     * Příznak zobrazení zjednodušeného pohledu (zpětná
+     * kompatibilita).
      */
-    private boolean simplyView;
+    private final boolean simplyView;
     /**
-     * Boolean hodnota pro zobrazení regulovaných cen.
+     * Režim zobrazení měsíčních odečtů (0 = Podrobné, 1 = Stručné, 2 = Krátké).
      */
-    private boolean showRegulPrice;
+    private final int displayMode;
     /**
-     * Model odběrného místa.
+     * Příznak pro zohlednění regulovaných cen (zastropování v r. 2023).
      */
+    private final boolean showRegulPrice;
+    /** Model aktuálně vybraného odběrného místa. */
     private final SubscriptionPointModel subscriptionPoint;
-    /**
-     * RecyclerView, ve kterém budou položky zobrazeny.
-     */
+    /** Kontejner {@link RecyclerView}, ve kterém jsou položky zobrazeny. */
     private final RecyclerView recyclerView;
-    /**
-     * ID vybraného měsíčního odečtu.
-     */
+    /** Identifikátor aktuálně vybraného měsíčního odečtu pro smazání. */
     private long selectedMonthlyReadingId;
-    /**
-     * Pozice vybrané položky.
-     */
+    /** Pozice vybrané položky pro smazání v adaptéru. */
     private int selectedPosition;
-    /**
-     * Listener pro kliknutí na položku.
-     */
+    /** Posluchač událostí klepnutí na položku odečtu. */
     private OnClickItemListener onClickItemListener;
 
 
     /**
-     * ViewHolder pro položky v RecyclerView.
-     * Třída je veřejná kvůli veřejnému API adapteru a obsahuje odkazy na prvky položky.
+     * Držák pohledu (ViewHolder) pro položky měsíčního odečtu v {@link RecyclerView}.
      */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout rootRelativeLayout, rl2, rl3;
         LinearLayout lnButtons;
-        TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPozePrice, tvMonth, tvDateDetail,
+        TextView tvDate, tvVt, tvNt, tvPayment, tvPriceList, tvNtDif, tvVtDif, tvVtPrice, tvNtPrice, tvPoze, tvPozePrice, tvMonth, tvDateDetail,
                 tvMonthPrice, tvTotalPrice, tvDifferentPrice, tvPaymentDescription, tvNextServicesDescription, tvNextServicesPrice, tvAlertRegulPrice,
                 tvVtDescription, tvNtDescription, tvDescription;
         ImageView ivIconResult, ivWarning;
@@ -117,9 +106,9 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
         /**
-         * Konstruktor ViewHolderu.
+         * Konstruktor držáku pohledu.
          *
-         * @param itemView View položky, která bude zobrazena v RecyclerView.
+         * @param itemView kořenové zobrazení položky
          */
         public MyViewHolder(@NonNull View itemView) {
 
@@ -130,18 +119,19 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
 
     /**
-     * Konstruktor pro `MonthlyReadingAdapter`.
+     * Konstruktor adaptéru s volbou režimu zobrazení.
      *
-     * @param items             Seznam měsíčních odečtů.
-     * @param subscriptionPoint Model odběrného místa.
-     * @param simplyView        Boolean hodnota pro zobrazení jednoduchého pohledu.
-     * @param showRegulPrice    Boolean hodnota pro zobrazení regulovaných cen.
-     * @param recyclerView      RecyclerView, ve kterém budou položky zobrazeny.
+     * @param items             seznam měsíčních odečtů
+     * @param subscriptionPoint model odběrného místa
+     * @param displayMode       režim zobrazení (0 = Podrobné, 1 = Stručné, 2 = Krátké)
+     * @param showRegulPrice    {@code true} pro zohlednění regulovaných cen
+     * @param recyclerView      kontejner {@link RecyclerView}
      */
-    public MonthlyReadingAdapter(ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, boolean simplyView, boolean showRegulPrice, RecyclerView recyclerView) {
+    public MonthlyReadingAdapter(ArrayList<MonthlyReadingModel> items, SubscriptionPointModel subscriptionPoint, int displayMode, boolean showRegulPrice, RecyclerView recyclerView) {
 
         this.items = items;
-        this.simplyView = simplyView;
+        this.displayMode = displayMode;
+        this.simplyView = (displayMode == ShPMonthlyReading.DISPLAY_MODE_CONDENSED || displayMode == ShPMonthlyReading.DISPLAY_MODE_MINIMAL);
         this.subscriptionPoint = subscriptionPoint;
         this.showRegulPrice = showRegulPrice;
         this.recyclerView = recyclerView;
@@ -175,6 +165,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         vh.tvNtDif = v.findViewById(R.id.tvNtRozdil);
         vh.tvVtDescription = v.findViewById(R.id.tvVTDescription);
         vh.tvNtDescription = v.findViewById(R.id.tvNTDescription);
+        vh.tvPoze = v.findViewById(R.id.tvPoze);
         vh.tvPozePrice = v.findViewById(R.id.tvPozePrice);
         vh.tvPayment = v.findViewById(R.id.tvPaymentPrice);
         vh.tvPaymentDescription = v.findViewById(R.id.tvPaymentDescription);
@@ -231,11 +222,14 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
         holder.tvAlertRegulPrice.setVisibility(View.GONE);
         resetRecycledState(holder);
 
+        double vtDiff = 0;
+        double ntDiff = 0;
+
         //výpočet
         if ((position + 1) < items.size()) {
             String differenceDescription = context.getResources().getString(R.string.kc_with_tax);
-            double vtDiff = monthlyReading.getVt() - items.get(position + 1).getVt();
-            double ntDiff = monthlyReading.getNt() - items.get(position + 1).getNt();
+            vtDiff = monthlyReading.getVt() - items.get(position + 1).getVt();
+            ntDiff = monthlyReading.getNt() - items.get(position + 1).getNt();
             double[] prices = new double[]{0, 0, 0, 0};
             double month;
             double monthPrice = 0;
@@ -415,7 +409,22 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     holder.tvNtPrice.setVisibility(View.VISIBLE);
                 }
             }
-            if (simplyView) {
+            if (displayMode == ShPMonthlyReading.DISPLAY_MODE_MINIMAL) {
+                holder.tvMonthPrice.setVisibility(View.GONE);
+                holder.rl2.setVisibility(View.GONE);
+                holder.tvPayment.setVisibility(View.GONE);
+                holder.tvPaymentDescription.setVisibility(View.GONE);
+                holder.ivIconResult.setVisibility(View.GONE);
+                holder.tvPriceList.setVisibility(View.GONE);
+                holder.tvPoze.setVisibility(View.GONE);
+                holder.tvPozePrice.setVisibility(View.GONE);
+                holder.tvNextServicesDescription.setVisibility(View.GONE);
+                holder.tvNextServicesPrice.setVisibility(View.GONE);
+                holder.tvDescription.setVisibility(View.GONE);
+
+                double totalConsumption = vtDiff + ntDiff;
+                holder.tvMonth.setText(context.getString(R.string.consuption, DecimalFormatHelper.df2.format(totalConsumption)));
+            } else if (simplyView || displayMode == ShPMonthlyReading.DISPLAY_MODE_CONDENSED) {
                 holder.tvPayment.setVisibility(View.GONE);
                 holder.tvPaymentDescription.setVisibility(View.GONE);
                 holder.ivIconResult.setVisibility(View.GONE);
@@ -438,24 +447,26 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 holder.tvMonthPrice.setLayoutParams(paramsTvMonthPrice);
             }
 
-            if (items.get(position).getOtherServices() > 0) {
-                holder.tvNextServicesDescription.setVisibility(View.VISIBLE);
-                holder.tvNextServicesPrice.setVisibility(View.VISIBLE);
-            } else {
-                holder.tvNextServicesDescription.setVisibility(View.GONE);
-                holder.tvNextServicesPrice.setVisibility(View.GONE);
-            }
-
-            if (monthlyReading.getDescription() != null) {
-                if (monthlyReading.getDescription().isEmpty()) {
-                    holder.tvDescription.setVisibility(View.GONE);
+            if (displayMode != ShPMonthlyReading.DISPLAY_MODE_MINIMAL) {
+                if (items.get(position).getOtherServices() > 0) {
+                    holder.tvNextServicesDescription.setVisibility(View.VISIBLE);
+                    holder.tvNextServicesPrice.setVisibility(View.VISIBLE);
                 } else {
-                    holder.tvDescription.setVisibility(View.VISIBLE);
-                    holder.tvDescription.setText(monthlyReading.getDescription());
+                    holder.tvNextServicesDescription.setVisibility(View.GONE);
+                    holder.tvNextServicesPrice.setVisibility(View.GONE);
                 }
-            } else {
-                holder.tvDescription.setVisibility(View.GONE);
-                holder.tvDescription.setText("");
+
+                if (monthlyReading.getDescription() != null) {
+                    if (monthlyReading.getDescription().isEmpty()) {
+                        holder.tvDescription.setVisibility(View.GONE);
+                    } else {
+                        holder.tvDescription.setVisibility(View.VISIBLE);
+                        holder.tvDescription.setText(monthlyReading.getDescription());
+                    }
+                } else {
+                    holder.tvDescription.setVisibility(View.GONE);
+                    holder.tvDescription.setText("");
+                }
             }
 
         }
@@ -544,36 +555,17 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
      * @param holder view holder, jehož proměnlivé stavy se resetují
      */
     private void resetRecycledState(@NonNull MyViewHolder holder) {
+        holder.tvMonthPrice.setVisibility(View.VISIBLE);
+        holder.rl2.setVisibility(View.VISIBLE);
+        holder.rl3.setVisibility(View.VISIBLE);
+        if (holder.tvPoze != null) holder.tvPoze.setVisibility(View.VISIBLE);
+        holder.tvPozePrice.setVisibility(View.VISIBLE);
         holder.tvMonth.setVisibility(View.VISIBLE);
         holder.tvDateDetail.setVisibility(View.VISIBLE);
         holder.btnDetail.setVisibility(View.VISIBLE);
         holder.tvDescription.setVisibility(View.GONE);
         holder.tvDescription.setText("");
         holder.ivWarning.setVisibility(View.INVISIBLE);
-    }
-
-
-    /**
-     * Nastaví boolean pro zobrazení/skrytí rozšířených dat.
-     *
-     * @param b Boolean hodnota pro zobrazení jednoduchého pohledu.
-     */
-    public void showSimpleView(boolean b) {
-
-        this.simplyView = b;
-        notifyItemRangeChanged(0, getItemCount());
-    }
-
-
-    /**
-     * Nastaví boolean pro zobrazení/skrytí regulovaných cen.
-     *
-     * @param b Boolean hodnota pro zobrazení regulovaných cen.
-     */
-    public void setShowRegulPrice(boolean b) {
-
-        this.showRegulPrice = b;
-        notifyItemRangeChanged(0, getItemCount());
     }
 
 
@@ -661,6 +653,8 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
 
     /**
      * Vrátí aktuálně zobrazený seznam měsíčních odečtů.
+     *
+     * @return seznam objektů {@link MonthlyReadingModel}
      */
     public ArrayList<MonthlyReadingModel> getItems() {
         return items;

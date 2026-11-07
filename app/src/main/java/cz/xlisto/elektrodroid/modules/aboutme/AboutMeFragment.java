@@ -59,6 +59,12 @@ public class AboutMeFragment extends Fragment {
         return fragment;
     }
 
+
+    /**
+     * Voláno při prvotním vytváření fragmentu.
+     *
+     * @param savedInstanceState uložený stav instance předchozího běhu (může být {@code null})
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,7 +132,8 @@ public class AboutMeFragment extends Fragment {
      *
      * @param context    kontext aplikace ({@link Context}) pro přístup ke zdrojům
      * @param resourceId identifikátor zdroje (např. {@code R.raw.version})
-     * @return seznam objektů {@link VersionModel} představující jednotlivé verze aplikace
+     * @return seznam objektů {@link VersionModel} představující jednotlivé verze aplikace,
+     *         nebo prázdný seznam při chybě načítání
      */
     public static List<VersionModel> readRawFile(Context context, int resourceId) {
 

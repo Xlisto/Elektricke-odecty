@@ -247,6 +247,17 @@
     <string name="filter_price_list">Filtr ceníků</string>
     <string name="delete_price_list">Smazat nevyužité ceníky</string>
     <string name="filter_monthly_readings">Filtr odečtů</string>
+    <string name="options_monthly_readings">Možnosti zobrazení</string>
+    <string name="display_mode">Zobrazení odečtů</string>
+    <string name="display_mode_detailed">Podrobné zobrazení</string>
+    <string name="display_mode_condensed">Stručné zobrazení</string>
+    <string name="display_mode_minimal">Krátké zobrazení</string>
+    <string name="section_period">Období</string>
+    <string name="all_periods">Všechna období</string>
+    <string name="section_subscription_point">Odběrné místo</string>
+    <string name="other_options">Další možnosti</string>
+    <string name="consider_cap_2023">Zohlednit zastropování cen v roce 2023</string>
+    <string name="btn_apply">POUŽÍT</string>
     <string name="add_nem_monthly_reading">Přidat nové měření</string>
     <string name="mon">PO</string>
     <string name="tue">ÚT</string>

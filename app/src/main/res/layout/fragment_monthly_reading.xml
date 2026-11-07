@@ -36,35 +36,12 @@
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swRegulPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvMonthlyReadingFilter"
-        android:layout_marginStart="5dp"
-        android:elegantTextHeight="false"
-        android:foregroundGravity="left"
-        android:freezesText="false"
-        android:minHeight="48dp"
-        android:text="@string/regulovane_ceny"
-        android:textAlignment="center" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swSimplyView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/tvMonthlyReadingFilter"
-        android:layout_marginEnd="5dp"
-        android:minHeight="48dp"
-        android:text="@string/zjednodusene_zobrazeni" />
-
     <!-- Sdílený stavový widget (stejný vizuál jako u faktur) pro bilanci filtrovaných odečtů. -->
     <TextView
         android:id="@+id/tvBalanceStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/swSimplyView"
+        android:layout_below="@id/tvMonthlyReadingFilter"
         android:layout_marginStart="5dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="5dp"
