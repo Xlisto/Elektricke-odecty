@@ -17,29 +17,27 @@ import cz.xlisto.elektrodroid.models.VersionModel;
 
 
 /**
- * Adapter pro RecyclerView, který zobrazuje seznam verzí.
+ * Adaptér pro {@link RecyclerView}, který zobrazuje historii verzí a seznam změn aplikace v obrazovce O aplikaci.
  */
 public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyItemAboutMeRecyclerViewAdapter.ViewHolder> {
 
     private final List<VersionModel> items;
 
-
     /**
-     * Konstruktor adapteru.
+     * Vytvoří novou instanci adaptéru se seznamem změn v jednotlivých verzích.
      *
-     * @param items Seznam verzí, které mají být zobrazeny.
+     * @param items seznam modelů verzí ({@link VersionModel}) určených k zobrazení
      */
     public MyItemAboutMeRecyclerViewAdapter(List<VersionModel> items) {
         this.items = items;
     }
 
-
     /**
-     * Vytváří nový ViewHolder při vytvoření nové položky v RecyclerView.
+     * Vytváří novou instanci {@link ViewHolder} nafouknutím rozvržení položky seznamu verzí.
      *
-     * @param parent   Rodičovský ViewGroup, ke kterému bude ViewHolder připojen.
-     * @param viewType Typ pohledu.
-     * @return Nový ViewHolder.
+     * @param parent   rodičovský {@link ViewGroup}, do kterého bude nový pohled vložen
+     * @param viewType typ pohledu pro novou položku
+     * @return nový {@link ViewHolder} s navázaným {@link ItemAboutMeBinding}
      */
     @NonNull
     @Override
@@ -47,12 +45,12 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
         return new ViewHolder(ItemAboutMeBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
-
     /**
-     * Připojuje data k ViewHolderu na zadané pozici.
+     * Bindle data z modelu verze na zadané pozici do zobrazení položky.
+     * Formátuje seznam změn do HTML struktury pro zobrazení v {@link TextView}.
      *
-     * @param holder   ViewHolder, který má být aktualizován.
-     * @param position Pozice položky v adapteru.
+     * @param holder   {@link ViewHolder}, který má být aktualizován
+     * @param position pozice položky v adaptéru
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
@@ -72,20 +70,18 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
         holder.itemView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
     }
 
-
     /**
-     * Vrací počet položek v adapteru.
+     * Vrací celkový počet zobrazených verzí v adaptéru.
      *
-     * @return Počet položek.
+     * @return počet položek v seznamu
      */
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-
     /**
-     * ViewHolder, který obsahuje pohledy pro jednotlivé položky v RecyclerView.
+     * Držitel pohledů ({@link RecyclerView.ViewHolder}) pro jednotlivou položku historie verzí.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -94,11 +90,10 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
         public final TextView tvContent;
         public VersionModel versionModel;
 
-
         /**
-         * Konstruktor ViewHolderu.
+         * Vytvoří držitel pohledů navázaný na zobrazení z {@link ItemAboutMeBinding}.
          *
-         * @param binding DataBinding objekt pro položku.
+         * @param binding objekt zobrazení položky historie verzí
          */
         public ViewHolder(ItemAboutMeBinding binding) {
             super(binding.getRoot());
@@ -107,11 +102,10 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
             tvContent = binding.itemContent;
         }
 
-
         /**
-         * Vrací řetězcovou reprezentaci ViewHolderu.
+         * Vrací řetězcovou reprezentaci držitele pohledů s obsahem textu změn.
          *
-         * @return Řetězcová reprezentace ViewHolderu.
+         * @return řetězcová reprezentace objektu {@link ViewHolder}
          */
         @NonNull
         @Override

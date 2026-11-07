@@ -32,25 +32,32 @@ import cz.xlisto.elektrodroid.utils.AppReviewHelper;
 
 
 /**
- * Fragment představující seznam položek provedených změn v aplikaci.
+ * Fragment zobrazující informace o aplikaci, historii verzí a seznam provedených změn.
+ *
+ * <p>Obsahuje také odkaz na zásady ochrany osobních údajů, vyvolání hodnocení aplikace v Google Play
+ * a ruční kontrolu dostupnosti aktualizací.</p>
  */
 public class AboutMeFragment extends Fragment {
 
     /**
-     * Povinný prázdný konstruktor pro fragment manager k instanciaci
-     * fragmentu (např. při změnách orientace obrazovky).
+     * Vytvoří novou instanci {@link AboutMeFragment}.
+     * Vyžadováno architekturou {@link Fragment} (např. při změně orientace obrazovky).
      */
     public AboutMeFragment() {
     }
 
 
+    /**
+     * Tovární metoda pro vytvoření nové instance fragmentu O aplikaci.
+     *
+     * @return nová instance {@link AboutMeFragment}
+     */
     public static AboutMeFragment newInstance() {
         AboutMeFragment fragment = new AboutMeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,15 @@ public class AboutMeFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje uživatelské rozhraní fragmentu, načte historii verzí ze zdrojů
+     * a nastavení obsluhy akcí (zásady ochrany soukromí, hodnocení aplikace, kontrola aktualizací).
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          rodičovský kontejner (může být {@code null})
+     * @param savedInstanceState uložený stav instance (může být {@code null})
+     * @return zobrazení rozvržení fragmentu {@link View}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,11 +122,11 @@ public class AboutMeFragment extends Fragment {
 
 
     /**
-     * Čte soubor z raw resources a vrací jeho obsah jako řetězec.
+     * Načte a parsuje JSON soubor historie verzí ze surových zdrojů (raw resources).
      *
-     * @param context    Kontext aplikace.
-     * @param resourceId ID resource souboru.
-     * @return Obsah souboru jako řetězec.
+     * @param context    kontext aplikace ({@link Context}) pro přístup ke zdrojům
+     * @param resourceId identifikátor zdroje (např. {@code R.raw.version})
+     * @return seznam objektů {@link VersionModel} představující jednotlivé verze aplikace
      */
     public static List<VersionModel> readRawFile(Context context, int resourceId) {
 
