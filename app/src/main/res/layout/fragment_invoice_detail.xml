@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     tools:context=".modules.invoice.InvoiceListFragment">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/lnOutSp"
+        style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/shape_monthly_reading_gray"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="visible"
+        app:cardCornerRadius="12dp">
 
-        <LinearLayout
+        <Spinner
+            android:id="@+id/spInvoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_item"
-            android:orientation="vertical"
-            android:visibility="visible">
-
-            <Spinner
-                android:id="@+id/spInvoice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="2dp"
-                android:contentDescription="@string/invoice_list"
-                android:minHeight="48dp" />
-        </LinearLayout>
-    </LinearLayout>
-
+            android:contentDescription="@string/invoice_list"
+            android:minHeight="48dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoice"
@@ -57,18 +47,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/tvTotal"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp" />
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp" />
 
     <TextView
         android:id="@+id/tvTotal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/shape_item"
         android:textAlignment="center"
         android:textSize="18sp"
@@ -81,4 +71,3 @@
         android:layout_alignParentBottom="true"
         android:visibility="gone" />
 </RelativeLayout>
-
