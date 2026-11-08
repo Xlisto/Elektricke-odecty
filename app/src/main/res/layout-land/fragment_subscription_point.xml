@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -107,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -164,7 +164,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginEnd="5dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -304,7 +304,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/reading_notification_day_of_week"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:textAppearance="?attr/textAppearanceBodySmall" />
 
                         <Spinner
                             android:id="@+id/spinnerDayOfWeek"

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:text="@string/fullscreen_graph_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         android:textStyle="bold" />
 
     <!-- Střední část: Jednotný souvislý zaoblený rámeček pro celou plochu grafu -->

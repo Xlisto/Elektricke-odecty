@@ -17,7 +17,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
         android:text="@string/obdobi_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textSize="14sp" />
 
     <TextView
@@ -28,7 +28,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListDescription"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textSize="14sp"
         tools:text="OD" />
 
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListOf"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textSize="14sp"
         tools:text="-" />
 
@@ -50,7 +50,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListDash"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textSize="14sp"
         tools:text="DO" />
 
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_toEndOf="@id/tvDateInvoiceListTo"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textSize="14sp" />
 
     <ImageView
@@ -143,7 +143,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="false"
             android:layout_below="@id/tvNumberInvoiceList"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textSize="14sp" />
 
         <TextView
@@ -154,7 +154,7 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentTop="false"
             android:layout_below="@id/tvNumberInvoiceList"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textSize="14sp" />
 
         <TextView
@@ -164,7 +164,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="17dp"
             android:text="@string/cislo"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <TextView
             android:id="@+id/tvNumberInvoiceList"
@@ -176,7 +176,7 @@
             android:gravity="end"
             android:textAlignment="viewEnd"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textSize="40sp"
             android:textStyle="normal|italic" />
 

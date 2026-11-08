@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         android:textColor="@color/text_primary"
         android:text="@string/please_wait" />
 

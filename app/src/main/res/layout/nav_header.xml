@@ -29,7 +29,7 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:text="@string/app_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
         android:textSize="24sp" />
 
 </RelativeLayout>

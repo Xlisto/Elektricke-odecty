@@ -179,7 +179,7 @@
         android:padding="10dp"
         android:text="@string/write_hdo"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:visibility="visible" />
 
     <TextView

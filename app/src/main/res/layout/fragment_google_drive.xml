@@ -23,7 +23,7 @@
             android:padding="10dp"
             android:text="@string/pending_upload_waiting_wifi_alert"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView

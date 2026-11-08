@@ -89,7 +89,7 @@
             android:layout_toEndOf="@+id/imgIconFile"
             android:clickable="false"
             android:fontFamily="sans-serif-black"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textSize="16sp"
             android:textStyle="bold" />
     </RelativeLayout>

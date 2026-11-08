@@ -25,7 +25,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:text="@string/settings_group_notifications"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -64,7 +64,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:text="@string/hdo_use_set_alarm_description"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?attr/textAppearanceBodySmall" />
 
             </LinearLayout>
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:text="@string/settings_group_connection"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -128,7 +128,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:text="@string/settings_group_navigation"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold" />
 
             <LinearLayout

@@ -177,7 +177,7 @@
             android:layout_toEndOf="@id/rbPriceList"
             android:gravity="start"
             android:text="@string/sazba_distribuce"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <TextView
             android:id="@+id/tvPlatnostCeniku"
@@ -215,7 +215,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="@string/produktova_rada"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="?attr/textAppearanceTitleMedium" />
 
 
 

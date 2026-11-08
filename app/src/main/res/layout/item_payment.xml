@@ -56,7 +56,7 @@
             android:layout_toEndOf="@+id/tvCislo0"
             android:gravity="end"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textSize="36sp"
             android:textStyle="normal|italic" />
 
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
     </RelativeLayout>
 
 

@@ -55,7 +55,7 @@
                     android:layout_marginBottom="0dp"
                     android:layout_marginStart="5dp"
                     android:text="@string/nuly"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textStyle="bold" />
 
                 <TextView
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:text="@string/nuly"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -83,7 +83,7 @@
                     android:layout_marginStart="15dp"
                     android:gravity="end"
                     android:text="@string/nuly"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
 
                 <TextView
                     android:id="@+id/tvNtRozdil"
@@ -93,7 +93,7 @@
                     android:layout_marginStart="15dp"
                     android:gravity="end"
                     android:text="@string/nuly"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
             </LinearLayout>
 
             <TextView
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:text="@string/vt2"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <TextView
                 android:id="@+id/tvNTDescription"
@@ -111,7 +111,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/tvVTDescription"
                 android:text="@string/nt2"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <TextView
                 android:id="@+id/tvItemVTPrice"
@@ -120,7 +120,7 @@
                 android:layout_alignParentEnd="true"
                 android:gravity="end"
                 android:text="@string/nuly"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold"
                 tools:ignore="RelativeOverlap" />
 
@@ -132,7 +132,7 @@
                 android:layout_below="@+id/tvItemVTPrice"
                 android:gravity="end"
                 android:text="@string/nuly"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -320,7 +320,7 @@
         android:layout_marginTop="-5dp"
         android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical"
         android:text="@string/datum"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         android:textStyle="bold" />
 
     <me.grantland.widget.AutofitTextView
@@ -334,7 +334,7 @@
         android:layout_toEndOf="@id/tvDate"
         android:layout_toStartOf="@id/imageViewWarningMonthlyReading"
         android:gravity="clip_horizontal|clip_vertical|center_horizontal|center_vertical|end"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?attr/textAppearanceBodySmall"
         android:textSize="11sp"
         android:textStyle="bold"
         android:maxLines="1"
