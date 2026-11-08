@@ -6,7 +6,6 @@ import static android.view.View.VISIBLE;
 import static java.util.Calendar.*;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 import static cz.xlisto.elektrodroid.format.SimpleDateFormatHelper.getDateFormat;
-import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
+import cz.xlisto.elektrodroid.dialogs.PriceListValidityDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
@@ -104,6 +106,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     Long itemId;
 
     Button btnFrom, btnUntil, btnBack, btnSave, btnReloadRegulPriceList;
+    MaterialButton btnPlatnostRange;
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
     LabelEditText ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14;
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
@@ -114,17 +117,33 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     RelativeLayout rlNoPriceList;
 
 
+    /**
+     * Vytváří a staví zobrazení fragmentu pro přidání nebo úpravu ceníku.
+     *
+     * @param inflater           objekt {@link LayoutInflater} pro nafouknutí rozvržení
+     * @param container          rodičovské zobrazení {@link ViewGroup}
+     * @param savedInstanceState uložený stav fragmentu při opětném vytvoření
+     * @return nafouknuté zobrazení fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_add_edit, container, false);
     }
 
 
+    /**
+     * Inicializuje komponenty uživatelského rozhraní, nastaví posluchače událostí
+     * a obnoví předchozí stav fragmentu.
+     *
+     * @param view               kořenové zobrazení fragmentu
+     * @param savedInstanceState uložený stav fragmentu při opětném vytvoření
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         btnFrom = view.findViewById(R.id.btnPlatnostOD);
         btnUntil = view.findViewById(R.id.btnPlatnostDO);
+        btnPlatnostRange = view.findViewById(R.id.btnPlatnostRange);
         btnBack = view.findViewById(R.id.btnZpet);
         btnSave = view.findViewById(R.id.btnUloz);
         btnReloadRegulPriceList = view.findViewById(R.id.btnReloadRegulPriceList);
@@ -174,22 +193,36 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             }
         });
 
-        btnFrom.setOnClickListener(v -> showDialog(getActivity(), day -> {
-            closedDialog = true;
-            btnFrom.setText(day);
-            hideItemView();
-            lastYear = year;
-            year = getYearBtnStart();
-            onResume();
-            setRegulPrice();
-            evaluateRegulatedPriceAvailability();
-        }, btnFrom.getText().toString()));
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                PriceListValidityDialogFragment.PRICE_LIST_VALIDITY,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> {
+                    String dateFrom = result.getString(PriceListValidityDialogFragment.DATE_FROM);
+                    String dateTo = result.getString(PriceListValidityDialogFragment.DATE_TO);
+                    if (dateFrom != null && dateTo != null) {
+                        btnFrom.setText(dateFrom);
+                        btnUntil.setText(dateTo);
+                        updateValidityRangeButtonText();
+                        closedDialog = true;
+                        hideItemView();
+                        lastYear = year;
+                        year = getYearBtnStart();
+                        setRegulPrice();
+                        evaluateRegulatedPriceAvailability();
+                    }
+                }
+        );
 
-        btnUntil.setOnClickListener(v -> showDialog(getActivity(), day -> {
-            btnUntil.setText(day);
-            setRegulPrice();
-            evaluateRegulatedPriceAvailability();
-        }, btnUntil.getText().toString()));
+        View.OnClickListener validityListener = v -> openValidityDialog();
+        if (btnPlatnostRange != null) {
+            btnPlatnostRange.setOnClickListener(validityListener);
+        }
+        View tvDescription = view.findViewById(R.id.tvDateInvoiceListDescription);
+        if (tvDescription != null) {
+            tvDescription.setOnClickListener(validityListener);
+        }
+        btnFrom.setOnClickListener(validityListener);
+        btnUntil.setOnClickListener(validityListener);
 
         switchJistic.setOnClickListener(v -> hideItemView());
 
@@ -331,6 +364,30 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 viewModel.preparePriceLists(priceListModelFirst, priceListModelSecond, this.getClass().equals(PriceListAddFragment.class), itemId);
             }
         });
+    }
+
+
+    /**
+     * Otevře dialog pro výběr a nastavení platnosti ceníku (OD - DO).
+     */
+    private void openValidityDialog() {
+        PriceListValidityDialogFragment dialog = PriceListValidityDialogFragment.newInstance(
+                btnFrom.getText().toString(),
+                btnUntil.getText().toString()
+        );
+        dialog.show(requireActivity().getSupportFragmentManager(), "PriceListValidityDialogFragment");
+    }
+
+
+    /**
+     * Aktualizuje text tlačítka zobrazení platnosti ceníku.
+     */
+    public void updateValidityRangeButtonText() {
+        String fromStr = btnFrom != null ? btnFrom.getText().toString() : "";
+        String untilStr = btnUntil != null ? btnUntil.getText().toString() : "";
+        if (btnPlatnostRange != null && !fromStr.isEmpty() && !untilStr.isEmpty()) {
+            btnPlatnostRange.setText(getString(R.string.date_range_format, fromStr, untilStr));
+        }
     }
 
 
@@ -667,7 +724,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                     hideItemView();
                     changeTitleOperatorTrhu();
-                    chanagePriceOperatorTrhu();
+                    changePriceOperatorTrhu();
                 });
             } catch (Exception e) {
                 Log.e(TAG, "Chyba při načítání regulovaných cen: " + e.getMessage(), e);
@@ -945,7 +1002,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Pokud jsou splněny podmínky, nastaví cenu a zakáže změnu barvy pozadí.
      */
-    void chanagePriceOperatorTrhu() {
+    void changePriceOperatorTrhu() {
         if (isAdded() && getLongBtnStart() >= 1719784800000L && year == 2024) {//1.7.2024
             ivCinnostOperatora.setDefaultText("9.24");
             ivCinnostOperatora.setAllowChangeBackgroundColor(false);
@@ -953,15 +1010,18 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     }
 
 
-    //TODO: kontrola ceníku 2024 a 2025
     /**
-     * Zkontroluje datumy nastavené na btnFrom a btnUntil.
-     * Pokud btnFrom je mezi 1.1.2024 a 30.6.2024, btnUntil musí být také do 30.6.2024.
-     * Pokud btnFrom je od 1.7.2024, btnUntil musí být maximálně do 31.12.2024.
-     * Pokud btnUntil je menší než btnFrom, zobrazí dialogové okno s výstrahou.
-     * Pokud podmínky nejsou splněny, zobrazí dialogové okno s výstrahou.
+     * Zkontroluje datumy platnosti ceníku zobrazené na tlačítkách {@code btnFrom} a {@code btnUntil}.
+     * <p>
+     * Provádí tyto kontroly:
+     * - **Rok 2024:** Ověří, zda rozsah překračuje 1. 7. 2024 (změna názvu a sazby činnosti operátora trhu).
+     *   Pokud rozsah překračuje tuto hranici, zobrazí dialog {@link YesNoDialogFragment} s dotazem na rozdělení ceníku.
+     * - **Rok 2025:** Ověří, zda rozsah překračuje 1. 9. 2025 (změna výše poplatku).
+     *   Pokud rozsah překračuje tuto hranici, zobrazí dialog {@link YesNoDialogFragment} s dotazem na rozdělení ceníku.
+     * - **Pořadí datumů:** Ověří, zda koncové datum {@code untilDate} není dřívější než počáteční datum {@code fromDate}.
+     *   Pokud ano, zobrazí upozorňovací dialog {@link OwnAlertDialog}.
      *
-     * @return true, pokud jsou datumy neplatné a zobrazí dialog s výstrahou, jinak false.
+     * @return {@code true}, pokud jsou datumy neplatné nebo překračují regulační hranice roku 2024/2025, jinak {@code false}.
      */
     boolean checkDateConditions() {
         Calendar fromDate = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());

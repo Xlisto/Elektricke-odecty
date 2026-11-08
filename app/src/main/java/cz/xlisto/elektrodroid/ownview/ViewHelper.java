@@ -107,6 +107,9 @@ public class ViewHelper {
      */
     public static Calendar parseCalendarFromString(String string) {
         Calendar calendar = Calendar.getInstance();
+        if (string == null || string.trim().isEmpty()) {
+            return calendar;
+        }
         try {
             calendar.setTime(Objects.requireNonNull(getSimpleDateFormat().parse(string)));
         } catch (ParseException e) {

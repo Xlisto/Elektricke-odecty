@@ -239,9 +239,6 @@
     <string name="refund">Přeplatek</string>
     <string name="support">Jednorázová podpora státu (2000 nebo 3500)</string>
     <string name="payment2">Platba:</string>
-    <string name="show_monthly_records_from">Měsíční odečty OD</string>
-    <string name="show_monthly_records_to">Měsíční odečty DO</string>
-    <string name="reser_filter">Vynulovat filtr</string>
     <string name="obdobi_mesicnich_odectu">Období měsíčních odečtů</string>
     <string name="rychle_predvolby">Rychlé předvolby</string>
     <string name="od_noveho_roku">Od nového roku</string>
@@ -254,6 +251,12 @@
     <string name="vybrat_rozsah_v_kalendari">Vybrat rozsah v kalendáři</string>
     <string name="invalid_date_range">Počáteční datum nesmí být pozdější než koncové datum.</string>
     <string name="vse">Vše</string>
+    <string name="platnost_ceniku">Platnost ceníku</string>
+    <string name="minuly_rok">Minulý rok</string>
+    <string name="tento_rok">Tento rok</string>
+    <string name="nasledujici_rok">Následující rok</string>
+    <string name="nastavit_platnost">Nastavit platnost</string>
+    <string name="date_range_format">%1$s – %2$s</string>
     <string name="filter_price_list">Filtr ceníků</string>
     <string name="delete_price_list">Smazat nevyužité ceníky</string>
     <string name="options_monthly_readings">Možnosti zobrazení</string>

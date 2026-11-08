@@ -153,6 +153,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     private void setItemPrice() {
         btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostOD()));
         btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostDO()));
+        updateValidityRangeButtonText();
         ivRada.setDefaultText(priceListModel.getRada());
         ivProdukt.setDefaultText(priceListModel.getProdukt());
         ivDodavatel.setDefaultText(priceListModel.getFirma());

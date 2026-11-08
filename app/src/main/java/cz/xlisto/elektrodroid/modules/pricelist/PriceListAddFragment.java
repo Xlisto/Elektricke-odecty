@@ -70,8 +70,8 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
             savePriceList();
         });
         if (savedInstanceState == null) {
-            setRegulPrice();
             getPreference();
+            setRegulPrice();
         }
         spSazba.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -162,6 +162,7 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
     private void getPreference() {
         btnFrom.setText(shPAddPriceList.get(ShPAddPriceList.PLATNOST_OD, "01.01." + getYearBtnStart()));
         btnUntil.setText(shPAddPriceList.get(ShPAddPriceList.PLATNOST_DO, "31.12." + getYearBtnStart()));
+        updateValidityRangeButtonText();
         ivDodavatel.setDefaultText(shPAddPriceList.get(ShPAddPriceList.DODAVATEL, ""));
         ivProdukt.setDefaultText(shPAddPriceList.get(ShPAddPriceList.PRODUKT, ""));
         ivRada.setDefaultText(shPAddPriceList.get(ShPAddPriceList.RADA, ""));

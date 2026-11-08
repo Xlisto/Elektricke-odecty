@@ -15,7 +15,6 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <RelativeLayout
-        android:id="@+id/item_version_cell"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/item_date"

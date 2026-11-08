@@ -14,7 +14,6 @@
 
         <!-- Záhlaví: Ikona a název sloučeno do jednoho TextView s compound drawable -->
         <TextView
-            android:id="@+id/tvDialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -118,7 +117,6 @@
 
         <!-- Nadpis pro rychlé předvolby -->
         <TextView
-            android:id="@+id/tvQuickPresetsHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -130,7 +128,6 @@
 
         <!-- Rychlé předvolby (Mřížka 2x2) -->
         <LinearLayout
-            android:id="@+id/llPresetsGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

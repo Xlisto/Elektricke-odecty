@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="false"
@@ -44,43 +45,45 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
-                <Button
-                    android:id="@+id/btnPlatnostDO"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPlatnostRange"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_margin="@dimen/price_list_editor_inline_margin"
-                    android:autofillHints="01.10.2022"
-                    android:contentDescription="@string/description_date_until"
-                    android:focusable="true"
-                    android:inputType="none"
-                    android:minHeight="48dp"
-                    android:text="@string/datum_cislem" />
-
-                <Button
-                    android:id="@+id/btnPlatnostOD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/price_list_editor_inline_margin"
-                    android:layout_toStartOf="@id/btnPlatnostDO"
-                    android:contentDescription="@string/description_date_from"
-                    android:focusable="true"
-                    android:importantForAutofill="no"
-                    android:inputType="none"
-                    android:minHeight="48dp"
-                    android:text="@string/datum_cislem" />
+                    app:icon="@drawable/ic_calendar_24"
+                    app:iconGravity="start"
+                    tools:text="01.01.2026 – 31.12.2026" />
 
                 <TextView
                     android:id="@+id/tvDateInvoiceListDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/btnPlatnostOD"
                     android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/price_list_editor_content_spacing"
-                    android:layout_toStartOf="@id/btnPlatnostOD"
+                    android:layout_toStartOf="@id/btnPlatnostRange"
                     android:text="@string/platnost_cenik" />
+
+                <Button
+                    android:id="@+id/btnPlatnostOD"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:text="@string/datum_cislem"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnPlatnostDO"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:text="@string/datum_cislem"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
