@@ -1,6 +1,7 @@
 package cz.xlisto.elektrodroid.modules.hdo;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,42 +41,23 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
 /**
- * Třída Connections slouží k navázání komunikace se servery EGD, CEZ a PRE.
+ * Třída {@code Connections} slouží k navázání síťové komunikace se servery distribučních společností (ČEZ, EG.D, PRE)
+ * a zpracování dat HDO (hromadné dálkové ovládání).
  * <p>
- * Tato třída poskytuje metody pro odesílání HTTP POST dotazů na servery a zpracování odpovědí.
- * <p>
- * Klíčové komponenty:
- * - Handler handler: Zpracovává výsledky dotazů.
- * - Handler handlerOnGroupAndCategory: Zpracovává výsledky dotazů na skupiny a kategorie.
- * <p>
- * Metody:
- * - sendPostParameters(String urlString, String urlParameters, String code, Context context, String districtName, int districtIndex, Handler handler): Odesílá POST dotaz na server.
- * - sendPost(String urlString, int distributionAreaIndex, String code, Context context, String districtName, int districtIndex, LinearLayout root, Handler handler): Odesílá POST dotaz na server a zpracovává odpověď.
- * - builderURL(String urlString): Sestaví URL z řetězce.
- * - builderConnection(URL url): Naváže HTTPS spojení.
- * - readInputStream(HttpsURLConnection connection, Context context): Načte InputStream z připojení.
- * - parseJSONCEZ(InputStream in): Načte a zpracuje JSON data z CEZ.
- * - parseJSONPRE(InputStream in): Načte a zpracuje JSON data z PRE.
- * - parseEGD(InputStream in, String code, Context context, String districtName, int districtIndex, LinearLayout root): Načte a zpracuje data z EGD.
- * - onLoadToken(String apiToken, String code, Context context, String districtName, int districtIndex, LinearLayout root): Zpracuje token pro přístup k datům.
- * - readerStream(InputStream in): Načte stream a uloží jej do řetězce.
- * - searchKod(String urlHdo, String code, Context context, String districtName, int districtIndex): Sestaví dotaz pro získání kategorie a skupiny.
- * - searchHdoParseInputDates(String jsonDataString, String districtName, int districtIndex, String code, String urlHdo, Context context, Handler handler): Zpracuje data pro získání časů HDO.
- * - searchHdo(String group, String category, String urlHdo, String code, Context context, String districtName, int districtIndex, Handler handler): Sestaví dotaz pro získání HDO dat o tarifu.
- * - getCategoryEgd(int districtIndex): Vrátí kategorii EGD podle vybraného okresu.
- * <p>
- * Vnitřní třídy:
- * - ResultData: Kontejner pro návratová data.
- * - GroupAndCategoryContainer: Kontejner pro data skupin a kategorií.
- * - ResultType: Enum pro typ výsledku získání dat.
- * <p>
- * Xlisto 19.06.2023 12:27
+ * Zajišťuje odesílání HTTP/HTTPS POST požadavků, parsování JSON a HTML odpovědí,
+ * extrakci tokenů přes skrytý {@link WebView} a sestavování GraphQL dotazů pro získání platných časů spínání tarifů.
  */
 public class Connections {
 
+    /**
+     * Logovací značka pro třídu Connections
+     */
     private static final String TAG = "Connections";
+
+    /** Handler pro doručování finálních výsledků volajícímu rozhraní */
     private Handler handler;
-    //handler obdrží  výsledek s Category a Group a spustí další dotaz na získání časů HDO
+
+    /** Handler obdrží výsledek s kategorií a skupinou a spustí následný dotaz na získání časů HDO na novém vlákně */
     private final Handler handlerOnGroupAndCategory = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -90,11 +72,15 @@ public class Connections {
 
 
     /**
-     * Odešle dotaz na api.egd pro získání skupiny kodu nebo časů HDO
+     * Odešle HTTP POST požadavek na GraphQL API EG.D pro získání skupiny kódu nebo časů spínání HDO.
      *
-     * @param urlString     url api adresy
-     * @param urlParameters parametry dotazu
-     * @param context       kontext aplikace pro zobrazení Toastu při chybě
+     * @param urlString     URL adresa API rozhraní
+     * @param urlParameters parametry POST požadavku ve formátu JSON
+     * @param code          kód povelu HDO
+     * @param context       kontext aplikace
+     * @param districtName  název vybraného okresu
+     * @param districtIndex index vybraného okresu
+     * @param handler       {@link Handler} pro zaslání výsledné zprávy (kód 100 pro úspěch, 101 pro chybu)
      */
     public void sendPostParameters(String urlString, String urlParameters, String code, Context context, String districtName, int districtIndex, Handler handler) {
         URL url = builderURL(urlString);
@@ -170,11 +156,16 @@ public class Connections {
 
 
     /**
-     * Odešle dotaz za zobrazení HDO časů. Výsledek je html sránka
+     * Odešle HTTP požadavek na zadanou URL adresu distribuční společnosti a zahájí parsování odpovědi podle distribuční oblasti.
      *
-     * @param urlString             url api adresy
-     * @param distributionAreaIndex index distribuční oblasti (0-CEZ, 1-EON, 2- PRE)
-     * @param context               kontext aplikace pro zobrazení Toastu při chybě
+     * @param urlString             URL adresa serveru distribuční společnosti
+     * @param distributionAreaIndex index distribuční oblasti (0 = ČEZ, 1 = EG.D, 2 = PRE)
+     * @param code                  kód povelu HDO
+     * @param context               kontext aplikace
+     * @param districtName          název vybraného okresu
+     * @param districtIndex         index vybraného okresu
+     * @param root                  kořenový {@link LinearLayout} pro skryté vložení {@link WebView} (vyžadováno u EG.D)
+     * @param handler               {@link Handler} pro vrácení výsledku volajícímu
      */
     public void sendPost(String urlString, int distributionAreaIndex, String code, Context context, String districtName, int districtIndex, LinearLayout root, Handler handler) {
         this.handler = handler;
@@ -203,10 +194,10 @@ public class Connections {
 
 
     /**
-     * Sestaví URL
+     * Sestaví objekt {@link URL} z textového řetězce.
      *
-     * @param urlString url adresa ve Stringu
-     * @return URL adresy
+     * @param urlString URL adresa ve tvaru řetězce
+     * @return vytvořený objekt {@link URL} nebo {@code null} při chybném formátu URL
      */
     private URL builderURL(String urlString) {
         URL url = null;
@@ -220,10 +211,10 @@ public class Connections {
 
 
     /**
-     * Naváže spojení
+     * Otevře HTTPS připojení k zadané URL adrese.
      *
-     * @param url URL adresa
-     * @return HttpsURLConnection připojení
+     * @param url cílová {@link URL} adresa
+     * @return vytvořený objekt {@link HttpsURLConnection} nebo {@code null} při selhání
      */
     private HttpsURLConnection builderConnection(URL url) {
         HttpsURLConnection connection = null;
@@ -238,9 +229,10 @@ public class Connections {
 
 
     /**
-     * Načte stream
+     * Otevře vstupní stream pro načtení dat z HTTPS připojení.
      *
-     * @return InputStream načítané stránky
+     * @param connection otevřené připojení {@link HttpsURLConnection}
+     * @return instanci {@link InputStream} s odpovědí serveru nebo {@code null} při I/O chybě
      */
     private InputStream readInputStream(HttpsURLConnection connection) {
         InputStream in;
@@ -255,10 +247,10 @@ public class Connections {
 
 
     /**
-     * Načte stream z CEZ a sestaví JSON pole
+     * Načte stream s JSON odpovědí od ČEZ a odešle sestavený {@link ResultData} přes {@link Handler}.
      *
-     * @param in stream
-     * @throws JSONException chyba při parsování JSONu
+     * @param in {@link InputStream} obsahující JSON zprávu
+     * @throws JSONException při chybě parsování JSON odpovědi
      */
     private void parseJSONCEZ(InputStream in) throws JSONException {
         String readerStream = readerStream(in);
@@ -273,9 +265,9 @@ public class Connections {
 
 
     /**
-     * Načte stream z PRE a sestaví JSON pole
+     * Načte a vyhodnotí HTML stránku s tabulkou spínání HDO od PRE a odešle vytvořený {@link ResultData} přes {@link Handler}.
      *
-     * @param in InputStream stránky
+     * @param in {@link InputStream} s HTML kódováním stránky
      */
     private void parseJSONPRE(InputStream in) {
         String readerStream = readerStream(in);
@@ -334,7 +326,10 @@ public class Connections {
 
 
     /**
-     * Vypočítá datum Velikonoční neděle pro daný rok (Meeus/Jones/Butcher algoritmus).
+     * Vypočítá datum Velikonoční neděle pro daný rok podle Meeusova/Jonesova/Butcherova algoritmu.
+     *
+     * @param year rok pro výpočet
+     * @return {@link Calendar} nastavený na půlnoc (00:00:00.000) Velikonoční neděle
      */
     public static Calendar getEasterSunday(int year) {
         int a = year % 19;
@@ -361,7 +356,10 @@ public class Connections {
 
 
     /**
-     * Zjistí, zda je zadané datum státním svátkem v ČR (včetně Velkého pátku a Velikonočního pondělí).
+     * Zjistí, zda zadané datum odpovídá státnímu svátku v ČR (včetně pohyblivých svátků jako Velký pátek a Velikonoční pondělí).
+     *
+     * @param c {@link Calendar} obsahující datum k prověření
+     * @return {@code true}, pokud je zadané datum státním svátkem, jinak {@code false}
      */
     public static boolean isCzechHoliday(Calendar c) {
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -405,9 +403,14 @@ public class Connections {
 
 
     /**
-     * Načte stream z EGD a nalezne token
+     * Načte a zpracuje HTML kód stránky EG.D a vyhledá v něm vložený API token pro další dotazy.
      *
-     * @param in InputStream
+     * @param in            {@link InputStream} s HTML kódováním stránky
+     * @param code          kód povelu HDO
+     * @param context       kontext aplikace
+     * @param districtName  název vybraného okresu
+     * @param districtIndex index vybraného okresu
+     * @param root          kořenový {@link LinearLayout} pro vložení skrytého {@link WebView}
      */
     private void parseEGD(InputStream in, String code, Context context, String districtName, int districtIndex, LinearLayout root) {
         String readerStream = readerStream(in);
@@ -436,15 +439,16 @@ public class Connections {
 
 
     /**
-     * Zobrazení html stránky s javascripty pro načtení tokenu
+     * Inicializuje skrytý {@link WebView} na UI vlákně s předaným API tokenem a vyčká na načtení dynamických skriptů.
      *
-     * @param apiToken      token pro přístup k datům
+     * @param apiToken      získaný token pro přístup k API EG.D
      * @param code          kód povelu HDO
      * @param context       kontext aplikace
-     * @param districtName  název okresu
-     * @param districtIndex index okresu
-     * @param root          kořenový layout pro zobrazení webview
+     * @param districtName  název vybraného okresu
+     * @param districtIndex index vybraného okresu
+     * @param root          kořenový {@link LinearLayout} pro přidání prvku {@link WebView}
      */
+    @SuppressLint("SetJavaScriptEnabled")
     private void onLoadToken(String apiToken, String code, Context context, String districtName, int districtIndex, LinearLayout root) {
 
         String page = CodeWeb.htmlPage.replace("***12345***", apiToken);
@@ -485,10 +489,10 @@ public class Connections {
 
 
     /**
-     * Přečte stream a uloží jej do stringu
+     * Přečte kompletní obsah ze vstupního streamu a vrátí jej jako textový řetězec.
      *
-     * @param in InputStream
-     * @return String načtené stránky
+     * @param in {@link InputStream} pro přečtení
+     * @return načtený text jako {@link String} (pokud je {@code in} rovno {@code null}, vrátí prázdný řetězec)
      */
     private String readerStream(InputStream in) {
         if (in == null) return "";
@@ -507,13 +511,13 @@ public class Connections {
 
 
     /**
-     * Sestaví dotaz na EGD pro získání kategorie a skupiny
+     * Asynchronně sestaví a odešle dotaz na GraphQL API EG.D pro zjištění kategorie a skupiny povelu HDO.
      *
-     * @param urlHdo        url HDO
-     * @param code          kód
+     * @param urlHdo        URL adresa API rozhraní
+     * @param code          kód povelu HDO
      * @param context       kontext aplikace
-     * @param districtName  název okresu
-     * @param districtIndex index okresu
+     * @param districtName  název vybraného okresu
+     * @param districtIndex index vybraného okresu
      */
     private void searchKod(String urlHdo, String code, Context context, String districtName, int districtIndex) {
         if (urlHdo.endsWith("/")) return;
@@ -541,14 +545,15 @@ public class Connections {
 
 
     /**
-     * Z dotazu na EGD získá kategorie a skupiny, potřebný na druhý dotaz pro získání časů HDO
+     * Zpracuje odpověď dotazu {@code searchKod} z EG.D, extrahuje kategorii a skupinu a vyvolá navazující dotaz pro získání časů HDO.
      *
-     * @param jsonDataString json data;
-     * @param districtName   název okresu
-     * @param districtIndex  index okresu
-     * @param code           kód HDO
-     * @param urlHdo         url HDO
+     * @param jsonDataString JSON data odpovědi z předchozího dotazu
+     * @param districtName   název vybraného okresu
+     * @param districtIndex  index vybraného okresu
+     * @param code           kód povelu HDO
+     * @param urlHdo         URL adresa API rozhraní
      * @param context        kontext aplikace
+     * @param handler        {@link Handler} pro vrácení výstupních dat
      */
     private void searchHdoParseInputDates(String jsonDataString, String districtName, int districtIndex, String code, String urlHdo, Context context, Handler handler) {
         String category = getCategoryEgd(districtIndex);
@@ -590,15 +595,16 @@ public class Connections {
 
 
     /**
-     * Sestaví dotaz pro server pro získání HDO dat o tarifu
+     * Asynchronně sestaví a odešle GraphQL dotaz na server EG.D pro získání konkrétních časů spínání tarifu HDO.
      *
-     * @param group         skupina tarifu
-     * @param category      kategorie tarifu
-     * @param urlHdo        url serveru
-     * @param code          kód tarifu
+     * @param group         skupina tarifu HDO
+     * @param category      kategorie tarifu HDO
+     * @param urlHdo        URL adresa serveru
+     * @param code          kód povelu HDO
      * @param context       kontext aplikace
-     * @param districtName  název okresu
-     * @param districtIndex index okresu
+     * @param districtName  název vybraného okresu
+     * @param districtIndex index vybraného okresu
+     * @param handler       {@link Handler} pro zaslání výsledku
      */
     public void searchHdo(String group, String category, String urlHdo, String code, Context context, String districtName, int districtIndex, Handler handler) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -620,9 +626,10 @@ public class Connections {
 
 
     /**
-     * Vrátí kategorii EGD podle vybraného okresu
+     * Určí kód kategorie EG.D (oblast VÝCHOD / ZÁPAD) na základě vybraného indexu okresu.
      *
-     * @return kategorie EGD
+     * @param districtIndex index vybraného okresu
+     * @return řetězec s kódovým označením kategorie ({@code "VYCHOD"}, {@code "ZAPAD"} nebo prázdný řetězec)
      */
     private String getCategoryEgd(int districtIndex) {
         //int itemSelectedPosition = spDistrict.getSelectedItemPosition();
@@ -635,16 +642,38 @@ public class Connections {
 
 
     /**
-     * Kontejner pro návratová data
+     * Datový kontejner (record) uchovávající výsledky načítání HDO dat.
+     *
+     * @param result     JSON řetězec s naparsovanými výslednými daty
+     * @param areaEgd    kód oblasti EG.D (např. VÝCHOD/ZÁPAD)
+     * @param area       identifikátor oblasti nebo název okresu
+     * @param urlString  URL adresa, ze které byla data stažena
+     * @param resultType typ výsledku podle distribuční společnosti ({@link ResultType})
      */
     record ResultData(String result, String areaEgd, String area, String urlString,
                       ResultType resultType) {
 
+        /**
+         * Vytvoří kontejner s výchozí prázdnou oblastí EG.D a URL adresou.
+         *
+         * @param result     JSON řetězec s výslednými daty
+         * @param resultType typ výsledku ({@link ResultType})
+         * @param area       identifikátor oblasti nebo okresu
+         */
         public ResultData(String result, ResultType resultType, String area) {
             this(result, resultType, area, "", "");
         }
 
 
+        /**
+         * Vytvoří plně specifikovaný kontejner dat.
+         *
+         * @param result     JSON řetězec s výslednými daty
+         * @param resultType typ výsledku ({@link ResultType})
+         * @param area       identifikátor oblasti nebo okresu
+         * @param areaEgd    kód oblasti EG.D
+         * @param urlString  URL adresa serveru
+         */
         public ResultData(String result, ResultType resultType, String area, String areaEgd, String urlString) {
             this(result, areaEgd, area, urlString, resultType);
         }
@@ -653,19 +682,43 @@ public class Connections {
 
 
     /**
-     * Typ výsledku získání dat
+     * Určuje typ a původ získaných dat HDO podle distribuční společnosti.
      */
     enum ResultType {
+        /** Datový výsledek od ČEZ */
         CEZ,
+        /** Datový výsledek od EG.D */
         EGD,
+        /** Datový výsledek od PRE */
         PRE,
+        /** Seznam kódů a kategorií z mezikroku parsování EG.D */
         CODES
     }
 
 
+    /**
+     * Kontejner (record) předávající parametry dotazu na skupinu a kategorii pro EG.D.
+     *
+     * @param urlHdo        URL adresa GraphQL API pro HDO
+     * @param urlParameters kódované parametry požadavku ve JSON
+     * @param code          kód povelu HDO
+     * @param districtName  název vybraného okresu
+     * @param context       kontext aplikace
+     * @param districtIndex index vybraného okresu
+     */
     record GroupAndCategoryContainer(String urlHdo, String urlParameters, String code,
                                      String districtName, Context context, int districtIndex) {
 
+        /**
+         * Konstruktor kontejneru pro uchování parametrů dotazu EG.D.
+         *
+         * @param urlHdo        URL adresa API
+         * @param urlParameters kódované parametry
+         * @param code          kód povelu HDO
+         * @param context       kontext aplikace
+         * @param districtName  název vybraného okresu
+         * @param districtIndex index vybraného okresu
+         */
         public GroupAndCategoryContainer(String urlHdo, String urlParameters, String code, Context context, String districtName, int districtIndex) {
             this(urlHdo, urlParameters, code, districtName, context, districtIndex);
         }
