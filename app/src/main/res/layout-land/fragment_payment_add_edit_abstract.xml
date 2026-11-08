@@ -4,234 +4,215 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="10dp">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/lnButtonsPayment"
-        android:orientation="horizontal"
-        tools:ignore="DisableBaselineAlignment">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="5dp"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPaymentDate"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:hint="@string/datum"
-                    app:endIconDrawable="@drawable/ic_calendar_24"
-                    app:endIconMinSize="36dp"
-                    app:endIconMode="custom"
-                    app:endIconTint="?attr/colorPrimary">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etPaymentDate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:cursorVisible="false"
-                        android:focusable="true"
-                        android:inputType="none"
-                        android:lines="1"
-                        android:maxLines="1"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="0dp"
-                        android:singleLine="true"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        tools:text="8. 11. 2026" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <DatePicker
-                    android:id="@+id/dpPayment"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone" />
-
-
-            </LinearLayout>
-        </ScrollView>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/shape_item"
-                    android:orientation="vertical">
-
-                    <cz.xlisto.elektrodroid.ownview.LabelEditText
-                        android:id="@+id/labPayment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="numberDecimal"
-                        app:direction="vertical"
-                        app:hintText="@string/_0"
-                        app:label="@string/payment2" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/shape_item"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/cbPayment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:checked="true"
-                        android:maxWidth="300dp"
-                        android:text="@string/payment"
-                        tools:ignore="TouchTargetSizeCheck" />
-
-                    <CheckBox
-                        android:id="@+id/cbSupplement"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:maxWidth="300dp"
-                        android:text="@string/supplement"
-                        tools:ignore="TouchTargetSizeCheck" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/shape_item"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/cbRefund"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:checked="false"
-                        android:maxWidth="300dp"
-                        android:text="@string/refund" />
-
-                    <CheckBox
-                        android:id="@+id/cbDiscount"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:maxWidth="300dp"
-                        android:text="@string/discount"
-                        tools:ignore="TouchTargetSizeCheck" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/shape_item"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/cbDiscountWithTax"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:maxWidth="300dp"
-                        android:text="@string/discount_with_tax"
-                        tools:ignore="TouchTargetSizeCheck" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/shape_item"
-                    android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/cbSupport"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:checked="false"
-                        android:maxWidth="300dp"
-                        android:text="@string/support" />
-
-
-                </LinearLayout>
-
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp" />
-
-            </LinearLayout>
-
-        </ScrollView>
-
-    </LinearLayout>
-
-
+    android:animateLayoutChanges="false"
+    android:padding="@dimen/price_list_editor_root_padding">
 
     <LinearLayout
         android:id="@+id/lnButtonsPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBackPayment"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:maxWidth="300dp"
-            android:text="@string/zpet"
-            android:textColor="@color/primary_text_button_color"
-            tools:ignore="TouchTargetSizeCheck,VisualLintBounds" />
+            android:text="@string/zpet" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSavePayment"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/primary_text_button_color" />
+            android:layout_marginStart="8dp"
+            android:text="@string/ulozit" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/lnButtonsPayment"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- Left Column -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Card 1: Payment Date & Amount -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilPaymentDate"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="@string/datum"
+                            app:endIconDrawable="@drawable/ic_calendar_24"
+                            app:endIconMinSize="36dp"
+                            app:endIconMode="custom"
+                            app:endIconTint="?attr/colorPrimary">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPaymentDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:cursorVisible="false"
+                                android:focusable="true"
+                                android:inputType="none"
+                                android:lines="1"
+                                android:maxLines="1"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="0dp"
+                                android:singleLine="true"
+                                android:textAppearance="?attr/textAppearanceBodyMedium"
+                                tools:text="8. 11. 2026" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <DatePicker
+                            android:id="@+id/dpPayment"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:visibility="gone" />
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/labPayment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="@string/payment2" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Right Column -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Card 2: Payment Type Selection (Checkboxes) -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/cbPayment"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:checked="true"
+                                android:minHeight="48dp"
+                                android:text="@string/payment" />
+
+                            <CheckBox
+                                android:id="@+id/cbSupplement"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:minHeight="48dp"
+                                android:text="@string/supplement" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <CheckBox
+                                android:id="@+id/cbDiscount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:minHeight="48dp"
+                                android:text="@string/discount" />
+
+                            <CheckBox
+                                android:id="@+id/cbDiscountWithTax"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:minHeight="48dp"
+                                android:text="@string/discount_with_tax" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/cbRefund"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:checked="false"
+                            android:minHeight="48dp"
+                            android:text="@string/refund" />
+
+                        <CheckBox
+                            android:id="@+id/cbSupport"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:checked="false"
+                            android:minHeight="48dp"
+                            android:text="@string/support" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

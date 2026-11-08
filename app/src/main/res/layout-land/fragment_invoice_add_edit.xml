@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
+    android:padding="@dimen/price_list_editor_root_padding">
+
+    <LinearLayout
+        android:id="@+id/lnButtonsInvoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackInvoice"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zpet" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveInvoice"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/ulozit" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/lnButtonsInvoice"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- Left Column -->
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Card 1: Date Range Header -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <RelativeLayout
+                        android:id="@+id/lnButtonsInvoiceDateAddEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvInvoiceDateRangeLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@id/btnInvoiceDateRange"
+                            android:layout_alignBottom="@id/btnInvoiceDateRange"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@id/btnInvoiceDateRange"
+                            android:gravity="center_vertical"
+                            android:text="@string/platnost_cenik"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnInvoiceDateRange"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            app:icon="@drawable/ic_calendar_24"
+                            app:iconGravity="start"
+                            tools:text="01.01.2025 – 31.12.2025" />
+
+                        <Button
+                            android:id="@+id/btnDateStart"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:text="@string/datum"
+                            android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/btnDateEnd"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:text="@string/datum"
+                            android:visibility="gone" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 2: High Tariff (VT) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/lnInvoiceStart"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/vt2"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" />
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/letVTStart"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="5"
+                            android:inputType="number|numberDecimal"
+                            android:maxEms="10"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="Počitadlo VT - začátek" />
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/letVTEnd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ems="5"
+                            android:inputType="number|numberDecimal"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="Počitadlo VT - konec" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Right Column -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Card 3: Low Tariff (NT) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/lnInvoiceEnd"
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/nt2"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" />
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/letNTStart"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="5"
+                            android:inputType="number|numberDecimal"
+                            android:maxEms="10"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="Počitadlo NT - začátek" />
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/letNTEnd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ems="5"
+                            android:inputType="number|numberDecimal"
+                            android:maxEms="10"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="Počitadlo NT - konec" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 4: Other Services, Meter Change & Price List Selection -->
+                <com.google.android.material.card.MaterialCardView
+                    style="?attr/materialCardViewOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="12dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp">
+
+                        <cz.xlisto.elektrodroid.ownview.LabelEditText
+                            android:id="@+id/letOtherServices"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="5"
+                            android:inputType="number|numberDecimal"
+                            android:maxEms="10"
+                            app:direction="vertical"
+                            app:hintText="@string/_0"
+                            app:label="Ostatní služby" />
+
+                        <CheckBox
+                            android:id="@+id/cbIsChangedElectrometer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/letOtherServices"
+                            android:layout_marginTop="8dp"
+                            android:minHeight="48dp"
+                            android:text="@string/changed_electric_meter" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSelectPriceList"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/cbIsChangedElectrometer"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/vyberCenik" />
+
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</RelativeLayout>
