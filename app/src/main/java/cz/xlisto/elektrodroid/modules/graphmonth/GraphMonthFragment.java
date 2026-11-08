@@ -1,11 +1,14 @@
 package cz.xlisto.elektrodroid.modules.graphmonth;
 
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,11 +33,16 @@ public class GraphMonthFragment extends Fragment {
     private final String ARG_IS_SHOW_NT = "isShowNT";
     private final String ARG_TYPE_GRAPH = "isShowLineGraph";
     private final String ARG_COMPARE_MONTH = "compareMonth";
+
     private GraphMonthView graphMonthView;
-    private ImageButton btnShowVT, btnShowNT, btnChangePeriod, btnTypeGraph, btnLeft, btnRight;
+    private View btnShowVT, btnShowNT, btnChangePeriod, btnTypeGraph, btnLeft, btnRight;
+    private View containerVT, containerNT, containerPeriod, containerType, containerLeft, containerRight;
+    private ImageView imgShowVT, imgShowNT, imgChangePeriod, imgTypeGraph, imgLeft, imgRight;
+    private TextView tvLabelLeft, tvLabelRight;
+
     private boolean showVT = true;
     private boolean showNT = true;
-    private int showPeriod = 1; // 0 - month, 1 - year, 2 - moth compare
+    private int showPeriod = 1; // 0 - month, 1 - year, 2 - month compare
     private int compareMonth = 0;
     private boolean showTypeGraph = true;
     private ShPGraphMonth shPGraphMonth;
@@ -67,15 +75,30 @@ public class GraphMonthFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_graph_month, container, false);
         graphMonthView = view.findViewById(R.id.graphMonthView);
-        btnShowVT = view.findViewById(R.id.imgBtnVT);
-        btnShowNT = view.findViewById(R.id.imgBtnNT);
-        btnChangePeriod = view.findViewById(R.id.imgBtnPeriod);
-        btnTypeGraph = view.findViewById(R.id.imgBtnType);
-        btnLeft = view.findViewById(R.id.imgBtnLeft);
-        btnRight = view.findViewById(R.id.imgBtnRight);
 
-        //zákaz hardwarové akcelerace - kvůli vykreslování čárkováné osy
-        //graphMonthView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        btnTypeGraph = view.findViewById(R.id.btnTypeGraph);
+        btnChangePeriod = view.findViewById(R.id.btnPeriod);
+        btnShowVT = view.findViewById(R.id.btnVT);
+        btnShowNT = view.findViewById(R.id.btnNT);
+        btnLeft = view.findViewById(R.id.btnLeft);
+        btnRight = view.findViewById(R.id.btnRight);
+
+        containerType = view.findViewById(R.id.containerBtnType);
+        containerPeriod = view.findViewById(R.id.containerBtnPeriod);
+        containerVT = view.findViewById(R.id.containerBtnVT);
+        containerNT = view.findViewById(R.id.containerBtnNT);
+        containerLeft = view.findViewById(R.id.containerBtnLeft);
+        containerRight = view.findViewById(R.id.containerBtnRight);
+
+        imgTypeGraph = view.findViewById(R.id.imgBtnType);
+        imgChangePeriod = view.findViewById(R.id.imgBtnPeriod);
+        imgShowVT = view.findViewById(R.id.imgBtnVT);
+        imgShowNT = view.findViewById(R.id.imgBtnNT);
+        imgLeft = view.findViewById(R.id.imgBtnLeft);
+        imgRight = view.findViewById(R.id.imgBtnRight);
+
+        tvLabelLeft = view.findViewById(R.id.tvLabelLeft);
+        tvLabelRight = view.findViewById(R.id.tvLabelRight);
 
         shPGraphMonth = new ShPGraphMonth(requireContext());
 
@@ -222,21 +245,33 @@ public class GraphMonthFragment extends Fragment {
 
 
     /**
+     * Vrátí barvu z aktuálního tématu podle zadaného atributu
+     */
+    private int getThemeColor(int attrRes) {
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(attrRes, typedValue, true);
+        return typedValue.data;
+    }
+
+
+    /**
      * Nastaví ikonu podle zobrazení období
      * 0 - měsíc; 1 - rok; 2 - meziměsíční porovnání
      */
     private void setImageIconPeriod() {
         switch (showPeriod) {
             case 0:
-                btnChangePeriod.setImageResource(R.drawable.ic_graph_month);
+                imgChangePeriod.setImageResource(R.drawable.ic_graph_month);
                 break;
             case 1:
-                btnChangePeriod.setImageResource(R.drawable.ic_graph_year);
+                imgChangePeriod.setImageResource(R.drawable.ic_graph_year);
                 break;
             case 2:
-                btnChangePeriod.setImageResource(R.drawable.ic_graph_month_compare);
+                imgChangePeriod.setImageResource(R.drawable.ic_graph_month_compare);
                 break;
         }
+        containerPeriod.setBackgroundResource(R.drawable.bg_graph_button_active);
+        imgChangePeriod.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
     }
 
 
@@ -245,9 +280,13 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconVT() {
         if (showVT) {
-            btnShowVT.setImageResource(R.drawable.ic_graph_vt_on);
+            imgShowVT.setImageResource(R.drawable.ic_graph_vt_on);
+            containerVT.setBackgroundResource(R.drawable.bg_graph_button_active);
+            imgShowVT.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
         } else {
-            btnShowVT.setImageResource(R.drawable.ic_graph_vt_off);
+            imgShowVT.setImageResource(R.drawable.ic_graph_vt_off);
+            containerVT.setBackgroundResource(R.drawable.bg_graph_button_inactive);
+            imgShowVT.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnSurfaceVariant)));
         }
     }
 
@@ -257,9 +296,13 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconNT() {
         if (showNT) {
-            btnShowNT.setImageResource(R.drawable.ic_graph_nt_on);
+            imgShowNT.setImageResource(R.drawable.ic_graph_nt_on);
+            containerNT.setBackgroundResource(R.drawable.bg_graph_button_active);
+            imgShowNT.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
         } else {
-            btnShowNT.setImageResource(R.drawable.ic_graph_nt_off);
+            imgShowNT.setImageResource(R.drawable.ic_graph_nt_off);
+            containerNT.setBackgroundResource(R.drawable.bg_graph_button_inactive);
+            imgShowNT.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnSurfaceVariant)));
         }
     }
 
@@ -270,10 +313,12 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconTypeGraph() {
         if (showTypeGraph) {
-            btnTypeGraph.setImageResource(R.drawable.ic_graph_column);
+            imgTypeGraph.setImageResource(R.drawable.ic_graph_column);
         } else {
-            btnTypeGraph.setImageResource(R.drawable.ic_graph_line);
+            imgTypeGraph.setImageResource(R.drawable.ic_graph_line);
         }
+        containerType.setBackgroundResource(R.drawable.bg_graph_button_active);
+        imgTypeGraph.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
     }
 
 
@@ -282,12 +327,20 @@ public class GraphMonthFragment extends Fragment {
      */
     private void setImageIconZoom() {
         if (showPeriod == 2) {
-            btnLeft.setImageResource(R.drawable.ic_graph_month_left);
-            btnRight.setImageResource(R.drawable.ic_graph_month_right);
+            imgLeft.setImageResource(R.drawable.ic_graph_month_left);
+            imgRight.setImageResource(R.drawable.ic_graph_month_right);
+            if (tvLabelLeft != null) tvLabelLeft.setText(R.string.graph_btn_prev_month);
+            if (tvLabelRight != null) tvLabelRight.setText(R.string.graph_btn_next_month);
         } else {
-            btnLeft.setImageResource(R.drawable.ic_graph_zoom_minus);
-            btnRight.setImageResource(R.drawable.ic_graph_zoom_plus);
+            imgLeft.setImageResource(R.drawable.ic_graph_zoom_minus);
+            imgRight.setImageResource(R.drawable.ic_graph_zoom_plus);
+            if (tvLabelLeft != null) tvLabelLeft.setText(R.string.graph_btn_zoom_out);
+            if (tvLabelRight != null) tvLabelRight.setText(R.string.graph_btn_zoom_in);
         }
+        containerLeft.setBackgroundResource(R.drawable.bg_graph_button_active);
+        imgLeft.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
+        containerRight.setBackgroundResource(R.drawable.bg_graph_button_active);
+        imgRight.setImageTintList(ColorStateList.valueOf(getThemeColor(com.google.android.material.R.attr.colorOnPrimaryContainer)));
         updateZoomTooltips();
     }
 

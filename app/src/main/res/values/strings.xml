@@ -345,6 +345,15 @@
     <string name="description_btn_previous_month">Předchozí porovnávaný měsíc</string>
     <string name="description_btn_next_month">Následující porovnávaný měsíc</string>
 
+    <string name="graph_btn_type">Graf</string>
+    <string name="graph_btn_period">Období</string>
+    <string name="graph_btn_vt">VT</string>
+    <string name="graph_btn_nt">NT</string>
+    <string name="graph_btn_zoom_out">Oddálit</string>
+    <string name="graph_btn_zoom_in">Přiblížit</string>
+    <string name="graph_btn_prev_month">Předchozí</string>
+    <string name="graph_btn_next_month">Následující</string>
+
 
     <string name="description_vt_color">Barva VT</string>
     <string name="description_nt_color">Barva NT</string>

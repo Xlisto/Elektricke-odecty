@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,100 +21,251 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?attr/colorSurfaceContainer"
-        android:padding="2dp"
-        android:orientation="horizontal">
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_graph_button_bar"
+        android:elevation="2dp"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
-        <ImageButton
-            android:id="@+id/imgBtnType"
+        <LinearLayout
+            android:id="@+id/btnTypeGraph"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_type"
-            android:tooltipText="@string/description_btn_type"
-            tools:targetApi="o"
-            android:cropToPadding="false"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_column" />
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
 
-        <ImageButton
-            android:id="@+id/imgBtnPeriod"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_period"
-            android:tooltipText="@string/description_btn_period"
-            tools:targetApi="o"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_year" />
+            <FrameLayout
+                android:id="@+id/containerBtnType"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
 
-        <ImageButton
-            android:id="@+id/imgBtnVT"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_vt"
-            android:tooltipText="@string/description_btn_vt"
-            tools:targetApi="o"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_vt_on" />
+                <ImageView
+                    android:id="@+id/imgBtnType"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_type"
+                    android:src="@drawable/ic_graph_column"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
 
-        <ImageButton
-            android:id="@+id/imgBtnNT"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_nt"
-            android:tooltipText="@string/description_btn_nt"
-            tools:targetApi="o"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_nt_on" />
+            <TextView
+                android:id="@+id/tvLabelType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_type"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/imgBtnLeft"
+        <LinearLayout
+            android:id="@+id/btnPeriod"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_zoom_in"
-            android:tooltipText="@string/description_btn_zoom_in"
-            tools:targetApi="o"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_zoom_minus" />
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
 
-        <ImageButton
-            android:id="@+id/imgBtnRight"
+            <FrameLayout
+                android:id="@+id/containerBtnPeriod"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
+
+                <ImageView
+                    android:id="@+id/imgBtnPeriod"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_period"
+                    android:src="@drawable/ic_graph_year"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvLabelPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_period"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnVT"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_margin="1dp"
-            android:adjustViewBounds="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/description_btn_zoom_out"
-            android:tooltipText="@string/description_btn_zoom_out"
-            tools:targetApi="o"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_graph_zoom_plus" />
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <FrameLayout
+                android:id="@+id/containerBtnVT"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
+
+                <ImageView
+                    android:id="@+id/imgBtnVT"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_vt"
+                    android:src="@drawable/ic_graph_vt_on"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvLabelVT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_vt"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnNT"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <FrameLayout
+                android:id="@+id/containerBtnNT"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
+
+                <ImageView
+                    android:id="@+id/imgBtnNT"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_nt"
+                    android:src="@drawable/ic_graph_nt_on"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvLabelNT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_nt"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnLeft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <FrameLayout
+                android:id="@+id/containerBtnLeft"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
+
+                <ImageView
+                    android:id="@+id/imgBtnLeft"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_zoom_in"
+                    android:src="@drawable/ic_graph_zoom_minus"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvLabelLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_zoom_out"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnRight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="2dp">
+
+            <FrameLayout
+                android:id="@+id/containerBtnRight"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_graph_button_active">
+
+                <ImageView
+                    android:id="@+id/imgBtnRight"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/description_btn_zoom_out"
+                    android:src="@drawable/ic_graph_zoom_plus"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvLabelRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/graph_btn_zoom_in"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="11sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
