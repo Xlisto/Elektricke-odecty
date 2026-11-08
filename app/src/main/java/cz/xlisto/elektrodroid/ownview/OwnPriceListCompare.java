@@ -21,7 +21,7 @@ import cz.xlisto.elektrodroid.R;
  */
 public class OwnPriceListCompare extends RelativeLayout {
 
-    private TextView tvTitle, tvLeft, tvRigth, tvDifferentLeft, tvDifferentRight;
+    private TextView tvTitle, tvLeft, tvRight, tvDifferentLeft, tvDifferentRight;
     private View separator;
 
 
@@ -43,19 +43,23 @@ public class OwnPriceListCompare extends RelativeLayout {
 
         tvTitle = findViewById(R.id.tvTitleComparePriceList);
         tvLeft = findViewById(R.id.tvLeftComparePriceList);
-        tvRigth = findViewById(R.id.tvRightComparePriceList);
+        tvRight = findViewById(R.id.tvRightComparePriceList);
         tvDifferentLeft = findViewById(R.id.tvLeftDifferentComparePriceList);
         tvDifferentRight = findViewById(R.id.tvRightDifferentComparePriceList);
         separator = findViewById(R.id.separatorComparePriceList);
 
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.OwnPriceListCompare);
-        String title = ta.getString(R.styleable.OwnPriceListCompare_title);
-        boolean visibleSeparator = ta.getBoolean(R.styleable.OwnPriceListCompare_separator, true);
-        boolean visibleDifferent = ta.getBoolean(R.styleable.OwnPriceListCompare_visibleDifferent, false);
+        try {
+            String title = ta.getString(R.styleable.OwnPriceListCompare_title);
+            boolean visibleSeparator = ta.getBoolean(R.styleable.OwnPriceListCompare_separator, true);
+            boolean visibleDifferent = ta.getBoolean(R.styleable.OwnPriceListCompare_visibleDifferent, false);
 
-        setTvTitle(title);
-        visibleSeparator(visibleSeparator);
-        visibleDifferent(visibleDifferent);
+            setTvTitle(title);
+            visibleSeparator(visibleSeparator);
+            visibleDifferent(visibleDifferent);
+        } finally {
+            ta.recycle();
+        }
     }
 
 
@@ -86,7 +90,7 @@ public class OwnPriceListCompare extends RelativeLayout {
      * @param s text
      */
     public void setRight(String s) {
-        tvRigth.setText(s);
+        tvRight.setText(s);
     }
 
 
