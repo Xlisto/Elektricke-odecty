@@ -13,6 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.PaymentModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
@@ -43,6 +53,8 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
     LabelEditText labPayment;
     CheckBox chPayment, chSupplement, chDiscount, chDiscountWithTax, chSupport, chRefund;
     DatePicker dp;
+    TextInputLayout tilPaymentDate;
+    TextInputEditText etPaymentDate;
     PaymentModel payment;
 
 
@@ -79,6 +91,16 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         btnSave = view.findViewById(R.id.btnSavePayment);
         btnBack = view.findViewById(R.id.btnBackPayment);
         dp = view.findViewById(R.id.dpPayment);
+        tilPaymentDate = view.findViewById(R.id.tilPaymentDate);
+        etPaymentDate = view.findViewById(R.id.etPaymentDate);
+
+        View.OnClickListener dateClickListener = v -> openDatePicker();
+        if (etPaymentDate != null) {
+            etPaymentDate.setOnClickListener(dateClickListener);
+        }
+        if (tilPaymentDate != null) {
+            tilPaymentDate.setEndIconOnClickListener(dateClickListener);
+        }
 
         btnBack.setOnClickListener(v -> {
             Keyboard.hide(requireActivity());
@@ -144,6 +166,42 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
             int month = savedInstanceState.getInt(DP_MONTH);
             int day = savedInstanceState.getInt(DP_DAY);
             dp.updateDate(year, month, day);
+        }
+        updatePaymentDateText();
+    }
+
+
+    /**
+     * Otevře {@link MaterialDatePicker} pro výběr data zálohové platby.
+     */
+    private void openDatePicker() {
+        LocalDate current = LocalDate.of(dp.getYear(), dp.getMonth() + 1, dp.getDayOfMonth());
+        long initialUtcMillis = current.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText(R.string.datum)
+                .setSelection(initialUtcMillis)
+                .build();
+
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            if (selection != null) {
+                LocalDate selectedDate = Instant.ofEpochMilli(selection).atZone(ZoneOffset.UTC).toLocalDate();
+                dp.updateDate(selectedDate.getYear(), selectedDate.getMonthValue() - 1, selectedDate.getDayOfMonth());
+                updatePaymentDateText();
+            }
+        });
+        datePicker.show(getParentFragmentManager(), "PAYMENT_DATE_PICKER");
+    }
+
+
+    /**
+     * Aktualizuje zobrazený text data v poli podle hodnoty z Pickeru/kalendáře.
+     */
+    public void updatePaymentDateText() {
+        if (etPaymentDate != null && dp != null) {
+            LocalDate date = LocalDate.of(dp.getYear(), dp.getMonth() + 1, dp.getDayOfMonth());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d. M. yyyy", Locale.getDefault());
+            etPaymentDate.setText(date.format(formatter));
         }
     }
 
