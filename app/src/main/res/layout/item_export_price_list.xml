@@ -6,7 +6,8 @@
     android:layout_marginBottom="2dp"
     android:layout_marginTop="2dp"
     android:clickable="true"
-    android:background="@drawable/shape_monthly_reading_gray">
+    android:background="@drawable/shape_monthly_reading_gray"
+    android:focusable="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
