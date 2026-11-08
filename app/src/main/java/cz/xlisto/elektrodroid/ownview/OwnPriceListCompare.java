@@ -17,25 +17,67 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Vlastní View pro porovnání ceníků
+ * Vlastní {@link RelativeLayout} prvek pro vizuální porovnání dvou ceníků elektrické energie.
+ * <p>
+ * Zobrazuje název ceníkové položky, hodnoty z obou porovnávaných ceníků (vlevo a vpravo),
+ * případný vypočtený rozdíl s rozlišením barev (úspora / navýšení) a volitelný spodní oddělovač.
  */
 public class OwnPriceListCompare extends RelativeLayout {
 
-    private TextView tvTitle, tvLeft, tvRight, tvDifferentLeft, tvDifferentRight;
+    /**
+     * Štítek pro název ceníkové položky
+     */
+    private TextView tvTitle;
+    /**
+     * Štítek pro hodnotu z prvního ceníku
+     */
+    private TextView tvLeft;
+    /**
+     * Štítek pro hodnotu z druhého ceníku
+     */
+    private TextView tvRight;
+    /**
+     * Štítek pro zobrazení vypočteného rozdílu z pohledu prvního ceníku
+     */
+    private TextView tvDifferentLeft;
+    /**
+     * Štítek pro zobrazení vypočteného rozdílu z pohledu druhého ceníku
+     */
+    private TextView tvDifferentRight;
+    /**
+     * Vizualizační oddělovač na spodním okraji prvku
+     */
     private View separator;
 
 
+    /**
+     * Konstruktor pro programové vytvoření komponenty.
+     *
+     * @param context kontext aplikace
+     */
     public OwnPriceListCompare(Context context) {
         super(context);
     }
 
 
+    /**
+     * Konstruktor pro vytvoření komponenty z XML layoutu se stylovatelnými atributy.
+     *
+     * @param context kontext aplikace
+     * @param attrs   množina atributů předaná z XML layoutu
+     */
     public OwnPriceListCompare(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
 
+    /**
+     * Inicializuje komponentu, nafoukne layout a načte vlastní atributy z XML.
+     *
+     * @param context kontext aplikace
+     * @param attrs   množina atributů předaná z XML layoutu
+     */
     @SuppressLint("ResourceType")
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -64,9 +106,9 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Nastaví titulek
+     * Nastaví titulek ceníkové položky.
      *
-     * @param s titulek
+     * @param s text titulku (pokud je {@code null}, text se nezmění)
      */
     public void setTvTitle(String s) {
         if (s != null)
@@ -75,9 +117,9 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Nastaví text na levý textview s cenou
+     * Nastaví text s cenou nebo hodnotou pro levý štítek (první ceník).
      *
-     * @param s text
+     * @param s text ke zobrazení
      */
     public void setLeft(String s) {
         tvLeft.setText(s);
@@ -85,9 +127,9 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Nastaví text na pravý textview s cenou
+     * Nastaví text s cenou nebo hodnotou pro pravý štítek (druhý ceník).
      *
-     * @param s text
+     * @param s text ke zobrazení
      */
     public void setRight(String s) {
         tvRight.setText(s);
@@ -95,12 +137,15 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Sestaví výpočet rodízlu dílčí ceny podle množství kwh nebo měsíců a mnastaví jej na textview
+     * Sestaví a nastaví zobrazení výpočtu rozdílu ceníkových položek roznásobených množstvím (kWh nebo měsíce).
+     * <p>
+     * Pokud je rozdíl nebo množství nulové, sekce s rozdíly se automaticky skryje.
+     * Texty rozdílů se barevně odliší (červená pro nárůst ceny, zelená pro pokles).
      *
-     * @param d        cena
-     * @param df       formát ceny
-     * @param quantity množství kwh nebo měsíců
-     * @param type     typ ceny
+     * @param d        rozdíl jednotkové ceny
+     * @param df       formátovač pro zobrazení číselných a měnových hodnot
+     * @param quantity množství (počet kWh nebo měsíců)
+     * @param type     typ ceníkové položky dle {@link Type}
      */
     public void setDifferent(double d, DecimalFormat df, double quantity, Type type) {
         double nD = d * (-1);
@@ -122,10 +167,12 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Nastaví do textview rozdílnou cenu, pokud rozdíl není, textview skryje
+     * Nastaví zobrazení přímého rozdílu cen bez násobení množstvím.
+     * <p>
+     * Pokud je rozdíl nulový, sekce s rozdíly se skryje. Nastavené hodnoty se barevně odliší.
      *
-     * @param d  cena
-     * @param df formát ceny
+     * @param d  rozdíl jednotkových cen
+     * @param df formátovač pro zobrazení číselných a měnových hodnot
      */
     public void setDifferent(double d, DecimalFormat df) {
         double dif2 = d * (-1);
@@ -139,9 +186,12 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Nastaví textview rozdílnou barvu podle kladné/záporné hodnoty
+     * Nastaví barvu textu pro štítky s rozdílem v závislosti na znaménku hodnoty.
+     * <p>
+     * Pro {@code d > 0} je levá hodnota červená a pravá zelená.
+     * Pro {@code d <= 0} je levá hodnota zelená a pravá červená.
      *
-     * @param d cena
+     * @param d hodnota rozdílu
      */
     private void setColorDifferentView(double d) {
         String cRed = "#e20707";
@@ -157,9 +207,9 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Zobrazí/skryje oddělovač obsažený na konci view
+     * Zobrazí nebo skryje vizuální oddělovač na spodním okraji prvku.
      *
-     * @param b true/false
+     * @param b {@code true} pro zobrazení oddělovače ({@link View#VISIBLE}), {@code false} pro jeho skrytí ({@link View#GONE})
      */
     public void visibleSeparator(boolean b) {
         if (b)
@@ -169,9 +219,9 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Zobrazí/skryje textview s rozdíly cen
+     * Zobrazí nebo skryje štítky s rozdíly cen.
      *
-     * @param b true/false
+     * @param b {@code true} pro zobrazení štítků ({@link View#VISIBLE}), {@code false} pro jejich skrytí ({@link View#GONE})
      */
     public void visibleDifferent(boolean b) {
         if (b) {
@@ -185,12 +235,18 @@ public class OwnPriceListCompare extends RelativeLayout {
 
 
     /**
-     * Typ podle ceníkové jednotky
+     * Typ ceníkové položky určující účel a způsob výpočtu rozdílu.
      */
     public enum Type {
+        /** Vysoký tarif (VT) */
         VT,
+        /**
+         * Nízký tarif (NT)
+         */
         NT,
+        /** Kombinace vysokého a nízkého tarifu (VT + NT) */
         VT_NT,
+        /** Měsíční platba */
         MONTH
     }
 
