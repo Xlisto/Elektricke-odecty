@@ -4,112 +4,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
+    android:padding="16dp"
     tools:context=".modules.subscriptionpoint.SubscriptionPointAddFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/buttons">
+        android:layout_above="@id/buttons"
+        android:clipToPadding="false">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/rlFaze"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/letDescription"
-                android:layout_alignEnd="@id/letName"
-                android:layout_marginBottom="5dp">
-
-                <EditText
-                    android:id="@+id/etCountPhaze"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvFazeZadani"
-                    android:autofillHints="@string/_3"
-                    android:ems="4"
-                    android:inputType="numberSigned"
-                    android:maxWidth="200dp"
-                    android:minHeight="48dp"
-                    android:textColorHint="#757575" />
-
-                <EditText
-                    android:id="@+id/etPhaze"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvFazeZadani"
-                    android:layout_toEndOf="@id/tvX"
-                    android:autofillHints="@string/_25"
-                    android:ems="4"
-                    android:inputType="numberSigned"
-                    android:maxWidth="200dp"
-                    android:minHeight="48dp"
-                    android:textColorHint="#757575" />
-
-                <TextView
-                    android:id="@+id/tvX"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/etCountPhaze"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@id/etCountPhaze"
-                    android:text="@string/x" />
-
-                <TextView
-                    android:id="@+id/tvFazeZadani"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:labelFor="@+id/etCountPhaze"
-                    android:text="@string/pocet_fazi" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@id/etPhaze"
-                    android:labelFor="@+id/etPhaze"
-                    android:text="@string/max_prikon" />
-            </RelativeLayout>
-
-            <cz.xlisto.elektrodroid.ownview.LabelEditText
-                android:id="@+id/letDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/letName"
-                android:layout_marginBottom="5dp"
-                android:inputType="text"
-                android:minHeight="48dp"
-                app:direction="vertical"
-                android:contentDescription="@string/description_subscription_point_description"
-                app:label="@string/popis">
-
-            </cz.xlisto.elektrodroid.ownview.LabelEditText>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="12dp"
+                android:contentDescription="@string/description_subscription_point_name"
                 android:inputType="text"
                 android:minHeight="48dp"
                 app:direction="vertical"
-                android:contentDescription="@string/description_subscription_point_name"
-                app:label="@string/jmeno_odberneho_mista">
+                app:label="@string/jmeno_odberneho_mista" />
 
-            </cz.xlisto.elektrodroid.ownview.LabelEditText>
+            <cz.xlisto.elektrodroid.ownview.LabelEditText
+                android:id="@+id/letDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:contentDescription="@string/description_subscription_point_description"
+                android:inputType="text"
+                android:minHeight="48dp"
+                app:direction="vertical"
+                app:label="@string/popis" />
+
+            <LinearLayout
+                android:id="@+id/rlFaze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pocet_fazi">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCountPhaze"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/_3"
+                        android:inputType="numberSigned"
+                        android:minHeight="48dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/tvX"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:text="@string/x"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/max_prikon">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPhaze"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/_25"
+                        android:inputType="numberSigned"
+                        android:minHeight="48dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
 
             <cz.xlisto.elektrodroid.ownview.LabelEditText
                 android:id="@+id/letElektrometer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rlFaze"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="12dp"
                 android:inputType="text"
                 android:minHeight="48dp"
                 app:direction="vertical"
@@ -119,12 +107,13 @@
                 android:id="@+id/letSebdescriptionPoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/letElektrometer"
+                android:layout_marginBottom="12dp"
                 android:inputType="number"
                 android:minHeight="48dp"
                 app:direction="vertical"
                 app:label="@string/cislo_odberneho_místa" />
-        </RelativeLayout>
+
+        </LinearLayout>
     </ScrollView>
 
     <LinearLayout
@@ -133,22 +122,22 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnZpet"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/primary_text_button_color" />
+            android:text="@string/zpet" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUloz"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/primary_text_button_color" />
+            android:layout_marginStart="8dp"
+            android:text="@string/ulozit" />
     </LinearLayout>
 </RelativeLayout>
