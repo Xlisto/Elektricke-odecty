@@ -4,8 +4,9 @@
     android:id="@+id/rlRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
     android:imeOptions="flagNoExtractUi"
-    android:padding="10dp"
+    android:padding="@dimen/price_list_editor_root_padding"
     tools:context="cz.xlisto.elektrodroid.MainActivity">
 
     <LinearLayout
@@ -14,23 +15,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBackMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/primary_text_button_color" />
+            android:text="@string/zpet" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveMonthlyReading"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ulozit"
-            android:textColor="@color/primary_text_button_color" />
+            android:layout_marginStart="8dp"
+            android:text="@string/ulozit" />
     </LinearLayout>
 
     <ScrollView
@@ -38,198 +39,223 @@
         android:layout_height="match_parent"
         android:layout_above="@id/lnButtonsMonthlyReading">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-
-            <RelativeLayout
-                android:id="@+id/rlDescription"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/rlState"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/shape_item">
-
-                <CheckBox
-                    android:id="@+id/cbShowDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:minHeight="48dp"
-                    android:text="@string/other_items" />
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/labDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/cbShowDescription"
-                    android:inputType="text"
-                    app:direction="vertical"
-
-                    app:label="@string/poznamka" />
-
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/labOtherServices"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/labDescription"
-                    android:imeOptions="flagNoFullscreen"
-                    android:inputType="numberDecimal"
-                    app:direction="vertical"
-                    app:hintText="@string/_0"
-                    app:label="@string/dalsi_sluzby" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/rlDescription"
-                android:background="@drawable/shape_item">
-
-                <Button
-                    android:id="@+id/btnSelectPriceList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/cbChangeMeter"
-                    android:layout_alignParentEnd="true"
-                    android:text="@string/vyberCenik" />
-
-                <CheckBox
-                    android:id="@+id/cbAddBackup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvResultDate"
-                    android:checked="false"
-                    android:minHeight="48dp"
-                    android:text="@string/addBackup" />
-
-                <CheckBox
-                    android:id="@+id/cbSendBackup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/cbAddBackup"
-                    android:checked="false"
-                    android:minHeight="48dp"
-                    android:text="@string/sendBackup" />
-
-                <CheckBox
-                    android:id="@+id/cbChangeMeter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/cbSendBackup"
-                    android:checked="false"
-                    android:minHeight="48dp"
-                    android:text="@string/changeMeter" />
-
-                <CheckBox
-                    android:id="@+id/cbAddPayment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/pridatZalohu"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-                <EditText
-                    android:id="@+id/etDatePayment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/cbAddPayment"
-                    android:layout_alignParentEnd="false"
-                    android:layout_toEndOf="@id/tvContentAddPayment"
-                    android:autofillHints="15"
-                    android:ems="3"
-                    android:inputType="date"
-                    android:maxWidth="488dp"
-                    android:maxEms="4"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    android:minEms="2" />
-
-                <TextView
-                    android:id="@+id/tvContentAddPayment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/etDatePayment"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:labelFor="@id/etDatePayment"
-                    android:text="@string/how_date_pay" />
-
-                <TextView
-                    android:id="@+id/tvResultDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/etDatePayment"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp" />
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
+            <!-- Card 1: Main Reading Info -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/rlState"
+                style="?attr/materialCardViewOutlinedStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/shape_item">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp">
 
-                <Button
-                    android:id="@+id/btnDate"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/tvDatumOdectuPocatek"
-                    android:text="@string/datum" />
+                    android:padding="12dp">
 
-                <TextView
-                    android:id="@+id/tvDatumOdectuPocatek"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tvDatumOdectuPocatek"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/btnDate"
+                        android:layout_alignBottom="@id/btnDate"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/btnDate"
+                        android:gravity="center_vertical"
+                        android:text="@string/datumOdectu"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDate"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/datum" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/labVT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/btnDate"
+                        android:layout_marginTop="12dp"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/stavVt" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/labNT"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/labVT"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/stavNt" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/labPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/labNT"
+                        android:imeOptions="flagNoExtractUi"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/pravidelnaZaloha" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Description & Other Services -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/rlDescription"
+                style="?attr/materialCardViewOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@id/btnDate"
-                    android:layout_marginStart="5dp"
-                    android:text="@string/datumOdectu" />
+                    android:padding="12dp">
 
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/labVT"
+                    <CheckBox
+                        android:id="@+id/cbShowDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/other_items" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/labDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbShowDescription"
+                        android:inputType="text"
+                        app:direction="vertical"
+                        app:label="@string/poznamka" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelEditText
+                        android:id="@+id/labOtherServices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/labDescription"
+                        android:imeOptions="flagNoFullscreen"
+                        android:inputType="numberDecimal"
+                        app:direction="vertical"
+                        app:hintText="@string/_0"
+                        app:label="@string/dalsi_sluzby" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Backup, Meter Change, Price List & Payment Options -->
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/btnDate"
-                    android:layout_marginTop="15dp"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberDecimal"
-                    app:direction="vertical"
-                    app:hintText="@string/_0"
-                    app:label="@string/stavVt" />
+                    android:layout_height="wrap_content"
+                    android:padding="12dp">
 
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/labNT"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/labVT"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberDecimal"
-                    app:direction="vertical"
-                    app:hintText="@string/_0"
-                    app:label="@string/stavNt" />
+                    <CheckBox
+                        android:id="@+id/cbAddBackup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/addBackup" />
 
+                    <CheckBox
+                        android:id="@+id/cbSendBackup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbAddBackup"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/sendBackup" />
 
-                <cz.xlisto.elektrodroid.ownview.LabelEditText
-                    android:id="@+id/labPayment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/labNT"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="numberDecimal"
-                    app:direction="vertical"
-                    app:hintText="@string/_0"
-                    app:label="@string/pravidelnaZaloha" />
+                    <CheckBox
+                        android:id="@+id/cbChangeMeter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbSendBackup"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/changeMeter" />
 
+                    <CheckBox
+                        android:id="@+id/cbAddPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbChangeMeter"
+                        android:checked="false"
+                        android:minHeight="48dp"
+                        android:text="@string/pridatZalohu" />
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/tvContentAddPayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbAddPayment"
+                        android:layout_alignBaseline="@id/etDatePayment"
+                        android:layout_marginEnd="5dp"
+                        android:labelFor="@id/etDatePayment"
+                        android:text="@string/how_date_pay" />
 
-        </RelativeLayout>
+                    <EditText
+                        android:id="@+id/etDatePayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/cbAddPayment"
+                        android:layout_toEndOf="@id/tvContentAddPayment"
+                        android:autofillHints="15"
+                        android:ems="3"
+                        android:inputType="date"
+                        android:maxEms="4"
+                        android:maxWidth="488dp"
+                        android:minEms="2"
+                        android:minHeight="48dp"
+                        android:minWidth="48dp" />
+
+                    <TextView
+                        android:id="@+id/tvResultDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/etDatePayment"
+                        android:layout_marginEnd="5dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectPriceList"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvResultDate"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/vyberCenik" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </ScrollView>
 
