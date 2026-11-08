@@ -18,7 +18,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BundleCompat;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -67,7 +68,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     private OwnPriceListCompare ownprcTotalVT, ownprcTotalNT, ownprcTotalPayment, ownprcTotalPoze;
     private OwnPriceListCompare ownprcTotalVTDPH, ownprcTotalNTDPH, ownprcTotalPaymentDPH, ownprcTotalPozeDPH;
     private OwnPriceListCompare ownprcTotalDPH;
-    private SwitchCompat swLeft, swRight;
+    private MaterialSwitch swLeft, swRight;
     private TextView tvShowRegulPriceLabel;
     private PriceListModel priceListLeft, priceListRight, priceListLeftRegul, priceListRightRegul;
     private PriceListModel priceListLeftNERegul, priceListRightNERegul;

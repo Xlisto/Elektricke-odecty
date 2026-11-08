@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
@@ -74,7 +74,7 @@ public class MonthlyReadingSettingsFragment extends Fragment {
     /**
      * Přepínač pro zohlednění zastropování cen v r. 2023.
      */
-    private SwitchMaterial swRegulPriceSetting;
+    private MaterialSwitch swRegulPriceSetting;
 
     /**
      * Správce preferencí měsíčních odečtů.

@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -61,10 +62,10 @@ public class SettingsFragment extends Fragment {
         chNotificationPermission = view.findViewById(R.id.chNotificationPermission);
         chExactAlarmPermission = view.findViewById(R.id.chExactAlarmPermission);
         CheckBox chUseSetAlarm = view.findViewById(R.id.chUseSetAlarm);
-        SwitchCompat switchShowFab = view.findViewById(R.id.switchShowFab);
-        SwitchCompat switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
-        SwitchCompat switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
-        SwitchCompat switchAllowMobileData = view.findViewById(R.id.switchAllowMobileData);
+        MaterialSwitch switchShowFab = view.findViewById(R.id.switchShowFab);
+        MaterialSwitch switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
+        MaterialSwitch switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
+        MaterialSwitch switchAllowMobileData = view.findViewById(R.id.switchAllowMobileData);
         final ShPSettings shPSettings = new ShPSettings(requireContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

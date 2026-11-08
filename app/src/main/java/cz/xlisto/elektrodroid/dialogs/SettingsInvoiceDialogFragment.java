@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import androidx.appcompat.widget.SwitchCompat;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -51,7 +51,7 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         shPInvoice = new ShPInvoice(requireContext());
         View view = View.inflate(requireContext(), R.layout.fragment_settings_invoice, null);
-        SwitchCompat switchAutoGenerate = view.findViewById(R.id.switchSettingsInvoice);
+        MaterialSwitch switchAutoGenerate = view.findViewById(R.id.switchSettingsInvoice);
         switchAutoGenerate.setChecked(shPInvoice.get(ShPInvoice.AUTO_GENERATE_INVOICE, true));
 
         TextView tvDescription = view.findViewById(R.id.tvAutogenerateSettingDescription);

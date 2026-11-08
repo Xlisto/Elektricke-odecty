@@ -17,7 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,7 +78,7 @@ public class DashBoardFragment extends Fragment {
         btnRightShowInvoiceSum = view.findViewById(R.id.imgBtnRightDashBoard);
         RelativeLayout rlGraphTotalConsuptionButtons = view.findViewById(R.id.rlGraphTotalConsuptionButtons);
         tvName = view.findViewById(R.id.tvNameDashBoard);
-        SwitchCompat swShowTotalConsuption = view.findViewById(R.id.swShowTotalConsuption);
+        MaterialSwitch swShowTotalConsuption = view.findViewById(R.id.swShowTotalConsuption);
         tvNoInvoices = view.findViewById(R.id.tvNoInvoices);
         spSort = view.findViewById(R.id.spSortInvoiceSum);
         graphTotalConsuptionView = view.findViewById(R.id.graphTotalConsuptionView);

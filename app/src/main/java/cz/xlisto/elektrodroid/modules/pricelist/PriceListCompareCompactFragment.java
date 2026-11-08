@@ -17,7 +17,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -41,7 +42,7 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     private PriceListModel priceListLeftNERegul = new PriceListModel(""), priceListRightNERegul = new PriceListModel("");
     private PriceListRegulBuilder priceListLeftRegulBuilder, priceListRightRegulBuilder;
     private View view;
-    private SwitchCompat swLeft, swRight;
+    private MaterialSwitch swLeft, swRight;
     private TextView tvDescription;
     private TableLayout tableLayout;
     private String[] left = new String[40];

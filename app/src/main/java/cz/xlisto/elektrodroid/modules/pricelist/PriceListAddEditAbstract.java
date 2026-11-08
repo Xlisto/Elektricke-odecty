@@ -21,7 +21,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -110,7 +111,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
     LabelEditText ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14;
     LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
-    SwitchCompat switchJistic;
+    MaterialSwitch switchJistic;
     Spinner spSazba, spDistribucniUzemi;
     TextView tvNoPriceListDescription, tvNoPriceListTitle;
     MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;

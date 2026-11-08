@@ -12,7 +12,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     private ArrayList<String> codes, codesException;
     private ArrayList<String[]> groupsList, groupExceptionList;
     private Spinner spinner;
-    private SwitchCompat swExceptionArea;
+    private MaterialSwitch swExceptionArea;
     private String exceptionArea;
     private String flagResultDialogFragment;
     private int selectedPosition;
