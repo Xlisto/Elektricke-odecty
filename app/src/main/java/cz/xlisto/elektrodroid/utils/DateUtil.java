@@ -5,27 +5,25 @@ import java.util.Calendar;
 
 
 /**
- * Jednoduchý model data obsahující rok, měsíc a den.
- * Hodnoty jsou naplněny z objektu {@link Calendar} v konstruktoru.
+ * Neoměnitelný (immutable) model data uchovávající rok, měsíc a den v měsíci.
+ * Hodnoty složek data jsou extrahovány z instance {@link Calendar} při vytváření objektu.
  */
 public class DateUtil {
 
-    // Konstantní tag pro logování (může být použit v Log.* voláních).
-    private static final String TAG = "Date";
-    // Rok (např. 2025)
+    /**
+     * Rok (např. 2025).
+     */
     private final int year;
-    // Měsíc jako číslo 0-11 (Calendar.MONTH vrací 0 = leden, 11 = prosinec).
-    // Poznámka: pokud potřebujete lidsky čitelný měsíc 1-12, je třeba k této hodnotě přičíst 1.
+    /** Měsíc v rozsahu 0–11 (hodnota z {@link Calendar#MONTH}, kde 0 = leden, 11 = prosinec). */
     private final int month;
-    // Den v měsíci (1-31)
+    /** Den v měsíci v rozsahu 1–31 (hodnota z {@link Calendar#DAY_OF_MONTH}). */
     private final int day;
 
 
     /**
-     * Vytvoří instanci Date z daného Calendaru.
-     * Hodnoty year/month/day jsou extrahovány při vytváření a pak neměnné.
+     * Vytvoří novou instanci {@link DateUtil} extrakcí složek data ze zadaného objektu {@link Calendar}.
      *
-     * @param calendar zdrojové datum/čas
+     * @param calendar zdrojové datum a čas ({@link Calendar})
      */
     public DateUtil(Calendar calendar) {
         year = calendar.get(Calendar.YEAR);
@@ -45,10 +43,11 @@ public class DateUtil {
 
 
     /**
-     * Vrátí měsíc v rozsahu 0-11 (0 = leden).
-     * Pokud potřebujete měsíc 1-12 použijte {@code getMonth() + 1}.
+     * Vrátí měsíc v rozsahu 0–11 (0 = leden, 11 = prosinec).
+     * <p>
+     * Pro získání lidsky čitelného čísla měsíce v rozsahu 1–12 použijte výraz {@code getMonth() + 1}.
      *
-     * @return měsíc 0-11
+     * @return měsíc jako číselná hodnota 0–11
      */
     public int getMonth() {
         return month;
@@ -56,9 +55,9 @@ public class DateUtil {
 
 
     /**
-     * Vrátí den v měsíci (1-31).
+     * Vrátí den v měsíci.
      *
-     * @return den v měsíci
+     * @return den v měsíci (1–31)
      */
     public int getDay() {
         return day;
