@@ -72,7 +72,7 @@ public class DataGraphMonth extends DataSource {
                 if (firstReader == 1) continue;
 
                 //sčítat záznam odečtu je potřeba o jeden pozadu, proto je kontrola po načtení a až při dalším cyklu se uplatňuje
-                add = SimpleDateFormatHelper.month.format(actualDate).equals(SimpleDateFormatHelper.month.format(previousDate));
+                add = SimpleDateFormatHelper.getMonth().format(actualDate).equals(SimpleDateFormatHelper.getMonth().format(previousDate));
 
                 //přidat nový záznam do měsíční spotřeby
                 if (add && i > 0) {

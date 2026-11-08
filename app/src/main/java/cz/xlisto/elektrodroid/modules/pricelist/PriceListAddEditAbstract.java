@@ -5,7 +5,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static java.util.Calendar.*;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
-import static cz.xlisto.elektrodroid.format.SimpleDateFormatHelper.dateFormat;
+import static cz.xlisto.elektrodroid.format.SimpleDateFormatHelper.getDateFormat;
 import static cz.xlisto.elektrodroid.ownview.OwnDatePicker.showDialog;
 
 import android.os.Bundle;
@@ -758,7 +758,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                             break;
                         } else if (cal1.get(YEAR) == selectedStartYear) {
                             // pokud jsou roky stejné, vytvoří se rozsah platných datumů
-                            datesMessageBuilder.append(dateFormat.format(cal1.getTime())).append(" - ").append(dateFormat.format(cal2.getTime()));
+                            datesMessageBuilder.append(getDateFormat().format(cal1.getTime())).append(" - ").append(getDateFormat().format(cal2.getTime()));
                             datesMessageBuilder.append('\n');
                         }
                     }

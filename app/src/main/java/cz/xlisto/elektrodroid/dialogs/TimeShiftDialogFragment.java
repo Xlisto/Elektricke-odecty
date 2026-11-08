@@ -144,8 +144,8 @@ public class TimeShiftDialogFragment extends DialogFragment {
         long nowMillis = System.currentTimeMillis();
         long meterMillis = nowMillis + timeShift;
 
-        String deviceTimeStr = SimpleDateFormatHelper.onlyTime.format(nowMillis).toUpperCase();
-        String meterTimeStr = SimpleDateFormatHelper.onlyTime.format(meterMillis).toUpperCase();
+        String deviceTimeStr = SimpleDateFormatHelper.getOnlyTime().format(nowMillis).toUpperCase();
+        String meterTimeStr = SimpleDateFormatHelper.getOnlyTime().format(meterMillis).toUpperCase();
 
         tvDeviceTimeDialog.setText(getString(R.string.device_time_label, deviceTimeStr));
         tvMeterTimeDialog.setText(getString(R.string.meter_time_label, meterTimeStr));

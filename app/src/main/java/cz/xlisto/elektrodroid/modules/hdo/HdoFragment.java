@@ -405,7 +405,7 @@ public class HdoFragment extends Fragment {
         calendar.setTimeInMillis(calendar.getTimeInMillis() + timeDifferent);//nastavení kalendáře na aktuální čas + časový posun
         long miliseconds = calendar.getTimeInMillis();//aktuální čas v milisekundách s časovým posunem
         if (tvTimeHdo != null) {
-            tvTimeHdo.setText(SimpleDateFormatHelper.onlyTime.format(miliseconds).toUpperCase());
+            tvTimeHdo.setText(SimpleDateFormatHelper.getOnlyTime().format(miliseconds).toUpperCase());
         }
 
         if (subscriptionPoint != null && subscriptionPoint.getTableHDO() != null && llRelaysStatusContainer != null && getContext() != null) {

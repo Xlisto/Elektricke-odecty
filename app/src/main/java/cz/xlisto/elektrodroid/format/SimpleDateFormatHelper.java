@@ -6,24 +6,48 @@ import java.util.Locale;
 
 
 /**
- * Pomocná třída poskytující předpřipravené instance SimpleDateFormat
- * pro formátování datumů a časů v češtině/německy.
- * <p>
- * Obsahuje statické konstanty pro formátování:
- * - onlyTime: jen čas s dnem v týdnu (HH:mm:ss EE)
- * - dateAndTime: datum a čas bez sekund (dd.MM.yyyy HH:mm)
- * - dateAndTimeWithSeconds: datum a čas se sekundami (dd.MM.yyyy HH:mm:ss)
- * - month: pouze měsíc (MM)
- * - year: pouze rok (yyyy)
- * - dateFormat: pouze datum (dd.MM.yyyy)
- * <p>
- * Xlisto 26.05.2023 11:15
+ * Pomocná třída poskytující předpřipravené instance {@link SimpleDateFormat}
+ * pro formátování dat a časů s využitím aktuální lokalizace.
  */
 public class SimpleDateFormatHelper {
 
-    public static SimpleDateFormat onlyTime = new SimpleDateFormat("HH:mm:ss EE", Locale.getDefault());
-    public static SimpleDateFormat month = new SimpleDateFormat("MM", Locale.getDefault());
-    public static SimpleDateFormat year = new SimpleDateFormat("yyyy", Locale.getDefault());
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    /**
+     * Vrátí novou instanci {@link SimpleDateFormat} pro formátování času s dnem v týdnu ("HH:mm:ss EE").
+     *
+     * @return objekt {@link SimpleDateFormat}
+     */
+    public static SimpleDateFormat getOnlyTime() {
+        return new SimpleDateFormat("HH:mm:ss EE", Locale.getDefault());
+    }
+
+
+    /**
+     * Vrátí novou instanci {@link SimpleDateFormat} pro formátování měsíce ("MM").
+     *
+     * @return objekt {@link SimpleDateFormat}
+     */
+    public static SimpleDateFormat getMonth() {
+        return new SimpleDateFormat("MM", Locale.getDefault());
+    }
+
+
+    /**
+     * Vrátí novou instanci {@link SimpleDateFormat} pro formátování roku ("yyyy").
+     *
+     * @return objekt {@link SimpleDateFormat}
+     */
+    public static SimpleDateFormat getYear() {
+        return new SimpleDateFormat("yyyy", Locale.getDefault());
+    }
+
+
+    /**
+     * Vrátí novou instanci {@link SimpleDateFormat} pro formátování data ("dd.MM.yyyy").
+     *
+     * @return objekt {@link SimpleDateFormat}
+     */
+    public static SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    }
 
 }
