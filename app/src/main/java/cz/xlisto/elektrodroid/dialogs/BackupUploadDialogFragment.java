@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -76,7 +78,7 @@ public class BackupUploadDialogFragment extends DialogFragment {
         }
 
         setCancelable(false);
-        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.upload_selected_backups_title)
                 .setView(view)
                 .setPositiveButton(R.string.ok, (dialogInterface, which) -> dismissAllowingStateLoss())

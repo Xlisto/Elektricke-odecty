@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.modules.payment;
 
 
-import android.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -93,7 +93,7 @@ public class PaymentChangeInvoiceDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View view = View.inflate(requireContext(), R.layout.dialog_payment_change_invoice, null);
         recyclerView = view.findViewById(R.id.rvInvoiceList);
         recyclerView.setAdapter(new PaymentChangeInvoiceAdapter(invoices, selectedIdInvoice));

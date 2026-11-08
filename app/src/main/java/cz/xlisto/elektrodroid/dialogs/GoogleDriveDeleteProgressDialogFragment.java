@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Locale;
@@ -65,7 +67,7 @@ public class GoogleDriveDeleteProgressDialogFragment extends DialogFragment {
         }
 
         setCancelable(false);
-        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle("Mazání z Google Drive")
                 .setView(view)
                 .create();

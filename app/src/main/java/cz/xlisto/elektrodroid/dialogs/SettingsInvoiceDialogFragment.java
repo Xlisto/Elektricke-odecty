@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.DialogFragment;
 
@@ -55,7 +57,7 @@ public class SettingsInvoiceDialogFragment extends DialogFragment {
         TextView tvDescription = view.findViewById(R.id.tvAutogenerateSettingDescription);
         setDescription(switchAutoGenerate.isChecked(), tvDescription);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.autogenerate_title));
         builder.setView(view);
         builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {

@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Locale;
@@ -85,7 +87,7 @@ public class TimeShiftDialogFragment extends DialogFragment {
             updateTimeDifferenceText();
         });
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.different_time)
                 .setView(view)
                 .setPositiveButton(R.string.ok, (dialog, which) -> getParentFragmentManager().setFragmentResult("TIME_SHIFT_CHANGED", new Bundle()))

@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
 
@@ -50,7 +52,7 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_invoice_list_add_edit, null);
 
         letNumberInvoice = dialogView.findViewById(R.id.letNumberInvoice);

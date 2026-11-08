@@ -21,6 +21,8 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         shpFilter = new ShPFilter(getContext());
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_filter, null);
 
         spRada = dialogView.findViewById(R.id.spRada);

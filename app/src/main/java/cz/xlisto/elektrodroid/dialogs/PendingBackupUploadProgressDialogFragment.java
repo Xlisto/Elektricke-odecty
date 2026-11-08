@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -71,7 +73,7 @@ public class PendingBackupUploadProgressDialogFragment extends DialogFragment {
         tvStatus.setText(message);
 
         setCancelable(false);
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.upload_selected_backups_title)
                 .setView(view)
                 .create();

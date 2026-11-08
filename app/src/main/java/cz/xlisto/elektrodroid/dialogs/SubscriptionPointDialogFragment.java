@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -126,7 +126,7 @@ public class SubscriptionPointDialogFragment extends DialogFragment {
         Spinner spinner = view.findViewById(R.id.spSubscriptionPoints);
         TextView spinnerLabel = view.findViewById(R.id.tvSpinnerLabel);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.selecting_subscription_point));
         if (useSpinner) {
             builder.setPositiveButton(getResources().getString(R.string.ok), (dialog, which) -> {

@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -73,7 +75,7 @@ public class PriceListDeleteBlockedDialogFragment extends DialogFragment {
         tvFak.setText(String.valueOf(fak));
         tvMon.setText(String.valueOf(mon));
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.deleting_pricelist)
                 .setIcon(R.drawable.ic_warning_png)
                 .setView(view)

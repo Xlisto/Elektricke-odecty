@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -89,7 +89,7 @@ public class SetDefaultMetersDialogFragment extends DialogFragment {
             //calendar.add(Calendar.DAY_OF_MONTH, -1);
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         builder.setTitle(getResources().getString(R.string.set_first_meters_title));
         builder.setView(view);
         builder.setIcon(R.drawable.ic_warning_png);

@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -144,7 +144,7 @@ public class InvoiceCutDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_invoice_cut, null);
 
         btnDate = dialogView.findViewById(R.id.btnDate);

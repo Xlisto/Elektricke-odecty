@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -62,7 +64,7 @@ public class HdoOldReminderDialogFragment extends DialogFragment {
 
         ShPHdo shPHdo = new ShPHdo(requireContext());
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.hdo_old_reminder_title)
                 .setMessage(message)
                 .setIcon(R.drawable.ic_warning_png)

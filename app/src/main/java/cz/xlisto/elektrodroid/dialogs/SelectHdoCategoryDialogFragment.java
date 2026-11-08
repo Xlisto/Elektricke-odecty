@@ -1,7 +1,7 @@
 package cz.xlisto.elektrodroid.dialogs;
 
 
-import android.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -90,7 +90,7 @@ public class SelectHdoCategoryDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
         View view = View.inflate(requireContext(), R.layout.dialog_select_hdo_category, null);
         spinner = view.findViewById(R.id.spCodes);

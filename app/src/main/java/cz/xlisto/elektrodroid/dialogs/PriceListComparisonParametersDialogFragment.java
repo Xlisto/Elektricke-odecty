@@ -12,6 +12,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import org.json.JSONException;
@@ -93,7 +95,7 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_set_values, null);
         letVT = dialogView.findViewById(R.id.letVT);
         letNT = dialogView.findViewById(R.id.letNT);

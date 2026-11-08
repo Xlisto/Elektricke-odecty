@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 
 import cz.xlisto.elektrodroid.R;
@@ -124,7 +126,7 @@ public class YesNoDialogFragment extends DialogFragment {
             flagResultDialogFragment = savedInstanceState.getString(FLAG_RESULT_DIALOG_FRAGMENT, flagResultDialogFragment);
         }
 
-        builder = new AlertDialog.Builder(requireContext(), R.style.DialogTheme);
+        builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         builder.setTitle(title);
         builder.setIcon(R.drawable.ic_warning_png);
 

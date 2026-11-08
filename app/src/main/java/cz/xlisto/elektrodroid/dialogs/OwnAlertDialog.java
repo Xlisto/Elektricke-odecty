@@ -7,7 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -82,7 +83,7 @@ public class OwnAlertDialog extends DialogFragment {
                 ? getString(R.string.ok)
                 : positiveText;
 
-        return new AlertDialog.Builder(requireContext(), R.style.DialogTheme)
+        return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(positiveButtonText, (dialogInterface, which) -> {
