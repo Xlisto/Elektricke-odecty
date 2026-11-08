@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TimePicker;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -157,7 +158,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     boolean checkSelectedDays() {
         initDays();
         if (mon + tue + wed + thu + fri + sat + sun == 0) {
-            Toast.makeText(getContext(), getResources().getString(R.string.have_to_coise_day), Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), R.string.have_to_coise_day, Snackbar.LENGTH_SHORT).show();
             return true;
         }
         return false;

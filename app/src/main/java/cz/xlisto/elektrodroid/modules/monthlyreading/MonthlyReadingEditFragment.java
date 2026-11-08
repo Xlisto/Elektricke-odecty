@@ -7,7 +7,8 @@ import static cz.xlisto.elektrodroid.shp.ShPMonthlyReading.SEND_BACKUP_EDT_READI
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -128,7 +129,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
                     getParentFragmentManager().popBackStack();
                 }
             } else {
-                Toast.makeText(requireActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
+                Snackbar.make(requireView(), R.string.vyberteCenik, Snackbar.LENGTH_SHORT).show();
             }
         });
 

@@ -22,7 +22,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -663,7 +664,7 @@ public class HdoSiteFragment extends Fragment {
 
             String tableHdo = subscriptionPoint.getTableHDO();
             if (tableHdo == null || tableHdo.isEmpty()) {
-                Toast.makeText(requireActivity(), "Nepodařilo se načíst údaje o odběrném místě", Toast.LENGTH_SHORT).show();
+                Snackbar.make(requireView(), "Nepodařilo se načíst údaje o odběrném místě", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             HdoUpdateHelper.smartSaveHdo(requireActivity(), hdoList, tableHdo, (oldModel, newModel, diffMinutes) -> {
@@ -674,9 +675,9 @@ public class HdoSiteFragment extends Fragment {
                     });
                 }
             });
-            Toast.makeText(requireActivity(), R.string.saved, Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), R.string.saved, Snackbar.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(requireActivity(), "Nejprve načtěte data", Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), "Nejprve načtěte data", Snackbar.LENGTH_SHORT).show();
         }
     }
 

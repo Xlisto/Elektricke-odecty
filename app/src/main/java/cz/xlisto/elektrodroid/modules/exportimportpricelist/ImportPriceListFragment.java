@@ -27,7 +27,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
@@ -264,7 +265,7 @@ public class ImportPriceListFragment extends Fragment {
                     dataPriceListSource.updatePriceList(priceList, priceList.getId());
                 }
                 dataPriceListSource.close();
-                Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.rewrite_prices_list), Toast.LENGTH_SHORT).show();
+                Snackbar.make(requireView(), R.string.rewrite_prices_list, Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -369,7 +370,7 @@ public class ImportPriceListFragment extends Fragment {
                     dataPriceListSource.close();
                     if (i == selectedPriceLists.size() - 1) {
                         mainHandler.post(() ->
-                                Toast.makeText(requireContext(), requireContext().getResources().getString(R.string.saved_prices_list), Toast.LENGTH_SHORT).show()
+                                Snackbar.make(requireView(), R.string.saved_prices_list, Snackbar.LENGTH_SHORT).show()
                         );
                     }
                 } else if (countPriceListInDatabase == 1) {

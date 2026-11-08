@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.transition.TransitionManager;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -400,7 +401,7 @@ public class BackupAdapter extends RecyclerView.Adapter<BackupAdapter.MyViewHold
         });
 
         holder.iconMoreFolderAction.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
+            PopupMenu popupMenu = new PopupMenu(new ContextThemeWrapper(v.getContext(), R.style.Theme_Odecty_PopupOverlay), v);
             popupMenu.getMenuInflater().inflate(R.menu.menu_more_folder_options, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(item -> {
                 if (file == null)

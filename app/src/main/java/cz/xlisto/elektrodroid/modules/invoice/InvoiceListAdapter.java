@@ -16,7 +16,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -356,7 +357,9 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 holder.imgAlert.setVisibility(View.GONE);
         } else {
             holder.imgAlert.setVisibility(View.VISIBLE);
-            Toast.makeText(context, "Zvýrazněné záznamy na sebe nenavazují", Toast.LENGTH_LONG).show();
+            if (context instanceof FragmentActivity activity && activity.findViewById(android.R.id.content) != null) {
+                Snackbar.make(activity.findViewById(android.R.id.content), "Zvýrazněné záznamy na sebe nenavazují", Snackbar.LENGTH_LONG).show();
+            }
         }
 
     }

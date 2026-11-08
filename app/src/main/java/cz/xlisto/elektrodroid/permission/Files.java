@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.documentfile.provider.DocumentFile;
@@ -129,7 +128,7 @@ public class Files {
                     out.write(json.getBytes());
                     out.flush();
                     out.close();
-                    Toast.makeText(activity, activity.getString(R.string.saved), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(view, activity.getString(R.string.saved), Snackbar.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

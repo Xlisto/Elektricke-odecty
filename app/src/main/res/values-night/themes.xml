@@ -56,5 +56,5 @@
 
     <style name="Theme.Odecty.AppBarOverlay" parent="ThemeOverlay.Material3.ActionBar" />
 
-    <style name="Theme.Odecty.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
+    <style name="Theme.Odecty.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
 </resources>

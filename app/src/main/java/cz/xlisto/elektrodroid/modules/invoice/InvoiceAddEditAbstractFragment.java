@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -334,20 +335,20 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
      */
     boolean checkData() {
         if (selectedIdInvoice == -2L) {
-            Toast.makeText(getActivity(), "Není vybrána faktura", Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), "Není vybrána faktura", Snackbar.LENGTH_SHORT).show();
             return true;
         }
         if (selectedIdPrice == -1L) {
-            Toast.makeText(getActivity(), "Není vybrán ceník", Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), "Není vybrán ceník", Snackbar.LENGTH_SHORT).show();
             return true;
         }
 
         if (btnDateStart.getText().toString().equals("Datum")) {
-            Toast.makeText(getActivity(), "Není vybrán počáteční datum", Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), "Není vybrán počáteční datum", Snackbar.LENGTH_SHORT).show();
             return true;
         }
         if (btnDateEnd.getText().toString().equals("Datum")) {
-            Toast.makeText(getActivity(), "Není vybrán konečný datum", Toast.LENGTH_SHORT).show();
+            Snackbar.make(requireView(), "Není vybrán konečný datum", Snackbar.LENGTH_SHORT).show();
             return true;
         }
         return false;

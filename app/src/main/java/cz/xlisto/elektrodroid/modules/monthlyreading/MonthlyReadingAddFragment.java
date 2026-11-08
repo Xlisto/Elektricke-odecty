@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -122,7 +123,7 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                     getParentFragmentManager().popBackStack();
                 }
             } else {
-                Toast.makeText(requireActivity(), getResources().getString(R.string.vyberteCenik), Toast.LENGTH_SHORT).show();
+                Snackbar.make(requireView(), R.string.vyberteCenik, Snackbar.LENGTH_SHORT).show();
             }
         });
 
