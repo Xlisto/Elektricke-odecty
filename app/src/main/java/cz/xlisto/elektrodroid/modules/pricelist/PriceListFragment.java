@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
@@ -267,10 +268,22 @@ public class PriceListFragment extends Fragment {
         String area = shpFilter.get(ShPFilter.AREA, ShPFilter.DEFAULT);
         String dateStart = "%";
         String dateEnd = "%";
-        if (!shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).isEmpty())
-            dateStart = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT)).getTimeInMillis());
-        if (!shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).isEmpty())
-            dateEnd = Long.toString(ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT)).getTimeInMillis());
+        if (!shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT).isEmpty()) {
+            Calendar calStart = ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT));
+            calStart.set(Calendar.HOUR_OF_DAY, 0);
+            calStart.set(Calendar.MINUTE, 0);
+            calStart.set(Calendar.SECOND, 0);
+            calStart.set(Calendar.MILLISECOND, 0);
+            dateStart = Long.toString(calStart.getTimeInMillis());
+        }
+        if (!shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).equals("%") && !shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT).isEmpty()) {
+            Calendar calEnd = ViewHelper.parseCalendarFromString(shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT));
+            calEnd.set(Calendar.HOUR_OF_DAY, 23);
+            calEnd.set(Calendar.MINUTE, 59);
+            calEnd.set(Calendar.SECOND, 59);
+            calEnd.set(Calendar.MILLISECOND, 999);
+            dateEnd = Long.toString(calEnd.getTimeInMillis());
+        }
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
         priceListModels = dataPriceListSource.readPriceList(rada, produkt, sazba, company, area, dateStart, dateEnd);

@@ -1,151 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:fillViewport="true">
 
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- Produktová řada -->
         <TextView
             android:id="@+id/tvTitleComparePriceList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/sp_produktova_rada" />
+            android:text="@string/sp_produktova_rada"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spRada"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvTitleComparePriceList"
-            android:layout_alignParentStart="true"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/description_list_price_list"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
+        <!-- Produkt -->
         <TextView
             android:id="@+id/tvProdukt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/spRada"
-            android:text="@string/sp_produkt" />
+            android:text="@string/sp_produkt"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spProdukt"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvProdukt"
-            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/description_list_price_product"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
+        <!-- Sazba -->
         <TextView
             android:id="@+id/tvSazba"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/spProdukt"
-            android:text="@string/sazba_distribuce" />
+            android:text="@string/sazba_distribuce"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spSazba"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvSazba"
-            android:layout_alignParentStart="true"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/description_list_price_sazba"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
+        <!-- Dodavatelé -->
         <TextView
             android:id="@+id/tvDodavatel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/spSazba"
-            android:text="@string/sp_dodavatele" />
+            android:text="@string/sp_dodavatele"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spCompany"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvDodavatel"
-            android:layout_alignParentStart="true"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/description_list_price_company"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
+        <!-- Distribuční území -->
         <TextView
             android:id="@+id/tvUzemi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/spCompany"
-            android:text="@string/sp_distribucni_uzemí" />
+            android:text="@string/sp_distribucni_uzemí"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spArea"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvUzemi"
-            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="12dp"
             android:contentDescription="@string/description_list_price_area"
-            android:minHeight="48dp" />
+            android:minHeight="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
+        <!-- Datum platnosti -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/spArea"
-            android:text="@string/sp_datum_platnosti" />
+            android:layout_marginBottom="4dp"
+            android:text="@string/sp_datum_platnosti"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold" />
+
         <LinearLayout
-            android:id="@+id/llDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:orientation="horizontal"
-            android:layout_below="@+id/tvDate">
+            android:paddingBottom="4dp">
 
-            <Spinner
-                android:popupBackground="?attr/colorSurfaceContainerHigh"
-                android:id="@+id/spDatumStart"
-                android:layout_width="fill_parent"
+            <!-- Datum OD -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDateFrom"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:contentDescription="@string/description_list_price_from"
-                android:minHeight="48dp" />
+                android:hint="@string/datum_od"
+                app:endIconDrawable="@drawable/ic_calendar_24"
+                app:endIconMinSize="36dp"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
 
-            <Spinner
-                android:popupBackground="?attr/colorSurfaceContainerHigh"
-                android:id="@+id/spDatumEnd"
-                android:layout_width="fill_parent"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDateFrom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="true"
+                    android:inputType="none"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="1. 1. 2026" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Datum DO -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDateTo"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:contentDescription="@string/description_list_price_to"
-                android:minHeight="48dp" />
+                android:hint="@string/datum_do"
+                app:endIconDrawable="@drawable/ic_calendar_24"
+                app:endIconMinSize="36dp"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDateTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="true"
+                    android:inputType="none"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="31. 12. 2026" />
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+        <!-- Chybové hlášení neplatného rozsahu dat -->
+        <TextView
+            android:id="@+id/tvDateRangeError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/invalid_date_range"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorError"
+            android:visibility="gone" />
 
-        <Button
+        <!-- Rychlé předvolby -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/rychle_predvolby"
+            android:textAppearance="?attr/textAppearanceTitleSmall"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAllDates"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/vse"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipThisYear"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/tento_rok"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLastYear"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/minuly_rok"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNextYear"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/nasledujici_rok"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tlačítko pro výběr rozsahu v kalendáři -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenRangePicker"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/vybrat_rozsah_v_kalendari"
+            app:icon="@drawable/ic_calendar_24"
+            app:iconGravity="textStart" />
+
+        <!-- Tlačítko pro reset filtrů -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnResetFilter"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentStart="false"
-            android:layout_below="@id/llDate"
-            android:layout_centerHorizontal="true"
-            android:maxWidth="320dp"
+            android:layout_gravity="center_horizontal"
             android:text="@string/filtr_reset" />
 
-    </RelativeLayout>
-
-
-
+    </LinearLayout>
 </ScrollView>

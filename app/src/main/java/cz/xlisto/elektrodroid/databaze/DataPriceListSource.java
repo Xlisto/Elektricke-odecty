@@ -361,16 +361,24 @@ public class DataPriceListSource {
      */
     public ArrayList<PriceListModel> readPriceList(String rada, String produkt, String sazba, String dodavatel, String uzemi, String dateStart, String dateEnd) {
         String selection = "rada LIKE ? AND produkt LIKE ? AND sazba LIKE ? AND firma LIKE ? AND distribuce LIKE ?";
-        if (!dateEnd.equals("%"))
-            selection += " AND platnost_od >= ? AND platnost_do <= ?";
-        else
-            selection += " AND platnost_od LIKE ?";
+        ArrayList<String> argsList = new ArrayList<>(Arrays.asList(rada, produkt, sazba, dodavatel, uzemi));
 
-        ArrayList<String> argsList = new ArrayList<>(Arrays.asList(rada, produkt, sazba, dodavatel, uzemi, dateStart));
-        if (!dateEnd.equals("%"))
+        boolean hasStart = dateStart != null && !dateStart.equals("%") && !dateStart.isEmpty();
+        boolean hasEnd = dateEnd != null && !dateEnd.equals("%") && !dateEnd.isEmpty();
+
+        if (hasStart && hasEnd) {
+            selection += " AND platnost_od <= ? AND (platnost_do >= ? OR platnost_do = 0)";
             argsList.add(dateEnd);
-        String[] args = new String[argsList.size()];
-        args = argsList.toArray(args);
+            argsList.add(dateStart);
+        } else if (hasStart) {
+            selection += " AND (platnost_do >= ? OR platnost_do = 0)";
+            argsList.add(dateStart);
+        } else if (hasEnd) {
+            selection += " AND platnost_od <= ?";
+            argsList.add(dateEnd);
+        }
+
+        String[] args = argsList.toArray(new String[0]);
         return readPriceList(selection, args);
     }
 
