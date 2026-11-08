@@ -94,8 +94,6 @@
     <string name="label_item">Item</string>
     <string name="price_list_item_label">%1$s, %2$s</string>
 
-    <string name="description_date_from">Platnost od</string>
-    <string name="description_date_until">Platnost do</string>
     <string name="validity_price_list_date">Platnost ceníku: %s - %s</string>
 
     <string name="sp_produktova_rada">Produktová řada</string>
@@ -387,10 +385,6 @@
     <string name="dp">DP</string>
     <string name="hint_hdo_code">Zadejte kód povelu</string>
     <string name="total_dph">Celkem s DPH</string>
-
-
-    <string name="btn_date_description_from">Datum začátku faktury</string>
-    <string name="btn_date_description_to">Datum konce faktury</string>
 
 
     <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
