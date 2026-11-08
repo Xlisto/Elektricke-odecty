@@ -257,6 +257,8 @@
     <string name="nasledujici_rok">Následující rok</string>
     <string name="nastavit_platnost">Nastavit platnost</string>
     <string name="date_range_format">%1$s – %2$s</string>
+    <string name="obdobi_faktury">Období faktury</string>
+    <string name="nastavit_datum">Nastavit datum</string>
     <string name="filter_price_list">Filtr ceníků</string>
     <string name="delete_price_list">Smazat nevyužité ceníky</string>
     <string name="options_monthly_readings">Možnosti zobrazení</string>

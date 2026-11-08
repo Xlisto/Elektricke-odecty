@@ -18,14 +18,16 @@ import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
 
+import com.google.android.material.button.MaterialButton;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
+import cz.xlisto.elektrodroid.dialogs.InvoiceDateRangeDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
-import cz.xlisto.elektrodroid.ownview.OwnDatePicker;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPAddEditInvoice;
 import cz.xlisto.elektrodroid.shp.ShPInvoice;
@@ -60,6 +62,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     String selectedTextPrice = "";
     long id = -1L;
     Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
+    MaterialButton btnInvoiceDateRange;
     LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
     String numberInvoice, table;
     CheckBox chIsChangedElectricMeter;
@@ -124,6 +127,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         isShowFragment = true;
         btnDateStart = view.findViewById(R.id.btnDateStart);
         btnDateEnd = view.findViewById(R.id.btnDateEnd);
+        btnInvoiceDateRange = view.findViewById(R.id.btnInvoiceDateRange);
         btnSelectPriceList = view.findViewById(R.id.btnSelectPriceList);
         btnSave = view.findViewById(R.id.btnSaveInvoice);
         btnBack = view.findViewById(R.id.btnBackInvoice);
@@ -134,9 +138,26 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         letOtherServices = view.findViewById(R.id.letOtherServices);
         chIsChangedElectricMeter = view.findViewById(R.id.cbIsChangedElectrometer);
 
-        btnDateStart.setOnClickListener(v -> OwnDatePicker.showDialog(getActivity(), date -> btnDateStart.setText(date), oldDateStart));
+        getParentFragmentManager().setFragmentResultListener(
+                InvoiceDateRangeDialogFragment.INVOICE_DATE_RANGE,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> {
+                    String dateFrom = result.getString(InvoiceDateRangeDialogFragment.DATE_FROM);
+                    String dateTo = result.getString(InvoiceDateRangeDialogFragment.DATE_TO);
+                    if (dateFrom != null && dateTo != null) {
+                        btnDateStart.setText(dateFrom);
+                        btnDateEnd.setText(dateTo);
+                        updateValidityRangeButtonText();
+                    }
+                }
+        );
 
-        btnDateEnd.setOnClickListener(v -> OwnDatePicker.showDialog(getActivity(), date -> btnDateEnd.setText(date), oldDateEnd));
+        View.OnClickListener validityListener = v -> openValidityDialog();
+        if (btnInvoiceDateRange != null) {
+            btnInvoiceDateRange.setOnClickListener(validityListener);
+        }
+        btnDateStart.setOnClickListener(validityListener);
+        btnDateEnd.setOnClickListener(validityListener);
 
         btnSelectPriceList.setOnClickListener(v -> {
             saveSharedPreferences();
@@ -177,6 +198,31 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
         }
 
         autogenerate = new ShPInvoice(requireActivity()).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
+        updateValidityRangeButtonText();
+    }
+
+
+    /**
+     * Otevře dialog pro výběr a nastavení období faktury (OD - DO).
+     */
+    private void openValidityDialog() {
+        InvoiceDateRangeDialogFragment dialog = InvoiceDateRangeDialogFragment.newInstance(
+                btnDateStart.getText().toString(),
+                btnDateEnd.getText().toString()
+        );
+        dialog.show(requireActivity().getSupportFragmentManager(), "InvoiceDateRangeDialogFragment");
+    }
+
+
+    /**
+     * Aktualizuje text tlačítka zobrazení období faktury.
+     */
+    public void updateValidityRangeButtonText() {
+        String fromStr = btnDateStart != null ? btnDateStart.getText().toString() : "";
+        String untilStr = btnDateEnd != null ? btnDateEnd.getText().toString() : "";
+        if (btnInvoiceDateRange != null && !fromStr.isEmpty() && !untilStr.isEmpty() && !fromStr.equalsIgnoreCase("Datum") && !untilStr.equalsIgnoreCase("Datum")) {
+            btnInvoiceDateRange.setText(getString(R.string.date_range_format, fromStr, untilStr));
+        }
     }
 
 

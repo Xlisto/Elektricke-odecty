@@ -59,6 +59,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         if (loadFromDatabase) {
             btnDateStart.setText(ViewHelper.convertLongToDate(invoice.getDateFrom()));
             btnDateEnd.setText(ViewHelper.convertLongToDate(invoice.getDateTo()));
+            updateValidityRangeButtonText();
             letVTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtStart()));
             letNTStart.setDefaultText(DecimalFormatHelper.df2.format(invoice.getNtStart()));
             letVTEnd.setDefaultText(DecimalFormatHelper.df2.format(invoice.getVtEnd()));
