@@ -1,89 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
-
-    <RelativeLayout
-        android:id="@+id/rlItemMonthlyReadingFilterDialogOutFrom"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/shape_monthly_reading_gray">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvFilterMonthlyReadingFrom"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="2dp"
-            android:background="@drawable/shape_item">
-
-            <DatePicker
-                android:id="@+id/dpMonthlyReadingFrom"
-                style="@android:style/Widget.DatePicker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
-
+        <!-- Záhlaví: Ikona a název sloučeno do jednoho TextView s compound drawable -->
         <TextView
-            android:id="@+id/tvFilterMonthlyReadingFrom"
+            android:id="@+id/tvDialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="false"
-            android:text="@string/show_monthly_records_from"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="20sp" />
-    </RelativeLayout>
+            android:layout_gravity="center_horizontal"
+            android:drawablePadding="8dp"
+            android:gravity="center_horizontal"
+            android:paddingBottom="16dp"
+            android:text="@string/obdobi_mesicnich_odectu"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            app:drawableTint="?attr/colorPrimary"
+            app:drawableTopCompat="@drawable/ic_calendar_24" />
 
-    <RelativeLayout
-        android:id="@+id/rlItemMonthlyReadingFilterDialogOutTo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rlItemMonthlyReadingFilterDialogOutFrom"
-        android:layout_margin="10dp"
-        android:background="@drawable/shape_monthly_reading_gray">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <!-- Výběr počátečního a koncového data vedle sebe -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvFilterMonthlyReadingTo"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="2dp"
-            android:background="@drawable/shape_item">
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
 
-            <DatePicker
-                android:id="@+id/dpMonthlyReadingTo"
-                style="@android:style/Widget.DatePicker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <!-- Datum OD -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDateFrom"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="1"
+                android:hint="@string/datum_od"
+                app:endIconDrawable="@drawable/ic_calendar_24"
+                app:endIconMinSize="36dp"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
 
-        </RelativeLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDateFrom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="true"
+                    android:inputType="none"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="1. 11. 2025" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Datum DO -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDateTo"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_weight="1"
+                android:hint="@string/datum_do"
+                app:endIconDrawable="@drawable/ic_calendar_24"
+                app:endIconMinSize="36dp"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDateTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="true"
+                    android:inputType="none"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="8. 11. 2026" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Chybové hlášení při neplatném rozsahu -->
         <TextView
-            android:id="@+id/tvFilterMonthlyReadingTo"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvDateRangeError"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/show_monthly_records_to"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="20sp" />
+            android:layout_marginBottom="8dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorError"
+            android:visibility="gone"
+            tools:text="Počáteční datum nesmí být pozdější než koncové datum." />
 
+        <!-- Nadpis pro rychlé předvolby -->
+        <TextView
+            android:id="@+id/tvQuickPresetsHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/rychle_predvolby"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold" />
 
-    </RelativeLayout>
+        <!-- Rychlé předvolby (Mřížka 2x2) -->
+        <LinearLayout
+            android:id="@+id/llPresetsGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
 
-    <Button
-        android:id="@+id/btnMonthlyReadingFilterReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rlItemMonthlyReadingFilterDialogOutTo"
-        android:layout_centerHorizontal="true"
-        android:text="@string/reser_filter" />
+            <!-- Řádek 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFromNewYear"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/od_noveho_roku"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
 
-</RelativeLayout>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLast6Months"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/poslednich_6_mesicu"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+            </LinearLayout>
+
+            <!-- Řádek 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLastYear"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/posledni_rok"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAllReadings"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/vsechny_odecty"
+                    android:textAlignment="center"
+                    android:textSize="12sp"
+                    app:chipIconVisible="false" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tlačítko pro výběr rozsahu v kalendáři -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenRangePicker"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/vybrat_rozsah_v_kalendari"
+            app:icon="@drawable/ic_calendar_24"
+            app:iconGravity="textStart" />
+
+        <!-- Spodní akční tlačítka -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelFilter"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/zrusit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApplyFilter"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pouzit_filtr"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
