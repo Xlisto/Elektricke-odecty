@@ -4,28 +4,28 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvSpinnerLabel"
         android:contentDescription="@string/button_subscription_point_1" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btn1"
         android:contentDescription="@string/button_subscription_point_2" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btn2"
         android:contentDescription="@string/button_subscription_point_3" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,6 +33,7 @@
         android:contentDescription="@string/button_subscription_point_4" />
 
     <Spinner
+        android:popupBackground="?attr/colorSurfaceContainerHigh"
         android:id="@+id/spSubscriptionPoints"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

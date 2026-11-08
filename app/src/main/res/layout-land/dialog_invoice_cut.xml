@@ -115,7 +115,7 @@
                 android:minWidth="640dp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancel"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                     android:text="@string/zrusit"
                     android:textColor="@color/primary_text_button_color" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCut"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDate"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"

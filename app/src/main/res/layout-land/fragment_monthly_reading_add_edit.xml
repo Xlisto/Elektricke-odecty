@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:padding="12dp">
 
-                        <CheckBox
+                        <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbShowDescription"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                         android:layout_height="wrap_content"
                         android:padding="12dp">
 
-                        <CheckBox
+                        <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbAddBackup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                             android:minHeight="48dp"
                             android:text="@string/addBackup" />
 
-                        <CheckBox
+                        <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbSendBackup"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -216,7 +216,7 @@
                             android:minHeight="48dp"
                             android:text="@string/sendBackup" />
 
-                        <CheckBox
+                        <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbChangeMeter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -225,7 +225,7 @@
                             android:minHeight="48dp"
                             android:text="@string/changeMeter" />
 
-                        <CheckBox
+                        <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbAddPayment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -244,7 +244,7 @@
                             android:labelFor="@id/etDatePayment"
                             android:text="@string/how_date_pay" />
 
-                        <EditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDatePayment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -26,7 +26,7 @@
                 android:background="@drawable/shape_item"
                 android:orientation="vertical">
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbMonday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                     android:minHeight="48dp"
                     android:text="@string/mon" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbTuesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                     android:minHeight="48dp"
                     android:text="@string/tue" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbWednesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                     android:minHeight="48dp"
                     android:text="@string/wed" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbThursday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                     android:minHeight="48dp"
                     android:text="@string/thu" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbFriday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                     android:minHeight="48dp"
                     android:text="@string/fri" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbSaturday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                     android:minHeight="48dp"
                     android:text="@string/sat" />
 
-                <CheckBox
+                <com.google.android.material.checkbox.MaterialCheckBox
                     android:id="@+id/cbSunday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="end">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddEditHdoBack"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
                 android:text="@string/zpet"
                 android:textColor="@color/primary_text_button_color" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddEditHdoSave"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"

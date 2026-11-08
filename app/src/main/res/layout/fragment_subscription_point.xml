@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".modules.subscriptionpoint.SubscriptionPointFragment">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddSubscriptionPoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,6 +52,7 @@
                     android:orientation="vertical">
 
                     <Spinner
+                        android:popupBackground="?attr/colorSurfaceContainerHigh"
                         android:id="@+id/spSubscriptionPoints"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -213,6 +214,7 @@
                     android:orientation="vertical">
 
                     <Spinner
+                        android:popupBackground="?attr/colorSurfaceContainerHigh"
                         android:id="@+id/spSubscriptionPointsNotification"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -231,7 +233,7 @@
                     android:orientation="vertical"
                     android:padding="8dp">
 
-                    <CheckBox
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/chReadingNotificationEnabled"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -239,6 +241,7 @@
                         android:text="@string/reading_notification_enabled" />
 
                     <Spinner
+                        android:popupBackground="?attr/colorSurfaceContainerHigh"
                         android:id="@+id/spinnerReadingNotificationFrequency"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -290,7 +293,7 @@
                             android:gravity="center_vertical"
                             android:text="@string/reading_notification_day_of_month" />
 
-                        <EditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDayOfMonth"
                             android:layout_width="80dp"
                             android:layout_height="wrap_content"
@@ -317,6 +320,7 @@
                             android:textAppearance="?attr/textAppearanceBodySmall" />
 
                         <Spinner
+                            android:popupBackground="?attr/colorSurfaceContainerHigh"
                             android:id="@+id/spinnerDayOfWeek"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

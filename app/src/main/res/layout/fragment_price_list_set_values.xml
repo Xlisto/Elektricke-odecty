@@ -70,7 +70,7 @@
             android:layout_alignParentStart="true"
             android:orientation="horizontal">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/letPhaze"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                 android:text="@string/x" />
 
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/letPower"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -128,7 +128,7 @@
             android:layout_below="@id/tvServices"
             android:orientation="horizontal">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/letServicesL"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -142,7 +142,7 @@
                 app:direction="vertical"
                 app:hintText="@string/_0" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/letServicesR"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

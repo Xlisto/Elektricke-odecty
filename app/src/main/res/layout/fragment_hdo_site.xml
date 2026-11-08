@@ -11,6 +11,7 @@
         android:orientation="horizontal">
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spDistributionArea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,6 +20,7 @@
             android:minHeight="48dp" />
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spDistrict"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +37,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etHdoCode"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -60,6 +62,7 @@
         android:orientation="horizontal">
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,6 +71,7 @@
             android:minHeight="48dp" />
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,6 +80,7 @@
             android:minHeight="48dp" />
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spPB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,7 +116,7 @@
         android:layout_below="@+id/lnCode"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHdoSite"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
@@ -120,7 +125,7 @@
             android:text="@string/load_www"
             android:textColor="@color/primary_text_button_color" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHdoLoadData"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
@@ -137,7 +142,7 @@
         android:layout_below="@+id/lnHdoButtons1"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveHdo"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
@@ -146,7 +151,7 @@
             android:text="@string/save_time"
             android:textColor="@color/primary_text_button_color" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClipData"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
@@ -159,6 +164,7 @@
     <include layout="@layout/layout_progress_bar" />
 
     <Spinner
+        android:popupBackground="?attr/colorSurfaceContainerHigh"
         android:id="@+id/spDateEgd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

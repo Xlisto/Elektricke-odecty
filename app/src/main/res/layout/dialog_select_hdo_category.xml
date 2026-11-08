@@ -5,6 +5,7 @@
     android:padding="10dp">
 
     <Spinner
+        android:popupBackground="?attr/colorSurfaceContainerHigh"
         android:id="@+id/spCodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvExceptionArea" />
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/swExceptionArea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

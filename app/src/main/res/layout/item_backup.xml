@@ -47,7 +47,7 @@
         android:orientation="horizontal"
         android:visibility="gone">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRestoreBackup"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
             android:text="@string/restore"
             android:textColor="@color/primary_text_button_color" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUploadBackup"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
             android:text="@string/google_drive"
             android:textColor="@color/primary_text_button_color" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteBackup"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
         android:singleLine="true"
         android:textAppearance="?attr/textAppearanceTitleLarge" />
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/cbSelectBackup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

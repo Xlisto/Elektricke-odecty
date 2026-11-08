@@ -117,7 +117,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddHdo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,6 +153,7 @@
                 android:padding="6dp">
 
                 <Spinner
+                    android:popupBackground="?attr/colorSurfaceContainerHigh"
                     android:id="@+id/spReleSettings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

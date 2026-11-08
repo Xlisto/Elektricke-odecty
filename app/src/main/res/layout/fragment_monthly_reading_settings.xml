@@ -181,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp">
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/rbDetailed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                             android:paddingStart="8dp"
                             android:text="@string/display_mode_detailed" />
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/rbCondensed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
                             android:paddingStart="8dp"
                             android:text="@string/display_mode_condensed" />
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/rbMinimal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
                         android:textAppearance="?attr/textAppearanceSubtitle2"
                         android:textColor="?android:attr/textColorSecondary" />
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
+                    <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/swRegulPriceSetting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -251,7 +251,7 @@
         android:orientation="horizontal"
         android:paddingTop="8dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelSettings"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="0dp"
@@ -260,7 +260,7 @@
             android:layout_weight="1"
             android:text="@string/zrusit" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnApplySettings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

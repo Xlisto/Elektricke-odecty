@@ -20,6 +20,7 @@
         app:cardCornerRadius="12dp">
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spInvoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +65,7 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

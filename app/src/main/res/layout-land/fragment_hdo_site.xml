@@ -18,6 +18,7 @@
             android:orientation="horizontal">
 
             <Spinner
+                android:popupBackground="?attr/colorSurfaceContainerHigh"
                 android:id="@+id/spDistributionArea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -26,6 +27,7 @@
                 android:entries="@array/distribucni_uzemi_kratke" />
 
             <Spinner
+                android:popupBackground="?attr/colorSurfaceContainerHigh"
                 android:id="@+id/spDistrict"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +44,7 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etHdoCode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -74,6 +76,7 @@
                 android:text="@string/a" />
 
             <Spinner
+                android:popupBackground="?attr/colorSurfaceContainerHigh"
                 android:id="@+id/spA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,6 +91,7 @@
                 android:text="@string/b" />
 
             <Spinner
+                android:popupBackground="?attr/colorSurfaceContainerHigh"
                 android:id="@+id/spB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,6 +106,7 @@
                 android:text="@string/dp" />
 
             <Spinner
+                android:popupBackground="?attr/colorSurfaceContainerHigh"
                 android:id="@+id/spPB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -119,7 +124,7 @@
             android:gravity="center|center_vertical"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHdoSite"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -129,7 +134,7 @@
                 android:text="@string/load_www"
                 android:textColor="@color/primary_text_button_color" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnHdoLoadData"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -150,7 +155,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveHdo"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -160,7 +165,7 @@
                 android:text="@string/save_time"
                 android:textColor="@color/primary_text_button_color" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClipData"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -176,6 +181,7 @@
 
 
         <Spinner
+            android:popupBackground="?attr/colorSurfaceContainerHigh"
             android:id="@+id/spDateEgd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

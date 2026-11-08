@@ -7,7 +7,7 @@
     android:clickable="true"
     android:focusable="true">
 
-    <RadioButton
+    <com.google.android.material.radiobutton.MaterialRadioButton
         android:id="@+id/rbSelectedInvoicePayment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

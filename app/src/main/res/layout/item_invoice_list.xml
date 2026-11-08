@@ -89,7 +89,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditInvoiceList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -98,7 +98,7 @@
                 android:layout_weight="1"
                 android:text="@string/btn_number_invoice" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShowInvoiceList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -117,7 +117,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShowPaymentList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -126,7 +126,7 @@
                 android:layout_weight="1"
                 android:text="@string/btn_advance_payments" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteInvoiceList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -3,7 +3,8 @@ package cz.xlisto.elektrodroid.modules.subscriptionpoint;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.app.TimePickerDialog;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
@@ -742,19 +743,23 @@ public class SubscriptionPointFragment extends Fragment {
             }
         }
 
-        TimePickerDialog dialog = new TimePickerDialog(
-                requireContext(),
-                (view, selectedHour, selectedMinute) -> {
-                    String timeString = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
-                    tvNotificationTime.setText(timeString);
-                    setReadingNotificationTime(itemId, timeString);
-                    MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
-                },
-                hour,
-                minute,
-                true
-        );
-        dialog.show();
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(hour)
+                .setMinute(minute)
+                .setTitleText(R.string.reading_notification_time)
+                .build();
+
+        picker.addOnPositiveButtonClickListener(v -> {
+            int selectedHour = picker.getHour();
+            int selectedMinute = picker.getMinute();
+            String timeString = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+            tvNotificationTime.setText(timeString);
+            setReadingNotificationTime(itemId, timeString);
+            MonthlyReadingReminderScheduler.rescheduleCurrentAsync(requireContext());
+        });
+
+        picker.show(getParentFragmentManager(), "MaterialTimePicker");
     }
 
     private boolean loadReadingNotificationEnabled(long id) {

@@ -77,14 +77,14 @@
                         app:iconGravity="start"
                         tools:text="01.01.2026 – 31.12.2026" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPlatnostOD"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:text="@string/datum_cislem"
                         android:visibility="gone" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPlatnostDO"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
@@ -167,6 +167,7 @@
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <Spinner
+                            android:popupBackground="?attr/colorSurfaceContainerHigh"
                             android:id="@+id/spDistribucniUzemiSeznam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -176,6 +177,7 @@
                             android:minHeight="48dp" />
 
                         <Spinner
+                            android:popupBackground="?attr/colorSurfaceContainerHigh"
                             android:id="@+id/spSazbaSeznam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -412,7 +414,7 @@
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
+                    <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/swJistic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

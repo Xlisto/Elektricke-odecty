@@ -220,7 +220,7 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/swShowTotalConsuption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

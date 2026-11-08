@@ -17,7 +17,7 @@
             android:minWidth="640dp"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnJoinCancel"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
                 android:text="@string/zrusit"
                 android:textColor="@color/primary_text_button_color" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnJoin"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"

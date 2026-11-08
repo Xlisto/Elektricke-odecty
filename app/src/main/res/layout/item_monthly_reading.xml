@@ -229,7 +229,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditMonthlyItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -238,7 +238,7 @@
                 android:layout_weight="1"
                 android:text="@string/edit" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDetailMonthlyItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -247,7 +247,7 @@
                 android:layout_weight="1"
                 android:text="@string/detail" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteMonthlyItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

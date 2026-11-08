@@ -28,21 +28,21 @@
             android:paddingEnd="8dp"
             android:paddingBottom="8dp">
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/chNotificationPermission"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="@string/notifications_enabled" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/chExactAlarmPermission"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
                 android:text="@string/exact_alarms_enabled" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/chUseSetAlarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:text="@string/hdo_use_set_alarm_description"
                 android:textAppearance="?attr/textAppearanceBodySmall" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/chHdoOldReminderEnabled"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
-            <androidx.appcompat.widget.SwitchCompat
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchShowFab"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
                 android:minHeight="48dp"
                 android:text="@string/show_fab_button" />
 
-            <androidx.appcompat.widget.SwitchCompat
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchShowBottomNavigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
                 android:minHeight="48dp"
                 android:text="@string/show_bottom_nav" />
 
-            <androidx.appcompat.widget.SwitchCompat
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchShowLeftNavigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
-            <androidx.appcompat.widget.SwitchCompat
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchAllowMobileData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

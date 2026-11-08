@@ -80,14 +80,14 @@
                         app:iconGravity="start"
                         tools:text="01.01.2025 – 31.12.2025" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDateStart"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:text="@string/datum"
                         android:visibility="gone" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDateEnd"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
@@ -220,7 +220,7 @@
                         app:hintText="@string/_0"
                         app:label="Ostatní služby" />
 
-                    <CheckBox
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/cbIsChangedElectrometer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
