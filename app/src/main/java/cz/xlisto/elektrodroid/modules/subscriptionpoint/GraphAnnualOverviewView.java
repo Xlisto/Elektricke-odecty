@@ -7,20 +7,28 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.customview.widget.ExploreByTouchHelper;
 import androidx.fragment.app.FragmentActivity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 import cz.xlisto.elektrodroid.R;
@@ -32,7 +40,8 @@ import cz.xlisto.elektrodroid.utils.DetectNightMode;
 
 
 /**
- * Vlastní View komponenta pro přehledový kombinovaný graf roční spotřeby a průměrné ceny elektřiny.
+ * Vlastní View
+ * komponenta pro přehledový kombinovaný graf roční spotřeby a průměrné ceny elektřiny.
  */
 public class GraphAnnualOverviewView extends View {
 
@@ -75,7 +84,6 @@ public class GraphAnnualOverviewView extends View {
     private final Path pathTotal = new Path();
     private final Path pathDiamond = new Path();
 
-    private float[] columnXCenters = new float[0];
     private float[] markerXCoords = new float[0];
     private float[] calloutXCoords = new float[0];
     private float[] consTextXCoords = new float[0];
@@ -97,6 +105,14 @@ public class GraphAnnualOverviewView extends View {
     private int rectPoolIndex = 0;
 
     private final RectF tempBoxRect = new RectF();
+
+    private float downX;
+    private float downY;
+    private boolean isTouchSlopExceeded;
+    private int touchSlop;
+    private int selectedYearIndexOnDown = -1;
+    private int selectedIndexForClick = -1;
+    private AnnualGraphAccessibilityHelper accessibilityHelper;
 
 
     /**
@@ -273,6 +289,11 @@ public class GraphAnnualOverviewView extends View {
         paintBgCard = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintBgCard.setColor(bgColor);
         paintBgCard.setStyle(Paint.Style.FILL);
+
+        touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        setFocusable(true);
+        accessibilityHelper = new AnnualGraphAccessibilityHelper(this);
+        ViewCompat.setAccessibilityDelegate(this, accessibilityHelper);
     }
 
 
@@ -289,6 +310,9 @@ public class GraphAnnualOverviewView extends View {
         }
 
         recalculateScales();
+        if (accessibilityHelper != null) {
+            accessibilityHelper.invalidateRoot();
+        }
         invalidate();
     }
 
@@ -364,8 +388,7 @@ public class GraphAnnualOverviewView extends View {
      * @param count Požadovaná kapacita polí
      */
     private void ensureArraysSized(int count) {
-        if (columnXCenters.length < count) {
-            columnXCenters = new float[count];
+        if (markerXCoords.length < count) {
             markerXCoords = new float[count];
             calloutXCoords = new float[count];
             consTextXCoords = new float[count];
@@ -655,7 +678,8 @@ public class GraphAnnualOverviewView extends View {
         float axisGap = DensityUtils.dpToPx(getContext(), 6); // Odstup čísel osy od svislé čáry osy Y
 
         if (showYAxes) {
-            // Názvy jednotek VÝŠE nad mřížkovým polem grafu
+            // Názvy jednotek VÝŠE n
+            // ad mřížkovým polem grafu
             paintText.setTextSize(DensityUtils.dpToPx(getContext(), 11));
             paintText.setFakeBoldText(true);
 
@@ -739,7 +763,6 @@ public class GraphAnnualOverviewView extends View {
 
             // Střed celé roční skupiny pro popisek roku na ose X
             float cxYearGroup = slotLeft + slotWidth / 2f;
-            columnXCenters[i] = cxYearGroup;
 
             double vtVal = isMWh ? (data.consumptionVT() / 1000.0) : data.consumptionVT();
             double ntVal = isMWh ? (data.consumptionNT() / 1000.0) : data.consumptionNT();
@@ -1330,35 +1353,290 @@ public class GraphAnnualOverviewView extends View {
 
 
     @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (accessibilityHelper != null) {
+            accessibilityHelper.invalidateRoot();
+        }
+    }
+
+
+    @Override
+    public boolean dispatchHoverEvent(@NonNull MotionEvent event) {
+        if (accessibilityHelper != null && accessibilityHelper.dispatchHoverEvent(event)) {
+            return true;
+        }
+        return super.dispatchHoverEvent(event);
+    }
+
+
+    @Override
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        if (accessibilityHelper != null && accessibilityHelper.dispatchKeyEvent(event)) {
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        if (accessibilityHelper != null) {
+            accessibilityHelper.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        }
+    }
+
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            performClick();
-            float touchX = event.getX();
-            if (columnXCenters != null && yearDataList != null) {
-                float minDistance = Float.MAX_VALUE;
-                int selectedIndex = -1;
-                for (int i = 0; i < columnXCenters.length; i++) {
-                    float dist = Math.abs(touchX - columnXCenters[i]);
-                    if (dist < minDistance && dist < DensityUtils.dpToPx(getContext(), 35)) {
-                        minDistance = dist;
-                        selectedIndex = i;
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                downX = event.getX();
+                downY = event.getY();
+                isTouchSlopExceeded = false;
+                selectedYearIndexOnDown = findYearIndexAt(downX);
+                if (getParent() != null) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                return true;
+
+            case MotionEvent.ACTION_MOVE:
+                float dx = Math.abs(event.getX() - downX);
+                float dy = Math.abs(event.getY() - downY);
+                if (dx > touchSlop || dy > touchSlop) {
+                    isTouchSlopExceeded = true;
+                    if (dy > dx && getParent() != null) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
                     }
                 }
+                return true;
 
-                if (selectedIndex >= 0 && selectedIndex < yearDataList.size()) {
-                    showDetailDialog(yearDataList.get(selectedIndex));
-                    return true;
+            case MotionEvent.ACTION_UP:
+                if (!isTouchSlopExceeded && selectedYearIndexOnDown >= 0) {
+                    int upIndex = findYearIndexAt(event.getX());
+                    if (upIndex == selectedYearIndexOnDown && upIndex < yearDataList.size()) {
+                        selectedIndexForClick = upIndex;
+                        performClick();
+                    }
                 }
-            }
+                selectedYearIndexOnDown = -1;
+                isTouchSlopExceeded = false;
+                return true;
+
+            case MotionEvent.ACTION_CANCEL:
+                selectedYearIndexOnDown = -1;
+                isTouchSlopExceeded = false;
+                return true;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        if (selectedIndexForClick >= 0 && yearDataList != null && selectedIndexForClick < yearDataList.size()) {
+            showDetailDialog(yearDataList.get(selectedIndexForClick));
+            selectedIndexForClick = -1;
+            return true;
         }
         return true;
     }
 
 
-    @SuppressWarnings("RedundantOverride")
-    @Override
-    public boolean performClick() {
-        return super.performClick();
+    /**
+     * Vyhledá index roku na základě horizontální X souřadnice dotyku.
+     *
+     * @param x X souřadnice v pixelech
+     * @return Index roku v seznamu, nebo -1 pokud nebyl rok nalezen
+     */
+    private int findYearIndexAt(float x) {
+        if (yearDataList == null || yearDataList.isEmpty()) {
+            return -1;
+        }
+        int count = yearDataList.size();
+        float width = chartArea.width();
+        if (width <= 0) {
+            width = getWidth();
+        }
+        if (width <= 0) {
+            return -1;
+        }
+
+        float slotWidth = width / count;
+        for (int i = 0; i < count; i++) {
+            float slotLeft = chartArea.left + i * slotWidth;
+            float slotRight = slotLeft + slotWidth;
+            if (x >= slotLeft && x <= slotRight) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    /**
+     * Vypočítá obdélníkovou oblast virtuálního prvku v rodičovské komponentě pro zadaný index roku.
+     *
+     * @param index Index roku v seznamu
+     * @return Obdélník hranic {@link Rect}
+     */
+    private Rect getYearBoundsInParent(int index) {
+        if (yearDataList == null || yearDataList.isEmpty() || index < 0 || index >= yearDataList.size()) {
+            return new Rect(0, 0, 1, 1);
+        }
+        int count = yearDataList.size();
+        float width = chartArea.width() > 0 ? chartArea.width() : getWidth();
+        if (width <= 0) {
+            width = 1;
+        }
+        float slotWidth = width / count;
+        float slotLeft = chartArea.left + index * slotWidth;
+        float slotRight = slotLeft + slotWidth;
+
+        int left = Math.max(0, (int) slotLeft);
+        int top = Math.max(0, (int) chartArea.top);
+        int right = Math.min(getWidth() > 0 ? getWidth() : (int) slotRight, (int) slotRight);
+        int bottom = getHeight() > 0 ? getHeight() : (int) chartArea.bottom;
+
+        if (right <= left) right = left + 1;
+        if (bottom <= top) bottom = top + 1;
+
+        return new Rect(left, top, right, bottom);
+    }
+
+
+    /**
+     * Vytvoří strukturovaný český textový popis ročních dat pro přístupnost (TalkBack).
+     *
+     * @param data Roční data
+     * @return Český textový popis pro přístupnost
+     */
+    private String buildAccessibilityDescription(AnnualYearData data) {
+        if (data == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getContext().getString(R.string.graph_annual_accessibility_year, data.year()));
+
+        if (data.isCurrentYear() && data.currentYearRangeLabel() != null) {
+            sb.append(" ").append(data.currentYearRangeLabel());
+        }
+
+        if (data.isEstimated()) {
+            sb.append(" ").append(getContext().getString(R.string.graph_annual_accessibility_estimated));
+        }
+        sb.append(". ");
+
+        if (data.getTotalConsumption() > 0 || data.fixedCostTotal() > 0 || data.avgPriceTotal() > 0) {
+            String unitStr = getContext().getString(isMWh ? R.string.graph_annual_accessibility_unit_mwh : R.string.graph_annual_accessibility_unit_kwh);
+            double factor = isMWh ? 1000.0 : 1.0;
+
+            String totalConsStr = DecimalFormatHelper.df1.format(data.getTotalConsumption() / factor);
+            sb.append(getContext().getString(R.string.graph_annual_accessibility_total_consumption, totalConsStr, unitStr)).append(" ");
+
+            if (isDualTariff) {
+                if (data.consumptionVT() > 0) {
+                    String vtConsStr = DecimalFormatHelper.df1.format(data.consumptionVT() / factor);
+                    sb.append(getContext().getString(R.string.graph_annual_accessibility_vt_consumption, vtConsStr, unitStr)).append(" ");
+                }
+                if (data.consumptionNT() > 0) {
+                    String ntConsStr = DecimalFormatHelper.df1.format(data.consumptionNT() / factor);
+                    sb.append(getContext().getString(R.string.graph_annual_accessibility_nt_consumption, ntConsStr, unitStr)).append(" ");
+                }
+            }
+
+            if (data.avgMonthlyFixedCost() > 0) {
+                String fixedStr = DecimalFormatHelper.df2.format(data.avgMonthlyFixedCost());
+                sb.append(getContext().getString(R.string.graph_annual_accessibility_fixed_cost, fixedStr)).append(" ");
+            }
+
+            if (data.avgPriceTotal() > 0) {
+                String priceTotalStr = DecimalFormatHelper.df2.format(data.avgPriceTotal());
+                sb.append(getContext().getString(R.string.graph_annual_accessibility_avg_price, priceTotalStr)).append(" ");
+            }
+
+            if (isDualTariff) {
+                if (data.avgPriceVT() > 0) {
+                    String priceVtStr = DecimalFormatHelper.df2.format(data.avgPriceVT());
+                    sb.append(getContext().getString(R.string.graph_annual_accessibility_avg_price_vt, priceVtStr)).append(" ");
+                }
+                if (data.avgPriceNT() > 0) {
+                    String priceNtStr = DecimalFormatHelper.df2.format(data.avgPriceNT());
+                    sb.append(getContext().getString(R.string.graph_annual_accessibility_avg_price_nt, priceNtStr)).append(" ");
+                }
+            }
+        } else {
+            sb.append(getContext().getString(R.string.no_data_available));
+        }
+
+        return sb.toString().trim();
+    }
+
+
+    /**
+     * Pomocná třída pro přístupnost (TalkBack) virtuálních uzlů jednotlivých roků v grafu.
+     */
+    private class AnnualGraphAccessibilityHelper extends ExploreByTouchHelper {
+
+        /**
+         * Vytvoří novou instanci pomocné třídy přístupnosti.
+         *
+         * @param host Vlastní view komponenta
+         */
+        public AnnualGraphAccessibilityHelper(@NonNull View host) {
+            super(host);
+        }
+
+
+        @Override
+        protected int getVirtualViewAt(float x, float y) {
+            int index = findYearIndexAt(x);
+            return index >= 0 ? index : INVALID_ID;
+        }
+
+
+        @Override
+        protected void getVisibleVirtualViews(List<Integer> virtualViewIds) {
+            if (yearDataList == null) return;
+            for (int i = 0; i < yearDataList.size(); i++) {
+                virtualViewIds.add(i);
+            }
+        }
+
+
+        @SuppressWarnings("deprecation")
+        @Override
+        protected void onPopulateNodeForVirtualView(int virtualViewId, @NonNull AccessibilityNodeInfoCompat node) {
+            if (yearDataList == null || virtualViewId < 0 || virtualViewId >= yearDataList.size()) {
+                node.setContentDescription("");
+                node.setBoundsInParent(new Rect(0, 0, 1, 1));
+                return;
+            }
+
+            AnnualYearData data = yearDataList.get(virtualViewId);
+            node.setContentDescription(buildAccessibilityDescription(data));
+            node.setBoundsInParent(getYearBoundsInParent(virtualViewId));
+            node.setClickable(true);
+            node.setFocusable(true);
+            node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK);
+        }
+
+
+        @Override
+        protected boolean onPerformActionForVirtualView(int virtualViewId, int action, @Nullable Bundle arguments) {
+            if (action == AccessibilityNodeInfoCompat.ACTION_CLICK) {
+                if (yearDataList != null && virtualViewId >= 0 && virtualViewId < yearDataList.size()) {
+                    showDetailDialog(yearDataList.get(virtualViewId));
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
 

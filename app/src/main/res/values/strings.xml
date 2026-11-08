@@ -258,6 +258,17 @@
     <string name="other_options">Další možnosti</string>
     <string name="consider_cap_2023">Zohlednit zastropování cen v roce 2023</string>
     <string name="btn_apply">POUŽÍT</string>
+    <string name="graph_annual_accessibility_year">Rok %1$d</string>
+    <string name="graph_annual_accessibility_estimated">odhad</string>
+    <string name="graph_annual_accessibility_total_consumption">Celková spotřeba %1$s %2$s.</string>
+    <string name="graph_annual_accessibility_vt_consumption">Vysoký tarif %1$s %2$s.</string>
+    <string name="graph_annual_accessibility_nt_consumption">Nízký tarif %1$s %2$s.</string>
+    <string name="graph_annual_accessibility_fixed_cost">Fixní měsíční náklady %1$s korun za měsíc.</string>
+    <string name="graph_annual_accessibility_avg_price">Průměrná cena celkem %1$s korun za megawatthodinu.</string>
+    <string name="graph_annual_accessibility_avg_price_vt">Průměrná cena vysokého tarifu %1$s korun za megawatthodinu.</string>
+    <string name="graph_annual_accessibility_avg_price_nt">Průměrná cena nízkého tarifu %1$s korun za megawatthodinu.</string>
+    <string name="graph_annual_accessibility_unit_mwh">megawatthodiny</string>
+    <string name="graph_annual_accessibility_unit_kwh">kilowatthodiny</string>
     <string name="add_nem_monthly_reading">Přidat nové měření</string>
     <string name="mon">PO</string>
     <string name="tue">ÚT</string>
