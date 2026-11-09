@@ -1,222 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/item_price_list"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardPriceListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp"
-    android:layout_marginTop="2dp"
-    android:background="@drawable/shape_monthly_reading_gray"
-    android:orientation="vertical">
+    android:layout_marginStart="6dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginEnd="6dp"
+    android:layout_marginBottom="3dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvProduktovaRada"
-        android:background="@drawable/shape_item"
-        android:gravity="start">
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <GridLayout
-            android:id="@+id/grid_item_price_list"
+        <!-- Line 1 & Line 2: Checkbox + Title & Subtitle -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvFirma"
-            android:columnCount="3"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="0dp"
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbPriceList"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
-                android:singleLine="false"
-                android:text="@string/kwh_vt"
-                android:textAlignment="viewStart"
-                android:textStyle="bold" />
+                android:layout_marginEnd="6dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="5dp"
-                android:singleLine="false"
-                android:text="@string/kwh_nt"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
+                <!-- Line 1: Název ceníku (max 2 řádky, výraznější typografie) -->
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold"
+                    tools:text="Elektřina na neurčito - Standard" />
+
+                <!-- Line 2: Období platnosti + doplňující údaje dle filtru -->
+                <TextView
+                    android:id="@+id/tvSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="01.01.2024 – 31.12.2024 • ČEZ Prodej • EG.D • D26d" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Oddělovač před cenovými údaji -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="6dp"
+            android:background="?attr/colorOutlineVariant" />
+
+        <!-- Line 3: Cenové údaje ve 3 zarovnaných sloupcích (VT, NT, Měsíc) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <!-- Sloupec 1: VT -->
+            <LinearLayout
+                android:id="@+id/containerVT"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kwh_vt"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOutline"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPriceVT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="2 500,00 Kč" />
+
+                <TextView
+                    android:id="@+id/tvPriceVTRegul"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorSecondary"
+                    android:visibility="gone"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="+ 1 200,00 Kč"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Sloupec 2: NT -->
+            <LinearLayout
+                android:id="@+id/containerNT"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kwh_nt"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOutline"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPriceNT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="1 800,00 Kč" />
+
+                <TextView
+                    android:id="@+id/tvPriceNTRegul"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorSecondary"
+                    android:visibility="gone"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="+ 400,00 Kč"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- Sloupec 3: Měsíc (mírně větší váha pro delší text "s DPH") -->
+            <LinearLayout
+                android:id="@+id/containerMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.3"
                 android:gravity="end"
-                android:singleLine="false"
-                android:text="@string/month"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvCenaVT"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
-                android:singleLine="false"
-                android:textAlignment="viewStart" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="@string/month"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?attr/colorOutline"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvCenaNT"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="5dp"
-                android:singleLine="false" />
+                <TextView
+                    android:id="@+id/tvPriceMonth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="120,00 Kč s DPH" />
 
-            <TextView
-                android:id="@+id/tvPayment"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
-                android:gravity="end"
-                android:singleLine="false" />
+                <TextView
+                    android:id="@+id/tvPriceMonthRegul"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorSecondary"
+                    android:visibility="gone"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeStepGranularity="1sp"
+                    app:autoSizeTextType="uniform"
+                    tools:text="+ 50,00 Kč"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvCenaVTRegul"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
-                android:singleLine="false"
-                android:textAlignment="viewStart" />
+        <!-- Poznámky k regulované ceně -->
+        <TextView
+            android:id="@+id/tvNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?attr/colorSecondary"
+            android:visibility="gone"
+            tools:text="Obsahuje regulované ceny pro rok 2024" />
 
-            <TextView
-                android:id="@+id/tvCenaNTRegul"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="5dp"
-                android:singleLine="false" />
-
-            <TextView
-                android:id="@+id/tvCenaMesicRegul"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="2dp"
-                android:gravity="end"
-                android:singleLine="false"
-                android:text="@string/jednotkova_cena" />
-        </GridLayout>
-
+        <!-- Rozbalovací akční tlačítka v běžném režimu -->
         <LinearLayout
             android:id="@+id/lnButtonsPriceListItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvPoznamkaItemPriceList"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditPriceListItem"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:text="@string/edit" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDetailPriceListItem"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
                 android:layout_weight="1"
                 android:text="@string/label_price_detail" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeletePriceListItem"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="@string/delete" />
+                android:text="@string/delete"
+                android:textColor="?attr/colorError"
+                app:strokeColor="?attr/colorError" />
         </LinearLayout>
-
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/rbPriceList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tvProdukt"
-            android:clickable="false"
-            android:focusable="false" />
-
-        <TextView
-            android:id="@+id/tvFirma"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvProdukt"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/tvSazba"
-            android:singleLine="false"
-            android:text="@string/dodavatel" />
-
-        <TextView
-            android:id="@+id/tvProdukt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentStart="false"
-            android:layout_below="@id/tvPlatnostCeniku"
-            android:layout_toEndOf="@id/rbPriceList"
-            android:gravity="start"
-            android:text="@string/sazba_distribuce"
-            android:textAppearance="?attr/textAppearanceTitleLarge" />
-
-        <TextView
-            android:id="@+id/tvPlatnostCeniku"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_centerHorizontal="true"
-            android:text="@string/platnost_cenik" />
-
-        <TextView
-            android:id="@+id/tvPoznamkaItemPriceList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/grid_item_price_list"
-            android:layout_marginTop="2dp" />
-
-        <TextView
-            android:id="@+id/tvSazba"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:layout_below="@id/tvProdukt"
-            android:layout_marginTop="10dp"
-            android:text="@string/sazba_distribuce" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/tvProduktovaRada"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/produktova_rada"
-        android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-
-
-</RelativeLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

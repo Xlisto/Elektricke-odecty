@@ -1,43 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:contentDescription="@string/description_price_list"
-    android:padding="10dp"
+    android:padding="8dp"
     tools:context="cz.xlisto.elektrodroid.MainActivity">
 
+    <!-- Kompaktní horní informační panel a ovládání výběru -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTopInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="6dp"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:strokeColor="?attr/colorOutlineVariant"
+        app:strokeWidth="1dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvPocetMist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Zobrazeno 8 z 256 ceníků" />
+
+            <!-- Lišta akcí v režimu vícenásobného výběru -->
+            <LinearLayout
+                android:id="@+id/containerSelectionActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tvSelectionCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorPrimary"
+                    tools:text="Vybráno: 3 ceníky" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClearSelection"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/zrusit_vyber"
+                    android:textColor="?attr/colorError" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompareSelected"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/porovnat" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Spodní tlačítka pro přidání a zpět -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddPriceList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tvPocetMist"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:text="@string/add_monthly_price_list" />
 
-    <TextView
-        android:id="@+id/tvPocetMist"
-        android:layout_width="match_parent"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="5dp"
-        android:background="@android:color/darker_gray"
-        android:elevation="6dp"
-        android:gravity="center"
-        android:padding="5dp"
-        android:textAlignment="center"
-        android:textColor="@color/black" />
+        android:layout_alignParentEnd="true"
+        android:text="@string/zpet" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/tvPocetMist"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentTop="false"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_gravity="bottom|end"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
@@ -47,25 +107,16 @@
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/tvPocetMist"
-        android:layout_alignParentEnd="true"
-        android:text="@string/zpet" />
-
+    <!-- RecyclerView zabírá veškerý zbývající prostor mezi horním barenem a spodními tlačítky -->
     <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
         android:id="@+id/rv_price_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/btnBack"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@id/cardTopInfo"
         android:contentDescription="@string/description_price_list"
         android:focusableInTouchMode="false"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:scrollbars="vertical" />
-
 
 </RelativeLayout>

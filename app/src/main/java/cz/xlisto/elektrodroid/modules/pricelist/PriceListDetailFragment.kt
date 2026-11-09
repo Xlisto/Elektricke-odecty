@@ -1,320 +1,324 @@
-package cz.xlisto.elektrodroid.modules.pricelist;
+package cz.xlisto.elektrodroid.modules.pricelist
 
-
-import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
-
-import java.util.Calendar;
-
-import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
-import cz.xlisto.elektrodroid.models.PriceListModel;
-import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
-import cz.xlisto.elektrodroid.ownview.LabelPriceDetail;
-import cz.xlisto.elektrodroid.ownview.ViewHelper;
-import cz.xlisto.elektrodroid.utils.DetectScreenMode;
-
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import cz.xlisto.elektrodroid.R
+import cz.xlisto.elektrodroid.databaze.DataPriceListSource
+import cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2
+import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
+import cz.xlisto.elektrodroid.ownview.LabelPriceDetail
+import cz.xlisto.elektrodroid.ownview.ViewHelper
+import cz.xlisto.elektrodroid.utils.DetectScreenMode
+import java.util.Calendar
 
 /**
- * Fragment pro zobrazení detailů ceníku.
+ * Fragment pro zobrazení detailů ceníku elektřiny.
  */
-public class PriceListDetailFragment extends Fragment {
+class PriceListDetailFragment : Fragment() {
 
-    public final static String PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment";
-    public final static String PRICE_LIST_ID = "price_list_id";
-    private LabelPriceDetail ldnDatum;
-    private LabelPriceDetail ldnRada, ldnProdukt, ldnSazba, ldnDodavatel, ldnUzemi;
-    private LabelPriceDetail ldnVTDodavka, ldnNTDodavka, ldnMesPlat;
-    private LabelPriceDetail ldnVTDistribuce, ldnNTDistribuce;
-    private LabelPriceDetail ldnJ0, ldnJ1, ldnJ2, ldnJ3, ldnJ4, ldnJ5, ldnJ6, ldnJ7, ldnJ8, ldnJ9, ldnJ10, ldnJ11, ldnJ12, ldnJ13, ldnJ14;
-    private LabelPriceDetail ldnSystemSluzby, ldnOTE, ldnPOZE1, ldnPOZE2;
-    private LabelPriceDetail ldnDan, ldnDPH;
-    private TextView tvPoznamka, tvPoznamkaVT, tvPoznamkaNT, tvPoznamkaPlat, tvPoznamkaPOZE1, tvPoznamkaPOZE2, tvPoznamkaOTE;
-    private static final String PRICE_ID = "price_list_id";
-    private static final String SHOW_IN_FRAGMENT = "show_in_fragment";
-    private long price_id;
-    private boolean showInFragment;
+    companion object {
+        const val PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment"
+        const val PRICE_LIST_ID = "price_list_id"
+        private const val PRICE_ID = "price_list_id"
+        private const val SHOW_IN_FRAGMENT = "show_in_fragment"
 
+        @JvmStatic
+        fun newInstance(priceListId: Long): PriceListDetailFragment {
+            return newInstance(priceListId, false)
+        }
 
-    /**
-     * Konstruktor třídy PriceListDetailFragment.
-     * Tento konstruktor je vyžadován a musí být veřejný a prázdný.
-     */
-    public PriceListDetailFragment() {
-        // Required empty public constructor
-    }
-
-
-    /**
-     * Tato metoda vytvoří novou instanci tohoto fragmentu s definovaným ID ceníku.
-     *
-     * @param priceListId ID ceníku, který má být načten.
-     * @return Nová instance fragmentu PriceListDetailFragment.
-     */
-    public static PriceListDetailFragment newInstance(long priceListId) {
-        return newInstance(priceListId, false);
-    }
-
-
-    /**
-     * Vytvoří novou instanci fragmentu PriceListDetailFragment s definovanými parametry.
-     *
-     * @param priceListId    ID ceníku, který má být načten.
-     * @param showInFragment Určuje, zda se má fragment zobrazit v rámci jiného fragmentu.
-     * @return Nová instance fragmentu PriceListDetailFragment.
-     */
-    public static PriceListDetailFragment newInstance(long priceListId, boolean showInFragment) {
-        PriceListDetailFragment fragment = new PriceListDetailFragment();
-        Bundle args = new Bundle();
-        args.putLong(PRICE_ID, priceListId);
-        args.putBoolean(SHOW_IN_FRAGMENT, showInFragment);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            price_id = getArguments().getLong(PRICE_ID);
-            showInFragment = getArguments().getBoolean(SHOW_IN_FRAGMENT);
+        @JvmStatic
+        fun newInstance(priceListId: Long, showInFragment: Boolean): PriceListDetailFragment {
+            val fragment = PriceListDetailFragment()
+            val args = Bundle()
+            args.putLong(PRICE_ID, priceListId)
+            args.putBoolean(SHOW_IN_FRAGMENT, showInFragment)
+            fragment.arguments = args
+            return fragment
         }
     }
 
+    private lateinit var ldnDatum: LabelPriceDetail
+    private lateinit var ldnRada: LabelPriceDetail
+    private lateinit var ldnProdukt: LabelPriceDetail
+    private lateinit var ldnSazba: LabelPriceDetail
+    private lateinit var ldnDodavatel: LabelPriceDetail
+    private lateinit var ldnUzemi: LabelPriceDetail
+    private lateinit var ldnVTDodavka: LabelPriceDetail
+    private lateinit var ldnNTDodavka: LabelPriceDetail
+    private lateinit var ldnMesPlat: LabelPriceDetail
+    private lateinit var ldnVTDistribuce: LabelPriceDetail
+    private lateinit var ldnNTDistribuce: LabelPriceDetail
+    private lateinit var ldnJ0: LabelPriceDetail
+    private lateinit var ldnJ1: LabelPriceDetail
+    private lateinit var ldnJ2: LabelPriceDetail
+    private lateinit var ldnJ3: LabelPriceDetail
+    private lateinit var ldnJ4: LabelPriceDetail
+    private lateinit var ldnJ5: LabelPriceDetail
+    private lateinit var ldnJ6: LabelPriceDetail
+    private lateinit var ldnJ7: LabelPriceDetail
+    private lateinit var ldnJ8: LabelPriceDetail
+    private lateinit var ldnJ9: LabelPriceDetail
+    private lateinit var ldnJ10: LabelPriceDetail
+    private lateinit var ldnJ11: LabelPriceDetail
+    private lateinit var ldnJ12: LabelPriceDetail
+    private lateinit var ldnJ13: LabelPriceDetail
+    private lateinit var ldnJ14: LabelPriceDetail
+    private lateinit var ldnSystemSluzby: LabelPriceDetail
+    private lateinit var ldnOTE: LabelPriceDetail
+    private lateinit var ldnPOZE1: LabelPriceDetail
+    private lateinit var ldnPOZE2: LabelPriceDetail
+    private lateinit var ldnDan: LabelPriceDetail
+    private lateinit var ldnDPH: LabelPriceDetail
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_price_list_detail, container, false);
+    private lateinit var tvPoznamka: TextView
+    private lateinit var tvPoznamkaVT: TextView
+    private lateinit var tvPoznamkaNT: TextView
+    private lateinit var tvPoznamkaPlat: TextView
+    private lateinit var tvPoznamkaPOZE1: TextView
+    private lateinit var tvPoznamkaPOZE2: TextView
+    private lateinit var tvPoznamkaOTE: TextView
+
+    private var priceId: Long = -1L
+    private var showInFragment = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            priceId = it.getLong(PRICE_ID)
+            showInFragment = it.getBoolean(SHOW_IN_FRAGMENT)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        var v = inflater.inflate(R.layout.fragment_price_list_detail, container, false)
         if (showInFragment && DetectScreenMode.isLandscape(requireActivity())) {
-            v = inflater.inflate(R.layout.fragment_price_list_detail_infragment, container, false);
+            v = inflater.inflate(R.layout.fragment_price_list_detail_infragment, container, false)
         }
 
-        ldnDatum = v.findViewById(R.id.ldnPlatnost);
+        ldnDatum = v.findViewById(R.id.ldnPlatnost)
+        ldnRada = v.findViewById(R.id.ldnRada)
+        ldnProdukt = v.findViewById(R.id.ldnProdukt)
+        ldnSazba = v.findViewById(R.id.ldnSazba)
+        ldnDodavatel = v.findViewById(R.id.ldnDodavatel)
+        ldnUzemi = v.findViewById(R.id.ldnUzemi)
+        tvPoznamka = v.findViewById(R.id.tvPoznamkaDetail)
 
-        ldnRada = v.findViewById(R.id.ldnRada);
-        ldnProdukt = v.findViewById(R.id.ldnProdukt);
-        ldnSazba = v.findViewById(R.id.ldnSazba);
-        ldnDodavatel = v.findViewById(R.id.ldnDodavatel);
-        ldnUzemi = v.findViewById(R.id.ldnUzemi);
-        tvPoznamka = v.findViewById(R.id.tvPoznamkaDetail);
+        ldnVTDodavka = v.findViewById(R.id.ldn_VT_dodavka)
+        ldnNTDodavka = v.findViewById(R.id.ldn_NT_dodavka)
+        ldnMesPlat = v.findViewById(R.id.ldn_staly_plat)
+        tvPoznamkaVT = v.findViewById(R.id.tvPoznamkaVT)
+        tvPoznamkaNT = v.findViewById(R.id.tvPoznamkaNT)
+        tvPoznamkaPlat = v.findViewById(R.id.tvPoznamkaPlat)
+        tvPoznamkaPOZE1 = v.findViewById(R.id.tvPoznamkaPOZE1)
+        tvPoznamkaPOZE2 = v.findViewById(R.id.tvPoznamkaPOZE2)
+        tvPoznamkaOTE = v.findViewById(R.id.tvPoznamkaOTE)
 
-        ldnVTDodavka = v.findViewById(R.id.ldn_VT_dodavka);
-        ldnNTDodavka = v.findViewById(R.id.ldn_NT_dodavka);
-        ldnMesPlat = v.findViewById(R.id.ldn_staly_plat);
-        tvPoznamkaVT = v.findViewById(R.id.tvPoznamkaVT);
-        tvPoznamkaNT = v.findViewById(R.id.tvPoznamkaNT);
-        tvPoznamkaPlat = v.findViewById(R.id.tvPoznamkaPlat);
-        tvPoznamkaPOZE1 = v.findViewById(R.id.tvPoznamkaPOZE1);
-        tvPoznamkaPOZE2 = v.findViewById(R.id.tvPoznamkaPOZE2);
-        tvPoznamkaOTE = v.findViewById(R.id.tvPoznamkaOTE);
+        ldnVTDistribuce = v.findViewById(R.id.ldn_VT_distribuce)
+        ldnNTDistribuce = v.findViewById(R.id.ldn_NT_distribuce)
 
-        ldnVTDistribuce = v.findViewById(R.id.ldn_VT_distribuce);
-        ldnNTDistribuce = v.findViewById(R.id.ldn_NT_distribuce);
+        ldnJ0 = v.findViewById(R.id.ldn_J0)
+        ldnJ1 = v.findViewById(R.id.ldn_J1)
+        ldnJ2 = v.findViewById(R.id.ldn_J2)
+        ldnJ3 = v.findViewById(R.id.ldn_J3)
+        ldnJ4 = v.findViewById(R.id.ldn_J4)
+        ldnJ5 = v.findViewById(R.id.ldn_J5)
+        ldnJ6 = v.findViewById(R.id.ldn_J6)
+        ldnJ7 = v.findViewById(R.id.ldn_J7)
+        ldnJ8 = v.findViewById(R.id.ldn_J8)
+        ldnJ9 = v.findViewById(R.id.ldn_J9)
+        ldnJ10 = v.findViewById(R.id.ldn_J10)
+        ldnJ11 = v.findViewById(R.id.ldn_J11)
+        ldnJ12 = v.findViewById(R.id.ldn_J12)
+        ldnJ13 = v.findViewById(R.id.ldn_J13)
+        ldnJ14 = v.findViewById(R.id.ldn_J14)
 
-        ldnJ0 = v.findViewById(R.id.ldn_J0);
-        ldnJ1 = v.findViewById(R.id.ldn_J1);
-        ldnJ2 = v.findViewById(R.id.ldn_J2);
-        ldnJ3 = v.findViewById(R.id.ldn_J3);
-        ldnJ4 = v.findViewById(R.id.ldn_J4);
-        ldnJ5 = v.findViewById(R.id.ldn_J5);
-        ldnJ6 = v.findViewById(R.id.ldn_J6);
-        ldnJ7 = v.findViewById(R.id.ldn_J7);
-        ldnJ8 = v.findViewById(R.id.ldn_J8);
-        ldnJ9 = v.findViewById(R.id.ldn_J9);
-        ldnJ10 = v.findViewById(R.id.ldn_J10);
-        ldnJ11 = v.findViewById(R.id.ldn_J11);
-        ldnJ12 = v.findViewById(R.id.ldn_J12);
-        ldnJ13 = v.findViewById(R.id.ldn_J13);
-        ldnJ14 = v.findViewById(R.id.ldn_J14);
+        ldnSystemSluzby = v.findViewById(R.id.ldn_systemove_sluzby)
+        ldnOTE = v.findViewById(R.id.ldn_OTE)
+        ldnPOZE1 = v.findViewById(R.id.ldn_POZE1)
+        ldnPOZE2 = v.findViewById(R.id.ldn_POZE2)
 
-        ldnSystemSluzby = v.findViewById(R.id.ldn_systemove_sluzby);
-        ldnOTE = v.findViewById(R.id.ldn_OTE);
-        ldnPOZE1 = v.findViewById(R.id.ldn_POZE1);
-        ldnPOZE2 = v.findViewById(R.id.ldn_POZE2);
+        ldnDan = v.findViewById(R.id.ldn_dan)
+        ldnDPH = v.findViewById(R.id.ldn_DPH)
 
-        ldnDan = v.findViewById(R.id.ldn_dan);
-        ldnDPH = v.findViewById(R.id.ldn_DPH);
+        loadPrice(priceId)
 
-        loadPrice(price_id);
+        parentFragmentManager.setFragmentResultListener(
+            PRICE_LIST_DETAIL_FRAGMENT,
+            this
+        ) { _, result ->
+            val newPriceId = result.getLong(PRICE_LIST_ID)
+            loadPrice(newPriceId)
+        }
 
-        getParentFragmentManager().setFragmentResultListener(PRICE_LIST_DETAIL_FRAGMENT, this, (requestKey, result) -> {
-            long priceId = result.getLong(PRICE_LIST_ID);
-            loadPrice(priceId);
-        });
-        return v;
+        return v
     }
-
 
     /**
      * Načte a zobrazí detaily ceníku na základě zadaného ID ceníku.
-     *
-     * @param priceId ID ceníku, který má být načten.
      */
-    public void loadPrice(long priceId) {
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(requireActivity());
-        dataPriceListSource.open();
-        PriceListModel priceList = dataPriceListSource.readPrice(priceId);
-        dataPriceListSource.close();
+    fun loadPrice(priceId: Long) {
+        if (priceId <= 0) return
+        this.priceId = priceId
 
-        long dateStart = priceList.getPlatnostOD();
-        long dateEnd = priceList.getPlatnostDO();
+        val dataPriceListSource = DataPriceListSource(requireActivity())
+        dataPriceListSource.open()
+        val priceList = dataPriceListSource.readPrice(priceId)
+        dataPriceListSource.close()
 
-        ldnDatum.setPrice(ViewHelper.convertLongToDate(dateStart) + " - " + ViewHelper.convertLongToDate(dateEnd));
+        if (priceList == null) return
 
-        ldnRada.setPrice(priceList.getRada());
-        ldnProdukt.setPrice(priceList.getProdukt());
-        ldnSazba.setPrice(priceList.getSazba());
-        ldnDodavatel.setPrice(priceList.getFirma());
-        ldnUzemi.setPrice(priceList.getDistribuce());
+        val dateStart = priceList.platnostOD
+        val dateEnd = priceList.platnostDO
 
-        ldnVTDodavka.setPrice(df2.format(priceList.getCenaVT()));
-        ldnNTDodavka.setPrice(df2.format(priceList.getCenaNT()));
-        ldnMesPlat.setPrice(df2.format(priceList.getMesicniPlat()));
+        ldnDatum.setPrice(
+            "${ViewHelper.convertLongToDate(dateStart)} - ${
+                ViewHelper.convertLongToDate(
+                    dateEnd
+                )
+            }"
+        )
 
-        ldnVTDistribuce.setPrice(df2.format(priceList.getDistVT()));
-        ldnNTDistribuce.setPrice(df2.format(priceList.getDistNT()));
+        ldnRada.setPrice(priceList.rada)
+        ldnProdukt.setPrice(priceList.produkt)
+        ldnSazba.setPrice(priceList.sazba)
+        ldnDodavatel.setPrice(priceList.firma)
+        ldnUzemi.setPrice(priceList.distribuce)
 
-        ldnJ0.setPrice(df2.format(priceList.getJ0()));
-        ldnJ1.setPrice(df2.format(priceList.getJ1()));
-        ldnJ2.setPrice(df2.format(priceList.getJ2()));
-        ldnJ3.setPrice(df2.format(priceList.getJ3()));
-        ldnJ4.setPrice(df2.format(priceList.getJ4()));
-        ldnJ5.setPrice(df2.format(priceList.getJ5()));
-        ldnJ6.setPrice(df2.format(priceList.getJ6()));
-        ldnJ7.setPrice(df2.format(priceList.getJ7()));
-        ldnJ8.setPrice(df2.format(priceList.getJ8()));
-        ldnJ9.setPrice(df2.format(priceList.getJ9()));
-        ldnJ10.setPrice(df2.format(priceList.getJ10()));
-        ldnJ11.setPrice(df2.format(priceList.getJ11()));
-        ldnJ12.setPrice(df2.format(priceList.getJ12()));
-        ldnJ13.setPrice(df2.format(priceList.getJ13()));
-        ldnJ14.setPrice(df2.format(priceList.getJ14()));
+        ldnVTDodavka.setPrice(df2.format(priceList.cenaVT))
+        ldnNTDodavka.setPrice(df2.format(priceList.cenaNT))
+        ldnMesPlat.setPrice(df2.format(priceList.mesicniPlat))
 
-        ldnSystemSluzby.setPrice(df2.format(priceList.getSystemSluzby()));
-        ldnOTE.setPrice(df2.format(priceList.getCinnost()));
-        ldnPOZE1.setPrice(df2.format(priceList.getPoze1()));
-        ldnPOZE2.setPrice(df2.format(priceList.getPoze2()));
+        ldnVTDistribuce.setPrice(df2.format(priceList.distVT))
+        ldnNTDistribuce.setPrice(df2.format(priceList.distNT))
 
-        ldnDan.setPrice(df2.format(priceList.getDan()));
-        ldnDPH.setPrice(df2.format(priceList.getDph()));
+        ldnJ0.setPrice(df2.format(priceList.j0))
+        ldnJ1.setPrice(df2.format(priceList.j1))
+        ldnJ2.setPrice(df2.format(priceList.j2))
+        ldnJ3.setPrice(df2.format(priceList.j3))
+        ldnJ4.setPrice(df2.format(priceList.j4))
+        ldnJ5.setPrice(df2.format(priceList.j5))
+        ldnJ6.setPrice(df2.format(priceList.j6))
+        ldnJ7.setPrice(df2.format(priceList.j7))
+        ldnJ8.setPrice(df2.format(priceList.j8))
+        ldnJ9.setPrice(df2.format(priceList.j9))
+        ldnJ10.setPrice(df2.format(priceList.j10))
+        ldnJ11.setPrice(df2.format(priceList.j11))
+        ldnJ12.setPrice(df2.format(priceList.j12))
+        ldnJ13.setPrice(df2.format(priceList.j13))
+        ldnJ14.setPrice(df2.format(priceList.j14))
 
-        //skrytí u NT u jednotarifního ceníku
-        if (priceList.getDistNT() == 0) {
-            ldnNTDistribuce.setVisibility(View.GONE);
-            ldnNTDodavka.setVisibility(View.GONE);
+        ldnSystemSluzby.setPrice(df2.format(priceList.systemSluzby))
+        ldnOTE.setPrice(df2.format(priceList.cinnost))
+        ldnPOZE1.setPrice(df2.format(priceList.poze1))
+        ldnPOZE2.setPrice(df2.format(priceList.poze2))
+
+        ldnDan.setPrice(df2.format(priceList.dan))
+        ldnDPH.setPrice(df2.format(priceList.dph))
+
+        // Skrytí NT u jednotarifního ceníku
+        if (priceList.distNT == 0.0) {
+            ldnNTDistribuce.visibility = View.GONE
+            ldnNTDodavka.visibility = View.GONE
         } else {
-            ldnNTDistribuce.setVisibility(View.VISIBLE);
-            ldnNTDodavka.setVisibility(View.VISIBLE);
+            ldnNTDistribuce.visibility = View.VISIBLE
+            ldnNTDodavka.visibility = View.VISIBLE
         }
 
-        if (priceList.getJ10() == 0) {
-            //méně hodnot jističů
-            ldnJ10.setVisibility(View.GONE);
-            ldnJ11.setVisibility(View.GONE);
-            ldnJ12.setVisibility(View.GONE);
-            ldnJ13.setVisibility(View.GONE);
-            ldnJ14.setVisibility(View.GONE);
-            ldnJ8.setVisibility(View.VISIBLE);
+        if (priceList.j10 == 0.0) {
+            // Méně hodnot jističů
+            ldnJ10.visibility = View.GONE
+            ldnJ11.visibility = View.GONE
+            ldnJ12.visibility = View.GONE
+            ldnJ13.visibility = View.GONE
+            ldnJ14.visibility = View.GONE
+            ldnJ8.visibility = View.VISIBLE
         } else {
-            //vice hodnot jističů
-            ldnJ10.setVisibility(View.VISIBLE);
-            ldnJ11.setVisibility(View.VISIBLE);
-            ldnJ12.setVisibility(View.VISIBLE);
-            ldnJ13.setVisibility(View.VISIBLE);
-            ldnJ14.setVisibility(View.VISIBLE);
-            ldnJ8.setVisibility(View.GONE);
+            // Více hodnot jističů
+            ldnJ10.visibility = View.VISIBLE
+            ldnJ11.visibility = View.VISIBLE
+            ldnJ12.visibility = View.VISIBLE
+            ldnJ13.visibility = View.VISIBLE
+            ldnJ14.visibility = View.VISIBLE
+            ldnJ8.visibility = View.GONE
         }
 
-        Calendar calendar = ViewHelper.parseCalendarFromString(ldnDatum.getPrice());
-        int year = calendar.get(Calendar.YEAR);
+        val calendar = ViewHelper.parseCalendarFromString(ldnDatum.price)
+        val year = calendar.get(Calendar.YEAR)
         if (year < 2016) {
-            ldnOTE.setPrice(df2.format(priceList.getOte()));
-            ldnOTE.setLabel(getResources().getString(R.string.cinnost_ote));
-            ldnOTE.setItem(getResources().getString(R.string.kc_MWh));
-            ldnPOZE2.setPrice(df2.format(priceList.getOze()));
-            ldnPOZE2.setLabel(getResources().getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz));
-            ldnPOZE1.setVisibility(View.GONE);
+            ldnOTE.setPrice(df2.format(priceList.ote))
+            ldnOTE.setLabel(getString(R.string.cinnost_ote))
+            ldnOTE.setItem(getString(R.string.kc_MWh))
+            ldnPOZE2.setPrice(df2.format(priceList.oze))
+            ldnPOZE2.setLabel(getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz))
+            ldnPOZE1.visibility = View.GONE
         }
 
-        //Přenastavení ceníku pro rok 2024, od 1.7. se činnost operátora trhu (OTE) mění na provoz nesíťové infrastruktury
-        //1719784800000 == 1.7.2024
-        if (dateStart >= 1719784800000L) {//1.7.2024 - 31.12.2024
-            ldnOTE.setLabel(getResources().getString(R.string.provoz_nesitove_infrastruktury));
-            ldnOTE.setItem(getResources().getString(R.string.kc_om));
+        // Přenastavení ceníku pro rok 2024 (1719784800000 = 1.7.2024)
+        if (dateStart >= 1719784800000L) {
+            ldnOTE.setLabel(getString(R.string.provoz_nesitove_infrastruktury))
+            ldnOTE.setItem(getString(R.string.kc_om))
         }
 
-        //zobrazení varování, pokud platnost ceníku překrývá s přechodem na provoz nesíťové infrastruktury (1.7.2024) a nové ceny od 1.9.2025
-        long transition2024 = 1719784800000L;//1.7.2024
-        long transition2025 = 1756677600000L;//1.9.2025
+        val transition2024 = 1719784800000L // 1.7.2024
+        val transition2025 = 1756677600000L // 1.9.2025
         if (year == 2024 && dateStart < transition2024 && dateEnd >= transition2024) {
-            tvPoznamkaOTE.setText(getResources().getText(R.string.provoz_nesitove_infrastruktury_poznamka));
-            tvPoznamkaOTE.setVisibility(View.VISIBLE);
+            tvPoznamkaOTE.text = getText(R.string.provoz_nesitove_infrastruktury_poznamka)
+            tvPoznamkaOTE.visibility = View.VISIBLE
         } else if (year == 2025 && dateStart < transition2025 && dateEnd >= transition2025) {
-            tvPoznamkaOTE.setText(getResources().getText(R.string.nova_cena_infrastruktua_poznamka));
-            tvPoznamkaOTE.setVisibility(View.VISIBLE);
+            tvPoznamkaOTE.text = getText(R.string.nova_cena_infrastruktua_poznamka)
+            tvPoznamkaOTE.visibility = View.VISIBLE
         } else {
-            tvPoznamkaOTE.setVisibility(View.GONE);
+            tvPoznamkaOTE.visibility = View.GONE
         }
 
-        //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
-        tvPoznamka.setVisibility(View.GONE);
-        PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, year);
-        String poznamka = priceListRegulBuilder.getNotes(requireActivity());
-        String maxVT = priceListRegulBuilder.getMaxVT();
-        String maxNT = priceListRegulBuilder.getMaxNT();
-        String maxPlat = priceListRegulBuilder.getMaxPlat();
-        String maxPOZE1 = priceListRegulBuilder.getMaxPOZE();
-        String maxPOZE2 = priceListRegulBuilder.getMaxPOZE();
+        // Poznámky a cenové stropy
+        val priceListRegulBuilder = PriceListRegulBuilder(priceList, year)
+        val poznamka = priceListRegulBuilder.getNotes(requireActivity())
+        val maxVT = priceListRegulBuilder.maxVT
+        val maxNT = priceListRegulBuilder.maxNT
+        val maxPlat = priceListRegulBuilder.maxPlat
+        val maxPOZE1 = priceListRegulBuilder.maxPOZE
 
-        if (priceListRegulBuilder.isRegulPrice()) {
-            tvPoznamka.setText(poznamka);
-            tvPoznamka.setVisibility(View.VISIBLE);
-            setPoznamka(tvPoznamkaVT, maxVT);
-            setPoznamka(tvPoznamkaPOZE1, maxPOZE1);
-            setPoznamka(tvPoznamkaPOZE2, maxPOZE2);
+        if (priceListRegulBuilder.isRegulPrice) {
+            tvPoznamka.text = poznamka
+            tvPoznamka.visibility = View.VISIBLE
 
-            tvPoznamkaVT.setVisibility(View.VISIBLE);
-            setPoznamka(tvPoznamkaNT, maxNT);
-
-            //vynechání poznámky NT u jednotarifního ceníku
-            if (priceList.getDistNT() == 0.0) {
-                tvPoznamkaNT.setVisibility(View.GONE);
+            // Zobrazení stropů přímo pod příslušným sloupcem (VT, NT, Měsíční plat)
+            setPoznamka(tvPoznamkaVT, maxVT)
+            setPoznamka(tvPoznamkaNT, maxNT)
+            if (priceList.distNT == 0.0) {
+                tvPoznamkaNT.visibility = View.GONE
             }
-            tvPoznamkaPlat.setVisibility(View.VISIBLE);
-            setPoznamka(tvPoznamkaPlat, maxPlat);
+            setPoznamka(tvPoznamkaPlat, maxPlat)
+
+            // Zrušení POZE se zobrazuje pouze jednou pod sekcí Ostatní služby
+            setPoznamka(tvPoznamkaPOZE1, maxPOZE1)
+            tvPoznamkaPOZE2.visibility = View.GONE
         } else {
-            tvPoznamka.setVisibility(View.GONE);
-            tvPoznamkaVT.setVisibility(View.GONE);
-            tvPoznamkaNT.setVisibility(View.GONE);
-            tvPoznamkaPlat.setVisibility(View.GONE);
-            tvPoznamkaPOZE1.setVisibility(View.GONE);
-            tvPoznamkaPOZE2.setVisibility(View.GONE);
+            tvPoznamka.visibility = View.GONE
+            tvPoznamkaVT.visibility = View.GONE
+            tvPoznamkaNT.visibility = View.GONE
+            tvPoznamkaPlat.visibility = View.GONE
+            tvPoznamkaPOZE1.visibility = View.GONE
+            tvPoznamkaPOZE2.visibility = View.GONE
         }
     }
 
-
-    /**
-     * Nastaví poznámku do zadaného TextView.
-     *
-     * @param tv TextView, do kterého se má poznámka nastavit.
-     * @param s  Poznámka, která se má nastavit do TextView. Pokud je null, TextView se skryje.
-     */
-    private void setPoznamka(TextView tv, String s) {
-        if (s != null) {
-            tv.setVisibility(View.VISIBLE);
-            tv.setText(s);
+    private fun setPoznamka(tv: TextView, s: String?) {
+        if (!s.isNullOrEmpty()) {
+            tv.visibility = View.VISIBLE
+            tv.text = s
         } else {
-            tv.setVisibility(View.GONE);
+            tv.visibility = View.GONE
         }
     }
-
 }

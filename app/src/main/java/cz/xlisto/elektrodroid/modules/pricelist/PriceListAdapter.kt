@@ -1,467 +1,460 @@
-package cz.xlisto.elektrodroid.modules.pricelist;
+package cz.xlisto.elektrodroid.modules.pricelist
 
-
-import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
-import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.transition.TransitionManager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-
-import cz.xlisto.elektrodroid.R;
-import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
-import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
-import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment;
-import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
-import cz.xlisto.elektrodroid.models.PriceListModel;
-import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
-import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
-import cz.xlisto.elektrodroid.ownview.ViewHelper;
-import cz.xlisto.elektrodroid.shp.ShPPriceList;
-import cz.xlisto.elektrodroid.utils.Calculation;
-import cz.xlisto.elektrodroid.utils.FragmentChange;
-import cz.xlisto.elektrodroid.utils.Round;
-
+import android.annotation.SuppressLint
+import android.content.Context
+import android.transition.TransitionManager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.checkbox.MaterialCheckBox
+import cz.xlisto.elektrodroid.R
+import cz.xlisto.elektrodroid.databaze.DataPriceListSource
+import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
+import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment
+import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
+import cz.xlisto.elektrodroid.format.DecimalFormatHelper
+import cz.xlisto.elektrodroid.models.PriceListModel
+import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel
+import cz.xlisto.elektrodroid.ownview.ViewHelper
+import cz.xlisto.elektrodroid.shp.ShPFilter
+import cz.xlisto.elektrodroid.shp.ShPPriceList
+import cz.xlisto.elektrodroid.utils.Calculation
+import cz.xlisto.elektrodroid.utils.FragmentChange
+import cz.xlisto.elektrodroid.utils.Round
 
 /**
- * Adapter RecyclerView pro zobrazení seznamu ceníků.
- * Zajišťuje vykreslení položek, zobrazení ovládacích tlačítek (detail, edit, smazat),
- * výpočet a formátování cen a reakce na kliknutí položek.
+ * Adaptér RecyclerView pro zobrazení a správu položek ceníků podle pravidel Material Design 3.
+ *
+ * Zajišťuje kompaktní trojřádkové rozvržení položek, dynamické skrývání údajů určených aktivními filtry,
+ * vícenásobný výběr položek pomocí checkboxů a správnou manipulaci s regulovanými cenami.
  */
-public class PriceListAdapter extends RecyclerView.Adapter<PriceListAdapter.MyViewHolder> {
+class PriceListAdapter(
+    private var items: ArrayList<PriceListModel>,
+    private val subscriptionPoint: SubscriptionPointModel?,
+    private var isSelectionMode: Boolean,
+    private var idSelectedPriceList: Long,
+    private val onClickItemListener: OnClickItemListener,
+    private val recyclerView: RecyclerView,
+    private val onSelectionChangedListener: OnSelectionChangedListener? = null
+) : RecyclerView.Adapter<PriceListAdapter.MyViewHolder>() {
 
-    public static final String TAG = "PriceListAdapter";
-    public final static String FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList";
-    private final OnClickItemListener onClickItemListener;
-    private final boolean showSelectItem;
-    private long idSelectedPriceList;
-    private final ArrayList<PriceListModel> items;
-    private final SubscriptionPointModel subscriptionPoint;
-    private int showButtons = -1;
-    private final RecyclerView recyclerView;
-    private final ShPPriceList shPPriceList;
-    private final Context context;
-    private long selectedItemId;
-    private int selectedPosition;
+    companion object {
+        const val TAG = "PriceListAdapter"
 
+        @JvmField
+        val FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList"
+    }
 
     /**
-     * ViewHolder pro položku ceníku obsahující odkazy na použité View prvky.
+     * Rozhraní pro posluchače událostí klepnutí na položku ceníku.
      */
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    fun interface OnClickItemListener {
+        fun setClickPriceListListener(priceList: PriceListModel?)
+    }
 
-        RelativeLayout relativeLayout;
-        TextView tvValidityDate, tvSeries, tvProduct, tvRate, tvFirma, tvPriceVT, tvPriceNT, tvPriceMonth,
-                tvNote, tvPriceVTRegul, tvPriceNTRegul, tvPriceMonthRegul;
-        RadioButton rbSelectItem;
-        LinearLayout lnButtons;
-        GridLayout gridLayout;
-        Button btnEdit, btnDelete, btnDetail;
+    /**
+     * Rozhraní pro posluchače změny vícenásobného výběru ceníků.
+     */
+    fun interface OnSelectionChangedListener {
+        fun onSelectionChanged(selectedIds: Set<Long>)
+    }
 
+    /**
+     * ViewHolder pro položku ceníku.
+     */
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val cardView: MaterialCardView = itemView.findViewById(R.id.cardPriceListItem)
+        val cbSelectItem: MaterialCheckBox = itemView.findViewById(R.id.cbPriceList)
+        val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
+        val tvSubtitle: TextView = itemView.findViewById(R.id.tvSubtitle)
+        val tvPriceVT: TextView = itemView.findViewById(R.id.tvPriceVT)
+        val tvPriceNT: TextView = itemView.findViewById(R.id.tvPriceNT)
+        val tvPriceMonth: TextView = itemView.findViewById(R.id.tvPriceMonth)
+        val tvPriceVTRegul: TextView = itemView.findViewById(R.id.tvPriceVTRegul)
+        val tvPriceNTRegul: TextView = itemView.findViewById(R.id.tvPriceNTRegul)
+        val tvPriceMonthRegul: TextView = itemView.findViewById(R.id.tvPriceMonthRegul)
+        val tvNote: TextView = itemView.findViewById(R.id.tvNote)
+        val lnButtons: LinearLayout = itemView.findViewById(R.id.lnButtonsPriceListItem)
+        val btnEdit: Button = itemView.findViewById(R.id.btnEditPriceListItem)
+        val btnDelete: Button = itemView.findViewById(R.id.btnDeletePriceListItem)
+        val btnDetail: Button = itemView.findViewById(R.id.btnDetailPriceListItem)
+    }
 
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
+    private val context: Context = recyclerView.context
+    private val shPPriceList = ShPPriceList(context)
+    private val shPFilter = ShPFilter(context)
+
+    /** Množina vybraných ID ceníků udržená napříč filtrací. */
+    val selectedIds: MutableSet<Long> = HashSet()
+
+    private var showButtons = -1
+    private var selectedItemId = -1L
+    private var selectedPosition = -1
+
+    init {
+        setHasStableIds(true)
+        if (idSelectedPriceList > 0) {
+            selectedIds.add(idSelectedPriceList)
         }
-
     }
 
-
-    /**
-     * Vytvoří nový adaptér pro seznam ceníků.
-     *
-     * @param items               seznam modelů ceníků
-     * @param subscriptionPoint   odběrné místo, podle kterého se počítají ceny
-     * @param selectItem          zda se zobrazuje volba (RadioButton) pro výběr ceníku
-     * @param idSelectedPriceList id aktuálně vybraného ceníku (pokud existuje)
-     * @param onClickItemListener callback pro informování o výběru ceníku
-     * @param recyclerView        RecyclerView, ve kterém je adaptér použit
-     */
-    public PriceListAdapter(ArrayList<PriceListModel> items, SubscriptionPointModel subscriptionPoint, boolean selectItem, long idSelectedPriceList,
-                            OnClickItemListener onClickItemListener, RecyclerView recyclerView) {
-        this.items = items;
-        this.showSelectItem = selectItem;
-        this.onClickItemListener = onClickItemListener;
-        this.idSelectedPriceList = idSelectedPriceList;
-        this.subscriptionPoint = subscriptionPoint;
-        this.recyclerView = recyclerView;
-        context = recyclerView.getContext();
-        shPPriceList = new ShPPriceList(context);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_price_list, parent, false)
+        return MyViewHolder(view)
     }
 
+    override fun onBindViewHolder(
+        holder: MyViewHolder,
+        @SuppressLint("RecyclerView") position: Int
+    ) {
+        val priceList = items[position]
+        showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1)
 
-    /**
-     * Vytvoří nový ViewHolder inflatováním layoutu položky.
-     *
-     * @param parent   rodičovský ViewGroup
-     * @param viewType typ view (nevyužito)
-     * @return inicializovaný MyViewHolder
-     */
-    @SuppressLint("MissingInflatedId")
-    @NonNull
-    @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_price_list, parent, false);
-        MyViewHolder vh = new MyViewHolder(v);
-        vh.relativeLayout = v.findViewById(R.id.item_price_list);
-        vh.rbSelectItem = v.findViewById(R.id.rbPriceList);
-        vh.tvValidityDate = v.findViewById(R.id.tvPlatnostCeniku);
-        vh.tvSeries = v.findViewById(R.id.tvProduktovaRada);
-        vh.tvProduct = v.findViewById(R.id.tvProdukt);
-        vh.tvRate = v.findViewById(R.id.tvSazba);
-        vh.tvFirma = v.findViewById(R.id.tvFirma);
-        vh.tvPriceVT = v.findViewById(R.id.tvCenaVT);
-        vh.tvPriceNT = v.findViewById(R.id.tvCenaNT);
-        vh.tvPriceMonth = v.findViewById(R.id.tvPayment);
-        vh.tvPriceVTRegul = v.findViewById(R.id.tvCenaVTRegul);
-        vh.tvPriceNTRegul = v.findViewById(R.id.tvCenaNTRegul);
-        vh.tvPriceMonthRegul = v.findViewById(R.id.tvCenaMesicRegul);
-        vh.tvNote = v.findViewById(R.id.tvPoznamkaItemPriceList);
-        vh.lnButtons = v.findViewById(R.id.lnButtonsPriceListItem);
-        vh.btnEdit = v.findViewById(R.id.btnEditPriceListItem);
-        vh.btnDelete = v.findViewById(R.id.btnDeletePriceListItem);
-        vh.btnDetail = v.findViewById(R.id.btnDetailPriceListItem);
-        vh.gridLayout = v.findViewById(R.id.grid_item_price_list);
+        // 1. Zobrazení názvu a dynamických popisků podle filtrů (Řádky 1 a 2)
+        bindDynamicLabels(holder, priceList)
 
-        return vh;
-    }
+        // 2. Výpočet a zobrazení cenových údajů (Řádek 3)
+        bindPrices(holder, priceList)
 
+        // 3. Režim výběru nebo běžný režim s tlačítkami
+        if (isSelectionMode) {
+            holder.cbSelectItem.visibility = View.VISIBLE
+            holder.cbSelectItem.isClickable = false
+            holder.cbSelectItem.isFocusable = false
+            holder.cbSelectItem.isChecked = selectedIds.contains(priceList.id)
+            holder.lnButtons.visibility = View.GONE
 
-    /**
-     * Naplní ViewHolder daty z modelu a nastaví posluchače pro interakci uživatele.
-     *
-     * @param holder   ViewHolder, který se má naplnit
-     * @param position pozice položky v poli items
-     */
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        final PriceListModel priceList = items.get(position);
-
-        showButtons = shPPriceList.get(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, -1);
-
-        double[] ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint);
-        String cenaVT = (df2.format(Round.round(ceny[0]))) + " Kč";
-        String cenaNT = (df2.format(Round.round(ceny[1]))) + " Kč";
-        String cenaMesic = (df2.format(Round.round(ceny[2]))) + " Kč s DPH";
-
-        int year = ViewHelper.yearIntOfLong(priceList.getPlatnostOD());
-        PriceListRegulBuilder priceListBuilder = new PriceListRegulBuilder(priceList, year);
-        PriceListModel priceListRegul = priceListBuilder.getRegulPriceList();
-        double[] cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint);
-
-        String cenaVTRegul = (df2.format(Round.round(cenyRegul[0]))) + " Kč";
-        String cenaNTRegul = (df2.format(Round.round(cenyRegul[1]))) + " Kč";
-        String cenaMesicRegul = (df2.format(Round.round(cenyRegul[2]))) + " Kč s DPH";
-
-        if (showSelectItem) {
-            //zobrazený radiobutton pro výběr
-            holder.rbSelectItem.setVisibility(View.VISIBLE);
-            holder.relativeLayout.setTag(position);
-            holder.relativeLayout.setOnClickListener(v -> {
-                idSelectedPriceList = priceList.getId();
-                notifyItemRangeChanged(0, getItemCount());
-                onClickItemListener.setClickPriceListListener(priceList);
-            });
-            int selectedItem = -1;
-            holder.rbSelectItem.setChecked(selectedItem == position);
-            if (priceList.getId() == idSelectedPriceList) {
-                holder.rbSelectItem.setChecked(true);
-                onClickItemListener.setClickPriceListListener(priceList);
+            holder.cardView.setOnClickListener {
+                if (selectedIds.contains(priceList.id)) {
+                    selectedIds.remove(priceList.id)
+                    holder.cbSelectItem.isChecked = false
+                } else {
+                    selectedIds.add(priceList.id)
+                    holder.cbSelectItem.isChecked = true
+                }
+                idSelectedPriceList = priceList.id
+                onClickItemListener.setClickPriceListListener(priceList)
+                onSelectionChangedListener?.onSelectionChanged(selectedIds)
             }
         } else {
-            //skrytý radiobutton pro výběr
-            //nastaví zarovnání na kraj rodiče
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.tvProduct.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_START, 1);
-            params.removeRule(RelativeLayout.END_OF);
-            holder.tvProduct.setLayoutParams(params);
-            holder.rbSelectItem.setVisibility(View.GONE);
-            holder.relativeLayout.setOnClickListener(v -> {
+            holder.cbSelectItem.visibility = View.GONE
 
-                if (showButtons >= 0) {
-                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                    if (viewHolder != null)
-                        viewHolder.itemView.findViewById(R.id.lnButtonsPriceListItem).setVisibility(View.GONE);
-                }
-
-                TransitionManager.beginDelayedTransition(recyclerView);
+            holder.cardView.setOnClickListener {
+                TransitionManager.beginDelayedTransition(recyclerView)
 
                 if (showButtons == position) {
-                    showButtons = -1;
-                    onClickItemListener.setClickPriceListListener(null);
-                    setShowIdItem(-1);
+                    showButtons = -1
+                    onClickItemListener.setClickPriceListListener(null)
+                    setShowIdItem(-1)
                 } else {
-                    showButtons = position;
-                    onClickItemListener.setClickPriceListListener(priceList);
-                    setShowIdItem(priceList.getId());
+                    showButtons = position
+                    onClickItemListener.setClickPriceListListener(priceList)
+                    setShowIdItem(priceList.id)
                 }
 
-                setShowPositionItem(position);
-                showButtons(holder, position);
-            });
-
-            holder.btnDetail.setOnClickListener(v -> {
-                PriceListDetailFragment priceListDetailFragment = PriceListDetailFragment.newInstance(priceList.getId());
-                FragmentChange.replace((FragmentActivity) context, priceListDetailFragment, MOVE, true);
-            });
-
-            holder.btnEdit.setOnClickListener(v -> {
-                PriceListEditFragment priceListEditFragment = PriceListEditFragment.newInstance(priceList.getId());
-                FragmentChange.replace((FragmentActivity) context, priceListEditFragment, MOVE, true);
-            });
-
-            holder.btnDelete.setOnClickListener(v -> {
-                selectedItemId = priceList.getId();
-                selectedPosition = position;
-                YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
-                        context.getString(R.string.confirm_delete_pricelist), FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST,
-                        priceList.getRada() + " "
-                                + priceList.getProdukt() + ", \n" + priceList.getSazba() + ", \n"
-                                + ViewHelper.convertLongToDate(priceList.getPlatnostOD()) + " - "
-                                + ViewHelper.convertLongToDate(priceList.getPlatnostDO()));
-                yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), "yesNoDialogFragment");
-
-            });
-
-            showButtons(holder, position);
-        }
-
-        String distUzemi = context.getResources().getString(R.string.dist_uzemi, priceList.getFirma(), priceList.getDistribuce());
-        holder.tvValidityDate.setText(context.getResources().getString(R.string.validity_price_list_date, ViewHelper.convertLongToDate(priceList.getPlatnostOD()), ViewHelper.convertLongToDate(priceList.getPlatnostDO())));
-        holder.tvSeries.setText(priceList.getRada());
-        holder.tvProduct.setText(priceList.getProdukt());
-        holder.tvRate.setText(priceList.getSazba());
-        holder.tvFirma.setText(distUzemi);
-        holder.tvPriceVT.setText(cenaVT);
-        holder.tvPriceNT.setText(cenaNT);
-        holder.tvPriceMonth.setText(cenaMesic);
-
-        if (priceListBuilder.isRegulPrice()) {
-            holder.tvPriceVTRegul.setText(cenaVTRegul);
-            holder.tvPriceNTRegul.setText(cenaNTRegul);
-            holder.tvPriceMonthRegul.setText(cenaMesicRegul);
-        }
-
-        //poznámky jsou uloženy v třídě Notes a hledají se podle příslušných datumů
-        if (priceListBuilder.isRegulPrice()) {
-            //ceník obsahuje regulovanou cenu
-            holder.tvNote.setText(priceListBuilder.getNotes(context));
-            holder.tvNote.setVisibility(View.VISIBLE);
-            holder.tvPriceVTRegul.setVisibility(View.VISIBLE);
-            holder.tvPriceNTRegul.setVisibility(View.VISIBLE);
-            holder.tvPriceMonthRegul.setVisibility(View.VISIBLE);
-            showNTPrice(priceList, holder);
-        } else {
-            showNTPrice(priceList, holder);
-            holder.tvNote.setVisibility(View.GONE);
-            holder.tvPriceVTRegul.setVisibility(View.GONE);
-            holder.tvPriceNTRegul.setVisibility(View.GONE);
-            holder.tvPriceMonthRegul.setVisibility(View.GONE);
-        }
-
-        holder.lnButtons.setOnClickListener(v -> {
-            if (showButtons == position) {
-                showButtons = -1;
-            } else {
-                showButtons = position;
+                setShowPositionItem(position)
+                updateButtonsVisibility(holder, position)
             }
-        });
+
+            holder.btnDetail.setOnClickListener {
+                val priceListDetailFragment = PriceListDetailFragment.newInstance(priceList.id)
+                FragmentChange.replace(
+                    context as FragmentActivity,
+                    priceListDetailFragment,
+                    FragmentChange.Transaction.MOVE,
+                    true
+                )
+            }
+
+            holder.btnEdit.setOnClickListener {
+                val priceListEditFragment = PriceListEditFragment.newInstance(priceList.id)
+                FragmentChange.replace(
+                    context as FragmentActivity,
+                    priceListEditFragment,
+                    FragmentChange.Transaction.MOVE,
+                    true
+                )
+            }
+
+            holder.btnDelete.setOnClickListener {
+                selectedItemId = priceList.id
+                selectedPosition = position
+                val detailInfo =
+                    "${priceList.rada} ${priceList.produkt}, \n${priceList.sazba}, \n" +
+                            "${ViewHelper.convertLongToDate(priceList.platnostOD)} - ${
+                                ViewHelper.convertLongToDate(
+                                    priceList.platnostDO
+                                )
+                            }"
+
+                val yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                    context.getString(R.string.confirm_delete_pricelist),
+                    FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST,
+                    detailInfo
+                )
+                yesNoDialogFragment.show(
+                    (context as FragmentActivity).supportFragmentManager,
+                    "yesNoDialogFragment"
+                )
+            }
+
+            updateButtonsVisibility(holder, position)
+        }
     }
 
+    override fun getItemCount(): Int = items.size
 
-    /**
-     * Vrací počet položek v adapteru.
-     *
-     * @return počet položek (0 pokud je seznam null)
-     */
-    @Override
-    public int getItemCount() {
-        if (items == null) return 0;
-        return items.size();
+    override fun getItemId(position: Int): Long {
+        return items.getOrNull(position)?.id ?: RecyclerView.NO_ID
     }
 
-
     /**
-     * Vrací identifikátor položky na dané pozici (pokud existuje).
-     *
-     * @param position pozice položky
-     * @return id položky nebo -1 při chybě
+     * Nastaví dynamický název (Řádek 1) a doplňující parametry platnosti a filtrů (Řádek 2).
      */
-    @Override
-    public long getItemId(int position) {
-        long itemId = -1L;
-        try {
-            itemId = items.get(position).getId();
-        } catch (Exception e) {
-            Log.e(TAG, "getItemId: " + e.getMessage());
+    private fun bindDynamicLabels(holder: MyViewHolder, priceList: PriceListModel) {
+        val radaFilter = shPFilter.get(ShPFilter.RADA, ShPFilter.DEFAULT)
+        val produktFilter = shPFilter.get(ShPFilter.PRODUKT, ShPFilter.DEFAULT)
+        val sazbaFilter = shPFilter.get(ShPFilter.SAZBA, ShPFilter.DEFAULT)
+        val companyFilter = shPFilter.get(ShPFilter.COMPANY, ShPFilter.DEFAULT)
+        val areaFilter = shPFilter.get(ShPFilter.AREA, ShPFilter.DEFAULT)
+
+        val isRadaFiltered =
+            radaFilter != "%" && radaFilter != DataPriceListSource.VSE && radaFilter.isNotBlank()
+        val isProduktFiltered =
+            produktFilter != "%" && produktFilter != DataPriceListSource.VSE && produktFilter.isNotBlank()
+        val isSazbaFiltered =
+            sazbaFilter != "%" && sazbaFilter != DataPriceListSource.VSE && sazbaFilter.isNotBlank()
+        val isCompanyFiltered =
+            companyFilter != "%" && companyFilter != DataPriceListSource.VSE && companyFilter.isNotBlank()
+        val isAreaFiltered =
+            areaFilter != "%" && areaFilter != DataPriceListSource.VSE && areaFilter.isNotBlank()
+
+        // První řádek: Název ceníku (Řada - Produkt)
+        val titleText = buildString {
+            if (!isRadaFiltered && priceList.rada.isNotBlank()) {
+                append(priceList.rada)
+            }
+            if (!isProduktFiltered && priceList.produkt.isNotBlank()) {
+                if (isNotEmpty()) append(" - ")
+                append(priceList.produkt)
+            }
+            if (isEmpty()) {
+                append(if (priceList.name.isNotBlank()) priceList.name else priceList.produkt)
+            }
+        }
+        holder.tvTitle.text = titleText
+
+        // Druhý řádek: Období platnosti + nefiltrované doplňující údaje
+        val dateText = context.getString(
+            R.string.validity_price_list_date,
+            ViewHelper.convertLongToDate(priceList.platnostOD),
+            ViewHelper.convertLongToDate(priceList.platnostDO)
+        )
+
+        val extraDetailsList = mutableListOf<String>()
+
+        if (!isCompanyFiltered && !priceList.firma.isNullOrBlank()) {
+            extraDetailsList.add(priceList.firma)
+        }
+        if (!isAreaFiltered && !priceList.distribuce.isNullOrBlank()) {
+            extraDetailsList.add(priceList.distribuce)
+        }
+        if (!isSazbaFiltered && !priceList.sazba.isNullOrBlank()) {
+            extraDetailsList.add(priceList.sazba)
         }
 
-        return itemId;
+        // Pojistka proti vizuální nerozlišitelnosti: pokud byly všechny parametry odfiltrovány, přidáme sazbu a dodavatele
+        if (extraDetailsList.isEmpty()) {
+            if (!priceList.sazba.isNullOrBlank()) extraDetailsList.add(priceList.sazba)
+            if (!priceList.firma.isNullOrBlank()) extraDetailsList.add(priceList.firma)
+        }
+
+        val extraDetailsStr = extraDetailsList.joinToString(" • ")
+        holder.tvSubtitle.text =
+            if (extraDetailsStr.isEmpty()) dateText else "$dateText • $extraDetailsStr"
     }
 
-
     /**
-     * Zobrazí tlačítka pro editaci a smazání ceníku
-     *
-     * @param holder   MyViewHolder
-     * @param position int pozice položky ceníku
+     * Vypočítá a zformátuje cenové údaje (VT, NT, Měsíc) i případné regulované ceny.
      */
-    private void showButtons(MyViewHolder holder, int position) {
-        setShowPositionItem(showButtons);
-        if (position == showButtons) {
-            holder.lnButtons.setVisibility(View.VISIBLE);
+    private fun bindPrices(holder: MyViewHolder, priceList: PriceListModel) {
+        val ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint)
+        val cenaVT = DecimalFormatHelper.df2.format(Round.round(ceny[0])) + " Kč"
+        val cenaNT = DecimalFormatHelper.df2.format(Round.round(ceny[1])) + " Kč"
+        val cenaMesic = DecimalFormatHelper.df2.format(Round.round(ceny[2])) + " Kč s DPH"
+
+        val year = ViewHelper.yearIntOfLong(priceList.platnostOD)
+        val priceListBuilder = PriceListRegulBuilder(priceList, year)
+        val priceListRegul = priceListBuilder.regulPriceList
+        val cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint)
+
+        val cenaVTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[0])) + " Kč"
+        val cenaNTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[1])) + " Kč"
+        val cenaMesicRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[2])) + " Kč s DPH"
+
+        holder.tvPriceVT.text = cenaVT
+        holder.tvPriceMonth.text = cenaMesic
+
+        if (priceList.cenaNT == 0.0 && (ceny[1] == 0.0)) {
+            holder.tvPriceNT.text = "—"
+            holder.tvPriceNTRegul.visibility = View.GONE
         } else {
-            holder.lnButtons.setVisibility(View.GONE);
+            holder.tvPriceNT.text = cenaNT
+        }
+
+        if (priceListBuilder.isRegulPrice) {
+            holder.tvPriceVTRegul.text = "+ $cenaVTRegul"
+            holder.tvPriceVTRegul.visibility = View.VISIBLE
+            if (priceList.cenaNT != 0.0) {
+                holder.tvPriceNTRegul.text = "+ $cenaNTRegul"
+                holder.tvPriceNTRegul.visibility = View.VISIBLE
+            }
+            holder.tvPriceMonthRegul.text = "+ $cenaMesicRegul"
+            holder.tvPriceMonthRegul.visibility = View.VISIBLE
+
+            val notes = priceListBuilder.getNotes(context)
+            if (!notes.isNullOrEmpty()) {
+                holder.tvNote.text = notes
+                holder.tvNote.visibility = View.VISIBLE
+            } else {
+                holder.tvNote.visibility = View.GONE
+            }
+        } else {
+            holder.tvPriceVTRegul.visibility = View.GONE
+            holder.tvPriceNTRegul.visibility = View.GONE
+            holder.tvPriceMonthRegul.visibility = View.GONE
+            holder.tvNote.visibility = View.GONE
         }
     }
 
-
     /**
-     * Smaže vybraný ceník (volá interní metodu s uloženým id a pozicí).
-     * Po smazání skryje tlačítka a vymaže uložené id.
+     * Řídí viditelnost akčních tlačítek na položce.
      */
-    public void deleteItemPrice() {
-        deleteItemPrice(selectedItemId, selectedPosition);
-        setShowPositionItem(-1);
-        setShowIdItem(-1);
-    }
-
-
-    /**
-     * Skryje tlačítka pro editaci a smazání ceníku (uloží stav -1).
-     */
-    public void setHideButtons() {
-        setShowPositionItem(-1);
-        setShowIdItem(-1);
-    }
-
-
-    /**
-     * Uloží pozici položky ceníku, kde jsou zobrazeny tlačítka.
-     * Hodnota -1 skryje všechny tlačítka.
-     *
-     * @param position int pozice položky ceníku, kde se mají zobrazit tlačítka
-     */
-    private void setShowPositionItem(int position) {
-        shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position);
-    }
-
-
-    /**
-     * Uloží id položky ceníku, kde se mají zobrazit tlačítka.
-     * Hodnota -1 znamená, že jsou skryty všechny tlačítka.
-     *
-     * @param id long id položky ceníku, kde se mají zobrazit tlačítka
-     */
-    private void setShowIdItem(long id) {
-        shPPriceList.set(ShPPriceList.SHOW_ID_ITEM_PRICE_LIST, id);
-    }
-
-
-    /**
-     * Smaže vybraný ceník podle id a pozice.
-     * Kontroluje, zda není ceník používán v záznamech odběrných míst a v tom případě
-     * zobrazí varovný dialog místo smazání.
-     *
-     * @param itemId   id ceníku
-     * @param position pozice v seznamu pro odstranění
-     */
-    private void deleteItemPrice(long itemId, int position) {
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        //seznam odběrných míst
-        ArrayList<SubscriptionPointModel> subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints();
-        int pricesTED = 0;
-        int pricesFAK = 0;
-        int pricesMON = 0;
-        //iterace všemi odběrnými místy a hledání použitých ceníků
-        for (SubscriptionPointModel subscriptionPointModel : subscriptionPointModels) {
-            pricesTED += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableTED(), itemId);
-            pricesFAK += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableFAK(), itemId);
-            pricesMON += dataSubscriptionPointSource.countPriceItems(subscriptionPointModel.getTableO(), itemId);
+    private fun updateButtonsVisibility(holder: MyViewHolder, position: Int) {
+        setShowPositionItem(showButtons)
+        if (position == showButtons) {
+            holder.lnButtons.visibility = View.VISIBLE
+        } else {
+            holder.lnButtons.visibility = View.GONE
         }
-        dataSubscriptionPointSource.close();
+    }
+
+    /**
+     * Smaže vybraný ceník.
+     */
+    fun deleteItemPrice() {
+        if (selectedItemId != -1L && selectedPosition != -1) {
+            deleteItemPrice(selectedItemId, selectedPosition)
+            setShowPositionItem(-1)
+            setShowIdItem(-1)
+        }
+    }
+
+    /**
+     * Skryje všechna zobrazená akční tlačítka.
+     */
+    fun setHideButtons() {
+        showButtons = -1
+        setShowPositionItem(-1)
+        setShowIdItem(-1)
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Vyprázdní vícenásobný výběr položek.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearSelection() {
+        selectedIds.clear()
+        onSelectionChangedListener?.onSelectionChanged(selectedIds)
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Aktualizuje seznam položek v adaptéru.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun setItems(newItems: ArrayList<PriceListModel>) {
+        this.items = newItems
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Přepne režim výběru.
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun setSelectionMode(enabled: Boolean) {
+        this.isSelectionMode = enabled
+        notifyDataSetChanged()
+    }
+
+    fun isSelectionMode(): Boolean = isSelectionMode
+
+    private fun setShowPositionItem(position: Int) {
+        shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position)
+    }
+
+    private fun setShowIdItem(id: Long) {
+        shPPriceList.set(ShPPriceList.SHOW_ID_ITEM_PRICE_LIST, id)
+    }
+
+    /**
+     * Provede odstranění ceníku podle ID, po kontrole jeho případného využití.
+     */
+    private fun deleteItemPrice(itemId: Long, position: Int) {
+        val dataSubscriptionPointSource = DataSubscriptionPointSource(context)
+        dataSubscriptionPointSource.open()
+        val subscriptionPointModels = dataSubscriptionPointSource.loadSubscriptionPoints()
+        var pricesTED = 0
+        var pricesFAK = 0
+        var pricesMON = 0
+
+        for (subscriptionPointModel in subscriptionPointModels) {
+            pricesTED += dataSubscriptionPointSource.countPriceItems(
+                subscriptionPointModel.tableTED,
+                itemId
+            )
+            pricesFAK += dataSubscriptionPointSource.countPriceItems(
+                subscriptionPointModel.tableFAK,
+                itemId
+            )
+            pricesMON += dataSubscriptionPointSource.countPriceItems(
+                subscriptionPointModel.tableO,
+                itemId
+            )
+        }
+        dataSubscriptionPointSource.close()
 
         if (pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
-            showWarningDialog(pricesTED, pricesFAK, pricesMON, context);
-            return;
+            showWarningDialog(pricesTED, pricesFAK, pricesMON, context)
+            return
         }
 
-        DataPriceListSource dataPriceListSource = new DataPriceListSource(context);
-        dataPriceListSource.open();
-        dataPriceListSource.deletePriceList(itemId);
+        val dataPriceListSource = DataPriceListSource(context)
+        dataPriceListSource.open()
+        dataPriceListSource.deletePriceList(itemId)
+        dataPriceListSource.close()
 
-        dataPriceListSource.close();
-        showButtons = -1;
-        items.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
-    }
-
-
-    /**
-     * Zobrazí dialog s upozorněním, že ceník nelze smazat, protože je použit v záznamech.
-     *
-     * @param ted     počet použití v TED
-     * @param fak     počet použití ve FAK
-     * @param mon     počet použití v MON
-     * @param context kontext pro vytvoření dialogu
-     */
-    private void showWarningDialog(int ted, int fak, int mon, Context context) {
-        if (!(context instanceof FragmentActivity)) {
-            return;
-        }
-        PriceListDeleteBlockedDialogFragment.newInstance(ted, fak, mon)
-                .show(((FragmentActivity) context).getSupportFragmentManager(), "priceListDeleteBlockedDialog");
-    }
-
-
-    /**
-     * Zobrazí nebo skryje NT cenu podle toho, zda model obsahuje cenu NT.
-     *
-     * @param priceList PriceListModel obsahující ceny
-     * @param holder    MyViewHolder, jehož pole budou upraveny
-     */
-    private void showNTPrice(PriceListModel priceList, MyViewHolder holder) {
-        if (priceList.getCenaNT() == 0) {
-            //jednotarifní sazby
-            holder.tvPriceNT.setVisibility(View.GONE);
-            holder.tvPriceNTRegul.setVisibility(View.GONE);
-        } else {
-            //dvoutarifní sazby
-            holder.tvPriceNT.setVisibility(View.VISIBLE);
-            holder.tvPriceNTRegul.setVisibility(View.VISIBLE);
+        showButtons = -1
+        if (position >= 0 && position < items.size) {
+            items.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, itemCount)
         }
     }
 
-
-    /**
-     * Rozhraní pro předání události výběru ceníku do volající aktivity/fragmentu.
-     */
-    public interface OnClickItemListener {
-
-        /**
-         * Voláno při výběru ceníku nebo při zrušení výběru (null).
-         *
-         * @param priceList vybraný model ceníku nebo null
-         */
-        void setClickPriceListListener(PriceListModel priceList);
-
+    private fun showWarningDialog(ted: Int, fak: Int, mon: Int, context: Context) {
+        if (context is FragmentActivity) {
+            PriceListDeleteBlockedDialogFragment.newInstance(ted, fak, mon)
+                .show(context.supportFragmentManager, "priceListDeleteBlockedDialog")
+        }
     }
-
 }

@@ -19,4 +19,11 @@
         android:visible="true"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_select_mode_pricelist"
+        android:icon="@drawable/ic_compare_24"
+        android:title="@string/rezim_vyberu"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
 </menu>

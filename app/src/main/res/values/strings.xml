@@ -122,6 +122,12 @@
     <string name="ne">NE</string>
 
     <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: %d/%d</string>
+    <string name="zobrazeno_z_ceniku">Zobrazeno %1$d z %2$d ceníků</string>
+    <string name="vybrano_ceniku_count">Vybráno: %1$d ceníků</string>
+    <string name="vybrano_ceniku_count_skryte">Vybráno: %1$d ceníků (%2$d skrytých)</string>
+    <string name="zrusit_vyber">Zrušit výběr</string>
+    <string name="porovnat">Porovnat</string>
+    <string name="rezim_vyberu">Režim výběru</string>
 
 
     <string name="poznamka_2022">Od října do konce roku je zrušen POZE</string>
