@@ -83,6 +83,13 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
         if (savedInstanceState == null) {
             loadMonthlyReading();
 
+            if (monthlyReading == null) {
+                if (isAdded()) {
+                    getParentFragmentManager().popBackStack();
+                }
+                return;
+            }
+
             btnDate.setText(ViewHelper.convertLongToDate(monthlyReading.getDate()));
             labVT.setDefaultText(df2.format(monthlyReading.getVt()));
             labNT.setDefaultText(df2.format(monthlyReading.getNt()));

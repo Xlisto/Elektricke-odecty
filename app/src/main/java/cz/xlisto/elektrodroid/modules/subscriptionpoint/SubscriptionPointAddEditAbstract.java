@@ -84,6 +84,7 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(NAME, letName.getText());
         outState.putString(DESCRIPTION, letDescription.getText());
         outState.putString(ELECTROMETER, letNumberEletrometer.getText());
         outState.putString(SUBSCRIPTION_POINT, letNumberSubscriptionPoint.getText());

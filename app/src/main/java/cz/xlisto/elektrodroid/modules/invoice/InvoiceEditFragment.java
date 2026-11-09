@@ -56,6 +56,13 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         InvoiceModel invoice = dataInvoiceSource.loadInvoice(id, table);
         dataInvoiceSource.close();
 
+        if (invoice == null) {
+            if (isAdded()) {
+                getParentFragmentManager().popBackStack();
+            }
+            return;
+        }
+
         if (loadFromDatabase) {
             btnDateStart.setText(ViewHelper.convertLongToDate(invoice.getDateFrom()));
             btnDateEnd.setText(ViewHelper.convertLongToDate(invoice.getDateTo()));

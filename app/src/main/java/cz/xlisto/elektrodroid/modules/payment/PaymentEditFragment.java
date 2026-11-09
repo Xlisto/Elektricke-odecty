@@ -46,6 +46,11 @@ public class PaymentEditFragment extends PaymentAddEditFragmentAbstract {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (payment == null) {
+            closeFragment();
+            return;
+        }
+
         if (savedInstanceState != null) {
             loadDatabase = savedInstanceState.getBoolean(LOAD_DATABASE);
         }

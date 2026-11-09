@@ -87,7 +87,9 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
             }
         } else if (subscriptionPoint == null) {
             loadSubscriptionPoint(itemId);
-            if (subscriptionPoint == null) {
+            if (subscriptionPoint != null) {
+                setItems();
+            } else {
                 Log.w(TAG, "Subscription point with id " + itemId + " not found.");
                 if (isAdded()) {
                     getParentFragmentManager().popBackStack();
@@ -121,8 +123,8 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
     }
 
 
-    private void setItems(){
-        if (subscriptionPoint == null) return;
+    private void setItems() {
+        if (subscriptionPoint == null || letName == null) return;
         letName.setDefaultText(subscriptionPoint.getName());
         letDescription.setDefaultText(subscriptionPoint.getDescription());
         letNumberEletrometer.setDefaultText(subscriptionPoint.getNumberElectricMeter());
