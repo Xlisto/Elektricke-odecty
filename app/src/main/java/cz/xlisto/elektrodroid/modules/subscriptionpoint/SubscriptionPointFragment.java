@@ -67,6 +67,7 @@ public class SubscriptionPointFragment extends Fragment {
 
     private FloatingActionButton fab;
     private Button btnAddSubscriptionPoint;
+    private MenuItem addMenuItem;
     private Spinner spSubscriptionPoint;
     private Spinner spSubscriptionPointNotification;
     private TextView tvDescription, tvPhaze, tvNumberElectricMeter, tvNumberSubscriptionPoint, tvNewSubscriptionPoint, tvNotificationTime;
@@ -107,11 +108,16 @@ public class SubscriptionPointFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_subscription_point, menu);
+                addMenuItem = menu.findItem(R.id.menu_action_add_subscription_point);
+                updateAddControlsVisibility();
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_subscription_point_edit) {
+                if (menuItem.getItemId() == R.id.menu_action_add_subscription_point) {
+                    addSubcsriptionPoint();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_subscription_point_edit) {
                     if (itemId > 0) {
                         edit();
                     }
@@ -307,7 +313,10 @@ public class SubscriptionPointFragment extends Fragment {
 
         // posluchač na zavření dialogového okna s nastavením
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
-                (requestKey, result) -> updateAddControlsVisibility()
+                (requestKey, result) -> {
+                    updateAddControlsVisibility();
+                    requireActivity().invalidateOptionsMenu();
+                }
         );
     }
 
@@ -610,9 +619,12 @@ public class SubscriptionPointFragment extends Fragment {
             if (fab != null) {
                 fab.setVisibility(GONE);
             }
+            if (addMenuItem != null) {
+                addMenuItem.setVisible(false);
+            }
             return;
         }
-        UIHelper.showButtons(btnAddSubscriptionPoint, fab, requireActivity(), sc, false);
+        UIHelper.showButtons(btnAddSubscriptionPoint, fab, addMenuItem, requireActivity(), sc, false);
     }
 
     private boolean isTabbedMode() {

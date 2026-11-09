@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_action_add_pricelist"
+        android:icon="@drawable/ic_add_24"
+        android:title="@string/add_monthly_price_list"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_delete_unused_pricelist"
         android:title="@string/delete_price_list"
         android:visible="true"

@@ -47,7 +47,7 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_content_add"
+        android:src="@drawable/ic_add_24"
         app:backgroundTint="@color/floatingButtonTint"
         app:layout_constraintBottom_toTopOf="@id/lnInvoiceBottomPanel"
         app:layout_constraintEnd_toEndOf="parent"

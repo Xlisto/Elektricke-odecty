@@ -32,7 +32,7 @@
         android:clickable="true"
         android:contentDescription="@string/add_nem_monthly_reading"
         android:focusable="true"
-        android:src="@drawable/ic_content_add"
+        android:src="@drawable/ic_add_24"
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground" />
 

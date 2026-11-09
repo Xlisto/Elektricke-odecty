@@ -343,7 +343,7 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:contentDescription="@string/add_subscriptionpoint"
         android:focusable="true"
-        android:src="@drawable/ic_content_add"
+        android:src="@drawable/ic_add_24"
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground"
         tools:ignore="RelativeLayout" />

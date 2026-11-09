@@ -568,6 +568,11 @@
     <string name="no_invoice_alert">Není zadána poslední faktura. \nZobrazit dialog pro nastavení výchozích hodnot můžete stisknutím tlačítka nebo zadejte poslední fakturu.</string>
 
     <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
+    <string name="add_button_type_label">Tlačítko pro přidání záznamu</string>
+    <string-array name="add_button_type_options">
+        <item>Floating Action Button (FAB)</item>
+        <item>Tlačítko v záhlaví (AppBar)</item>
+    </string-array>
     <string name="show_bottom_nav">Zobrazit dolní panel rychlé navigace</string>
     <string name="show_nav">Zobrazit levý panel rychlé navigace</string>
     <string name="allow_mobile_data">Povolit použití mobilních dat pro online funkce</string>
@@ -582,6 +587,7 @@
     <string name="end_year_is_smaller">Konečné datum musí být pozdější než počáteční datum.</string>
 
     <string name="settings_group_notifications">Upozornění</string>
+    <string name="settings_group_add_button">Přidávání záznamů</string>
     <string name="settings_group_navigation">Zobrazení navigace</string>
     <string name="settings_group_connection">Připojení</string>
     <string name="notifications_enabled">Povolené notifikace</string>

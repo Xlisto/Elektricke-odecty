@@ -2,10 +2,10 @@ package cz.xlisto.elektrodroid.utils;
 
 
 import android.content.Context;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -14,46 +14,78 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
 /**
- * Pomocná třída pro správu viditelnosti UI prvků (tlačítka pro přidání a FAB).
+ * Pomocná třída pro správu viditelnosti UI prvků (tlačítka pro přidání v AppBaru a FAB).
  * <p>
- * Obsahuje metody pro zobrazení/skrytí tlačítka a FloatingActionButton v závislosti
- * na vybraném odběrném místě a nastavení aplikace.
+ * Obsahuje metody pro zobrazení/skrytí položky menu v AppBaru a FloatingActionButton
+ * v závislosti na vybraném odběrném místě a nastavení aplikace.
  */
 public class UIHelper {
 
     /**
-     * Zobrazí/skryje tlačítko pro přidání nové položky. Pokud není vybrané odběrné místo, žádné se nezobrazí.
+     * Zobrazí/skryje tlačítko pro přidání nové položky (FAB nebo položku menu v AppBaru).
      */
     public static void showButtons(Button btn, FloatingActionButton fab, Context context, boolean checkSubscription) {
-        showButtons(btn, fab, context, null, checkSubscription);
+        showButtons(btn, fab, null, context, null, checkSubscription);
     }
 
 
     /**
-     * Zobrazí/skryje tlačítko pro přidání nové položky. Pokud není vybrané odběrné místo, žádné se nezobrazí.
-     *
-     * @param viewGroup ViewGroup, který se má posunout, pokud je tlačítko skryté
+     * Zobrazí/skryje tlačítko pro přidání nové položky (FAB nebo položku menu v AppBaru).
      */
-    public static void showButtons(Button btn, FloatingActionButton fab, Context context, ViewGroup viewGroup, boolean checkSubscription) {
+    public static void showButtons(Button btn, FloatingActionButton fab, MenuItem addMenuItem, Context context, boolean checkSubscription) {
+        showButtons(btn, fab, addMenuItem, context, null, checkSubscription);
+    }
+
+
+    /**
+     * Zobrazí/skryje tlačítko pro přidání nové položky.
+     *
+     * @param btn               klasické tlačítko (vždy se skryje)
+     * @param fab               FloatingActionButton
+     * @param addMenuItem       položka menu v AppBaru
+     * @param context           kontext aplikace
+     * @param viewGroup         ViewGroup pro případné přizpůsobení layoutu
+     * @param checkSubscription zda kontrolovat vybrané odběrné místo
+     */
+    public static void showButtons(Button btn, FloatingActionButton fab, MenuItem addMenuItem, Context context, ViewGroup viewGroup, boolean checkSubscription) {
+        if (btn != null) {
+            btn.setVisibility(View.GONE);
+        }
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(context);
         if (subscriptionPoint != null || !checkSubscription) {
             ShPSettings shPSettings = new ShPSettings(context);
-            if (shPSettings.get(ShPSettings.SHOW_FAB, true)) {
-                fab.setVisibility(View.VISIBLE);
-                btn.setVisibility(View.GONE);
-            } else {
-                if (viewGroup != null) {
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                    params.addRule(RelativeLayout.ABOVE, btn.getId());
-                    viewGroup.setLayoutParams(params);
+            int buttonType = shPSettings.getAddButtonType();
+            if (buttonType == ShPSettings.ADD_BUTTON_TYPE_FAB) {
+                if (fab != null) {
+                    fab.setVisibility(View.VISIBLE);
                 }
-                fab.setVisibility(View.GONE);
-                btn.setVisibility(View.VISIBLE);
+                if (addMenuItem != null) {
+                    addMenuItem.setVisible(false);
+                }
+            } else {
+                if (fab != null) {
+                    fab.setVisibility(View.GONE);
+                }
+                if (addMenuItem != null) {
+                    addMenuItem.setVisible(true);
+                }
             }
         } else {
-            fab.setVisibility(View.GONE);
-            btn.setVisibility(View.GONE);
+            if (fab != null) {
+                fab.setVisibility(View.GONE);
+            }
+            if (addMenuItem != null) {
+                addMenuItem.setVisible(false);
+            }
         }
+    }
+
+
+    /**
+     * Zobrazí/skryje tlačítko pro přidání nové položky.
+     */
+    public static void showButtons(Button btn, FloatingActionButton fab, Context context, ViewGroup viewGroup, boolean checkSubscription) {
+        showButtons(btn, fab, null, context, viewGroup, checkSubscription);
     }
 
 }

@@ -178,7 +178,7 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
         android:contentDescription="@string/image_destription_new_hdo"
-        android:src="@drawable/ic_content_add"
+        android:src="@drawable/ic_add_24"
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground" />
 

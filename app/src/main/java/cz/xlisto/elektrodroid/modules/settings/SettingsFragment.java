@@ -11,7 +11,10 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 
@@ -62,7 +65,7 @@ public class SettingsFragment extends Fragment {
         chNotificationPermission = view.findViewById(R.id.chNotificationPermission);
         chExactAlarmPermission = view.findViewById(R.id.chExactAlarmPermission);
         CheckBox chUseSetAlarm = view.findViewById(R.id.chUseSetAlarm);
-        MaterialSwitch switchShowFab = view.findViewById(R.id.switchShowFab);
+        Spinner spAddButtonType = view.findViewById(R.id.spAddButtonType);
         MaterialSwitch switchShowBottomNavigation = view.findViewById(R.id.switchShowBottomNavigation);
         MaterialSwitch switchShowLeftNavigation = view.findViewById(R.id.switchShowLeftNavigation);
         MaterialSwitch switchAllowMobileData = view.findViewById(R.id.switchAllowMobileData);
@@ -91,7 +94,29 @@ public class SettingsFragment extends Fragment {
             chExactAlarmPermission.setVisibility(View.GONE);
         }
 
-        switchShowFab.setChecked(shPSettings.get(ShPSettings.SHOW_FAB, true));
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.add_button_type_options,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAddButtonType.setAdapter(adapter);
+        spAddButtonType.setSelection(shPSettings.getAddButtonType());
+        spAddButtonType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                if (shPSettings.getAddButtonType() != position) {
+                    shPSettings.setAddButtonType(position);
+                    notifySettingsChanged();
+                }
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         switchShowBottomNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true));
         switchShowLeftNavigation.setChecked(shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true));
         switchAllowMobileData.setChecked(shPSettings.get(ShPSettings.ALLOW_MOBILE_DATA, true));
@@ -105,11 +130,6 @@ public class SettingsFragment extends Fragment {
         chUseSetAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.USE_HDO_SET_ALARM, isChecked);
             rescheduleAllHdoAlarmsAsync();
-        });
-
-        switchShowFab.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            shPSettings.set(ShPSettings.SHOW_FAB, switchShowFab.isChecked());
-            notifySettingsChanged();
         });
 
         switchShowBottomNavigation.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_action_add_subscription_point"
+        android:icon="@drawable/ic_add_24"
+        android:title="@string/add_subscriptionpoint"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_subscription_point_edit"
         android:icon="@drawable/ic_edit_24"
         android:title="@string/upravit_odberne_misto"

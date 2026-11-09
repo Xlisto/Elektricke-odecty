@@ -69,6 +69,7 @@ public class InvoiceListFragment extends Fragment {
     private String tableReading;
     private Button btnAddInvoice;
     private FloatingActionButton fab;
+    private MenuItem addMenuItem;
     private LinearLayout llAlertNoInvoice;
     private InvoiceListViewModel invoiceListViewModel;
 
@@ -152,7 +153,10 @@ public class InvoiceListFragment extends Fragment {
 
         //posluchač zavření dialogová okna nastavení
         getParentFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
-                (requestKey, bundle) -> UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true)
+                (requestKey, bundle) -> {
+                    UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
+                    requireActivity().invalidateOptionsMenu();
+                }
         );
 
         //posluchač zavření dialogového okna pro nastavení výchozích stavů měřičů
@@ -191,11 +195,21 @@ public class InvoiceListFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_invoice, menu);
+                addMenuItem = menu.findItem(R.id.menu_invoice_item_add_invoice);
+                MenuItem addItemInvoice = menu.findItem(R.id.menu_action_add_item_invoice);
+                if (addItemInvoice != null) {
+                    addItemInvoice.setVisible(false);
+                }
+                UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
             }
 
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_invoice_item_add_invoice) {
+                    showAddInvoiceDialog();
+                    return true;
+                }
                 if (menuItem.getItemId() == R.id.menu_invoice_item_settings) {
                     SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
                     return true;
@@ -242,7 +256,7 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddInvoice, fab, requireActivity(), true);
+        UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
         loadDataAndSetAdapter();
     }
 

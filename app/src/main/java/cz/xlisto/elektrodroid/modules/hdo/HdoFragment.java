@@ -92,6 +92,7 @@ public class HdoFragment extends Fragment {
     private HdoAdapter hdoAdapter;
     private Button btnAddHdo;
     private FloatingActionButton fab;
+    private MenuItem addMenuItem;
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
@@ -123,6 +124,8 @@ public class HdoFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_hdo, menu);
+                addMenuItem = menu.findItem(R.id.menu_action_add_hdo);
+                UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
                 ShPHdo shPHdo = new ShPHdo(requireContext());
                 boolean isGraphic = shPHdo.isGraphicMode();
                 MenuItem toggleItem = menu.findItem(R.id.menu_hdo_toggle_view);
@@ -135,7 +138,10 @@ public class HdoFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.menu_hdo_toggle_view) {
+                if (menuItem.getItemId() == R.id.menu_action_add_hdo) {
+                    showAddDialog();
+                    return true;
+                } else if (menuItem.getItemId() == R.id.menu_hdo_toggle_view) {
                     ShPHdo shPHdo = new ShPHdo(requireContext());
                     boolean currentGraphic = shPHdo.isGraphicMode();
                     boolean newGraphic = !currentGraphic;
@@ -248,7 +254,10 @@ public class HdoFragment extends Fragment {
                 );
         //posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
-                ((requestKey, result) -> UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true)));
+                ((requestKey, result) -> {
+                    UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
+                    requireActivity().invalidateOptionsMenu();
+                }));
 
         //posluchač pro změnu časového posunu v dialogu
         requireActivity().getSupportFragmentManager().setFragmentResultListener("TIME_SHIFT_CHANGED", this, (requestKey, result) -> {
@@ -273,7 +282,7 @@ public class HdoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddHdo, fab, requireActivity(), true);
+        UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint != null)
             idSubscriptionPoint = subscriptionPoint.getId();

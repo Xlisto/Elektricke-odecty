@@ -94,6 +94,7 @@ public class InvoiceFragment extends Fragment {
     boolean showCheckBoxSelect;
     private Button btnCreateInvoice, btnAddItemInvoice;
     private FloatingActionButton fab;
+    private MenuItem addMenuItem;
     private InvoiceViewModel viewModel;
     private LinearLayout lnInvoiceBottomPanel;
     private LinearLayout lnInvoiceTotalCard, lnInvoiceTotalOptions;
@@ -110,6 +111,7 @@ public class InvoiceFragment extends Fragment {
         MenuItem selectItem = menu.findItem(R.id.menu_invoice_item_select);
         MenuItem cancelSelectionItem = menu.findItem(R.id.menu_invoice_item_cancel_selection);
         MenuItem addInvoiceItem = menu.findItem(R.id.menu_invoice_item_add_invoice);
+        addMenuItem = menu.findItem(R.id.menu_action_add_item_invoice);
         boolean showSelectionMenu = idFak == -1L;
         boolean multiselectEnabled = showSelectionMenu && showCheckBoxSelect;
         if (selectItem != null) {
@@ -119,8 +121,9 @@ public class InvoiceFragment extends Fragment {
             cancelSelectionItem.setVisible(multiselectEnabled);
         }
         if (addInvoiceItem != null) {
-            addInvoiceItem.setVisible(multiselectEnabled);
+            addInvoiceItem.setVisible(false);
         }
+        UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
     }
 
 
@@ -254,6 +257,10 @@ public class InvoiceFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_action_add_item_invoice) {
+                    showAddInvoice();
+                    return true;
+                }
                 if (menuItem.getItemId() == R.id.menu_invoice_item_settings) {
                     SettingsInvoiceDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), SettingsInvoiceDialogFragment.TAG);
                     return true;
@@ -659,6 +666,9 @@ public class InvoiceFragment extends Fragment {
             fab.setVisibility(View.GONE);
             btnCreateInvoice.setVisibility(View.GONE);
             btnAddItemInvoice.setVisibility(View.GONE);
+            if (addMenuItem != null) {
+                addMenuItem.setVisible(false);
+            }
             if (invoiceAdapter != null) {
                 invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
             }
@@ -666,7 +676,7 @@ public class InvoiceFragment extends Fragment {
             return;
         }
         btnCreateInvoice.setVisibility(View.GONE);
-        UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
+        UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
     }
 
 
@@ -680,8 +690,11 @@ public class InvoiceFragment extends Fragment {
             btnAddItemInvoice.setVisibility(View.GONE);
             btnCreateInvoice.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
+            if (addMenuItem != null) {
+                addMenuItem.setVisible(false);
+            }
         } else {
-            UIHelper.showButtons(btnAddItemInvoice, fab, requireActivity(), true);
+            UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
         }
     }
 

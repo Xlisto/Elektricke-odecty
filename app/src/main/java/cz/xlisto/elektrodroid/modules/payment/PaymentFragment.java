@@ -4,6 +4,9 @@ package cz.xlisto.elektrodroid.modules.payment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -14,7 +17,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +57,7 @@ public class PaymentFragment extends Fragment {
     private PaymentAdapter paymentAdapter;
     private Button btnAddPayment;
     private FloatingActionButton fab;
+    private MenuItem addMenuItem;
 
 
     public static PaymentFragment newInstance(long idFak, int position) {
@@ -90,6 +97,26 @@ public class PaymentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MenuHost menuHost = requireActivity();
+        menuHost.addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_payment, menu);
+                addMenuItem = menu.findItem(R.id.menu_action_add_payment);
+                UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
+            }
+
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_action_add_payment) {
+                    showAddPaymentDialog();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+
         return inflater.inflate(R.layout.fragment_payment, container, false);
     }
 
@@ -141,7 +168,10 @@ public class PaymentFragment extends Fragment {
                 });
         //posluchač zavření dialogová okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
-                (requestKey, bundle) -> UIHelper.showButtons(btnAddPayment, fab, requireActivity(), true)
+                (requestKey, bundle) -> {
+                    UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
+                    requireActivity().invalidateOptionsMenu();
+                }
         );
     }
 
@@ -151,7 +181,7 @@ public class PaymentFragment extends Fragment {
         super.onResume();
         setTotal();
         setRecyclerView();
-        UIHelper.showButtons(btnAddPayment, fab, requireActivity(), true);
+        UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
     }
 
 

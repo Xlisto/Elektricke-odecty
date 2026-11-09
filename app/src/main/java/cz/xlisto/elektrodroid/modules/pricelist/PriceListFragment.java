@@ -69,6 +69,7 @@ public class PriceListFragment extends Fragment {
     private TextView tvCountPriceItem;
     private Button btnBack, btnAddPriceList;
     private FloatingActionButton fab;
+    private MenuItem addMenuItem;
     private SubscriptionPointModel subscriptionPoint;
     private PriceListAdapter priceListAdapter;
     private ArrayList<PriceListModel> priceListModels;
@@ -140,10 +141,16 @@ public class PriceListFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_price_list, menu);
+                addMenuItem = menu.findItem(R.id.menu_action_add_pricelist);
+                UIHelper.showButtons(btnAddPriceList, fab, addMenuItem, requireActivity(), rv, false);
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.menu_action_add_pricelist) {
+                    addNewPriceList();
+                    return true;
+                }
                 if (menuItem.getItemId() == R.id.menu_filter_pricelist) {
                     PriceListFilterDialogFragment.newInstance().show(requireActivity().getSupportFragmentManager(), TAG);
                     return true;
@@ -224,7 +231,8 @@ public class PriceListFragment extends Fragment {
         // Posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> {
-                    UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
+                    UIHelper.showButtons(btnAddPriceList, fab, addMenuItem, requireActivity(), rv, false);
+                    requireActivity().invalidateOptionsMenu();
                     btnShowBack();
                 })
         );
@@ -240,7 +248,7 @@ public class PriceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddPriceList, fab, requireActivity(), rv, false);
+        UIHelper.showButtons(btnAddPriceList, fab, addMenuItem, requireActivity(), rv, false);
         btnShowBack();
     }
 
