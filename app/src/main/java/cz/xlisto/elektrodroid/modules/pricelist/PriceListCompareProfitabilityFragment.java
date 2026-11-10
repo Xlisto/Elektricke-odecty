@@ -283,11 +283,8 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         double currentTotalMwh = scenario.getTotalKwh() / 1000.0;
         double ntRatio = scenario.getNtRatio();
 
-        PriceListModel plA = selectedPriceLists.get(0);
-        PriceListModel plB = selectedPriceLists.size() > 1 ? selectedPriceLists.get(1) : selectedPriceLists.get(0);
-
-        BreakEvenResult breakEvenResult = BreakEvenCalculator.calculateBreakEvenConsumption(
-                plA, plB, ntRatio, scenario.getMonths(), (int) scenario.getCountPhaze(), (int) scenario.getPowerBreaker()
+        BreakEvenResult breakEvenResult = BreakEvenCalculator.calculateMultiPriceListBreakEven(
+                selectedPriceLists, ntRatio, scenario.getMonths(), (int) scenario.getCountPhaze(), (int) scenario.getPowerBreaker(), currentTotalMwh
         );
 
         tvBreakEvenSummaryText.setText(breakEvenResult.textSummary);

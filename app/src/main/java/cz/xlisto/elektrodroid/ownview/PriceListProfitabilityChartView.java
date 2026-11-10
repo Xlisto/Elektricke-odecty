@@ -129,10 +129,35 @@ public class PriceListProfitabilityChartView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int desiredHeight = (int) (260 * density);
+        float paddingLeft = 55 * density;
+        float legendHeight = measureLegendHeight(width, paddingLeft, 16 * density);
+        int desiredHeight = (int) (legendHeight + (230 * density));
         setMeasuredDimension(width, desiredHeight);
     }
 
+
+    private float measureLegendHeight(int width, float startX, float startY) {
+        if (seriesList == null || seriesList.isEmpty()) return 0;
+
+        float x = startX;
+        float y = startY;
+        float lineLength = 16 * density;
+        float lineGap = 18 * density;
+        float rightBound = Math.max(100 * density, width - (16 * density));
+
+        for (SeriesData series : seriesList) {
+            float textWidth = textPaint.measureText(series.title);
+            float itemWidth = lineLength + (6 * density) + textWidth;
+
+            if (x > startX && (x + itemWidth > rightBound)) {
+                x = startX;
+                y += lineGap;
+            }
+            x += itemWidth + (16 * density);
+        }
+
+        return y - startY + lineGap;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -147,7 +172,11 @@ public class PriceListProfitabilityChartView extends View {
 
         float paddingLeft = 55 * density;
         float paddingRight = 20 * density;
-        float paddingTop = 30 * density;
+
+        // Vykreslení legendy nahoře a zjištění potřebné výšky
+        float legendBottomY = drawLegend(canvas, paddingLeft, 16 * density);
+
+        float paddingTop = Math.max(30 * density, legendBottomY + (10 * density));
         float paddingBottom = 40 * density;
 
         float chartW = width - paddingLeft - paddingRight;
@@ -217,44 +246,61 @@ public class PriceListProfitabilityChartView extends View {
             canvas.drawText(refLabel, refX + (4 * density), paddingTop + (12 * density), textPaint);
         }
 
-        // Vykreslení bodu zvratu (pokud existuje)
+        // Vykreslení bodů zvratu (pokud existují)
         if (breakEvenResult != null && breakEvenResult.status == ResultStatus.EXACT_INTERSECTION) {
-            double breakEvenX = (mode == Mode.COST_VS_CONSUMPTION) ? breakEvenResult.breakEvenMwh : breakEvenResult.breakEvenNtPercent;
-            if (breakEvenX >= 0 && breakEvenX <= maxX) {
-                float beX = paddingLeft + (float) ((breakEvenX / maxX) * chartW);
+            List<Double> bePoints = (breakEvenResult.allBreakEvenMwhPoints != null && !breakEvenResult.allBreakEvenMwhPoints.isEmpty())
+                    ? breakEvenResult.allBreakEvenMwhPoints
+                    : (breakEvenResult.breakEvenMwh > 0 ? java.util.Collections.singletonList(breakEvenResult.breakEvenMwh) : new ArrayList<>());
 
-                // Najdeme výšku na grafu
-                double yAtBreakEven = getYValueAtX(breakEvenX);
-                float beY = paddingTop + chartH - (float) ((yAtBreakEven / maxY) * chartH);
+            for (double breakEvenX : bePoints) {
+                if (breakEvenX >= 0 && breakEvenX <= maxX) {
+                    float beX = paddingLeft + (float) ((breakEvenX / maxX) * chartW);
 
-                canvas.drawCircle(beX, beY, 6 * density, breakEvenPointPaint);
+                    // Najdeme výšku na grafu
+                    double yAtBreakEven = getYValueAtX(breakEvenX);
+                    float beY = paddingTop + chartH - (float) ((yAtBreakEven / maxY) * chartH);
 
-                textPaint.setColor(0xFF2E7D32);
-                textPaint.setFakeBoldText(true);
-                String beLabel = "Bod zvratu: " + DecimalFormatHelper.df1.format(breakEvenX) + (mode == Mode.COST_VS_CONSUMPTION ? " MWh" : " %");
-                canvas.drawText(beLabel, beX + (8 * density), beY - (6 * density), textPaint);
-                textPaint.setFakeBoldText(false);
+                    canvas.drawCircle(beX, beY, 6 * density, breakEvenPointPaint);
+
+                    textPaint.setColor(0xFF2E7D32);
+                    textPaint.setFakeBoldText(true);
+                    String beLabel = "Bod zvratu: " + DecimalFormatHelper.df1.format(breakEvenX) + (mode == Mode.COST_VS_CONSUMPTION ? " MWh" : " %");
+                    canvas.drawText(beLabel, beX + (8 * density), beY - (6 * density), textPaint);
+                    textPaint.setFakeBoldText(false);
+                }
             }
         }
-
-        // Legenda nahoře
-        drawLegend(canvas, paddingLeft, 16 * density);
     }
 
 
-    private void drawLegend(Canvas canvas, float startX, float startY) {
+    private float drawLegend(Canvas canvas, float startX, float startY) {
+        if (seriesList == null || seriesList.isEmpty()) return startY;
+
         float x = startX;
+        float y = startY;
         float lineLength = 16 * density;
+        float lineGap = 18 * density;
+        float rightBound = Math.max(100 * density, getWidth() - (16 * density));
 
         for (SeriesData series : seriesList) {
+            float textWidth = textPaint.measureText(series.title);
+            float itemWidth = lineLength + (6 * density) + textWidth;
+
+            if (x > startX && (x + itemWidth > rightBound)) {
+                x = startX;
+                y += lineGap;
+            }
+
             linePaint.setColor(series.color);
-            canvas.drawLine(x, startY, x + lineLength, startY, linePaint);
+            canvas.drawLine(x, y - (4 * density), x + lineLength, y - (4 * density), linePaint);
 
             textPaint.setColor(0xFF212121);
-            canvas.drawText(series.title, x + lineLength + (4 * density), startY + (4 * density), textPaint);
+            canvas.drawText(series.title, x + lineLength + (6 * density), y, textPaint);
 
-            x += lineLength + (textPaint.measureText(series.title) + (16 * density));
+            x += itemWidth + (16 * density);
         }
+
+        return y;
     }
 
 
