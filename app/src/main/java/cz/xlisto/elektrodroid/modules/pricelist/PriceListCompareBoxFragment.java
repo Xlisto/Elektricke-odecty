@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.pricelist;
 
-
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.os.Bundle;
@@ -14,141 +13,64 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.os.BundleCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.PriceListComparisonParametersDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonScenario;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
-
 /**
- * Kontejnerový fragment pro porovnání ceníků.
- * Zajišťuje výběr levého/pravého ceníku, parametry výpočtu a předání dat do podřízeného fragmentu.
- * Xlisto 01.03.2024 11:46
+ * Hlavní kontejnerový fragment porovnávání ceníků obsahující 4 záložky (Přehled, Grafy, Výhodnost sazeb, Tabulka).
  */
 public class PriceListCompareBoxFragment extends Fragment {
+
     private static final String TAG = "PriceListCompareBoxFragment";
-    private static final String ARG_CONSUPTION_CONTAINER = "consuptionContainer";
-    private static long idPriceListLeft = -1L, idPriceListRight = -1L;
-    private PriceListModel priceListLeftNERegul, priceListRightNERegul;
-    private SelectedPriceListsInterface selectedPriceListsInterface;
     private PriceListsViewModel priceListsViewModel;
-    private Button btnLeft;
-    private Button btnRight;
-    private ConsuptionContainer consuptionContainer = new ConsuptionContainer();
 
+    private Button btnSelectPriceLists;
+    private TabLayout tabLayoutCompare;
+    private ViewPager2 viewPagerCompare;
 
-    /**
-     * @return nová instance fragmentu porovnání ceníků
-     */
+    private final String[] tabTitles = new String[]{"Přehled", "Grafy", "Výhodnost sazeb", "Tabulka"};
+
     public static PriceListCompareBoxFragment newInstance() {
         return new PriceListCompareBoxFragment();
     }
 
-
-    /**
-     * Inicializuje ViewModel a načte parametry porovnání ceníků
-     * pro aktuální odběrné místo.
-     *
-     * <p>Pokud uložený záznam neexistuje nebo je nevalidní,
-     * použije fallback hodnoty.</p>
-     *
-     * @param savedInstanceState uložený stav instance (může být null)
-     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         priceListsViewModel = new ViewModelProvider(this).get(PriceListsViewModel.class);
-        consuptionContainer = loadCompareParameters();
+        loadCompareParameters();
     }
 
-
-    /**
-     * Vytvoří kořenové zobrazení fragmentu.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_compare_box, container, false);
     }
 
-    /**
-     * Načte uložené parametry porovnání ceníků z tabulky nastavení.
-     *
-     * <p>Klíč je jedinečný pro aktuální odběrné místo. Pokud není dostupný
-     * validní JSON záznam, vrací se výchozí kontejner.</p>
-     *
-     * @return kontejner parametrů porovnání
-     */
-    private ConsuptionContainer loadCompareParameters() {
-        ConsuptionContainer defaults = createDefaultContainer();
-        SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
-        if (subscriptionPointModel == null) {
-            return defaults;
-        }
-
-        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
-        dataSettingsSource.open();
-        String json = dataSettingsSource.loadPriceListCompareParameters(subscriptionPointModel.getId());
-        dataSettingsSource.close();
-
-        if (json == null || json.trim().isEmpty()) {
-            return defaults;
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            return new ConsuptionContainer(
-                    jsonObject.optDouble("vt", defaults.vt()),
-                    jsonObject.optDouble("nt", defaults.nt()),
-                    jsonObject.optDouble("month", defaults.month()),
-                    jsonObject.optDouble("phaze", defaults.phaze()),
-                    jsonObject.optDouble("power", defaults.power()),
-                    jsonObject.optDouble("ser_l", defaults.servicesL()),
-                    jsonObject.optDouble("ser_r", defaults.servicesR()));
-        } catch (JSONException ignored) {
-            return defaults;
-        }
-    }
-
-    /**
-     * Vytvoří výchozí kontejner parametrů porovnání.
-     *
-     * <p>Výchozí hodnoty: VT=1, NT=2, měsíc=12. Fáze a příkon se přebírají
-     * z aktuálního odběrného místa, pokud je k dispozici.</p>
-     *
-     * @return výchozí kontejner
-     */
-    private ConsuptionContainer createDefaultContainer() {
-        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireContext());
-        double phaze = 3;
-        double power = 25;
-        if (subscriptionPoint != null) {
-            phaze = subscriptionPoint.getCountPhaze();
-            power = subscriptionPoint.getPhaze();
-        }
-        return new ConsuptionContainer(1, 2, 12, phaze, power, 0, 0);
-    }
-
-
-    /**
-     * Nastaví menu, posluchače výběru ceníků a posluchače změny vstupních parametrů.
-     *
-     * @param view               kořenové zobrazení fragmentu
-     * @param savedInstanceState uložený stav instance (může být null)
-     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -163,7 +85,20 @@ public class PriceListCompareBoxFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.menu_values) {
-                    PriceListComparisonParametersDialogFragment.newInstance(consuptionContainer)
+                    PriceListComparisonScenario scenario = priceListsViewModel.getScenario().getValue();
+                    if (scenario == null) scenario = new PriceListComparisonScenario();
+
+                    ConsuptionContainer container = new ConsuptionContainer(
+                            scenario.getVtKwh() / 1000.0,
+                            scenario.getNtKwh() / 1000.0,
+                            scenario.getMonths(),
+                            scenario.getCountPhaze(),
+                            scenario.getPowerBreaker(),
+                            scenario.getServicesLeft(),
+                            scenario.getServicesRight()
+                    );
+
+                    PriceListComparisonParametersDialogFragment.newInstance(container)
                             .show(requireActivity().getSupportFragmentManager(), TAG);
                     return true;
                 }
@@ -171,114 +106,126 @@ public class PriceListCompareBoxFragment extends Fragment {
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        btnLeft = view.findViewById(R.id.btnLeft);
-        btnRight = view.findViewById(R.id.btnRight);
+        btnSelectPriceLists = view.findViewById(R.id.btnSelectPriceLists);
+        tabLayoutCompare = view.findViewById(R.id.tabLayoutCompare);
+        viewPagerCompare = view.findViewById(R.id.viewPagerCompare);
 
-        btnLeft.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListLeft, PriceListFragment.Side.LEFT);
+        ComparePagerAdapter adapter = new ComparePagerAdapter(this);
+        viewPagerCompare.setAdapter(adapter);
+
+        new TabLayoutMediator(tabLayoutCompare, viewPagerCompare, (tab, position) -> tab.setText(tabTitles[position])).attach();
+
+        btnSelectPriceLists.setOnClickListener(v -> {
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L);
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
-        btnRight.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, idPriceListRight, PriceListFragment.Side.RIGHT);
-            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
-        });
-
-        PriceListCompareCompactFragment priceListCompareCompactFragment = PriceListCompareCompactFragment.newInstance();
-
-        //getChildFragmentManager().beginTransaction().replace(R.id.price_list_compare_container, priceListCompareDetailFragment).commit();
-        getChildFragmentManager().beginTransaction().replace(R.id.price_list_compare_container, priceListCompareCompactFragment).commit();
-        try {
-            //selectedPriceListsInterface = priceListCompareDetailFragment;
-            selectedPriceListsInterface = priceListCompareCompactFragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(requireContext() + " must implement SelectedPriceListsInterface");
-        }
-
-
-        //listener pro výběr ceníku
+        // Listener pro výběr ceníků z PriceListFragment
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
-            PriceListModel priceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
-            PriceListFragment.Side side = BundleCompat.getSerializable(result, PriceListFragment.FLAG_SIDE, PriceListFragment.Side.class);
-            if (priceList != null && side != null) {
-                if (side.equals(PriceListFragment.Side.LEFT)) {
-                    priceListLeftNERegul = priceList;
-                    idPriceListLeft = priceList.getId();
-                    priceListsViewModel.setPriceListLeft(priceList);
-                } else {
-                    priceListRightNERegul = priceList;
-                    idPriceListRight = priceList.getId();
-                    priceListsViewModel.setPriceListRight(priceList);
+            long[] selectedIds = result.getLongArray(PriceListFragment.FLAG_SELECTED_IDS);
+            if (selectedIds != null && selectedIds.length > 0) {
+                DataPriceListSource source = new DataPriceListSource(requireContext());
+                source.open();
+                List<PriceListModel> selectedList = new ArrayList<>();
+                for (long id : selectedIds) {
+                    PriceListModel pl = source.readPrice(id);
+                    if (pl != null && pl.getId() > 0) {
+                        selectedList.add(pl);
+                    }
+                }
+                source.close();
+                priceListsViewModel.setSelectedPriceLists(selectedList);
+            } else {
+                PriceListModel singlePl = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+                if (singlePl != null) {
+                    List<PriceListModel> list = priceListsViewModel.getSelectedPriceLists().getValue();
+                    if (list == null) list = new ArrayList<>();
+                    List<PriceListModel> newList = new ArrayList<>(list);
+                    if (!newList.contains(singlePl)) {
+                        newList.add(singlePl);
+                    }
+                    priceListsViewModel.setSelectedPriceLists(newList);
                 }
             }
-            selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul,consuptionContainer);
-            if (priceListLeftNERegul != null)
-                btnLeft.setText(priceListLeftNERegul.getName());
-            if (priceListRightNERegul != null)
-                btnRight.setText(priceListRightNERegul.getName());
         });
 
-        //listener pro výběr parametrů
+        // Listener pro parametr dialog
         getParentFragmentManager().setFragmentResultListener(PriceListComparisonParametersDialogFragment.TAG, this, (requestKey, result) -> {
-            consuptionContainer = BundleCompat.getSerializable(result, PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER, ConsuptionContainer.class);
-            selectedPriceListsInterface.onPriceListsSelected(priceListLeftNERegul, priceListRightNERegul, consuptionContainer);
-            priceListsViewModel.setConsuptionContainer(consuptionContainer);
+            ConsuptionContainer container = (ConsuptionContainer) result.getSerializable(PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER);
+            if (container != null) {
+                priceListsViewModel.setConsuptionContainer(container);
+            }
         });
 
+        priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> {
+            if (priceLists == null || priceLists.isEmpty()) {
+                btnSelectPriceLists.setText("Vybrat ceníky ke srovnání (0 vybráno)");
+            } else {
+                btnSelectPriceLists.setText("Vybrané ceníky: " + priceLists.size() + " (klepnutím upravte)");
+            }
+        });
     }
 
 
-    /**
-     * Obnoví navázání dat z ViewModelu a předá aktuální stav do cílového porovnávacího fragmentu.
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        //posluchač pro aktualizaci dat levého ceníku
-        priceListsViewModel.getPriceListLeft().observe(getViewLifecycleOwner(), priceList -> {
-            if (priceList != null)
-                btnLeft.setText(priceList.getName());
-            updateSelectedPriceLists();
-        });
+    private void loadCompareParameters() {
+        SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
+        if (subscriptionPointModel == null) {
+            return;
+        }
 
-        //posluchač pro aktualizaci dat pravého ceníku
-        priceListsViewModel.getPriceListRight().observe(getViewLifecycleOwner(), priceList -> {
-            if (priceList != null)
-                btnRight.setText(priceList.getName());
-            updateSelectedPriceLists();
-        });
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        dataSettingsSource.open();
+        String json = dataSettingsSource.loadPriceListCompareParameters(subscriptionPointModel.getId());
+        dataSettingsSource.close();
 
-        //posluchač pro aktualizaci dat parametrů
-        priceListsViewModel.getConsuptionContainer().observe(getViewLifecycleOwner(), consuptionContainer -> {
-            this.consuptionContainer = consuptionContainer;
-            updateSelectedPriceLists();
-        });
-
-        updateSelectedPriceLists();
-    }
-
-
-    private void updateSelectedPriceLists() {
-        if (selectedPriceListsInterface != null) {
-            selectedPriceListsInterface.onPriceListsSelected(
-                    priceListsViewModel.getPriceListLeft().getValue(),
-                    priceListsViewModel.getPriceListRight().getValue(),
-                    consuptionContainer);
+        if (json != null && !json.trim().isEmpty()) {
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                ConsuptionContainer container = new ConsuptionContainer(
+                        jsonObject.optDouble("vt", 1.0),
+                        jsonObject.optDouble("nt", 2.0),
+                        jsonObject.optDouble("month", 12.0),
+                        jsonObject.optDouble("phaze", subscriptionPointModel.getCountPhaze()),
+                        jsonObject.optDouble("power", subscriptionPointModel.getPhaze()),
+                        jsonObject.optDouble("ser_l", 0.0),
+                        jsonObject.optDouble("ser_r", 0.0)
+                );
+                priceListsViewModel.setConsuptionContainer(container);
+            } catch (JSONException ignored) {
+            }
         }
     }
 
 
-    /**
-     * Uloží aktuální kontejner vstupních parametrů.
-     *
-     * @param outState cílový bundle pro uložení stavu
-     */
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(ARG_CONSUPTION_CONTAINER, consuptionContainer);
+    private static class ComparePagerAdapter extends FragmentStateAdapter {
+
+        public ComparePagerAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return PriceListCompareOverviewFragment.newInstance();
+                case 1:
+                    return PriceListCompareChartsFragment.newInstance();
+                case 2:
+                    return PriceListCompareProfitabilityFragment.newInstance();
+                case 3:
+                    return PriceListCompareTableFragment.newInstance();
+                default:
+                    return PriceListCompareOverviewFragment.newInstance();
+            }
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return 4;
+        }
+
     }
-
-
-
 }

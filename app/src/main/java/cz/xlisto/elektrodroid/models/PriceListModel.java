@@ -178,6 +178,39 @@ public class PriceListModel implements Serializable {
 
 
     /**
+     * Vrátí formátovaný textový interval platnosti ceníku (např. "01.01.2025 – 31.08.2025").
+     *
+     * @return textový interval platnosti
+     */
+    public String getPlatnostText() {
+        if (platnostOD > 0 && platnostDO > 0) {
+            return convertLongToDate(platnostOD) + " – " + convertLongToDate(platnostDO);
+        } else if (platnostOD > 0) {
+            return "od " + convertLongToDate(platnostOD);
+        } else if (platnostDO > 0) {
+            return "do " + convertLongToDate(platnostDO);
+        }
+        return "";
+    }
+
+
+    /**
+     * Vrátí název ceníku se sazbou a obdobím platnosti na jednom řádku.
+     *
+     * @return název ceníku s obdobím platnosti
+     */
+    public String getNameWithPeriod() {
+        if (this.produkt.equals(NO_PRICE_LIST))
+            return NO_PRICE_LIST;
+        String dates = getPlatnostText();
+        if (!dates.isEmpty()) {
+            return getProdukt() + " (" + getSazba() + " • " + dates + ")";
+        }
+        return getProdukt() + " (" + getSazba() + ")";
+    }
+
+
+    /**
      * Zjistí, zdali je ceník prázdný. Kontroluje se podle názvu ceníku.
      *
      * @return boolean true - prázdný, false - není prázdný

@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/llButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="4dp">
 
         <Button
-            android:id="@+id/btnLeft"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnSelectPriceLists"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/vyberteCenikLevy"
-            android:textColor="@color/primary_text_button_color" />
-
-        <Button
-            android:id="@+id/btnRight"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/vyberteCenikPravy"
-            android:textColor="@color/primary_text_button_color" />
+            android:text="Vybrat ceníky ke srovnání"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/price_list_compare_container"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutCompare"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/llButtons" />
+        android:layout_height="wrap_content"
+        app:tabMode="fixed"
+        app:tabGravity="fill" />
 
-</RelativeLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerCompare"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
