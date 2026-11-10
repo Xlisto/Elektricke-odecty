@@ -13,13 +13,14 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.os.BundleCompat;
 import androidx.core.view.MenuHost;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -49,8 +50,6 @@ public class PriceListCompareBoxFragment extends Fragment {
     private PriceListsViewModel priceListsViewModel;
 
     private Button btnSelectPriceLists;
-    private TabLayout tabLayoutCompare;
-    private ViewPager2 viewPagerCompare;
 
     private final String[] tabTitles = new String[]{"Přehled", "Grafy", "Výhodnost sazeb", "Tabulka"};
 
@@ -85,19 +84,7 @@ public class PriceListCompareBoxFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.menu_values) {
-                    PriceListComparisonScenario scenario = priceListsViewModel.getScenario().getValue();
-                    if (scenario == null) scenario = new PriceListComparisonScenario();
-
-                    ConsuptionContainer container = new ConsuptionContainer(
-                            scenario.getVtKwh() / 1000.0,
-                            scenario.getNtKwh() / 1000.0,
-                            scenario.getMonths(),
-                            scenario.getCountPhaze(),
-                            scenario.getPowerBreaker(),
-                            scenario.getServicesLeft(),
-                            scenario.getServicesRight()
-                    );
-
+                    ConsuptionContainer container = createContainerFromScenario(priceListsViewModel.getScenario().getValue());
                     PriceListComparisonParametersDialogFragment.newInstance(container)
                             .show(requireActivity().getSupportFragmentManager(), TAG);
                     return true;
@@ -107,8 +94,8 @@ public class PriceListCompareBoxFragment extends Fragment {
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         btnSelectPriceLists = view.findViewById(R.id.btnSelectPriceLists);
-        tabLayoutCompare = view.findViewById(R.id.tabLayoutCompare);
-        viewPagerCompare = view.findViewById(R.id.viewPagerCompare);
+        TabLayout tabLayoutCompare = view.findViewById(R.id.tabLayoutCompare);
+        ViewPager2 viewPagerCompare = view.findViewById(R.id.viewPagerCompare);
 
         ComparePagerAdapter adapter = new ComparePagerAdapter(this);
         viewPagerCompare.setAdapter(adapter);
@@ -124,7 +111,7 @@ public class PriceListCompareBoxFragment extends Fragment {
                     selectedIdsArray[i] = currentSelected.get(i).getId();
                 }
             }
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L, selectedIdsArray, null);
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L, selectedIdsArray, null, true);
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 
@@ -144,7 +131,7 @@ public class PriceListCompareBoxFragment extends Fragment {
                 source.close();
                 priceListsViewModel.setSelectedPriceLists(selectedList);
             } else {
-                PriceListModel singlePl = (PriceListModel) result.getSerializable(PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT);
+                PriceListModel singlePl = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
                 if (singlePl != null) {
                     List<PriceListModel> list = priceListsViewModel.getSelectedPriceLists().getValue();
                     if (list == null) list = new ArrayList<>();
@@ -159,21 +146,48 @@ public class PriceListCompareBoxFragment extends Fragment {
 
         // Listener pro parametr dialog
         getParentFragmentManager().setFragmentResultListener(PriceListComparisonParametersDialogFragment.TAG, this, (requestKey, result) -> {
-            ConsuptionContainer container = (ConsuptionContainer) result.getSerializable(PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER);
+            ConsuptionContainer container = BundleCompat.getSerializable(result, PriceListComparisonParametersDialogFragment.CONSUPTION_CONTAINER, ConsuptionContainer.class);
             if (container != null) {
                 priceListsViewModel.setConsuptionContainer(container);
             }
         });
 
         priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> {
-            if (priceLists == null || priceLists.isEmpty()) {
-                btnSelectPriceLists.setText("Vybrat ceníky ke srovnání (0 vybráno)");
+            int count = priceLists != null ? priceLists.size() : 0;
+            if (count == 0) {
+                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrat ceníky ke srovnání (%d vybráno)", 0));
             } else {
-                btnSelectPriceLists.setText("Vybrané ceníky: " + priceLists.size() + " (klepnutím upravte)");
+                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrané ceníky: %d (klepnutím upravte)", count));
             }
         });
     }
 
+
+    private ConsuptionContainer createContainerFromScenario(PriceListComparisonScenario scenario) {
+        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
+        return new ConsuptionContainer(
+                activeScenario.getVtKwh() / 1000.0,
+                activeScenario.getNtKwh() / 1000.0,
+                activeScenario.getMonths(),
+                activeScenario.getCountPhaze(),
+                activeScenario.getPowerBreaker(),
+                activeScenario.getServicesLeft(),
+                activeScenario.getServicesRight()
+        );
+    }
+
+
+    private ConsuptionContainer createContainerFromJson(JSONObject jsonObject, SubscriptionPointModel subscriptionPointModel) {
+        return new ConsuptionContainer(
+                jsonObject.optDouble("vt", 1.0),
+                jsonObject.optDouble("nt", 2.0),
+                jsonObject.optDouble("month", 12.0),
+                jsonObject.optDouble("phaze", subscriptionPointModel.getCountPhaze()),
+                jsonObject.optDouble("power", subscriptionPointModel.getPhaze()),
+                jsonObject.optDouble("ser_l", 0.0),
+                jsonObject.optDouble("ser_r", 0.0)
+        );
+    }
 
     private void loadCompareParameters() {
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
@@ -189,21 +203,12 @@ public class PriceListCompareBoxFragment extends Fragment {
         if (json != null && !json.trim().isEmpty()) {
             try {
                 JSONObject jsonObject = new JSONObject(json);
-                ConsuptionContainer container = new ConsuptionContainer(
-                        jsonObject.optDouble("vt", 1.0),
-                        jsonObject.optDouble("nt", 2.0),
-                        jsonObject.optDouble("month", 12.0),
-                        jsonObject.optDouble("phaze", subscriptionPointModel.getCountPhaze()),
-                        jsonObject.optDouble("power", subscriptionPointModel.getPhaze()),
-                        jsonObject.optDouble("ser_l", 0.0),
-                        jsonObject.optDouble("ser_r", 0.0)
-                );
+                ConsuptionContainer container = createContainerFromJson(jsonObject, subscriptionPointModel);
                 priceListsViewModel.setConsuptionContainer(container);
             } catch (JSONException ignored) {
             }
         }
     }
-
 
     private static class ComparePagerAdapter extends FragmentStateAdapter {
 
@@ -211,29 +216,20 @@ public class PriceListCompareBoxFragment extends Fragment {
             super(fragment);
         }
 
-
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            switch (position) {
-                case 0:
-                    return PriceListCompareOverviewFragment.newInstance();
-                case 1:
-                    return PriceListCompareChartsFragment.newInstance();
-                case 2:
-                    return PriceListCompareProfitabilityFragment.newInstance();
-                case 3:
-                    return PriceListCompareTableFragment.newInstance();
-                default:
-                    return PriceListCompareOverviewFragment.newInstance();
-            }
+            return switch (position) {
+                case 1 -> PriceListCompareChartsFragment.newInstance();
+                case 2 -> PriceListCompareProfitabilityFragment.newInstance();
+                case 3 -> PriceListCompareTableFragment.newInstance();
+                default -> PriceListCompareOverviewFragment.newInstance();
+            };
         }
-
 
         @Override
         public int getItemCount() {
             return 4;
         }
-
     }
 }

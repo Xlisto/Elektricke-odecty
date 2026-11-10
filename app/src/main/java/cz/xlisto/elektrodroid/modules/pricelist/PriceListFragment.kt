@@ -58,6 +58,8 @@ class PriceListFragment : Fragment() {
 
         const val FLAG_SELECTED_IDS = "flagSelectedIds"
 
+        const val FLAG_IS_COMPARE_MODE = "flagIsCompareMode"
+
         private const val SHOW_SELECT_ITEM = "param1"
         private const val ID_SELECTED_PRICE_LIST = "param2"
         private const val ARG_ID_FRAGMENT = "idFragment"
@@ -69,7 +71,7 @@ class PriceListFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(selectedItem: Boolean, idSelectedPriceList: Long): PriceListFragment {
-            return newInstance(selectedItem, idSelectedPriceList, null, null)
+            return newInstance(selectedItem, idSelectedPriceList, null, null, false)
         }
 
         @JvmStatic
@@ -78,7 +80,7 @@ class PriceListFragment : Fragment() {
             idSelectedPriceList: Long,
             side: Side?
         ): PriceListFragment {
-            return newInstance(selectedItem, idSelectedPriceList, null, side)
+            return newInstance(selectedItem, idSelectedPriceList, null, side, false)
         }
 
         @JvmStatic
@@ -86,7 +88,8 @@ class PriceListFragment : Fragment() {
             selectedItem: Boolean,
             idSelectedPriceList: Long,
             initialSelectedIds: LongArray?,
-            side: Side?
+            side: Side?,
+            isCompareMode: Boolean = false
         ): PriceListFragment {
             val fragment = PriceListFragment()
             val args = Bundle()
@@ -96,6 +99,7 @@ class PriceListFragment : Fragment() {
                 args.putLongArray(FLAG_SELECTED_IDS, initialSelectedIds)
             }
             args.putSerializable(FLAG_SIDE, side)
+            args.putBoolean(FLAG_IS_COMPARE_MODE, isCompareMode)
             fragment.arguments = args
             return fragment
         }
@@ -104,6 +108,7 @@ class PriceListFragment : Fragment() {
     private lateinit var shpFilter: ShPFilter
     private var showSelectItem = false
     private var isSelectionModeActive = false
+    private var isCompareMode = false
     private var idSelectedPriceList: Long = -1L
     private var side: Side? = null
     private var idFragment = 0
@@ -132,6 +137,7 @@ class PriceListFragment : Fragment() {
             showSelectItem = it.getBoolean(SHOW_SELECT_ITEM)
             idSelectedPriceList = it.getLong(ID_SELECTED_PRICE_LIST)
             side = BundleCompat.getSerializable(it, FLAG_SIDE, Side::class.java)
+            isCompareMode = it.getBoolean(FLAG_IS_COMPARE_MODE, false)
             val initialIds = it.getLongArray(FLAG_SELECTED_IDS)
             if (initialIds != null) {
                 selectedIds.clear()
@@ -422,7 +428,8 @@ class PriceListFragment : Fragment() {
                 selectedIds.clear()
                 selectedIds.addAll(ids)
                 updateSelectionUiState()
-            }
+            },
+            isCompareMode = isCompareMode
         )
 
         // Sync selectedIds with adapter

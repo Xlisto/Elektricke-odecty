@@ -50,7 +50,8 @@ class PriceListAdapter(
     private var idSelectedPriceList: Long,
     private val onClickItemListener: OnClickItemListener,
     private val recyclerView: RecyclerView,
-    private val onSelectionChangedListener: OnSelectionChangedListener? = null
+    private val onSelectionChangedListener: OnSelectionChangedListener? = null,
+    private val isCompareMode: Boolean = false
 ) : RecyclerView.Adapter<PriceListAdapter.MyViewHolder>() {
 
     companion object {
@@ -171,13 +172,24 @@ class PriceListAdapter(
                 if (selectedIds.contains(priceList.id)) {
                     selectedIds.remove(priceList.id)
                     holder.cbSelectItem.isChecked = false
+                    idSelectedPriceList = priceList.id
+                    onClickItemListener.setClickPriceListListener(priceList)
+                    onSelectionChangedListener?.onSelectionChanged(selectedIds)
                 } else {
-                    selectedIds.add(priceList.id)
-                    holder.cbSelectItem.isChecked = true
+                    if (canSelectPriceList(priceList)) {
+                        selectedIds.add(priceList.id)
+                        holder.cbSelectItem.isChecked = true
+                        idSelectedPriceList = priceList.id
+                        onClickItemListener.setClickPriceListListener(priceList)
+                        onSelectionChangedListener?.onSelectionChanged(selectedIds)
+                    } else {
+                        android.widget.Toast.makeText(
+                            context,
+                            R.string.cannot_combine_single_and_dual_tariffs,
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-                idSelectedPriceList = priceList.id
-                onClickItemListener.setClickPriceListListener(priceList)
-                onSelectionChangedListener?.onSelectionChanged(selectedIds)
             }
         } else {
             holder.cbSelectItem.visibility = View.GONE
@@ -525,6 +537,31 @@ class PriceListAdapter(
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, itemCount)
         }
+    }
+
+    /**
+     * Zkontroluje kompatibilitu sazby vybraného ceníku s již vybranými ceníky.
+     * Jednotarifní ceníky (D01d, D02d) nelze kombinovat s dvoutarifními sazbami.
+     */
+    private fun canSelectPriceList(candidate: PriceListModel): Boolean {
+        if (!isCompareMode) return true
+        if (selectedIds.isEmpty()) return true
+        if (selectedIds.contains(candidate.id)) return true
+
+        val firstSelectedId = selectedIds.firstOrNull() ?: return true
+        val firstSelectedModel = items.find { it.id == firstSelectedId }
+            ?: run {
+                val dataPriceListSource = DataPriceListSource(context)
+                dataPriceListSource.open()
+                val pl = dataPriceListSource.readPrice(firstSelectedId)
+                dataPriceListSource.close()
+                pl
+            } ?: return true
+
+        val isFirstSingle = isSingleTariff(firstSelectedModel)
+        val isCandidateSingle = isSingleTariff(candidate)
+
+        return isFirstSingle == isCandidateSingle
     }
 
     /**

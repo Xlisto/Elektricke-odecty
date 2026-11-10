@@ -186,7 +186,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
                     priceListLeftNERegul = priceList;
                     idPriceListLeft = priceList.getId();
                     createNeregulPriceListLeft();
-                } else {
+                } else if (side.equals(PriceListFragment.Side.RIGHT)) {
                     priceListRightNERegul = priceList;
                     idPriceListRight = priceList.getId();
                     createNeregulPriceListRight();
