@@ -54,8 +54,8 @@ public class BreakEvenCalculatorTest {
         // Ověříme generování křivky
         List<Point2D> curveD01 = BreakEvenCalculator.generateCostVsConsumptionCurve(d01, 0.0, 12, 3, 25, 10.0, 10);
         assertEquals(11, curveD01.size());
-        assertEquals(0.0, curveD01.get(0).x, 0.001);
-        assertEquals(10.0, curveD01.get(10).x, 0.001);
+        assertEquals(0.0, curveD01.get(0).x(), 0.001);
+        assertEquals(10.0, curveD01.get(10).x(), 0.001);
     }
 
     @Test

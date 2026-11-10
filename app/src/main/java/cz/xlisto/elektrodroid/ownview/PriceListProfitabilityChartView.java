@@ -222,8 +222,8 @@ public class PriceListProfitabilityChartView extends View {
 
             for (int i = 0; i < series.points.size(); i++) {
                 Point2D p = series.points.get(i);
-                float px = paddingLeft + (float) ((p.x / maxX) * chartW);
-                float py = paddingTop + chartH - (float) ((p.y / maxY) * chartH);
+                float px = paddingLeft + (float) ((p.x() / maxX) * chartW);
+                float py = paddingTop + chartH - (float) ((p.y() / maxY) * chartH);
 
                 if (i == 0) {
                     path.moveTo(px, py);
@@ -304,7 +304,7 @@ public class PriceListProfitabilityChartView extends View {
         double max = 0;
         for (SeriesData s : seriesList) {
             for (Point2D p : s.points) {
-                if (p.x > max) max = p.x;
+                if (p.x() > max) max = p.x();
             }
         }
         return max;
@@ -314,7 +314,7 @@ public class PriceListProfitabilityChartView extends View {
         double max = 0;
         for (SeriesData s : seriesList) {
             for (Point2D p : s.points) {
-                if (p.y > max) max = p.y;
+                if (p.y() > max) max = p.y();
             }
         }
         return max * 1.1; // 10% rezerva nahoře
@@ -326,12 +326,12 @@ public class PriceListProfitabilityChartView extends View {
         for (int i = 0; i < series.points.size() - 1; i++) {
             Point2D p1 = series.points.get(i);
             Point2D p2 = series.points.get(i + 1);
-            if (x >= p1.x && x <= p2.x) {
-                double ratio = (p2.x - p1.x) > 0 ? (x - p1.x) / (p2.x - p1.x) : 0;
-                return p1.y + ratio * (p2.y - p1.y);
+            if (x >= p1.x() && x <= p2.x()) {
+                double ratio = (p2.x() - p1.x()) > 0 ? (x - p1.x()) / (p2.x() - p1.x()) : 0;
+                return p1.y() + ratio * (p2.y() - p1.y());
             }
         }
-        return series.points.get(0).y;
+        return series.points.get(0).y();
     }
 
     @Override

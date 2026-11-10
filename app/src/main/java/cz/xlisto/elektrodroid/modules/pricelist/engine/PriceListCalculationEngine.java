@@ -65,11 +65,13 @@ public class PriceListCalculationEngine {
             return null;
         }
 
-        int year = priceList.getRokPlatnost();
-        if (year <= 0) {
+        int year;
+        if (priceList.getRokPlatnost() <= 0) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(priceList.getPlatnostOD());
             year = cal.get(Calendar.YEAR);
+        } else {
+            year = priceList.getRokPlatnost();
         }
 
         // Aplikujeme regulované úpravy (zastropování 2023, nulování POZE)
@@ -145,8 +147,8 @@ public class PriceListCalculationEngine {
         double regulatedNtWithDph = (activePriceList.getDistNT() + activePriceList.getDan() + activePriceList.getSystemSluzby() + unitPozePerMwh + otePerMwh) * dphMultiplier;
         double regulatedMonthlyWithDph = (monthlyBreakerPrice + oteMonthly + monthlyPozeBreaker) * dphMultiplier;
 
-        double pozeConsumptionVal = 0.0;
-        double pozeBreakerVal = 0.0;
+        double pozeConsumptionVal;
+        double pozeBreakerVal;
 
         if (year == 2022 || year == 2023 || (year >= 2026 && activePriceList.getPoze1() == 0)) {
             pozeConsumptionVal = (year >= 2026 && activePriceList.getPoze1() > 0) ? activePriceList.getPoze1() : 0.0;

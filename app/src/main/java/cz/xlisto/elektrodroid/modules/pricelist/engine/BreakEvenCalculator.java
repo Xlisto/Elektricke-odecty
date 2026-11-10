@@ -21,15 +21,9 @@ public class BreakEvenCalculator {
         INVALID_DATA
     }
 
-    public static class Point2D {
 
-        public final double x;
-        public final double y;
+    public record Point2D(double x, double y) {
 
-        public Point2D(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 
     public static class BreakEvenResult {
@@ -394,13 +388,17 @@ public class BreakEvenCalculator {
         String nameA = priceListA.getNameWithPeriod();
         String nameB = priceListB.getNameWithPeriod();
 
-        if (eBreakEvenMwh < 0) {
-            if (pA < pB && fA < fB) {
+        if (eBreakEvenMwh <= 0.05) {
+            // Průsečík je nulový nebo v záporné spotřebě – jeden ceník je výhodnější v celém kladném rozsahu
+            double costA1 = fA + pA;
+            double costB1 = fB + pB;
+
+            if (costA1 <= costB1) {
                 return new BreakEvenResult(
                         ResultStatus.NO_INTERSECTION_A_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + nameA + " je výhodnější v celém rozsahu spotřeby.",
+                        "Ceník " + nameA + " je výhodnější v celém rozsahu spotřeby.\n\nNejméně výhodnou (nejdražší) variantou v celém rozsahu spotřeby je " + nameB + ".",
                         noticeA,
                         noticeB
                 );
@@ -409,7 +407,7 @@ public class BreakEvenCalculator {
                         ResultStatus.NO_INTERSECTION_B_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + nameB + " je výhodnější v celém rozsahu spotřeby.",
+                        "Ceník " + nameB + " je výhodnější v celém rozsahu spotřeby.\n\nNejméně výhodnou (nejdražší) variantou v celém rozsahu spotřeby je " + nameA + ".",
                         noticeA,
                         noticeB
                 );
@@ -471,34 +469,6 @@ public class BreakEvenCalculator {
         return points;
     }
 
-    /**
-     * Vypočítá řadu bodů závislosti celkových ročních nákladů na podílu NT (%) při konstantní celkové spotřebě v MWh.
-     */
-    public static List<Point2D> generateCostVsNtRatioCurve(
-            PriceListModel priceList,
-            double totalMwh,
-            double months,
-            int countPhaze,
-            int powerBreaker,
-            int steps
-    ) {
-        List<Point2D> points = new ArrayList<>();
-        if (priceList == null || steps <= 1) {
-            return points;
-        }
-
-        for (int i = 0; i <= steps; i++) {
-            double ntPercent = (100.0 / steps) * i;
-            double ntRatio = ntPercent / 100.0;
-            double vt = (1.0 - ntRatio) * totalMwh * 1000.0;
-            double nt = ntRatio * totalMwh * 1000.0;
-            PriceListComparisonResult res = PriceListCalculationEngine.calculate(priceList, vt, nt, months, countPhaze, powerBreaker);
-            double cost = res != null ? res.getTotalWithDph() : 0.0;
-            points.add(new Point2D(ntPercent, cost));
-        }
-
-        return points;
-    }
 
     /**
      * Vrátí informační text o technických podmínkách přiznání distribuční sazby.
@@ -506,25 +476,23 @@ public class BreakEvenCalculator {
     public static String getTechnicalConditionNotice(String sazba) {
         if (sazba == null) return "";
         String cleanSazba = sazba.trim().toUpperCase();
-        switch (cleanSazba) {
-            case "D01D":
-                return "D01d: Jednotarifní sazba pro odběrná místa s malou spotřebou (svícení, běžné spotřebiče).";
-            case "D02D":
-                return "D02d: Jednotarifní sazba pro běžné domácnosti se střední spotřebou.";
-            case "D25D":
-                return "D25d: Dvoutarifní sazba (8 hod NT) určená pro akumulační ohřev teplé užitkové vody (TUV). Vyžaduje blokování spotřebičů.";
-            case "D26D":
-                return "D26d: Dvoutarifní sazba (8 hod NT) pro akumulační vytápění a ohřev vody s vyšším instalovaným příkonem topných těles.";
-            case "D35D":
-                return "D35d: Dvoutarifní sazba (16 hod NT) pro vytápění tepelným čerpadlem nebo hybridy.";
-            case "D45D":
-                return "D45d: Dvoutarifní sazba (20 hod NT) pro přímotopné elektrické vytápění.";
-            case "D57D":
-                return "D57d: Dvoutarifní sazba (20 hod NT) pro elektrické vytápění (přímotopy, tepelná čerpadla, elektrokotle).";
-            case "D61D":
-                return "D61d: Víkendová sazba s levným tarifem od pátku 12:00 do neděle 22:00 (vhodná pro chaty a chalupy).";
-            default:
-                return "";
-        }
+        return switch (cleanSazba) {
+            case "D01D" ->
+                    "D01d: Jednotarifní sazba pro odběrná místa s malou spotřebou (svícení, běžné spotřebiče).";
+            case "D02D" -> "D02d: Jednotarifní sazba pro běžné domácnosti se střední spotřebou.";
+            case "D25D" ->
+                    "D25d: Dvoutarifní sazba (8 hod NT) určená pro akumulační ohřev teplé užitkové vody (TUV). Vyžaduje blokování spotřebičů.";
+            case "D26D" ->
+                    "D26d: Dvoutarifní sazba (8 hod NT) pro akumulační vytápění a ohřev vody s vyšším instalovaným příkonem topných těles.";
+            case "D35D" ->
+                    "D35d: Dvoutarifní sazba (16 hod NT) pro vytápění tepelným čerpadlem nebo hybridy.";
+            case "D45D" ->
+                    "D45d: Dvoutarifní sazba (20 hod NT) pro přímotopné elektrické vytápění.";
+            case "D57D" ->
+                    "D57d: Dvoutarifní sazba (20 hod NT) pro elektrické vytápění (přímotopy, tepelná čerpadla, elektrokotle).";
+            case "D61D" ->
+                    "D61d: Víkendová sazba s levným tarifem od pátku 12:00 do neděle 22:00 (vhodná pro chaty a chalupy).";
+            default -> "";
+        };
     }
 }
