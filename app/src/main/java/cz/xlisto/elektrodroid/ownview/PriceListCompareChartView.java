@@ -186,7 +186,7 @@ public class PriceListCompareChartView extends View {
         int subtitleCount = Math.max(1, subtitleLines.size());
 
         float textHeight = (titleCount + subtitleCount) * (15 * density);
-        return textHeight + (38 * density);
+        return textHeight + (54 * density);
     }
 
     @Override
