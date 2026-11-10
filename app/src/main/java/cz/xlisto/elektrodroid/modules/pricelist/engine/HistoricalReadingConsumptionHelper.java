@@ -205,4 +205,57 @@ public class HistoricalReadingConsumptionHelper {
         return new HistoricalConsumptionResult(avgVt, avgNt, -1, false, true, qualityNote, availableYears);
     }
 
+
+    /**
+     * Vypočítá průměrnou roční spotřebu za zadaný počet posledních dostupných roků s odečty.
+     *
+     * @param context           kontext aplikace
+     * @param subscriptionPoint odběrné místo
+     * @param recentYearsCount  počet posledních roků k započítání
+     * @return {@link HistoricalConsumptionResult} s průměrnou spotřebou
+     */
+    public static HistoricalConsumptionResult calculateAverageConsumptionForLastNYears(
+            Context context,
+            SubscriptionPointModel subscriptionPoint,
+            int recentYearsCount
+    ) {
+        if (subscriptionPoint == null || context == null || recentYearsCount <= 0) {
+            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Není vybráno odběrné místo", new ArrayList<>());
+        }
+
+        AnnualOverviewDataBuilder builder = new AnnualOverviewDataBuilder(context);
+        ArrayList<AnnualYearData> allData = builder.buildAllAnnualData(subscriptionPoint);
+        List<Integer> availableYears = getAvailableYears(context, subscriptionPoint);
+
+        if (allData.isEmpty() || availableYears.isEmpty()) {
+            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Žádné odečty v databázi", availableYears);
+        }
+
+        double totalVt = 0;
+        double totalNt = 0;
+        int count = 0;
+
+        int yearsToInclude = Math.min(recentYearsCount, availableYears.size());
+        List<Integer> targetYears = availableYears.subList(0, yearsToInclude);
+
+        for (AnnualYearData yd : allData) {
+            if (targetYears.contains(yd.year()) && (yd.consumptionVT() > 0 || yd.consumptionNT() > 0)) {
+                totalVt += yd.consumptionVT();
+                totalNt += yd.consumptionNT();
+                count++;
+            }
+        }
+
+        if (count == 0) {
+            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Nedostatek dat pro zadané období", availableYears);
+        }
+
+        double avgVt = totalVt / count;
+        double avgNt = totalNt / count;
+        String qualityNote = (count == 1)
+                ? String.format(java.util.Locale.getDefault(), "Spotřeba z nejnovějšího roku odečtů (%d)", targetYears.get(0))
+                : String.format(java.util.Locale.getDefault(), "Průměrná roční spotřeba za poslední %d roky odečtů", count);
+
+        return new HistoricalConsumptionResult(avgVt, avgNt, -1, false, true, qualityNote, availableYears);
+    }
 }

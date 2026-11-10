@@ -146,6 +146,9 @@ public class BreakEvenCalculator {
 
         double eBreakEvenMwh = deltaF / deltaP;
 
+        String nameA = priceListA.getNameWithPeriod();
+        String nameB = priceListB.getNameWithPeriod();
+
         if (eBreakEvenMwh < 0) {
             // Průsečík je v záporné spotřebě
             if (pA < pB && fA < fB) {
@@ -153,7 +156,7 @@ public class BreakEvenCalculator {
                         ResultStatus.NO_INTERSECTION_A_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + priceListA.getProdukt() + " (" + priceListA.getSazba() + ") je výhodnější v celém rozsahu kladné spotřeby.",
+                        "Ceník " + nameA + " je výhodnější v celém rozsahu spotřeby.",
                         noticeA,
                         noticeB
                 );
@@ -162,40 +165,22 @@ public class BreakEvenCalculator {
                         ResultStatus.NO_INTERSECTION_B_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + priceListB.getProdukt() + " (" + priceListB.getSazba() + ") je výhodnější v celém rozsahu kladné spotřeby.",
+                        "Ceník " + nameB + " je výhodnější v celém rozsahu spotřeby.",
                         noticeA,
                         noticeB
                 );
             }
         }
 
-        String nameA = priceListA.getNameWithPeriod();
-        String nameB = priceListB.getNameWithPeriod();
-
-        boolean sameProductSeries = priceListA.getProdukt().equalsIgnoreCase(priceListB.getProdukt())
-                || (priceListA.getRada() != null && priceListA.getRada().equalsIgnoreCase(priceListB.getRada()));
-
         String summary;
         if (fA < fB) {
-            if (sameProductSeries) {
-                summary = String.format(java.util.Locale.getDefault(),
-                        "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější ceník %s ze staršího/jiného období (%s). Od %.2f MWh/rok je výhodnější ceník stejné produktové řady z období (%s).",
-                        eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameA, priceListA.getPlatnostText(), eBreakEvenMwh, priceListB.getPlatnostText());
-            } else {
-                summary = String.format(java.util.Locale.getDefault(),
-                        "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější %s. Od %.2f MWh/rok je výhodnější %s.",
-                        eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameA, eBreakEvenMwh, nameB);
-            }
+            summary = String.format(java.util.Locale.getDefault(),
+                    "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější %s. Od %.2f MWh/rok je výhodnější %s.",
+                    eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameA, eBreakEvenMwh, nameB);
         } else {
-            if (sameProductSeries) {
-                summary = String.format(java.util.Locale.getDefault(),
-                        "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější ceník %s ze staršího/jiného období (%s). Od %.2f MWh/rok je výhodnější ceník stejné produktové řady z období (%s).",
-                        eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameB, priceListB.getPlatnostText(), eBreakEvenMwh, priceListA.getPlatnostText());
-            } else {
-                summary = String.format(java.util.Locale.getDefault(),
-                        "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější %s. Od %.2f MWh/rok je výhodnější %s.",
-                        eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameB, eBreakEvenMwh, nameA);
-            }
+            summary = String.format(java.util.Locale.getDefault(),
+                    "Do spotřeby %.2f MWh/rok (%.0f kWh) je výhodnější %s. Od %.2f MWh/rok je výhodnější %s.",
+                    eBreakEvenMwh, eBreakEvenMwh * 1000.0, nameB, eBreakEvenMwh, nameA);
         }
 
         return new BreakEvenResult(

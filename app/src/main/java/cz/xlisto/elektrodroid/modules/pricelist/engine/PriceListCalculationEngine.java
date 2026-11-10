@@ -229,14 +229,21 @@ public class PriceListCalculationEngine {
             return priceList.getOze() * totalMwh;
         }
 
-        double pozeByBreaker = (months * (countPhaze * powerBreaker)) * priceList.getPoze1();
-        double pozeByConsumption = totalMwh * priceList.getPoze2();
+        double poze1 = priceList.getPoze1();
+        double poze2 = priceList.getPoze2();
 
-        if (pozeByBreaker <= 0 && pozeByConsumption <= 0) {
+        if (poze1 <= 0 && poze2 <= 0) {
             return 0.0;
         }
-        if (pozeByBreaker <= 0) return pozeByConsumption;
-        if (pozeByConsumption <= 0) return pozeByBreaker;
+        if (poze1 <= 0) {
+            return totalMwh * poze2;
+        }
+        if (poze2 <= 0) {
+            return (months * (countPhaze * powerBreaker)) * poze1;
+        }
+
+        double pozeByBreaker = (months * (countPhaze * powerBreaker)) * poze1;
+        double pozeByConsumption = totalMwh * poze2;
 
         return Math.min(pozeByBreaker, pozeByConsumption);
     }

@@ -56,15 +56,93 @@
                         android:text="Historické odečty" />
                 </RadioGroup>
 
-                <TextView
-                    android:id="@+id/tvHistoryQualityInfo"
+                <!-- Posuvníky pro Modelovou spotřebu (VT + NT) -->
+                <LinearLayout
+                    android:id="@+id/llModelSlidersContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Vyberte zdroj v nastavení parametrů"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:visibility="gone" />
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvVtSliderLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Modelová spotřeba VT: 1,0 MWh (1000 kWh)"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderVtMwh"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stepSize="0.1"
+                        android:value="1.0"
+                        android:valueFrom="0.0"
+                        android:valueTo="20.0" />
+
+                    <LinearLayout
+                        android:id="@+id/llNtSliderWrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvNtSliderLabel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Modelová spotřeba NT: 2,0 MWh (2000 kWh)"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderNtMwh"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:stepSize="0.1"
+                            android:value="2.0"
+                            android:valueFrom="0.0"
+                            android:valueTo="20.0" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Posuvník pro Historická data (Počet roků do historie) -->
+                <LinearLayout
+                    android:id="@+id/llHistorySliderContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvHistoryYearsLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Počet roků do historie pro průměr: 1 rok"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderHistoryYears"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stepSize="1.0"
+                        android:value="1.0"
+                        android:valueFrom="1.0"
+                        android:valueTo="5.0" />
+
+                    <TextView
+                        android:id="@+id/tvHistoryQualityInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Kvalita dat: načítání..."
+                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -99,31 +177,6 @@
                     android:text="Proporce výhodnosti jednotlivých sazeb dle roční spotřeby"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurface" />
-
-                <LinearLayout
-                    android:id="@+id/llNtSliderContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvNtSliderLabel"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Podíl nízkého tarifu (NT): 60 %"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                    <com.google.android.material.slider.Slider
-                        android:id="@+id/sliderNtRatio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:value="60.0"
-                        android:valueFrom="0.0"
-                        android:valueTo="100.0"
-                        android:stepSize="5.0" />
-                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
