@@ -48,8 +48,7 @@ class PriceListAdapter(
     companion object {
         const val TAG = "PriceListAdapter"
 
-        @JvmField
-        val FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList"
+        const val FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList"
     }
 
     /**
@@ -74,6 +73,7 @@ class PriceListAdapter(
         val cbSelectItem: MaterialCheckBox = itemView.findViewById(R.id.cbPriceList)
         val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         val tvSubtitle: TextView = itemView.findViewById(R.id.tvSubtitle)
+        val containerNT: View = itemView.findViewById(R.id.containerNT)
         val tvPriceVT: TextView = itemView.findViewById(R.id.tvPriceVT)
         val tvPriceNT: TextView = itemView.findViewById(R.id.tvPriceNT)
         val tvPriceMonth: TextView = itemView.findViewById(R.id.tvPriceMonth)
@@ -247,7 +247,7 @@ class PriceListAdapter(
                 append(priceList.produkt)
             }
             if (isEmpty()) {
-                append(if (priceList.name.isNotBlank()) priceList.name else priceList.produkt)
+                append(priceList.name.ifBlank { priceList.produkt })
             }
         }
         holder.tvTitle.text = titleText
@@ -283,12 +283,22 @@ class PriceListAdapter(
     }
 
     /**
+     * Zjistí, zda se jedná o jednosazbový ceník (např. D01d, D02d, C01d, C02d).
+     */
+    private fun isSingleTariff(priceList: PriceListModel): Boolean {
+        val sazba = priceList.sazba.lowercase().replace(" ", "")
+        return sazba.contains("d01") || sazba.contains("d02") ||
+                sazba.contains("c01") || sazba.contains("c02") ||
+                (priceList.cenaNT == 0.0 && priceList.distNT == 0.0)
+    }
+
+    /**
      * Vypočítá a zformátuje cenové údaje (VT, NT, Měsíc) i případné regulované ceny.
      */
     private fun bindPrices(holder: MyViewHolder, priceList: PriceListModel) {
         val ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint)
-        val cenaVT = DecimalFormatHelper.df2.format(Round.round(ceny[0])) + " Kč"
-        val cenaNT = DecimalFormatHelper.df2.format(Round.round(ceny[1])) + " Kč"
+        val cenaVT = DecimalFormatHelper.df2.format(Round.round(ceny[0])) + " Kč/kWh"
+        val cenaNT = DecimalFormatHelper.df2.format(Round.round(ceny[1])) + " Kč/kWh"
         val cenaMesic = DecimalFormatHelper.df2.format(Round.round(ceny[2])) + " Kč s DPH"
 
         val year = ViewHelper.yearIntOfLong(priceList.platnostOD)
@@ -296,28 +306,31 @@ class PriceListAdapter(
         val priceListRegul = priceListBuilder.regulPriceList
         val cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint)
 
-        val cenaVTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[0])) + " Kč"
-        val cenaNTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[1])) + " Kč"
+        val cenaVTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[0])) + " Kč/kWh"
+        val cenaNTRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[1])) + " Kč/kWh"
         val cenaMesicRegul = DecimalFormatHelper.df2.format(Round.round(cenyRegul[2])) + " Kč s DPH"
 
         holder.tvPriceVT.text = cenaVT
         holder.tvPriceMonth.text = cenaMesic
 
-        if (priceList.cenaNT == 0.0 && (ceny[1] == 0.0)) {
-            holder.tvPriceNT.text = "—"
-            holder.tvPriceNTRegul.visibility = View.GONE
+        val singleTariff = isSingleTariff(priceList)
+        if (singleTariff) {
+            holder.containerNT.visibility = View.GONE
         } else {
+            holder.containerNT.visibility = View.VISIBLE
             holder.tvPriceNT.text = cenaNT
         }
 
         if (priceListBuilder.isRegulPrice) {
-            holder.tvPriceVTRegul.text = "+ $cenaVTRegul"
+            holder.tvPriceVTRegul.text = context.getString(R.string.plus_value, cenaVTRegul)
             holder.tvPriceVTRegul.visibility = View.VISIBLE
-            if (priceList.cenaNT != 0.0) {
-                holder.tvPriceNTRegul.text = "+ $cenaNTRegul"
+            if (!singleTariff) {
+                holder.tvPriceNTRegul.text = context.getString(R.string.plus_value, cenaNTRegul)
                 holder.tvPriceNTRegul.visibility = View.VISIBLE
+            } else {
+                holder.tvPriceNTRegul.visibility = View.GONE
             }
-            holder.tvPriceMonthRegul.text = "+ $cenaMesicRegul"
+            holder.tvPriceMonthRegul.text = context.getString(R.string.plus_value, cenaMesicRegul)
             holder.tvPriceMonthRegul.visibility = View.VISIBLE
 
             val notes = priceListBuilder.getNotes(context)
@@ -361,6 +374,7 @@ class PriceListAdapter(
     /**
      * Skryje všechna zobrazená akční tlačítka.
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun setHideButtons() {
         showButtons = -1
         setShowPositionItem(-1)
@@ -379,15 +393,6 @@ class PriceListAdapter(
     }
 
     /**
-     * Aktualizuje seznam položek v adaptéru.
-     */
-    @SuppressLint("NotifyDataSetChanged")
-    fun setItems(newItems: ArrayList<PriceListModel>) {
-        this.items = newItems
-        notifyDataSetChanged()
-    }
-
-    /**
      * Přepne režim výběru.
      */
     @SuppressLint("NotifyDataSetChanged")
@@ -395,8 +400,6 @@ class PriceListAdapter(
         this.isSelectionMode = enabled
         notifyDataSetChanged()
     }
-
-    fun isSelectionMode(): Boolean = isSelectionMode
 
     private fun setShowPositionItem(position: Int) {
         shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position)
