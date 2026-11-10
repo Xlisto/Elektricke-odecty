@@ -377,15 +377,15 @@ class PriceListAdapter(
         }
 
         if (priceListBuilder.isRegulPrice) {
-            holder.tvPriceVTRegul.text = context.getString(R.string.plus_value, cenaVTRegul)
+            holder.tvPriceVTRegul.text = cenaVTRegul
             holder.tvPriceVTRegul.visibility = View.VISIBLE
             if (!singleTariff) {
-                holder.tvPriceNTRegul.text = context.getString(R.string.plus_value, cenaNTRegul)
+                holder.tvPriceNTRegul.text = cenaNTRegul
                 holder.tvPriceNTRegul.visibility = View.VISIBLE
             } else {
                 holder.tvPriceNTRegul.visibility = View.GONE
             }
-            holder.tvPriceMonthRegul.text = context.getString(R.string.plus_value, cenaMesicRegul)
+            holder.tvPriceMonthRegul.text = cenaMesicRegul
             holder.tvPriceMonthRegul.visibility = View.VISIBLE
 
             val notes = priceListBuilder.getNotes(context)
