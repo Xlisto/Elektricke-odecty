@@ -265,8 +265,8 @@ public class PriceListCompareOverviewFragment extends Fragment {
 
         int rowCount = isRegulated ? 5 : 3;
         String[] rowIcons = isRegulated
-                ? new String[]{"⚡", "🌙", "🪙", "🌿", "🌿"}
-                : new String[]{"⚡", "🌙", "🪙"};
+                ? new String[]{"⚡", "🌙", "Σ", "🌿", "🌿"}
+                : new String[]{"⚡", "🌙", "Σ"};
         String[] rowTitles = isRegulated
                 ? new String[]{"Distribuce VT", "Distribuce NT", "Platba za jistič", "POZE dle spotřeby", "POZE dle jističe"}
                 : new String[]{"Vysoký tarif", "Nízký tarif", "Stálá platba"};
@@ -425,7 +425,7 @@ public class PriceListCompareOverviewFragment extends Fragment {
         leftLabelsCol.setOrientation(LinearLayout.VERTICAL);
         leftLabelsCol.setPadding(0, 0, (int) (12 * density), 0);
 
-        String[] rowIcons = new String[]{"⚡", "🌙", "🪙"};
+        String[] rowIcons = new String[]{"⚡", "🌙", "Σ"};
         String[] rowTitles = new String[]{"Celkem VT", "Celkem NT", "Celkové fixní platby"};
         String[] rowUnits = new String[]{"Kč/MWh", "Kč/MWh", "Kč/měsíc"};
 
