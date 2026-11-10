@@ -29,20 +29,11 @@
             android:text="@string/settings" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnAddPayment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:text="@string/add_invoice" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoiceList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/btnAddPayment"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/lnAlertFirstMeters"
         android:layout_alignParentTop="false"
         android:layout_marginTop="0dp"
@@ -79,4 +70,3 @@
         android:visibility="gone" />
 
 </RelativeLayout>
-

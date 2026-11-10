@@ -67,7 +67,6 @@ public class InvoiceListFragment extends Fragment {
     private String tableFak;
     private String tableNow;
     private String tableReading;
-    private Button btnAddInvoice;
     private FloatingActionButton fab;
     private MenuItem addMenuItem;
     private LinearLayout llAlertNoInvoice;
@@ -154,7 +153,7 @@ public class InvoiceListFragment extends Fragment {
         //posluchač zavření dialogová okna nastavení
         getParentFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> {
-                    UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
+                    UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                     requireActivity().invalidateOptionsMenu();
                 }
         );
@@ -200,7 +199,7 @@ public class InvoiceListFragment extends Fragment {
                 if (addItemInvoice != null) {
                     addItemInvoice.setVisible(false);
                 }
-                UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
+                UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
             }
 
 
@@ -232,20 +231,17 @@ public class InvoiceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         readIdSubscriptionPoint();
-        btnAddInvoice = view.findViewById(R.id.btnAddPayment);
         Button btnSetFirstMeters = view.findViewById(R.id.btnSetFirstMeters);
         llAlertNoInvoice = view.findViewById(R.id.lnAlertFirstMeters);
         fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.recycleViewInvoiceList);
         TextView tvNoInvoice = view.findViewById(R.id.tvAlertInvoiceList);
-        btnAddInvoice.setOnClickListener(v -> showAddInvoiceDialog());
         btnSetFirstMeters.setOnClickListener(v -> showAddFirstMetersDialog());
         fab.setOnClickListener(v -> showAddInvoiceDialog());
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint == null) {
             tvNoInvoice.setVisibility(View.VISIBLE);
             rv.setVisibility(View.INVISIBLE);
-            btnAddInvoice.setEnabled(false);
         }
     }
 
@@ -256,7 +252,7 @@ public class InvoiceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddInvoice, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
         loadDataAndSetAdapter();
     }
 

@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -90,7 +89,6 @@ public class HdoFragment extends Fragment {
     private long idSubscriptionPoint, timeDifferent;
     private ArrayList<HdoModel> hdoModels = new ArrayList<>();
     private HdoAdapter hdoAdapter;
-    private Button btnAddHdo;
     private FloatingActionButton fab;
     private MenuItem addMenuItem;
 
@@ -125,7 +123,7 @@ public class HdoFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_hdo, menu);
                 addMenuItem = menu.findItem(R.id.menu_action_add_hdo);
-                UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
+                UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                 ShPHdo shPHdo = new ShPHdo(requireContext());
                 boolean isGraphic = shPHdo.isGraphicMode();
                 MenuItem toggleItem = menu.findItem(R.id.menu_hdo_toggle_view);
@@ -207,7 +205,6 @@ public class HdoFragment extends Fragment {
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         fab = view.findViewById(R.id.fabHdo);
-        btnAddHdo = view.findViewById(R.id.btnAddHdo);
 
         ImageView btnMinimizeHdo = view.findViewById(R.id.btnMinimizeHdo);
         LinearLayout llHdoClockDetails = view.findViewById(R.id.llHdoClockDetails);
@@ -224,7 +221,6 @@ public class HdoFragment extends Fragment {
         });
 
         fab.setOnClickListener(v -> showAddDialog());
-        btnAddHdo.setOnClickListener(v -> showAddDialog());
 
         spReleSettings.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -255,7 +251,7 @@ public class HdoFragment extends Fragment {
         //posluchač při zavření dialogového okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 ((requestKey, result) -> {
-                    UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
+                    UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                     requireActivity().invalidateOptionsMenu();
                 }));
 
@@ -282,7 +278,7 @@ public class HdoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        UIHelper.showButtons(btnAddHdo, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
         subscriptionPoint = SubscriptionPoint.load(requireActivity());
         if (subscriptionPoint != null)
             idSubscriptionPoint = subscriptionPoint.getId();

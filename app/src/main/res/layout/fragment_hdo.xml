@@ -5,13 +5,6 @@
     android:layout_height="match_parent"
     android:padding="5dp">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAddHdo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/add_hdo" />
-
     <!-- HDO Clock & Status Card Block -->
     <LinearLayout
         android:id="@+id/cardHdoClock"
@@ -158,7 +151,7 @@
         android:id="@+id/rvHdo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btnAddHdo"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/cardHdoFilter"
         android:layout_alignParentStart="true"
         android:layout_marginTop="6dp"

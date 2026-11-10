@@ -92,7 +92,7 @@ public class InvoiceFragment extends Fragment {
     private PozeModel poze;
     private InvoiceAdapter invoiceAdapter;
     boolean showCheckBoxSelect;
-    private Button btnCreateInvoice, btnAddItemInvoice;
+    private Button btnCreateInvoice;
     private FloatingActionButton fab;
     private MenuItem addMenuItem;
     private InvoiceViewModel viewModel;
@@ -123,7 +123,7 @@ public class InvoiceFragment extends Fragment {
         if (addInvoiceItem != null) {
             addInvoiceItem.setVisible(false);
         }
-        UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
     }
 
 
@@ -295,7 +295,6 @@ public class InvoiceFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rv = view.findViewById(R.id.recycleViewInvoice);
-        btnAddItemInvoice = view.findViewById(R.id.btnAddItemInvoice);
         fab = view.findViewById(R.id.fab);
         btnCreateInvoice = view.findViewById(R.id.btnCreateInvoice);
         tvTotal = view.findViewById(R.id.tvTotal);
@@ -307,13 +306,11 @@ public class InvoiceFragment extends Fragment {
         if (savedInstanceState != null) {
             isTotalPanelExpanded = savedInstanceState.getBoolean(STATE_TOTAL_PANEL_EXPANDED, false);
         }
-        btnAddItemInvoice.setOnClickListener(v -> showAddInvoice());
         fab.setOnClickListener(v -> showAddInvoice());
         btnCreateInvoice.setOnClickListener(v -> showCreateInvoiceDialog());
         tvTotal.setOnClickListener(v -> toggleTotalCard());
 
         if (idFak == -1L) {
-            btnAddItemInvoice.setVisibility(View.GONE);
             btnCreateInvoice.setVisibility(View.GONE);
         }
 
@@ -665,7 +662,6 @@ public class InvoiceFragment extends Fragment {
         if (idFak == -1L) {
             fab.setVisibility(View.GONE);
             btnCreateInvoice.setVisibility(View.GONE);
-            btnAddItemInvoice.setVisibility(View.GONE);
             if (addMenuItem != null) {
                 addMenuItem.setVisible(false);
             }
@@ -676,7 +672,7 @@ public class InvoiceFragment extends Fragment {
             return;
         }
         btnCreateInvoice.setVisibility(View.GONE);
-        UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
     }
 
 
@@ -687,14 +683,13 @@ public class InvoiceFragment extends Fragment {
      */
     private void showButtons(boolean isInvoiceTED) {
         if (isInvoiceTED) {
-            btnAddItemInvoice.setVisibility(View.GONE);
             btnCreateInvoice.setVisibility(View.GONE);
             fab.setVisibility(View.GONE);
             if (addMenuItem != null) {
                 addMenuItem.setVisible(false);
             }
         } else {
-            UIHelper.showButtons(btnAddItemInvoice, fab, addMenuItem, requireActivity(), true);
+            UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
         }
     }
 

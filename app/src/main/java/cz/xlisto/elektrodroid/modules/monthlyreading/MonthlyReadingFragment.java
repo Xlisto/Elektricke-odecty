@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -85,8 +84,6 @@ public class MonthlyReadingFragment extends Fragment {
     private SubscriptionPointModel subscriptionPoint;
     /** Plovoucí tlačítko pro přidání nového odečtu. */
     private FloatingActionButton fab;
-    /** Spodní tlačítko pro přidání nového odečtu. */
-    private Button btnAddMonthlyReading;
     /**
      * Položka menu v AppBaru pro přidání nového odečtu.
      */
@@ -169,7 +166,7 @@ public class MonthlyReadingFragment extends Fragment {
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT, this,
                 (requestKey, result) -> {
                     loadDataFromDatabase();
-                    UIHelper.showButtons(btnAddMonthlyReading, fab, addMenuItem, requireActivity(), true);
+                    UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                 });
 
         //posluchač změny měsíčního odečtu - zobrazení detailu v land režimu
@@ -182,7 +179,7 @@ public class MonthlyReadingFragment extends Fragment {
         //posluchač na zavření dialogového okna s nastavením
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, result) -> {
-                    UIHelper.showButtons(btnAddMonthlyReading, fab, addMenuItem, requireActivity(), true);
+                    UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                     requireActivity().invalidateOptionsMenu();
                     loadDataFromDatabase();
                 });
@@ -242,7 +239,7 @@ public class MonthlyReadingFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_monthly_reading, menu);
                 addMenuItem = menu.findItem(R.id.menu_action_add_monthly_reading);
-                UIHelper.showButtons(btnAddMonthlyReading, fab, addMenuItem, requireContext(), true);
+                UIHelper.showButtons(null, fab, addMenuItem, requireContext(), true);
             }
 
 
@@ -283,7 +280,6 @@ public class MonthlyReadingFragment extends Fragment {
         }
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
         fab = view.findViewById(R.id.fab);
-        btnAddMonthlyReading = view.findViewById(R.id.btnAddMonthlyReading);
         rv = view.findViewById(R.id.rvMonthlyReading);
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
@@ -291,7 +287,6 @@ public class MonthlyReadingFragment extends Fragment {
         updateFilterLabel();
 
         fab.setOnClickListener(v -> addMonthlyReading());
-        btnAddMonthlyReading.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
     }
 
@@ -305,7 +300,7 @@ public class MonthlyReadingFragment extends Fragment {
         promptPriceListUpdateIfNeeded();
 
         loadDataFromDatabase();
-        UIHelper.showButtons(btnAddMonthlyReading, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
     }
 
 

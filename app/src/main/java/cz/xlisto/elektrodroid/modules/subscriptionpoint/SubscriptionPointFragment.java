@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -66,7 +65,6 @@ public class SubscriptionPointFragment extends Fragment {
     private static final int DAY_OF_MONTH_MAX = 31;
 
     private FloatingActionButton fab;
-    private Button btnAddSubscriptionPoint;
     private MenuItem addMenuItem;
     private Spinner spSubscriptionPoint;
     private Spinner spSubscriptionPointNotification;
@@ -147,7 +145,6 @@ public class SubscriptionPointFragment extends Fragment {
         tvNumberElectricMeter = view.findViewById(R.id.tvNumberElectrometer);
         tvNumberSubscriptionPoint = view.findViewById(R.id.tvNumberSubscriptionPoint);
         tvNewSubscriptionPoint = view.findViewById(R.id.tvCreateNewSubscriptionPoint);
-        btnAddSubscriptionPoint = view.findViewById(R.id.btnAddSubscriptionPoint);
         layoutSubscriptionPointManagement = view.findViewById(R.id.layoutSubscriptionPointManagement);
         lnSpinner = view.findViewById(R.id.lnSpinner);
         lnDescription = view.findViewById(R.id.lnDescription);
@@ -176,7 +173,6 @@ public class SubscriptionPointFragment extends Fragment {
             });
         }
         fab.setOnClickListener(v -> addSubcsriptionPoint());
-        btnAddSubscriptionPoint.setOnClickListener(v -> addSubcsriptionPoint());
 
         setupTabs();
 
@@ -603,9 +599,6 @@ public class SubscriptionPointFragment extends Fragment {
         if (lnReadingNotification != null) {
             lnReadingNotification.setVisibility(VISIBLE);
         }
-        if (btnAddSubscriptionPoint != null) {
-            btnAddSubscriptionPoint.setVisibility(GONE);
-        }
         if (fab != null) {
             fab.setVisibility(GONE);
         }
@@ -613,9 +606,6 @@ public class SubscriptionPointFragment extends Fragment {
 
     private void updateAddControlsVisibility() {
         if (tabLayout != null && tabLayout.getVisibility() == VISIBLE && tabLayout.getSelectedTabPosition() == 1) {
-            if (btnAddSubscriptionPoint != null) {
-                btnAddSubscriptionPoint.setVisibility(GONE);
-            }
             if (fab != null) {
                 fab.setVisibility(GONE);
             }
@@ -624,7 +614,7 @@ public class SubscriptionPointFragment extends Fragment {
             }
             return;
         }
-        UIHelper.showButtons(btnAddSubscriptionPoint, fab, addMenuItem, requireActivity(), sc, false);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), sc, false);
     }
 
     private boolean isTabbedMode() {

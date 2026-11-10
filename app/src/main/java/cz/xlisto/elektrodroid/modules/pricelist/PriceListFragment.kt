@@ -102,7 +102,6 @@ class PriceListFragment : Fragment() {
     private lateinit var btnClearSelection: Button
     private lateinit var btnCompareSelected: Button
     private lateinit var btnBack: Button
-    private lateinit var btnAddPriceList: Button
     private lateinit var fab: FloatingActionButton
     private var addMenuItem: MenuItem? = null
 
@@ -152,7 +151,7 @@ class PriceListFragment : Fragment() {
                 menuInflater.inflate(R.menu.menu_price_list, menu)
                 addMenuItem = menu.findItem(R.id.menu_action_add_pricelist)
                 UIHelper.showButtons(
-                    btnAddPriceList,
+                    null,
                     fab,
                     addMenuItem,
                     requireActivity(),
@@ -212,10 +211,6 @@ class PriceListFragment : Fragment() {
         btnClearSelection = view.findViewById(R.id.btnClearSelection)
         btnCompareSelected = view.findViewById(R.id.btnCompareSelected)
         btnBack = view.findViewById(R.id.btnBack)
-        btnAddPriceList = view.findViewById(R.id.btnAddPriceList)
-
-        fab.setOnClickListener { addNewPriceList() }
-        btnAddPriceList.setOnClickListener { addNewPriceList() }
 
         btnClearSelection.setOnClickListener {
             selectedIds.clear()
@@ -277,7 +272,7 @@ class PriceListFragment : Fragment() {
         requireActivity().supportFragmentManager.setFragmentResultListener(
             SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this
         ) { _, _ ->
-            UIHelper.showButtons(btnAddPriceList, fab, addMenuItem, requireActivity(), rv, false)
+            UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
             requireActivity().invalidateOptionsMenu()
             btnShowBack()
         }
@@ -293,7 +288,7 @@ class PriceListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        UIHelper.showButtons(btnAddPriceList, fab, addMenuItem, requireActivity(), rv, false)
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
         btnShowBack()
     }
 

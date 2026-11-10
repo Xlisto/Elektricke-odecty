@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <RelativeLayout
@@ -12,15 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         tools:context=".modules.monthlyreading.MonthlyReadingFragment">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAddMonthlyReading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:text="@string/add_monthly_reading" />
 
         <!-- Původní horní label filtru; text filtru se nyní zobrazuje uvnitř widgetu bilance. -->
         <TextView
@@ -73,7 +64,7 @@
             android:id="@+id/rvMonthlyReading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/btnAddMonthlyReading"
+            android:layout_alignParentBottom="true"
             android:layout_below="@id/tvBalanceStatus"
             android:contentDescription="@string/description_monthly_reading"
             android:layoutAnimation="@anim/layout_animation_fall_down"

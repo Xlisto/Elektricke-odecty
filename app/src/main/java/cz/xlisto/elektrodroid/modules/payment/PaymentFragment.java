@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,7 +54,6 @@ public class PaymentFragment extends Fragment {
     private TextView tvTotal, tvDiscount;
     private ArrayList<PaymentModel> payments;
     private PaymentAdapter paymentAdapter;
-    private Button btnAddPayment;
     private FloatingActionButton fab;
     private MenuItem addMenuItem;
 
@@ -103,7 +101,7 @@ public class PaymentFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_payment, menu);
                 addMenuItem = menu.findItem(R.id.menu_action_add_payment);
-                UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
+                UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
             }
 
 
@@ -127,9 +125,7 @@ public class PaymentFragment extends Fragment {
         rv = view.findViewById(R.id.recycleViewPayment);
         tvTotal = view.findViewById(R.id.tvTotal);
         tvDiscount = view.findViewById(R.id.tvDiscountFragment);
-        btnAddPayment = view.findViewById(R.id.btnAddPayment);
         fab = view.findViewById(R.id.fab);
-        btnAddPayment.setOnClickListener(v -> showAddPaymentDialog());
         fab.setOnClickListener(v -> showAddPaymentDialog());
         // Posluchač dialogového okna na smazání platby
         requireActivity().getSupportFragmentManager().setFragmentResultListener(PaymentAdapter.FLAG_PAYMENT_ADAPTER_DELETE, this, (requestKey, result) -> {
@@ -169,7 +165,7 @@ public class PaymentFragment extends Fragment {
         //posluchač zavření dialogová okna nastavení
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this,
                 (requestKey, bundle) -> {
-                    UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
+                    UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                     requireActivity().invalidateOptionsMenu();
                 }
         );
@@ -181,7 +177,7 @@ public class PaymentFragment extends Fragment {
         super.onResume();
         setTotal();
         setRecyclerView();
-        UIHelper.showButtons(btnAddPayment, fab, addMenuItem, requireActivity(), true);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
     }
 
 
