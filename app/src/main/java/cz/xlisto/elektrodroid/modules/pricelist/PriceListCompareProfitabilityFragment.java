@@ -1,9 +1,13 @@
 package cz.xlisto.elektrodroid.modules.pricelist;
 
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -14,14 +18,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.slider.Slider;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
+import cz.xlisto.elektrodroid.models.DistributionTariffConditions;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator;
@@ -32,11 +41,12 @@ import cz.xlisto.elektrodroid.modules.pricelist.engine.HistoricalReadingConsumpt
 import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonScenario;
 import cz.xlisto.elektrodroid.ownview.PriceListProfitabilityChartView;
 import cz.xlisto.elektrodroid.ownview.PriceListProfitabilityChartView.SeriesData;
+import cz.xlisto.elektrodroid.repositories.DistributionTariffConditionsRepository;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 /**
  * Záložka „Výhodnost sazeb“ pro analýzu bodu zvratu (break-even point) a simulaci změny distribuční sazby.
- * Podporuje 2 posuvníky (VT a NT) pro modelovou spotřebu a 1 posuvník pro počet roků historie.
+ * Podporuje 2 posuvníky (VT a NT) pro modelovou spotřebu, 1 posuvník pro počet roků historie a rozbalovací kartu s technickými podmínkami přiznání sazeb.
  */
 public class PriceListCompareProfitabilityFragment extends Fragment {
 
@@ -61,10 +71,10 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
     private TextView tvBreakEvenSummaryText;
     private PriceListProfitabilityChartView chartProfitability;
-    private TextView tvTechnicalNoticeA;
-    private TextView tvTechnicalNoticeB;
+    private LinearLayout llTechnicalConditionsContainer;
 
     private boolean isUpdatingFromCode = false;
+    private final Set<String> expandedTariffs = new HashSet<>();
     private final int[] lineColors = new int[]{0xFF1E88E5, 0xFF43A047, 0xFFFB8C00, 0xFF8E24AA};
 
     public static PriceListCompareProfitabilityFragment newInstance() {
@@ -102,8 +112,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
         tvBreakEvenSummaryText = view.findViewById(R.id.tvBreakEvenSummaryText);
         chartProfitability = view.findViewById(R.id.chartProfitability);
-        tvTechnicalNoticeA = view.findViewById(R.id.tvTechnicalNoticeA);
-        tvTechnicalNoticeB = view.findViewById(R.id.tvTechnicalNoticeB);
+        llTechnicalConditionsContainer = view.findViewById(R.id.llTechnicalConditionsContainer);
 
         rgProfitabilitySource.setOnCheckedChangeListener((group, checkedId) -> {
             if (isUpdatingFromCode) return;
@@ -128,10 +137,9 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
             }
         });
 
-        viewModel.getScenario().observe(getViewLifecycleOwner(), scenario -> syncUIWithScenario(scenario));
+        viewModel.getScenario().observe(getViewLifecycleOwner(), this::syncUIWithScenario);
         viewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> updateProfitabilityUI());
     }
-
 
     private void onSourceModeChanged() {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
@@ -150,7 +158,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         }
     }
 
-
     private void updateVtFromSlider(float vtValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         if (scenario == null) scenario = new PriceListComparisonScenario();
@@ -160,7 +167,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.setScenario(scenario);
     }
 
-
     private void updateNtFromSlider(float ntValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         if (scenario == null) scenario = new PriceListComparisonScenario();
@@ -169,7 +175,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         scenario.setNtKwh(ntValueMwh * 1000.0);
         viewModel.setScenario(scenario);
     }
-
 
     private void updateHistoryFromSlider(int yearsCount) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
@@ -206,7 +211,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.setScenario(scenario);
     }
 
-
     private void setSliderValueSafely(Slider slider, float rawValue) {
         float min = slider.getValueFrom();
         float max = slider.getValueTo();
@@ -222,7 +226,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         clamped = Math.max(min, Math.min(clamped, max));
         slider.setValue(clamped);
     }
-
 
     private void syncUIWithScenario(PriceListComparisonScenario scenario) {
         if (scenario == null) return;
@@ -263,7 +266,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         updateProfitabilityUI();
     }
 
-
     private void updateProfitabilityUI() {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         List<PriceListModel> selectedPriceLists = viewModel.getSelectedPriceLists().getValue();
@@ -271,6 +273,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         if (scenario == null || selectedPriceLists == null || selectedPriceLists.isEmpty()) {
             tvBreakEvenSummaryText.setText("Pro porovnání výhodnosti sazeb vyberte alespoň 2 ceníky");
             chartProfitability.setChartData(PriceListProfitabilityChartView.Mode.COST_VS_CONSUMPTION, new ArrayList<>(), null, 0);
+            updateTechnicalConditionsUI(new ArrayList<>());
             return;
         }
 
@@ -288,8 +291,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         );
 
         tvBreakEvenSummaryText.setText(breakEvenResult.textSummary);
-        tvTechnicalNoticeA.setText(breakEvenResult.technicalConditionNoticeA);
-        tvTechnicalNoticeB.setText(breakEvenResult.technicalConditionNoticeB);
 
         // Generujeme křivky nákladů v závislosti na spotřebě 0..20 MWh
         double maxMwh = Math.max(10.0, currentTotalMwh * 1.5);
@@ -310,5 +311,98 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
                 breakEvenResult,
                 currentTotalMwh
         );
+
+        updateTechnicalConditionsUI(selectedPriceLists);
+    }
+
+
+    private void updateTechnicalConditionsUI(List<PriceListModel> priceLists) {
+        if (llTechnicalConditionsContainer == null) return;
+        llTechnicalConditionsContainer.removeAllViews();
+
+        if (priceLists == null || priceLists.isEmpty()) {
+            TextView tvEmpty = new TextView(requireContext());
+            tvEmpty.setText("Vyberte ceníky pro zobrazení podmínek distribučních sazeb.");
+            tvEmpty.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium);
+            tvEmpty.setTextColor(0xFF757575);
+            llTechnicalConditionsContainer.addView(tvEmpty);
+            return;
+        }
+
+        Set<String> uniqueTariffCodes = new LinkedHashSet<>();
+        for (PriceListModel pl : priceLists) {
+            if (pl.getSazba() != null && !pl.getSazba().trim().isEmpty()) {
+                uniqueTariffCodes.add(pl.getSazba().trim());
+            }
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+
+        for (String code : uniqueTariffCodes) {
+            DistributionTariffConditions cond = DistributionTariffConditionsRepository.getConditionsForTariff(code);
+            if (cond == null) {
+                cond = new DistributionTariffConditions(
+                        code,
+                        "Sazba " + code,
+                        "Dvoutarifní / Jednotarifní",
+                        "Podmínky přiznání pro tuto sazbu posuzuje distributor.",
+                        "Podrobnější informace naleznete v oficiálním cenovém rozhodnutí ERÚ nebo u příslušného provozovatele distribuční soustavy.",
+                        false,
+                        "",
+                        "https://www.cezdistribuce.cz/pro-zakazniky/potrebuji-vyresit/ceny-a-podminky/podminky-pro-priznani-distribucni-sazby"
+                );
+            }
+
+            View itemView = inflater.inflate(R.layout.item_tariff_condition, llTechnicalConditionsContainer, false);
+            MaterialCardView cardItem = itemView.findViewById(R.id.cardTariffItem);
+            TextView tvCode = itemView.findViewById(R.id.tvTariffCode);
+            TextView tvBadge = itemView.findViewById(R.id.tvLowTariffBadge);
+            ImageView ivChevron = itemView.findViewById(R.id.ivChevron);
+            TextView tvShortDesc = itemView.findViewById(R.id.tvShortDescription);
+            LinearLayout llExpanded = itemView.findViewById(R.id.llExpandedContent);
+            TextView tvHistNotice = itemView.findViewById(R.id.tvHistoricalNotice);
+            TextView tvDetailed = itemView.findViewById(R.id.tvDetailedConditions);
+            TextView tvOfficialUrl = itemView.findViewById(R.id.tvOfficialUrlLink);
+
+            tvCode.setText(cond.getTariffCode());
+            tvBadge.setText(cond.getLowTariffBadge());
+            tvShortDesc.setText(cond.getShortDescription());
+            tvDetailed.setText(cond.getDetailedConditions());
+
+            if (cond.isHistorical() && cond.getHistoricalNotice() != null && !cond.getHistoricalNotice().isEmpty()) {
+                tvHistNotice.setVisibility(View.VISIBLE);
+                tvHistNotice.setText(cond.getHistoricalNotice());
+            } else {
+                tvHistNotice.setVisibility(View.GONE);
+            }
+
+            String currentCodeKey = cond.getTariffCode();
+            boolean isExpanded = expandedTariffs.contains(currentCodeKey);
+            llExpanded.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            ivChevron.setImageResource(isExpanded ? R.drawable.ic_expand_less_24 : R.drawable.ic_expand_more_24);
+
+            cardItem.setOnClickListener(v -> {
+                boolean newExpandedState = llExpanded.getVisibility() != View.VISIBLE;
+                llExpanded.setVisibility(newExpandedState ? View.VISIBLE : View.GONE);
+                ivChevron.setImageResource(newExpandedState ? R.drawable.ic_expand_less_24 : R.drawable.ic_expand_more_24);
+
+                if (newExpandedState) {
+                    expandedTariffs.add(currentCodeKey);
+                } else {
+                    expandedTariffs.remove(currentCodeKey);
+                }
+            });
+
+            String url = cond.getOfficialUrl();
+            tvOfficialUrl.setOnClickListener(v -> {
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                } catch (Exception ignored) {
+                }
+            });
+
+            llTechnicalConditionsContainer.addView(itemView);
+        }
     }
 }
