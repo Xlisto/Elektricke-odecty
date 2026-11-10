@@ -1,18 +1,18 @@
 package cz.xlisto.elektrodroid.ownview;
 
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.Break
 import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.Point2D;
 import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.ResultStatus;
 
-
 /**
  * Custom View pro závislost celkových ročních nákladů na spotřebě nebo podílu NT se zvýrazněným bodem zvratu.
+ * Dynamicky přizpůsobuje barvy textu a mřížky pro světlý i tmavý režim (Light/Dark mode).
  */
 public class PriceListProfitabilityChartView extends View {
 
@@ -34,22 +34,18 @@ public class PriceListProfitabilityChartView extends View {
         COST_VS_NT_RATIO
     }
 
-
     public static class SeriesData {
 
         public final String title;
         public final int color;
         public final List<Point2D> points;
 
-
         public SeriesData(String title, int color, List<Point2D> points) {
             this.title = title;
             this.color = color;
             this.points = points != null ? points : new ArrayList<>();
         }
-
     }
-
 
     private Mode mode = Mode.COST_VS_CONSUMPTION;
     private List<SeriesData> seriesList = new ArrayList<>();
@@ -65,24 +61,20 @@ public class PriceListProfitabilityChartView extends View {
 
     private float density;
 
-
     public PriceListProfitabilityChartView(Context context) {
         super(context);
         init(context);
     }
-
 
     public PriceListProfitabilityChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-
     public PriceListProfitabilityChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
-
 
     private void init(Context context) {
         density = context.getResources().getDisplayMetrics().density;
@@ -114,7 +106,6 @@ public class PriceListProfitabilityChartView extends View {
         breakEvenPointPaint.setColor(0xFF2E7D32); // Zelený bod zvratu
     }
 
-
     public void setChartData(Mode mode, List<SeriesData> seriesList, BreakEvenResult breakEvenResult, double currentReferenceValue) {
         this.mode = mode;
         this.seriesList = seriesList != null ? seriesList : new ArrayList<>();
@@ -125,7 +116,6 @@ public class PriceListProfitabilityChartView extends View {
         invalidate();
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
@@ -134,7 +124,6 @@ public class PriceListProfitabilityChartView extends View {
         int desiredHeight = (int) (legendHeight + (230 * density));
         setMeasuredDimension(width, desiredHeight);
     }
-
 
     private float measureLegendHeight(int width, float startX, float startY) {
         if (seriesList == null || seriesList.isEmpty()) return 0;
@@ -162,7 +151,15 @@ public class PriceListProfitabilityChartView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        int textColorPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(getContext(), R.color.color_axis));
+        int textColorSecondary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFF757575);
+        int gridColor = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOutlineVariant, 0x22000000);
+
+        gridPaint.setColor(gridColor);
+
         if (seriesList == null || seriesList.isEmpty()) {
+            textPaint.setColor(textColorSecondary);
             canvas.drawText("Žádné datové řady k zobrazení", 20 * density, 40 * density, textPaint);
             return;
         }
@@ -174,7 +171,7 @@ public class PriceListProfitabilityChartView extends View {
         float paddingRight = 20 * density;
 
         // Vykreslení legendy nahoře a zjištění potřebné výšky
-        float legendBottomY = drawLegend(canvas, paddingLeft, 16 * density);
+        float legendBottomY = drawLegend(canvas, paddingLeft, 16 * density, textColorPrimary);
 
         float paddingTop = Math.max(30 * density, legendBottomY + (10 * density));
         float paddingBottom = 40 * density;
@@ -192,6 +189,7 @@ public class PriceListProfitabilityChartView extends View {
 
         // Vykreslení mřížky a popisků Y
         int yTicks = 4;
+        textPaint.setColor(textColorSecondary);
         for (int i = 0; i <= yTicks; i++) {
             float y = paddingTop + chartH - (i * (chartH / yTicks));
             double yVal = (maxY / yTicks) * i;
@@ -256,7 +254,6 @@ public class PriceListProfitabilityChartView extends View {
                 if (breakEvenX >= 0 && breakEvenX <= maxX) {
                     float beX = paddingLeft + (float) ((breakEvenX / maxX) * chartW);
 
-                    // Najdeme výšku na grafu
                     double yAtBreakEven = getYValueAtX(breakEvenX);
                     float beY = paddingTop + chartH - (float) ((yAtBreakEven / maxY) * chartH);
 
@@ -273,7 +270,7 @@ public class PriceListProfitabilityChartView extends View {
     }
 
 
-    private float drawLegend(Canvas canvas, float startX, float startY) {
+    private float drawLegend(Canvas canvas, float startX, float startY, int textColor) {
         if (seriesList == null || seriesList.isEmpty()) return startY;
 
         float x = startX;
@@ -294,7 +291,7 @@ public class PriceListProfitabilityChartView extends View {
             linePaint.setColor(series.color);
             canvas.drawLine(x, y - (4 * density), x + lineLength, y - (4 * density), linePaint);
 
-            textPaint.setColor(0xFF212121);
+            textPaint.setColor(textColor);
             canvas.drawText(series.title, x + lineLength + (6 * density), y, textPaint);
 
             x += itemWidth + (16 * density);
@@ -302,7 +299,6 @@ public class PriceListProfitabilityChartView extends View {
 
         return y;
     }
-
 
     private double getMaxX() {
         double max = 0;
@@ -314,7 +310,6 @@ public class PriceListProfitabilityChartView extends View {
         return max;
     }
 
-
     private double getMaxY() {
         double max = 0;
         for (SeriesData s : seriesList) {
@@ -324,7 +319,6 @@ public class PriceListProfitabilityChartView extends View {
         }
         return max * 1.1; // 10% rezerva nahoře
     }
-
 
     private double getYValueAtX(double x) {
         if (seriesList.isEmpty()) return 0;
@@ -340,12 +334,10 @@ public class PriceListProfitabilityChartView extends View {
         return series.points.get(0).y;
     }
 
-
     @Override
     public boolean performClick() {
         return super.performClick();
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -356,5 +348,4 @@ public class PriceListProfitabilityChartView extends View {
         }
         return super.onTouchEvent(event);
     }
-
 }

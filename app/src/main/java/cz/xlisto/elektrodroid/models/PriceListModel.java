@@ -203,10 +203,13 @@ public class PriceListModel implements Serializable {
         if (this.produkt.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
         String dates = getPlatnostText();
+        String name = (this.rada != null && !this.rada.trim().isEmpty() && !this.rada.trim().equalsIgnoreCase(this.produkt.trim()))
+                ? this.rada.trim() + " - " + getProdukt()
+                : getProdukt();
         if (!dates.isEmpty()) {
-            return getProdukt() + " (" + getSazba() + " • " + dates + ")";
+            return name + " (" + getSazba() + " • " + dates + ")";
         }
-        return getProdukt() + " (" + getSazba() + ")";
+        return name + " (" + getSazba() + ")";
     }
 
 

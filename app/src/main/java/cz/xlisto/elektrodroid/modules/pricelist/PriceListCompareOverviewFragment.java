@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.pricelist;
 
-
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -21,28 +20,27 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 
 import java.util.List;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
+import cz.xlisto.elektrodroid.modules.pricelist.engine.PriceListCalculationEngine;
 import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonResult;
 import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonScenario;
 import cz.xlisto.elektrodroid.ownview.PriceListCompareChartView;
 
-
 /**
  * Záložka „Přehled“ pro zobrazení žebříčku ceníků seřazeného od nejlevnějšího s vyznačením úspor a oddělených tabulek pro obchodní, regulované a celkové součtové ceny.
+ * U jednotarifních sazeb (D01d, D02d) automaticky skrývá řádky nízkého tarifu (NT).
  */
 public class PriceListCompareOverviewFragment extends Fragment {
 
-    private PriceListsViewModel viewModel;
     private TextView tvOverviewParamsSummary;
-    private MaterialCardView cardKeyPricesUnregulated;
     private LinearLayout llKeyPricesUnregulatedContainer;
     private MaterialCardView cardKeyPricesRegulated;
     private LinearLayout llKeyPricesRegulatedContainer;
-    private MaterialCardView cardKeyPricesTotal;
     private LinearLayout llKeyPricesTotalContainer;
     private PriceListCompareChartView chartOverview;
     private LinearLayout llOverviewListContainer;
@@ -55,11 +53,9 @@ public class PriceListCompareOverviewFragment extends Fragment {
             {0xFFE0F7FA, 0xFF00838F}  // Světle azurová, tmavě azurový kód
     };
 
-
     public static PriceListCompareOverviewFragment newInstance() {
         return new PriceListCompareOverviewFragment();
     }
-
 
     @Nullable
     @Override
@@ -67,19 +63,16 @@ public class PriceListCompareOverviewFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_price_list_compare_overview, container, false);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireParentFragment()).get(PriceListsViewModel.class);
+        PriceListsViewModel viewModel = new ViewModelProvider(requireParentFragment()).get(PriceListsViewModel.class);
 
         tvOverviewParamsSummary = view.findViewById(R.id.tvOverviewParamsSummary);
-        cardKeyPricesUnregulated = view.findViewById(R.id.cardKeyPricesUnregulated);
         llKeyPricesUnregulatedContainer = view.findViewById(R.id.llKeyPricesUnregulatedContainer);
         cardKeyPricesRegulated = view.findViewById(R.id.cardKeyPricesRegulated);
         llKeyPricesRegulatedContainer = view.findViewById(R.id.llKeyPricesRegulatedContainer);
-        cardKeyPricesTotal = view.findViewById(R.id.cardKeyPricesTotal);
         llKeyPricesTotalContainer = view.findViewById(R.id.llKeyPricesTotalContainer);
         chartOverview = view.findViewById(R.id.chartOverview);
         llOverviewListContainer = view.findViewById(R.id.llOverviewListContainer);
@@ -87,7 +80,6 @@ public class PriceListCompareOverviewFragment extends Fragment {
         viewModel.getScenario().observe(getViewLifecycleOwner(), this::updateScenarioSummary);
         viewModel.getComparisonResults().observe(getViewLifecycleOwner(), this::updateResultsUI);
     }
-
 
     private void updateScenarioSummary(PriceListComparisonScenario scenario) {
         if (scenario == null) return;
@@ -102,7 +94,6 @@ public class PriceListCompareOverviewFragment extends Fragment {
         );
         tvOverviewParamsSummary.setText(summary);
     }
-
 
     private void updateResultsUI(List<PriceListComparisonResult> results) {
         if (results == null || results.isEmpty()) {
@@ -132,7 +123,8 @@ public class PriceListCompareOverviewFragment extends Fragment {
         chartOverview.setData(results, PriceListCompareChartView.DisplayMetric.TOTAL_ANNUAL_COST);
         llOverviewListContainer.removeAllViews();
 
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        int textColorPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(requireContext(), R.color.color_axis));
+        int textColorSecondary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFF757575);
 
         for (int i = 0; i < results.size(); i++) {
             PriceListComparisonResult res = results.get(i);
@@ -148,11 +140,12 @@ public class PriceListCompareOverviewFragment extends Fragment {
             int p = (int) (14 * getResources().getDisplayMetrics().density);
             cardContent.setPadding(p, p, p, p);
 
-            // Titulek
+            // Titulek v žebříčku ceníků
             TextView tvTitle = new TextView(requireContext());
             tvTitle.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium);
-            String rank = (i + 1) + ". ";
-            tvTitle.setText(rank + res.getPriceList().getProdukt() + " (" + res.getPriceList().getSazba() + ")");
+            String titleText = (i + 1) + ". " + res.getPriceList().getNameWithPeriod();
+            tvTitle.setText(titleText);
+            tvTitle.setTextColor(textColorPrimary);
             cardContent.addView(tvTitle);
 
             // Subtitulek
@@ -160,14 +153,25 @@ public class PriceListCompareOverviewFragment extends Fragment {
             tvSubtitle.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
             String periodText = res.getPriceList().getPlatnostText();
             String pozeInfo = res.getPozeTypeDescription();
-            tvSubtitle.setText("Dodavatel: " + res.getPriceList().getFirma() + " • Distribuce: " + res.getPriceList().getDistribuce() + (periodText.isEmpty() ? "" : " • Platnost: " + periodText) + (pozeInfo.isEmpty() ? "" : " • " + pozeInfo));
+            StringBuilder sbSubtitle = new StringBuilder();
+            sbSubtitle.append("Dodavatel: ").append(res.getPriceList().getFirma())
+                    .append(" • Distribuce: ").append(res.getPriceList().getDistribuce());
+            if (!periodText.isEmpty()) {
+                sbSubtitle.append(" • Platnost: ").append(periodText);
+            }
+            if (!pozeInfo.isEmpty()) {
+                sbSubtitle.append(" • ").append(pozeInfo);
+            }
+            tvSubtitle.setText(sbSubtitle.toString());
+            tvSubtitle.setTextColor(textColorSecondary);
             cardContent.addView(tvSubtitle);
 
             // Cena
             TextView tvPrice = new TextView(requireContext());
             tvPrice.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_HeadlineSmall);
-            tvPrice.setText(DecimalFormatHelper.df0.format(res.getTotalWithDph()) + " Kč s DPH");
-            tvPrice.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_axis));
+            String priceText = String.format(java.util.Locale.getDefault(), "%s Kč s DPH", DecimalFormatHelper.df0.format(res.getTotalWithDph()));
+            tvPrice.setText(priceText);
+            tvPrice.setTextColor(textColorPrimary);
             cardContent.addView(tvPrice);
 
             // Rozdíl
@@ -222,6 +226,16 @@ public class PriceListCompareOverviewFragment extends Fragment {
     }
 
 
+    private boolean isAllSingleTariff(List<PriceListComparisonResult> results) {
+        if (results == null || results.isEmpty()) return false;
+        for (PriceListComparisonResult res : results) {
+            if (!PriceListCalculationEngine.isSingleTariff(res.getPriceList())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean areRegulatedComponentsDifferent(List<PriceListComparisonResult> results) {
         if (results == null || results.size() < 2) return false;
         PriceListComparisonResult first = results.get(0);
@@ -237,10 +251,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
         return false;
     }
 
-
     private void buildKeyPricesTable(LinearLayout container, List<PriceListComparisonResult> results, boolean isRegulated) {
         container.removeAllViews();
         float density = getResources().getDisplayMetrics().density;
+        boolean allSingle = isAllSingleTariff(results);
+
+        int textColorPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(requireContext(), R.color.color_axis));
+        int textColorSecondary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFF757575);
 
         LinearLayout leftLabelsCol = new LinearLayout(requireContext());
         leftLabelsCol.setOrientation(LinearLayout.VERTICAL);
@@ -262,6 +279,8 @@ public class PriceListCompareOverviewFragment extends Fragment {
         leftLabelsCol.addView(headerBlank);
 
         for (int r = 0; r < rowCount; r++) {
+            if (allSingle && r == 1) continue; // Skryjeme řádek NT pro jednotarifní ceníky
+
             LinearLayout rowLabelLayout = new LinearLayout(requireContext());
             rowLabelLayout.setOrientation(LinearLayout.HORIZONTAL);
             rowLabelLayout.setGravity(Gravity.CENTER_VERTICAL);
@@ -280,13 +299,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
             tvTitle.setText(rowTitles[r]);
             tvTitle.setTypeface(null, Typeface.BOLD);
             tvTitle.setTextSize(13);
-            tvTitle.setTextColor(0xFF212121);
+            tvTitle.setTextColor(textColorPrimary);
             titleUnitBox.addView(tvTitle);
 
             TextView tvUnit = new TextView(requireContext());
             tvUnit.setText(rowUnits[r]);
             tvUnit.setTextSize(10);
-            tvUnit.setTextColor(0xFF757575);
+            tvUnit.setTextColor(textColorSecondary);
             titleUnitBox.addView(tvUnit);
 
             rowLabelLayout.addView(titleUnitBox);
@@ -327,9 +346,10 @@ public class PriceListCompareOverviewFragment extends Fragment {
             }
 
             for (int r = 0; r < rowCount; r++) {
+                if (allSingle && r == 1) continue; // Skryjeme řádek NT pro jednotarifní ceníky
+
                 double currentVal = rowVals[r];
 
-                // Korunka se zobrazí JEN v případě, že existuje rozdíl a currentVal je nejnižší
                 double minVal = Double.MAX_VALUE;
                 double maxVal = -Double.MAX_VALUE;
                 for (PriceListComparisonResult other : results) {
@@ -393,10 +413,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
         }
     }
 
-
     private void buildTotalPricesTable(LinearLayout container, List<PriceListComparisonResult> results) {
         container.removeAllViews();
         float density = getResources().getDisplayMetrics().density;
+        boolean allSingle = isAllSingleTariff(results);
+
+        int textColorPrimary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(requireContext(), R.color.color_axis));
+        int textColorSecondary = MaterialColors.getColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFF757575);
 
         LinearLayout leftLabelsCol = new LinearLayout(requireContext());
         leftLabelsCol.setOrientation(LinearLayout.VERTICAL);
@@ -411,6 +434,8 @@ public class PriceListCompareOverviewFragment extends Fragment {
         leftLabelsCol.addView(headerBlank);
 
         for (int r = 0; r < 3; r++) {
+            if (allSingle && r == 1) continue; // Skryjeme řádek Celkem NT pro jednotarifní ceníky
+
             LinearLayout rowLabelLayout = new LinearLayout(requireContext());
             rowLabelLayout.setOrientation(LinearLayout.HORIZONTAL);
             rowLabelLayout.setGravity(Gravity.CENTER_VERTICAL);
@@ -429,13 +454,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
             tvTitle.setText(rowTitles[r]);
             tvTitle.setTypeface(null, Typeface.BOLD);
             tvTitle.setTextSize(13);
-            tvTitle.setTextColor(0xFF212121);
+            tvTitle.setTextColor(textColorPrimary);
             titleUnitBox.addView(tvTitle);
 
             TextView tvUnit = new TextView(requireContext());
             tvUnit.setText(rowUnits[r]);
             tvUnit.setTextSize(10);
-            tvUnit.setTextColor(0xFF757575);
+            tvUnit.setTextColor(textColorSecondary);
             titleUnitBox.addView(tvUnit);
 
             rowLabelLayout.addView(titleUnitBox);
@@ -469,6 +494,9 @@ public class PriceListCompareOverviewFragment extends Fragment {
             };
 
             for (int r = 0; r < 3; r++) {
+                if (allSingle && r == 1)
+                    continue; // Skryjeme řádek Celkem NT pro jednotarifní ceníky
+
                 double currentVal = rowVals[r];
 
                 double minVal = Double.MAX_VALUE;
@@ -534,50 +562,33 @@ public class PriceListCompareOverviewFragment extends Fragment {
         }
     }
 
-
     private double getMerchantRowVal(PriceListComparisonResult res, int row) {
-        switch (row) {
-            case 0:
-                return res.getMerchantVtWithDph();
-            case 1:
-                return res.getMerchantNtWithDph();
-            case 2:
-                return res.getMerchantMonthlyWithDph();
-            default:
-                return 0;
-        }
+        return switch (row) {
+            case 0 -> res.getMerchantVtWithDph();
+            case 1 -> res.getMerchantNtWithDph();
+            case 2 -> res.getMerchantMonthlyWithDph();
+            default -> 0;
+        };
     }
-
 
     private double getRegulatedRowVal(PriceListComparisonResult res, int row) {
-        switch (row) {
-            case 0:
-                return res.getRegulatedVtWithDph();
-            case 1:
-                return res.getRegulatedNtWithDph();
-            case 2:
-                return res.getRegulatedMonthlyWithDph();
-            case 3:
-                return res.getPozeConsumptionWithDph();
-            case 4:
-                return res.getPozeBreakerWithDph();
-            default:
-                return 0;
-        }
+        return switch (row) {
+            case 0 -> res.getRegulatedVtWithDph();
+            case 1 -> res.getRegulatedNtWithDph();
+            case 2 -> res.getRegulatedMonthlyWithDph();
+            case 3 -> res.getPozeConsumptionWithDph();
+            case 4 -> res.getPozeBreakerWithDph();
+            default -> 0;
+        };
     }
 
-
     private double getTotalRowVal(PriceListComparisonResult res, int row) {
-        switch (row) {
-            case 0:
-                return res.getFullVtPricePerMwhWithDph();
-            case 1:
-                return res.getFullNtPricePerMwhWithDph();
-            case 2:
-                return res.getFullMonthlyFixedCostWithDph();
-            default:
-                return 0;
-        }
+        return switch (row) {
+            case 0 -> res.getFullVtPricePerMwhWithDph();
+            case 1 -> res.getFullNtPricePerMwhWithDph();
+            case 2 -> res.getFullMonthlyFixedCostWithDph();
+            default -> 0;
+        };
     }
 
 }

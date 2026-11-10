@@ -79,8 +79,9 @@ public class PriceListCalculationEngine {
             activePriceList = regulBuilder.getRegulPriceList();
         }
 
-        double vtMwh = vtKwh / 1000.0;
-        double ntMwh = ntKwh / 1000.0;
+        boolean singleTariff = isSingleTariff(activePriceList);
+        double vtMwh = singleTariff ? (vtKwh + ntKwh) / 1000.0 : vtKwh / 1000.0;
+        double ntMwh = singleTariff ? 0.0 : ntKwh / 1000.0;
         double totalMwh = vtMwh + ntMwh;
 
         // 1. Obchodní (neregulovaná) složka
@@ -246,6 +247,19 @@ public class PriceListCalculationEngine {
         double pozeByConsumption = totalMwh * poze2;
 
         return Math.min(pozeByBreaker, pozeByConsumption);
+    }
+
+
+    /**
+     * Zjistí, zda se jedná o jednotarifní ceník (D01d, D02d nebo ceník bez NT sazby).
+     */
+    public static boolean isSingleTariff(PriceListModel priceList) {
+        if (priceList == null) return false;
+        String sazba = priceList.getSazba() != null ? priceList.getSazba().trim().toUpperCase() : "";
+        if (sazba.equalsIgnoreCase("D01D") || sazba.equalsIgnoreCase("D02D")) {
+            return true;
+        }
+        return priceList.getCenaNT() <= 0 && priceList.getDistNT() <= 0;
     }
 
 
