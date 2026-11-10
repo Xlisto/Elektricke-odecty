@@ -34,6 +34,14 @@ import cz.xlisto.elektrodroid.utils.Round
  *
  * Zajišťuje kompaktní trojřádkové rozvržení položek, dynamické skrývání údajů určených aktivními filtry,
  * vícenásobný výběr položek pomocí checkboxů a správnou manipulaci s regulovanými cenami.
+ *
+ * @property items seznam modelů ceníků ke zobrazení
+ * @property subscriptionPoint odběrné místo pro výpočet cen
+ * @property isSelectionMode příznak, zda je aktivní režim vícenásobného výběru pomocí checkboxů
+ * @property idSelectedPriceList ID primárně vybraného ceníku
+ * @property onClickItemListener posluchač pro reakci na výchozí výběr nebo klepnutí na ceník
+ * @property recyclerView objekt [RecyclerView], ve kterém je adaptér použit
+ * @property onSelectionChangedListener volitelný posluchač pro informování o změně vícenásobného výběru
  */
 class PriceListAdapter(
     private var items: ArrayList<PriceListModel>,
@@ -46,8 +54,10 @@ class PriceListAdapter(
 ) : RecyclerView.Adapter<PriceListAdapter.MyViewHolder>() {
 
     companion object {
+        /** Identifikátor pro protokolování událostí adaptéru. */
         const val TAG = "PriceListAdapter"
 
+        /** Klíč výsledku dialogového okna pro potvrzení smazání ceníku. */
         const val FLAG_DIALOG_FRAGMENT_DELETE_PRICE_LIST = "dialogFragmentDeletePriceList"
     }
 
@@ -55,6 +65,11 @@ class PriceListAdapter(
      * Rozhraní pro posluchače událostí klepnutí na položku ceníku.
      */
     fun interface OnClickItemListener {
+        /**
+         * Voláno při výběru ceníku nebo zrušení jeho výběru.
+         *
+         * @param priceList vybraný model ceníku, nebo `null` při zrušení výběru
+         */
         fun setClickPriceListListener(priceList: PriceListModel?)
     }
 
@@ -62,11 +77,18 @@ class PriceListAdapter(
      * Rozhraní pro posluchače změny vícenásobného výběru ceníků.
      */
     fun interface OnSelectionChangedListener {
+        /**
+         * Voláno při změně stavu zaškrtnutých ceníků v režimu výběru.
+         *
+         * @param selectedIds aktuální množina ID vybraných ceníků
+         */
         fun onSelectionChanged(selectedIds: Set<Long>)
     }
 
     /**
-     * ViewHolder pro položku ceníku.
+     * ViewHolder pro položku ceníku uchovávající odkazy na prvky uživatelského rozhraní.
+     *
+     * @param itemView kořenové zobrazení položky
      */
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: MaterialCardView = itemView.findViewById(R.id.cardPriceListItem)
@@ -105,12 +127,25 @@ class PriceListAdapter(
         }
     }
 
+    /**
+     * Vytvoří novou instanci [MyViewHolder] inflatováním layoutu položky ceníku.
+     *
+     * @param parent rodičovský [ViewGroup]
+     * @param viewType typ zobrazení položky
+     * @return nově vytvořený [MyViewHolder]
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_price_list, parent, false)
         return MyViewHolder(view)
     }
 
+    /**
+     * Naplní [MyViewHolder] daty z konkrétního ceníku na dané pozici a nastaví posluchače interakcí.
+     *
+     * @param holder [MyViewHolder] k naplnění
+     * @param position pozice položky v seznamu
+     */
     override fun onBindViewHolder(
         holder: MyViewHolder,
         @SuppressLint("RecyclerView") position: Int
@@ -210,14 +245,28 @@ class PriceListAdapter(
         }
     }
 
+    /**
+     * Vrací celkový počet položek v adaptéru.
+     *
+     * @return počet ceníků v seznamu
+     */
     override fun getItemCount(): Int = items.size
 
+    /**
+     * Vrací stabilní unikátní identifikátor položky ceníku na dané pozici.
+     *
+     * @param position pozice položky v seznamu
+     * @return ID ceníku nebo [RecyclerView.NO_ID] v případě neplatné pozice
+     */
     override fun getItemId(position: Int): Long {
         return items.getOrNull(position)?.id ?: RecyclerView.NO_ID
     }
 
     /**
      * Nastaví dynamický název (Řádek 1) a doplňující parametry platnosti a filtrů (Řádek 2).
+     *
+     * @param holder [MyViewHolder] s prvky položky
+     * @param priceList zobrazovaný model ceníku
      */
     private fun bindDynamicLabels(holder: MyViewHolder, priceList: PriceListModel) {
         val radaFilter = shPFilter.get(ShPFilter.RADA, ShPFilter.DEFAULT)
@@ -284,6 +333,9 @@ class PriceListAdapter(
 
     /**
      * Zjistí, zda se jedná o jednosazbový ceník (např. D01d, D02d, C01d, C02d).
+     *
+     * @param priceList prověřovaný model ceníku
+     * @return `true`, pokud ceník odpovídá jednosazbovému tarifu
      */
     private fun isSingleTariff(priceList: PriceListModel): Boolean {
         val sazba = priceList.sazba.lowercase().replace(" ", "")
@@ -294,6 +346,9 @@ class PriceListAdapter(
 
     /**
      * Vypočítá a zformátuje cenové údaje (VT, NT, Měsíc) i případné regulované ceny.
+     *
+     * @param holder [MyViewHolder] s prvky položky
+     * @param priceList zobrazovaný model ceníku
      */
     private fun bindPrices(holder: MyViewHolder, priceList: PriceListModel) {
         val ceny = Calculation.calculatePriceForPriceListDPH(priceList, subscriptionPoint)
@@ -350,6 +405,9 @@ class PriceListAdapter(
 
     /**
      * Řídí viditelnost akčních tlačítek na položce.
+     *
+     * @param holder [MyViewHolder] položky
+     * @param position pozice v adaptéru
      */
     private fun updateButtonsVisibility(holder: MyViewHolder, position: Int) {
         setShowPositionItem(showButtons)
@@ -361,7 +419,7 @@ class PriceListAdapter(
     }
 
     /**
-     * Smaže vybraný ceník.
+     * Smaže vybraný ceník, pokud byly uloženy platné parametry označené položky.
      */
     fun deleteItemPrice() {
         if (selectedItemId != -1L && selectedPosition != -1) {
@@ -394,6 +452,8 @@ class PriceListAdapter(
 
     /**
      * Přepne režim výběru.
+     *
+     * @param enabled `true` pro aktivaci vícenásobného výběru s checkboxem
      */
     @SuppressLint("NotifyDataSetChanged")
     fun setSelectionMode(enabled: Boolean) {
@@ -401,16 +461,29 @@ class PriceListAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Uloží do nastavení pozici položky ceníku s viditelnými tlačítky.
+     *
+     * @param position pozice položky, nebo `-1` pro skrytí
+     */
     private fun setShowPositionItem(position: Int) {
         shPPriceList.set(ShPPriceList.SHOW_BUTTONS_PRICE_LIST, position)
     }
 
+    /**
+     * Uloží do nastavení ID položky ceníku s viditelnými tlačítky.
+     *
+     * @param id ID ceníku, nebo `-1` pro skrytí
+     */
     private fun setShowIdItem(id: Long) {
         shPPriceList.set(ShPPriceList.SHOW_ID_ITEM_PRICE_LIST, id)
     }
 
     /**
-     * Provede odstranění ceníku podle ID, po kontrole jeho případného využití.
+     * Provede odstranění ceníku podle ID, po kontrole jeho případného využití v odběrných místech.
+     *
+     * @param itemId ID ceníku k odstranění
+     * @param position pozice položky v seznamu
      */
     private fun deleteItemPrice(itemId: Long, position: Int) {
         val dataSubscriptionPointSource = DataSubscriptionPointSource(context)
@@ -454,6 +527,14 @@ class PriceListAdapter(
         }
     }
 
+    /**
+     * Zobrazí varovný dialog informující o tom, že ceník nelze smazat z důvodu jeho použití.
+     *
+     * @param ted počet použití v záznamech TED
+     * @param fak počet použití v záznamech FAK
+     * @param mon počet použití v měsíčních odečtech
+     * @param context kontext pro vytvoření dialogu
+     */
     private fun showWarningDialog(ted: Int, fak: Int, mon: Int, context: Context) {
         if (context is FragmentActivity) {
             PriceListDeleteBlockedDialogFragment.newInstance(ted, fak, mon)
