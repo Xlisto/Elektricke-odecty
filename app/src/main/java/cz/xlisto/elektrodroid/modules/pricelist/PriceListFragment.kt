@@ -69,7 +69,7 @@ class PriceListFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(selectedItem: Boolean, idSelectedPriceList: Long): PriceListFragment {
-            return newInstance(selectedItem, idSelectedPriceList, null)
+            return newInstance(selectedItem, idSelectedPriceList, null, null)
         }
 
         @JvmStatic
@@ -78,10 +78,23 @@ class PriceListFragment : Fragment() {
             idSelectedPriceList: Long,
             side: Side?
         ): PriceListFragment {
+            return newInstance(selectedItem, idSelectedPriceList, null, side)
+        }
+
+        @JvmStatic
+        fun newInstance(
+            selectedItem: Boolean,
+            idSelectedPriceList: Long,
+            initialSelectedIds: LongArray?,
+            side: Side?
+        ): PriceListFragment {
             val fragment = PriceListFragment()
             val args = Bundle()
             args.putBoolean(SHOW_SELECT_ITEM, selectedItem)
             args.putLong(ID_SELECTED_PRICE_LIST, idSelectedPriceList)
+            if (initialSelectedIds != null) {
+                args.putLongArray(FLAG_SELECTED_IDS, initialSelectedIds)
+            }
             args.putSerializable(FLAG_SIDE, side)
             fragment.arguments = args
             return fragment
@@ -109,6 +122,7 @@ class PriceListFragment : Fragment() {
     private var priceListAdapter: PriceListAdapter? = null
     private var priceListModels: ArrayList<PriceListModel> = ArrayList()
     private val selectedIds: MutableSet<Long> = HashSet()
+    private var isFilterOnlySelected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +132,11 @@ class PriceListFragment : Fragment() {
             showSelectItem = it.getBoolean(SHOW_SELECT_ITEM)
             idSelectedPriceList = it.getLong(ID_SELECTED_PRICE_LIST)
             side = BundleCompat.getSerializable(it, FLAG_SIDE, Side::class.java)
+            val initialIds = it.getLongArray(FLAG_SELECTED_IDS)
+            if (initialIds != null) {
+                selectedIds.clear()
+                initialIds.forEach { id -> selectedIds.add(id) }
+            }
         }
 
         isSelectionModeActive = showSelectItem
@@ -215,11 +234,21 @@ class PriceListFragment : Fragment() {
         btnClearSelection.setOnClickListener {
             selectedIds.clear()
             priceListAdapter?.clearSelection()
-            updateSelectionUiState()
+            if (isFilterOnlySelected) {
+                loadOnlySelectedPriceLists()
+            } else {
+                updateSelectionUiState()
+            }
         }
 
         btnCompareSelected.setOnClickListener {
-            confirmAndReturnResult()
+            isFilterOnlySelected = !isFilterOnlySelected
+            if (isFilterOnlySelected) {
+                loadOnlySelectedPriceLists()
+            } else {
+                onLoadData()
+                setAdapter()
+            }
         }
 
         btnBack.setOnClickListener {
@@ -406,6 +435,26 @@ class PriceListFragment : Fragment() {
     }
 
     /**
+     * Načte a zobrazí v seznamu pouze vybrané ceníky.
+     */
+    private fun loadOnlySelectedPriceLists() {
+        val dataPriceListSource = DataPriceListSource(requireContext())
+        dataPriceListSource.open()
+        val selectedModels = ArrayList<PriceListModel>()
+        selectedIds.forEach { id ->
+            val pl = dataPriceListSource.readPrice(id)
+            if (pl != null && pl.id > 0) {
+                selectedModels.add(pl)
+            }
+        }
+        dataPriceListSource.close()
+
+        priceListModels = selectedModels
+        tvCountPriceItem.text = getString(R.string.zobrazeno_vybranych_ceniku, selectedModels.size)
+        setAdapter()
+    }
+
+    /**
      * Aktualizuje stav informační lišty vybraných ceníků a tlačítek akcí.
      */
     private fun updateSelectionUiState() {
@@ -415,9 +464,15 @@ class PriceListFragment : Fragment() {
 
         if (isSelectionModeActive) {
             containerSelectionActions.visibility = View.VISIBLE
-            btnCompareSelected.isEnabled = totalSelected > 0
+            btnCompareSelected.isEnabled = totalSelected > 0 || isFilterOnlySelected
 
-            if (hiddenSelected > 0) {
+            if (isFilterOnlySelected) {
+                btnCompareSelected.text = getString(R.string.zobrazit_vse)
+            } else {
+                btnCompareSelected.text = getString(R.string.zobrazit_vybrane)
+            }
+
+            if (hiddenSelected > 0 && !isFilterOnlySelected) {
                 tvSelectionCount.text =
                     getString(R.string.vybrano_ceniku_count_skryte, totalSelected, hiddenSelected)
             } else {

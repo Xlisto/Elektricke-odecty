@@ -116,7 +116,15 @@ public class PriceListCompareBoxFragment extends Fragment {
         new TabLayoutMediator(tabLayoutCompare, viewPagerCompare, (tab, position) -> tab.setText(tabTitles[position])).attach();
 
         btnSelectPriceLists.setOnClickListener(v -> {
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L);
+            List<PriceListModel> currentSelected = priceListsViewModel.getSelectedPriceLists().getValue();
+            long[] selectedIdsArray = null;
+            if (currentSelected != null && !currentSelected.isEmpty()) {
+                selectedIdsArray = new long[currentSelected.size()];
+                for (int i = 0; i < currentSelected.size(); i++) {
+                    selectedIdsArray[i] = currentSelected.get(i).getId();
+                }
+            }
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L, selectedIdsArray, null);
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });
 

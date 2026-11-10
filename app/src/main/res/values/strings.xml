@@ -127,6 +127,9 @@
     <string name="vybrano_ceniku_count_skryte">Vybráno: %1$d ceníků (%2$d skrytých)</string>
     <string name="zrusit_vyber">Zrušit výběr</string>
     <string name="porovnat">Porovnat</string>
+    <string name="zobrazit_vybrane">Zobrazit vybrané</string>
+    <string name="zobrazit_vse">Zobrazit všechny</string>
+    <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
     <string name="rezim_vyberu">Režim výběru</string>
     <string name="plus_value">+ %s</string>
 
