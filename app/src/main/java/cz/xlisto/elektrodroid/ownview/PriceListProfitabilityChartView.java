@@ -25,6 +25,7 @@ import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.Resul
 
 /**
  * Custom View pro závislost celkových ročních nákladů na spotřebě nebo podílu NT se zvýrazněným bodem zvratu.
+ * Automaticky zalamuje dlouhé názvy ceníků v legendě tak, aby se celý název vešel na obrazovku.
  * Dynamicky přizpůsobuje barvy textu a mřížky pro světlý i tmavý režim (Light/Dark mode).
  */
 public class PriceListProfitabilityChartView extends View {
@@ -116,6 +117,52 @@ public class PriceListProfitabilityChartView extends View {
         invalidate();
     }
 
+
+    private List<String> splitTextToLines(Paint paint, String text, float maxWidth) {
+        List<String> lines = new ArrayList<>();
+        if (text == null || text.trim().isEmpty()) return lines;
+
+        if (paint.measureText(text) <= maxWidth) {
+            lines.add(text);
+            return lines;
+        }
+
+        // Přednostní rozdělení před závorkou " (" pokud existuje
+        int parenIdx = text.indexOf(" (");
+        if (parenIdx > 0) {
+            String part1 = text.substring(0, parenIdx).trim();
+            String part2 = text.substring(parenIdx).trim();
+            if (paint.measureText(part1) <= maxWidth && paint.measureText(part2) <= maxWidth) {
+                lines.add(part1);
+                lines.add(part2);
+                return lines;
+            }
+        }
+
+        // Obecné zalamování po slovech
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+
+        for (String word : words) {
+            if (currentLine.length() == 0) {
+                currentLine.append(word);
+            } else {
+                String testLine = currentLine + " " + word;
+                if (paint.measureText(testLine) <= maxWidth) {
+                    currentLine.append(" ").append(word);
+                } else {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder(word);
+                }
+            }
+        }
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+
+        return lines;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
@@ -128,24 +175,18 @@ public class PriceListProfitabilityChartView extends View {
     private float measureLegendHeight(int width, float startX, float startY) {
         if (seriesList == null || seriesList.isEmpty()) return 0;
 
-        float x = startX;
         float y = startY;
-        float lineLength = 16 * density;
-        float lineGap = 18 * density;
+        float lineGap = 16 * density;
         float rightBound = Math.max(100 * density, width - (16 * density));
+        float maxTitleWidth = Math.max(60 * density, rightBound - startX - (22 * density));
 
         for (SeriesData series : seriesList) {
-            float textWidth = textPaint.measureText(series.title);
-            float itemWidth = lineLength + (6 * density) + textWidth;
-
-            if (x > startX && (x + itemWidth > rightBound)) {
-                x = startX;
-                y += lineGap;
-            }
-            x += itemWidth + (16 * density);
+            List<String> titleLines = splitTextToLines(textPaint, series.title, maxTitleWidth);
+            int lineCount = Math.max(1, titleLines.size());
+            y += (lineCount * lineGap);
         }
 
-        return y - startY + lineGap;
+        return y - startY + (4 * density);
     }
 
     @Override
@@ -269,32 +310,31 @@ public class PriceListProfitabilityChartView extends View {
         }
     }
 
-
     private float drawLegend(Canvas canvas, float startX, float startY, int textColor) {
         if (seriesList == null || seriesList.isEmpty()) return startY;
 
-        float x = startX;
         float y = startY;
         float lineLength = 16 * density;
-        float lineGap = 18 * density;
+        float lineGap = 16 * density;
         float rightBound = Math.max(100 * density, getWidth() - (16 * density));
+        float maxTitleWidth = Math.max(60 * density, rightBound - startX - lineLength - (6 * density));
 
         for (SeriesData series : seriesList) {
-            float textWidth = textPaint.measureText(series.title);
-            float itemWidth = lineLength + (6 * density) + textWidth;
-
-            if (x > startX && (x + itemWidth > rightBound)) {
-                x = startX;
-                y += lineGap;
-            }
+            List<String> titleLines = splitTextToLines(textPaint, series.title, maxTitleWidth);
 
             linePaint.setColor(series.color);
-            canvas.drawLine(x, y - (4 * density), x + lineLength, y - (4 * density), linePaint);
+            canvas.drawLine(startX, y - (4 * density), startX + lineLength, y - (4 * density), linePaint);
 
             textPaint.setColor(textColor);
-            canvas.drawText(series.title, x + lineLength + (6 * density), y, textPaint);
+            textPaint.setFakeBoldText(false);
 
-            x += itemWidth + (16 * density);
+            float lineY = y;
+            for (String titleLine : titleLines) {
+                canvas.drawText(titleLine, startX + lineLength + (6 * density), lineY, textPaint);
+                lineY += lineGap;
+            }
+
+            y = lineY + (2 * density);
         }
 
         return y;
