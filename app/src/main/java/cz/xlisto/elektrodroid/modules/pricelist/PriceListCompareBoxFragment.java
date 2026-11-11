@@ -155,9 +155,9 @@ public class PriceListCompareBoxFragment extends Fragment {
         priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> {
             int count = priceLists != null ? priceLists.size() : 0;
             if (count == 0) {
-                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrat ceníky ke srovnání (%d vybráno)", 0));
+                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrat ceníky (%d)", 0));
             } else {
-                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrané ceníky: %d (klepnutím upravte)", count));
+                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrané ceníky (%d)", count));
             }
         });
     }

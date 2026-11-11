@@ -9,16 +9,16 @@
         android:id="@+id/llButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="4dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSelectPriceLists"
             style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Vybrat ceníky ke srovnání"
+            android:text="Vybrané ceníky (0)"
             android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
@@ -26,8 +26,8 @@
         android:id="@+id/tabLayoutCompare"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed"
-        app:tabGravity="fill" />
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerCompare"
