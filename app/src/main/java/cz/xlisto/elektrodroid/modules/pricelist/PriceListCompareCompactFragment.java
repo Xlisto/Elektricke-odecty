@@ -311,15 +311,15 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
                 } else {//měrné jednotky
                     if (i <= 2)
                         tv.setText("");
-                    if (i == 3 || i == 4 || i == 6 || i == 8 || i == 9 || i == 25 || i == 28 || i == 29 || i == 30 || i == 31 || i == 32 || i == 35)
+                    if (i == 3 || i == 4 || i == 6 || i == 8 || i == 9 || i == 25 || i == 28 || i == 29 || i == 30)
                         tv.setText(kcMwh);
-                    if (i == 5 || i >= 10 && i <= 24 || i == 33 || i == 36)
+                    if (i == 5 || (i >= 10 && i <= 24))
                         tv.setText(kcMonth);
                     if (i == 26)
                         tv.setText(kcOmMonth);
-                    if (i == 27 || i == 34)
+                    if (i == 27)
                         tv.setText(kcAmMonth);
-                    if (i == 37 || i == 38 || i == 39)
+                    if (i >= 31 && i <= 39)
                         tv.setText(kc);
                 }
                 indexIdTable[i][j] = tv.getId();
