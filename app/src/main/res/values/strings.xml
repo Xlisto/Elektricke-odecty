@@ -132,6 +132,9 @@
     <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
     <string name="cannot_combine_single_and_dual_tariffs">Není možné kombinovat jednotarifní ceníky (D01d, D02d) s dvoutarifními sazebami.</string>
     <string name="best_option_badge">★ NEJVÝHODNĚJŠÍ VARIANTA</string>
+    <string name="no_historical_readings_found">Historické odečty nebyly nalezeny</string>
+    <string name="select_at_least_two_pricelists">Pro porovnání výhodnosti sazeb vyberte alespoň 2 ceníky</string>
+    <string name="select_pricelists_to_show_conditions">Vyberte ceníky pro zobrazení podmínek distribučních sazeb.</string>
     <string name="rezim_vyberu">Režim výběru</string>
     <string name="plus_value">+ %s</string>
 

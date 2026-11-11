@@ -1,6 +1,5 @@
 package cz.xlisto.elektrodroid.modules.pricelist;
 
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,8 +51,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
     private PriceListsViewModel viewModel;
 
-    private RadioGroup rgProfitabilitySource;
-    private RadioButton rbSourceModel;
     private RadioButton rbSourceHistory;
 
     private LinearLayout llModelSlidersContainer;
@@ -93,8 +90,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireParentFragment()).get(PriceListsViewModel.class);
 
-        rgProfitabilitySource = view.findViewById(R.id.rgProfitabilitySource);
-        rbSourceModel = view.findViewById(R.id.rbSourceModel);
+        RadioGroup rgProfitabilitySource = view.findViewById(R.id.rgProfitabilitySource);
         rbSourceHistory = view.findViewById(R.id.rbSourceHistory);
 
         llModelSlidersContainer = view.findViewById(R.id.llModelSlidersContainer);
@@ -143,42 +139,42 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
     private void onSourceModeChanged() {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
-        if (scenario == null) scenario = new PriceListComparisonScenario();
+        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
 
         if (rbSourceHistory.isChecked()) {
             llModelSlidersContainer.setVisibility(View.GONE);
             llHistorySliderContainer.setVisibility(View.VISIBLE);
-            scenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.HISTORICAL_YEAR);
+            activeScenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.HISTORICAL_YEAR);
             updateHistoryFromSlider((int) sliderHistoryYears.getValue());
         } else {
             llModelSlidersContainer.setVisibility(View.VISIBLE);
             llHistorySliderContainer.setVisibility(View.GONE);
-            scenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.MANUAL);
+            activeScenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.MANUAL);
             updateVtFromSlider(sliderVtMwh.getValue());
         }
     }
 
     private void updateVtFromSlider(float vtValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
-        if (scenario == null) scenario = new PriceListComparisonScenario();
+        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
 
-        scenario.setVtKwh(vtValueMwh * 1000.0);
-        scenario.setNtKwh(sliderNtMwh.getValue() * 1000.0);
-        viewModel.setScenario(scenario);
+        activeScenario.setVtKwh(vtValueMwh * 1000.0);
+        activeScenario.setNtKwh(sliderNtMwh.getValue() * 1000.0);
+        viewModel.setScenario(activeScenario);
     }
 
     private void updateNtFromSlider(float ntValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
-        if (scenario == null) scenario = new PriceListComparisonScenario();
+        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
 
-        scenario.setVtKwh(sliderVtMwh.getValue() * 1000.0);
-        scenario.setNtKwh(ntValueMwh * 1000.0);
-        viewModel.setScenario(scenario);
+        activeScenario.setVtKwh(sliderVtMwh.getValue() * 1000.0);
+        activeScenario.setNtKwh(ntValueMwh * 1000.0);
+        viewModel.setScenario(activeScenario);
     }
 
     private void updateHistoryFromSlider(int yearsCount) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
-        if (scenario == null) scenario = new PriceListComparisonScenario();
+        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
 
         ShPSubscriptionPoint shP = new ShPSubscriptionPoint(requireContext());
         long idSub = shP.get(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
@@ -190,25 +186,25 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
             if (subPoint != null) {
                 List<Integer> availableYears = HistoricalReadingConsumptionHelper.getAvailableYears(requireContext(), subPoint);
+                int maxAvailableYears = availableYears.isEmpty() ? yearsCount : Math.min(yearsCount, availableYears.size());
                 if (!availableYears.isEmpty()) {
                     float maxYears = Math.max(1.0f, (float) availableYears.size());
                     sliderHistoryYears.setValueTo(maxYears);
-                    if (yearsCount > maxYears) yearsCount = (int) maxYears;
-                    setSliderValueSafely(sliderHistoryYears, yearsCount);
+                    setSliderValueSafely(sliderHistoryYears, maxAvailableYears);
                 }
 
-                HistoricalConsumptionResult histRes = HistoricalReadingConsumptionHelper.calculateAverageConsumptionForLastNYears(requireContext(), subPoint, yearsCount);
+                HistoricalConsumptionResult histRes = HistoricalReadingConsumptionHelper.calculateAverageConsumptionForLastNYears(requireContext(), subPoint, maxAvailableYears);
                 if (histRes.totalKwh > 0) {
-                    scenario.setVtKwh(histRes.vtKwh);
-                    scenario.setNtKwh(histRes.ntKwh);
+                    activeScenario.setVtKwh(histRes.vtKwh);
+                    activeScenario.setNtKwh(histRes.ntKwh);
                     tvHistoryQualityInfo.setText(histRes.qualityNote);
                 } else {
-                    tvHistoryQualityInfo.setText("Historické odečty nebyly nalezeny");
+                    tvHistoryQualityInfo.setText(R.string.no_historical_readings_found);
                 }
             }
         }
 
-        viewModel.setScenario(scenario);
+        viewModel.setScenario(activeScenario);
     }
 
     private void setSliderValueSafely(Slider slider, float rawValue) {
@@ -216,15 +212,16 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         float max = slider.getValueTo();
         float step = slider.getStepSize();
 
-        float clamped = Math.max(min, Math.min(rawValue, max));
+        float initialClamped = Math.max(min, Math.min(rawValue, max));
+        float calculatedValue = initialClamped;
 
         if (step > 0) {
-            float steps = Math.round((clamped - min) / step);
-            clamped = min + (steps * step);
+            float steps = Math.round((initialClamped - min) / step);
+            calculatedValue = min + (steps * step);
         }
 
-        clamped = Math.max(min, Math.min(clamped, max));
-        slider.setValue(clamped);
+        float finalValue = Math.max(min, Math.min(calculatedValue, max));
+        slider.setValue(finalValue);
     }
 
     private void syncUIWithScenario(PriceListComparisonScenario scenario) {
@@ -271,7 +268,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         List<PriceListModel> selectedPriceLists = viewModel.getSelectedPriceLists().getValue();
 
         if (scenario == null || selectedPriceLists == null || selectedPriceLists.isEmpty()) {
-            tvBreakEvenSummaryText.setText("Pro porovnání výhodnosti sazeb vyberte alespoň 2 ceníky");
+            tvBreakEvenSummaryText.setText(R.string.select_at_least_two_pricelists);
             chartProfitability.setChartData(PriceListProfitabilityChartView.Mode.COST_VS_CONSUMPTION, new ArrayList<>(), null, 0);
             updateTechnicalConditionsUI(new ArrayList<>());
             return;
@@ -312,14 +309,13 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         updateTechnicalConditionsUI(selectedPriceLists);
     }
 
-
     private void updateTechnicalConditionsUI(List<PriceListModel> priceLists) {
         if (llTechnicalConditionsContainer == null) return;
         llTechnicalConditionsContainer.removeAllViews();
 
         if (priceLists == null || priceLists.isEmpty()) {
             TextView tvEmpty = new TextView(requireContext());
-            tvEmpty.setText("Vyberte ceníky pro zobrazení podmínek distribučních sazeb.");
+            tvEmpty.setText(R.string.select_pricelists_to_show_conditions);
             tvEmpty.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium);
             tvEmpty.setTextColor(0xFF757575);
             llTechnicalConditionsContainer.addView(tvEmpty);
