@@ -151,18 +151,7 @@ public class PriceListCompareOverviewFragment extends Fragment {
             // Subtitulek
             TextView tvSubtitle = new TextView(requireContext());
             tvSubtitle.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
-            String periodText = res.getPriceList().getPlatnostText();
-            String pozeInfo = res.getPozeTypeDescription();
-            StringBuilder sbSubtitle = new StringBuilder();
-            sbSubtitle.append("Dodavatel: ").append(res.getPriceList().getFirma())
-                    .append(" • Distribuce: ").append(res.getPriceList().getDistribuce());
-            if (!periodText.isEmpty()) {
-                sbSubtitle.append(" • Platnost: ").append(periodText);
-            }
-            if (!pozeInfo.isEmpty()) {
-                sbSubtitle.append(" • ").append(pozeInfo);
-            }
-            tvSubtitle.setText(sbSubtitle.toString());
+            tvSubtitle.setText(buildSubtitleText(res));
             tvSubtitle.setTextColor(textColorSecondary);
             cardContent.addView(tvSubtitle);
 
@@ -179,7 +168,7 @@ public class PriceListCompareOverviewFragment extends Fragment {
             tvDiff.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyMedium);
 
             if (res.isCheapest()) {
-                tvDiff.setText("★ NEJVÝHODNĚJŠÍ VARIANTA");
+                tvDiff.setText(R.string.best_option_badge);
                 tvDiff.setTextColor(0xFF2E7D32); // Zelená
                 card.setStrokeColor(0xFF2E7D32);
                 card.setStrokeWidth((int) (2 * getResources().getDisplayMetrics().density));
@@ -223,6 +212,22 @@ public class PriceListCompareOverviewFragment extends Fragment {
 
             llOverviewListContainer.addView(card);
         }
+    }
+
+
+    private String buildSubtitleText(PriceListComparisonResult res) {
+        String periodText = res.getPriceList().getPlatnostText();
+        String pozeInfo = res.getPozeTypeDescription();
+        StringBuilder sbSubtitle = new StringBuilder();
+        sbSubtitle.append("Dodavatel: ").append(res.getPriceList().getFirma())
+                .append(" • Distribuce: ").append(res.getPriceList().getDistribuce());
+        if (!periodText.isEmpty()) {
+            sbSubtitle.append(" • Platnost: ").append(periodText);
+        }
+        if (!pozeInfo.isEmpty()) {
+            sbSubtitle.append(" • ").append(pozeInfo);
+        }
+        return sbSubtitle.toString();
     }
 
 

@@ -131,6 +131,7 @@
     <string name="zobrazit_vse">Zobrazit všechny</string>
     <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
     <string name="cannot_combine_single_and_dual_tariffs">Není možné kombinovat jednotarifní ceníky (D01d, D02d) s dvoutarifními sazebami.</string>
+    <string name="best_option_badge">★ NEJVÝHODNĚJŠÍ VARIANTA</string>
     <string name="rezim_vyberu">Režim výběru</string>
     <string name="plus_value">+ %s</string>
 
