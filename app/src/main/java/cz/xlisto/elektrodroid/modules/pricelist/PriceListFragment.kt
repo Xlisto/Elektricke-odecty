@@ -18,8 +18,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.widget.Toast
 import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
+import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
+import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
 import cz.xlisto.elektrodroid.models.PriceListModel
@@ -60,6 +63,8 @@ class PriceListFragment : Fragment() {
         const val FLAG_SELECTED_IDS = "flagSelectedIds"
 
         const val FLAG_IS_COMPARE_MODE = "flagIsCompareMode"
+
+        const val FLAG_RESULT_DELETE_SELECTED_PRICELISTS = "flagResultDeleteSelectedPriceLists"
 
         private const val SHOW_SELECT_ITEM = "param1"
         private const val ID_SELECTED_PRICE_LIST = "param2"
@@ -178,8 +183,20 @@ class PriceListFragment : Fragment() {
                 menuInflater.inflate(R.menu.menu_price_list, menu)
                 addMenuItem = menu.findItem(R.id.menu_action_add_pricelist)
 
-                if (showSelectItem || isCompareMode) {
+                val isPickerMode = showSelectItem || isCompareMode
+
+                if (isPickerMode) {
                     menu.findItem(R.id.menu_select_mode_pricelist)?.isVisible = false
+                    menu.findItem(R.id.menu_delete_unused_pricelist)?.isVisible = false
+                    menu.findItem(R.id.menu_compare_selected_pricelists)?.isVisible = false
+                    menu.findItem(R.id.menu_delete_selected_pricelists)?.isVisible = false
+                } else {
+                    menu.findItem(R.id.menu_select_mode_pricelist)?.isVisible = true
+                    menu.findItem(R.id.menu_delete_unused_pricelist)?.isVisible = true
+                    menu.findItem(R.id.menu_compare_selected_pricelists)?.isVisible =
+                        isSelectionModeActive
+                    menu.findItem(R.id.menu_delete_selected_pricelists)?.isVisible =
+                        isSelectionModeActive
                 }
 
                 UIHelper.showButtons(
@@ -212,6 +229,16 @@ class PriceListFragment : Fragment() {
 
                     R.id.menu_select_mode_pricelist -> {
                         toggleSelectionMode()
+                        true
+                    }
+
+                    R.id.menu_compare_selected_pricelists -> {
+                        startPriceListComparison()
+                        true
+                    }
+
+                    R.id.menu_delete_selected_pricelists -> {
+                        confirmDeleteSelectedPriceLists()
                         true
                     }
 
@@ -323,6 +350,15 @@ class PriceListFragment : Fragment() {
             }
         }
 
+        // Posluchač při potvrzení smazání vybraných ceníků
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            FLAG_RESULT_DELETE_SELECTED_PRICELISTS, this
+        ) { _, result ->
+            if (result.getBoolean(YesNoDialogFragment.RESULT)) {
+                performDeleteSelectedPriceLists()
+            }
+        }
+
         // Posluchač při zavření dialogového okna nastavení
         requireActivity().supportFragmentManager.setFragmentResultListener(
             SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this
@@ -418,6 +454,7 @@ class PriceListFragment : Fragment() {
     private fun toggleSelectionMode() {
         isSelectionModeActive = !isSelectionModeActive
         priceListAdapter?.setSelectionMode(isSelectionModeActive)
+        requireActivity().invalidateOptionsMenu()
         updateSelectionUiState()
     }
 
@@ -541,6 +578,128 @@ class PriceListFragment : Fragment() {
             sendResultBundle()
         }
         super.onDestroyView()
+    }
+
+    /**
+     * Otevírá fragment pro srovnání vybraných ceníků.
+     */
+    private fun startPriceListComparison() {
+        if (selectedIds.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                R.string.no_pricelists_selected_for_compare,
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        val compareBoxFragment = PriceListCompareBoxFragment.newInstance(selectedIds.toLongArray())
+        FragmentChange.replace(
+            requireActivity(),
+            compareBoxFragment,
+            FragmentChange.Transaction.MOVE,
+            true
+        )
+    }
+
+    /**
+     * Zobrazí dialog s dotazem na smazání vybraných ceníků.
+     */
+    private fun confirmDeleteSelectedPriceLists() {
+        if (selectedIds.isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                R.string.no_pricelists_selected_for_delete,
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        val yesNoDialogFragment = YesNoDialogFragment.newInstance(
+            getString(R.string.delete_selected_pricelists_title),
+            FLAG_RESULT_DELETE_SELECTED_PRICELISTS,
+            getString(R.string.delete_selected_pricelists_message, selectedIds.size)
+        )
+        yesNoDialogFragment.show(
+            requireActivity().supportFragmentManager,
+            YesNoDialogFragment.TAG
+        )
+    }
+
+    /**
+     * Provede smazání vybraných ceníků s kontrolou na jejich použití v odečtech a fakturách.
+     */
+    private fun performDeleteSelectedPriceLists() {
+        if (selectedIds.isEmpty()) return
+
+        val dataSubscriptionPointSource = DataSubscriptionPointSource(requireContext())
+        dataSubscriptionPointSource.open()
+        val subscriptionPointModels: ArrayList<SubscriptionPointModel> =
+            dataSubscriptionPointSource.loadSubscriptionPoints()
+
+        val dataPriceListSource = DataPriceListSource(requireContext())
+        dataPriceListSource.open()
+
+        var deletedCount = 0
+        var blockedCount = 0
+        var totalTed = 0
+        var totalFak = 0
+        var totalMon = 0
+
+        val idsToDelete = ArrayList(selectedIds)
+
+        for (itemId in idsToDelete) {
+            var pricesTED = 0
+            var pricesFAK = 0
+            var pricesMON = 0
+
+            for (i in 0 until subscriptionPointModels.size) {
+                val subscriptionPointModel = subscriptionPointModels[i]
+                pricesTED += dataSubscriptionPointSource.countPriceItems(
+                    subscriptionPointModel.tableTED,
+                    itemId
+                )
+                pricesFAK += dataSubscriptionPointSource.countPriceItems(
+                    subscriptionPointModel.tableFAK,
+                    itemId
+                )
+                pricesMON += dataSubscriptionPointSource.countPriceItems(
+                    subscriptionPointModel.tableO,
+                    itemId
+                )
+            }
+
+            if (pricesTED > 0 || pricesFAK > 0 || pricesMON > 0) {
+                blockedCount++
+                totalTed += pricesTED
+                totalFak += pricesFAK
+                totalMon += pricesMON
+            } else {
+                dataPriceListSource.deletePriceList(itemId)
+                selectedIds.remove(itemId)
+                deletedCount++
+            }
+        }
+
+        dataPriceListSource.close()
+        dataSubscriptionPointSource.close()
+
+        onLoadData()
+        setAdapter()
+
+        if (blockedCount > 0) {
+            PriceListDeleteBlockedDialogFragment.newInstance(totalTed, totalFak, totalMon)
+                .show(requireActivity().supportFragmentManager, "priceListDeleteBlockedDialog")
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.deleted_some_blocked_some, deletedCount, blockedCount),
+                Toast.LENGTH_LONG
+            ).show()
+        } else if (deletedCount > 0) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.deleted_pricelists_success, deletedCount),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     /**

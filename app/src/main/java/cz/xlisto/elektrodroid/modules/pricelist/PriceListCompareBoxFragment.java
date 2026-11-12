@@ -57,11 +57,39 @@ public class PriceListCompareBoxFragment extends Fragment {
         return new PriceListCompareBoxFragment();
     }
 
+
+    public static PriceListCompareBoxFragment newInstance(long[] selectedIds) {
+        PriceListCompareBoxFragment fragment = new PriceListCompareBoxFragment();
+        if (selectedIds != null && selectedIds.length > 0) {
+            Bundle args = new Bundle();
+            args.putLongArray(PriceListFragment.FLAG_SELECTED_IDS, selectedIds);
+            fragment.setArguments(args);
+        }
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         priceListsViewModel = new ViewModelProvider(this).get(PriceListsViewModel.class);
         loadCompareParameters();
+
+        if (getArguments() != null) {
+            long[] initialSelectedIds = getArguments().getLongArray(PriceListFragment.FLAG_SELECTED_IDS);
+            if (initialSelectedIds != null && initialSelectedIds.length > 0) {
+                DataPriceListSource source = new DataPriceListSource(requireContext());
+                source.open();
+                List<PriceListModel> selectedList = new ArrayList<>();
+                for (long id : initialSelectedIds) {
+                    PriceListModel pl = source.readPrice(id);
+                    if (pl != null && pl.getId() > 0) {
+                        selectedList.add(pl);
+                    }
+                }
+                source.close();
+                priceListsViewModel.setSelectedPriceLists(selectedList);
+            }
+        }
     }
 
     @Nullable

@@ -22,6 +22,18 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_compare_selected_pricelists"
+        android:title="@string/menu_compare_selected_pricelists"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_delete_selected_pricelists"
+        android:title="@string/menu_delete_selected_pricelists"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menu_delete_unused_pricelist"
         android:title="@string/delete_price_list"
         android:visible="true"

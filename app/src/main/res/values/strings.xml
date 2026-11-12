@@ -131,6 +131,14 @@
     <string name="zobrazit_vse">Zobrazit všechny</string>
     <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
     <string name="cannot_combine_single_and_dual_tariffs">Není možné kombinovat jednotarifní ceníky (D01d, D02d) s dvoutarifními sazebami.</string>
+    <string name="menu_compare_selected_pricelists">Porovnat vybrané ceníky</string>
+    <string name="menu_delete_selected_pricelists">Smazat vybrané ceníky</string>
+    <string name="delete_selected_pricelists_title">Smazat vybrané ceníky</string>
+    <string name="delete_selected_pricelists_message">Opravdu chcete smazat vybrané ceníky (%1$d)? Ceníky použité v odečtech nebo fakturách nebudou smazány.</string>
+    <string name="deleted_pricelists_success">Smazáno ceníků: %1$d</string>
+    <string name="deleted_some_blocked_some">Smazáno %1$d ceníků. %2$d ceníků nebylo smazáno, protože jsou použity v odečtech nebo fakturách.</string>
+    <string name="no_pricelists_selected_for_delete">Nebyly vybrány žádné ceníky ke smazání.</string>
+    <string name="no_pricelists_selected_for_compare">Nebyly vybrány žádné ceníky k porovnání.</string>
     <string name="best_option_badge">★ NEJVÝHODNĚJŠÍ VARIANTA</string>
     <string name="no_historical_readings_found">Historické odečty nebyly nalezeny</string>
     <string name="select_at_least_two_pricelists">Pro porovnání výhodnosti sazeb vyberte alespoň 2 ceníky</string>
