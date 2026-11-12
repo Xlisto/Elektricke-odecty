@@ -24,7 +24,7 @@ public class PrePdfParser implements PdfPriceListParser {
     public boolean canParse(String pdfText) {
         if (pdfText == null) return false;
         String text = pdfText.toUpperCase();
-        return (text.contains("PREDISTRIBUCE") || text.contains("PRE PROUD") || text.contains("PRE.CZ") || text.contains("PRAŽSKÁ ENERGETIKA"));
+        return (text.contains("PRAŽSKÁ ENERGETIKA") || text.contains("PRAZSKA ENERGETIKA") || text.contains("PRE PROUD") || text.contains("PRE.CZ"));
     }
 
 

@@ -13,6 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.BundleCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -336,6 +338,7 @@ class PriceListFragment : Fragment() {
         requireActivity().invalidateOptionsMenu()
 
         fab = view.findViewById(R.id.fab)
+        fab.setOnClickListener { v -> showAddPriceListMenu(v) }
         rv = view.findViewById(R.id.rv_price_list)
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist)
         tvSelectionCount = view.findViewById(R.id.tvSelectionCount)
@@ -874,5 +877,35 @@ class PriceListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Zobrazí nabídku pro přidání ceníku (ručně nebo z PDF) při kliknutí na plovoucí tlačítko FAB.
+     *
+     * @param view Náhledový prvek (FAB), ke kterému se nabídka ukotví
+     */
+    private fun showAddPriceListMenu(view: View) {
+        val popupMenu = PopupMenu(
+            ContextThemeWrapper(requireContext(), R.style.Theme_Odecty_PopupOverlay),
+            view
+        )
+        popupMenu.menuInflater.inflate(R.menu.menu_add_pricelist_fab, popupMenu.menu)
+        popupMenu.setForceShowIcon(true)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_action_add_pricelist -> {
+                    addNewPriceList()
+                    true
+                }
+
+                R.id.menu_action_add_pdf_pricelist -> {
+                    pdfPickerLauncher.launch("application/pdf")
+                    true
+                }
+
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_action_add_pricelist"
+        android:icon="@drawable/ic_add_24"
+        android:title="@string/add_monthly_price_list" />
+
+    <item
+        android:id="@+id/menu_action_add_pdf_pricelist"
+        android:icon="@drawable/ic_add_pdf_24"
+        android:title="@string/add_pdf_price_list" />
+</menu>

@@ -214,6 +214,10 @@ public class PdfParserTest {
         List<PriceListModel> eonItems = PdfParserFactory.parsePdf(null, EON_SAMPLE_TEXT);
         assertEquals(10, eonItems.size());
         assertEquals("E.ON Energie, a.s.", eonItems.get(0).getFirma());
+
+        List<PriceListModel> mndItems = PdfParserFactory.parsePdf(null, MND_SAMPLE_TEXT);
+        assertEquals(10, mndItems.size());
+        assertEquals("MND Energie a.s.", mndItems.get(0).getFirma());
     }
 
 

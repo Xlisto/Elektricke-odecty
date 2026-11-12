@@ -33,7 +33,7 @@ public class EonPdfParser implements PdfPriceListParser {
     public boolean canParse(String pdfText) {
         if (pdfText == null) return false;
         String text = pdfText.toUpperCase();
-        return (text.contains("E.ON") || text.contains("EG.D") || text.contains("EON.CZ"));
+        return (text.contains("E.ON") || text.contains("EON.CZ") || text.contains("ENERGIE24"));
     }
 
 
