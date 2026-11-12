@@ -31,6 +31,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_DETAIL_FRAGMENT
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_ID
+import cz.xlisto.elektrodroid.modules.pricelist.download.DownloadPriceListFragment
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfImportSelectionFragment
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserFactory
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserUtils
@@ -307,6 +308,17 @@ class PriceListFragment : Fragment() {
                         yesNoDialogFragment.show(
                             requireActivity().supportFragmentManager,
                             YesNoDialogFragment.TAG
+                        )
+                        true
+                    }
+
+                    R.id.menu_action_download_pricelists -> {
+                        val downloadFragment = DownloadPriceListFragment.newInstance()
+                        FragmentChange.replace(
+                            requireActivity(),
+                            downloadFragment,
+                            FragmentChange.Transaction.MOVE,
+                            true
                         )
                         true
                     }

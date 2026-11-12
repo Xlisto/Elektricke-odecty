@@ -34,6 +34,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_action_download_pricelists"
+        android:title="@string/download_price_lists"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_delete_selected_pricelists"
         android:title="@string/menu_delete_selected_pricelists"
         android:visible="false"
