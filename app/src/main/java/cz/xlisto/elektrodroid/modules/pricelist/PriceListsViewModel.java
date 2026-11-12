@@ -27,16 +27,6 @@ public class PriceListsViewModel extends ViewModel {
     private final MutableLiveData<List<PriceListModel>> selectedPriceListsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<PriceListComparisonResult>> comparisonResultsLiveData = new MutableLiveData<>(new ArrayList<>());
 
-    public void setPriceListLeft(PriceListModel priceListLeft) {
-        this.priceListLeft.setValue(priceListLeft);
-        syncSelectedPriceLists();
-    }
-
-    public void setPriceListRight(PriceListModel priceListRight) {
-        this.priceListRight.setValue(priceListRight);
-        syncSelectedPriceLists();
-    }
-
 
     public void setConsuptionContainer(ConsuptionContainer container) {
         this.consuptionContainer.setValue(container);
@@ -64,29 +54,11 @@ public class PriceListsViewModel extends ViewModel {
     public void setSelectedPriceLists(List<PriceListModel> priceLists) {
         this.selectedPriceListsLiveData.setValue(priceLists != null ? priceLists : new ArrayList<>());
         if (priceLists != null && !priceLists.isEmpty()) {
-            if (priceLists.size() >= 1) priceListLeft.setValue(priceLists.get(0));
-            if (priceLists.size() >= 2) priceListRight.setValue(priceLists.get(1));
+            priceListLeft.setValue(priceLists.get(0));
+            if (priceLists.size() > 1) {
+                priceListRight.setValue(priceLists.get(1));
+            }
         }
-        reevaluateResults();
-    }
-
-
-    private void syncSelectedPriceLists() {
-        List<PriceListModel> current = selectedPriceListsLiveData.getValue();
-        if (current == null) current = new ArrayList<>();
-        List<PriceListModel> newList = new ArrayList<>(current);
-
-        PriceListModel left = priceListLeft.getValue();
-        PriceListModel right = priceListRight.getValue();
-
-        if (left != null && !newList.contains(left)) {
-            newList.add(0, left);
-        }
-        if (right != null && !newList.contains(right)) {
-            newList.add(right);
-        }
-
-        selectedPriceListsLiveData.setValue(newList);
         reevaluateResults();
     }
 
@@ -99,16 +71,6 @@ public class PriceListsViewModel extends ViewModel {
             List<PriceListComparisonResult> results = PriceListCalculationEngine.evaluateAll(priceLists, scenario);
             comparisonResultsLiveData.setValue(results);
         }
-    }
-
-
-    public LiveData<PriceListModel> getPriceListLeft() {
-        return priceListLeft;
-    }
-
-
-    public LiveData<PriceListModel> getPriceListRight() {
-        return priceListRight;
     }
 
 
