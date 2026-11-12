@@ -841,6 +841,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 }
 
                 // zobrazení chybového hlášení, pokud něco obsahuje a zneaktivnění tlačítka pro uložení.
+                // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() == 0
+                //noinspection SizeReplaceableByIsEmpty
                 if (errorTitleBuilder.length() == 0) {
                     btnReloadRegulPriceList.setVisibility(View.VISIBLE);
                     tvNoPriceListDescription.setVisibility(View.GONE);
@@ -851,6 +853,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                     btnReloadRegulPriceList.setVisibility(View.GONE);
                     rlNoPriceList.setVisibility(VISIBLE);
                 }
+                // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() == 0
+                //noinspection SizeReplaceableByIsEmpty
                 if (errorMessageBuilder.length() == 0)
                     tvNoPriceListDescription.setVisibility(View.GONE);
                 else tvNoPriceListDescription.setVisibility(View.VISIBLE);

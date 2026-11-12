@@ -127,6 +127,7 @@ public class PriceListCompareChartView extends View {
     }
 
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
     private List<String> splitTextToLines(Paint paint, String text, float maxWidth) {
         List<String> lines = new ArrayList<>();
         if (text == null || text.trim().isEmpty()) return lines;
@@ -153,6 +154,8 @@ public class PriceListCompareChartView extends View {
         StringBuilder currentLine = new StringBuilder();
 
         for (String word : words) {
+            // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() == 0
+            //noinspection SizeReplaceableByIsEmpty
             if (currentLine.length() == 0) {
                 currentLine.append(word);
             } else {
@@ -161,10 +164,13 @@ public class PriceListCompareChartView extends View {
                     currentLine.append(" ").append(word);
                 } else {
                     lines.add(currentLine.toString());
-                    currentLine = new StringBuilder(word);
+                    currentLine.setLength(0);
+                    currentLine.append(word);
                 }
             }
         }
+        // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() > 0
+        //noinspection SizeReplaceableByIsEmpty
         if (currentLine.length() > 0) {
             lines.add(currentLine.toString());
         }

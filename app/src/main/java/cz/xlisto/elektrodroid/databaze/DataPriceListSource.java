@@ -48,7 +48,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -348,7 +347,10 @@ public class DataPriceListSource {
     }
 
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
     private void appendFilterClause(StringBuilder selection, ArrayList<String> argsList, String columnName, String paramValue) {
+        // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() > 0
+        //noinspection SizeReplaceableByIsEmpty
         if (selection.length() > 0) {
             selection.append(" AND ");
         }
