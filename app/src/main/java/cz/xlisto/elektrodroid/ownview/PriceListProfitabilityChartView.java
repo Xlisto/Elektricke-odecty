@@ -31,12 +31,26 @@ import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.Resul
  */
 public class PriceListProfitabilityChartView extends View {
 
+    /**
+     * Režim zobrazení grafu výhodnosti ceníku.
+     */
     public enum Mode {
+        /**
+         * Závislost nákladů na roční spotřebě (v MWh).
+         */
         COST_VS_CONSUMPTION,
+        /** Závislost nákladů na podílu nízkého tarifu (v %). */
         COST_VS_NT_RATIO
     }
 
 
+    /**
+     * Datová řada pro zobrazení jedné křivky ceníku v grafu.
+     *
+     * @param title  název ceníku pro legendu
+     * @param color  barva čáry
+     * @param points seznam 2D bodů křivky
+     */
     public record SeriesData(String title, int color, List<Point2D> points) {
 
         public SeriesData(String title, int color, List<Point2D> points) {
@@ -107,6 +121,15 @@ public class PriceListProfitabilityChartView extends View {
         breakEvenPointPaint.setColor(0xFF2E7D32); // Zelený bod zvratu
     }
 
+
+    /**
+     * Nastaví datové řady, výsledek výpočtu bodu zvratu a referenční hodnotu pro vykreslení grafu.
+     *
+     * @param mode                  režim zobrazení (spotřeba vs. podíl NT)
+     * @param seriesList            seznam datových řad pro jednotlivé ceníky
+     * @param breakEvenResult       výsledek výpočtu bodu zvratu mezi ceníky
+     * @param currentReferenceValue svislá referenční hodnota (např. aktuální spotřeba v MWh nebo % NT)
+     */
     public void setChartData(Mode mode, List<SeriesData> seriesList, BreakEvenResult breakEvenResult, double currentReferenceValue) {
         this.mode = mode;
         this.seriesList = seriesList != null ? seriesList : new ArrayList<>();
@@ -118,6 +141,14 @@ public class PriceListProfitabilityChartView extends View {
     }
 
 
+    /**
+     * Rozdělí zadaný text na více řádků tak, aby žádný řádek nepřesáhl maximální povolenou šířku.
+     *
+     * @param paint    objekt {@link Paint} pro měření šířky textu
+     * @param text     text k rozdělení
+     * @param maxWidth maximální dostupná šířka pro text v pixelech
+     * @return seznam řádků textu
+     */
     @SuppressWarnings("SizeReplaceableByIsEmpty")
     private List<String> splitTextToLines(Paint paint, String text, float maxWidth) {
         List<String> lines = new ArrayList<>();
@@ -178,6 +209,15 @@ public class PriceListProfitabilityChartView extends View {
         setMeasuredDimension(width, desiredHeight);
     }
 
+
+    /**
+     * Vypočítá výšku požadovanou pro zobrazení celé legendy v závislosti na počtu zalamovaných řádků názvů ceníků.
+     *
+     * @param width  šířka grafu
+     * @param startX počáteční X souřadnice legendy
+     * @param startY počáteční Y souřadnice legendy
+     * @return výška legendy v pixelech
+     */
     private float measureLegendHeight(int width, float startX, float startY) {
         if (seriesList == null || seriesList.isEmpty()) return 0;
 
@@ -207,7 +247,7 @@ public class PriceListProfitabilityChartView extends View {
 
         if (seriesList == null || seriesList.isEmpty()) {
             textPaint.setColor(textColorSecondary);
-            canvas.drawText("Žádné datové řady k zobrazení", 20 * density, 40 * density, textPaint);
+            canvas.drawText(getContext().getString(R.string.no_data_series_to_display), 20 * density, 40 * density, textPaint);
             return;
         }
 
@@ -316,6 +356,16 @@ public class PriceListProfitabilityChartView extends View {
         }
     }
 
+
+    /**
+     * Vykreslí legendu datových řad v horní části grafu a vrátí dolní Y souřadnici obsazenou legendou.
+     *
+     * @param canvas    plátno pro kreslení
+     * @param startX    počáteční X souřadnice
+     * @param startY    počáteční Y souřadnice
+     * @param textColor barva textu
+     * @return dolní Y souřadnice po vykreslení celé legendy
+     */
     private float drawLegend(Canvas canvas, float startX, float startY, int textColor) {
         if (seriesList == null || seriesList.isEmpty()) return startY;
 
@@ -346,6 +396,12 @@ public class PriceListProfitabilityChartView extends View {
         return y;
     }
 
+
+    /**
+     * Zjistí maximální hodnotu osy X ze všech datových řad.
+     *
+     * @return maximální hodnota na ose X
+     */
     private double getMaxX() {
         double max = 0;
         for (SeriesData s : seriesList) {
@@ -356,6 +412,12 @@ public class PriceListProfitabilityChartView extends View {
         return max;
     }
 
+
+    /**
+     * Zjistí maximální hodnotu osy Y ze všech datových řad včetně 10% rezervy nahoře.
+     *
+     * @return maximální hodnota na ose Y
+     */
     private double getMaxY() {
         double max = 0;
         for (SeriesData s : seriesList) {
@@ -366,6 +428,13 @@ public class PriceListProfitabilityChartView extends View {
         return max * 1.1; // 10% rezerva nahoře
     }
 
+
+    /**
+     * Interpoluje hodnotu Y prvního ceníku v zadaném bodě X.
+     *
+     * @param x hodnota osy X
+     * @return interpolovaná hodnota Y
+     */
     private double getYValueAtX(double x) {
         if (seriesList.isEmpty()) return 0;
         SeriesData series = seriesList.get(0);

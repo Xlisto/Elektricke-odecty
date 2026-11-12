@@ -257,7 +257,7 @@ public class PriceListCompareChartView extends View {
 
         if (results == null || results.isEmpty()) {
             textPaint.setColor(textColorSecondary);
-            canvas.drawText("Žádné ceníky k zobrazení", 20 * density, 40 * density, textPaint);
+            canvas.drawText(getContext().getString(R.string.no_price_lists_to_display), 20 * density, 40 * density, textPaint);
             return;
         }
 
@@ -384,22 +384,27 @@ public class PriceListCompareChartView extends View {
     private void drawLegend(Canvas canvas, float startX, float startY, int textColor) {
         float x = startX;
         float boxSize = 12 * density;
+        float spacing = 16 * density;
 
-        // Obchodní
-        canvas.drawRect(x, startY, x + boxSize, startY + boxSize, merchantPaint);
         textPaint.setColor(textColor);
         textPaint.setFakeBoldText(false);
-        canvas.drawText("Obchodní", x + boxSize + (4 * density), startY + (10 * density), textPaint);
-        x += 80 * density;
+
+        // Obchodní
+        String textMerchant = getContext().getString(R.string.obchodni_slozka);
+        canvas.drawRect(x, startY, x + boxSize, startY + boxSize, merchantPaint);
+        canvas.drawText(textMerchant, x + boxSize + (4 * density), startY + (10 * density), textPaint);
+        x += boxSize + (4 * density) + textPaint.measureText(textMerchant) + spacing;
 
         // Regulovaná
+        String textRegulated = getContext().getString(R.string.regulovana_slozka);
         canvas.drawRect(x, startY, x + boxSize, startY + boxSize, regulatedPaint);
-        canvas.drawText("Regulovaná", x + boxSize + (4 * density), startY + (10 * density), textPaint);
-        x += 90 * density;
+        canvas.drawText(textRegulated, x + boxSize + (4 * density), startY + (10 * density), textPaint);
+        x += boxSize + (4 * density) + textPaint.measureText(textRegulated) + spacing;
 
         // Daně
+        String textTax = getContext().getString(R.string.dane);
         canvas.drawRect(x, startY, x + boxSize, startY + boxSize, taxPaint);
-        canvas.drawText("Daně", x + boxSize + (4 * density), startY + (10 * density), textPaint);
+        canvas.drawText(textTax, x + boxSize + (4 * density), startY + (10 * density), textPaint);
     }
 
 

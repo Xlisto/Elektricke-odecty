@@ -75,6 +75,10 @@
     <string name="zobrazeno_mene">Zobrazeno méně hodnot jističů</string>
     <string name="zobrazeno_vice">Zobrazeno více hodnot jističů</string>
     <string name="dane">Daně</string>
+    <string name="obchodni_slozka">Obchodní</string>
+    <string name="regulovana_slozka">Regulovaná</string>
+    <string name="no_price_lists_to_display">Žádné ceníky k zobrazení</string>
+    <string name="no_data_series_to_display">Žádné datové řady k zobrazení</string>
     <string name="celkem_vt">Celková cena VT</string>
     <string name="celkem_nt">Celková cena NT</string>
     <string name="mesicni_platy">Měsíční platy</string>
