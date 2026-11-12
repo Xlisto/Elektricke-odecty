@@ -324,7 +324,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         if (set == null || set.isEmpty() || set.contains(VSE) || set.contains("%")) {
             return "%";
         }
-        return String.join(",", set);
+        return String.join(";", set);
     }
 
 
@@ -335,8 +335,8 @@ public class PriceListFilterDialogFragment extends DialogFragment {
             return;
         }
 
-        if (prefValue.contains(",")) {
-            String[] parts = prefValue.split(",");
+        if (prefValue.contains(";")) {
+            String[] parts = prefValue.split(";");
             for (String p : parts) {
                 String trimmed = p.trim();
                 if (!trimmed.isEmpty() && !trimmed.equals("%") && !trimmed.equalsIgnoreCase(VSE)) {

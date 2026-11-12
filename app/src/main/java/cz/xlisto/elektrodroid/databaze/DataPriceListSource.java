@@ -363,8 +363,8 @@ public class DataPriceListSource {
             return;
         }
 
-        if (paramValue.contains(",")) {
-            String[] parts = paramValue.split(",");
+        if (paramValue.contains(";")) {
+            String[] parts = paramValue.split(";");
             ArrayList<String> validParts = new ArrayList<>();
             for (String p : parts) {
                 String trimmed = p.trim();

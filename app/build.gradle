@@ -156,6 +156,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation libs.slf4j.api
     testImplementation libs.slf4j.simple
+    testImplementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
     // optional - needed for credentials support from play services, for devices running
     implementation libs.androidx.credentials

@@ -283,7 +283,7 @@ class PriceListAdapter(
         return filterValue != "%" &&
                 filterValue != DataPriceListSource.VSE &&
                 filterValue.isNotBlank() &&
-                !filterValue.contains(",")
+                !filterValue.contains(";")
     }
 
     /**

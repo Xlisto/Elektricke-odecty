@@ -44,6 +44,31 @@ public class PdfParserTest {
 
 
     @Test
+    public void testRealEonPdfFiles() throws Exception {
+        String[] paths = {
+                "C:/Users/Xlisto/Downloads/EON_CENIK/cenik--komplet--elektrina--max--na--3--roky--11_26-----distribucni--uzemi--eg.d.pdf",
+                "C:/Users/Xlisto/Downloads/EON_CENIK/cenik--komplet--elektrina--max--na--3--roky--11_26-----distribucni--uzemi--cez.pdf",
+                "C:/Users/Xlisto/Downloads/EON_CENIK/cenik--komplet--elektrina--max--na--3--roky--11_26-----distribucni--uzemi--pre.pdf"
+        };
+        for (String path : paths) {
+            java.io.File file = new java.io.File(path);
+            if (!file.exists()) continue;
+
+            try (org.apache.pdfbox.pdmodel.PDDocument doc = org.apache.pdfbox.pdmodel.PDDocument.load(file)) {
+                org.apache.pdfbox.text.PDFTextStripper stripper = new org.apache.pdfbox.text.PDFTextStripper();
+                stripper.setSortByPosition(true);
+                String text = stripper.getText(doc);
+
+                List<PriceListModel> result = PdfParserFactory.parsePdf(null, text);
+                assertEquals("E.ON ceník z " + file.getName() + " by měl mít 10 sazeb", 10, result.size());
+                assertTrue("VT cena u D 01d by měla být > 0", result.get(0).getCenaVT() > 0);
+                assertTrue("Stálý plat u D 01d by měl být > 0", result.get(0).getMesicniPlat() > 0);
+            }
+        }
+    }
+
+
+    @Test
     public void testCezPdfParser() {
         CezPdfParser parser = new CezPdfParser();
         assertTrue("ČEZ parser by měl detekovat text", parser.canParse(CEZ_SAMPLE_TEXT));
