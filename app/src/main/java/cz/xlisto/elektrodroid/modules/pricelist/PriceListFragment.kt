@@ -651,8 +651,7 @@ class PriceListFragment : Fragment() {
             var pricesFAK = 0
             var pricesMON = 0
 
-            for (i in 0 until subscriptionPointModels.size) {
-                val subscriptionPointModel = subscriptionPointModels[i]
+            for (subscriptionPointModel in subscriptionPointModels) {
                 pricesTED += dataSubscriptionPointSource.countPriceItems(
                     subscriptionPointModel.tableTED,
                     itemId
