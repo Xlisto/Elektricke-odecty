@@ -28,6 +28,12 @@ public class PriceListsViewModel extends ViewModel {
     private final MutableLiveData<List<PriceListComparisonResult>> comparisonResultsLiveData = new MutableLiveData<>(new ArrayList<>());
 
 
+    /**
+     * Nastaví kontejner se zadanou spotřebou a parametry odběrného místa.
+     * Přepočítá odpovídající scénář porovnání (převod MWh na kWh) a vyvolá nový výpočet výsledků.
+     *
+     * @param container kontejner se zadanými hodnotami spotřeby a vlastnostmi jističe a fází
+     */
     public void setConsuptionContainer(ConsuptionContainer container) {
         this.consuptionContainer.setValue(container);
         if (container != null) {
@@ -45,12 +51,24 @@ public class PriceListsViewModel extends ViewModel {
     }
 
 
+    /**
+     * Nastaví scénář porovnání ceníků a vyvolá přepočet výsledků.
+     *
+     * @param scenario nový scénář s parametry spotřeby a služeb
+     */
     public void setScenario(PriceListComparisonScenario scenario) {
         this.scenarioLiveData.setValue(scenario);
         reevaluateResults();
     }
 
 
+    /**
+     * Nastaví seznam vybraných ceníků pro porovnání.
+     * Automaticky přiřadí první ceník jako levý a případný druhý ceník jako pravý,
+     * a následně vyvolá přepočet výsledků.
+     *
+     * @param priceLists seznam ceníků určených k porovnání
+     */
     public void setSelectedPriceLists(List<PriceListModel> priceLists) {
         this.selectedPriceListsLiveData.setValue(priceLists != null ? priceLists : new ArrayList<>());
         if (priceLists != null && !priceLists.isEmpty()) {
@@ -63,6 +81,9 @@ public class PriceListsViewModel extends ViewModel {
     }
 
 
+    /**
+     * Provede přepočet výsledků porovnání ceníků na základě aktuálního scénáře a seznamu vybraných ceníků.
+     */
     public void reevaluateResults() {
         PriceListComparisonScenario scenario = scenarioLiveData.getValue();
         List<PriceListModel> priceLists = selectedPriceListsLiveData.getValue();
@@ -74,21 +95,41 @@ public class PriceListsViewModel extends ViewModel {
     }
 
 
+    /**
+     * Vrátí {@link LiveData} s aktuálním kontejnerem spotřeby a parametrů.
+     *
+     * @return {@link LiveData} obsahující {@link ConsuptionContainer}
+     */
     public LiveData<ConsuptionContainer> getConsuptionContainer() {
         return consuptionContainer;
     }
 
 
+    /**
+     * Vrátí {@link LiveData} s aktuálním scénářem porovnání ceníků.
+     *
+     * @return {@link LiveData} obsahující {@link PriceListComparisonScenario}
+     */
     public LiveData<PriceListComparisonScenario> getScenario() {
         return scenarioLiveData;
     }
 
 
+    /**
+     * Vrátí {@link LiveData} se seznamem ceníků vybraných k porovnání.
+     *
+     * @return {@link LiveData} obsahující seznam {@link PriceListModel}
+     */
     public LiveData<List<PriceListModel>> getSelectedPriceLists() {
         return selectedPriceListsLiveData;
     }
 
 
+    /**
+     * Vrátí {@link LiveData} s vypočtenými výsledky porovnání pro jednotlivé ceníky.
+     *
+     * @return {@link LiveData} obsahující seznam {@link PriceListComparisonResult}
+     */
     public LiveData<List<PriceListComparisonResult>> getComparisonResults() {
         return comparisonResultsLiveData;
     }
