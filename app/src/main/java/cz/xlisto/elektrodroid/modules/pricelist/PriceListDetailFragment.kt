@@ -28,7 +28,7 @@ class PriceListDetailFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(priceListId: Long): PriceListDetailFragment {
-            return newInstance(priceListId, false)
+            return newInstance(priceListId, showInFragment = false)
         }
 
         @JvmStatic
@@ -97,7 +97,7 @@ class PriceListDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         var v = inflater.inflate(R.layout.fragment_price_list_detail, container, false)
         if (showInFragment && DetectScreenMode.isLandscape(requireActivity())) {
@@ -179,50 +179,49 @@ class PriceListDetailFragment : Fragment() {
         val dateStart = priceList.platnostOD
         val dateEnd = priceList.platnostDO
 
-        ldnDatum.setPrice(
+        ldnDatum.price =
             "${ViewHelper.convertLongToDate(dateStart)} - ${
                 ViewHelper.convertLongToDate(
                     dateEnd
                 )
             }"
-        )
 
-        ldnRada.setPrice(priceList.rada)
-        ldnProdukt.setPrice(priceList.produkt)
-        ldnSazba.setPrice(priceList.sazba)
-        ldnDodavatel.setPrice(priceList.firma)
-        ldnUzemi.setPrice(priceList.distribuce)
+        ldnRada.price = priceList.rada
+        ldnProdukt.price = priceList.produkt
+        ldnSazba.price = priceList.sazba
+        ldnDodavatel.price = priceList.firma
+        ldnUzemi.price = priceList.distribuce
 
-        ldnVTDodavka.setPrice(df2.format(priceList.cenaVT))
-        ldnNTDodavka.setPrice(df2.format(priceList.cenaNT))
-        ldnMesPlat.setPrice(df2.format(priceList.mesicniPlat))
+        ldnVTDodavka.price = df2.format(priceList.cenaVT)
+        ldnNTDodavka.price = df2.format(priceList.cenaNT)
+        ldnMesPlat.price = df2.format(priceList.mesicniPlat)
 
-        ldnVTDistribuce.setPrice(df2.format(priceList.distVT))
-        ldnNTDistribuce.setPrice(df2.format(priceList.distNT))
+        ldnVTDistribuce.price = df2.format(priceList.distVT)
+        ldnNTDistribuce.price = df2.format(priceList.distNT)
 
-        ldnJ0.setPrice(df2.format(priceList.j0))
-        ldnJ1.setPrice(df2.format(priceList.j1))
-        ldnJ2.setPrice(df2.format(priceList.j2))
-        ldnJ3.setPrice(df2.format(priceList.j3))
-        ldnJ4.setPrice(df2.format(priceList.j4))
-        ldnJ5.setPrice(df2.format(priceList.j5))
-        ldnJ6.setPrice(df2.format(priceList.j6))
-        ldnJ7.setPrice(df2.format(priceList.j7))
-        ldnJ8.setPrice(df2.format(priceList.j8))
-        ldnJ9.setPrice(df2.format(priceList.j9))
-        ldnJ10.setPrice(df2.format(priceList.j10))
-        ldnJ11.setPrice(df2.format(priceList.j11))
-        ldnJ12.setPrice(df2.format(priceList.j12))
-        ldnJ13.setPrice(df2.format(priceList.j13))
-        ldnJ14.setPrice(df2.format(priceList.j14))
+        ldnJ0.price = df2.format(priceList.j0)
+        ldnJ1.price = df2.format(priceList.j1)
+        ldnJ2.price = df2.format(priceList.j2)
+        ldnJ3.price = df2.format(priceList.j3)
+        ldnJ4.price = df2.format(priceList.j4)
+        ldnJ5.price = df2.format(priceList.j5)
+        ldnJ6.price = df2.format(priceList.j6)
+        ldnJ7.price = df2.format(priceList.j7)
+        ldnJ8.price = df2.format(priceList.j8)
+        ldnJ9.price = df2.format(priceList.j9)
+        ldnJ10.price = df2.format(priceList.j10)
+        ldnJ11.price = df2.format(priceList.j11)
+        ldnJ12.price = df2.format(priceList.j12)
+        ldnJ13.price = df2.format(priceList.j13)
+        ldnJ14.price = df2.format(priceList.j14)
 
-        ldnSystemSluzby.setPrice(df2.format(priceList.systemSluzby))
-        ldnOTE.setPrice(df2.format(priceList.cinnost))
-        ldnPOZE1.setPrice(df2.format(priceList.poze1))
-        ldnPOZE2.setPrice(df2.format(priceList.poze2))
+        ldnSystemSluzby.price = df2.format(priceList.systemSluzby)
+        ldnOTE.price = df2.format(priceList.cinnost)
+        ldnPOZE1.price = df2.format(priceList.poze1)
+        ldnPOZE2.price = df2.format(priceList.poze2)
 
-        ldnDan.setPrice(df2.format(priceList.dan))
-        ldnDPH.setPrice(df2.format(priceList.dph))
+        ldnDan.price = df2.format(priceList.dan)
+        ldnDPH.price = df2.format(priceList.dph)
 
         // Skrytí NT u jednotarifního ceníku
         if (priceList.distNT == 0.0) {
@@ -252,32 +251,46 @@ class PriceListDetailFragment : Fragment() {
         }
 
         val calendar = ViewHelper.parseCalendarFromString(ldnDatum.price)
-        val year = calendar.get(Calendar.YEAR)
+        val year = calendar[Calendar.YEAR]
         if (year < 2016) {
-            ldnOTE.setPrice(df2.format(priceList.ote))
-            ldnOTE.setLabel(getString(R.string.cinnost_ote))
+            ldnOTE.price = df2.format(priceList.ote)
+            ldnOTE.label = getString(R.string.cinnost_ote)
             ldnOTE.setItem(getString(R.string.kc_MWh))
-            ldnPOZE2.setPrice(df2.format(priceList.oze))
-            ldnPOZE2.setLabel(getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz))
+            ldnPOZE2.price = df2.format(priceList.oze)
+            ldnPOZE2.label = getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz)
             ldnPOZE1.visibility = View.GONE
         }
 
         // Přenastavení ceníku pro rok 2024 (1719784800000 = 1.7.2024)
         if (dateStart >= 1719784800000L) {
-            ldnOTE.setLabel(getString(R.string.provoz_nesitove_infrastruktury))
+            ldnOTE.label = getString(R.string.provoz_nesitove_infrastruktury)
             ldnOTE.setItem(getString(R.string.kc_om))
         }
 
         val transition2024 = 1719784800000L // 1.7.2024
         val transition2025 = 1756677600000L // 1.9.2025
-        if (year == 2024 && dateStart < transition2024 && dateEnd >= transition2024) {
-            tvPoznamkaOTE.text = getText(R.string.provoz_nesitove_infrastruktury_poznamka)
-            tvPoznamkaOTE.visibility = View.VISIBLE
-        } else if (year == 2025 && dateStart < transition2025 && dateEnd >= transition2025) {
-            tvPoznamkaOTE.text = getText(R.string.nova_cena_infrastruktua_poznamka)
-            tvPoznamkaOTE.visibility = View.VISIBLE
-        } else {
-            tvPoznamkaOTE.visibility = View.GONE
+        when (year) {
+            2024 -> {
+                if (dateStart < transition2024 && dateEnd >= transition2024) {
+                    tvPoznamkaOTE.text = getText(R.string.provoz_nesitove_infrastruktury_poznamka)
+                    tvPoznamkaOTE.visibility = View.VISIBLE
+                } else {
+                    tvPoznamkaOTE.visibility = View.GONE
+                }
+            }
+
+            2025 -> {
+                if (dateStart < transition2025 && dateEnd >= transition2025) {
+                    tvPoznamkaOTE.text = getText(R.string.nova_cena_infrastruktua_poznamka)
+                    tvPoznamkaOTE.visibility = View.VISIBLE
+                } else {
+                    tvPoznamkaOTE.visibility = View.GONE
+                }
+            }
+
+            else -> {
+                tvPoznamkaOTE.visibility = View.GONE
+            }
         }
 
         // Poznámky a cenové stropy
