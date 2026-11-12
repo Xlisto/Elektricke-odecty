@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
@@ -35,17 +36,15 @@ public class PriceListProfitabilityChartView extends View {
         COST_VS_NT_RATIO
     }
 
-    public static class SeriesData {
 
-        public final String title;
-        public final int color;
-        public final List<Point2D> points;
+    public record SeriesData(String title, int color, List<Point2D> points) {
 
         public SeriesData(String title, int color, List<Point2D> points) {
             this.title = title;
             this.color = color;
             this.points = points != null ? points : new ArrayList<>();
         }
+
     }
 
     private Mode mode = Mode.COST_VS_CONSUMPTION;
@@ -59,6 +58,7 @@ public class PriceListProfitabilityChartView extends View {
     private Paint linePaint;
     private Paint referenceLinePaint;
     private Paint breakEvenPointPaint;
+    private final Path linePath = new Path();
 
     private float density;
 
@@ -118,6 +118,7 @@ public class PriceListProfitabilityChartView extends View {
     }
 
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
     private List<String> splitTextToLines(Paint paint, String text, float maxWidth) {
         List<String> lines = new ArrayList<>();
         if (text == null || text.trim().isEmpty()) return lines;
@@ -144,6 +145,8 @@ public class PriceListProfitabilityChartView extends View {
         StringBuilder currentLine = new StringBuilder();
 
         for (String word : words) {
+            // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() == 0
+            //noinspection SizeReplaceableByIsEmpty
             if (currentLine.length() == 0) {
                 currentLine.append(word);
             } else {
@@ -152,10 +155,13 @@ public class PriceListProfitabilityChartView extends View {
                     currentLine.append(" ").append(word);
                 } else {
                     lines.add(currentLine.toString());
-                    currentLine = new StringBuilder(word);
+                    currentLine.setLength(0);
+                    currentLine.append(word);
                 }
             }
         }
+        // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24), proto je použit length() > 0
+        //noinspection SizeReplaceableByIsEmpty
         if (currentLine.length() > 0) {
             lines.add(currentLine.toString());
         }
@@ -190,7 +196,7 @@ public class PriceListProfitabilityChartView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         int textColorPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(getContext(), R.color.color_axis));
@@ -259,7 +265,7 @@ public class PriceListProfitabilityChartView extends View {
             if (series.points == null || series.points.size() < 2) continue;
 
             linePaint.setColor(series.color);
-            Path path = new Path();
+            linePath.reset();
 
             for (int i = 0; i < series.points.size(); i++) {
                 Point2D p = series.points.get(i);
@@ -267,12 +273,12 @@ public class PriceListProfitabilityChartView extends View {
                 float py = paddingTop + chartH - (float) ((p.y() / maxY) * chartH);
 
                 if (i == 0) {
-                    path.moveTo(px, py);
+                    linePath.moveTo(px, py);
                 } else {
-                    path.lineTo(px, py);
+                    linePath.lineTo(px, py);
                 }
             }
-            canvas.drawPath(path, linePaint);
+            canvas.drawPath(linePath, linePaint);
         }
 
         // Vykreslení svislé referenční čáry pro aktuální hodnotu
@@ -289,7 +295,7 @@ public class PriceListProfitabilityChartView extends View {
         if (breakEvenResult != null && breakEvenResult.status == ResultStatus.EXACT_INTERSECTION) {
             List<Double> bePoints = (breakEvenResult.allBreakEvenMwhPoints != null && !breakEvenResult.allBreakEvenMwhPoints.isEmpty())
                     ? breakEvenResult.allBreakEvenMwhPoints
-                    : (breakEvenResult.breakEvenMwh > 0 ? java.util.Collections.singletonList(breakEvenResult.breakEvenMwh) : new ArrayList<>());
+                    : (breakEvenResult.breakEvenMwh > 0 ? java.util.Collections.singletonList(breakEvenResult.breakEvenMwh) : java.util.Collections.emptyList());
 
             for (double breakEvenX : bePoints) {
                 if (breakEvenX >= 0 && breakEvenX <= maxX) {
