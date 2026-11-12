@@ -5,21 +5,21 @@
         android:id="@+id/menu_action_add_pricelist"
         android:icon="@drawable/ic_add_24"
         android:title="@string/add_monthly_price_list"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_filter_pricelist"
         android:icon="@drawable/ic_filter_alt_24"
         android:title="@string/filter_price_list"
         android:visible="true"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_select_mode_pricelist"
         android:icon="@drawable/ic_select_mode_24"
         android:title="@string/rezim_vyberu"
         android:visible="true"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_compare_selected_pricelists"
