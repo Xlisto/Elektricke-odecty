@@ -348,6 +348,48 @@ public class DataPriceListSource {
     }
 
 
+    private void appendFilterClause(StringBuilder selection, ArrayList<String> argsList, String columnName, String paramValue) {
+        if (selection.length() > 0) {
+            selection.append(" AND ");
+        }
+
+        if (paramValue == null || paramValue.trim().isEmpty() || paramValue.equals("%") || paramValue.equalsIgnoreCase(VSE)) {
+            selection.append(columnName).append(" LIKE ?");
+            argsList.add("%");
+            return;
+        }
+
+        if (paramValue.contains(",")) {
+            String[] parts = paramValue.split(",");
+            ArrayList<String> validParts = new ArrayList<>();
+            for (String p : parts) {
+                String trimmed = p.trim();
+                if (!trimmed.isEmpty() && !trimmed.equals("%") && !trimmed.equalsIgnoreCase(VSE)) {
+                    validParts.add(trimmed);
+                }
+            }
+
+            if (validParts.isEmpty()) {
+                selection.append(columnName).append(" LIKE ?");
+                argsList.add("%");
+            } else if (validParts.size() == 1) {
+                selection.append(columnName).append(" = ?");
+                argsList.add(validParts.get(0));
+            } else {
+                selection.append("(");
+                for (int i = 0; i < validParts.size(); i++) {
+                    if (i > 0) selection.append(" OR ");
+                    selection.append(columnName).append(" = ?");
+                    argsList.add(validParts.get(i));
+                }
+                selection.append(")");
+            }
+        } else {
+            selection.append(columnName).append(" = ?");
+            argsList.add(paramValue.trim());
+        }
+    }
+
     /**
      * Načte všechny ceníky vyhovující filtru
      *
@@ -356,30 +398,37 @@ public class DataPriceListSource {
      * @param sazba     filtr pro sazbu
      * @param dodavatel filtr pro název dodavatele
      * @param uzemi     filtr pro název území
-     * @param dateStart filtr pro datum platnosti
+     * @param dateStart filtr pro datum OD
+     * @param dateEnd   filtr pro datum DO
      * @return ArrayList<PriceListModel> seznam ceníků
      */
     public ArrayList<PriceListModel> readPriceList(String rada, String produkt, String sazba, String dodavatel, String uzemi, String dateStart, String dateEnd) {
-        String selection = "rada LIKE ? AND produkt LIKE ? AND sazba LIKE ? AND firma LIKE ? AND distribuce LIKE ?";
-        ArrayList<String> argsList = new ArrayList<>(Arrays.asList(rada, produkt, sazba, dodavatel, uzemi));
+        StringBuilder selection = new StringBuilder();
+        ArrayList<String> argsList = new ArrayList<>();
+
+        appendFilterClause(selection, argsList, DBHelperPriceList.RADA, rada);
+        appendFilterClause(selection, argsList, DBHelperPriceList.PRODUKT, produkt);
+        appendFilterClause(selection, argsList, DBHelperPriceList.SAZBA, sazba);
+        appendFilterClause(selection, argsList, DBHelperPriceList.FIRMA, dodavatel);
+        appendFilterClause(selection, argsList, DBHelperPriceList.DISTRIBUCE, uzemi);
 
         boolean hasStart = dateStart != null && !dateStart.equals("%") && !dateStart.isEmpty();
         boolean hasEnd = dateEnd != null && !dateEnd.equals("%") && !dateEnd.isEmpty();
 
         if (hasStart && hasEnd) {
-            selection += " AND platnost_od <= ? AND (platnost_do >= ? OR platnost_do = 0)";
+            selection.append(" AND platnost_od <= ? AND (platnost_do >= ? OR platnost_do = 0)");
             argsList.add(dateEnd);
             argsList.add(dateStart);
         } else if (hasStart) {
-            selection += " AND (platnost_do >= ? OR platnost_do = 0)";
+            selection.append(" AND (platnost_do >= ? OR platnost_do = 0)");
             argsList.add(dateStart);
         } else if (hasEnd) {
-            selection += " AND platnost_od <= ?";
+            selection.append(" AND platnost_od <= ?");
             argsList.add(dateEnd);
         }
 
         String[] args = argsList.toArray(new String[0]);
-        return readPriceList(selection, args);
+        return readPriceList(selection.toString(), args);
     }
 
 

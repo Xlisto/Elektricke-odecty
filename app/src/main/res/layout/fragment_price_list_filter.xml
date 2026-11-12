@@ -13,94 +13,129 @@
         android:padding="16dp">
 
         <!-- Produktová řada -->
-        <TextView
-            android:id="@+id/tvTitleComparePriceList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sp_produktova_rada"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spRada"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilRada"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:contentDescription="@string/description_list_price_list"
-            android:minHeight="48dp"
-            android:popupBackground="?attr/colorSurfaceContainerHigh" />
+            android:hint="@string/sp_produktova_rada"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="Všechny" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Produkt -->
-        <TextView
-            android:id="@+id/tvProdukt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sp_produkt"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spProdukt"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilProdukt"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:contentDescription="@string/description_list_price_product"
-            android:minHeight="48dp"
-            android:popupBackground="?attr/colorSurfaceContainerHigh" />
+            android:hint="@string/sp_produkt"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etProdukt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="Aku, Akumulace 16" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Sazba -->
-        <TextView
-            android:id="@+id/tvSazba"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sazba_distribuce"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spSazba"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilSazba"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:contentDescription="@string/description_list_price_sazba"
-            android:minHeight="48dp"
-            android:popupBackground="?attr/colorSurfaceContainerHigh" />
+            android:hint="@string/sazba_distribuce"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSazba"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="D 25d, D 26d" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Dodavatelé -->
-        <TextView
-            android:id="@+id/tvDodavatel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sp_dodavatele"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spCompany"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCompany"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:contentDescription="@string/description_list_price_company"
-            android:minHeight="48dp"
-            android:popupBackground="?attr/colorSurfaceContainerHigh" />
+            android:hint="@string/sp_dodavatele"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCompany"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="ČEZ, E.ON" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Distribuční území -->
-        <TextView
-            android:id="@+id/tvUzemi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sp_distribucni_uzemí"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textStyle="bold" />
-
-        <Spinner
-            android:id="@+id/spArea"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilArea"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:contentDescription="@string/description_list_price_area"
-            android:minHeight="48dp"
-            android:popupBackground="?attr/colorSurfaceContainerHigh" />
+            android:hint="@string/distribucni_uzemi"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="EG.D" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Datum platnosti -->
         <TextView
@@ -139,7 +174,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:cursorVisible="false"
-                    android:focusable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none"
                     android:lines="1"
                     android:maxLines="1"
@@ -173,7 +209,8 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:cursorVisible="false"
-                    android:focusable="true"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none"
                     android:lines="1"
                     android:maxLines="1"

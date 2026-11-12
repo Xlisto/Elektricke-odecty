@@ -13,9 +13,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,8 +33,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DBHelperPriceList;
@@ -44,25 +45,36 @@ import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPFilter;
 
-
 /**
  * Dialog ve stylu Material Design 3 pro filtraci ceníků.
- * Umožňuje filtrování podle řady, produktu, sazby, dodavatele, distribučního území
- * a nově poskytuje moderní výběr dat platnosti pomocí kalendáře, ručního vstupu
- * a rychlých předvoleb roků.
+ * Umožňuje vícenásobný výběr položek (multi-select) pro řadu, produkt, sazbu, dodavatele i distribuční území
+ * a poskytuje výběr dat platnosti pomocí kalendáře a rychlých předvoleb roků.
  */
 public class PriceListFilterDialogFragment extends DialogFragment {
 
     public static final String FLAG_RESULT_FILTER_DIALOG_FRAGMENT = "flagPriceListFilterDialogFragment";
     public static final String RESULT = "result";
 
-    private Spinner spRada, spProdukt, spSazba, spCompany, spArea;
+    private TextInputLayout tilRada, tilProdukt, tilSazba, tilCompany, tilArea;
+    private TextInputEditText etRada, etProdukt, etSazba, etCompany, etArea;
+
     private TextInputLayout tilDateFrom, tilDateTo;
     private TextInputEditText etDateFrom, etDateTo;
     private TextView tvDateRangeError;
     private Chip chipAllDates, chipThisYear, chipLastYear, chipNextYear;
 
-    private String rada, produkt, sazba, dodavatel, uzemi;
+    private final Set<String> selectedRada = new LinkedHashSet<>();
+    private final Set<String> selectedProdukt = new LinkedHashSet<>();
+    private final Set<String> selectedSazba = new LinkedHashSet<>();
+    private final Set<String> selectedCompany = new LinkedHashSet<>();
+    private final Set<String> selectedArea = new LinkedHashSet<>();
+
+    private ArrayList<String> optionsRada = new ArrayList<>();
+    private ArrayList<String> optionsProdukt = new ArrayList<>();
+    private ArrayList<String> optionsSazba = new ArrayList<>();
+    private ArrayList<String> optionsCompany = new ArrayList<>();
+    private ArrayList<String> optionsArea = new ArrayList<>();
+
     private String dateStart = "%", dateEnd = "%";
 
     private ShPFilter shpFilter;
@@ -122,12 +134,30 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     }
 
 
+    private void disableKeyboard(TextInputEditText editText) {
+        if (editText != null) {
+            editText.setFocusable(false);
+            editText.setFocusableInTouchMode(false);
+            editText.setLongClickable(false);
+            editText.setInputType(android.text.InputType.TYPE_NULL);
+        }
+    }
+
     private void initViews(View view) {
-        spRada = view.findViewById(R.id.spRada);
-        spProdukt = view.findViewById(R.id.spProdukt);
-        spSazba = view.findViewById(R.id.spSazba);
-        spCompany = view.findViewById(R.id.spCompany);
-        spArea = view.findViewById(R.id.spArea);
+        tilRada = view.findViewById(R.id.tilRada);
+        etRada = view.findViewById(R.id.etRada);
+
+        tilProdukt = view.findViewById(R.id.tilProdukt);
+        etProdukt = view.findViewById(R.id.etProdukt);
+
+        tilSazba = view.findViewById(R.id.tilSazba);
+        etSazba = view.findViewById(R.id.etSazba);
+
+        tilCompany = view.findViewById(R.id.tilCompany);
+        etCompany = view.findViewById(R.id.etCompany);
+
+        tilArea = view.findViewById(R.id.tilArea);
+        etArea = view.findViewById(R.id.etArea);
 
         tilDateFrom = view.findViewById(R.id.tilDateFrom);
         tilDateTo = view.findViewById(R.id.tilDateTo);
@@ -139,12 +169,39 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         chipThisYear = view.findViewById(R.id.chipThisYear);
         chipLastYear = view.findViewById(R.id.chipLastYear);
         chipNextYear = view.findViewById(R.id.chipNextYear);
-    }
 
+        disableKeyboard(etRada);
+        disableKeyboard(etProdukt);
+        disableKeyboard(etSazba);
+        disableKeyboard(etCompany);
+        disableKeyboard(etArea);
+        disableKeyboard(etDateFrom);
+        disableKeyboard(etDateTo);
+    }
 
     private void setupListeners(View view) {
         MaterialButton btnOpenRangePicker = view.findViewById(R.id.btnOpenRangePicker);
         Button btnResetFilter = view.findViewById(R.id.btnResetFilter);
+
+        View.OnClickListener clickRada = v -> openMultiChoiceDialog(R.string.sp_produktova_rada, optionsRada, selectedRada, etRada);
+        etRada.setOnClickListener(clickRada);
+        tilRada.setEndIconOnClickListener(clickRada);
+
+        View.OnClickListener clickProdukt = v -> openMultiChoiceDialog(R.string.sp_produkt, optionsProdukt, selectedProdukt, etProdukt);
+        etProdukt.setOnClickListener(clickProdukt);
+        tilProdukt.setEndIconOnClickListener(clickProdukt);
+
+        View.OnClickListener clickSazba = v -> openMultiChoiceDialog(R.string.sazba_distribuce, optionsSazba, selectedSazba, etSazba);
+        etSazba.setOnClickListener(clickSazba);
+        tilSazba.setEndIconOnClickListener(clickSazba);
+
+        View.OnClickListener clickCompany = v -> openMultiChoiceDialog(R.string.sp_dodavatele, optionsCompany, selectedCompany, etCompany);
+        etCompany.setOnClickListener(clickCompany);
+        tilCompany.setEndIconOnClickListener(clickCompany);
+
+        View.OnClickListener clickArea = v -> openMultiChoiceDialog(R.string.distribucni_uzemi, optionsArea, selectedArea, etArea);
+        etArea.setOnClickListener(clickArea);
+        tilArea.setEndIconOnClickListener(clickArea);
 
         View.OnClickListener listenerFrom = v -> openDatePickerFrom();
         etDateFrom.setOnClickListener(listenerFrom);
@@ -175,93 +232,179 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         chipLastYear.setOnClickListener(presetListener);
         chipNextYear.setOnClickListener(presetListener);
 
-        btnResetFilter.setOnClickListener(v -> setItemSpinnerAll());
+        btnResetFilter.setOnClickListener(v -> resetAllFilters());
+    }
+
+
+    private void openMultiChoiceDialog(
+            int titleRes,
+            ArrayList<String> optionsList,
+            Set<String> selectedSet,
+            TextInputEditText editText
+    ) {
+        if (optionsList == null || optionsList.isEmpty()) return;
+
+        CharSequence[] items = optionsList.toArray(new CharSequence[0]);
+        boolean[] checkedItems = new boolean[items.length];
+
+        if (selectedSet.isEmpty() || selectedSet.contains(VSE) || selectedSet.contains("%")) {
+            checkedItems[0] = true;
+        } else {
+            for (int idx = 0; idx < items.length; idx++) {
+                if (selectedSet.contains(items[idx].toString())) {
+                    checkedItems[idx] = true;
+                }
+            }
+        }
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
+        builder.setTitle(titleRes);
+        builder.setMultiChoiceItems(items, checkedItems, (dialog, which, isChecked) -> {
+            if (which == 0) {
+                if (isChecked) {
+                    for (int idx = 1; idx < checkedItems.length; idx++) {
+                        checkedItems[idx] = false;
+                        ((AlertDialog) dialog).getListView().setItemChecked(idx, false);
+                    }
+                }
+            } else {
+                if (isChecked) {
+                    checkedItems[0] = false;
+                    ((AlertDialog) dialog).getListView().setItemChecked(0, false);
+                }
+            }
+        });
+
+        builder.setPositiveButton(R.string.vybrat, (dialog, which) -> {
+            selectedSet.clear();
+            boolean isAllChecked = checkedItems[0];
+            if (!isAllChecked) {
+                for (int idx = 1; idx < checkedItems.length; idx++) {
+                    if (checkedItems[idx]) {
+                        selectedSet.add(items[idx].toString());
+                    }
+                }
+            }
+
+            updateFieldText(selectedSet, editText);
+        });
+
+        builder.setNegativeButton(R.string.zrusit, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    private void updateFieldText(Set<String> selectedSet, TextInputEditText editText) {
+        if (selectedSet == null || selectedSet.isEmpty() || selectedSet.contains(VSE) || selectedSet.contains("%")) {
+            editText.setText(VSE);
+        } else {
+            editText.setText(String.join(", ", selectedSet));
+        }
     }
 
     private void setDataFromDatabase() {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
-        ArrayList<String> arrayListRada = dataPriceListSource.readPriceListCount(DBHelperPriceList.RADA);
-        ArrayList<String> arrayListProdukt = dataPriceListSource.readPriceListCount(DBHelperPriceList.PRODUKT);
-        ArrayList<String> arrayListSazba = dataPriceListSource.readPriceListCount(DBHelperPriceList.SAZBA);
-        ArrayList<String> arrayListDodavatel = dataPriceListSource.readPriceListCount(DBHelperPriceList.FIRMA);
-        ArrayList<String> arrayListUzemi = dataPriceListSource.readPriceListCount(DBHelperPriceList.DISTRIBUCE);
+        optionsRada = dataPriceListSource.readPriceListCount(DBHelperPriceList.RADA);
+        optionsProdukt = dataPriceListSource.readPriceListCount(DBHelperPriceList.PRODUKT);
+        optionsSazba = dataPriceListSource.readPriceListCount(DBHelperPriceList.SAZBA);
+        optionsCompany = dataPriceListSource.readPriceListCount(DBHelperPriceList.FIRMA);
+        optionsArea = dataPriceListSource.readPriceListCount(DBHelperPriceList.DISTRIBUCE);
         dataPriceListSource.close();
 
-        spRada.setAdapter(setStringAdapter(arrayListRada));
-        spProdukt.setAdapter(setStringAdapter(arrayListProdukt));
-        spSazba.setAdapter(setStringAdapter(arrayListSazba));
-        spCompany.setAdapter(setStringAdapter(arrayListDodavatel));
-        spArea.setAdapter(setStringAdapter(arrayListUzemi));
-
-        setItemSpinner(arrayListRada, spRada, rada);
-        setItemSpinner(arrayListProdukt, spProdukt, produkt);
-        setItemSpinner(arrayListSazba, spSazba, sazba);
-        setItemSpinner(arrayListDodavatel, spCompany, dodavatel);
-        setItemSpinner(arrayListUzemi, spArea, uzemi);
-    }
-
-    private ArrayAdapter<String> setStringAdapter(ArrayList<String> arrayList) {
-        return new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, arrayList);
+        updateFieldText(selectedRada, etRada);
+        updateFieldText(selectedProdukt, etProdukt);
+        updateFieldText(selectedSazba, etSazba);
+        updateFieldText(selectedCompany, etCompany);
+        updateFieldText(selectedArea, etArea);
     }
 
 
-    private void setItemSpinner(ArrayList<String> arrayList, Spinner sp, String item) {
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (arrayList.get(i).equals(item)) {
-                sp.setSelection(i);
+    private String formatSetToPreference(Set<String> set) {
+        if (set == null || set.isEmpty() || set.contains(VSE) || set.contains("%")) {
+            return "%";
+        }
+        return String.join(",", set);
+    }
+
+
+    private void parsePreferenceToSet(String prefValue, Set<String> targetSet) {
+        targetSet.clear();
+        if (prefValue == null || prefValue.equals("%") || prefValue.equalsIgnoreCase(VSE) || prefValue.trim().isEmpty()) {
+            targetSet.add(VSE);
+            return;
+        }
+
+        if (prefValue.contains(",")) {
+            String[] parts = prefValue.split(",");
+            for (String p : parts) {
+                String trimmed = p.trim();
+                if (!trimmed.isEmpty() && !trimmed.equals("%") && !trimmed.equalsIgnoreCase(VSE)) {
+                    targetSet.add(trimmed);
+                }
             }
+        } else {
+            targetSet.add(prefValue.trim());
+        }
+
+        if (targetSet.isEmpty()) {
+            targetSet.add(VSE);
         }
     }
 
     private void savePreferences() {
-        rada = spRada.getSelectedItem().toString();
-        produkt = spProdukt.getSelectedItem().toString();
-        sazba = spSazba.getSelectedItem().toString();
-        dodavatel = spCompany.getSelectedItem().toString();
-        uzemi = spArea.getSelectedItem().toString();
-
-        if (rada.equals(VSE)) rada = "%";
-        if (produkt.equals(VSE)) produkt = "%";
-        if (sazba.equals(VSE)) sazba = "%";
-        if (dodavatel.equals(VSE)) dodavatel = "%";
-        if (uzemi.equals(VSE)) uzemi = "%";
-
-        shpFilter.set(RADA, rada);
-        shpFilter.set(PRODUKT, produkt);
-        shpFilter.set(SAZBA, sazba);
-        shpFilter.set(COMPANY, dodavatel);
-        shpFilter.set(AREA, uzemi);
+        shpFilter.set(RADA, formatSetToPreference(selectedRada));
+        shpFilter.set(PRODUKT, formatSetToPreference(selectedProdukt));
+        shpFilter.set(SAZBA, formatSetToPreference(selectedSazba));
+        shpFilter.set(COMPANY, formatSetToPreference(selectedCompany));
+        shpFilter.set(AREA, formatSetToPreference(selectedArea));
         shpFilter.set(DATE_START, dateStart);
         shpFilter.set(DATE_END, dateEnd);
     }
 
     private void loadPreferences() {
-        rada = shpFilter.get(RADA, VSE);
-        produkt = shpFilter.get(PRODUKT, VSE);
-        sazba = shpFilter.get(SAZBA, VSE);
-        dodavatel = shpFilter.get(COMPANY, VSE);
-        uzemi = shpFilter.get(AREA, VSE);
+        parsePreferenceToSet(shpFilter.get(RADA, VSE), selectedRada);
+        parsePreferenceToSet(shpFilter.get(PRODUKT, VSE), selectedProdukt);
+        parsePreferenceToSet(shpFilter.get(SAZBA, VSE), selectedSazba);
+        parsePreferenceToSet(shpFilter.get(COMPANY, VSE), selectedCompany);
+        parsePreferenceToSet(shpFilter.get(AREA, VSE), selectedArea);
+
         dateStart = shpFilter.get(DATE_START, VSE);
         dateEnd = shpFilter.get(DATE_END, VSE);
     }
 
-    private void setItemSpinnerAll() {
-        spRada.setSelection(0);
-        spSazba.setSelection(0);
-        spProdukt.setSelection(0);
-        spCompany.setSelection(0);
-        spArea.setSelection(0);
+
+    private void resetAllFilters() {
+        selectedRada.clear();
+        selectedRada.add(VSE);
+
+        selectedProdukt.clear();
+        selectedProdukt.add(VSE);
+
+        selectedSazba.clear();
+        selectedSazba.add(VSE);
+
+        selectedCompany.clear();
+        selectedCompany.add(VSE);
+
+        selectedArea.clear();
+        selectedArea.add(VSE);
+
+        updateFieldText(selectedRada, etRada);
+        updateFieldText(selectedProdukt, etProdukt);
+        updateFieldText(selectedSazba, etSazba);
+        updateFieldText(selectedCompany, etCompany);
+        updateFieldText(selectedArea, etArea);
+
         applyPresetAllDates();
     }
-
 
     private void applyPresetAllDates() {
         dateStart = "%";
         dateEnd = "%";
         updateDateUiState();
     }
-
 
     private void applyPresetThisYear() {
         int currentYear = LocalDate.now().getYear();
@@ -270,7 +413,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         updateDateUiState();
     }
 
-
     private void applyPresetLastYear() {
         int lastYear = LocalDate.now().getYear() - 1;
         dateStart = "01.01." + lastYear;
@@ -278,14 +420,12 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         updateDateUiState();
     }
 
-
     private void applyPresetNextYear() {
         int nextYear = LocalDate.now().getYear() + 1;
         dateStart = "01.01." + nextYear;
         dateEnd = "31.12." + nextYear;
         updateDateUiState();
     }
-
 
     private void openDatePickerFrom() {
         long initialUtcMillis = parseToUtcMillis(dateStart);
@@ -304,7 +444,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         datePicker.show(getParentFragmentManager(), "DATE_PICKER_FROM");
     }
 
-
     private void openDatePickerTo() {
         long initialUtcMillis = parseToUtcMillis(dateEnd);
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
@@ -321,7 +460,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         });
         datePicker.show(getParentFragmentManager(), "DATE_PICKER_TO");
     }
-
 
     private void openRangePicker() {
         long startMillis = parseToUtcMillis(dateStart);
@@ -346,7 +484,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         rangePicker.show(getParentFragmentManager(), "DATE_RANGE_PICKER");
     }
 
-
     private void updateDateUiState() {
         etDateFrom.setText(dateStart.equals("%") ? "" : dateStart);
         etDateTo.setText(dateEnd.equals("%") ? "" : dateEnd);
@@ -359,7 +496,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         isUserSelectingPreset = false;
     }
 
-
     private void updateChipStates() {
         int currentYear = LocalDate.now().getYear();
 
@@ -369,7 +505,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         chipNextYear.setChecked(dateStart.equals("01.01." + (currentYear + 1)) && dateEnd.equals("31.12." + (currentYear + 1)));
     }
 
-
     private boolean isDateRangeValid() {
         if (!dateStart.equals("%") && !dateEnd.equals("%") && !dateStart.isEmpty() && !dateEnd.isEmpty()) {
             Calendar calStart = ViewHelper.parseCalendarFromString(dateStart);
@@ -378,7 +513,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         }
         return true;
     }
-
 
     private long parseToUtcMillis(String dateStr) {
         if (dateStr == null || dateStr.equals("%") || dateStr.trim().isEmpty()) {
@@ -390,8 +524,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     }
 
 
-    private String formatDate(LocalDate date) {
+    String formatDate(LocalDate date) {
         return String.format(Locale.GERMANY, "%02d.%02d.%04d", date.getDayOfMonth(), date.getMonthValue(), date.getYear());
     }
-
 }
