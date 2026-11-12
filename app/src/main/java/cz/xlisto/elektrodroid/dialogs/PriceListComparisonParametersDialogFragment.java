@@ -55,7 +55,6 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
     private final String SERVICES_L = "ser_l";
     private final String SERVICES_R = "ser_r";
 
-    private RadioGroup rgSource;
     private RadioButton rbSourceManual;
     private RadioButton rbSourceHistoryYear;
     private RadioButton rbSourceHistoryAvg;
@@ -95,7 +94,7 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_set_values, null);
 
-        rgSource = dialogView.findViewById(R.id.rgSource);
+        RadioGroup rgSource = dialogView.findViewById(R.id.rgSource);
         rbSourceManual = dialogView.findViewById(R.id.rbSourceManual);
         rbSourceHistoryYear = dialogView.findViewById(R.id.rbSourceHistoryYear);
         rbSourceHistoryAvg = dialogView.findViewById(R.id.rbSourceHistoryAvg);
