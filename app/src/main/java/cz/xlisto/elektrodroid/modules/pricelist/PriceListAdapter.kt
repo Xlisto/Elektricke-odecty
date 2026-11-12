@@ -275,6 +275,18 @@ class PriceListAdapter(
     }
 
     /**
+     * Zjistí, zda je atribut odfiltrován na právě jednu konkrétní hodnotu.
+     * Pokud filtr obsahuje více hodnot oddělených čárkou (např. "D01d,D02d"), vrací `false`,
+     * aby se atribut na položkách zobrazoval a položky byly odlišitelné.
+     */
+    private fun isSingleValueFiltered(filterValue: String): Boolean {
+        return filterValue != "%" &&
+                filterValue != DataPriceListSource.VSE &&
+                filterValue.isNotBlank() &&
+                !filterValue.contains(",")
+    }
+
+    /**
      * Nastaví dynamický název (Řádek 1) a doplňující parametry platnosti a filtrů (Řádek 2).
      *
      * @param holder [MyViewHolder] s prvky položky
@@ -287,16 +299,11 @@ class PriceListAdapter(
         val companyFilter = shPFilter.get(ShPFilter.COMPANY, ShPFilter.DEFAULT)
         val areaFilter = shPFilter.get(ShPFilter.AREA, ShPFilter.DEFAULT)
 
-        val isRadaFiltered =
-            radaFilter != "%" && radaFilter != DataPriceListSource.VSE && radaFilter.isNotBlank()
-        val isProduktFiltered =
-            produktFilter != "%" && produktFilter != DataPriceListSource.VSE && produktFilter.isNotBlank()
-        val isSazbaFiltered =
-            sazbaFilter != "%" && sazbaFilter != DataPriceListSource.VSE && sazbaFilter.isNotBlank()
-        val isCompanyFiltered =
-            companyFilter != "%" && companyFilter != DataPriceListSource.VSE && companyFilter.isNotBlank()
-        val isAreaFiltered =
-            areaFilter != "%" && areaFilter != DataPriceListSource.VSE && areaFilter.isNotBlank()
+        val isRadaFiltered = isSingleValueFiltered(radaFilter)
+        val isProduktFiltered = isSingleValueFiltered(produktFilter)
+        val isSazbaFiltered = isSingleValueFiltered(sazbaFilter)
+        val isCompanyFiltered = isSingleValueFiltered(companyFilter)
+        val isAreaFiltered = isSingleValueFiltered(areaFilter)
 
         // První řádek: Název ceníku (Řada - Produkt)
         val titleText = buildString {

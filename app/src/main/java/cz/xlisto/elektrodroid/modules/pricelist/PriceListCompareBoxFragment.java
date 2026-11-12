@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,7 +48,7 @@ public class PriceListCompareBoxFragment extends Fragment {
     private static final String TAG = "PriceListCompareBoxFragment";
     private PriceListsViewModel priceListsViewModel;
 
-    private Button btnSelectPriceLists;
+    private MenuItem menuSelectPriceLists;
 
     private final String[] tabTitles = new String[]{"Přehled", "Grafy", "Výhodnost sazeb", "Tabulka"};
 
@@ -107,6 +106,8 @@ public class PriceListCompareBoxFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_price_list_compare, menu);
+                menuSelectPriceLists = menu.findItem(R.id.menu_select_price_lists);
+                updateSelectPriceListsMenuItem();
             }
 
             @Override
@@ -116,12 +117,14 @@ public class PriceListCompareBoxFragment extends Fragment {
                     PriceListComparisonParametersDialogFragment.newInstance(container)
                             .show(requireActivity().getSupportFragmentManager(), TAG);
                     return true;
+                } else if (item.getItemId() == R.id.menu_select_price_lists) {
+                    openSelectPriceLists();
+                    return true;
                 }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        btnSelectPriceLists = view.findViewById(R.id.btnSelectPriceLists);
         TabLayout tabLayoutCompare = view.findViewById(R.id.tabLayoutCompare);
         ViewPager2 viewPagerCompare = view.findViewById(R.id.viewPagerCompare);
 
@@ -129,19 +132,6 @@ public class PriceListCompareBoxFragment extends Fragment {
         viewPagerCompare.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayoutCompare, viewPagerCompare, (tab, position) -> tab.setText(tabTitles[position])).attach();
-
-        btnSelectPriceLists.setOnClickListener(v -> {
-            List<PriceListModel> currentSelected = priceListsViewModel.getSelectedPriceLists().getValue();
-            long[] selectedIdsArray = null;
-            if (currentSelected != null && !currentSelected.isEmpty()) {
-                selectedIdsArray = new long[currentSelected.size()];
-                for (int i = 0; i < currentSelected.size(); i++) {
-                    selectedIdsArray[i] = currentSelected.get(i).getId();
-                }
-            }
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L, selectedIdsArray, null, true);
-            FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
-        });
 
         // Listener pro výběr ceníků z PriceListFragment
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
@@ -180,14 +170,34 @@ public class PriceListCompareBoxFragment extends Fragment {
             }
         });
 
-        priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> {
+        priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> updateSelectPriceListsMenuItem());
+    }
+
+
+    private void openSelectPriceLists() {
+        List<PriceListModel> currentSelected = priceListsViewModel.getSelectedPriceLists().getValue();
+        long[] selectedIdsArray = null;
+        if (currentSelected != null && !currentSelected.isEmpty()) {
+            selectedIdsArray = new long[currentSelected.size()];
+            for (int i = 0; i < currentSelected.size(); i++) {
+                selectedIdsArray[i] = currentSelected.get(i).getId();
+            }
+        }
+        PriceListFragment priceListFragment = PriceListFragment.newInstance(true, -1L, selectedIdsArray, null, true);
+        FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
+    }
+
+
+    private void updateSelectPriceListsMenuItem() {
+        if (menuSelectPriceLists != null) {
+            List<PriceListModel> priceLists = priceListsViewModel.getSelectedPriceLists().getValue();
             int count = priceLists != null ? priceLists.size() : 0;
             if (count == 0) {
-                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrat ceníky (%d)", 0));
+                menuSelectPriceLists.setTitle(getString(R.string.select_pricelists_count, 0));
             } else {
-                btnSelectPriceLists.setText(String.format(java.util.Locale.getDefault(), "Vybrané ceníky (%d)", count));
+                menuSelectPriceLists.setTitle(getString(R.string.selected_pricelists_count, count));
             }
-        });
+        }
     }
 
 

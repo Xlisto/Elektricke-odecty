@@ -136,6 +136,8 @@
     <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
     <string name="cannot_combine_single_and_dual_tariffs">Není možné kombinovat jednotarifní ceníky (D01d, D02d) s dvoutarifními sazebami.</string>
     <string name="menu_compare_selected_pricelists">Porovnat vybrané ceníky</string>
+    <string name="select_pricelists_count">Ceníky (%d)</string>
+    <string name="selected_pricelists_count">Ceníky (%d)</string>
     <string name="menu_delete_selected_pricelists">Smazat vybrané ceníky</string>
     <string name="delete_selected_pricelists_title">Smazat vybrané ceníky</string>
     <string name="delete_selected_pricelists_message">Opravdu chcete smazat vybrané ceníky (%1$d)? Ceníky použité v odečtech nebo fakturách nebudou smazány.</string>
@@ -319,7 +321,7 @@
     <string name="from">OD</string>
     <string name="until">DO</string>
     <string name="dashboard">Přehled</string>
-    <string name="compare_price_list">Porovnání ceníků</string>
+    <string name="compare_price_list">Porovnání</string>
     <string name="price_lists">Ceníky</string>
     <string name="month_reads">Měsíční odečty</string>
     <string name="subscription_points">Odběrná místa</string>

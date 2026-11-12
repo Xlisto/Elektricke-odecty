@@ -5,31 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutCompare"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSelectPriceLists"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Vybrané ceníky (0)"
-            android:textColor="?attr/colorPrimary" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutCompare"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:tabGravity="fill"
-            app:tabMode="fixed" />
-    </LinearLayout>
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerCompare"
