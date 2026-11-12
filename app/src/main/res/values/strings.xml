@@ -607,6 +607,15 @@
     <string name="allow_mobile_data">Povolit použití mobilních dat pro online funkce</string>
     <string name="add_monthly_reading">Přidat odečet</string>
     <string name="add_monthly_price_list">Přidat ceník</string>
+    <string name="add_pdf_price_list">Přidat ceník z PDF</string>
+    <string name="pdf_import_validity_warning">Maximální platnost ceníku byla nastavena do 31. 12. %1$d, protože od nového roku platí jiné regulované ceny.</string>
+    <string name="pdf_import_select_rates_title">Výběr sazeb k uložení</string>
+    <string name="pdf_import_no_rates_selected">Vyberte alespoň jednu sazbu k uložení.</string>
+    <string name="pdf_import_duplicate_title">Ceník již existuje</string>
+    <string name="pdf_import_duplicate_message">Ceník pro sazbu %1$s již v databázi existuje. Chcete jej aktualizovat novými hodnotami z PDF?</string>
+    <string name="pdf_import_duplicate_diff_header">Porovnání rozdílů (Původní ➔ Nový):</string>
+    <string name="pdf_import_error">Chyba při čtení PDF ceníku: %1$s</string>
+    <string name="pdf_import_unsupported_supplier">Zvolený PDF ceník se nepodařilo automaticky rozparsovat. Nepodporovaný formát dodavatele.</string>
     <string name="add_subscriptionpoint">Přidat odběrné místo</string>
     <string name="add_hdo">Přidat čas HDO</string>
 

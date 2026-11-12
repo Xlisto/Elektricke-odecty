@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.modules.pricelist
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.BundleCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -18,7 +21,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import android.widget.Toast
 import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
@@ -29,6 +31,9 @@ import cz.xlisto.elektrodroid.models.PriceListModel
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_DETAIL_FRAGMENT
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_ID
+import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfImportSelectionFragment
+import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserFactory
+import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserUtils
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment
 import cz.xlisto.elektrodroid.ownview.ViewHelper
 import cz.xlisto.elektrodroid.shp.ShPAddEditInvoice
@@ -38,15 +43,19 @@ import cz.xlisto.elektrodroid.utils.FragmentChange
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint
 import cz.xlisto.elektrodroid.utils.UIHelper
 import java.util.Calendar
+import java.util.concurrent.Executors
 
 /**
- * Fragment pro zobrazení, filtrování a výběr ceníků elektřiny.
+ * Fragment pro zobrazení, filtrování, import a výběr ceníků elektřiny.
  *
- * Umožňuje procházet uložené ceníky, aplikovat filtry, mazat nevyužité ceníky
- * a vybírat jeden nebo více ceníků pro porovnání či přiřazení k fakturám v souladu s Material Design 3.
+ * Umožňuje procházet uložené ceníky, aplikovat filtry, importovat ceníky z PDF dokumentů
+ * dodavatelů, mazat nevyužité či vybrané ceníky a vybírat ceníky pro porovnání nebo přiřazení k fakturám.
  */
 class PriceListFragment : Fragment() {
 
+    /**
+     * Strana zobrazení v porovnávacím nebo dvoupanelovém režimu (např. v rozvržení na šířku).
+     */
     enum class Side {
         LEFT, RIGHT
     }
@@ -54,16 +63,22 @@ class PriceListFragment : Fragment() {
     companion object {
         private const val TAG = "PriceListFragment"
 
+        /** Klíč výsledku s vybraným modelem ceníku předávaným volajícímu fragmentu. */
         const val FLAG_RESULT_PRICE_LIST_FRAGMENT = "flagResultPriceListFragment"
 
+        /** Klíč výsledkového balíčku (Bundle) při vrácení vybraného ceníku. */
         const val FLAG_PRICE_LIST_FRAGMENT = "flagPriceListFragment"
 
+        /** Klíč pro určení strany zobrazení (vlevo/vpravo). */
         const val FLAG_SIDE = "flagSide"
 
+        /** Klíč pro předání pole vybraných ID ceníků. */
         const val FLAG_SELECTED_IDS = "flagSelectedIds"
 
+        /** Klíč příznaku režimu porovnávání ceníků. */
         const val FLAG_IS_COMPARE_MODE = "flagIsCompareMode"
 
+        /** Klíč výsledku s potvrzením smazání vybraných ceníků. */
         const val FLAG_RESULT_DELETE_SELECTED_PRICELISTS = "flagResultDeleteSelectedPriceLists"
 
         private const val SHOW_SELECT_ITEM = "param1"
@@ -75,11 +90,26 @@ class PriceListFragment : Fragment() {
 
         private var selectedPrice: PriceListModel? = null
 
+        /**
+         * Vytvoří novou instanci fragmentu pro výběr jednoho ceníku.
+         *
+         * @param selectedItem Zda se má zobrazit režim výběru položky
+         * @param idSelectedPriceList ID aktuálně vybraného ceníku
+         * @return Nová instance [PriceListFragment]
+         */
         @JvmStatic
         fun newInstance(selectedItem: Boolean, idSelectedPriceList: Long): PriceListFragment {
             return newInstance(selectedItem, idSelectedPriceList, null, null, false)
         }
 
+        /**
+         * Vytvoří novou instanci fragmentu s určením strany zobrazení.
+         *
+         * @param selectedItem Zda se má zobrazit režim výběru položky
+         * @param idSelectedPriceList ID aktuálně vybraného ceníku
+         * @param side Strana zobrazení ([Side.LEFT] nebo [Side.RIGHT])
+         * @return Nová instance [PriceListFragment]
+         */
         @JvmStatic
         fun newInstance(
             selectedItem: Boolean,
@@ -89,6 +119,16 @@ class PriceListFragment : Fragment() {
             return newInstance(selectedItem, idSelectedPriceList, null, side, false)
         }
 
+        /**
+         * Vytvoří novou instanci fragmentu s kompletní konfigurací výběru a porovnávání.
+         *
+         * @param selectedItem Zda se má zobrazit režim výběru položky
+         * @param idSelectedPriceList ID aktuálně vybraného ceníku
+         * @param initialSelectedIds Výchozí pole ID vybraných ceníků
+         * @param side Strana zobrazení
+         * @param isCompareMode Zda se má fragment otevřít v režimu srovnání ceníků
+         * @return Nová instance [PriceListFragment]
+         */
         @JvmStatic
         fun newInstance(
             selectedItem: Boolean,
@@ -128,6 +168,7 @@ class PriceListFragment : Fragment() {
     private lateinit var btnBack: Button
     private lateinit var fab: FloatingActionButton
     private var addMenuItem: MenuItem? = null
+    private var addPdfMenuItem: MenuItem? = null
 
     private var subscriptionPoint: SubscriptionPointModel? = null
     private var priceListAdapter: PriceListAdapter? = null
@@ -135,6 +176,12 @@ class PriceListFragment : Fragment() {
     private val selectedIds: MutableSet<Long> = HashSet()
     private var isFilterOnlySelected = false
     private var isResultReturned = false
+
+    /** Launcher pro výběr PDF souboru ceníku ze zařízení. */
+    private val pdfPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { processSelectedPdf(it) }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,6 +229,7 @@ class PriceListFragment : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_price_list, menu)
                 addMenuItem = menu.findItem(R.id.menu_action_add_pricelist)
+                addPdfMenuItem = menu.findItem(R.id.menu_action_add_pdf_pricelist)
 
                 val isPickerMode = showSelectItem || isCompareMode
 
@@ -207,6 +255,9 @@ class PriceListFragment : Fragment() {
                     rv,
                     false
                 )
+                if (addMenuItem != null && addPdfMenuItem != null) {
+                    addPdfMenuItem?.isVisible = addMenuItem?.isVisible == true
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -218,6 +269,11 @@ class PriceListFragment : Fragment() {
 
                     R.id.menu_action_add_pricelist -> {
                         addNewPriceList()
+                        true
+                    }
+
+                    R.id.menu_action_add_pdf_pricelist -> {
+                        pdfPickerLauncher.launch("application/pdf")
                         true
                     }
 
@@ -449,7 +505,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Přepne režim výběru.
+     * Přepne režim výběru více položek a aktualizuje stav akční lišty a ovládacích prvků.
      */
     private fun toggleSelectionMode() {
         isSelectionModeActive = !isSelectionModeActive
@@ -499,7 +555,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Načte a zobrazí v seznamu pouze vybrané ceníky.
+     * Načte a zobrazí v seznamu pouze ceníky odpovídající vybraným ID.
      */
     private fun loadOnlySelectedPriceLists() {
         val dataPriceListSource = DataPriceListSource(requireContext())
@@ -519,7 +575,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Aktualizuje stav informační lišty vybraných ceníků a tlačítek akcí.
+     * Aktualizuje stav informační lišty vybraných ceníků, textu počítadla a tlačítka akce.
      */
     private fun updateSelectionUiState() {
         val totalSelected = selectedIds.size
@@ -548,7 +604,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Odesle balicek s vysledkem vyberu ceniku.
+     * Odešle balíček s výsledkem výběru ceníku do [parentFragmentManager] a uloží ID do preferencí.
      */
     private fun sendResultBundle() {
         if (isResultReturned) return
@@ -581,7 +637,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Otevírá fragment pro srovnání vybraných ceníků.
+     * Otevírá fragment pro srovnání vybraných ceníků podle [selectedIds].
      */
     private fun startPriceListComparison() {
         if (selectedIds.isEmpty()) {
@@ -602,7 +658,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Zobrazí dialog s dotazem na smazání vybraných ceníků.
+     * Zobrazí dialog [YesNoDialogFragment] s dotazem na smazání vybraných ceníků.
      */
     private fun confirmDeleteSelectedPriceLists() {
         if (selectedIds.isEmpty()) {
@@ -625,7 +681,9 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Provede smazání vybraných ceníků s kontrolou na jejich použití v odečtech a fakturách.
+     * Provede smazání vybraných ceníků s kontrolou na jejich vazbu v odečtech a fakturách.
+     *
+     * Pokud jsou ceníky používány, zobrazí se varovný dialog [PriceListDeleteBlockedDialogFragment].
      */
     private fun performDeleteSelectedPriceLists() {
         if (selectedIds.isEmpty()) return
@@ -702,7 +760,9 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Zobrazí nebo aktualizuje fragment s detailem ceníku v režimu na šířku (landscape).
+     * Zobrazí nebo aktualizuje detail ceníku [PriceListDetailFragment] v rozvržení pro režim na šířku (landscape).
+     *
+     * @param showAfterRotation Zda se má provést obnova detailu po otočení obrazovky
      */
     private fun showDetailPriceFragment(showAfterRotation: Boolean) {
         var fragment: PriceListDetailFragment?
@@ -752,7 +812,7 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Otevře fragment pro přidání nového ceníku.
+     * Otevře fragment [PriceListAddFragment] pro ruční zadání nového ceníku.
      */
     private fun addNewPriceList() {
         val priceListAddFragment = PriceListAddFragment.newInstance()
@@ -762,5 +822,45 @@ class PriceListFragment : Fragment() {
             FragmentChange.Transaction.MOVE,
             true
         )
+    }
+
+    /**
+     * Načte a rozparsuje vybraný PDF soubor na pozadí a při úspěchu otevře [PdfImportSelectionFragment].
+     *
+     * @param uri URI vybraného PDF dokumentu
+     */
+    private fun processSelectedPdf(uri: Uri) {
+        Executors.newSingleThreadExecutor().execute {
+            try {
+                val pdfText = PdfParserUtils.extractTextFromPdf(requireContext(), uri)
+                val priceLists = PdfParserFactory.parsePdf(requireContext(), pdfText)
+
+                requireActivity().runOnUiThread {
+                    if (priceLists.isNotEmpty()) {
+                        val selectionFragment = PdfImportSelectionFragment.newInstance(priceLists)
+                        FragmentChange.replace(
+                            requireActivity(),
+                            selectionFragment,
+                            FragmentChange.Transaction.MOVE,
+                            true
+                        )
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.pdf_import_unsupported_supplier,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                requireActivity().runOnUiThread {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.pdf_import_error, e.message ?: ""),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 }

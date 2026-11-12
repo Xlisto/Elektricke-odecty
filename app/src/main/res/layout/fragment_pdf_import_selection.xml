@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/colorSurface">
+
+    <!-- Header Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="3dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tvPdfSupplier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ČEZ Prodej, a.s."
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tvPdfProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Elektřina na dobu neurčitou"
+                android:textSize="15sp"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvPdfValidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Platnost: 01.01.2026 - 31.12.2026"
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:layout_marginTop="2dp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Warning Banner for End of Year cap -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="#FFF8E1"
+        app:strokeColor="#FFE082"
+        app:strokeWidth="1dp"
+        app:cardCornerRadius="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_dialog_alert"
+                app:tint="#F57F17"
+                android:contentDescription="Upozornění" />
+
+            <TextView
+                android:id="@+id/tvPdfValidityWarning"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="@string/pdf_import_validity_warning"
+                android:textColor="#5D4037"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Selection Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pdf_import_select_rates_title"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btnSelectAll"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vybrat vše"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnDeselectAll"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zrušit výběr"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <!-- Rates RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPdfRates"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Bottom Action Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="?attr/colorSurface">
+
+        <Button
+            android:id="@+id/btnBackPdfImport"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Zrušit"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btnSaveSelectedPdfRates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Uložit vybrané" />
+
+    </LinearLayout>
+
+</LinearLayout>

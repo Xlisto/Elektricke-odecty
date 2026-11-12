@@ -2,16 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_filter_pricelist"
+        android:icon="@drawable/ic_filter_alt_24"
+        android:title="@string/filter_price_list"
+        android:visible="true"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_action_add_pricelist"
         android:icon="@drawable/ic_add_24"
         android:title="@string/add_monthly_price_list"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_filter_pricelist"
-        android:icon="@drawable/ic_filter_alt_24"
-        android:title="@string/filter_price_list"
-        android:visible="true"
+        android:id="@+id/menu_action_add_pdf_pricelist"
+        android:icon="@drawable/ic_add_pdf_24"
+        android:title="@string/add_pdf_price_list"
         app:showAsAction="ifRoom" />
 
     <item

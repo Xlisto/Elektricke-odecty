@@ -340,8 +340,10 @@ public class DataPriceListSource {
         String sql = "SELECT _id FROM ceniky WHERE rada = ? AND produkt = ? AND sazba = ? AND firma = ? AND platnost_od = ? AND distribuce = ? ";
         String[] args = new String[]{rada, produkt, sazba, firma, platnostOd, distribuce};
         Cursor cursor = database.rawQuery(sql, args);
-        cursor.moveToFirst();
-        long id = cursor.getLong(0);
+        long id = -1;
+        if (cursor.moveToFirst()) {
+            id = cursor.getLong(0);
+        }
         cursor.close();
         return id;
     }
