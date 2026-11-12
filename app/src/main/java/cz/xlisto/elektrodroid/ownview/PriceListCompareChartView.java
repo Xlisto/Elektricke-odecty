@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
@@ -27,20 +28,40 @@ import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonResult
  */
 public class PriceListCompareChartView extends View {
 
+    /**
+     * Typy grafu porovnání ceníků.
+     */
     public enum ChartType {
+        /**
+         * Vodorovný sloupcový graf.
+         */
         HORIZONTAL_BAR,
+        /** Skládaný sloupcový graf (struktura ceny). */
         STACKED_BAR
     }
 
+
+    /**
+     * Zobrazované metriky pro grafické porovnání ceníků.
+     */
     public enum DisplayMetric {
+        /** Celkové roční náklady. */
         TOTAL_ANNUAL_COST,
+        /** Průměrné měsíční náklady. */
         AVG_MONTHLY_COST,
+        /** Cena za vysoký tarif (VT). */
         VT_PRICE,
+        /** Cena za nízký tarif (NT). */
         NT_PRICE,
+        /** Stálý měsíční plat. */
         FIXED_MONTHLY_FEE,
+        /** Regulovaná složka ceny. */
         REGULATED_COMPONENT,
+        /** Neregulovaná (obchodní) složka ceny. */
         UNREGULATED_COMPONENT,
+        /** Struktura ceny (skládaný sloupec). */
         PRICE_STRUCTURE_STACKED,
+        /** Rozdíl oproti nejlevnějšímu ceníku. */
         DIFF_VS_CHEAPEST
     }
 
@@ -54,11 +75,9 @@ public class PriceListCompareChartView extends View {
     private Paint regulatedPaint;
     private Paint taxPaint;
     private Paint cheapestHighlightPaint;
-    private Paint borderPaint;
-    private Paint tooltipPaint;
 
-    private int selectedIndex = -1;
     private float density;
+    private final RectF tempRect = new RectF();
 
     private final int[] chartPalette = new int[]{
             0xFF1E88E5, 0xFF43A047, 0xFFFB8C00, 0xFF8E24AA,
@@ -105,28 +124,35 @@ public class PriceListCompareChartView extends View {
         cheapestHighlightPaint.setStyle(Paint.Style.STROKE);
         cheapestHighlightPaint.setStrokeWidth(2 * density);
         cheapestHighlightPaint.setColor(0xFF2E7D32); // Zelený rámeček vítěze
-
-        borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(1 * density);
-        borderPaint.setColor(0x33000000);
-
-        tooltipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        tooltipPaint.setColor(0xEE323232);
-        tooltipPaint.setStyle(Paint.Style.FILL);
     }
 
+
+    /**
+     * Nastaví data pro zobrazení v grafu a zvolenou zobrazenou metriku.
+     * Automaticky určí odpovídající typ grafu (vodorovné nebo skládané sloupce),
+     * přepočítá rozvržení a vyvolá překreslení View.
+     *
+     * @param results seznam výsledků porovnání ceníků
+     * @param metric  zobrazovaná metrika
+     */
     public void setData(List<PriceListComparisonResult> results, DisplayMetric metric) {
         this.results = results != null ? results : new ArrayList<>();
         this.displayMetric = metric;
         this.chartType = (metric == DisplayMetric.PRICE_STRUCTURE_STACKED) ? ChartType.STACKED_BAR : ChartType.HORIZONTAL_BAR;
-        this.selectedIndex = -1;
 
         requestLayout();
         invalidate();
     }
 
 
+    /**
+     * Rozdělí zadaný text na více řádků tak, aby žádný řádek nepřesáhl maximální povolenou šířku.
+     *
+     * @param paint    objekt {@link Paint} použitý k měření šířky textu
+     * @param text     text k rozdělení
+     * @param maxWidth maximální šířka řádku v pixelech
+     * @return seznam řádků textu
+     */
     @SuppressWarnings("SizeReplaceableByIsEmpty")
     private List<String> splitTextToLines(Paint paint, String text, float maxWidth) {
         List<String> lines = new ArrayList<>();
@@ -179,6 +205,13 @@ public class PriceListCompareChartView extends View {
     }
 
 
+    /**
+     * Vypočítá výšku jednoho položkového bloku v grafu s ohledem na počet zalamovaných řádků titulku a subtitulku.
+     *
+     * @param item     položka s výsledkem porovnání ceníku
+     * @param maxWidth maximální dostupná šířka pro text
+     * @return požadovaná výška položky v pixelech
+     */
     private float calculateItemHeight(PriceListComparisonResult item, float maxWidth) {
         textPaint.setFakeBoldText(true);
         String title = item.getPriceList().getNameWithPeriod();
@@ -214,8 +247,9 @@ public class PriceListCompareChartView extends View {
         setMeasuredDimension(width, desiredHeight);
     }
 
+
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         int textColorPrimary = MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface, ContextCompat.getColor(getContext(), R.color.color_axis));
@@ -285,11 +319,11 @@ public class PriceListCompareChartView extends View {
                 if (barWidth < 4 * density && val > 0) barWidth = 4 * density;
 
                 barPaint.setColor(chartPalette[i % chartPalette.length]);
-                RectF barRect = new RectF(paddingLeft, barStartY, paddingLeft + barWidth, barStartY + barHeight);
-                canvas.drawRoundRect(barRect, 4 * density, 4 * density, barPaint);
+                tempRect.set(paddingLeft, barStartY, paddingLeft + barWidth, barStartY + barHeight);
+                canvas.drawRoundRect(tempRect, 4 * density, 4 * density, barPaint);
 
                 if (item.isCheapest()) {
-                    canvas.drawRoundRect(barRect, 4 * density, 4 * density, cheapestHighlightPaint);
+                    canvas.drawRoundRect(tempRect, 4 * density, 4 * density, cheapestHighlightPaint);
                 }
 
                 // Text s hodnotou vedle sloupce
@@ -311,20 +345,20 @@ public class PriceListCompareChartView extends View {
 
                 // Obchodní
                 if (merchantW > 0) {
-                    RectF rect = new RectF(currX, barStartY, currX + merchantW, barStartY + barHeight);
-                    canvas.drawRect(rect, merchantPaint);
+                    tempRect.set(currX, barStartY, currX + merchantW, barStartY + barHeight);
+                    canvas.drawRect(tempRect, merchantPaint);
                     currX += merchantW;
                 }
                 // Regulovaná
                 if (regulatedW > 0) {
-                    RectF rect = new RectF(currX, barStartY, currX + regulatedW, barStartY + barHeight);
-                    canvas.drawRect(rect, regulatedPaint);
+                    tempRect.set(currX, barStartY, currX + regulatedW, barStartY + barHeight);
+                    canvas.drawRect(tempRect, regulatedPaint);
                     currX += regulatedW;
                 }
                 // Daně
                 if (taxW > 0) {
-                    RectF rect = new RectF(currX, barStartY, currX + taxW, barStartY + barHeight);
-                    canvas.drawRect(rect, taxPaint);
+                    tempRect.set(currX, barStartY, currX + taxW, barStartY + barHeight);
+                    canvas.drawRect(tempRect, taxPaint);
                     currX += taxW;
                 }
 
@@ -339,6 +373,14 @@ public class PriceListCompareChartView extends View {
     }
 
 
+    /**
+     * Vykreslí barevnou legendu složek ceny (Obchodní, Regulovaná, Daně) pro skládaný graf.
+     *
+     * @param canvas    plátno pro kreslení
+     * @param startX    počáteční X souřadnice legendy
+     * @param startY    počáteční Y souřadnice legendy
+     * @param textColor barva textu legendy
+     */
     private void drawLegend(Canvas canvas, float startX, float startY, int textColor) {
         float x = startX;
         float boxSize = 12 * density;
@@ -360,6 +402,12 @@ public class PriceListCompareChartView extends View {
         canvas.drawText("Daně", x + boxSize + (4 * density), startY + (10 * density), textPaint);
     }
 
+
+    /**
+     * Určí maximální hodnotu ze všech výsledků pro zadanou metriku, podle které se škáluje délka sloupců.
+     *
+     * @return maximální hodnota
+     */
     private double getMaxValue() {
         double max = 0;
         for (PriceListComparisonResult res : results) {
@@ -369,40 +417,40 @@ public class PriceListCompareChartView extends View {
         return max;
     }
 
+
+    /**
+     * Vrátí číselnou hodnotu vybrané metriky z daného výsledku porovnání.
+     *
+     * @param res výsledek porovnání ceníku
+     * @return číselná hodnota zobrazené metriky
+     */
     private double getValueForMetric(PriceListComparisonResult res) {
-        switch (displayMetric) {
-            case TOTAL_ANNUAL_COST:
-                return res.getTotalWithDph();
-            case AVG_MONTHLY_COST:
-                return res.getAverageMonthlyCostWithDph();
-            case VT_PRICE:
-                return res.getPriceList().getCenaVT();
-            case NT_PRICE:
-                return res.getPriceList().getCenaNT();
-            case FIXED_MONTHLY_FEE:
-                return res.getPriceList().getMesicniPlat();
-            case REGULATED_COMPONENT:
-                return res.getRegulatedTotalCost();
-            case UNREGULATED_COMPONENT:
-                return res.getMerchantTotalCost();
-            case DIFF_VS_CHEAPEST:
-                return res.getDiffVsCheapest();
-            default:
-                return res.getTotalWithDph();
-        }
+        return switch (displayMetric) {
+            case TOTAL_ANNUAL_COST, PRICE_STRUCTURE_STACKED -> res.getTotalWithDph();
+            case AVG_MONTHLY_COST -> res.getAverageMonthlyCostWithDph();
+            case VT_PRICE -> res.getPriceList().getCenaVT();
+            case NT_PRICE -> res.getPriceList().getCenaNT();
+            case FIXED_MONTHLY_FEE -> res.getPriceList().getMesicniPlat();
+            case REGULATED_COMPONENT -> res.getRegulatedTotalCost();
+            case UNREGULATED_COMPONENT -> res.getMerchantTotalCost();
+            case DIFF_VS_CHEAPEST -> res.getDiffVsCheapest();
+        };
     }
 
+
+    /**
+     * Formátuje číselnou hodnotu metriky do textového řetězce včetně příslušných měrových jednotek.
+     *
+     * @param val hodnota k formátování
+     * @return formátovaný řetězec s měnovou nebo jednotkovou příponou
+     */
     private String formatMetricValue(double val) {
-        switch (displayMetric) {
-            case VT_PRICE:
-            case NT_PRICE:
-                return DecimalFormatHelper.df2.format(val) + " Kč/MWh";
-            case FIXED_MONTHLY_FEE:
-            case AVG_MONTHLY_COST:
-                return DecimalFormatHelper.df0.format(val) + " Kč/měs";
-            default:
-                return DecimalFormatHelper.df0.format(val) + " Kč";
-        }
+        return switch (displayMetric) {
+            case VT_PRICE, NT_PRICE -> DecimalFormatHelper.df2.format(val) + " Kč/MWh";
+            case FIXED_MONTHLY_FEE, AVG_MONTHLY_COST ->
+                    DecimalFormatHelper.df0.format(val) + " Kč/měs";
+            default -> DecimalFormatHelper.df0.format(val) + " Kč";
+        };
     }
 
     @Override
