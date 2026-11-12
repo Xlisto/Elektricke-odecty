@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog
 import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
@@ -850,8 +851,11 @@ class PriceListFragment : Fragment() {
                 val pdfText = PdfParserUtils.extractTextFromPdf(requireContext(), uri)
                 val priceLists = PdfParserFactory.parsePdf(requireContext(), pdfText)
 
+                val hasValidPrices =
+                    priceLists.any { it.cenaVT > 0 || it.cenaNT > 0 || it.mesicniPlat > 0 }
+
                 requireActivity().runOnUiThread {
-                    if (priceLists.isNotEmpty()) {
+                    if (priceLists.isNotEmpty() && hasValidPrices) {
                         val selectionFragment = PdfImportSelectionFragment.newInstance(priceLists)
                         FragmentChange.replace(
                             requireActivity(),
@@ -860,20 +864,20 @@ class PriceListFragment : Fragment() {
                             true
                         )
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.pdf_import_unsupported_supplier,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        OwnAlertDialog.showDialog(
+                            requireActivity(),
+                            getString(R.string.pdf_import_cannot_read_title),
+                            getString(R.string.pdf_import_cannot_read_message)
+                        )
                     }
                 }
             } catch (e: Exception) {
                 requireActivity().runOnUiThread {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.pdf_import_error, e.message ?: ""),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    OwnAlertDialog.showDialog(
+                        requireActivity(),
+                        getString(R.string.pdf_import_cannot_read_title),
+                        getString(R.string.pdf_import_cannot_read_message)
+                    )
                 }
             }
         }

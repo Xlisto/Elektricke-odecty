@@ -15,7 +15,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
  * Parser pro ceníky dodavatele Česká Regionální Energetika a.s. (ČRE).
  * <p>
  * Detekuje PDF dokumenty ČRE, extrahuje název produktové řady, platnost OD/DO, distribuční území
- * a sestaví ceníkové položky pro jednotlivé distribuční sazby včetně obchodních a regulovaných cen.
+ * a sestaví ceníkové položky pro jednotlivé distribuční sazby. Obchodní i regulované ceny se parsují dynamicky.
  */
 public class CrePdfParser implements PdfPriceListParser {
 
@@ -23,12 +23,6 @@ public class CrePdfParser implements PdfPriceListParser {
     private static final String DISTRIBUCE = "PREdistribuce, a. s.";
 
 
-    /**
-     * Zjistí, zda předaný text z PDF dokumentu pochází od dodavatele Česká Regionální Energetika a.s.
-     *
-     * @param pdfText Extrahovaný text z PDF souboru
-     * @return true pokud text obsahuje identifikátory dodavatele ČRE
-     */
     @Override
     public boolean canParse(String pdfText) {
         if (pdfText == null) return false;
@@ -37,13 +31,6 @@ public class CrePdfParser implements PdfPriceListParser {
     }
 
 
-    /**
-     * Rozparsuje text PDF ceníku ČRE a vrátí seznam ceníkových modelů pro jednotlivé distribuční sazby.
-     *
-     * @param context Kontext aplikace
-     * @param pdfText Extrahovaný text z PDF souboru
-     * @return Seznam načtených objektů {@link PriceListModel}
-     */
     @Override
     public List<PriceListModel> parse(Context context, String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
@@ -93,53 +80,37 @@ public class CrePdfParser implements PdfPriceListParser {
         }
 
         String[][] rateDefs = {
-                {"D 01d", produkt, "2925.00", "0.0", "149.00"},
-                {"D 02d", produkt, "1516.53", "0.0", "149.00"},
-                {"D 25d", produkt, "1656.49", "175.20", "149.00"},
-                {"D 26d", produkt, "1009.35", "175.20", "149.00"},
-                {"D 27d", produkt, "1656.49", "175.20", "149.00"},
-                {"D 35d", produkt, "421.52", "175.20", "149.00"},
-                {"D 45d", produkt, "421.52", "175.20", "149.00"},
-                {"D 56d", produkt, "421.52", "175.20", "149.00"},
-                {"D 57d", produkt, "421.52", "175.20", "149.00"},
-                {"D 61d", produkt, "2343.05", "175.20", "149.00"}
+                {"D 01d", produkt},
+                {"D 02d", produkt},
+                {"D 25d", produkt},
+                {"D 26d", produkt},
+                {"D 27d", produkt},
+                {"D 35d", produkt},
+                {"D 45d", produkt},
+                {"D 56d", produkt},
+                {"D 57d", produkt},
+                {"D 61d", produkt}
         };
 
-        // Regulované ceny z PREdistribuce
-        double[] creDistVT = {1854.71, 1516.53, 1656.49, 1009.35, 1656.49, 421.52, 421.52, 421.52, 421.52, 2343.05};
-        double[] creDistNT = {0.0, 0.0, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20};
-        double[] creJ0 = {44.0, 87.0, 80.0, 110.0, 76.0, 154.0, 154.0, 154.0, 154.0, 64.0};
-        double[] creJ1 = {70.0, 139.0, 128.0, 175.0, 122.0, 246.0, 246.0, 246.0, 246.0, 103.0};
-        double[] creJ2 = {88.0, 173.0, 160.0, 219.0, 152.0, 308.0, 308.0, 308.0, 308.0, 128.0};
-        double[] creJ3 = {110.0, 217.0, 200.0, 274.0, 191.0, 385.0, 385.0, 385.0, 385.0, 161.0};
-        double[] creJ4 = {140.0, 277.0, 256.0, 350.0, 244.0, 492.0, 492.0, 492.0, 492.0, 205.0};
-        double[] creJ5 = {175.0, 347.0, 320.0, 438.0, 305.0, 616.0, 616.0, 616.0, 622.0, 257.0};
-        double[] creJ6 = {219.0, 434.0, 401.0, 548.0, 381.0, 770.0, 770.0, 770.0, 933.0, 321.0};
-        double[] creJ7 = {276.0, 546.0, 505.0, 690.0, 480.0, 970.0, 970.0, 970.0, 1433.0, 404.0};
-
-        for (int i = 0; i < rateDefs.length; i++) {
-            String[] def = rateDefs[i];
+        for (String[] def : rateDefs) {
             String sazba = PdfParserUtils.formatSazba(def[0]);
             String rada = def[1];
-            double vt = Double.parseDouble(def[2]);
-            double nt = Double.parseDouble(def[3]);
-            double plat = Double.parseDouble(def[4]);
 
             PriceListModel model = new PriceListModel(
                     0L,
                     rada,
                     produkt,
                     FIRMA,
-                    vt,
-                    nt,
-                    plat,
-                    28.30,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0, // daň bez DPH
                     sazba,
-                    creDistVT[i], creDistNT[i], creJ0[i], creJ1[i], creJ2[i], creJ3[i], creJ4[i], creJ5[i], creJ6[i], creJ7[i], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    164.24, // systémové služby bez DPH
-                    12.87,  // činnost operátora bez DPH
-                    0.0,    // POZE1
-                    495.00, // POZE2
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, // regulované ceny se načítají z raw JSON
+                    0.0, // systémové služby bez DPH
+                    0.0, // činnost operátora bez DPH
+                    0.0, // POZE1
+                    0.0, // POZE2
                     0.0, 0.0,
                     platnostOD,
                     platnostDO,

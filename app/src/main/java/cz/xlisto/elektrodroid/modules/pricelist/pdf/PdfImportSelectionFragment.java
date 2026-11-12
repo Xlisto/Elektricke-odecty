@@ -23,6 +23,7 @@ import java.util.List;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -102,7 +103,29 @@ public class PdfImportSelectionFragment extends Fragment {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(first.getPlatnostOD() > 0 ? first.getPlatnostOD() : System.currentTimeMillis());
             int year = cal.get(Calendar.YEAR);
-            tvValidityWarning.setText(getString(R.string.pdf_import_validity_warning, year));
+
+            boolean hasRegulatedData = first.getDistVT() > 0 || first.getJ0() > 0;
+            boolean hasMissingCommercial = false;
+            for (PriceListModel model : parsedPriceLists) {
+                if (model.getCenaVT() == 0.0 || model.getMesicniPlat() == 0.0) {
+                    hasMissingCommercial = true;
+                    break;
+                }
+            }
+
+            StringBuilder warningText = new StringBuilder();
+            if (hasMissingCommercial) {
+                warningText.append(getString(R.string.pdf_import_missing_commercial_warning));
+            }
+            if (!hasRegulatedData) {
+                if (warningText.length() > 0) warningText.append("\n\n");
+                warningText.append(getString(R.string.pdf_import_missing_regulated_warning, year, first.getDistribuce()));
+            }
+            if (!hasMissingCommercial && hasRegulatedData) {
+                warningText.append(getString(R.string.pdf_import_validity_warning, year));
+            }
+
+            tvValidityWarning.setText(warningText.toString());
         }
 
         adapter = new PdfRateSelectionAdapter(parsedPriceLists);
@@ -125,6 +148,23 @@ public class PdfImportSelectionFragment extends Fragment {
         List<PriceListModel> selected = adapter.getSelectedItems();
         if (selected.isEmpty()) {
             Toast.makeText(requireContext(), R.string.pdf_import_no_rates_selected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        boolean hasAnyCommercialPrice = false;
+        for (PriceListModel model : selected) {
+            if (model.getCenaVT() > 0 || model.getCenaNT() > 0 || model.getMesicniPlat() > 0) {
+                hasAnyCommercialPrice = true;
+                break;
+            }
+        }
+
+        if (!hasAnyCommercialPrice) {
+            OwnAlertDialog.showDialog(
+                    requireActivity(),
+                    getString(R.string.pdf_import_cannot_read_title),
+                    getString(R.string.pdf_import_cannot_read_message)
+            );
             return;
         }
 

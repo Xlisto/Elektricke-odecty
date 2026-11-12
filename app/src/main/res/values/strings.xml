@@ -609,6 +609,8 @@
     <string name="add_monthly_price_list">Přidat ceník</string>
     <string name="add_pdf_price_list">Přidat ceník z PDF</string>
     <string name="pdf_import_validity_warning">Maximální platnost ceníku byla nastavena do 31. 12. %1$d, protože od nového roku platí jiné regulované ceny.</string>
+    <string name="pdf_import_missing_regulated_warning">Upozornění: Pro rok %1$d a distribuční území %2$s nebyly v databázi aplikace (jistice.json, distribuce.json, ostatni.json) nalezeny odpovídající regulované ceny.</string>
+    <string name="pdf_import_missing_commercial_warning">Upozornění: U některých sazeb se nepodařilo z PDF automaticky načíst obchodní ceny silové elektřiny. Po uložení zkontrolujte a doplňte ceny v ceníku ručně.</string>
     <string name="pdf_import_select_rates_title">Výběr sazeb k uložení</string>
     <string name="pdf_import_no_rates_selected">Vyberte alespoň jednu sazbu k uložení.</string>
     <string name="pdf_import_duplicate_title">Ceník již existuje</string>
@@ -616,6 +618,8 @@
     <string name="pdf_import_duplicate_diff_header">Porovnání rozdílů (Původní ➔ Nový):</string>
     <string name="pdf_import_error">Chyba při čtení PDF ceníku: %1$s</string>
     <string name="pdf_import_unsupported_supplier">Zvolený PDF ceník se nepodařilo automaticky rozparsovat. Nepodporovaný formát dodavatele.</string>
+    <string name="pdf_import_cannot_read_title">Nemožnost přečíst ceník</string>
+    <string name="pdf_import_cannot_read_message">Z vybraného PDF dokumentu se nepodařilo načíst cenové údaje silové elektřiny. Ceník nelze uložit.\n\nDoplňte prosím ceník ručním způsobem.</string>
     <string name="download_price_lists">Stáhnout ceníky</string>
     <string name="download_price_lists_info">Vyberte dodavatele. V prohlížeči se otevře jeho oficiální stránka s ceníky, kde si můžete stáhnout požadovaný PDF ceník (případně po zvolení distribučního území či období) a následně jej v aplikaci načíst přes tlačítko PDF+.</string>
     <string name="open_in_browser">Otevřít stránku</string>

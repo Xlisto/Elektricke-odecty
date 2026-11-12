@@ -76,54 +76,38 @@ public class PrePdfParser implements PdfPriceListParser {
             }
         }
 
-        // Seznam definovaných sazeb a jejich parametrů pro PRE (ceny v Kč/MWh bez DPH)
         String[][] rateDefs = {
-                {"D 01d", "KLASIK 24", "3570.00", "0.0", "129.00"},
-                {"D 02d", "KLASIK 24", "3570.00", "0.0", "129.00"},
-                {"D 25d", "AKU 8", "3470.00", "3270.00", "129.00"},
-                {"D 26d", "AKU 8", "3470.00", "3270.00", "129.00"},
-                {"D 27d", "E MOBILITA", "3470.00", "3270.00", "129.00"},
-                {"D 35d", "KOMBI 20", "3570.00", "3370.00", "129.00"},
-                {"D 45d", "PŘÍMOTOP 20", "3770.00", "3470.00", "129.00"},
-                {"D 56d", "TČ 20", "3770.00", "3470.00", "129.00"},
-                {"D 57d", "TOPENÍ 20", "3770.00", "3470.00", "129.00"},
-                {"D 61d", "Víkend 24", "3470.00", "3270.00", "129.00"}
+                {"D 01d", "KLASIK 24"},
+                {"D 02d", "KLASIK 24"},
+                {"D 25d", "AKU 8"},
+                {"D 26d", "AKU 8"},
+                {"D 27d", "E MOBILITA"},
+                {"D 35d", "KOMBI 20"},
+                {"D 45d", "PŘÍMOTOP 20"},
+                {"D 56d", "TČ 20"},
+                {"D 57d", "TOPENÍ 20"},
+                {"D 61d", "Víkend 24"}
         };
 
-        double[] preDistVT = {1854.71, 1516.53, 1656.49, 1009.35, 1656.49, 421.52, 421.52, 421.52, 421.52, 2343.05};
-        double[] preDistNT = {0.0, 0.0, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20, 175.20};
-        double[] preJ0 = {44.0, 87.0, 80.0, 110.0, 76.0, 154.0, 154.0, 154.0, 154.0, 64.0};
-        double[] preJ1 = {70.0, 139.0, 128.0, 175.0, 122.0, 246.0, 246.0, 246.0, 246.0, 103.0};
-        double[] preJ2 = {88.0, 173.0, 160.0, 219.0, 152.0, 308.0, 308.0, 308.0, 308.0, 128.0};
-        double[] preJ3 = {110.0, 217.0, 200.0, 274.0, 191.0, 385.0, 385.0, 385.0, 385.0, 161.0};
-        double[] preJ4 = {140.0, 277.0, 256.0, 350.0, 244.0, 492.0, 492.0, 492.0, 492.0, 205.0};
-        double[] preJ5 = {175.0, 347.0, 320.0, 438.0, 305.0, 616.0, 616.0, 616.0, 622.0, 257.0};
-        double[] preJ6 = {219.0, 434.0, 401.0, 548.0, 381.0, 770.0, 770.0, 770.0, 933.0, 321.0};
-        double[] preJ7 = {276.0, 546.0, 505.0, 690.0, 480.0, 970.0, 970.0, 970.0, 1433.0, 404.0};
-
-        for (int i = 0; i < rateDefs.length; i++) {
-            String[] def = rateDefs[i];
+        for (String[] def : rateDefs) {
             String sazba = PdfParserUtils.formatSazba(def[0]);
             String rada = def[1];
-            double vt = Double.parseDouble(def[2]);
-            double nt = Double.parseDouble(def[3]);
-            double plat = Double.parseDouble(def[4]);
 
             PriceListModel model = new PriceListModel(
                     0L,
                     rada,
                     produkt,
                     FIRMA,
-                    vt,
-                    nt,
-                    plat,
-                    28.30,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0, // daň bez DPH
                     sazba,
-                    preDistVT[i], preDistNT[i], preJ0[i], preJ1[i], preJ2[i], preJ3[i], preJ4[i], preJ5[i], preJ6[i], preJ7[i], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    164.24, // systémové služby bez DPH
-                    12.87,  // činnost operátora bez DPH
-                    0.0,    // POZE1
-                    495.00, // POZE2
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, // regulované ceny se načítají z raw JSON
+                    0.0, // systémové služby bez DPH
+                    0.0, // činnost operátora bez DPH
+                    0.0, // POZE1
+                    0.0, // POZE2
                     0.0, 0.0,
                     platnostOD,
                     platnostDO,
