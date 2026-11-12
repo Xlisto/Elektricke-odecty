@@ -58,7 +58,7 @@ public class PriceListCompareTableFragment extends Fragment {
                 .replace(R.id.tableFragmentContainer, compactFragment)
                 .commit();
 
-        viewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> updateSpinners(priceLists));
+        viewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), this::updateSpinners);
     }
 
 
@@ -82,8 +82,10 @@ public class PriceListCompareTableFragment extends Fragment {
         adapterRight.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTableRightPriceList.setAdapter(adapterRight);
 
-        if (priceLists.size() >= 1) spTableLeftPriceList.setSelection(0);
-        if (priceLists.size() >= 2) spTableRightPriceList.setSelection(1);
+        spTableLeftPriceList.setSelection(0);
+        if (priceLists.size() > 1) {
+            spTableRightPriceList.setSelection(1);
+        }
 
         AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
             @Override
