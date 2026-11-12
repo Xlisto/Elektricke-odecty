@@ -83,6 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:visibility="gone"
         android:text="@string/zpet" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -102,12 +103,12 @@
         app:backgroundTint="@color/floatingButtonTint"
         app:tint="@color/floatingButtonBackground" />
 
-    <!-- RecyclerView zabírá veškerý zbývající prostor mezi horním barenem a spodními tlačítky -->
+    <!-- RecyclerView zabírá veškerý zbývající prostor mezi horním barenem a spodním okrajem -->
     <cz.xlisto.elektrodroid.ownview.ContextMenuRecyclerView
         android:id="@+id/rv_price_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btnBack"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/cardTopInfo"
         android:contentDescription="@string/description_price_list"
         android:focusableInTouchMode="false"

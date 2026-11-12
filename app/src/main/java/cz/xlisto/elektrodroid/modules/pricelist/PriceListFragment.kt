@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.BundleCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -128,6 +129,7 @@ class PriceListFragment : Fragment() {
     private var priceListModels: ArrayList<PriceListModel> = ArrayList()
     private val selectedIds: MutableSet<Long> = HashSet()
     private var isFilterOnlySelected = false
+    private var isResultReturned = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,6 +177,11 @@ class PriceListFragment : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_price_list, menu)
                 addMenuItem = menu.findItem(R.id.menu_action_add_pricelist)
+
+                if (showSelectItem || isCompareMode) {
+                    menu.findItem(R.id.menu_select_mode_pricelist)?.isVisible = false
+                }
+
                 UIHelper.showButtons(
                     null,
                     fab,
@@ -187,6 +194,11 @@ class PriceListFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        confirmAndReturnResult()
+                        true
+                    }
+
                     R.id.menu_action_add_pricelist -> {
                         addNewPriceList()
                         true
@@ -260,6 +272,14 @@ class PriceListFragment : Fragment() {
         btnBack.setOnClickListener {
             confirmAndReturnResult()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    confirmAndReturnResult()
+                }
+            })
 
         // Posluchač při potvrzení filtru ceníku
         requireActivity().supportFragmentManager.setFragmentResultListener(
@@ -491,9 +511,12 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Potvrdí výběr ceníků a předá výsledek volajícímu fragmentu nebo aktivitě.
+     * Odesle balicek s vysledkem vyberu ceniku.
      */
-    private fun confirmAndReturnResult() {
+    private fun sendResultBundle() {
+        if (isResultReturned) return
+        isResultReturned = true
+
         val shPAddEditInvoice = ShPAddEditInvoice(context)
         shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, idSelectedPriceList)
 
@@ -503,7 +526,21 @@ class PriceListFragment : Fragment() {
         bundle.putLongArray(FLAG_SELECTED_IDS, selectedIds.toLongArray())
 
         parentFragmentManager.setFragmentResult(FLAG_PRICE_LIST_FRAGMENT, bundle)
+    }
+
+    /**
+     * Potvrdí výběr ceníků a předá výsledek volajícímu fragmentu nebo aktivitě.
+     */
+    private fun confirmAndReturnResult() {
+        sendResultBundle()
         parentFragmentManager.popBackStack()
+    }
+
+    override fun onDestroyView() {
+        if (!isResultReturned && (showSelectItem || isCompareMode)) {
+            sendResultBundle()
+        }
+        super.onDestroyView()
     }
 
     /**
@@ -550,11 +587,9 @@ class PriceListFragment : Fragment() {
      * Řídí viditelnost tlačítka Zpět a plovoucího tlačítka FAB podle režimu výběru.
      */
     private fun btnShowBack() {
+        btnBack.visibility = View.GONE
         if (showSelectItem) {
-            btnBack.visibility = View.VISIBLE
             fab.visibility = View.GONE
-        } else {
-            btnBack.visibility = View.GONE
         }
     }
 

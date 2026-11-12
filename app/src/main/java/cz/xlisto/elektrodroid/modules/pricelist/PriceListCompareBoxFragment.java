@@ -118,7 +118,7 @@ public class PriceListCompareBoxFragment extends Fragment {
         // Listener pro výběr ceníků z PriceListFragment
         getParentFragmentManager().setFragmentResultListener(PriceListFragment.FLAG_PRICE_LIST_FRAGMENT, this, (requestKey, result) -> {
             long[] selectedIds = result.getLongArray(PriceListFragment.FLAG_SELECTED_IDS);
-            if (selectedIds != null && selectedIds.length > 0) {
+            if (selectedIds != null) {
                 DataPriceListSource source = new DataPriceListSource(requireContext());
                 source.open();
                 List<PriceListModel> selectedList = new ArrayList<>();
