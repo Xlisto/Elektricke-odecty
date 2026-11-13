@@ -504,8 +504,13 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         chipNextYear.setChecked(dateStart.equals("01.01." + (currentYear + 1)) && dateEnd.equals("31.12." + (currentYear + 1)));
     }
 
+
+    private boolean isDateFilterValid(String dateStr) {
+        return dateStr != null && !dateStr.trim().isEmpty() && !dateStr.equals("%") && !dateStr.equalsIgnoreCase(VSE) && !dateStr.equalsIgnoreCase("[VŠE]");
+    }
+
     private boolean isDateRangeValid() {
-        if (!dateStart.equals("%") && !dateEnd.equals("%") && !dateStart.isEmpty() && !dateEnd.isEmpty()) {
+        if (isDateFilterValid(dateStart) && isDateFilterValid(dateEnd)) {
             Calendar calStart = ViewHelper.parseCalendarFromString(dateStart);
             Calendar calEnd = ViewHelper.parseCalendarFromString(dateEnd);
             return !calStart.after(calEnd);
@@ -514,7 +519,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     }
 
     private long parseToUtcMillis(String dateStr) {
-        if (dateStr == null || dateStr.equals("%") || dateStr.trim().isEmpty()) {
+        if (!isDateFilterValid(dateStr)) {
             return LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
         }
         Calendar cal = ViewHelper.parseCalendarFromString(dateStr);

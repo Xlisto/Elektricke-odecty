@@ -107,13 +107,13 @@ public class ViewHelper {
      */
     public static Calendar parseCalendarFromString(String string) {
         Calendar calendar = Calendar.getInstance();
-        if (string == null || string.trim().isEmpty()) {
+        if (string == null || string.trim().isEmpty() || string.equals("%") || string.startsWith("[")) {
             return calendar;
         }
         try {
             calendar.setTime(Objects.requireNonNull(getSimpleDateFormat().parse(string)));
         } catch (ParseException e) {
-            Log.e(TAG, "Chyba při parsování data ze řetězce: " + string, e);
+            Log.w(TAG, "Chyba při parsování data ze řetězce: " + string);
         }
         return calendar;
     }

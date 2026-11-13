@@ -474,7 +474,19 @@ class PriceListFragment : Fragment() {
         outState.putInt(ARG_ID_FRAGMENT, idFragment)
         outState.putSerializable(FLAG_SIDE, side)
         outState.putLongArray(KEY_SELECTED_IDS, selectedIds.toLongArray())
-        outState.putString(BTN_BACK_TEXT, btnBack.text.toString())
+        if (::btnBack.isInitialized) {
+            outState.putString(BTN_BACK_TEXT, btnBack.text.toString())
+        }
+    }
+
+    /**
+     * Ověří, zda je řetězec filtru data platným datem a ne zástupnou hodnotou.
+     */
+    private fun isDateFilterValid(dateStr: String?): Boolean {
+        return !(dateStr.isNullOrBlank() || dateStr == "%" || dateStr == DataPriceListSource.VSE || dateStr.equals(
+            "[VŠE]",
+            ignoreCase = true
+        ))
     }
 
     /**
@@ -493,7 +505,7 @@ class PriceListFragment : Fragment() {
         var dateEnd = "%"
 
         val filterStart = shpFilter.get(ShPFilter.DATE_START, ShPFilter.DEFAULT)
-        if (filterStart != "%" && filterStart.isNotEmpty()) {
+        if (isDateFilterValid(filterStart)) {
             val calStart = ViewHelper.parseCalendarFromString(filterStart)
             calStart.set(Calendar.HOUR_OF_DAY, 0)
             calStart.set(Calendar.MINUTE, 0)
@@ -503,7 +515,7 @@ class PriceListFragment : Fragment() {
         }
 
         val filterEnd = shpFilter.get(ShPFilter.DATE_END, ShPFilter.DEFAULT)
-        if (filterEnd != "%" && filterEnd.isNotEmpty()) {
+        if (isDateFilterValid(filterEnd)) {
             val calEnd = ViewHelper.parseCalendarFromString(filterEnd)
             calEnd.set(Calendar.HOUR_OF_DAY, 23)
             calEnd.set(Calendar.MINUTE, 59)
@@ -858,20 +870,20 @@ class PriceListFragment : Fragment() {
      * @param taskText Text popisující právě prováděný úkon
      */
     private fun showProgressOverlay(show: Boolean, taskText: String = "") {
-        if (!isAdded) return
+        if (!isAdded || !::overlayPdfProgress.isInitialized) return
         if (show) {
             overlayPdfProgress.visibility = View.VISIBLE
             tvPdfProgressTask.text = taskText
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val blurEffect = RenderEffect.createBlurEffect(15f, 15f, Shader.TileMode.CLAMP)
-                rv.setRenderEffect(blurEffect)
-                cardTopInfo.setRenderEffect(blurEffect)
+                if (::rv.isInitialized) rv.setRenderEffect(blurEffect)
+                if (::cardTopInfo.isInitialized) cardTopInfo.setRenderEffect(blurEffect)
             }
         } else {
             overlayPdfProgress.visibility = View.GONE
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                rv.setRenderEffect(null)
-                cardTopInfo.setRenderEffect(null)
+                if (::rv.isInitialized) rv.setRenderEffect(null)
+                if (::cardTopInfo.isInitialized) cardTopInfo.setRenderEffect(null)
             }
         }
     }
