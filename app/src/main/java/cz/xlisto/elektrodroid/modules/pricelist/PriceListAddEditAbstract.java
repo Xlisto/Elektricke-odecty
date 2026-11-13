@@ -470,30 +470,41 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Nastaví adaptér pro spinner distribučního území.
+     * Vrátí pole názvů distribučních území příslušných pro zadaný rok.
+     * Pro rok >= 2021 se používá "EG.D", pro rok < 2021 se používá "E.ON".
+     *
+     * @param year Rok platnosti ceníku
+     * @return Pole řetězců sazeb s titulkem na indexu 0
+     */
+    public static String[] getDistUzemiArrayForYear(int year) {
+        if (year >= 2021) {
+            return new String[]{"Dist. území", "ČEZ", "EG.D", "PRE"};
+        } else {
+            return new String[]{"Dist. území", "ČEZ", "E.ON", "PRE"};
+        }
+    }
+
+
+    /**
+     * Nastaví adaptér pro spinner distribučního území podle zadaného roku platnosti.
      *
      * <p>
      * Provádí bezpečné nastavení dat a adaptéru na hlavním vlákně:
      * - použije {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()} a vykoná úlohu se zpožděním (1140 ms),
      * - před manipulací s UI ověří {@link #isAdded()} aby se zabránilo {@code IllegalStateException} pokud už fragment není připojen,
-     * - načte pole distribučních území z resources (`R.array.distribucni_uzemi`), vytvoří nový {@code MySpinnerDistributorsAdapter}
+     * - načte pole distribučních území z {@link #getDistUzemiArrayForYear(int)}, vytvoří nový {@link MySpinnerDistributorsAdapter}
      * a nastaví ho do `spDistribucniUzemi`,
      * - obnoví předchozí výběr pomocí `selectionDistUzemi`,
      * - po nastavení adaptéru zavolá {@link #evaluateRegulatedPriceAvailability()} pro aktualizaci stavu UI závislého na dostupnosti regulovaných cen.
-     * <p>
-     * Poznámky:
-     * - Všechny UI operace probíhají na hlavním vlákně.
-     * - Zpoždění slouží k tomu, aby se adaptér nastavil až po dokončení jiných inicializací UI v onViewCreated.
-     * - Metoda nijak neprovádí I/O v pozadí (načítání resources je rychlé) a dbá na bezpečnost vůči životnímu cyklu fragmentu.
      */
     void setDistribucniUzemiAdapter() {
-        // zajistit, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
+        // zajistí, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
         Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
             if (!isAdded())
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
-            arrayDistUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
+            arrayDistUzemi = getDistUzemiArrayForYear(year);
             adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
             spDistribucniUzemi.setAdapter(adapterDistUzemi);
             spDistribucniUzemi.setSelection(selectionDistUzemi, true);
@@ -504,31 +515,29 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Změni spinner podle data na E.ON nebo EG.D. Položek ČEZ a PRE se netýká.
+     * Změní vybranou položku v spinneru distribučního území mezi E.ON a EG.D podle roku platnosti.
      * <p>
-     * Pokud je vybraný index 0, PRE nebo ČEZ, metoda nic nemění.
-     * Pokud je rok 2021 a vyšší a vybraný string položky neodpovídá EG.D,
-     * vybere položku s indexem 3 (EG.D).
-     * Pokud je rok 2020 a nižší a vybraný string položky neodpovídá E.ON,
-     * vybere položku s indexem 2 (E.ON).
+     * Pokud je vybraný rok 2021 a vyšší a není vybráno EG.D, nastaví výběr na EG.D.
+     * Pokud je rok 2020 a nižší a není vybráno E.ON, nastaví výběr na E.ON.
+     * Položek ČEZ a PRE se změna netýká.
      */
     void changeDistributionSpinner() {
-        //nic neměnit, pokud je vybraný index 0, PRE nebo ČEZ
-        if (spDistribucniUzemi.getSelectedItem().toString().equals("PRE") || spDistribucniUzemi.getSelectedItem().toString().equals("ČEZ") || spDistribucniUzemi.getSelectedItemPosition() == 0)
+        if (spDistribucniUzemi.getSelectedItemPosition() <= 0)
             return;
 
-        //po předchozí  podmínce se zde dostanou jen E.ON a EG.D
-        //pokud je rok 2021 a vyšší. Vybraný string položky neodpovídá EG.D, tak se vybere položka s indexem 3. To je EG.D
-        //pokud je rok 2020 a nižší. Vybraný string položky neodpovídá E.ON, tak se vybere položka s indexem 2. To je E.ON
+        String selected = spDistribucniUzemi.getSelectedItem().toString();
+        if (selected.equals("PRE") || selected.equals("ČEZ"))
+            return;
+
         if (year >= 2021) {
-            if (!spDistribucniUzemi.getSelectedItem().toString().equals("EG.D")) {
+            if (!selected.equals("EG.D")) {
+                selectionDistUzemi = 2;
                 setDistribucniUzemiAdapter();
-                selectionDistUzemi = 3;
             }
         } else {
-            if (!spDistribucniUzemi.getSelectedItem().toString().equals("E.ON")) {
-                setDistribucniUzemiAdapter();
+            if (!selected.equals("E.ON")) {
                 selectionDistUzemi = 2;
+                setDistribucniUzemiAdapter();
             }
         }
     }

@@ -495,9 +495,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
-        if (countSubscriptionPoints > 1)
-            menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
+        menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_app));
         return true;
     }
@@ -528,11 +526,30 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     //pro skrytí položky menu
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        //Seznam fragmentů
-        List<String> visibleFragmentsTags = Arrays.asList("BackupFragment", "ExportPriceListFragment",
-                "DashBoardFragment", "ExportPriceListFragment", "ImportPriceListFragment", "MonthlyReadingFragment",
-                "GraphColorFragment", "GraphMonthFragment", "HdoFragment", "InvoiceListFragment",
-                "SubscriptionPointFragment", "GraphColorFragment", "HelpFragment", "AboutMeFragment", "SettingsViewDialogFragment");
+        //Seznam fragmentů, pro které je volba odběrného místa v menu povolená
+        List<String> visibleFragmentsTags = Arrays.asList(
+                "BackupFragment",
+                "GoogleDriveFragment",
+                "ExportPriceListFragment",
+                "ImportPriceListFragment",
+                "DashBoardFragment",
+                "MonthlyReadingFragment",
+                "MonthlyReadingSettingsFragment",
+                "PriceListFragment",
+                "PriceListDetailFragment",
+                "GraphColorFragment",
+                "GraphMonthFragment",
+                "HdoFragment",
+                "HdoSiteFragment",
+                "InvoiceFragment",
+                "InvoiceListFragment",
+                "SubscriptionPointFragment",
+                "PaymentFragment",
+                "HelpFragment",
+                "AboutMeFragment",
+                "SettingsViewDialogFragment",
+                "SettingsFragment"
+        );
         //kontrola, zda-li je některý fragment zobrazen
         boolean isFragmentVisible = false;
         for (String tag : visibleFragmentsTags) {
@@ -542,11 +559,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 break;
             }
         }
-        //zobrazí položku menu, pokud je některý fragment zobrazen
-        int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
-        if (countSubscriptionPoints > 1) {
-            MenuItem item = menu.findItem(0);
-            item.setVisible(isFragmentVisible);
+        //zobrazí položku menu, pokud je některý fragment zobrazen a existuje více než 1 odběrné místo
+        MenuItem item = menu.findItem(0);
+        if (item != null) {
+            int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
+            item.setVisible(countSubscriptionPoints > 1 && isFragmentVisible);
         }
         return super.onPrepareOptionsMenu(menu);
     }

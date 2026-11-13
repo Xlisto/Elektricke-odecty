@@ -20,20 +20,16 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.dialogs.MonthlyReadingFilterDialogFragment;
-import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
-import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
-import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
- * Fragment pro správy možností zobrazení měsíčních odečtů a souvisejících filtrů.
+ * Fragment pro správu možností zobrazení měsíčních odečtů a souvisejících filtrů.
  * <p>
  * Umožňuje uživateli nastavit požadovaný režim zobrazení (Podrobné, Stručné, Krátké),
- * přepínat zohlednění regulovaných cen v r. 2023, vybrat filtrované období a změnit
- * aktivní odběrné místo. Změny se do nastavení a nadřazeného fragmentu aplikují po stisknutí
- * tlačítka POUŽÍT.
+ * přepínat zohlednění regulovaných cen v r. 2023 a vybrat filtrované období. Změny se do nastavení
+ * a nadřazeného fragmentu aplikují po stisknutí tlačítka POUŽÍT.
  */
 public class MonthlyReadingSettingsFragment extends Fragment {
 
@@ -64,9 +60,9 @@ public class MonthlyReadingSettingsFragment extends Fragment {
     private long to = Long.MAX_VALUE;
 
     /**
-     * Textové popisky pro zobrazení vybraného období a odběrného místa.
+     * Textový popisek pro zobrazení vybraného období.
      */
-    private TextView tvPeriodValue, tvSubscriptionPointValue;
+    private TextView tvPeriodValue;
     /**
      * Skupina přepínačů režimu zobrazení.
      */
@@ -108,7 +104,7 @@ public class MonthlyReadingSettingsFragment extends Fragment {
 
 
     /**
-     * Načte počáteční argumenty období a registruje posluchače výsledků pro dialogy filtru a odběrného místa.
+     * Načte počáteční argumenty období a registruje posluchače výsledků pro dialog filtru.
      *
      * @param savedInstanceState uložený stav instance (může být {@code null})
      */
@@ -132,13 +128,6 @@ public class MonthlyReadingSettingsFragment extends Fragment {
                     }
                     updatePeriodLabel();
                 }
-        );
-
-        // Posluchač změny odběrného místa
-        requireActivity().getSupportFragmentManager().setFragmentResultListener(
-                SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
-                this,
-                (requestKey, result) -> updateSubscriptionPointLabel()
         );
     }
 
@@ -175,9 +164,7 @@ public class MonthlyReadingSettingsFragment extends Fragment {
         shPMonthlyReading = new ShPMonthlyReading(requireActivity());
 
         MaterialCardView cardPeriod = view.findViewById(R.id.cardPeriod);
-        MaterialCardView cardSubscriptionPoint = view.findViewById(R.id.cardSubscriptionPoint);
         tvPeriodValue = view.findViewById(R.id.tvPeriodValue);
-        tvSubscriptionPointValue = view.findViewById(R.id.tvSubscriptionPointValue);
         rgDisplayMode = view.findViewById(R.id.rgDisplayMode);
         RadioButton rbDetailed = view.findViewById(R.id.rbDetailed);
         RadioButton rbCondensed = view.findViewById(R.id.rbCondensed);
@@ -198,19 +185,11 @@ public class MonthlyReadingSettingsFragment extends Fragment {
         swRegulPriceSetting.setChecked(shPMonthlyReading.get(ShPMonthlyReading.REGUL_PRICE, false));
 
         updatePeriodLabel();
-        updateSubscriptionPointLabel();
 
         cardPeriod.setOnClickListener(v -> {
             MonthlyReadingFilterDialogFragment dialogFragment = MonthlyReadingFilterDialogFragment.newInstance(from, to);
             dialogFragment.show(requireActivity().getSupportFragmentManager(), "MonthlyReadingFilterDialogFragment");
         });
-
-        cardSubscriptionPoint.setOnClickListener(v ->
-                SubscriptionPointDialogFragment.newInstance().show(
-                        requireActivity().getSupportFragmentManager(),
-                        SubscriptionPointDialogFragment.class.getSimpleName()
-                )
-        );
 
         btnCancel.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
@@ -231,20 +210,6 @@ public class MonthlyReadingSettingsFragment extends Fragment {
                     ViewHelper.convertLongToDate(from),
                     ViewHelper.convertLongToDate(to)
             ));
-        }
-    }
-
-
-    /**
-     * Aktualizuje textový popisek názvu aktuálně vybraného odběrného místa.
-     */
-    private void updateSubscriptionPointLabel() {
-        if (tvSubscriptionPointValue == null) return;
-        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireActivity());
-        if (subscriptionPoint != null) {
-            tvSubscriptionPointValue.setText(subscriptionPoint.getName());
-        } else {
-            tvSubscriptionPointValue.setText(getString(R.string.create_place));
         }
     }
 

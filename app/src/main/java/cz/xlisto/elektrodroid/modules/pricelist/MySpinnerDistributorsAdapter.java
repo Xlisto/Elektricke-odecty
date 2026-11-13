@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -15,9 +16,10 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Adapter pro zobrazení položek v Spinneru distributorů.
- * Umožňuje skrýt první položku v rozbalovacím seznamu a podle roku
- * přepínat viditelnost položek "E.ON" a "EG.D".
+ * Adaptér pro zobrazení položek v Spinneru distributorů a distribučních sazeb.
+ * <p>
+ * Umožňuje skrýt první titulní položku v rozbalovacím seznamu a podle zadaného roku platnosti
+ * dynamicky skrývat nebo zobrazovat položky "E.ON" a "EG.D" bez vytváření prázdných mezer v nabídce.
  */
 public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
@@ -27,12 +29,12 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
 
     /**
-     * Vytvoří nový adapter pro Spinner.
+     * Vytvoří nový adaptér pro Spinner.
      *
-     * @param context  kontext aplikace
-     * @param resource layout resource pro položku Spinneru
-     * @param objects  pole řetězců, které budou zobrazeny
-     * @param year     rok použitý pro rozhodnutí o viditelnosti distributorů
+     * @param context  Kontext aplikace
+     * @param resource Identifikátor rozvržení položky Spinneru
+     * @param objects  Pole řetězců (názvy distribučních území nebo sazeb)
+     * @param year     Rok platnosti ceníku určený pro filtrování viditelnosti distributorů
      */
     public MySpinnerDistributorsAdapter(@NonNull Context context, int resource, @NonNull String[] objects, int year) {
         super(context, resource, objects);
@@ -43,13 +45,12 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
 
     /**
-     * Vrací zobrazení aktuálně vybrané položky (krátká forma Spinneru).
-     * Deleguje tvorbu na {@link #getCustomView(int, View, ViewGroup, boolean, int)}.
+     * Vrátí zobrazení aktuálně vybrané položky ve sbaleném stavu Spinneru.
      *
-     * @param position    pozice položky
-     * @param convertView případné znovupoužitelné View
-     * @param parent      rodičovský ViewGroup
-     * @return View použité pro zobrazení vybrané položky
+     * @param position    Pozice položky
+     * @param convertView Znovupoužitelné zobrazení položky
+     * @param parent      Rodičovské zobrazení {@link ViewGroup}
+     * @return Zobrazení {@link View} pro vybranou položku
      */
     @NonNull
     @Override
@@ -59,13 +60,12 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
 
     /**
-     * Vrací rozbalovací zobrazení položky (drop-down).
-     * Deleguje tvorbu na {@link #getCustomView(int, View, ViewGroup, boolean, int)}.
+     * Vrátí zobrazení položky v rozbalovacím seznamu (drop-down) Spinneru.
      *
-     * @param position    pozice položky v seznamu
-     * @param convertView případné znovupoužitelné View
-     * @param parent      rodičovský ViewGroup
-     * @return View použité v rozbalovacím seznamu
+     * @param position    Pozice položky v seznamu
+     * @param convertView Znovupoužitelné zobrazení položky
+     * @param parent      Rodičovské zobrazení {@link ViewGroup}
+     * @return Zobrazení {@link View} pro položku v rozbalovacím seznamu
      */
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -74,41 +74,35 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
 
     /**
-     * Vytvoří a nakonfiguruje View pro položku Spinneru.
-     * - Pokud je parametr {@code hideFirst} true a pozice je 0, první položka se skryje.
-     * - Podle parametru {@code year} se přepíná viditelnost textů "E.ON" a "EG.D":
-     * od roku 2021 se zobrazuje "EG.D" a skrývá "E.ON", do roku 2020 opačně.
+     * Vytvoří a nakonfiguruje zobrazení pro položku Spinneru.
+     * <p>
+     * Pravidla viditelnosti:
+     * - Pokud je {@code hideFirst} nastaveno na {@code true} a pozice je 0, první titulní položka se skryje a její rozměry se sbalí.
+     * - Pokud je rok 2021 a vyšší, položka "E.ON" se skryje a sbalí.
+     * - Pokud je rok 2020 a nižší, položka "EG.D" se skryje a sbalí.
      *
-     * @param position    pozice položky
-     * @param convertView případné znovupoužitelné View (nevyužívá se zde re-use)
-     * @param parent      rodičovský ViewGroup
-     * @param hideFirst   pokud true, první položka (index 0) bude skryta v dropdownu
-     * @param year        rok použitý pro rozhodnutí o viditelnosti distributorů
-     * @return připravené View pro danou pozici
+     * @param position    Pozice položky v pole {@code objects}
+     * @param convertView Znovupoužitelné zobrazení položky
+     * @param parent      Rodičovské zobrazení {@link ViewGroup}
+     * @param hideFirst   Pokud je {@code true}, skryje titulní položku na pozici 0 v rozbalovací nabídce
+     * @param year        Rok platnosti ceníku
+     * @return Pripravené zobrazení {@link View} pro danou pozici
      */
     public View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent, boolean hideFirst, int year) {
-        //od 2021 zobrazovat EG.D; do 2020 zobrazovat E.ON
-        //E.ON = 2; EG.D = 3
-
-        View v = LayoutInflater.from(parent.getContext()).inflate(resource, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
         TextView tv = v.findViewById(R.id.tvSpinnerItem);
-        String eon = "E.ON";
-        String egd = "EG.D";
-        tv.setText(objects[position]);
-        if (position == 0 && hideFirst) {
-            tv.setVisibility(View.GONE);
-        }
+        String item = objects[position];
+        tv.setText(item);
 
-        if (year >= 2021) {
-            if (objects[position].equals(eon))
-                tv.setVisibility(View.GONE);
-            if (objects[position].equals(egd))
-                tv.setVisibility(View.VISIBLE);
+        boolean isHidden = (position == 0 && hideFirst)
+                || (year >= 2021 && "E.ON".equals(item))
+                || (year < 2021 && "EG.D".equals(item));
+
+        if (isHidden) {
+            v.setVisibility(View.GONE);
+            v.setLayoutParams(new AbsListView.LayoutParams(1, 1));
         } else {
-            if (objects[position].equals(egd))
-                tv.setVisibility(View.GONE);
-            if (objects[position].equals(eon))
-                tv.setVisibility(View.VISIBLE);
+            v.setVisibility(View.VISIBLE);
         }
 
         return v;

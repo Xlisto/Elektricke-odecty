@@ -54,9 +54,9 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Použijte tuto tovární metodu k vytvoření nové instance
-     * tohoto fragmentu pomocí poskytnutých parametrů.
+     * Vytvoří novou instanci fragmentu pro úpravu ceníku se zadaným identifikátorem.
      *
+     * @param id Identifikátor upravovaného ceníku v databázi
      * @return Nová instance fragmentu PriceListEditFragment.
      */
     public static PriceListEditFragment newInstance(long id) {
@@ -68,6 +68,11 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Načte předaný identifikátor ceníku z argumentů fragmentu při jeho vytvoření.
+     *
+     * @param savedInstanceState Uložený stav fragmentu při opětném vytvoření
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Vytvoří a obnoví zobrazení fragmentu a načte příznak prvního načtení ze savedInstanceState.
+     *
+     * @param inflater           Objekt {@link LayoutInflater} pro nafouknutí rozvržení
+     * @param container          Rodičovské zobrazení {@link ViewGroup}
+     * @param savedInstanceState Uložený stav fragmentu při opětném vytvoření
+     * @return Nafouknuté zobrazení fragmentu
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,6 +99,12 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Inicializuje komponenty UI, načte ceník z databáze a nastaví posluchač pro tlačítko uložení.
+     *
+     * @param view               Kořenové zobrazení fragmentu
+     * @param savedInstanceState Uložený stav fragmentu při opětném vytvoření
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -102,6 +121,10 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Při obnovení fragmentu zajistí při prvním načtení inicializaci adaptéru distribučního území,
+     * nastavení výběru spinnerů a kontrolu automatického přepnutí distributora.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -115,6 +138,11 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     }
 
 
+    /**
+     * Uloží stav fragmentu pro zachování příznaku prvního načtení při změně konfigurace.
+     *
+     * @param outState {@link Bundle} pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -206,10 +234,9 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * - Spouští operaci na hlavním vlákně pomocí {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()}
      * a {@code postDelayed(...)} (prodleva 1300 ms).
      * - Před manipulací s UI ověřuje {@link #isAdded()} a kontroluje, že {@code priceListModel}
-     * i cílové spinnery nejsou {@code null}, aby se zabránilo {@link NullPointerException}
-     * nebo {@code IllegalStateException}.
-     * - Načítá pole z resources: {@code R.array.distribucni_uzemi} a {@code R.array.sazby}
-     * a pro nastavení výběru volá pomocnou metodu {@link #compare(String[], android.widget.Spinner, String)}.
+     * i cílové spinnery nejsou {@code null}.
+     * - Načítá dynamické pole distribučních území pro daný rok z {@link PriceListAddEditAbstract#getDistUzemiArrayForYear(int)}
+     * a pole sazeb z {@code R.array.sazby}, a pro nastavení výběru volá pomocnou metodu {@link #compare(String[], android.widget.Spinner, String)}.
      * <p>
      * Poznámky:
      * - Všechny UI operace probíhají na hlavním vlákně.
@@ -224,7 +251,8 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             if (!isAdded())
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
-            String[] distribucniUzemi = getResources().getStringArray(R.array.distribucni_uzemi);
+            int year = priceListModel.getRokPlatnost();
+            String[] distribucniUzemi = PriceListAddEditAbstract.getDistUzemiArrayForYear(year);
             String[] sazby = getResources().getStringArray(R.array.sazby);
 
             compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribuce());
