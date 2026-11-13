@@ -20,7 +20,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 public class EonPdfParser implements PdfPriceListParser {
 
     private static final String FIRMA = "E.ON Energie, a.s.";
-    private static final String DEFAULT_DISTRIBUCE = "EG.D, s.r.o.";
+    private static final String DEFAULT_DISTRIBUCE = "EG.D";
 
 
     /**
@@ -97,12 +97,12 @@ public class EonPdfParser implements PdfPriceListParser {
         // Detekce distribučního území
         String distribuce = DEFAULT_DISTRIBUCE;
         String upperText = cleanText.toUpperCase();
-        if (upperText.contains("PREDISTRIBUCE")) {
-            distribuce = "PREdistribuce, a. s.";
+        if (upperText.contains("PREDISTRIBUCE") || upperText.contains("PRE")) {
+            distribuce = "PRE";
         } else if (upperText.contains("ČEZ DISTRIBUCE") || upperText.contains("CEZ DISTRIBUCE")) {
-            distribuce = "ČEZ Distribuce, a.s.";
-        } else if (upperText.contains("EG.D")) {
-            distribuce = "EG.D, s.r.o.";
+            distribuce = "ČEZ";
+        } else if (upperText.contains("EG.D") || upperText.contains("E.ON")) {
+            distribuce = "EG.D";
         }
 
         // Extrakce obchodních cen bez DPH

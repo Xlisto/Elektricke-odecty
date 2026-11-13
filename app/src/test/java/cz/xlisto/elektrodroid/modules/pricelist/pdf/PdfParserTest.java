@@ -80,7 +80,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("ČEZ Prodej, a.s.", d01.getFirma());
-        assertEquals("ČEZ Distribuce, a.s.", d01.getDistribuce());
+        assertEquals("ČEZ", d01.getDistribuce());
         assertEquals(3190.08, d01.getCenaVT(), 0.01);
         assertEquals(0.0, d01.getCenaNT(), 0.01);
         assertEquals(135.00, d01.getMesicniPlat(), 0.01);
@@ -106,7 +106,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("Pražská energetika, a. s.", d01.getFirma());
-        assertEquals("PREdistribuce, a. s.", d01.getDistribuce());
+        assertEquals("PRE", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());
@@ -128,7 +128,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("E.ON Energie, a.s.", d01.getFirma());
-        assertEquals("EG.D, s.r.o.", d01.getDistribuce());
+        assertEquals("EG.D", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());
@@ -150,7 +150,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("CENTROPOL ENERGY, a. s.", d01.getFirma());
-        assertEquals("ČEZ Distribuce, a.s.", d01.getDistribuce());
+        assertEquals("ČEZ", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());
@@ -172,7 +172,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("MND Energie a.s.", d01.getFirma());
-        assertEquals("EG.D, s.r.o.", d01.getDistribuce());
+        assertEquals("EG.D", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());
@@ -194,7 +194,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("innogy Energie, s.r.o.", d01.getFirma());
-        assertEquals("EG.D, s.r.o.", d01.getDistribuce());
+        assertEquals("EG.D", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());
@@ -216,7 +216,7 @@ public class PdfParserTest {
         PriceListModel d01 = items.get(0);
         assertEquals("D 01d", d01.getSazba());
         assertEquals("Česká Regionální Energetika a.s.", d01.getFirma());
-        assertEquals("PREdistribuce, a. s.", d01.getDistribuce());
+        assertEquals("PRE", d01.getDistribuce());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getPlatnostDO());

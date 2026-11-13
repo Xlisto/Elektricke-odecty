@@ -65,9 +65,9 @@ public class GenericPdfParser implements PdfPriceListParser {
             firma = "Pražská energetika, a. s.";
         else if (pdfText.contains("E.ON") || pdfText.contains("EG.D")) firma = "E.ON Energie, a.s.";
 
-        String distribuce = "ČEZ Distribuce, a.s.";
-        if (pdfText.contains("PREdistribuce")) distribuce = "PREdistribuce, a. s.";
-        else if (pdfText.contains("EG.D")) distribuce = "EG.D, s.r.o.";
+        String distribuce = "ČEZ";
+        if (pdfText.contains("PREdistribuce") || pdfText.contains("PRE")) distribuce = "PRE";
+        else if (pdfText.contains("EG.D") || pdfText.contains("E.ON")) distribuce = "EG.D";
 
         String produkt = "PDF Ceník";
 

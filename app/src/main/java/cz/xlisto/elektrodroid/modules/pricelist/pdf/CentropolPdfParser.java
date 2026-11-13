@@ -20,7 +20,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 public class CentropolPdfParser implements PdfPriceListParser {
 
     private static final String FIRMA = "CENTROPOL ENERGY, a. s.";
-    private static final String DISTRIBUCE = "ČEZ Distribuce, a.s.";
+    private static final String DISTRIBUCE = "ČEZ";
 
 
     @Override
@@ -80,11 +80,11 @@ public class CentropolPdfParser implements PdfPriceListParser {
             if (group1 != null) {
                 String rawDist = group1.toUpperCase();
                 if (rawDist.contains("EG.D") || rawDist.contains("E.ON")) {
-                    distribuce = "EG.D, s.r.o.";
+                    distribuce = "EG.D";
                 } else if (rawDist.contains("PRE")) {
-                    distribuce = "PREdistribuce, a. s.";
+                    distribuce = "PRE";
                 } else if (rawDist.contains("ČEZ") || rawDist.contains("CEZ")) {
-                    distribuce = "ČEZ Distribuce, a.s.";
+                    distribuce = "ČEZ";
                 }
             }
         }
