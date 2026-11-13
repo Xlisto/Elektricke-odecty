@@ -83,4 +83,6 @@
     <color name="dialog_text_primary">#191C20</color>
     <color name="dialog_button_text">#005CBB</color>
     <color name="dialog_button_text_disabled">#74777F</color>
+
+    <color name="progress_overlay_bg">#D9F9F9FF</color>
 </resources>

@@ -1,6 +1,9 @@
 package cz.xlisto.elektrodroid.modules.pricelist
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -164,6 +167,7 @@ class PriceListFragment : Fragment() {
     private var idFragment = 0
 
     private lateinit var rv: RecyclerView
+    private lateinit var cardTopInfo: View
     private lateinit var tvCountPriceItem: TextView
     private lateinit var tvSelectionCount: TextView
     private lateinit var containerSelectionActions: View
@@ -171,6 +175,9 @@ class PriceListFragment : Fragment() {
     private lateinit var btnCompareSelected: Button
     private lateinit var btnBack: Button
     private lateinit var fab: FloatingActionButton
+    private lateinit var overlayPdfProgress: View
+    private lateinit var cardPdfProgress: View
+    private lateinit var tvPdfProgressTask: TextView
     private var addMenuItem: MenuItem? = null
     private var addPdfMenuItem: MenuItem? = null
 
@@ -341,12 +348,16 @@ class PriceListFragment : Fragment() {
         fab = view.findViewById(R.id.fab)
         fab.setOnClickListener { v -> showAddPriceListMenu(v) }
         rv = view.findViewById(R.id.rv_price_list)
+        cardTopInfo = view.findViewById(R.id.cardTopInfo)
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist)
         tvSelectionCount = view.findViewById(R.id.tvSelectionCount)
         containerSelectionActions = view.findViewById(R.id.containerSelectionActions)
         btnClearSelection = view.findViewById(R.id.btnClearSelection)
         btnCompareSelected = view.findViewById(R.id.btnCompareSelected)
         btnBack = view.findViewById(R.id.btnBack)
+        overlayPdfProgress = view.findViewById(R.id.overlayPdfProgress)
+        cardPdfProgress = view.findViewById(R.id.cardPdfProgress)
+        tvPdfProgressTask = view.findViewById(R.id.tvPdfProgressTask)
 
         btnClearSelection.setOnClickListener {
             selectedIds.clear()
@@ -841,20 +852,55 @@ class PriceListFragment : Fragment() {
     }
 
     /**
+     * Zobrazí nebo skryje překryvnou vrstvu s indikátorem průběhu a aplikuje rozostření (blur) na pozadí (API 31+).
+     *
+     * @param show Zda zobrazit indikátor průběhu
+     * @param taskText Text popisující právě prováděný úkon
+     */
+    private fun showProgressOverlay(show: Boolean, taskText: String = "") {
+        if (!isAdded) return
+        if (show) {
+            overlayPdfProgress.visibility = View.VISIBLE
+            tvPdfProgressTask.text = taskText
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val blurEffect = RenderEffect.createBlurEffect(15f, 15f, Shader.TileMode.CLAMP)
+                rv.setRenderEffect(blurEffect)
+                cardTopInfo.setRenderEffect(blurEffect)
+            }
+        } else {
+            overlayPdfProgress.visibility = View.GONE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                rv.setRenderEffect(null)
+                cardTopInfo.setRenderEffect(null)
+            }
+        }
+    }
+
+    /**
      * Načte a rozparsuje vybraný PDF soubor na pozadí a při úspěchu otevře [PdfImportSelectionFragment].
      *
      * @param uri URI vybraného PDF dokumentu
      */
     private fun processSelectedPdf(uri: Uri) {
+        showProgressOverlay(true, getString(R.string.pdf_import_task_extracting))
+
         Executors.newSingleThreadExecutor().execute {
             try {
+                requireActivity().runOnUiThread {
+                    showProgressOverlay(true, getString(R.string.pdf_import_task_extracting))
+                }
                 val pdfText = PdfParserUtils.extractTextFromPdf(requireContext(), uri)
+
+                requireActivity().runOnUiThread {
+                    showProgressOverlay(true, getString(R.string.pdf_import_task_parsing))
+                }
                 val priceLists = PdfParserFactory.parsePdf(requireContext(), pdfText)
 
                 val hasValidPrices =
                     priceLists.any { it.cenaVT > 0 || it.cenaNT > 0 || it.mesicniPlat > 0 }
 
                 requireActivity().runOnUiThread {
+                    showProgressOverlay(false)
                     if (priceLists.isNotEmpty() && hasValidPrices) {
                         val selectionFragment = PdfImportSelectionFragment.newInstance(priceLists)
                         FragmentChange.replace(
@@ -873,6 +919,7 @@ class PriceListFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 requireActivity().runOnUiThread {
+                    showProgressOverlay(false)
                     OwnAlertDialog.showDialog(
                         requireActivity(),
                         getString(R.string.pdf_import_cannot_read_title),

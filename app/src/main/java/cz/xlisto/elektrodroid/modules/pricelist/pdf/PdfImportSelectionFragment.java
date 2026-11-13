@@ -80,8 +80,9 @@ public class PdfImportSelectionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView tvSupplier = view.findViewById(R.id.tvPdfSupplier);
         TextView tvProduct = view.findViewById(R.id.tvPdfProduct);
+        TextView tvSupplier = view.findViewById(R.id.tvPdfSupplier);
+        TextView tvArea = view.findViewById(R.id.tvPdfArea);
         TextView tvValidity = view.findViewById(R.id.tvPdfValidity);
         TextView tvValidityWarning = view.findViewById(R.id.tvPdfValidityWarning);
         Button btnSelectAll = view.findViewById(R.id.btnSelectAll);
@@ -92,12 +93,13 @@ public class PdfImportSelectionFragment extends Fragment {
 
         if (!parsedPriceLists.isEmpty()) {
             PriceListModel first = parsedPriceLists.get(0);
-            tvSupplier.setText(first.getFirma());
             tvProduct.setText(first.getProdukt());
+            tvSupplier.setText(getString(R.string.pdf_import_supplier_label, first.getFirma()));
+            tvArea.setText(getString(R.string.pdf_import_area_label, PdfParserUtils.getFullDistribuceName(first.getDistribuce())));
 
             String validFrom = ViewHelper.convertLongToDate(first.getPlatnostOD());
             String validUntil = ViewHelper.convertLongToDate(first.getPlatnostDO());
-            String validityTitle = getString(R.string.pdf_import_select_rates_title) + " (" + validFrom + " – " + validUntil + ")";
+            String validityTitle = getString(R.string.pdf_import_validity_label, validFrom, validUntil);
             tvValidity.setText(validityTitle);
 
             Calendar cal = Calendar.getInstance();

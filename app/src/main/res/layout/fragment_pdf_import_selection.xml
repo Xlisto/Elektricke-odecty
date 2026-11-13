@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -21,30 +22,40 @@
             android:padding="12dp">
 
             <TextView
-                android:id="@+id/tvPdfSupplier"
+                android:id="@+id/tvPdfProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ČEZ Prodej, a.s."
+                tools:text="Komplet elektřina MAX"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:textColor="?attr/colorPrimary" />
 
             <TextView
-                android:id="@+id/tvPdfProduct"
+                android:id="@+id/tvPdfSupplier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Elektřina na dobu neurčitou"
-                android:textSize="15sp"
+                tools:text="Dodavatel: E.ON Energie, a.s."
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvPdfArea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Distribuční území: EG.D"
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_marginTop="2dp" />
 
             <TextView
                 android:id="@+id/tvPdfValidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Platnost: 01.01.2026 - 31.12.2026"
+                tools:text="Platnost ceníku: 04.11.2026 – 31.12.2026"
                 android:textSize="13sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="4dp" />
 
         </LinearLayout>
 

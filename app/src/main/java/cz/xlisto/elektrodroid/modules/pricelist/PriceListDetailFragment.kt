@@ -10,6 +10,7 @@ import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
+import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserUtils
 import cz.xlisto.elektrodroid.ownview.LabelPriceDetail
 import cz.xlisto.elektrodroid.ownview.ViewHelper
 import cz.xlisto.elektrodroid.utils.DetectScreenMode
@@ -190,7 +191,7 @@ class PriceListDetailFragment : Fragment() {
         ldnProdukt.price = priceList.produkt
         ldnSazba.price = priceList.sazba
         ldnDodavatel.price = priceList.firma
-        ldnUzemi.price = priceList.distribuce
+        ldnUzemi.price = PdfParserUtils.getFullDistribuceName(priceList.distribuce)
 
         ldnVTDodavka.price = df2.format(priceList.cenaVT)
         ldnNTDodavka.price = df2.format(priceList.cenaNT)

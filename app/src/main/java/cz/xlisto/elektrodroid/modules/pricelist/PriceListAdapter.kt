@@ -22,6 +22,7 @@ import cz.xlisto.elektrodroid.format.DecimalFormatHelper
 import cz.xlisto.elektrodroid.models.PriceListModel
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel
+import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserUtils
 import cz.xlisto.elektrodroid.ownview.ViewHelper
 import cz.xlisto.elektrodroid.shp.ShPFilter
 import cz.xlisto.elektrodroid.shp.ShPPriceList
@@ -333,7 +334,7 @@ class PriceListAdapter(
             extraDetailsList.add(priceList.firma)
         }
         if (!isAreaFiltered && !priceList.distribuce.isNullOrBlank()) {
-            extraDetailsList.add(priceList.distribuce)
+            extraDetailsList.add(PdfParserUtils.getFullDistribuceName(priceList.distribuce))
         }
         if (!isSazbaFiltered && !priceList.sazba.isNullOrBlank()) {
             extraDetailsList.add(priceList.sazba)

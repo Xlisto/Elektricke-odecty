@@ -149,7 +149,7 @@ public class PdfParserUtils {
 
 
     /**
-     * Vrátí zkrácený název distribučního území pro ReadRawJSON ("ČEZ", "EG.D", "PRE").
+     * Vrátí zkrácený název distribučního území pro databázi ("ČEZ", "EG.D", "PRE").
      *
      * @param rawDist Původní název distribučního území
      * @return Zkrácený název ("ČEZ", "EG.D" nebo "PRE")
@@ -157,9 +157,28 @@ public class PdfParserUtils {
     public static String getShortDistribuce(String rawDist) {
         if (rawDist == null) return "ČEZ";
         String upper = rawDist.toUpperCase();
-        if (upper.contains("EG.D") || upper.contains("E.ON")) return "EG.D";
+        if (upper.contains("EG.D")) return "EG.D";
         if (upper.contains("PRE")) return "PRE";
-        return "ČEZ";
+        if (upper.contains("ČEZ") || upper.contains("CEZ")) return "ČEZ";
+        if (upper.contains("E.ON") || upper.contains("EON")) return "E.ON";
+        return rawDist;
+    }
+
+
+    /**
+     * Vrátí plný název distribučního území ze zkráceného kódu pro zobrazení v UI.
+     *
+     * @param shortDist Zkrácený kód distribučního území ("ČEZ", "EG.D", "PRE", "E.ON")
+     * @return Plný název distribučního území (např. "PREdistribuce, a. s.")
+     */
+    public static String getFullDistribuceName(String shortDist) {
+        if (shortDist == null) return "";
+        String upper = shortDist.toUpperCase();
+        if (upper.contains("EG.D")) return "EG.D, s.r.o.";
+        if (upper.contains("PRE")) return "PREdistribuce, a. s.";
+        if (upper.contains("ČEZ") || upper.contains("CEZ")) return "ČEZ Distribuce, a.s.";
+        if (upper.contains("E.ON") || upper.contains("EON")) return "E.ON Energie, a.s.";
+        return shortDist;
     }
 
 }

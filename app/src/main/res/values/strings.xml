@@ -620,6 +620,11 @@
     <string name="pdf_import_unsupported_supplier">Zvolený PDF ceník se nepodařilo automaticky rozparsovat. Nepodporovaný formát dodavatele.</string>
     <string name="pdf_import_cannot_read_title">Nemožnost přečíst ceník</string>
     <string name="pdf_import_cannot_read_message">Z vybraného PDF dokumentu se nepodařilo načíst cenové údaje silové elektřiny. Ceník nelze uložit.\n\nDoplňte prosím ceník ručním způsobem.</string>
+    <string name="pdf_import_supplier_label">Dodavatel: %1$s</string>
+    <string name="pdf_import_area_label">Distribuční území: %1$s</string>
+    <string name="pdf_import_validity_label">Platnost ceníku: %1$s – %2$s</string>
+    <string name="pdf_import_task_extracting">Extrahování textu z PDF dokumentu…</string>
+    <string name="pdf_import_task_parsing">Parsování sazeb a regulovaných cen…</string>
     <string name="download_price_lists">Stáhnout ceníky</string>
     <string name="download_price_lists_info">Vyberte dodavatele. V prohlížeči se otevře jeho oficiální stránka s ceníky, kde si můžete stáhnout požadovaný PDF ceník (případně po zvolení distribučního území či období) a následně jej v aplikaci načíst přes tlačítko PDF+.</string>
     <string name="open_in_browser">Otevřít stránku</string>
