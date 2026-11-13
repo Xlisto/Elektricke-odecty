@@ -374,7 +374,7 @@
                         app:label_price_item="@string/jistic_nad_50" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J8"
+                        android:id="@+id/ldn_J10"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -382,15 +382,7 @@
                         app:label_price_item="@string/jistic_nad_63" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J9"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        app:item="@string/kc_mesic"
-                        app:label_price_item="@string/jistic_nad_63_za_A" />
-
-                    <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J10"
+                        android:id="@+id/ldn_J11"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
@@ -398,20 +390,12 @@
                         app:label_price_item="@string/jistic_nad_80" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J11"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        app:item="@string/kc_mesic"
-                        app:label_price_item="@string/jistic_nad_100" />
-
-                    <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J12"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
-                        app:label_price_item="@string/jistic_nad_125" />
+                        app:label_price_item="@string/jistic_nad_100" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J13"
@@ -501,14 +485,14 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         app:item="@string/kc_MWh"
-                        app:label_price_item="@string/dan_elektriny" />
+                        app:label_price_item="@string/dan_z_elektriny" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_DPH"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
-                        app:item="@string/empty"
+                        app:item="@string/procent"
                         app:label_price_item="@string/dph" />
                 </GridLayout>
 

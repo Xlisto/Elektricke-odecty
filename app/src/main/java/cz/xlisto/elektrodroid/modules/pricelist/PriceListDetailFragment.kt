@@ -83,6 +83,7 @@ class PriceListDetailFragment : Fragment() {
     private lateinit var tvPoznamkaPOZE1: TextView
     private lateinit var tvPoznamkaPOZE2: TextView
     private lateinit var tvPoznamkaOTE: TextView
+    private lateinit var containerJistice: android.widget.LinearLayout
 
     private var priceId: Long = -1L
     private var showInFragment = false
@@ -142,6 +143,8 @@ class PriceListDetailFragment : Fragment() {
         ldnJ13 = v.findViewById(R.id.ldn_J13)
         ldnJ14 = v.findViewById(R.id.ldn_J14)
 
+        containerJistice = v.findViewById(R.id.containerJistice)
+
         ldnSystemSluzby = v.findViewById(R.id.ldn_systemove_sluzby)
         ldnOTE = v.findViewById(R.id.ldn_OTE)
         ldnPOZE1 = v.findViewById(R.id.ldn_POZE1)
@@ -200,21 +203,32 @@ class PriceListDetailFragment : Fragment() {
         ldnVTDistribuce.price = df2.format(priceList.distVT)
         ldnNTDistribuce.price = df2.format(priceList.distNT)
 
-        ldnJ0.price = df2.format(priceList.j0)
-        ldnJ1.price = df2.format(priceList.j1)
-        ldnJ2.price = df2.format(priceList.j2)
-        ldnJ3.price = df2.format(priceList.j3)
-        ldnJ4.price = df2.format(priceList.j4)
-        ldnJ5.price = df2.format(priceList.j5)
-        ldnJ6.price = df2.format(priceList.j6)
-        ldnJ7.price = df2.format(priceList.j7)
-        ldnJ8.price = df2.format(priceList.j8)
-        ldnJ9.price = df2.format(priceList.j9)
-        ldnJ10.price = df2.format(priceList.j10)
-        ldnJ11.price = df2.format(priceList.j11)
-        ldnJ12.price = df2.format(priceList.j12)
-        ldnJ13.price = df2.format(priceList.j13)
-        ldnJ14.price = df2.format(priceList.j14)
+        val allBreakers = listOf(
+            ldnJ0 to priceList.j0,
+            ldnJ1 to priceList.j1,
+            ldnJ2 to priceList.j2,
+            ldnJ3 to priceList.j3,
+            ldnJ4 to priceList.j4,
+            ldnJ5 to priceList.j5,
+            ldnJ6 to priceList.j6,
+            ldnJ7 to priceList.j7,
+            ldnJ10 to priceList.j10,
+            ldnJ11 to priceList.j11,
+            ldnJ12 to priceList.j12,
+            ldnJ13 to priceList.j13,
+            ldnJ14 to priceList.j14,
+            ldnJ8 to priceList.j8,
+            ldnJ9 to priceList.j9
+        )
+
+        val activeViews = allBreakers
+            .filter { it.second != 0.0 }
+            .map { (view, value) ->
+                view.price = df2.format(value)
+                view
+            }
+
+        setupBreakersGrid(containerJistice, activeViews)
 
         ldnSystemSluzby.price = df2.format(priceList.systemSluzby)
         ldnOTE.price = df2.format(priceList.cinnost)
@@ -223,33 +237,6 @@ class PriceListDetailFragment : Fragment() {
 
         ldnDan.price = df2.format(priceList.dan)
         ldnDPH.price = df2.format(priceList.dph)
-
-        // Skrytí NT u jednotarifního ceníku
-        if (priceList.distNT == 0.0) {
-            ldnNTDistribuce.visibility = View.GONE
-            ldnNTDodavka.visibility = View.GONE
-        } else {
-            ldnNTDistribuce.visibility = View.VISIBLE
-            ldnNTDodavka.visibility = View.VISIBLE
-        }
-
-        if (priceList.j10 == 0.0) {
-            // Méně hodnot jističů
-            ldnJ10.visibility = View.GONE
-            ldnJ11.visibility = View.GONE
-            ldnJ12.visibility = View.GONE
-            ldnJ13.visibility = View.GONE
-            ldnJ14.visibility = View.GONE
-            ldnJ8.visibility = View.VISIBLE
-        } else {
-            // Více hodnot jističů
-            ldnJ10.visibility = View.VISIBLE
-            ldnJ11.visibility = View.VISIBLE
-            ldnJ12.visibility = View.VISIBLE
-            ldnJ13.visibility = View.VISIBLE
-            ldnJ14.visibility = View.VISIBLE
-            ldnJ8.visibility = View.GONE
-        }
 
         val calendar = ViewHelper.parseCalendarFromString(ldnDatum.price)
         val year = calendar[Calendar.YEAR]
@@ -333,6 +320,65 @@ class PriceListDetailFragment : Fragment() {
             tv.text = s
         } else {
             tv.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Dynamicky uspořádá seznam aktivních prvků jističů do dvou sloupců bez prázdných mezer.
+     */
+    private fun setupBreakersGrid(
+        container: android.widget.LinearLayout,
+        visibleItems: List<LabelPriceDetail>
+    ) {
+        container.removeAllViews()
+        val context = container.context
+        val density = context.resources.displayMetrics.density
+        val margin2dp = (2 * density).toInt()
+
+        for (i in visibleItems.indices step 2) {
+            val rowLayout = android.widget.LinearLayout(context).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = margin2dp
+                    bottomMargin = margin2dp
+                }
+                orientation = android.widget.LinearLayout.HORIZONTAL
+            }
+
+            val item1 = visibleItems[i]
+            (item1.parent as? ViewGroup)?.removeView(item1)
+            item1.layoutParams = android.widget.LinearLayout.LayoutParams(
+                0,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+            item1.visibility = View.VISIBLE
+            rowLayout.addView(item1)
+
+            if (i + 1 < visibleItems.size) {
+                val item2 = visibleItems[i + 1]
+                (item2.parent as? ViewGroup)?.removeView(item2)
+                item2.layoutParams = android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                )
+                item2.visibility = View.VISIBLE
+                rowLayout.addView(item2)
+            } else {
+                val emptyView = View(context).apply {
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                }
+                rowLayout.addView(emptyView)
+            }
+
+            container.addView(rowLayout)
         }
     }
 }

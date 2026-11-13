@@ -269,133 +269,125 @@
                     android:textColor="?attr/colorPrimary"
                     android:textStyle="bold" />
 
-                <!-- Mřížka jističů po 2 v řádku -->
-                <GridLayout
+                <!-- Skrytý fond prvků jističů pro inicializaci v kódu -->
+                <LinearLayout
+                    android:id="@+id/poolJistice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:orientation="horizontal">
+                    android:visibility="gone">
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J0"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_do_10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J1"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_10" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J2"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_16" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J3"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_20" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J4"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_25" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J5"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_32" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J6"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_40" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                         android:id="@+id/ldn_J7"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_50" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J8"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J10"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_63" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J9"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J11"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        app:item="@string/kc_mesic"
-                        app:label_price_item="@string/jistic_nad_63_za_A" />
-
-                    <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J10"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_80" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J11"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J12"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_100" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J12"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J13"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
                         app:item="@string/kc_mesic"
                         app:label_price_item="@string/jistic_nad_125" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J13"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J14"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        app:item="@string/kc_mesic"
+                        app:item="@string/kc_1A"
                         app:label_price_item="@string/jistic_nad_160" />
 
                     <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
-                        android:id="@+id/ldn_J14"
-                        android:layout_width="0dp"
+                        android:id="@+id/ldn_J8"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        app:item="@string/kc_mesic"
-                        app:label_price_item="@string/jistic_nad_160" />
-                </GridLayout>
+                        app:item="@string/kc_1A"
+                        app:label_price_item="@string/jistic_nad_63_za_A" />
+
+                    <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
+                        android:id="@+id/ldn_J9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:item="@string/kc_1A"
+                        app:label_price_item="@string/jistic_nad_25_za_A" />
+                </LinearLayout>
+
+                <!-- Dynamicky generovaná mřížka aktivních jističů -->
+                <LinearLayout
+                    android:id="@+id/containerJistice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
