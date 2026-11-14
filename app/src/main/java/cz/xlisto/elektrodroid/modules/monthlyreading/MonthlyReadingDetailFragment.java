@@ -620,6 +620,20 @@ public class MonthlyReadingDetailFragment extends Fragment {
         double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
         double cinnost = Math.max(priceList.getCinnost(), priceList.getOte());
 
+        int year = priceList.getRokPlatnost();
+        if (monthlyReadingCurrently != null) {
+            Calendar calendarStart = Calendar.getInstance();
+            calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
+            year = calendarStart.get(Calendar.YEAR);
+        }
+
+        double pozeVal = priceList.getPoze2();
+        if (year < PriceListModel.NEW_POZE_YEAR) {
+            pozeVal = priceList.getOze();
+        } else if (year == 2026) {
+            pozeVal = priceList.getPoze1();
+        }
+
         priceArray = new double[]{
                 priceList.getCenaVT(),
                 priceList.getDistVT(),
@@ -635,18 +649,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 jistic,
                 cinnost,
                 priceList.getMesicniPlat() + jistic + cinnost,
-                priceList.getPoze2()
+                pozeVal
         };
-
-        // Kontrola roku data aktuálního měsíčního odečtu a případná korekce položky "poze".
-        // Pokud nemáme ještě načtený `monthlyReadingCurrently`, vynecháme kontrolu a ponecháme výchozí hodnotu (poze2).
-        if (monthlyReadingCurrently != null) {
-            Calendar calendarStart = Calendar.getInstance();
-            calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
-            int year = calendarStart.get(Calendar.YEAR);
-            if (year == 2026)
-                priceArray[14] = priceList.getPoze1();
-        }
     }
 
 
