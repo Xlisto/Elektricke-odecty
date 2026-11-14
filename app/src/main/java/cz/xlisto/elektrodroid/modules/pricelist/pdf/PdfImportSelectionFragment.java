@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -124,10 +125,32 @@ public class PdfImportSelectionFragment extends Fragment {
                 warningText.append(getString(R.string.pdf_import_missing_regulated_warning, year, first.getDistribuce()));
             }
             if (!hasMissingCommercial && hasRegulatedData) {
-                warningText.append(getString(R.string.pdf_import_validity_warning, year));
+                if (PdfParserUtils.is2025BeforeSeptember(first.getPlatnostOD())) {
+                    warningText.append(getString(R.string.pdf_import_validity_warning_august, year));
+                } else {
+                    warningText.append(getString(R.string.pdf_import_validity_warning, year));
+                }
             }
 
             tvValidityWarning.setText(warningText.toString());
+        }
+
+        View card2025Split = view.findViewById(R.id.card2025Split);
+        CheckBox cb2025Split = view.findViewById(R.id.cb2025Split);
+
+        boolean has2025PreSep = false;
+        for (PriceListModel model : parsedPriceLists) {
+            if (PdfParserUtils.is2025BeforeSeptember(model.getPlatnostOD())) {
+                has2025PreSep = true;
+                break;
+            }
+        }
+
+        if (has2025PreSep) {
+            card2025Split.setVisibility(View.VISIBLE);
+            cb2025Split.setOnCheckedChangeListener((buttonView, isChecked) -> filterAndDisplayRates(isChecked));
+        } else {
+            card2025Split.setVisibility(View.GONE);
         }
 
         adapter = new PdfRateSelectionAdapter(parsedPriceLists);
@@ -140,6 +163,29 @@ public class PdfImportSelectionFragment extends Fragment {
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
         btnSave.setOnClickListener(v -> saveSelectedPriceLists());
+    }
+
+
+    private void filterAndDisplayRates(boolean include2ndPeriod) {
+        if (include2ndPeriod) {
+            adapter.updateItems(parsedPriceLists);
+        } else {
+            List<PriceListModel> filtered = new ArrayList<>();
+            for (PriceListModel model : parsedPriceLists) {
+                if (!is2ndPeriod2025(model)) {
+                    filtered.add(model);
+                }
+            }
+            adapter.updateItems(filtered);
+        }
+    }
+
+
+    private boolean is2ndPeriod2025(PriceListModel model) {
+        if (model == null || model.getPlatnostOD() <= 0) return false;
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(model.getPlatnostOD());
+        return cal.get(Calendar.YEAR) == 2025 && cal.get(Calendar.MONTH) >= Calendar.SEPTEMBER;
     }
 
 

@@ -19,6 +19,7 @@ import java.util.Set;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.PriceListModel;
+import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
 /**
@@ -77,7 +78,9 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
         holder.cbSelectRate.setOnCheckedChangeListener(null);
         holder.cbSelectRate.setChecked(selectedIndices.contains(position));
 
-        String title = item.getSazba() + " - " + item.getRada();
+        String validFrom = ViewHelper.convertLongToDate(item.getPlatnostOD());
+        String validUntil = ViewHelper.convertLongToDate(item.getPlatnostDO());
+        String title = item.getSazba() + " - " + item.getRada() + " (" + validFrom + " – " + validUntil + ")";
         holder.tvRateName.setText(title);
 
         String info = String.format(Locale.US, "VT: %s Kč | NT: %s Kč | Plat: %s Kč/měs",
@@ -150,6 +153,24 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
             }
         }
         return selected;
+    }
+
+
+    /**
+     * Aktualizuje seznam ceníkových položek a znovunačte zaškrtnuté indexy.
+     *
+     * @param newItems Nový seznam položek
+     */
+    public void updateItems(List<PriceListModel> newItems) {
+        this.items.clear();
+        if (newItems != null) {
+            this.items.addAll(newItems);
+        }
+        this.selectedIndices.clear();
+        for (int i = 0; i < this.items.size(); i++) {
+            selectedIndices.add(i);
+        }
+        notifyDataSetChanged();
     }
 
 

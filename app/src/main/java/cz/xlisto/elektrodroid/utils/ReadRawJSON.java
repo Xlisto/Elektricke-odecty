@@ -27,7 +27,7 @@ public class ReadRawJSON {
     private final static String TAG = "ReadRawJSON";
     private final Context context;
     private int year;
-    private Calendar startCalBtn, endCalBtn;
+    private Calendar startCalBtn;
     private String distUzemi, sazba;
     private final PriceListModel priceListModel;
     private static final String ROK = "rok";
@@ -98,7 +98,6 @@ public class ReadRawJSON {
     public PriceListModel read(Calendar startCal, Calendar endCal, String distUzemi, String sazba) {
         this.year = new DateUtil(startCal).getYear();
         this.startCalBtn = startCal;
-        this.endCalBtn = endCal;
         this.distUzemi = distUzemi;
         this.sazba = sazba;
         String distribuce = readRaw(R.raw.distribuce);
@@ -284,7 +283,12 @@ public class ReadRawJSON {
                     endCalJson.set(Calendar.MONTH, parseDate(endDate)[1]);
                     startCalJson.set(Calendar.YEAR, year);
                     endCalJson.set(Calendar.YEAR, year);
-                    if (!startCalBtn.before(startCalJson) && !endCalBtn.after(endCalJson)) {
+                    endCalJson.set(Calendar.HOUR_OF_DAY, 23);
+                    endCalJson.set(Calendar.MINUTE, 59);
+                    endCalJson.set(Calendar.SECOND, 59);
+                    endCalJson.set(Calendar.MILLISECOND, 999);
+
+                    if (!startCalBtn.before(startCalJson) && !startCalBtn.after(endCalJson)) {
                         // přiřazení hodnot z periody (bezpečně pomocí opt*)
                         priceListModel.setSystemSluzby(otherPriceObj.optDouble(SYSTEM_SLUZBY, priceListModel.getSystemSluzby()));
                         priceListModel.setCinnost(otherPriceObj.optDouble(CINNOST, priceListModel.getCinnost()));

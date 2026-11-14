@@ -258,6 +258,38 @@ public class PdfParserTest {
 
 
     @Test
+    public void test2025PreSeptemberSplit() {
+        String eon2025Text = "E.ON Energie, a.s.\nEG.D, s.r.o.\nCeník Komplet elektřina MAX bez závazku\nObchodní cena za elektřinu platná od 1. 1. 2025\n";
+        EonPdfParser parser = new EonPdfParser();
+        List<PriceListModel> items = parser.parse(null, eon2025Text);
+        assertNotNull(items);
+        assertEquals("Ceník z počátku roku 2025 by měl generovat 20 položek (10 sazeb × 2 období)", 20, items.size());
+
+        PriceListModel period1 = items.get(0);
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTimeInMillis(period1.getPlatnostDO());
+        assertEquals(2025, cal1.get(Calendar.YEAR));
+        assertEquals(Calendar.AUGUST, cal1.get(Calendar.MONTH));
+        assertEquals(31, cal1.get(Calendar.DAY_OF_MONTH));
+        assertEquals(10.84, period1.getCinnost(), 0.01);
+
+        PriceListModel period2 = items.get(1);
+        Calendar cal2Start = Calendar.getInstance();
+        cal2Start.setTimeInMillis(period2.getPlatnostOD());
+        assertEquals(2025, cal2Start.get(Calendar.YEAR));
+        assertEquals(Calendar.SEPTEMBER, cal2Start.get(Calendar.MONTH));
+        assertEquals(1, cal2Start.get(Calendar.DAY_OF_MONTH));
+
+        Calendar cal2End = Calendar.getInstance();
+        cal2End.setTimeInMillis(period2.getPlatnostDO());
+        assertEquals(2025, cal2End.get(Calendar.YEAR));
+        assertEquals(Calendar.DECEMBER, cal2End.get(Calendar.MONTH));
+        assertEquals(31, cal2End.get(Calendar.DAY_OF_MONTH));
+        assertEquals(12.45, period2.getCinnost(), 0.01);
+    }
+
+
+    @Test
     public void testCalculateEndOfYear() {
         long startMillis = PdfParserUtils.parseDateToMillis("1.10.2026");
         long endOfYearMillis = PdfParserUtils.calculateEndOfYear(startMillis);

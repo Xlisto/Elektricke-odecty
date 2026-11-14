@@ -68,8 +68,11 @@ public class MndPdfParser implements PdfPriceListParser {
             }
         }
 
-        // Maximální platnost do konce aktuálního roku
-        long platnostDO = PdfParserUtils.calculateEndOfYear(platnostOD > 0 ? platnostOD : System.currentTimeMillis());
+        // Rozpoznání zda jde o 2025 s počátkem před zářím
+        boolean is2025Split = PdfParserUtils.is2025BeforeSeptember(platnostOD);
+        long platnostDO = is2025Split
+                ? PdfParserUtils.calculateEndOfAugust2025()
+                : PdfParserUtils.calculateEndOfYear(platnostOD > 0 ? platnostOD : System.currentTimeMillis());
 
         // Detekce distribučního území z PDF
         String distribuce = DISTRIBUCE;
@@ -143,7 +146,7 @@ public class MndPdfParser implements PdfPriceListParser {
                     sazba,
                     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, // regulované ceny načítány dynamicky z raw JSON
                     0.0, // systémové služby bez DPH
-                    0.0, // činnost operátora bez DPH
+                    is2025Split ? 10.84 : 0.0, // činnost operátora bez DPH pro 1. období 2025
                     0.0, // POZE1
                     0.0, // POZE2
                     0.0, 0.0,
@@ -157,6 +160,11 @@ public class MndPdfParser implements PdfPriceListParser {
             );
 
             result.add(model);
+
+            if (is2025Split) {
+                PriceListModel model2 = PdfParserUtils.create2025SecondPeriodModel(model);
+                result.add(model2);
+            }
         }
 
         return result;

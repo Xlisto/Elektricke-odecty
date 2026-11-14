@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cz.xlisto.elektrodroid.models.PriceListModel;
+
 
 /**
  * Pomocné utility pro čtení a parsování PDF ceníků.
@@ -179,6 +181,87 @@ public class PdfParserUtils {
         if (upper.contains("ČEZ") || upper.contains("CEZ")) return "ČEZ Distribuce, a.s.";
         if (upper.contains("E.ON") || upper.contains("EON")) return "E.ON Energie, a.s.";
         return shortDist;
+    }
+
+
+    /**
+     * Vypočítá milisekundy pro konec 1. období roku 2025 (31. 8. 2025 23:59:59.999).
+     *
+     * @return Milisekundy konce srpna 2025
+     */
+    public static long calculateEndOfAugust2025() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2025);
+        cal.set(Calendar.MONTH, Calendar.AUGUST);
+        cal.set(Calendar.DAY_OF_MONTH, 31);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        return cal.getTimeInMillis();
+    }
+
+
+    /**
+     * Zjistí, zda datum v milisekundách spadá do roku 2025 a je před 1. 9. 2025.
+     *
+     * @param startMillis Datum v milisekundách
+     * @return true pokud je datum v roce 2025 a před 1. zářím 2025
+     */
+    public static boolean is2025BeforeSeptember(long startMillis) {
+        if (startMillis <= 0) return false;
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(startMillis);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        return year == 2025 && month < Calendar.SEPTEMBER;
+    }
+
+
+    /**
+     * Vytvoří duplikát ceníkového modelu pro 2. období roku 2025 (01. 09. 2025 – 31. 12. 2025).
+     *
+     * @param model Model pro 1. období roku 2025
+     * @return Nový model {@link PriceListModel} pro 2. období roku 2025 s aktualizovanou cenou za provoz nesíťové infrastruktury
+     */
+    public static PriceListModel create2025SecondPeriodModel(PriceListModel model) {
+        Calendar calStart = Calendar.getInstance();
+        calStart.set(Calendar.YEAR, 2025);
+        calStart.set(Calendar.MONTH, Calendar.SEPTEMBER);
+        calStart.set(Calendar.DAY_OF_MONTH, 1);
+        calStart.set(Calendar.HOUR_OF_DAY, 0);
+        calStart.set(Calendar.MINUTE, 0);
+        calStart.set(Calendar.SECOND, 0);
+        calStart.set(Calendar.MILLISECOND, 0);
+
+        long start2 = calStart.getTimeInMillis();
+        long end2 = calculateEndOfYear(start2);
+
+        return new PriceListModel(
+                0L,
+                model.getRada(),
+                model.getProdukt(),
+                model.getFirma(),
+                model.getCenaVT(),
+                model.getCenaNT(),
+                model.getMesicniPlat(),
+                model.getDan(),
+                model.getSazba(),
+                model.getDistVT(), model.getDistNT(), model.getJ0(), model.getJ1(), model.getJ2(), model.getJ3(), model.getJ4(), model.getJ5(), model.getJ6(), model.getJ7(), model.getJ8(), model.getJ9(), model.getJ10(), model.getJ11(), model.getJ12(), model.getJ13(), model.getJ14(),
+                model.getSystemSluzby(),
+                12.45, // 2. období 2025: činnost operátora/provoz nesíťové infrastruktury bez DPH (12,45 Kč)
+                model.getPoze1(),
+                model.getPoze2(),
+                model.getOze(),
+                model.getOte(),
+                start2,
+                end2,
+                model.getDph(),
+                model.getDistribuce(),
+                model.getAutor(),
+                model.getDatumVytvoreni(),
+                model.getEmail()
+        );
     }
 
 }

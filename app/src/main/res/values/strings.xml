@@ -609,6 +609,7 @@
     <string name="add_monthly_price_list">Přidat ceník</string>
     <string name="add_pdf_price_list">Přidat ceník z PDF</string>
     <string name="pdf_import_validity_warning">Maximální platnost ceníku byla nastavena do 31. 12. %1$d, protože od nového roku platí jiné regulované ceny.</string>
+    <string name="pdf_import_validity_warning_august">Maximální platnost 1. období ceníku byla nastavena do 31. 8. %1$d, protože od 1. 9. platí jiné regulované ceny za provoz nesíťové infrastruktury.</string>
     <string name="pdf_import_missing_regulated_warning">Upozornění: Pro rok %1$d a distribuční území %2$s nebyly v databázi aplikace (jistice.json, distribuce.json, ostatni.json) nalezeny odpovídající regulované ceny.</string>
     <string name="pdf_import_missing_commercial_warning">Upozornění: U některých sazeb se nepodařilo z PDF automaticky načíst obchodní ceny silové elektřiny. Po uložení zkontrolujte a doplňte ceny v ceníku ručně.</string>
     <string name="pdf_import_select_rates_title">Výběr sazeb k uložení</string>
@@ -623,6 +624,7 @@
     <string name="pdf_import_supplier_label">Dodavatel: %1$s</string>
     <string name="pdf_import_area_label">Distribuční území: %1$s</string>
     <string name="pdf_import_validity_label">Platnost ceníku: %1$s – %2$s</string>
+    <string name="pdf_import_2025_split_checkbox">Vytvořit i ceníky pro 2. období roku 2025 (01. 09. 2025 – 31. 12. 2025) s novou cenou za provoz nesíťové infrastruktury (12,45 Kč bez DPH)</string>
     <string name="pdf_import_task_extracting">Extrahování textu z PDF dokumentu…</string>
     <string name="pdf_import_task_parsing">Parsování sazeb a regulovaných cen…</string>
     <string name="download_price_lists">Stáhnout ceníky</string>

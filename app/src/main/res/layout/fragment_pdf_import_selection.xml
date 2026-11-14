@@ -100,6 +100,29 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- 2025 Mid-Year Split Card (Visible only for 2025 pre-September price lists) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card2025Split"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        app:cardCornerRadius="8dp">
+
+        <CheckBox
+            android:id="@+id/cb2025Split"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:checked="true"
+            android:text="@string/pdf_import_2025_split_checkbox"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:textSize="12sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
     <!-- Selection Controls -->
     <LinearLayout
         android:layout_width="match_parent"
