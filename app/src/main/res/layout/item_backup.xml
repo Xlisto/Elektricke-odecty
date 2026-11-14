@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rlBackupItem"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -39,49 +40,61 @@
 
     <LinearLayout
         android:id="@+id/lnButtonsBackup"
-        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTypeBackup"
-        android:clickable="false"
         android:orientation="horizontal"
         android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRestoreBackup"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
-            android:clickable="false"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/restore"
-            android:textColor="@color/primary_text_button_color" />
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUploadBackup"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
-            android:clickable="false"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/google_drive"
-            android:textColor="@color/primary_text_button_color" />
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteBackup"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
             android:layout_weight="1"
-            android:clickable="false"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:text="@string/delete"
-            android:textColor="@color/primary_text_button_color" />
+            android:textColor="?attr/colorError"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeTextType="uniform"
+            app:strokeColor="?attr/colorError" />
     </LinearLayout>
 
     <TextView
