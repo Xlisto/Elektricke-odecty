@@ -1,197 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="6dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvDateMonthDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvDateScopeMonthDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tvDateMonthDetail"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/tvDateMonthDetail"
-            android:layout_marginEnd="15dp" />
-
-        <RelativeLayout
-            android:id="@+id/rlConsuptionMonthDetail"
+        <!-- KARTA 1: Datum a období odečtu -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tvDateScopeMonthDetail"
-            android:layout_margin="10dp"
-            android:background="@drawable/shape_monthly_reading_gray">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
 
-            <TableLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shape_item">
+                android:orientation="horizontal"
+                android:padding="12dp">
 
-                <TableRow
+                <TextView
+                    android:id="@+id/tvDateMonthDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?attr/colorPrimary"
+                    android:textStyle="bold"
+                    tools:text="01.07.2026" />
+
+                <TextView
+                    android:id="@+id/tvDateScopeMonthDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="01.06.2026 - 30.06.2026 (1.0)" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- KARTA 2: Stavy měřidel a spotřeba -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
+
+            <RelativeLayout
+                android:id="@+id/rlConsuptionMonthDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
+                <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold" />
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/meric"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/meric"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/meric"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold" />
 
-                    <TextView
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/meric"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/rozdil"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textStyle="bold" />
+                    </TableRow>
+
+                    <TableRow
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/rozdil"
-                        android:textStyle="bold" />
-                </TableRow>
+                        android:layout_marginTop="4dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tvVTMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/vt"
+                            android:textColor="?attr/colorOnSurface" />
 
-                    <TextView
-                        android:id="@+id/tvVTMonthDetail"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tvVTMetersStartMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:id="@+id/tvVTMetersDashMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="center"
+                            android:text="@string/dash"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tvVTMetersEndMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <TextView
+                            android:id="@+id/tvVTConsuptionMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/vt" />
+                        android:layout_marginTop="2dp">
 
-                    <TextView
-                        android:id="@+id/tvVTMetersStartMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
+                        <TextView
+                            android:id="@+id/tvNTMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/nt"
+                            android:textColor="?attr/colorOnSurface" />
 
-                    <TextView
-                        android:id="@+id/tvVTMetersDashMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center"
-                        android:text="@string/dash" />
+                        <TextView
+                            android:id="@+id/tvNTMetersStartMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
 
-                    <TextView
-                        android:id="@+id/tvVTMetersEndMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
+                        <TextView
+                            android:id="@+id/tvNTMetersDashMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="center"
+                            android:text="@string/dash"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
-                    <TextView
-                        android:id="@+id/tvVTConsuptionMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
-                </TableRow>
+                        <TextView
+                            android:id="@+id/tvNTMetersEndMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tvNTConsuptionMonthDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="end"
+                            android:textColor="?attr/colorOnSurface" />
+                    </TableRow>
 
-                    <TextView
-                        android:id="@+id/tvNTMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:text="@string/nt" />
+                </TableLayout>
 
-                    <TextView
-                        android:id="@+id/tvNTMetersStartMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/tvNTMetersDashMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center"
-                        android:text="@string/dash" />
+        </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/tvNTMetersEndMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:id="@+id/tvNTConsuptionMonthDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginStart="5dp"
-                        android:gravity="end" />
-                </TableRow>
-
-            </TableLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rlPriceMonthDetail"
+        <!-- KARTA 3: Cenový rozpis a kalkulace -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/rlConsuptionMonthDetail"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/shape_monthly_reading_gray">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
 
-            <TableLayout
-                android:id="@+id/tvTableVTMonthDetail"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/rlPriceMonthDetail"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/shape_item" />
+                android:padding="8dp">
 
-        </RelativeLayout>
+                <TableLayout
+                    android:id="@+id/tvTableVTMonthDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
+            </RelativeLayout>
 
+        </com.google.android.material.card.MaterialCardView>
 
+    </LinearLayout>
 
-    </RelativeLayout>
-
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
