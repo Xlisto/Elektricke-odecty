@@ -23,9 +23,9 @@ import cz.xlisto.elektrodroid.R;
  */
 public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
 
-    final int resource;
-    final String[] objects;
-    final int year;
+    private final int resource;
+    private final String[] objects;
+    private final int year;
 
 
     /**
@@ -67,6 +67,7 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
      * @param parent      Rodičovské zobrazení {@link ViewGroup}
      * @return Zobrazení {@link View} pro položku v rozbalovacím seznamu
      */
+    @NonNull
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         return getCustomView(position, convertView, parent, true, year);
@@ -86,10 +87,13 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
      * @param parent      Rodičovské zobrazení {@link ViewGroup}
      * @param hideFirst   Pokud je {@code true}, skryje titulní položku na pozici 0 v rozbalovací nabídce
      * @param year        Rok platnosti ceníku
-     * @return Pripravené zobrazení {@link View} pro danou pozici
+     * @return Připravené zobrazení {@link View} pro danou pozici
      */
+    @NonNull
     public View getCustomView(int position, @Nullable View convertView, @NonNull ViewGroup parent, boolean hideFirst, int year) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+        View v = (convertView != null)
+                ? convertView
+                : LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
         TextView tv = v.findViewById(R.id.tvSpinnerItem);
         String item = objects[position];
         tv.setText(item);
@@ -103,6 +107,9 @@ public class MySpinnerDistributorsAdapter extends ArrayAdapter<String> {
             v.setLayoutParams(new AbsListView.LayoutParams(1, 1));
         } else {
             v.setVisibility(View.VISIBLE);
+            v.setLayoutParams(new AbsListView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
         }
 
         return v;
