@@ -190,9 +190,9 @@ public class ImportPriceListAdapter extends RecyclerView.Adapter<ImportPriceList
         Runnable runnable = () -> {
             ArrayList<PriceListModel> priceList = (new JSONPriceList().getPriceList(context, documentFile));
             if (!priceList.isEmpty()) {
-                holder.tvName.setText(priceList.get(0).getRada());
-                holder.tvTyp.setText(context.getResources().getString(R.string.import_price_list_typ1, priceList.get(0).getFirma(), priceList.get(0).getDistribuce()));
-                holder.tvTyp2.setText(context.getResources().getString(R.string.import_price_list_typ2, priceList.size(), ViewHelper.convertLongToDate(priceList.get(0).getPlatnostOD())));
+                holder.tvName.setText(priceList.get(0).getSeries());
+                holder.tvTyp.setText(context.getResources().getString(R.string.import_price_list_typ1, priceList.get(0).getCompany(), priceList.get(0).getDistribution()));
+                holder.tvTyp2.setText(context.getResources().getString(R.string.import_price_list_typ2, priceList.size(), ViewHelper.convertLongToDate(priceList.get(0).getValidFrom())));
             }
         };
         runnable.run();

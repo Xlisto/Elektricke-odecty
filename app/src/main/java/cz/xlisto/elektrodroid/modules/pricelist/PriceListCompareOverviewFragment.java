@@ -174,17 +174,17 @@ public class PriceListCompareOverviewFragment extends Fragment {
                 card.setStrokeWidth((int) (2 * getResources().getDisplayMetrics().density));
             } else {
                 PriceListComparisonResult cheapest = results.get(0);
-                boolean sameSeries = res.getPriceList().getProdukt().equalsIgnoreCase(cheapest.getPriceList().getProdukt())
-                        || (res.getPriceList().getRada() != null && res.getPriceList().getRada().equalsIgnoreCase(cheapest.getPriceList().getRada()));
+                boolean sameSeries = res.getPriceList().getProduct().equalsIgnoreCase(cheapest.getPriceList().getProduct())
+                        || (res.getPriceList().getSeries() != null && res.getPriceList().getSeries().equalsIgnoreCase(cheapest.getPriceList().getSeries()));
 
                 String diffText;
-                if (sameSeries && !cheapest.getPriceList().getPlatnostText().isEmpty()) {
+                if (sameSeries && !cheapest.getPriceList().getValidityText().isEmpty()) {
                     diffText = String.format(
                             java.util.Locale.getDefault(),
                             "+%s Kč (+%.1f %%) oproti ceníku stejné řady z období (%s)",
                             DecimalFormatHelper.df0.format(res.getDiffVsCheapest()),
                             res.getPercentDiffVsCheapest(),
-                            cheapest.getPriceList().getPlatnostText()
+                            cheapest.getPriceList().getValidityText()
                     );
                 } else {
                     diffText = String.format(
@@ -192,8 +192,8 @@ public class PriceListCompareOverviewFragment extends Fragment {
                             "+%s Kč (+%.1f %%) oproti %s (%s)",
                             DecimalFormatHelper.df0.format(res.getDiffVsCheapest()),
                             res.getPercentDiffVsCheapest(),
-                            cheapest.getPriceList().getProdukt(),
-                            cheapest.getPriceList().getPlatnostText()
+                            cheapest.getPriceList().getProduct(),
+                            cheapest.getPriceList().getValidityText()
                     );
                 }
                 tvDiff.setText(diffText);
@@ -216,11 +216,11 @@ public class PriceListCompareOverviewFragment extends Fragment {
 
 
     private String buildSubtitleText(PriceListComparisonResult res) {
-        String periodText = res.getPriceList().getPlatnostText();
+        String periodText = res.getPriceList().getValidityText();
         String pozeInfo = res.getPozeTypeDescription();
         StringBuilder sbSubtitle = new StringBuilder();
-        sbSubtitle.append("Dodavatel: ").append(res.getPriceList().getFirma())
-                .append(" • Distribuce: ").append(res.getPriceList().getDistribuce());
+        sbSubtitle.append("Dodavatel: ").append(res.getPriceList().getCompany())
+                .append(" • Distribuce: ").append(res.getPriceList().getDistribution());
         if (!periodText.isEmpty()) {
             sbSubtitle.append(" • Platnost: ").append(periodText);
         }
@@ -328,7 +328,7 @@ public class PriceListCompareOverviewFragment extends Fragment {
             priceCol.setPadding((int) (4 * density), 0, (int) (4 * density), 0);
 
             TextView colHeader = new TextView(requireContext());
-            colHeader.setText(res.getPriceList().getProdukt());
+            colHeader.setText(res.getPriceList().getProduct());
             colHeader.setTypeface(null, Typeface.BOLD);
             colHeader.setTextSize(11);
             colHeader.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
@@ -483,7 +483,7 @@ public class PriceListCompareOverviewFragment extends Fragment {
             priceCol.setPadding((int) (4 * density), 0, (int) (4 * density), 0);
 
             TextView colHeader = new TextView(requireContext());
-            colHeader.setText(res.getPriceList().getProdukt());
+            colHeader.setText(res.getPriceList().getProduct());
             colHeader.setTypeface(null, Typeface.BOLD);
             colHeader.setTextSize(11);
             colHeader.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);

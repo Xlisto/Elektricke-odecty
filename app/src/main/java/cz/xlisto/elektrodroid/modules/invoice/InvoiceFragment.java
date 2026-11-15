@@ -545,13 +545,13 @@ public class InvoiceFragment extends Fragment {
             //TODO předělat objekt POZE, aby obsahoval tuto podmínku, stejná je v Calculation, možná komplet výpočet přesunout do Calculation
             //poze počítá podle typu, který se vybere podle celkové spotřeby na faktuře
             if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {
-                if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+                if (priceList.getValidityYear() < NEW_POZE_YEAR) {
                     price[3] = ntVt * regulPriceList.getOze();//poze dle spotřeby starší ceník
                 } else {
                     price[3] = ntVt * regulPriceList.getPoze2();//poze dle spotřeby novější ceník
                     // Pokud je rok platnosti ceníku 2026, použijeme alternativní sazbu POZE1
                     // (speciální přechodné pravidlo pro rok 2026), proto přepíšeme hodnotu.
-                    if (priceList.getRokPlatnost() == 2026)
+                    if (priceList.getValidityYear() == 2026)
                         price[3] = ntVt * regulPriceList.getPoze1();
                 }
             } else {
@@ -562,16 +562,16 @@ public class InvoiceFragment extends Fragment {
             for (int j = 0; j < priceTotal.length; j++) {
                 priceTotal[j] += price[j];
                 total += price[j];
-                totalDPH += price[j] + (price[j] * priceList.getDph() / 100);
+                totalDPH += price[j] + (price[j] * priceList.getVat() / 100);
             }
             total += otherServices;
-            totalDPH += otherServices + (otherServices * priceList.getDph() / 100);
+            totalDPH += otherServices + (otherServices * priceList.getVat() / 100);
             // Slevy se aplikují jednorázově na posledním průchodu smyčky (nezávisle na datu slevy)
             if (i == invoices.size() - 1) {
                 double discountWithoutTax = dataInvoiceSource.sumDiscountWithoutTax(idFak, tablePAY); // sleva bez DPH - odečte se z ceny bez DPH (pak se přičte DPH)
                 double discountWithTaxInTotal = dataInvoiceSource.sumDiscountWithTaxInTotal(idFak, tablePAY); // sleva s DPH - odečte se přímo z ceny s DPH
                 total -= discountWithoutTax;
-                totalDPH -= discountWithoutTax + (discountWithoutTax * priceList.getDph() / 100) + discountWithTaxInTotal;
+                totalDPH -= discountWithoutTax + (discountWithoutTax * priceList.getVat() / 100) + discountWithTaxInTotal;
             }
         }
         dataInvoiceSource.close();

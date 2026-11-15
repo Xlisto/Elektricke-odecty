@@ -51,7 +51,7 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     private double vt = 1;
     private double nt = 1;
     private double month = 12;
-    private double phaze = 3;
+    private double phase = 3;
     private double power = 25;
     private double servicesL = 0;
     private double servicesR = 0;
@@ -171,26 +171,26 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     /**
      * Výpočet ceny spotřeby
      *
-     * @param consuptionVt - spotřeba VT
-     * @param consuptionNt - spotřeba NT
-     * @param pr           - ceník
+     * @param consumptionVt - spotřeba VT
+     * @param consumptionNt - spotřeba NT
+     * @param priceList     - ceník
      * @return - cena spotřeby
      */
-    private double[] priceConsuption(double consuptionVt, double consuptionNt, PriceListModel pr) {
+    private double[] priceConsumption(double consumptionVt, double consumptionNt, PriceListModel priceList) {
         double priceVt = 0.0; //když je v ceníku prázdný místo, Double se načte jako 0.0, zde se provádí kontrola na druh ceníku
         double priceNt = 0.0;
-        boolean chyba = true;
-        if ((pr.getCinnost() + pr.getPoze1() + pr.getPoze2()) == 0.0) {//pokud je starý ceník
-            priceVt = (pr.getCenaVT() + pr.getDan() + pr.getDistVT() + pr.getSystemSluzby() + pr.getOze() + pr.getOte()) * consuptionVt;
-            priceNt = (pr.getCenaNT() + pr.getDan() + pr.getDistNT() + pr.getSystemSluzby() + pr.getOze() + pr.getOte()) * consuptionNt;
-            chyba = false;
+        boolean isError = true;
+        if ((priceList.getActivity() + priceList.getPoze1() + priceList.getPoze2()) == 0.0) {//pokud je starý ceník
+            priceVt = (priceList.getPriceVT() + priceList.getTax() + priceList.getDistVT() + priceList.getSystemServices() + priceList.getOze() + priceList.getOte()) * consumptionVt;
+            priceNt = (priceList.getPriceNT() + priceList.getTax() + priceList.getDistNT() + priceList.getSystemServices() + priceList.getOze() + priceList.getOte()) * consumptionNt;
+            isError = false;
         }
-        if ((pr.getOze() + pr.getOte()) == 0.0) {
-            priceVt = (pr.getCenaVT() + pr.getDan() + pr.getDistVT() + pr.getSystemSluzby()) * consuptionVt;//zde u porovnávání poze2 nepřičítat, u odečtů naopak přičítat ke spotřebe
-            priceNt = (pr.getCenaNT() + pr.getDan() + pr.getDistNT() + pr.getSystemSluzby()) * consuptionNt;
-            chyba = false;
+        if ((priceList.getOze() + priceList.getOte()) == 0.0) {
+            priceVt = (priceList.getPriceVT() + priceList.getTax() + priceList.getDistVT() + priceList.getSystemServices()) * consumptionVt;//zde u porovnávání poze2 nepřičítat, u odečtů naopak přičítat ke spotřebe
+            priceNt = (priceList.getPriceNT() + priceList.getTax() + priceList.getDistNT() + priceList.getSystemServices()) * consumptionNt;
+            isError = false;
         }
-        if (chyba) return new double[]{0.0, 0.0};
+        if (isError) return new double[]{0.0, 0.0};
         return new double[]{priceVt, priceNt};
     }
 
@@ -198,15 +198,15 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     /**
      * Výpočet ceny za měsíce
      *
-     * @param pr     ceník
-     * @param phaze  fáze
-     * @param power  příkon
-     * @param months měsíce
+     * @param priceList ceník
+     * @param phase     fáze
+     * @param power     příkon
+     * @param months    měsíce
      * @return cena za měsíce
      */
-    private double paymentMonths(PriceListModel pr, double phaze, double power, double months) {
-        double priceBreaker = Calculation.calculatePriceBreaker(pr, (int) phaze, (int) power);//cena jističe
-        double priceMonth = priceBreaker + pr.getCinnost() + pr.getMesicniPlat();//cena jističe + cinnost + měsíční platba
+    private double paymentMonths(PriceListModel priceList, double phase, double power, double months) {
+        double priceBreaker = Calculation.calculatePriceBreaker(priceList, (int) phase, (int) power);//cena jističe
+        double priceMonth = priceBreaker + priceList.getActivity() + priceList.getMonthlyPayment();//cena jističe + cinnost + měsíční platba
         return priceMonth * months;//cena jističe + cinnost + měsíční platba * počet měsíců = celková cena za měsíce
     }
 
@@ -214,21 +214,21 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     /**
      * Výpočet POZE
      *
-     * @param spotreba    - spotřeba
-     * @param pocetMesicu - počet měsíců
-     * @param faze        - fáze
-     * @param prikon      - příkon
-     * @param pr          - ceník
+     * @param consumption - spotřeba
+     * @param monthsCount - počet měsíců
+     * @param phase       - fáze
+     * @param power       - příkon
+     * @param priceList   - ceník
      * @return - pole s výsledky POZE
      */
-    private double[] getPOZE(double spotreba, Double pocetMesicu, Double faze, Double prikon, PriceListModel pr) {
-        double[] vysledek = {0.0, 0.0, 0.0};
-        double p1 = spotreba * pr.getPoze2();//POZE dle spotřeby
-        double p2 = (pocetMesicu * (faze * prikon)) * pr.getPoze1();//POZE dle hodnoty jističe
-        vysledek[2] = Math.min(p1, p2);
-        vysledek[1] = p1;
-        vysledek[0] = p2;
-        return vysledek;
+    private double[] getPOZE(double consumption, Double monthsCount, Double phase, Double power, PriceListModel priceList) {
+        double[] result = {0.0, 0.0, 0.0};
+        double p1 = consumption * priceList.getPoze2();//POZE dle spotřeby
+        double p2 = (monthsCount * (phase * power)) * priceList.getPoze1();//POZE dle hodnoty jističe
+        result[2] = Math.min(p1, p2);
+        result[1] = p1;
+        result[0] = p2;
+        return result;
     }
 
 
@@ -263,7 +263,7 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
         this.vt = container.vt();
         this.nt = container.nt();
         this.month = container.month();
-        this.phaze = container.phaze();
+        this.phase = container.phaze();
         this.power = container.power();
         this.servicesL = container.servicesL();
         this.servicesR = container.servicesR();
@@ -348,31 +348,31 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
      * Aktualizuje tabulku TableLayout
      */
     private void updateTable() {
-        double[] spotrebaLeft = priceConsuption(vt, nt, priceListLeft);
-        double[] spotrebaRight = priceConsuption(vt, nt, priceListRight);
-        double platbaLeft = paymentMonths(priceListLeft, phaze, power, month);
-        double platbaRight = paymentMonths(priceListRight, phaze, power, month);
-        double[] pozeLeft = getPOZE(vt + nt, month, phaze, power, priceListLeft);
-        double[] pozeRight = getPOZE(vt + nt, month, phaze, power, priceListRight);
-        double celkemBezDphLeft = spotrebaLeft[0] + spotrebaLeft[1] + platbaLeft + pozeLeft[2] + servicesL;
-        double celkemBezDphRight = spotrebaRight[0] + spotrebaRight[1] + platbaRight + pozeRight[2] + servicesR;
-        double dphLeft = celkemBezDphLeft * priceListLeft.getDph() / 100;
-        double dphRight = celkemBezDphRight * priceListRight.getDph() / 100;
-        double celkemSDphLeft = celkemBezDphLeft + dphLeft;
-        double celkemSDphRight = celkemBezDphRight + dphRight;
+        double[] consumptionLeft = priceConsumption(vt, nt, priceListLeft);
+        double[] consumptionRight = priceConsumption(vt, nt, priceListRight);
+        double paymentLeft = paymentMonths(priceListLeft, phase, power, month);
+        double paymentRight = paymentMonths(priceListRight, phase, power, month);
+        double[] pozeLeft = getPOZE(vt + nt, month, phase, power, priceListLeft);
+        double[] pozeRight = getPOZE(vt + nt, month, phase, power, priceListRight);
+        double totalWithoutVatLeft = consumptionLeft[0] + consumptionLeft[1] + paymentLeft + pozeLeft[2] + servicesL;
+        double totalWithoutVatRight = consumptionRight[0] + consumptionRight[1] + paymentRight + pozeRight[2] + servicesR;
+        double vatLeft = totalWithoutVatLeft * priceListLeft.getVat() / 100;
+        double vatRight = totalWithoutVatRight * priceListRight.getVat() / 100;
+        double totalWithVatLeft = totalWithoutVatLeft + vatLeft;
+        double totalWithVatRight = totalWithoutVatRight + vatRight;
         for (int i = 0; i < indexIdTable.length; i++) {
             for (int j = 0; j < 5; j++) {
                 TextView tv = view.findViewById(indexIdTable[i][j]);
                 if (j == 1) {
                     tv.setText(left[i]);
                     if (i == 31) {//cena spotřeby VT
-                        tv.setText(DecimalFormatHelper.df2.format(spotrebaLeft[0]));
+                        tv.setText(DecimalFormatHelper.df2.format(consumptionLeft[0]));
                     }
                     if (i == 32) {//cena spotřeby NT
-                        tv.setText(DecimalFormatHelper.df2.format(spotrebaLeft[1]));
+                        tv.setText(DecimalFormatHelper.df2.format(consumptionLeft[1]));
                     }
                     if (i == 33) {//cena měsíční platby
-                        tv.setText(DecimalFormatHelper.df2.format(platbaLeft));
+                        tv.setText(DecimalFormatHelper.df2.format(paymentLeft));
                     }
                     if (i == 34) {//cena poze dle jističe
                         tv.setText(DecimalFormatHelper.df2.format(pozeLeft[0]));
@@ -384,26 +384,26 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
                         tv.setText(DecimalFormatHelper.df2.format(servicesL));
                     }
                     if (i == 37) {//cena celkem bez DPH
-                        tv.setText(DecimalFormatHelper.df2.format(celkemBezDphLeft));
+                        tv.setText(DecimalFormatHelper.df2.format(totalWithoutVatLeft));
                     }
                     if (i == 38) {//cena DPH
-                        tv.setText(DecimalFormatHelper.df2.format(dphLeft));
+                        tv.setText(DecimalFormatHelper.df2.format(vatLeft));
                     }
                     if (i == 39) {//cena celkem s DPH
-                        tv.setText(DecimalFormatHelper.df2.format(celkemSDphLeft));
+                        tv.setText(DecimalFormatHelper.df2.format(totalWithVatLeft));
                     }
 
                 }
                 if (j == 2) {
                     tv.setText(right[i]);
                     if (i == 31) {//cena spotřeby VT
-                        tv.setText(DecimalFormatHelper.df2.format(spotrebaRight[0]));
+                        tv.setText(DecimalFormatHelper.df2.format(consumptionRight[0]));
                     }
                     if (i == 32) {//cena spotřeby NT
-                        tv.setText(DecimalFormatHelper.df2.format(spotrebaRight[1]));
+                        tv.setText(DecimalFormatHelper.df2.format(consumptionRight[1]));
                     }
                     if (i == 33) {//cena měsíční platby
-                        tv.setText(DecimalFormatHelper.df2.format(platbaRight));
+                        tv.setText(DecimalFormatHelper.df2.format(paymentRight));
                     }
                     if (i == 34) {//cena poze dle jističe
                         tv.setText(DecimalFormatHelper.df2.format(pozeRight[0]));
@@ -415,26 +415,26 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
                         tv.setText(DecimalFormatHelper.df2.format(servicesR));
                     }
                     if (i == 37) {//cena celkem bez DPH
-                        tv.setText(DecimalFormatHelper.df2.format(celkemBezDphRight));
+                        tv.setText(DecimalFormatHelper.df2.format(totalWithoutVatRight));
                     }
                     if (i == 38) {//cena DPH
-                        tv.setText(DecimalFormatHelper.df2.format(dphRight));
+                        tv.setText(DecimalFormatHelper.df2.format(vatRight));
                     }
                     if (i == 39) {//cena celkem s DPH
-                        tv.setText(DecimalFormatHelper.df2.format(celkemSDphRight));
+                        tv.setText(DecimalFormatHelper.df2.format(totalWithVatRight));
                     }
                 }
                 if (j == 3) {
                     if (isNumeric(left[i]) && isNumeric(right[i])) {
                         tv.setText(DecimalFormatHelper.df2.format((parseDouble(left[i]) - parseDouble(right[i]))));
                         if (i == 31) {//rozdíl ceny VT
-                            tv.setText(DecimalFormatHelper.df2.format(spotrebaLeft[0] - spotrebaRight[0]));
+                            tv.setText(DecimalFormatHelper.df2.format(consumptionLeft[0] - consumptionRight[0]));
                         }
                         if (i == 32) {//rozdíl ceny NT
-                            tv.setText(DecimalFormatHelper.df2.format(spotrebaLeft[1] - spotrebaRight[1]));
+                            tv.setText(DecimalFormatHelper.df2.format(consumptionLeft[1] - consumptionRight[1]));
                         }
                         if (i == 33) {//rozdíl ceny měsíční platby
-                            tv.setText(DecimalFormatHelper.df2.format(platbaLeft - platbaRight));
+                            tv.setText(DecimalFormatHelper.df2.format(paymentLeft - paymentRight));
                         }
                         if (i == 34) {//rozdíl ceny poze dle jističe
                             tv.setText(DecimalFormatHelper.df2.format(pozeLeft[0] - pozeRight[0]));
@@ -446,13 +446,13 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
                             tv.setText(DecimalFormatHelper.df2.format(servicesL - servicesR));
                         }
                         if (i == 37) {//rozdíl ceny celkem bez DPH
-                            tv.setText(DecimalFormatHelper.df2.format(celkemBezDphLeft - celkemBezDphRight));
+                            tv.setText(DecimalFormatHelper.df2.format(totalWithoutVatLeft - totalWithoutVatRight));
                         }
                         if (i == 38) {//rozdíl ceny DPH
-                            tv.setText(DecimalFormatHelper.df2.format(dphLeft - dphRight));
+                            tv.setText(DecimalFormatHelper.df2.format(vatLeft - vatRight));
                         }
                         if (i == 39) {//rozdíl ceny celkem s DPH
-                            tv.setText(DecimalFormatHelper.df2.format(celkemSDphLeft - celkemSDphRight));
+                            tv.setText(DecimalFormatHelper.df2.format(totalWithVatLeft - totalWithVatRight));
                         }
                     }
                 }
@@ -489,17 +489,17 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     /**
      * Vytvoří pole pro výpis ceníku
      *
-     * @param pr - ceník
+     * @param priceList - ceník
      * @return - pole pro výpis ceníku
      */
-    private String[] buildArray(PriceListModel pr) {
-        return new String[]{pr.getProdukt(), pr.getFirma(), pr.getDistribuce(), DecimalFormatHelper.df2.format(pr.getCenaVT()), DecimalFormatHelper.df2.format(pr.getCenaNT()),
-                DecimalFormatHelper.df2.format(pr.getMesicniPlat()), DecimalFormatHelper.df2.format(pr.getDan()), pr.getSazba(), DecimalFormatHelper.df2.format(pr.getDistVT()), DecimalFormatHelper.df2.format(pr.getDistNT()),
-                DecimalFormatHelper.df2.format(pr.getJ0()), DecimalFormatHelper.df2.format(pr.getJ1()), DecimalFormatHelper.df2.format(pr.getJ2()), DecimalFormatHelper.df2.format(pr.getJ3()), DecimalFormatHelper.df2.format(pr.getJ4()),
-                DecimalFormatHelper.df2.format(pr.getJ5()), DecimalFormatHelper.df2.format(pr.getJ6()), DecimalFormatHelper.df2.format(pr.getJ7()), DecimalFormatHelper.df2.format(pr.getJ14()), DecimalFormatHelper.df2.format(pr.getJ13()),
-                DecimalFormatHelper.df2.format(pr.getJ10()), DecimalFormatHelper.df2.format(pr.getJ11()), DecimalFormatHelper.df2.format(pr.getJ12()), DecimalFormatHelper.df2.format(pr.getJ8()), DecimalFormatHelper.df2.format(pr.getJ9()),
-                DecimalFormatHelper.df2.format(pr.getSystemSluzby()), DecimalFormatHelper.df2.format(pr.getCinnost()), DecimalFormatHelper.df2.format(pr.getPoze1()), DecimalFormatHelper.df2.format(pr.getPoze2()), DecimalFormatHelper.df2.format(pr.getOze()),
-                DecimalFormatHelper.df2.format(pr.getOte()),
+    private String[] buildArray(PriceListModel priceList) {
+        return new String[]{priceList.getProduct(), priceList.getCompany(), priceList.getDistribution(), DecimalFormatHelper.df2.format(priceList.getPriceVT()), DecimalFormatHelper.df2.format(priceList.getPriceNT()),
+                DecimalFormatHelper.df2.format(priceList.getMonthlyPayment()), DecimalFormatHelper.df2.format(priceList.getTax()), priceList.getRate(), DecimalFormatHelper.df2.format(priceList.getDistVT()), DecimalFormatHelper.df2.format(priceList.getDistNT()),
+                DecimalFormatHelper.df2.format(priceList.getJ0()), DecimalFormatHelper.df2.format(priceList.getJ1()), DecimalFormatHelper.df2.format(priceList.getJ2()), DecimalFormatHelper.df2.format(priceList.getJ3()), DecimalFormatHelper.df2.format(priceList.getJ4()),
+                DecimalFormatHelper.df2.format(priceList.getJ5()), DecimalFormatHelper.df2.format(priceList.getJ6()), DecimalFormatHelper.df2.format(priceList.getJ7()), DecimalFormatHelper.df2.format(priceList.getJ14()), DecimalFormatHelper.df2.format(priceList.getJ13()),
+                DecimalFormatHelper.df2.format(priceList.getJ10()), DecimalFormatHelper.df2.format(priceList.getJ11()), DecimalFormatHelper.df2.format(priceList.getJ12()), DecimalFormatHelper.df2.format(priceList.getJ8()), DecimalFormatHelper.df2.format(priceList.getJ9()),
+                DecimalFormatHelper.df2.format(priceList.getSystemServices()), DecimalFormatHelper.df2.format(priceList.getActivity()), DecimalFormatHelper.df2.format(priceList.getPoze1()), DecimalFormatHelper.df2.format(priceList.getPoze2()), DecimalFormatHelper.df2.format(priceList.getOze()),
+                DecimalFormatHelper.df2.format(priceList.getOte()),
                 "0", "0", "0", "0", "0", "0", "0", "0", "0"
         };
     }
@@ -568,7 +568,7 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
         float[] width = new float[5];
 
         for (int i = 0; i < 5; i++) {
-            float sizeRow = 0;
+            float maxRowWidth = 0;
             for (int j = 0; j < titles.length; j++) {
                 TextView tv = view.findViewById(indexIdTable[j][i]);
                 tv.setTextSize(DP, textSize);
@@ -580,16 +580,16 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
 
                 float textWidth = paint.measureText(tv.getText().toString() + DensityUtils.dpToPx(requireContext(), padding));
 
-                if (sizeRow < textWidth) {
-                    sizeRow = textWidth;
+                if (maxRowWidth < textWidth) {
+                    maxRowWidth = textWidth;
                 }
             }
-            width[i] = sizeRow;//maximální šířka sloupce
+            width[i] = maxRowWidth;//maximální šířka sloupce
         }
 
         float totalWidth = 0;
-        for (float v : width) {
-            totalWidth += v;//součet všech šířekk sloupců
+        for (float columnWidth : width) {
+            totalWidth += columnWidth;//součet všech šířek sloupců
         }
         return (int) totalWidth;
     }

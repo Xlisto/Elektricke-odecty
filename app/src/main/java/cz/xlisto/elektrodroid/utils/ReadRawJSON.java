@@ -260,12 +260,12 @@ public class ReadRawJSON {
             if (otherPrice == null) return;
 
             if (otherPrice instanceof JSONObject) {
-                priceListModel.setSystemSluzby(((JSONObject) otherPrice).getDouble(SYSTEM_SLUZBY));
-                priceListModel.setCinnost(((JSONObject) otherPrice).getDouble(CINNOST));
+                priceListModel.setSystemServices(((JSONObject) otherPrice).getDouble(SYSTEM_SLUZBY));
+                priceListModel.setActivity(((JSONObject) otherPrice).getDouble(CINNOST));
                 priceListModel.setPoze1(((JSONObject) otherPrice).getDouble(POZE1));
                 priceListModel.setPoze2(((JSONObject) otherPrice).getDouble(POZE2));
-                priceListModel.setDph(((JSONObject) otherPrice).getDouble(DPH));
-                priceListModel.setDan(((JSONObject) otherPrice).getDouble(DAN));
+                priceListModel.setVat(((JSONObject) otherPrice).getDouble(DPH));
+                priceListModel.setTax(((JSONObject) otherPrice).getDouble(DAN));
             } else if (otherPrice instanceof JSONArray otherPriceArr) {
 
                 for (int i = 0; i < otherPriceArr.length(); i++) {
@@ -290,12 +290,12 @@ public class ReadRawJSON {
 
                     if (!startCalBtn.before(startCalJson) && !startCalBtn.after(endCalJson)) {
                         // přiřazení hodnot z periody (bezpečně pomocí opt*)
-                        priceListModel.setSystemSluzby(otherPriceObj.optDouble(SYSTEM_SLUZBY, priceListModel.getSystemSluzby()));
-                        priceListModel.setCinnost(otherPriceObj.optDouble(CINNOST, priceListModel.getCinnost()));
+                        priceListModel.setSystemServices(otherPriceObj.optDouble(SYSTEM_SLUZBY, priceListModel.getSystemServices()));
+                        priceListModel.setActivity(otherPriceObj.optDouble(CINNOST, priceListModel.getActivity()));
                         priceListModel.setPoze1(otherPriceObj.optDouble(POZE1, priceListModel.getPoze1()));
                         priceListModel.setPoze2(otherPriceObj.optDouble(POZE2, priceListModel.getPoze2()));
-                        priceListModel.setDph(otherPriceObj.optDouble(DPH, priceListModel.getDph()));
-                        priceListModel.setDan(otherPriceObj.optDouble(DAN, priceListModel.getDan()));
+                        priceListModel.setVat(otherPriceObj.optDouble(DPH, priceListModel.getVat()));
+                        priceListModel.setTax(otherPriceObj.optDouble(DAN, priceListModel.getTax()));
                         // nalezeno, lze ukončit smyčku
                         break;
                     }

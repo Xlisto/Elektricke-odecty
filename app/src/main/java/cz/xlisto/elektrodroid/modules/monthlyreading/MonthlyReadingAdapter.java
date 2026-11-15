@@ -257,7 +257,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                     overDateRegulPrice = isOverDateRegulPrice(priceListRegulBuilder, monthlyReading, monthlyReadingPrevious);
                 }
 
-                boolean overDatePriceList = priceList.getPlatnostOD() <= dateStart && priceList.getPlatnostDO() >= dateEnd;
+                boolean overDatePriceList = priceList.getValidFrom() <= dateStart && priceList.getValidTo() >= dateEnd;
 
                 if (overDateRegulPrice || !overDatePriceList) {
                     holder.ivWarning.setVisibility(View.VISIBLE);
@@ -282,7 +282,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
                 double difference = monthlyReading.getDifferenceDPH();
                 if (difference > 0)
                     differenceDescription = context.getResources().getString(R.string.kc_with_discount);
-                total = total + (total * priceList.getDph() / 100) - difference;
+                total = total + (total * priceList.getVat() / 100) - difference;
                 different = monthlyReading.getPayment() - total;
             }
             String color = "red";
@@ -397,7 +397,7 @@ public class MonthlyReadingAdapter extends RecyclerView.Adapter<MonthlyReadingAd
             holder.ivIconResult.setVisibility(View.VISIBLE);
             if (priceList != null) {
                 //skrytí NT sazby u jednotarifních sazeb
-                if (priceList.getCenaNT() == 0 && priceList.getDistNT() == 0) {
+                if (priceList.getPriceNT() == 0 && priceList.getDistNT() == 0) {
                     holder.tvNtDescription.setVisibility(View.GONE);
                     holder.tvNt.setVisibility(View.GONE);
                     holder.tvNtDif.setVisibility(View.GONE);

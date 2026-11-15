@@ -306,7 +306,7 @@ public class InvoiceDetailFragment extends Fragment {
             PriceListModel priceList = priceListRegulBuilder.getRegulPriceList();
             double priceBreaker = Calculation.calculatePriceBreaker(priceList, countPhaze, phaze);
             if (!hiddenNT) {
-                if (priceList.getSazba().equals(D01) || priceList.getSazba().equals(D02)) {
+                if (priceList.getRate().equals(D01) || priceList.getRate().equals(D02)) {
                     hiddenNT = true;
                     if (spinner.getSelectedItemPosition() == 1)
                         spinner.setSelection(0);
@@ -318,19 +318,19 @@ public class InvoiceDetailFragment extends Fragment {
             String s = spinner.getSelectedItem().toString();
             if (s.equals(SummaryInvoiceModel.Title.VT.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getVt() / 1000, priceList.getCenaVT(),
+                        invoice.getVt() / 1000, priceList.getPriceVT(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.VT));
             } else if (s.equals(SummaryInvoiceModel.Title.NT.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getNt() / 1000, priceList.getCenaNT(),
+                        invoice.getNt() / 1000, priceList.getPriceNT(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.NT));
             } else if (s.equals(SummaryInvoiceModel.Title.PAY.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getMesicniPlat(),
+                        invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getMonthlyPayment(),
                         SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.PAY));
             } else if (s.equals(SummaryInvoiceModel.Title.TAX.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getVtNt() / 1000, priceList.getDan(),
+                        invoice.getVtNt() / 1000, priceList.getTax(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.TAX));
             } else if (s.equals(SummaryInvoiceModel.Title.VT_DIST.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
@@ -346,27 +346,27 @@ public class InvoiceDetailFragment extends Fragment {
                         SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.TAX));
             } else if (s.equals(SummaryInvoiceModel.Title.SYS_SERVICES.toString())) {
                 summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                        invoice.getVtNt() / 1000, priceList.getSystemSluzby(),
+                        invoice.getVtNt() / 1000, priceList.getSystemServices(),
                         SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.SYS_SERVICES));
             } else if (s.equals(SummaryInvoiceModel.Title.OTE.toString())) {
                 if (invoice.getDateFrom() < (ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()))
                     summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getCinnost(),
+                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getActivity(),
                             SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
             } else if (s.equals(SummaryInvoiceModel.Title.INF.toString())) {
                 if (invoice.getDateFrom() >= (ViewHelper.parseCalendarFromString("01.07.2024").getTimeInMillis()))
                     summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
-                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getCinnost(),
+                            invoice.getDifferentDate(DifferenceDate.TypeDate.INVOICE), priceList.getActivity(),
                             SummaryInvoiceModel.Unit.MONTH, SummaryInvoiceModel.Title.OTE));
             } else if (s.equals(SummaryInvoiceModel.Title.POZE.toString())) {
                 if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {//podle spotřeby
-                    if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+                    if (priceList.getValidityYear() < NEW_POZE_YEAR) {
                         summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                                 invoice.getVtNt() / 1000, priceList.getOze(),
                                 SummaryInvoiceModel.Unit.MWH, SummaryInvoiceModel.Title.POZE));
                     } else {
                         Double tempPoze = priceList.getPoze2();
-                        if (priceList.getRokPlatnost() == 2026)
+                        if (priceList.getValidityYear() == 2026)
                             tempPoze = priceList.getPoze1();
                         summaryInvoices.add(new SummaryInvoiceModel(invoice.getDateFrom(), invoice.getDateTo(),
                                 invoice.getVtNt() / 1000, tempPoze,

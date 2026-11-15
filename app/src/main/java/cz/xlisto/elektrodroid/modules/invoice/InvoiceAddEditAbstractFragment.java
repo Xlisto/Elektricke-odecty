@@ -176,7 +176,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             PriceListModel selectedPriceList = BundleCompat.getSerializable(result, PriceListFragment.FLAG_RESULT_PRICE_LIST_FRAGMENT, PriceListModel.class);
             btnSave.setEnabled(false);
             if (selectedPriceList != null) {
-                deactivateNT(selectedPriceList.getSazba().equals(InvoiceAbstract.D01) || selectedPriceList.getSazba().equals(InvoiceAbstract.D02));
+                deactivateNT(selectedPriceList.getRate().equals(InvoiceAbstract.D01) || selectedPriceList.getRate().equals(InvoiceAbstract.D02));
                 btnSelectPriceList.setText(selectedPriceList.getName());
                 selectedIdPrice = selectedPriceList.getId();
                 btnSave.setEnabled(true);

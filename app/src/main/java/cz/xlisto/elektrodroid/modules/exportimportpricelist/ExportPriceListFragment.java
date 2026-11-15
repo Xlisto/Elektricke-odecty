@@ -135,7 +135,7 @@ public class ExportPriceListFragment extends Fragment {
                 fileName = priceListSumModel.firma() + " "
                         + priceListSumModel.rada() + " "
                         + ViewHelper.getSimpleDateFormat().format(priceListSumModel.datum()) + " "
-                        + priceListModels.get(0).getDistribuce() + ".json";
+                        + priceListModels.get(0).getDistribution() + ".json";
 
                 if (files.existJSONFile(requireActivity(), fileName, Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI)))) {
                     YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getString(R.string.export_price_list_title), FLAG_DIALOG_FRAGMENT_EXPORT_REWRITE

@@ -117,17 +117,17 @@ public class PriceListSplitter {
         long newFrom = ViewHelper.parseCalendarFromString(newFromDateStr).getTimeInMillis();
 
         for (PriceListModel originalPriceList : priceLists) {
-            if (originalPriceList != null && originalPriceList.getPlatnostDO() > cutOff) {
+            if (originalPriceList != null && originalPriceList.getValidTo() > cutOff) {
                 PriceListModel newPriceList = new PriceListModel(
                         originalPriceList.getId(),
-                        originalPriceList.getRada(),
-                        originalPriceList.getProdukt(),
-                        originalPriceList.getFirma(),
-                        originalPriceList.getCenaVT(),
-                        originalPriceList.getCenaNT(),
-                        originalPriceList.getMesicniPlat(),
-                        originalPriceList.getDan(),
-                        originalPriceList.getSazba(),
+                        originalPriceList.getSeries(),
+                        originalPriceList.getProduct(),
+                        originalPriceList.getCompany(),
+                        originalPriceList.getPriceVT(),
+                        originalPriceList.getPriceNT(),
+                        originalPriceList.getMonthlyPayment(),
+                        originalPriceList.getTax(),
+                        originalPriceList.getRate(),
                         originalPriceList.getDistVT(),
                         originalPriceList.getDistNT(),
                         originalPriceList.getJ0(),
@@ -145,22 +145,22 @@ public class PriceListSplitter {
                         originalPriceList.getJ12(),
                         originalPriceList.getJ13(),
                         originalPriceList.getJ14(),
-                        originalPriceList.getSystemSluzby(),
+                        originalPriceList.getSystemServices(),
                         updatedCinnost,
                         originalPriceList.getPoze1(),
                         originalPriceList.getPoze2(),
                         originalPriceList.getOze(),
                         originalPriceList.getOte(),
                         newFrom,
-                        originalPriceList.getPlatnostDO(),
-                        originalPriceList.getDph(),
-                        originalPriceList.getDistribuce(),
-                        originalPriceList.getAutor(),
-                        originalPriceList.getDatumVytvoreni(),
+                        originalPriceList.getValidTo(),
+                        originalPriceList.getVat(),
+                        originalPriceList.getDistribution(),
+                        originalPriceList.getAuthor(),
+                        originalPriceList.getCreationDate(),
                         originalPriceList.getEmail()
                 );
 
-                originalPriceList.setPlatnostDO(cutOff);
+                originalPriceList.setValidTo(cutOff);
                 splitPriceListMap.put(originalPriceList, newPriceList);
             }
         }

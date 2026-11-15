@@ -179,15 +179,15 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * @throws NullPointerException pokud {@code priceListModel} nebo některé widgety jsou {@code null}
      */
     private void setItemPrice() {
-        btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostOD()));
-        btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getPlatnostDO()));
+        btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getValidFrom()));
+        btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getValidTo()));
         updateValidityRangeButtonText();
-        ivRada.setDefaultText(priceListModel.getRada());
-        ivProdukt.setDefaultText(priceListModel.getProdukt());
-        ivDodavatel.setDefaultText(priceListModel.getFirma());
-        ivVT.setDefaultText(df2.format(priceListModel.getCenaVT()));
-        ivNT.setDefaultText(df2.format(priceListModel.getCenaNT()));
-        ivPlat.setDefaultText(df2.format(priceListModel.getMesicniPlat()));
+        ivRada.setDefaultText(priceListModel.getSeries());
+        ivProdukt.setDefaultText(priceListModel.getProduct());
+        ivDodavatel.setDefaultText(priceListModel.getCompany());
+        ivVT.setDefaultText(df2.format(priceListModel.getPriceVT()));
+        ivNT.setDefaultText(df2.format(priceListModel.getPriceNT()));
+        ivPlat.setDefaultText(df2.format(priceListModel.getMonthlyPayment()));
         ivVT1.setDefaultText(df2.format(priceListModel.getDistVT()));
         ivNT1.setDefaultText(df2.format(priceListModel.getDistNT()));
         ivJ0.setDefaultText(df2.format(priceListModel.getJ0()));
@@ -206,13 +206,13 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         ivJ13.setDefaultText(df2.format(priceListModel.getJ13()));
         ivJ14.setDefaultText(df2.format(priceListModel.getJ14()));
         ivOTE.setDefaultText(df2.format(priceListModel.getOte()));
-        ivCinnostOperatora.setDefaultText(df2.format(priceListModel.getCinnost()));
+        ivCinnostOperatora.setDefaultText(df2.format(priceListModel.getActivity()));
         ivOZE.setDefaultText(df2.format(priceListModel.getOze()));
         ivPOZE1.setDefaultText(df2.format(priceListModel.getPoze1()));
         ivPOZE2.setDefaultText(df2.format(priceListModel.getPoze2()));
-        ivSystemSluzby.setDefaultText(df2.format(priceListModel.getSystemSluzby()));
-        ivDan.setDefaultText(df2.format(priceListModel.getDan()));
-        ivDPH.setDefaultText(df2.format(priceListModel.getDph()));
+        ivSystemSluzby.setDefaultText(df2.format(priceListModel.getSystemServices()));
+        ivDan.setDefaultText(df2.format(priceListModel.getTax()));
+        ivDPH.setDefaultText(df2.format(priceListModel.getVat()));
         if (priceListModel.getJ10() == 0 && priceListModel.getJ11() == 0
                 && priceListModel.getJ12() == 0 && priceListModel.getJ13() == 0
                 && priceListModel.getJ14() == 0) {
@@ -251,12 +251,12 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             if (!isAdded())
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
-            int year = priceListModel.getRokPlatnost();
+            int year = priceListModel.getValidityYear();
             String[] distribucniUzemi = PriceListAddEditAbstract.getDistUzemiArrayForYear(year);
             String[] sazby = getResources().getStringArray(R.array.sazby);
 
-            compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribuce());
-            compare(sazby, spSazba, priceListModel.getSazba());
+            compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribution());
+            compare(sazby, spSazba, priceListModel.getRate());
         };
         handler.postDelayed(r, 1300);
     }

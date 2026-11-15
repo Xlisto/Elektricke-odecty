@@ -432,7 +432,7 @@ public class MonthlyReadingFragment extends Fragment {
                         + (prices[1] * ntDiff)
                         + (prices[3] * (vtDiff + ntDiff))
                         + monthlyReading.getOtherServices();
-                totalPrice = totalPrice + (totalPrice * priceList.getDph() / 100) - monthlyReading.getDifferenceDPH();
+                totalPrice = totalPrice + (totalPrice * priceList.getVat() / 100) - monthlyReading.getDifferenceDPH();
                 totalBalance += monthlyReading.getPayment() - totalPrice;
             }
         } finally {

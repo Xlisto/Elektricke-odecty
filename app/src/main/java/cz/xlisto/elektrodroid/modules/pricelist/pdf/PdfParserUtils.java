@@ -239,16 +239,16 @@ public class PdfParserUtils {
 
         return new PriceListModel(
                 0L,
-                model.getRada(),
-                model.getProdukt(),
-                model.getFirma(),
-                model.getCenaVT(),
-                model.getCenaNT(),
-                model.getMesicniPlat(),
-                model.getDan(),
-                model.getSazba(),
+                model.getSeries(),
+                model.getProduct(),
+                model.getCompany(),
+                model.getPriceVT(),
+                model.getPriceNT(),
+                model.getMonthlyPayment(),
+                model.getTax(),
+                model.getRate(),
                 model.getDistVT(), model.getDistNT(), model.getJ0(), model.getJ1(), model.getJ2(), model.getJ3(), model.getJ4(), model.getJ5(), model.getJ6(), model.getJ7(), model.getJ8(), model.getJ9(), model.getJ10(), model.getJ11(), model.getJ12(), model.getJ13(), model.getJ14(),
-                model.getSystemSluzby(),
+                model.getSystemServices(),
                 12.45, // 2. období 2025: činnost operátora/provoz nesíťové infrastruktury bez DPH (12,45 Kč)
                 model.getPoze1(),
                 model.getPoze2(),
@@ -256,10 +256,10 @@ public class PdfParserUtils {
                 model.getOte(),
                 start2,
                 end2,
-                model.getDph(),
-                model.getDistribuce(),
-                model.getAutor(),
-                model.getDatumVytvoreni(),
+                model.getVat(),
+                model.getDistribution(),
+                model.getAuthor(),
+                model.getCreationDate(),
                 model.getEmail()
         );
     }

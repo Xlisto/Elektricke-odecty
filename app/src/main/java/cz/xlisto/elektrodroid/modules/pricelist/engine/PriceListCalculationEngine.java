@@ -66,12 +66,12 @@ public class PriceListCalculationEngine {
         }
 
         int year;
-        if (priceList.getRokPlatnost() <= 0) {
+        if (priceList.getValidityYear() <= 0) {
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(priceList.getPlatnostOD());
+            cal.setTimeInMillis(priceList.getValidFrom());
             year = cal.get(Calendar.YEAR);
         } else {
-            year = priceList.getRokPlatnost();
+            year = priceList.getValidityYear();
         }
 
         // Aplikujeme regulované úpravy (zastropování 2023, nulování POZE)
@@ -87,9 +87,9 @@ public class PriceListCalculationEngine {
         double totalMwh = vtMwh + ntMwh;
 
         // 1. Obchodní (neregulovaná) složka
-        double merchantVtCost = activePriceList.getCenaVT() * vtMwh;
-        double merchantNtCost = activePriceList.getCenaNT() * ntMwh;
-        double merchantMonthlyCost = activePriceList.getMesicniPlat() * months;
+        double merchantVtCost = activePriceList.getPriceVT() * vtMwh;
+        double merchantNtCost = activePriceList.getPriceNT() * ntMwh;
+        double merchantMonthlyCost = activePriceList.getMonthlyPayment() * months;
 
         // 2. Regulovaná složka
         double distVtCost = activePriceList.getDistVT() * vtMwh;
@@ -98,19 +98,19 @@ public class PriceListCalculationEngine {
         double monthlyBreakerPrice = Calculation.calculatePriceBreaker(activePriceList, countPhaze, powerBreaker);
         double breakerCost = monthlyBreakerPrice * months;
 
-        double systemServicesCost = activePriceList.getSystemSluzby() * totalMwh;
-        double oteCost = activePriceList.getCinnost() * months;
+        double systemServicesCost = activePriceList.getSystemServices() * totalMwh;
+        double oteCost = activePriceList.getActivity() * months;
 
         // Výpočet POZE
         double pozeCost = calculatePozeCost(activePriceList, year, totalMwh, months, countPhaze, powerBreaker);
 
         // 3. Daně
-        double electricityTax = activePriceList.getDan() * totalMwh;
+        double electricityTax = activePriceList.getTax() * totalMwh;
 
         double totalWithoutDph = merchantVtCost + merchantNtCost + merchantMonthlyCost
                 + distVtCost + distNtCost + breakerCost + systemServicesCost + oteCost + pozeCost + electricityTax;
 
-        double dphRate = activePriceList.getDph();
+        double dphRate = activePriceList.getVat();
         double dphAmount = totalWithoutDph * (dphRate / 100.0);
         double totalWithDph = totalWithoutDph + dphAmount;
 
@@ -135,16 +135,16 @@ public class PriceListCalculationEngine {
         }
 
         double otePerMwh = (year < PriceListModel.NEW_POZE_YEAR) ? activePriceList.getOte() : 0.0;
-        double oteMonthly = (year >= PriceListModel.NEW_POZE_YEAR) ? activePriceList.getCinnost() : 0.0;
+        double oteMonthly = (year >= PriceListModel.NEW_POZE_YEAR) ? activePriceList.getActivity() : 0.0;
 
         // Obchodní + Regulace + Daně dohromady
-        double fullVtPricePerMwhWithDph = (activePriceList.getCenaVT() + activePriceList.getDistVT() + activePriceList.getDan() + activePriceList.getSystemSluzby() + unitPozePerMwh + otePerMwh) * dphMultiplier;
-        double fullNtPricePerMwhWithDph = (activePriceList.getCenaNT() + activePriceList.getDistNT() + activePriceList.getDan() + activePriceList.getSystemSluzby() + unitPozePerMwh + otePerMwh) * dphMultiplier;
-        double fullMonthlyFixedCostWithDph = (activePriceList.getMesicniPlat() + monthlyBreakerPrice + oteMonthly + monthlyPozeBreaker) * dphMultiplier;
+        double fullVtPricePerMwhWithDph = (activePriceList.getPriceVT() + activePriceList.getDistVT() + activePriceList.getTax() + activePriceList.getSystemServices() + unitPozePerMwh + otePerMwh) * dphMultiplier;
+        double fullNtPricePerMwhWithDph = (activePriceList.getPriceNT() + activePriceList.getDistNT() + activePriceList.getTax() + activePriceList.getSystemServices() + unitPozePerMwh + otePerMwh) * dphMultiplier;
+        double fullMonthlyFixedCostWithDph = (activePriceList.getMonthlyPayment() + monthlyBreakerPrice + oteMonthly + monthlyPozeBreaker) * dphMultiplier;
 
         // Čistě regulované položky stanovované ERÚ + státní daně s DPH (Distribuce + Daň + Systémové služby + POZE + OTE)
-        double regulatedVtWithDph = (activePriceList.getDistVT() + activePriceList.getDan() + activePriceList.getSystemSluzby() + unitPozePerMwh + otePerMwh) * dphMultiplier;
-        double regulatedNtWithDph = (activePriceList.getDistNT() + activePriceList.getDan() + activePriceList.getSystemSluzby() + unitPozePerMwh + otePerMwh) * dphMultiplier;
+        double regulatedVtWithDph = (activePriceList.getDistVT() + activePriceList.getTax() + activePriceList.getSystemServices() + unitPozePerMwh + otePerMwh) * dphMultiplier;
+        double regulatedNtWithDph = (activePriceList.getDistNT() + activePriceList.getTax() + activePriceList.getSystemServices() + unitPozePerMwh + otePerMwh) * dphMultiplier;
         double regulatedMonthlyWithDph = (monthlyBreakerPrice + oteMonthly + monthlyPozeBreaker) * dphMultiplier;
 
         double pozeConsumptionVal;
@@ -257,11 +257,11 @@ public class PriceListCalculationEngine {
      */
     public static boolean isSingleTariff(PriceListModel priceList) {
         if (priceList == null) return false;
-        String sazba = priceList.getSazba() != null ? priceList.getSazba().trim().toUpperCase() : "";
+        String sazba = priceList.getRate() != null ? priceList.getRate().trim().toUpperCase() : "";
         if (sazba.equalsIgnoreCase("D01D") || sazba.equalsIgnoreCase("D02D")) {
             return true;
         }
-        return priceList.getCenaNT() <= 0 && priceList.getDistNT() <= 0;
+        return priceList.getPriceNT() <= 0 && priceList.getDistNT() <= 0;
     }
 
 

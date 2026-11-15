@@ -61,8 +61,8 @@ public class PdfParserTest {
 
                 List<PriceListModel> result = PdfParserFactory.parsePdf(null, text);
                 assertEquals("E.ON ceník z " + file.getName() + " by měl mít 10 sazeb", 10, result.size());
-                assertTrue("VT cena u D 01d by měla být > 0", result.get(0).getCenaVT() > 0);
-                assertTrue("Stálý plat u D 01d by měl být > 0", result.get(0).getMesicniPlat() > 0);
+                assertTrue("VT cena u D 01d by měla být > 0", result.get(0).getPriceVT() > 0);
+                assertTrue("Stálý plat u D 01d by měl být > 0", result.get(0).getMonthlyPayment() > 0);
             }
         }
     }
@@ -78,16 +78,16 @@ public class PdfParserTest {
         assertEquals("ČEZ ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("ČEZ Prodej, a.s.", d01.getFirma());
-        assertEquals("ČEZ", d01.getDistribuce());
-        assertEquals(3190.08, d01.getCenaVT(), 0.01);
-        assertEquals(0.0, d01.getCenaNT(), 0.01);
-        assertEquals(135.00, d01.getMesicniPlat(), 0.01);
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("ČEZ Prodej, a.s.", d01.getCompany());
+        assertEquals("ČEZ", d01.getDistribution());
+        assertEquals(3190.08, d01.getPriceVT(), 0.01);
+        assertEquals(0.0, d01.getPriceNT(), 0.01);
+        assertEquals(135.00, d01.getMonthlyPayment(), 0.01);
 
         // Kontrola zastropování platnosti do konce roku (31.12.2026)
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -104,12 +104,12 @@ public class PdfParserTest {
         assertEquals("PRE ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("Pražská energetika, a. s.", d01.getFirma());
-        assertEquals("PRE", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("Pražská energetika, a. s.", d01.getCompany());
+        assertEquals("PRE", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -126,12 +126,12 @@ public class PdfParserTest {
         assertEquals("E.ON ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("E.ON Energie, a.s.", d01.getFirma());
-        assertEquals("EG.D", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("E.ON Energie, a.s.", d01.getCompany());
+        assertEquals("EG.D", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -148,12 +148,12 @@ public class PdfParserTest {
         assertEquals("Centropol ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("CENTROPOL ENERGY, a. s.", d01.getFirma());
-        assertEquals("ČEZ", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("CENTROPOL ENERGY, a. s.", d01.getCompany());
+        assertEquals("ČEZ", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -170,12 +170,12 @@ public class PdfParserTest {
         assertEquals("MND ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("MND Energie a.s.", d01.getFirma());
-        assertEquals("EG.D", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("MND Energie a.s.", d01.getCompany());
+        assertEquals("EG.D", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -192,12 +192,12 @@ public class PdfParserTest {
         assertEquals("innogy ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("innogy Energie, s.r.o.", d01.getFirma());
-        assertEquals("EG.D", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("innogy Energie, s.r.o.", d01.getCompany());
+        assertEquals("EG.D", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -214,12 +214,12 @@ public class PdfParserTest {
         assertEquals("ČRE ceník by měl obsahovat 10 sazeb", 10, items.size());
 
         PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getSazba());
-        assertEquals("Česká Regionální Energetika a.s.", d01.getFirma());
-        assertEquals("PRE", d01.getDistribuce());
+        assertEquals("D 01d", d01.getRate());
+        assertEquals("Česká Regionální Energetika a.s.", d01.getCompany());
+        assertEquals("PRE", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getPlatnostDO());
+        cal.setTimeInMillis(d01.getValidTo());
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
@@ -230,19 +230,19 @@ public class PdfParserTest {
     public void testParserFactory() {
         List<PriceListModel> cezItems = PdfParserFactory.parsePdf(null, CEZ_SAMPLE_TEXT);
         assertEquals(10, cezItems.size());
-        assertEquals("ČEZ Prodej, a.s.", cezItems.get(0).getFirma());
+        assertEquals("ČEZ Prodej, a.s.", cezItems.get(0).getCompany());
 
         List<PriceListModel> preItems = PdfParserFactory.parsePdf(null, PRE_SAMPLE_TEXT);
         assertEquals(10, preItems.size());
-        assertEquals("Pražská energetika, a. s.", preItems.get(0).getFirma());
+        assertEquals("Pražská energetika, a. s.", preItems.get(0).getCompany());
 
         List<PriceListModel> eonItems = PdfParserFactory.parsePdf(null, EON_SAMPLE_TEXT);
         assertEquals(10, eonItems.size());
-        assertEquals("E.ON Energie, a.s.", eonItems.get(0).getFirma());
+        assertEquals("E.ON Energie, a.s.", eonItems.get(0).getCompany());
 
         List<PriceListModel> mndItems = PdfParserFactory.parsePdf(null, MND_SAMPLE_TEXT);
         assertEquals(10, mndItems.size());
-        assertEquals("MND Energie a.s.", mndItems.get(0).getFirma());
+        assertEquals("MND Energie a.s.", mndItems.get(0).getCompany());
     }
 
 
@@ -267,25 +267,25 @@ public class PdfParserTest {
 
         PriceListModel period1 = items.get(0);
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTimeInMillis(period1.getPlatnostDO());
+        cal1.setTimeInMillis(period1.getValidTo());
         assertEquals(2025, cal1.get(Calendar.YEAR));
         assertEquals(Calendar.AUGUST, cal1.get(Calendar.MONTH));
         assertEquals(31, cal1.get(Calendar.DAY_OF_MONTH));
-        assertEquals(10.84, period1.getCinnost(), 0.01);
+        assertEquals(10.84, period1.getActivity(), 0.01);
 
         PriceListModel period2 = items.get(1);
         Calendar cal2Start = Calendar.getInstance();
-        cal2Start.setTimeInMillis(period2.getPlatnostOD());
+        cal2Start.setTimeInMillis(period2.getValidFrom());
         assertEquals(2025, cal2Start.get(Calendar.YEAR));
         assertEquals(Calendar.SEPTEMBER, cal2Start.get(Calendar.MONTH));
         assertEquals(1, cal2Start.get(Calendar.DAY_OF_MONTH));
 
         Calendar cal2End = Calendar.getInstance();
-        cal2End.setTimeInMillis(period2.getPlatnostDO());
+        cal2End.setTimeInMillis(period2.getValidTo());
         assertEquals(2025, cal2End.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal2End.get(Calendar.MONTH));
         assertEquals(31, cal2End.get(Calendar.DAY_OF_MONTH));
-        assertEquals(12.45, period2.getCinnost(), 0.01);
+        assertEquals(12.45, period2.getActivity(), 0.01);
     }
 
 

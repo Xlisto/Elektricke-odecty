@@ -80,11 +80,11 @@ public class PdfParserFactory {
             ReadRawJSON reader = new ReadRawJSON(context);
             Calendar startCal = Calendar.getInstance();
             Calendar endCal = Calendar.getInstance();
-            startCal.setTimeInMillis(model.getPlatnostOD() > 0 ? model.getPlatnostOD() : System.currentTimeMillis());
-            endCal.setTimeInMillis(model.getPlatnostDO() > 0 ? model.getPlatnostDO() : System.currentTimeMillis());
+            startCal.setTimeInMillis(model.getValidFrom() > 0 ? model.getValidFrom() : System.currentTimeMillis());
+            endCal.setTimeInMillis(model.getValidTo() > 0 ? model.getValidTo() : System.currentTimeMillis());
 
-            String shortDist = PdfParserUtils.getShortDistribuce(model.getDistribuce());
-            PriceListModel regModel = reader.read(startCal, endCal, shortDist, model.getSazba());
+            String shortDist = PdfParserUtils.getShortDistribuce(model.getDistribution());
+            PriceListModel regModel = reader.read(startCal, endCal, shortDist, model.getRate());
 
             if (regModel != null && (regModel.getDistVT() > 0 || regModel.getJ0() > 0)) {
                 model.setDistVT(regModel.getDistVT());
@@ -104,13 +104,13 @@ public class PdfParserFactory {
                 model.setJ12(regModel.getJ12());
                 model.setJ13(regModel.getJ13());
                 model.setJ14(regModel.getJ14());
-                model.setSystemSluzby(regModel.getSystemSluzby());
-                model.setCinnost(regModel.getCinnost());
+                model.setSystemServices(regModel.getSystemServices());
+                model.setActivity(regModel.getActivity());
                 model.setPoze1(regModel.getPoze1());
                 model.setPoze2(regModel.getPoze2());
-                model.setDan(regModel.getDan());
-                if (regModel.getDph() > 0) {
-                    model.setDph(regModel.getDph());
+                model.setTax(regModel.getTax());
+                if (regModel.getVat() > 0) {
+                    model.setVat(regModel.getVat());
                 }
             }
         } catch (Exception e) {

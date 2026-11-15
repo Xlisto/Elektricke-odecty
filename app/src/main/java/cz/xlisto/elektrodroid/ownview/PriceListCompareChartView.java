@@ -220,7 +220,7 @@ public class PriceListCompareChartView extends View {
 
         textPaint.setFakeBoldText(false);
         String pozeInfo = item.getPozeTypeDescription();
-        String subtitle = item.getPriceList().getFirma() + " • " + item.getPriceList().getDistribuce() + (pozeInfo.isEmpty() ? "" : " • " + pozeInfo);
+        String subtitle = item.getPriceList().getCompany() + " • " + item.getPriceList().getDistribution() + (pozeInfo.isEmpty() ? "" : " • " + pozeInfo);
         List<String> subtitleLines = splitTextToLines(textPaint, subtitle, maxWidth);
         int subtitleCount = Math.max(1, subtitleLines.size());
 
@@ -303,7 +303,7 @@ public class PriceListCompareChartView extends View {
             textPaint.setFakeBoldText(false);
             textPaint.setColor(textColorSecondary);
             String pozeInfo = item.getPozeTypeDescription();
-            String subtitle = item.getPriceList().getFirma() + " • " + item.getPriceList().getDistribuce() + (pozeInfo.isEmpty() ? "" : " • " + pozeInfo);
+            String subtitle = item.getPriceList().getCompany() + " • " + item.getPriceList().getDistribution() + (pozeInfo.isEmpty() ? "" : " • " + pozeInfo);
             List<String> subtitleLines = splitTextToLines(textPaint, subtitle, maxTextWidth);
 
             for (String line : subtitleLines) {
@@ -433,9 +433,9 @@ public class PriceListCompareChartView extends View {
         return switch (displayMetric) {
             case TOTAL_ANNUAL_COST, PRICE_STRUCTURE_STACKED -> res.getTotalWithDph();
             case AVG_MONTHLY_COST -> res.getAverageMonthlyCostWithDph();
-            case VT_PRICE -> res.getPriceList().getCenaVT();
-            case NT_PRICE -> res.getPriceList().getCenaNT();
-            case FIXED_MONTHLY_FEE -> res.getPriceList().getMesicniPlat();
+            case VT_PRICE -> res.getPriceList().getPriceVT();
+            case NT_PRICE -> res.getPriceList().getPriceNT();
+            case FIXED_MONTHLY_FEE -> res.getPriceList().getMonthlyPayment();
             case REGULATED_COMPONENT -> res.getRegulatedTotalCost();
             case UNREGULATED_COMPONENT -> res.getMerchantTotalCost();
             case DIFF_VS_CHEAPEST -> res.getDiffVsCheapest();

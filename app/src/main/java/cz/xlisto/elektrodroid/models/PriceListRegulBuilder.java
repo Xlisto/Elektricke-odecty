@@ -31,7 +31,7 @@ public class PriceListRegulBuilder extends PriceListModel {
      * @param priceList ceník
      */
     public PriceListRegulBuilder(PriceListModel priceList) {
-        this(priceList, priceList.getRokPlatnost());
+        this(priceList, priceList.getValidityYear());
     }
 
 
@@ -98,14 +98,14 @@ public class PriceListRegulBuilder extends PriceListModel {
     private void initialize(PriceListModel priceList, int year, int month) {
         this.year = year;
         isRegulPrice = false;
-        this.priceList = new PriceListModel(priceList.getId(), priceList.getRada(), priceList.getProdukt(), priceList.getFirma(), priceList.getCenaVT(),
-                priceList.getCenaNT(), priceList.getMesicniPlat(), priceList.getDan(), priceList.getSazba(), priceList.getDistVT(),
+        this.priceList = new PriceListModel(priceList.getId(), priceList.getSeries(), priceList.getProduct(), priceList.getCompany(), priceList.getPriceVT(),
+                priceList.getPriceNT(), priceList.getMonthlyPayment(), priceList.getTax(), priceList.getRate(), priceList.getDistVT(),
                 priceList.getDistNT(), priceList.getJ0(), priceList.getJ1(), priceList.getJ2(), priceList.getJ3(), priceList.getJ4(),
                 priceList.getJ5(), priceList.getJ6(), priceList.getJ7(), priceList.getJ8(), priceList.getJ9(), priceList.getJ10(),
-                priceList.getJ11(), priceList.getJ12(), priceList.getJ13(), priceList.getJ14(), priceList.getSystemSluzby(),
-                priceList.getCinnost(), priceList.getPoze1(), priceList.getPoze2(), priceList.getOze(), priceList.getOte(),
-                priceList.getPlatnostOD(), priceList.getPlatnostDO(), priceList.getDph(), priceList.getDistribuce(),
-                priceList.getAutor(), priceList.getDatumVytvoreni(), priceList.getEmail());
+                priceList.getJ11(), priceList.getJ12(), priceList.getJ13(), priceList.getJ14(), priceList.getSystemServices(),
+                priceList.getActivity(), priceList.getPoze1(), priceList.getPoze2(), priceList.getOze(), priceList.getOte(),
+                priceList.getValidFrom(), priceList.getValidTo(), priceList.getVat(), priceList.getDistribution(),
+                priceList.getAuthor(), priceList.getCreationDate(), priceList.getEmail());
         //nastavení poze0, nt, vt
         if (year == 2023) {
             setVtMax5000();
@@ -138,8 +138,8 @@ public class PriceListRegulBuilder extends PriceListModel {
      * Nastaví v ceníku zastropovanou cenu VT
      */
     private void setVtMax5000() {
-        if (priceList.getCenaVT() > MAX_VT_2023)
-            priceList.setCenaVT(MAX_VT_2023);
+        if (priceList.getPriceVT() > MAX_VT_2023)
+            priceList.setPriceVT(MAX_VT_2023);
     }
 
 
@@ -147,8 +147,8 @@ public class PriceListRegulBuilder extends PriceListModel {
      * Nastaví v ceníku zastropovanou cenu NT
      */
     private void setNtMax5000() {
-        if (priceList.getCenaNT() > MAX_NT_2023)
-            priceList.setCenaNT(MAX_NT_2023);
+        if (priceList.getPriceNT() > MAX_NT_2023)
+            priceList.setPriceNT(MAX_NT_2023);
     }
 
 
@@ -156,8 +156,8 @@ public class PriceListRegulBuilder extends PriceListModel {
      * Nastaví v ceníku zastropovanou cenu měsíčního platu
      */
     private void setPlatMax130() {
-        if (priceList.getMesicniPlat() > MAX_PLAT_2023)
-            priceList.setMesicniPlat(MAX_PLAT_2023);
+        if (priceList.getMonthlyPayment() > MAX_PLAT_2023)
+            priceList.setMonthlyPayment(MAX_PLAT_2023);
     }
 
 

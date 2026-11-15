@@ -909,7 +909,7 @@ class PriceListFragment : Fragment() {
                 val priceLists = PdfParserFactory.parsePdf(requireContext(), pdfText)
 
                 val hasValidPrices =
-                    priceLists.any { it.cenaVT > 0 || it.cenaNT > 0 || it.mesicniPlat > 0 }
+                    priceLists.any { it.priceVT > 0 || it.priceNT > 0 || it.monthlyPayment > 0 }
 
                 requireActivity().runOnUiThread {
                     showProgressOverlay(false)

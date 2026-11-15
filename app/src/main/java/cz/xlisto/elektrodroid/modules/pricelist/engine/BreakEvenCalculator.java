@@ -93,7 +93,7 @@ public class BreakEvenCalculator {
             return new BreakEvenResult(ResultStatus.INVALID_DATA, -1, -1, "Nejsou vybrány žádné ceníky.", "", "");
         }
         if (priceLists.size() == 1) {
-            String notice = getTechnicalConditionNotice(priceLists.get(0).getSazba());
+            String notice = getTechnicalConditionNotice(priceLists.get(0).getRate());
             return new BreakEvenResult(ResultStatus.NO_INTERSECTION_A_CHEAPER, -1, -1,
                     "Pro analýzu bodu zvratu vyberte alespoň 2 ceníky.", notice, "");
         }
@@ -261,8 +261,8 @@ public class BreakEvenCalculator {
         double primaryBe = actualSwitchPoints.isEmpty() ? -1 : actualSwitchPoints.get(0);
         ResultStatus status = actualSwitchPoints.isEmpty() ? ResultStatus.NO_INTERSECTION_A_CHEAPER : ResultStatus.EXACT_INTERSECTION;
 
-        String noticeA = getTechnicalConditionNotice(priceLists.get(0).getSazba());
-        String noticeB = getTechnicalConditionNotice(priceLists.get(1).getSazba());
+        String noticeA = getTechnicalConditionNotice(priceLists.get(0).getRate());
+        String noticeB = getTechnicalConditionNotice(priceLists.get(1).getRate());
 
         return new BreakEvenResult(
                 status,
@@ -331,8 +331,8 @@ public class BreakEvenCalculator {
             return new BreakEvenResult(ResultStatus.INVALID_DATA, -1, -1, "Neplatná data ceníků", "", "");
         }
 
-        String noticeA = getTechnicalConditionNotice(priceListA.getSazba());
-        String noticeB = getTechnicalConditionNotice(priceListB.getSazba());
+        String noticeA = getTechnicalConditionNotice(priceListA.getRate());
+        String noticeB = getTechnicalConditionNotice(priceListB.getRate());
 
         PriceListComparisonResult resA0 = PriceListCalculationEngine.calculate(priceListA, 0, 0, months, countPhaze, powerBreaker);
         PriceListComparisonResult resB0 = PriceListCalculationEngine.calculate(priceListB, 0, 0, months, countPhaze, powerBreaker);
@@ -367,7 +367,7 @@ public class BreakEvenCalculator {
                         ResultStatus.NO_INTERSECTION_A_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + priceListA.getProdukt() + " (" + priceListA.getSazba() + ") je výhodnější v celém rozsahu spotřeby.",
+                        "Ceník " + priceListA.getProduct() + " (" + priceListA.getRate() + ") je výhodnější v celém rozsahu spotřeby.",
                         noticeA,
                         noticeB
                 );
@@ -376,7 +376,7 @@ public class BreakEvenCalculator {
                         ResultStatus.NO_INTERSECTION_B_CHEAPER,
                         -1,
                         -1,
-                        "Ceník " + priceListB.getProdukt() + " (" + priceListB.getSazba() + ") je výhodnější v celém rozsahu spotřeby.",
+                        "Ceník " + priceListB.getProduct() + " (" + priceListB.getRate() + ") je výhodnější v celém rozsahu spotřeby.",
                         noticeA,
                         noticeB
                 );

@@ -351,19 +351,19 @@ public class AnnualOverviewDataBuilder {
 
                 totalMonthsInYear += durationMonths;
 
-                double dphRatio = 1.0 + (priceList.getDph() / 100.0);
+                double dphRatio = 1.0 + (priceList.getVat() / 100.0);
 
                 // Čistě variabilní ceny za kWh -> převod na Kč s DPH za kWh (BEZ rozpočítání fixních nákladů)
-                double vtUnitKwhWithDph = ((priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby()) / 1000.0) * dphRatio;
-                double ntUnitKwhWithDph = ((priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby()) / 1000.0) * dphRatio;
+                double vtUnitKwhWithDph = ((priceList.getPriceVT() + priceList.getDistVT() + priceList.getTax() + priceList.getSystemServices()) / 1000.0) * dphRatio;
+                double ntUnitKwhWithDph = ((priceList.getPriceNT() + priceList.getDistNT() + priceList.getTax() + priceList.getSystemServices()) / 1000.0) * dphRatio;
 
                 double varCostVT = dVT * vtUnitKwhWithDph;
                 double varCostNT = dNT * ntUnitKwhWithDph;
 
                 // Stálá měsíční platba s DPH (měsíční plat + jistič + činnost)
                 double breakerPrice = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
-                double cinnostOte = Math.max(priceList.getCinnost(), priceList.getOte());
-                double monthlyFixedWithDph = (priceList.getMesicniPlat() + breakerPrice + cinnostOte) * dphRatio;
+                double cinnostOte = Math.max(priceList.getActivity(), priceList.getOte());
+                double monthlyFixedWithDph = (priceList.getMonthlyPayment() + breakerPrice + cinnostOte) * dphRatio;
 
                 // POZE s DPH (pokud se počítá v daném roce)
                 double pozeCostSegment = 0;

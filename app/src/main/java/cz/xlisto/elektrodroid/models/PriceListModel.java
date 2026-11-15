@@ -22,14 +22,14 @@ public class PriceListModel implements Serializable {
     public final static String EGD = "EG.D";
     private final static String NO_PRICE_LIST = "Ceník nenalezen!!!";
     private long id;
-    private String rada;
-    private String produkt;
-    private final String firma;
-    private Double cenaVT;
-    private Double cenaNT;
-    private Double mesicniPlat;
-    private Double dan;
-    private String sazba;
+    private String series;
+    private String product;
+    private final String company;
+    private Double priceVT;
+    private Double priceNT;
+    private Double monthlyPayment;
+    private Double tax;
+    private String rate;
     private Double distVT;
     private Double distNT;
     private Double j0;
@@ -47,18 +47,18 @@ public class PriceListModel implements Serializable {
     private Double j12;
     private Double j13;
     private Double j14;
-    private Double systemSluzby;
-    private Double cinnost;
+    private Double systemServices;
+    private Double activity;
     private Double poze1;
     private Double poze2;
     private final Double oze;
     private final Double ote;
-    private long platnostOD;
-    private long platnostDO;
-    private double dph;
-    private final String distribuce;
-    private final String autor;
-    private final long datumVytvoreni;
+    private long validFrom;
+    private long validTo;
+    private double vat;
+    private final String distribution;
+    private final String author;
+    private final long creationDate;
     private final String email;
     private boolean isChecked = false;
 
@@ -70,15 +70,15 @@ public class PriceListModel implements Serializable {
 
 
     //nulový konstruktor
-    public PriceListModel(String produkt) {
+    public PriceListModel(String product) {
         this.id = 0L;
-        this.produkt = produkt;
-        this.firma = "";
-        this.cenaVT = 0.0;
-        this.cenaNT = 0.0;
-        this.mesicniPlat = 0.0;
-        this.dan = 0.0;
-        this.sazba = "";
+        this.product = product;
+        this.company = "";
+        this.priceVT = 0.0;
+        this.priceNT = 0.0;
+        this.monthlyPayment = 0.0;
+        this.tax = 0.0;
+        this.rate = "";
         this.distVT = 0.0;
         this.distNT = 0.0;
         this.j0 = 0.0;
@@ -96,39 +96,39 @@ public class PriceListModel implements Serializable {
         this.j12 = 0.0;
         this.j13 = 0.0;
         this.j14 = 0.0;
-        this.systemSluzby = 0.0;
-        this.cinnost = 0.0;
+        this.systemServices = 0.0;
+        this.activity = 0.0;
         this.poze1 = 0.0;
         this.poze2 = 0.0;
         this.oze = 0.0;
         this.ote = 0.0;
-        this.platnostOD = 0L;
-        this.platnostDO = 0L;
-        this.dph = 0.0;
-        this.distribuce = "";
-        this.autor = "";
-        this.datumVytvoreni = 0L;
+        this.validFrom = 0L;
+        this.validTo = 0L;
+        this.vat = 0.0;
+        this.distribution = "";
+        this.author = "";
+        this.creationDate = 0L;
         this.email = "";
     }
 
 
-    public PriceListModel(long id, String rada, String produkt, String firma, double cenaVT,
-                          double cenaNT, double mesicniPlat, double dan, String sazba, double distVT,
+    public PriceListModel(long id, String series, String product, String company, double priceVT,
+                          double priceNT, double monthlyPayment, double tax, String rate, double distVT,
                           double distNT, double j0, double j1, double j2, double j3, double j4,
                           double j5, double j6, double j7, double j8, double j9, double j10,
-                          double j11, double j12, double j13, double j14, double systemSluzby,
-                          double cinnost, double poze1, double poze2, double oze, double ote,
-                          long platnostOD, long platnostDO, double dph, String distribuce,
-                          String autor, long datumVytvoreni, String email) {
+                          double j11, double j12, double j13, double j14, double systemServices,
+                          double activity, double poze1, double poze2, double oze, double ote,
+                          long validFrom, long validTo, double vat, String distribution,
+                          String author, long creationDate, String email) {
         this.id = id;
-        this.rada = rada;
-        this.produkt = produkt;
-        this.firma = firma;
-        this.cenaVT = cenaVT;
-        this.cenaNT = cenaNT;
-        this.mesicniPlat = mesicniPlat;
-        this.dan = dan;
-        this.sazba = sazba;
+        this.series = series;
+        this.product = product;
+        this.company = company;
+        this.priceVT = priceVT;
+        this.priceNT = priceNT;
+        this.monthlyPayment = monthlyPayment;
+        this.tax = tax;
+        this.rate = rate;
         this.distVT = distVT;
         this.distNT = distNT;
         this.j0 = j0;
@@ -146,18 +146,18 @@ public class PriceListModel implements Serializable {
         this.j12 = j12;
         this.j13 = j13;
         this.j14 = j14;
-        this.systemSluzby = systemSluzby;
-        this.cinnost = cinnost;
+        this.systemServices = systemServices;
+        this.activity = activity;
         this.poze1 = poze1;
         this.poze2 = poze2;
         this.oze = oze;
         this.ote = ote;
-        this.platnostOD = platnostOD;
-        this.platnostDO = platnostDO;
-        this.dph = dph;
-        this.distribuce = distribuce;
-        this.autor = autor;
-        this.datumVytvoreni = datumVytvoreni;
+        this.validFrom = validFrom;
+        this.validTo = validTo;
+        this.vat = vat;
+        this.distribution = distribution;
+        this.author = author;
+        this.creationDate = creationDate;
         this.email = email;
     }
 
@@ -168,12 +168,12 @@ public class PriceListModel implements Serializable {
      * @return String název, sazba a platnost ceníku
      */
     public String getName() {
-        if (this.produkt.equals(NO_PRICE_LIST))
+        if (this.product.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
 
-        return getProdukt() + ", " + getSazba()
-                + ",\nPlatný: \n" + convertLongToDate(getPlatnostOD() + 1)
-                + " - " + convertLongToDate(getPlatnostDO());
+        return getProduct() + ", " + getRate()
+                + ",\nPlatný: \n" + convertLongToDate(getValidFrom() + 1)
+                + " - " + convertLongToDate(getValidTo());
     }
 
 
@@ -182,13 +182,13 @@ public class PriceListModel implements Serializable {
      *
      * @return textový interval platnosti
      */
-    public String getPlatnostText() {
-        if (platnostOD > 0 && platnostDO > 0) {
-            return convertLongToDate(platnostOD) + " – " + convertLongToDate(platnostDO);
-        } else if (platnostOD > 0) {
-            return "od " + convertLongToDate(platnostOD);
-        } else if (platnostDO > 0) {
-            return "do " + convertLongToDate(platnostDO);
+    public String getValidityText() {
+        if (validFrom > 0 && validTo > 0) {
+            return convertLongToDate(validFrom) + " – " + convertLongToDate(validTo);
+        } else if (validFrom > 0) {
+            return "od " + convertLongToDate(validFrom);
+        } else if (validTo > 0) {
+            return "do " + convertLongToDate(validTo);
         }
         return "";
     }
@@ -200,16 +200,16 @@ public class PriceListModel implements Serializable {
      * @return název ceníku s obdobím platnosti
      */
     public String getNameWithPeriod() {
-        if (this.produkt.equals(NO_PRICE_LIST))
+        if (this.product.equals(NO_PRICE_LIST))
             return NO_PRICE_LIST;
-        String dates = getPlatnostText();
-        String name = (this.rada != null && !this.rada.trim().isEmpty() && !this.rada.trim().equalsIgnoreCase(this.produkt.trim()))
-                ? this.rada.trim() + " - " + getProdukt()
-                : getProdukt();
+        String dates = getValidityText();
+        String name = (this.series != null && !this.series.trim().isEmpty() && !this.series.trim().equalsIgnoreCase(this.product.trim()))
+                ? this.series.trim() + " - " + getProduct()
+                : getProduct();
         if (!dates.isEmpty()) {
-            return name + " (" + getSazba() + " • " + dates + ")";
+            return name + " (" + getRate() + " • " + dates + ")";
         }
-        return name + " (" + getSazba() + ")";
+        return name + " (" + getRate() + ")";
     }
 
 
@@ -219,28 +219,28 @@ public class PriceListModel implements Serializable {
      * @return boolean true - prázdný, false - není prázdný
      */
     public boolean isEmpty() {
-        return this.produkt.equals(NO_PRICE_LIST);
+        return this.product.equals(NO_PRICE_LIST);
     }
 
 
     @NonNull
     public String toString() {
         return "Ceník:\n" +
-                "id: " + getId() + " Řada: " + getRada() +
-                "\nProdukt: " + getProdukt() + " Distribuční firma: " + getFirma() +
-                "\nCenaVT:" + getCenaVT() + " CenaNT:" + getCenaNT() + " Měsíční plat: " + getMesicniPlat() + " Daň: " + getDan() +
-                "\nSazba: " + getSazba() +
+                "id: " + getId() + " Řada: " + getSeries() +
+                "\nProdukt: " + getProduct() + " Distribuční firma: " + getCompany() +
+                "\nCenaVT:" + getPriceVT() + " CenaNT:" + getPriceNT() + " Měsíční plat: " + getMonthlyPayment() + " Daň: " + getTax() +
+                "\nSazba: " + getRate() +
                 "\nDist. VT: " + getDistVT() + " NT: " + getDistNT() + " J0:" + getJ0() +
                 "\nJ1:" + getJ1() + " J2:" + getJ2() + " J3:" + getJ3() +
                 "\nJ4:" + getJ4() + " J5:" + getJ5() + " J6:" + getJ6() +
                 "\nJ7:" + getJ7() + " J8:" + getJ8() + " J9:" + getJ9() +
                 "\nJ10:" + getJ10() + " J11:" + getJ11() + " J12:" + getJ12() +
                 "\nJ13:" + getJ13() + " J14:" + getJ14() +
-                "\nSystem.služby: " + getSystemSluzby() + " Činnost OTE:" + getCinnost() + " POZE1: " + getPoze1() +
+                "\nSystem.služby: " + getSystemServices() + " Činnost OTE:" + getActivity() + " POZE1: " + getPoze1() +
                 "\nPOZE2:" + getPoze2() + " OZE:" + getOze() + " OTE:" + getOte() +
-                "\nPlatnost OD:" + getPlatnostOD() + "(" + ViewHelper.convertLongToDate(getPlatnostOD()) + ") DO:" + getPlatnostDO() + " (" + ViewHelper.convertLongToDate(getPlatnostDO()) + ")" +
-                "\nDistribuce: " + getDistribuce() +
-                "\nDph:" + getDph() + " Datum Vytvoření: " + getDatumVytvoreni() + " Autor:" + getAutor() + " email :" + getEmail();
+                "\nPlatnost OD:" + getValidFrom() + "(" + ViewHelper.convertLongToDate(getValidFrom()) + ") DO:" + getValidTo() + " (" + ViewHelper.convertLongToDate(getValidTo()) + ")" +
+                "\nDistribuce: " + getDistribution() +
+                "\nDph:" + getVat() + " Datum Vytvoření: " + getCreationDate() + " Autor:" + getAuthor() + " email :" + getEmail();
     }
 
 
@@ -249,43 +249,43 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public String getRada() {
-        return rada;
+    public String getSeries() {
+        return series;
     }
 
 
-    public String getProdukt() {
-        return produkt;
+    public String getProduct() {
+        return product;
     }
 
 
-    public String getFirma() {
-        return firma;
+    public String getCompany() {
+        return company;
     }
 
 
-    public Double getCenaVT() {
-        return cenaVT != null ? cenaVT : 0.0;
+    public Double getPriceVT() {
+        return priceVT != null ? priceVT : 0.0;
     }
 
 
-    public Double getCenaNT() {
-        return cenaNT != null ? cenaNT : 0.0;
+    public Double getPriceNT() {
+        return priceNT != null ? priceNT : 0.0;
     }
 
 
-    public Double getMesicniPlat() {
-        return mesicniPlat != null ? mesicniPlat : 0.0;
+    public Double getMonthlyPayment() {
+        return monthlyPayment != null ? monthlyPayment : 0.0;
     }
 
 
-    public Double getDan() {
-        return dan != null ? dan : 0.0;
+    public Double getTax() {
+        return tax != null ? tax : 0.0;
     }
 
 
-    public String getSazba() {
-        return sazba;
+    public String getRate() {
+        return rate;
     }
 
 
@@ -374,13 +374,13 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public Double getSystemSluzby() {
-        return systemSluzby != null ? systemSluzby : 0.0;
+    public Double getSystemServices() {
+        return systemServices != null ? systemServices : 0.0;
     }
 
 
-    public Double getCinnost() {
-        return cinnost != null ? cinnost : 0.0;
+    public Double getActivity() {
+        return activity != null ? activity : 0.0;
     }
 
 
@@ -404,18 +404,18 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public Long getPlatnostOD() {
-        return platnostOD;
+    public Long getValidFrom() {
+        return validFrom;
     }
 
 
-    public Long getPlatnostDO() {
-        return platnostDO;
+    public Long getValidTo() {
+        return validTo;
     }
 
 
-    public Double getDph() {
-        return dph;
+    public Double getVat() {
+        return vat;
     }
 
 
@@ -426,31 +426,31 @@ public class PriceListModel implements Serializable {
      *
      * @return string oblasti distribuce
      */
-    public String getDistribuce() {
-        if (getRokPlatnost() >= 2021) {
-            if (distribuce.equals(EON))
+    public String getDistribution() {
+        if (getValidityYear() >= 2021) {
+            if (distribution.equals(EON))
                 return EGD;
         } else {
-            if (distribuce.equals(EGD))
+            if (distribution.equals(EGD))
                 return EON;
         }
-        return distribuce;
+        return distribution;
     }
 
 
-    public String getAutor() {
-        return autor;
+    public String getAuthor() {
+        return author;
     }
 
 
-    public Long getDatumVytvoreni() {
-        return datumVytvoreni;
+    public Long getCreationDate() {
+        return creationDate;
     }
 
 
-    public int getRokPlatnost() {
+    public int getValidityYear() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(getPlatnostOD());
+        calendar.setTimeInMillis(getValidFrom());
         return calendar.get(Calendar.YEAR);
     }
 
@@ -470,33 +470,33 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public void setProdukt(String produkt) {
-        this.produkt = produkt;
+    public void setProduct(String product) {
+        this.product = product;
     }
 
 
-    public void setCenaVT(Double cenaVT) {
-        this.cenaVT = cenaVT;
+    public void setPriceVT(Double priceVT) {
+        this.priceVT = priceVT;
     }
 
 
-    public void setCenaNT(Double cenaNT) {
-        this.cenaNT = cenaNT;
+    public void setPriceNT(Double priceNT) {
+        this.priceNT = priceNT;
     }
 
 
-    public void setMesicniPlat(Double mesicniPlat) {
-        this.mesicniPlat = mesicniPlat;
+    public void setMonthlyPayment(Double monthlyPayment) {
+        this.monthlyPayment = monthlyPayment;
     }
 
 
-    public void setDan(Double dan) {
-        this.dan = dan;
+    public void setTax(Double tax) {
+        this.tax = tax;
     }
 
 
-    public void setSazba(String sazba) {
-        this.sazba = sazba;
+    public void setRate(String rate) {
+        this.rate = rate;
     }
 
 
@@ -585,13 +585,13 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public void setSystemSluzby(Double systemSluzby) {
-        this.systemSluzby = systemSluzby;
+    public void setSystemServices(Double systemServices) {
+        this.systemServices = systemServices;
     }
 
 
-    public void setCinnost(Double cinnost) {
-        this.cinnost = cinnost;
+    public void setActivity(Double activity) {
+        this.activity = activity;
     }
 
 
@@ -605,8 +605,8 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public void setDph(Double dph) {
-        this.dph = dph;
+    public void setVat(Double vat) {
+        this.vat = vat;
     }
 
 
@@ -615,13 +615,13 @@ public class PriceListModel implements Serializable {
     }
 
 
-    public void setPlatnostDO(Long platnostDO) {
-        this.platnostDO = platnostDO;
+    public void setValidTo(Long validTo) {
+        this.validTo = validTo;
     }
 
 
-    public void setPlatnostOD(Long platnostOD) {
-        this.platnostOD = platnostOD;
+    public void setValidFrom(Long validFrom) {
+        this.validFrom = validFrom;
     }
 
 }

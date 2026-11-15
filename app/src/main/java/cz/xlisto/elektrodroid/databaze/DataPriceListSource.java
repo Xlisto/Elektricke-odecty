@@ -253,14 +253,14 @@ public class DataPriceListSource {
      */
     private ContentValues createContentValue(PriceListModel priceListModel) {
         ContentValues values = new ContentValues();
-        values.put(RADA, priceListModel.getRada());
-        values.put(PRODUKT, priceListModel.getProdukt());
-        values.put(FIRMA, priceListModel.getFirma());
-        values.put(CENA_VT, priceListModel.getCenaVT());
-        values.put(CENA_NT, priceListModel.getCenaNT());
-        values.put(MESIC_PLAT, priceListModel.getMesicniPlat());
-        values.put(DAN, priceListModel.getDan());
-        values.put(SAZBA, priceListModel.getSazba());
+        values.put(RADA, priceListModel.getSeries());
+        values.put(PRODUKT, priceListModel.getProduct());
+        values.put(FIRMA, priceListModel.getCompany());
+        values.put(CENA_VT, priceListModel.getPriceVT());
+        values.put(CENA_NT, priceListModel.getPriceNT());
+        values.put(MESIC_PLAT, priceListModel.getMonthlyPayment());
+        values.put(DAN, priceListModel.getTax());
+        values.put(SAZBA, priceListModel.getRate());
         values.put(DIST_VT, priceListModel.getDistVT());
         values.put(DIST_NT, priceListModel.getDistNT());
         values.put(J0, priceListModel.getJ0());
@@ -278,18 +278,18 @@ public class DataPriceListSource {
         values.put(J12, priceListModel.getJ12());
         values.put(J13, priceListModel.getJ13());
         values.put(J14, priceListModel.getJ14());
-        values.put(SYSTEM_SLUZBY, priceListModel.getSystemSluzby());
-        values.put(CINNOST, priceListModel.getCinnost());
+        values.put(SYSTEM_SLUZBY, priceListModel.getSystemServices());
+        values.put(CINNOST, priceListModel.getActivity());
         values.put(POZE1, priceListModel.getPoze1());
         values.put(POZE2, priceListModel.getPoze2());
         values.put(OZE, priceListModel.getOze());
         values.put(OTE, priceListModel.getOte());
-        values.put(PLATNOST_OD, priceListModel.getPlatnostOD());
-        values.put(PLATNOST_DO, priceListModel.getPlatnostDO());
-        values.put(DPH, priceListModel.getDph());
-        values.put(DISTRIBUCE, priceListModel.getDistribuce());
-        values.put(AUTOR, priceListModel.getAutor());
-        values.put(DATUM_VYTVORENI, priceListModel.getDatumVytvoreni());
+        values.put(PLATNOST_OD, priceListModel.getValidFrom());
+        values.put(PLATNOST_DO, priceListModel.getValidTo());
+        values.put(DPH, priceListModel.getVat());
+        values.put(DISTRIBUCE, priceListModel.getDistribution());
+        values.put(AUTOR, priceListModel.getAuthor());
+        values.put(DATUM_VYTVORENI, priceListModel.getCreationDate());
         values.put(EMAIL, priceListModel.getEmail());
         return values;
     }

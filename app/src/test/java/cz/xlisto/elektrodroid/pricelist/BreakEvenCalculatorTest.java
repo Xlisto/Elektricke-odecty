@@ -19,21 +19,21 @@ public class BreakEvenCalculatorTest {
 
     private PriceListModel createSamplePriceList(String produkt, String sazba, double cenaVT, double cenaNT, double mesicniPlat, double distVT, double distNT) {
         PriceListModel pl = new PriceListModel(produkt);
-        pl.setSazba(sazba);
-        pl.setCenaVT(cenaVT);
-        pl.setCenaNT(cenaNT);
-        pl.setMesicniPlat(mesicniPlat);
+        pl.setRate(sazba);
+        pl.setPriceVT(cenaVT);
+        pl.setPriceNT(cenaNT);
+        pl.setMonthlyPayment(mesicniPlat);
         pl.setDistVT(distVT);
         pl.setDistNT(distNT);
-        pl.setDan(28.30);
-        pl.setSystemSluzby(100.0);
-        pl.setCinnost(10.0);
+        pl.setTax(28.30);
+        pl.setSystemServices(100.0);
+        pl.setActivity(10.0);
         pl.setPoze1(0.0);
         pl.setPoze2(0.0);
         pl.setJ3(100.0); // 3x25A
-        pl.setDph(21.0);
-        pl.setPlatnostOD(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("1.1.2025").getTimeInMillis());
-        pl.setPlatnostDO(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("31.12.2025").getTimeInMillis());
+        pl.setVat(21.0);
+        pl.setValidFrom(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("1.1.2025").getTimeInMillis());
+        pl.setValidTo(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("31.12.2025").getTimeInMillis());
         return pl;
     }
 

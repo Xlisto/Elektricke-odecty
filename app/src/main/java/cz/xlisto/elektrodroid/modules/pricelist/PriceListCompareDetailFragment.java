@@ -382,15 +382,15 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         if (priceListRight != null) {
             showSwRight(priceListRightRegulBuilder.isRegulPrice());
 
-            ownprcRada.setRight(priceListRight.getRada());
-            ownprcProdukt.setRight(priceListRight.getProdukt());
-            ownprcSazba.setRight(priceListRight.getSazba());
-            ownprcDodavatel.setRight(priceListRight.getFirma());
-            ownprcUzemi.setRight(priceListRight.getDistribuce());
+            ownprcRada.setRight(priceListRight.getSeries());
+            ownprcProdukt.setRight(priceListRight.getProduct());
+            ownprcSazba.setRight(priceListRight.getRate());
+            ownprcDodavatel.setRight(priceListRight.getCompany());
+            ownprcUzemi.setRight(priceListRight.getDistribution());
 
-            ownprcVT.setRight(df2.format(priceListRight.getCenaVT()) + KC_MWH);
-            ownprcNT.setRight(df2.format(priceListRight.getCenaNT()) + KC_MWH);
-            ownprcPayment.setRight(df2.format(priceListRight.getMesicniPlat()) + KC_MONTH);
+            ownprcVT.setRight(df2.format(priceListRight.getPriceVT()) + KC_MWH);
+            ownprcNT.setRight(df2.format(priceListRight.getPriceNT()) + KC_MWH);
+            ownprcPayment.setRight(df2.format(priceListRight.getMonthlyPayment()) + KC_MONTH);
 
             ownprcVTRegul.setRight(df2.format(priceListRight.getDistVT()) + KC_MWH);
             ownprcNTRegul.setRight(df2.format(priceListRight.getDistNT()) + KC_MWH);
@@ -411,19 +411,19 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
             ownprcJ13.setRight(df2.format(priceListRight.getJ13()) + KC_MONTH);
             ownprcJ14.setRight(df2.format(priceListRight.getJ14()) + KC_MONTH);
 
-            ownprcSystem.setRight(df2.format(priceListRight.getSystemSluzby()) + KC_MWH);
-            if (priceListRight.getCinnost() == 0)
+            ownprcSystem.setRight(df2.format(priceListRight.getSystemServices()) + KC_MWH);
+            if (priceListRight.getActivity() == 0)
                 ownprcOTE.setRight(df2.format(priceListRight.getOte()) + " Kč za OM/měsíc");
             else
-                ownprcOTE.setRight(df2.format(priceListRight.getCinnost()) + " Kč za OM/měsíc");
+                ownprcOTE.setRight(df2.format(priceListRight.getActivity()) + " Kč za OM/měsíc");
             ownprcPOZE1.setRight(df2.format(priceListRight.getPoze1()) + " Kč za 1A/měsíc");
             if (priceListRight.getOze() == 0)
                 ownprcPOZE2.setRight(df2.format(priceListRight.getPoze2()) + KC_MWH);
             else
                 ownprcPOZE2.setRight(df2.format(priceListRight.getOze()) + KC_MWH);
 
-            ownprcTaxation.setRight(df2.format(priceListRight.getDan()) + KC_MWH);
-            ownprcDPH.setRight(df2.format(priceListRight.getDph()) + " %");
+            ownprcTaxation.setRight(df2.format(priceListRight.getTax()) + KC_MWH);
+            ownprcDPH.setRight(df2.format(priceListRight.getVat()) + " %");
 
             //výpočty
             if (subscriptionPoint != null) {
@@ -437,33 +437,33 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
                 ownprcTotalPayment.setRight(df2.format((totalPriceRight[2] + servicesR) * month) + KC);
 
                 //nastavení celkového součtu s DPH pravá strana
-                ownprcTotalVTDPH.setRight(df2.format(addDPH(totalPriceRight[0] * vt, priceListRight.getDph())) + KC);
-                ownprcTotalNTDPH.setRight(df2.format(addDPH(totalPriceRight[1] * nt, priceListRight.getDph())) + KC);
-                ownprcTotalPaymentDPH.setRight(df2.format(addDPH((totalPriceRight[2] + servicesR) * month, priceListRight.getDph())) + KC);
+                ownprcTotalVTDPH.setRight(df2.format(addDPH(totalPriceRight[0] * vt, priceListRight.getVat())) + KC);
+                ownprcTotalNTDPH.setRight(df2.format(addDPH(totalPriceRight[1] * nt, priceListRight.getVat())) + KC);
+                ownprcTotalPaymentDPH.setRight(df2.format(addDPH((totalPriceRight[2] + servicesR) * month, priceListRight.getVat())) + KC);
 
                 ownprcTotalPoze.setRight(df2.format(totalPozeRight) + KC);
-                ownprcTotalPozeDPH.setRight(df2.format(addDPH(totalPozeRight, priceListRight.getDph())) + KC);
+                ownprcTotalPozeDPH.setRight(df2.format(addDPH(totalPozeRight, priceListRight.getVat())) + KC);
                 if (Calculation.getPoze(priceListRight, phaze, power, vt + nt, month).isMAXPoze()) {
                     ownprcTotalPoze.setRight(df2.format(totalPozeRight) + KC);
-                    ownprcTotalPozeDPH.setRight(df2.format(addDPH(totalPozeRight, priceListRight.getDph())) + KC);
+                    ownprcTotalPozeDPH.setRight(df2.format(addDPH(totalPozeRight, priceListRight.getVat())) + KC);
                 }
                 totalRight = (totalPriceRight[0] * vt) + (totalPriceRight[1] * nt) + ((totalPriceRight[2] + servicesR) * month) + totalPozeRight;
-                ownprcTotalDPH.setRight(df2.format(addDPH(totalRight, priceListRight.getDph())) + KC);
+                ownprcTotalDPH.setRight(df2.format(addDPH(totalRight, priceListRight.getVat())) + KC);
             }
         }
 
         if (priceListLeft != null) {
             showSwLeft(priceListLeftRegulBuilder.isRegulPrice());
 
-            ownprcRada.setLeft(priceListLeft.getRada());
-            ownprcProdukt.setLeft(priceListLeft.getProdukt());
-            ownprcSazba.setLeft(priceListLeft.getSazba());
-            ownprcDodavatel.setLeft(priceListLeft.getFirma());
-            ownprcUzemi.setLeft(priceListLeft.getDistribuce());
+            ownprcRada.setLeft(priceListLeft.getSeries());
+            ownprcProdukt.setLeft(priceListLeft.getProduct());
+            ownprcSazba.setLeft(priceListLeft.getRate());
+            ownprcDodavatel.setLeft(priceListLeft.getCompany());
+            ownprcUzemi.setLeft(priceListLeft.getDistribution());
 
-            ownprcVT.setLeft(df2.format(priceListLeft.getCenaVT()) + KC_MWH);
-            ownprcNT.setLeft(df2.format(priceListLeft.getCenaNT()) + KC_MWH);
-            ownprcPayment.setLeft(df2.format(priceListLeft.getMesicniPlat()) + KC_MONTH);
+            ownprcVT.setLeft(df2.format(priceListLeft.getPriceVT()) + KC_MWH);
+            ownprcNT.setLeft(df2.format(priceListLeft.getPriceNT()) + KC_MWH);
+            ownprcPayment.setLeft(df2.format(priceListLeft.getMonthlyPayment()) + KC_MONTH);
 
             ownprcVTRegul.setLeft(df2.format(priceListLeft.getDistVT()) + KC_MWH);
             ownprcNTRegul.setLeft(df2.format(priceListLeft.getDistNT()) + KC_MWH);
@@ -484,18 +484,18 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
             ownprcJ13.setLeft(df2.format(priceListLeft.getJ13()) + KC_MONTH);
             ownprcJ14.setLeft(df2.format(priceListLeft.getJ14()) + KC_MONTH);
 
-            ownprcSystem.setLeft(df2.format(priceListLeft.getSystemSluzby()) + KC_MWH);
-            if (priceListLeft.getCinnost() == 0)
+            ownprcSystem.setLeft(df2.format(priceListLeft.getSystemServices()) + KC_MWH);
+            if (priceListLeft.getActivity() == 0)
                 ownprcOTE.setLeft(df2.format(priceListLeft.getOte()) + " Kč za OM/měsíc");
             else
-                ownprcOTE.setLeft(df2.format(priceListLeft.getCinnost()) + " Kč za OM/měsíc");
+                ownprcOTE.setLeft(df2.format(priceListLeft.getActivity()) + " Kč za OM/měsíc");
             ownprcPOZE1.setLeft(df2.format(priceListLeft.getPoze1()) + " Kč za 1A/měsíc");
             if (priceListLeft.getOze() == 0) {
                 ownprcPOZE2.setLeft(df2.format(priceListLeft.getPoze2()) + KC_MWH);
             } else
                 ownprcPOZE2.setLeft(df2.format(priceListLeft.getOze()) + KC_MWH);
-            ownprcTaxation.setLeft(df2.format(priceListLeft.getDan()) + KC_MWH);
-            ownprcDPH.setLeft(df2.format(priceListLeft.getDph()) + " %");
+            ownprcTaxation.setLeft(df2.format(priceListLeft.getTax()) + KC_MWH);
+            ownprcDPH.setLeft(df2.format(priceListLeft.getVat()) + " %");
 
             //výpočty
             if (subscriptionPoint != null) {
@@ -508,19 +508,19 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
                 ownprcTotalPayment.setLeft(df2.format((totalPriceLeft[2] + servicesL) * month) + KC);
 
                 //nastavení celkového součtu s DPH levá strana
-                ownprcTotalVTDPH.setLeft(df2.format(addDPH(totalPriceLeft[0] * vt, priceListLeft.getDph())) + KC);
-                ownprcTotalNTDPH.setLeft(df2.format(addDPH(totalPriceLeft[1] * nt, priceListLeft.getDph())) + KC);
-                ownprcTotalPaymentDPH.setLeft(df2.format(addDPH((totalPriceLeft[2] + servicesL) * month, priceListLeft.getDph())) + KC);
+                ownprcTotalVTDPH.setLeft(df2.format(addDPH(totalPriceLeft[0] * vt, priceListLeft.getVat())) + KC);
+                ownprcTotalNTDPH.setLeft(df2.format(addDPH(totalPriceLeft[1] * nt, priceListLeft.getVat())) + KC);
+                ownprcTotalPaymentDPH.setLeft(df2.format(addDPH((totalPriceLeft[2] + servicesL) * month, priceListLeft.getVat())) + KC);
 
                 ownprcTotalPoze.setLeft(df2.format(totalPozeLeft) + KC);
-                ownprcTotalPozeDPH.setLeft(df2.format(addDPH(totalPozeLeft, priceListLeft.getDph())) + KC);
+                ownprcTotalPozeDPH.setLeft(df2.format(addDPH(totalPozeLeft, priceListLeft.getVat())) + KC);
                 if (Calculation.getPoze(priceListLeft, phaze, power, vt + nt, month).isMAXPoze()) {
                     ownprcTotalPoze.setLeft(df2.format(totalPozeLeft) + KC);
-                    ownprcTotalPozeDPH.setLeft(df2.format(addDPH(totalPozeLeft, priceListLeft.getDph())) + KC);
+                    ownprcTotalPozeDPH.setLeft(df2.format(addDPH(totalPozeLeft, priceListLeft.getVat())) + KC);
                 }
 
                 totalLeft = (totalPriceLeft[0] * vt) + (totalPriceLeft[1] * nt) + ((totalPriceLeft[2] + servicesL) * month) + totalPozeLeft;
-                ownprcTotalDPH.setLeft(df2.format(addDPH(totalLeft, priceListLeft.getDph())) + KC);
+                ownprcTotalDPH.setLeft(df2.format(addDPH(totalLeft, priceListLeft.getVat())) + KC);
 
             }
         }
@@ -528,13 +528,13 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         if (priceListLeft != null && priceListRight != null) {
             if (priceListRightRegulBuilder.isRegulPrice() && priceListLeftRegulBuilder.isRegulPrice())
                 tvShowRegulPriceLabel.setVisibility(VISIBLE);
-            double difVT = priceListLeft.getCenaVT() - priceListRight.getCenaVT();
+            double difVT = priceListLeft.getPriceVT() - priceListRight.getPriceVT();
             setDifferentPrice(ownprcVT, difVT, VT);
 
-            double difNT = priceListLeft.getCenaNT() - priceListRight.getCenaNT();
+            double difNT = priceListLeft.getPriceNT() - priceListRight.getPriceNT();
             setDifferentPrice(ownprcNT, difNT, NT);
 
-            double difPayment = priceListLeft.getMesicniPlat() - priceListRight.getMesicniPlat();
+            double difPayment = priceListLeft.getMonthlyPayment() - priceListRight.getMonthlyPayment();
             setDifferentPrice(ownprcPayment, difPayment, MONTH);
 
             double difRegulVT = priceListLeft.getDistVT() - priceListRight.getDistVT();
@@ -588,17 +588,17 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
             double difJ14 = priceListLeft.getJ14() - priceListRight.getJ14();
             setDifferentPrice(ownprcJ14, difJ14, MONTH);
 
-            double difSystem = priceListLeft.getSystemSluzby() - priceListRight.getSystemSluzby();
+            double difSystem = priceListLeft.getSystemServices() - priceListRight.getSystemServices();
             setDifferentPrice(ownprcSystem, difSystem, VT_NT);
 
             //načítám ote, pokud je činnost větší než nula, použiji tuto hodnotu
             //ote a cinnost jsou stejné údaje, liší se typem ceníku
             double oteLeft = priceListLeft.getOte();
             double oteRight = priceListRight.getOte();
-            if (priceListLeft.getCinnost() > 0)
-                oteLeft = priceListLeft.getCinnost();
-            if (priceListRight.getCinnost() > 0)
-                oteRight = priceListRight.getCinnost();
+            if (priceListLeft.getActivity() > 0)
+                oteLeft = priceListLeft.getActivity();
+            if (priceListRight.getActivity() > 0)
+                oteRight = priceListRight.getActivity();
             double difOTE = oteLeft - oteRight;
             setDifferentPrice(ownprcOTE, difOTE, MONTH);
 
@@ -628,18 +628,18 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
                 setDifferentPrice(ownprcTotalPoze, difTotalPoze);
 
                 //rozdíl v celkovém součtu s DPH levá strana
-                double difTotalVTDPH = addDPH(totalPriceLeft[0], priceListLeft.getDph()) - addDPH(totalPriceRight[0], priceListRight.getDph());
-                double difTotalNTDPH = addDPH(totalPriceLeft[1], priceListLeft.getDph()) - addDPH(totalPriceRight[1], priceListRight.getDph());
-                double difTotalPaymentDPH = addDPH(totalPriceLeft[2] + servicesL, priceListLeft.getDph()) - addDPH(totalPriceRight[2] + servicesR, priceListRight.getDph());
-                double difTotalPozeDPH = addDPH(totalPozeLeft, priceListLeft.getDph()) - addDPH(totalPozeRight, priceListRight.getDph());
+                double difTotalVTDPH = addDPH(totalPriceLeft[0], priceListLeft.getVat()) - addDPH(totalPriceRight[0], priceListRight.getVat());
+                double difTotalNTDPH = addDPH(totalPriceLeft[1], priceListLeft.getVat()) - addDPH(totalPriceRight[1], priceListRight.getVat());
+                double difTotalPaymentDPH = addDPH(totalPriceLeft[2] + servicesL, priceListLeft.getVat()) - addDPH(totalPriceRight[2] + servicesR, priceListRight.getVat());
+                double difTotalPozeDPH = addDPH(totalPozeLeft, priceListLeft.getVat()) - addDPH(totalPozeRight, priceListRight.getVat());
                 setDifferentPrice(ownprcTotalVTDPH, difTotalVTDPH, VT);
                 setDifferentPrice(ownprcTotalNTDPH, difTotalNTDPH, NT);
                 setDifferentPrice(ownprcTotalPaymentDPH, difTotalPaymentDPH, MONTH);
 
                 setDifferentPrice(ownprcTotalPozeDPH, difTotalPozeDPH);
-                setDifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getDph()) - addDPH(totalRight, priceListRight.getDph()));
+                setDifferentPrice(ownprcTotalDPH, addDPH(totalLeft, priceListLeft.getVat()) - addDPH(totalRight, priceListRight.getVat()));
 
-                setHideNotUsedItem(ownprcNT, priceListLeft.getCenaNT(), priceListRight.getCenaNT());
+                setHideNotUsedItem(ownprcNT, priceListLeft.getPriceNT(), priceListRight.getPriceNT());
                 setHideNotUsedItem(ownprcNTRegul, priceListLeft.getDistNT(), priceListRight.getDistNT());
                 setHideNotUsedItem(ownprcJ7, priceListLeft.getJ7(), priceListRight.getJ7());
                 setHideNotUsedItem(ownprcJ8, priceListLeft.getJ8(), priceListRight.getJ8());

@@ -335,7 +335,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                 PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastJune, null);
                 PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstJuly);
-                priceListModelSecond.setCinnost(9.24);
+                priceListModelSecond.setActivity(9.24);
 
                  viewModel.preparePriceLists(priceListModelFirst, priceListModelSecond, this.getClass().equals(PriceListAddFragment.class), itemId);
 
@@ -360,7 +360,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                 PriceListModel priceListModelFirst = createPriceListWithDates(calendarLastAugust, null);
                 PriceListModel priceListModelSecond = createPriceListWithDates(null, calendarFirstSeptember);
-                priceListModelSecond.setCinnost(12.45);
+                priceListModelSecond.setActivity(12.45);
 
                 viewModel.preparePriceLists(priceListModelFirst, priceListModelSecond, this.getClass().equals(PriceListAddFragment.class), itemId);
             }
@@ -717,7 +717,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
                 PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistribucniUzemi.getSelectedItem().toString(), spSazba.getSelectedItem().toString());
 
-                double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemSluzby(), priceListModel.getCinnost(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getOze(), priceListModel.getOte(), priceListModel.getDan(), priceListModel.getDph()};
+                double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemServices(), priceListModel.getActivity(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getOze(), priceListModel.getOte(), priceListModel.getTax(), priceListModel.getVat()};
 
                 LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemSluzby, ivCinnostOperatora, ivPOZE1, ivPOZE2, ivOZE, ivOTE, ivDan, ivDPH};
 
@@ -1164,10 +1164,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     private PriceListModel createPriceListWithDates(Calendar platnostDO, Calendar platnostOD) {
         PriceListModel priceListModel = createPriceList();
         if (platnostDO != null) {
-            priceListModel.setPlatnostDO(platnostDO.getTimeInMillis());
+            priceListModel.setValidTo(platnostDO.getTimeInMillis());
         }
         if (platnostOD != null) {
-            priceListModel.setPlatnostOD(platnostOD.getTimeInMillis());
+            priceListModel.setValidFrom(platnostOD.getTimeInMillis());
         }
 
         return priceListModel;

@@ -20,21 +20,21 @@ public class PriceListCalculationEngineTest {
 
     private PriceListModel createSamplePriceList(String produkt, String sazba, double cenaVT, double cenaNT, double mesicniPlat, double distVT, double distNT, int year) {
         PriceListModel pl = new PriceListModel(produkt);
-        pl.setSazba(sazba);
-        pl.setCenaVT(cenaVT);
-        pl.setCenaNT(cenaNT);
-        pl.setMesicniPlat(mesicniPlat);
+        pl.setRate(sazba);
+        pl.setPriceVT(cenaVT);
+        pl.setPriceNT(cenaNT);
+        pl.setMonthlyPayment(mesicniPlat);
         pl.setDistVT(distVT);
         pl.setDistNT(distNT);
-        pl.setDan(28.30);
-        pl.setSystemSluzby(100.0);
-        pl.setCinnost(10.0);
+        pl.setTax(28.30);
+        pl.setSystemServices(100.0);
+        pl.setActivity(10.0);
         pl.setPoze1(10.0);
         pl.setPoze2(495.0);
         pl.setJ3(150.0); // Jistič 3x25A
-        pl.setDph(21.0);
-        pl.setPlatnostOD(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("1.1." + year).getTimeInMillis());
-        pl.setPlatnostDO(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("31.12." + year).getTimeInMillis());
+        pl.setVat(21.0);
+        pl.setValidFrom(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("1.1." + year).getTimeInMillis());
+        pl.setValidTo(cz.xlisto.elektrodroid.ownview.ViewHelper.parseCalendarFromString("31.12." + year).getTimeInMillis());
         return pl;
     }
 
@@ -95,11 +95,11 @@ public class PriceListCalculationEngineTest {
         List<PriceListComparisonResult> results = PriceListCalculationEngine.evaluateAll(list, scenario);
 
         assertEquals(2, results.size());
-        assertEquals("Levnější", results.get(0).getPriceList().getProdukt());
+        assertEquals("Levnější", results.get(0).getPriceList().getProduct());
         assertTrue(results.get(0).isCheapest());
         assertEquals(0.0, results.get(0).getDiffVsCheapest(), 0.001);
 
-        assertEquals("Dražší", results.get(1).getPriceList().getProdukt());
+        assertEquals("Dražší", results.get(1).getPriceList().getProduct());
         org.junit.Assert.assertFalse(results.get(1).isCheapest());
         assertTrue(results.get(1).getDiffVsCheapest() > 0);
     }

@@ -236,10 +236,10 @@ class PriceListAdapter(
                 selectedItemId = priceList.id
                 selectedPosition = position
                 val detailInfo =
-                    "${priceList.rada} ${priceList.produkt}, \n${priceList.sazba}, \n" +
-                            "${ViewHelper.convertLongToDate(priceList.platnostOD)} - ${
+                    "${priceList.series} ${priceList.product}, \n${priceList.rate}, \n" +
+                            "${ViewHelper.convertLongToDate(priceList.validFrom)} - ${
                                 ViewHelper.convertLongToDate(
-                                    priceList.platnostDO
+                                    priceList.validTo
                                 )
                             }"
 
@@ -308,15 +308,15 @@ class PriceListAdapter(
 
         // První řádek: Název ceníku (Řada - Produkt)
         val titleText = buildString {
-            if (!isRadaFiltered && priceList.rada.isNotBlank()) {
-                append(priceList.rada)
+            if (!isRadaFiltered && priceList.series.isNotBlank()) {
+                append(priceList.series)
             }
-            if (!isProduktFiltered && priceList.produkt.isNotBlank()) {
+            if (!isProduktFiltered && priceList.product.isNotBlank()) {
                 if (isNotEmpty()) append(" - ")
-                append(priceList.produkt)
+                append(priceList.product)
             }
             if (isEmpty()) {
-                append(priceList.name.ifBlank { priceList.produkt })
+                append(priceList.name.ifBlank { priceList.product })
             }
         }
         holder.tvTitle.text = titleText
@@ -324,26 +324,26 @@ class PriceListAdapter(
         // Druhý řádek: Období platnosti + nefiltrované doplňující údaje
         val dateText = context.getString(
             R.string.validity_price_list_date,
-            ViewHelper.convertLongToDate(priceList.platnostOD),
-            ViewHelper.convertLongToDate(priceList.platnostDO)
+            ViewHelper.convertLongToDate(priceList.validFrom),
+            ViewHelper.convertLongToDate(priceList.validTo)
         )
 
         val extraDetailsList = mutableListOf<String>()
 
-        if (!isCompanyFiltered && !priceList.firma.isNullOrBlank()) {
-            extraDetailsList.add(priceList.firma)
+        if (!isCompanyFiltered && !priceList.company.isNullOrBlank()) {
+            extraDetailsList.add(priceList.company)
         }
-        if (!isAreaFiltered && !priceList.distribuce.isNullOrBlank()) {
-            extraDetailsList.add(PdfParserUtils.getFullDistribuceName(priceList.distribuce))
+        if (!isAreaFiltered && !priceList.distribution.isNullOrBlank()) {
+            extraDetailsList.add(PdfParserUtils.getFullDistribuceName(priceList.distribution))
         }
-        if (!isSazbaFiltered && !priceList.sazba.isNullOrBlank()) {
-            extraDetailsList.add(priceList.sazba)
+        if (!isSazbaFiltered && !priceList.rate.isNullOrBlank()) {
+            extraDetailsList.add(priceList.rate)
         }
 
         // Pojistka proti vizuální nerozlišitelnosti: pokud byly všechny parametry odfiltrovány, přidáme sazbu a dodavatele
         if (extraDetailsList.isEmpty()) {
-            if (!priceList.sazba.isNullOrBlank()) extraDetailsList.add(priceList.sazba)
-            if (!priceList.firma.isNullOrBlank()) extraDetailsList.add(priceList.firma)
+            if (!priceList.rate.isNullOrBlank()) extraDetailsList.add(priceList.rate)
+            if (!priceList.company.isNullOrBlank()) extraDetailsList.add(priceList.company)
         }
 
         val extraDetailsStr = extraDetailsList.joinToString(" • ")
@@ -358,10 +358,10 @@ class PriceListAdapter(
      * @return `true`, pokud ceník odpovídá jednosazbovému tarifu
      */
     private fun isSingleTariff(priceList: PriceListModel): Boolean {
-        val sazba = priceList.sazba.lowercase().replace(" ", "")
+        val sazba = priceList.rate.lowercase().replace(" ", "")
         return sazba.contains("d01") || sazba.contains("d02") ||
                 sazba.contains("c01") || sazba.contains("c02") ||
-                (priceList.cenaNT == 0.0 && priceList.distNT == 0.0)
+                (priceList.priceNT == 0.0 && priceList.distNT == 0.0)
     }
 
     /**
@@ -376,7 +376,7 @@ class PriceListAdapter(
         val cenaNT = DecimalFormatHelper.df2.format(Round.round(ceny[1])) + " Kč/kWh"
         val cenaMesic = DecimalFormatHelper.df2.format(Round.round(ceny[2])) + " Kč s DPH"
 
-        val year = ViewHelper.yearIntOfLong(priceList.platnostOD)
+        val year = ViewHelper.yearIntOfLong(priceList.validFrom)
         val priceListBuilder = PriceListRegulBuilder(priceList, year)
         val priceListRegul = priceListBuilder.regulPriceList
         val cenyRegul = Calculation.calculatePriceForPriceListDPH(priceListRegul, subscriptionPoint)

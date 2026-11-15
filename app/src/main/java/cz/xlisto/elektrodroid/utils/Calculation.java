@@ -54,7 +54,7 @@ public class Calculation {
     public static double[] calculatePriceForPriceListDPH(PriceListModel priceList, SubscriptionPointModel subscriptionPoint) {
         double[] prices = calculatePriceForPriceListKwh(priceList, subscriptionPoint);
         double[] pricesDPH = new double[3];
-        double dph = priceList.getDph();
+        double dph = priceList.getVat();
         for (int i = 0; i < prices.length; i++) {
             pricesDPH[i] = prices[i] + (prices[i] * dph / 100);
         }
@@ -78,7 +78,7 @@ public class Calculation {
     public static double[] calculatePriceForPriceListKwh(PriceListModel priceList, SubscriptionPointModel subscriptionPoint) {
         checkSubscriptionPint(subscriptionPoint);
         Calendar date = Calendar.getInstance();
-        date.setTimeInMillis(priceList.getPlatnostOD());
+        date.setTimeInMillis(priceList.getValidFrom());
         int year = date.get(Calendar.YEAR);
 
         // zavedení státní slevy za POZE pro rok 2026 (POZE = 0, dle ceníku)
@@ -87,9 +87,9 @@ public class Calculation {
             poze = priceList.getPoze1();
         else poze = priceList.getPoze2();
 
-        double vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby() + poze) / 1000;
-        double nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby() + poze) / 1000;
-        double stPlat = priceList.getMesicniPlat() + priceList.getOte() + priceList.getCinnost() + calculatePriceBreaker(priceList, countPhaze, power);
+        double vt = (priceList.getPriceVT() + priceList.getDistVT() + priceList.getTax() + priceList.getSystemServices() + poze) / 1000;
+        double nt = (priceList.getPriceNT() + priceList.getDistNT() + priceList.getTax() + priceList.getSystemServices() + poze) / 1000;
+        double stPlat = priceList.getMonthlyPayment() + priceList.getOte() + priceList.getActivity() + calculatePriceBreaker(priceList, countPhaze, power);
         return new double[]{vt, nt, stPlat};
     }
 
@@ -124,22 +124,22 @@ public class Calculation {
         double poze;
         double stPlat;
         //podmínka pro starší ceník před rokem 2016/
-        if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+        if (priceList.getValidityYear() < NEW_POZE_YEAR) {
             //Výpočet cenaVT+distribuceVT+dan+systemSluzby+OTE (OZE,KVET a DZ (zkráceně POZE) výpočet zvlášť)
             //Výpočet OZE,KVET,DZ (zkráceně POZE) podle spotřeby
             //Výpočet stálé měsíční platby: měsíc * (měsíční plat + cena za jistič)
-            vt = (priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby() + priceList.getOte());
-            nt = (priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby() + priceList.getOte());
+            vt = (priceList.getPriceVT() + priceList.getDistVT() + priceList.getTax() + priceList.getSystemServices() + priceList.getOte());
+            nt = (priceList.getPriceNT() + priceList.getDistNT() + priceList.getTax() + priceList.getSystemServices() + priceList.getOte());
             poze = priceList.getOze();
-            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power);
+            stPlat = priceList.getMonthlyPayment() + calculatePriceBreaker(priceList, countPhaze, power);
         } else {
             //Výpočet cenaVT+distribuceVT+dan+systemSluzby
             //Výpočet POZE podle spotřeby
             //Výpočet stálé měsíční platby: měsíc * (měsíční plat + cena za jistič + OTE)
-            vt = priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby();
-            nt = priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby();
+            vt = priceList.getPriceVT() + priceList.getDistVT() + priceList.getTax() + priceList.getSystemServices();
+            nt = priceList.getPriceNT() + priceList.getDistNT() + priceList.getTax() + priceList.getSystemServices();
             poze = priceList.getPoze2();
-            stPlat = priceList.getMesicniPlat() + calculatePriceBreaker(priceList, countPhaze, power) + priceList.getCinnost();
+            stPlat = priceList.getMonthlyPayment() + calculatePriceBreaker(priceList, countPhaze, power) + priceList.getActivity();
         }
         return new double[]{vt, nt, stPlat, poze};
     }
@@ -376,7 +376,7 @@ public class Calculation {
         double phaze = countPhaze * power;
         poze2 = priceList.getPoze2() * consumption;
         poze1 = phaze * priceList.getPoze1() * month;
-        if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+        if (priceList.getValidityYear() < NEW_POZE_YEAR) {
             poze2 = priceList.getOze() * consumption;
             poze1 = poze2;
         }
@@ -482,13 +482,13 @@ public class Calculation {
             double pozePrice;
             //TODO předělat objekt POZE, aby obsahoval tuto podmínku, stejná je v InvoiceFragment
             if (poze.getTypePoze() == PozeModel.TypePoze.POZE2) {
-                if (priceList.getRokPlatnost() < NEW_POZE_YEAR) {
+                if (priceList.getValidityYear() < NEW_POZE_YEAR) {
                     pozePrice = (vtConsuption + ntConsuption) * priceList.getOze() / 1000;//poze dle spotřeby starší ceník
                 } else {
                     pozePrice = Round.round(vtConsuption + ntConsuption) * priceList.getPoze2() / 1000;//poze dle spotřeby novější ceník
                     // Pokud je rok platnosti ceníku 2026, použijeme alternativní sazbu POZE1
                     // (speciální přechodné pravidlo pro rok 2026), proto přepíšeme hodnotu.
-                    if (priceList.getRokPlatnost() == 2026)
+                    if (priceList.getValidityYear() == 2026)
                         pozePrice = Round.round((vtConsuption + ntConsuption) * priceList.getPoze1());
                 }
             } else {
@@ -499,7 +499,7 @@ public class Calculation {
             double ntPrice = ntConsuption * price[1] / 1000;
             double stPlat = differentMonth * price[2];
 
-            sum += (vtPrice + ntPrice + stPlat + pozePrice + ((vtPrice + ntPrice + stPlat + pozePrice) * priceList.getDph() / 100));
+            sum += (vtPrice + ntPrice + stPlat + pozePrice + ((vtPrice + ntPrice + stPlat + pozePrice) * priceList.getVat() / 100));
         }
         return sum;
     }

@@ -274,7 +274,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
             return;
         }
 
-        boolean isDualTariff = selectedPriceLists.stream().anyMatch(pl -> pl.getCenaNT() > 0 || (pl.getSazba() != null && !pl.getSazba().trim().equalsIgnoreCase("D01d") && !pl.getSazba().trim().equalsIgnoreCase("D02d")));
+        boolean isDualTariff = selectedPriceLists.stream().anyMatch(pl -> pl.getPriceNT() > 0 || (pl.getRate() != null && !pl.getRate().trim().equalsIgnoreCase("D01d") && !pl.getRate().trim().equalsIgnoreCase("D02d")));
         llNtSliderWrapper.setVisibility(isDualTariff ? View.VISIBLE : View.GONE);
 
         double currentTotalMwh = scenario.getTotalKwh() / 1000.0;
@@ -324,8 +324,8 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
         Set<String> uniqueTariffCodes = new LinkedHashSet<>();
         for (PriceListModel pl : priceLists) {
-            if (pl.getSazba() != null && !pl.getSazba().trim().isEmpty()) {
-                uniqueTariffCodes.add(pl.getSazba().trim());
+            if (pl.getRate() != null && !pl.getRate().trim().isEmpty()) {
+                uniqueTariffCodes.add(pl.getRate().trim());
             }
         }
 

@@ -280,12 +280,12 @@ public class ImportPriceListFragment extends Fragment {
 
                         //nastavení filtru ceníku na hledaný ceník
                         ShPFilter shpFilter = new ShPFilter(requireContext());
-                        shpFilter.set(RADA, doublePriceList.getRada());
-                        shpFilter.set(PRODUKT, doublePriceList.getProdukt());
-                        shpFilter.set(SAZBA, doublePriceList.getSazba());
-                        shpFilter.set(COMPANY, doublePriceList.getFirma());
-                        shpFilter.set(AREA, doublePriceList.getDistribuce());
-                        shpFilter.set(DATE_START, ViewHelper.convertLongToDate(doublePriceList.getPlatnostOD()));//tady je potřeba převádět long číslo na datum ve stringu, jinak při načítání následuje pád aplikace
+                        shpFilter.set(RADA, doublePriceList.getSeries());
+                        shpFilter.set(PRODUKT, doublePriceList.getProduct());
+                        shpFilter.set(SAZBA, doublePriceList.getRate());
+                        shpFilter.set(COMPANY, doublePriceList.getCompany());
+                        shpFilter.set(AREA, doublePriceList.getDistribution());
+                        shpFilter.set(DATE_START, ViewHelper.convertLongToDate(doublePriceList.getValidFrom()));//tady je potřeba převádět long číslo na datum ve stringu, jinak při načítání následuje pád aplikace
                         Fragment priceListFragment = PriceListFragment.newInstance(false, -1L);
                         FragmentChange.replace(requireActivity(), priceListFragment, ALPHA);
                     }
@@ -358,8 +358,8 @@ public class ImportPriceListFragment extends Fragment {
                 PriceListModel priceList = selectedPriceLists.get(i);
                 DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
                 dataPriceListSource.open();
-                int countPriceListInDatabase = dataPriceListSource.countPriceListItems(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
-                        priceList.getFirma(), String.valueOf(priceList.getPlatnostOD()), priceList.getDistribuce());
+                int countPriceListInDatabase = dataPriceListSource.countPriceListItems(priceList.getSeries(), priceList.getProduct(), priceList.getRate(),
+                        priceList.getCompany(), String.valueOf(priceList.getValidFrom()), priceList.getDistribution());
                 dataPriceListSource.close();
                 if (countPriceListInDatabase == 0) {
                     //přidá ceník do databáze, pokud neexistuje
@@ -374,8 +374,8 @@ public class ImportPriceListFragment extends Fragment {
                 } else if (countPriceListInDatabase == 1) {
                     //upraví ceník v databázi, pokud existuje jen jeden
                     dataPriceListSource.open();
-                    long idPriceListInDatabase = dataPriceListSource.idPriceListItem(priceList.getRada(), priceList.getProdukt(), priceList.getSazba(),
-                            priceList.getFirma(), String.valueOf(priceList.getPlatnostOD()), priceList.getDistribuce());
+                    long idPriceListInDatabase = dataPriceListSource.idPriceListItem(priceList.getSeries(), priceList.getProduct(), priceList.getRate(),
+                            priceList.getCompany(), String.valueOf(priceList.getValidFrom()), priceList.getDistribution());
                     dataPriceListSource.close();
                     priceList.setId(idPriceListInDatabase);
                     synchronized (singlePriceListsLock) {
@@ -383,7 +383,7 @@ public class ImportPriceListFragment extends Fragment {
                     }
                     if (i == selectedPriceLists.size() - 1) {
                         String title = getResources().getString(R.string.price_list_exists);
-                        String message = getResources().getString(R.string.rewrite_price_list, priceList.getProdukt(), priceList.getSazba());
+                        String message = getResources().getString(R.string.rewrite_price_list, priceList.getProduct(), priceList.getRate());
                         if (selectedPriceLists.size() > 1) {
                             title = getResources().getString(R.string.price_lists_exist);
                             message = getResources().getString(R.string.found_price_list);
@@ -400,7 +400,7 @@ public class ImportPriceListFragment extends Fragment {
                         doublePriceList = priceList;
                         mainHandler.post(() -> {
                             YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(getResources().getString(R.string.price_list_exists), FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES,
-                                    getResources().getString(R.string.price_list_found_multiple_variants, priceList.getProdukt(), priceList.getSazba()));
+                                    getResources().getString(R.string.price_list_found_multiple_variants, priceList.getProduct(), priceList.getRate()));
                             yesNoDialogFragment.show(requireActivity().getSupportFragmentManager(), YesNoDialogFragment.TAG);
                         });
                         break;

@@ -78,15 +78,15 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
         holder.cbSelectRate.setOnCheckedChangeListener(null);
         holder.cbSelectRate.setChecked(selectedIndices.contains(position));
 
-        String validFrom = ViewHelper.convertLongToDate(item.getPlatnostOD());
-        String validUntil = ViewHelper.convertLongToDate(item.getPlatnostDO());
-        String title = item.getSazba() + " - " + item.getRada() + " (" + validFrom + " – " + validUntil + ")";
+        String validFrom = ViewHelper.convertLongToDate(item.getValidFrom());
+        String validUntil = ViewHelper.convertLongToDate(item.getValidTo());
+        String title = item.getRate() + " - " + item.getSeries() + " (" + validFrom + " – " + validUntil + ")";
         holder.tvRateName.setText(title);
 
         String info = String.format(Locale.US, "VT: %s Kč | NT: %s Kč | Plat: %s Kč/měs",
-                DecimalFormatHelper.df2.format(item.getCenaVT()),
-                DecimalFormatHelper.df2.format(item.getCenaNT()),
-                DecimalFormatHelper.df2.format(item.getMesicniPlat()));
+                DecimalFormatHelper.df2.format(item.getPriceVT()),
+                DecimalFormatHelper.df2.format(item.getPriceNT()),
+                DecimalFormatHelper.df2.format(item.getMonthlyPayment()));
         holder.tvPricesInfo.setText(info);
 
         holder.cbSelectRate.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -180,8 +180,8 @@ class PriceListDetailFragment : Fragment() {
 
         if (priceList == null) return
 
-        val dateStart = priceList.platnostOD
-        val dateEnd = priceList.platnostDO
+        val dateStart = priceList.validFrom
+        val dateEnd = priceList.validTo
 
         ldnDatum.price =
             "${ViewHelper.convertLongToDate(dateStart)} - ${
@@ -190,15 +190,15 @@ class PriceListDetailFragment : Fragment() {
                 )
             }"
 
-        ldnRada.price = priceList.rada
-        ldnProdukt.price = priceList.produkt
-        ldnSazba.price = priceList.sazba
-        ldnDodavatel.price = priceList.firma
-        ldnUzemi.price = PdfParserUtils.getFullDistribuceName(priceList.distribuce)
+        ldnRada.price = priceList.series
+        ldnProdukt.price = priceList.product
+        ldnSazba.price = priceList.rate
+        ldnDodavatel.price = priceList.company
+        ldnUzemi.price = PdfParserUtils.getFullDistribuceName(priceList.distribution)
 
-        ldnVTDodavka.price = df2.format(priceList.cenaVT)
-        ldnNTDodavka.price = df2.format(priceList.cenaNT)
-        ldnMesPlat.price = df2.format(priceList.mesicniPlat)
+        ldnVTDodavka.price = df2.format(priceList.priceVT)
+        ldnNTDodavka.price = df2.format(priceList.priceNT)
+        ldnMesPlat.price = df2.format(priceList.monthlyPayment)
 
         ldnVTDistribuce.price = df2.format(priceList.distVT)
         ldnNTDistribuce.price = df2.format(priceList.distNT)
@@ -230,13 +230,13 @@ class PriceListDetailFragment : Fragment() {
 
         setupBreakersGrid(containerJistice, activeViews)
 
-        ldnSystemSluzby.price = df2.format(priceList.systemSluzby)
-        ldnOTE.price = df2.format(priceList.cinnost)
+        ldnSystemSluzby.price = df2.format(priceList.systemServices)
+        ldnOTE.price = df2.format(priceList.activity)
         ldnPOZE1.price = df2.format(priceList.poze1)
         ldnPOZE2.price = df2.format(priceList.poze2)
 
-        ldnDan.price = df2.format(priceList.dan)
-        ldnDPH.price = df2.format(priceList.dph)
+        ldnDan.price = df2.format(priceList.tax)
+        ldnDPH.price = df2.format(priceList.vat)
 
         val calendar = ViewHelper.parseCalendarFromString(ldnDatum.price)
         val year = calendar[Calendar.YEAR]

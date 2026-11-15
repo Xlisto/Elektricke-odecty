@@ -94,23 +94,23 @@ public class PdfImportSelectionFragment extends Fragment {
 
         if (!parsedPriceLists.isEmpty()) {
             PriceListModel first = parsedPriceLists.get(0);
-            tvProduct.setText(first.getProdukt());
-            tvSupplier.setText(getString(R.string.pdf_import_supplier_label, first.getFirma()));
-            tvArea.setText(getString(R.string.pdf_import_area_label, PdfParserUtils.getFullDistribuceName(first.getDistribuce())));
+            tvProduct.setText(first.getProduct());
+            tvSupplier.setText(getString(R.string.pdf_import_supplier_label, first.getCompany()));
+            tvArea.setText(getString(R.string.pdf_import_area_label, PdfParserUtils.getFullDistribuceName(first.getDistribution())));
 
-            String validFrom = ViewHelper.convertLongToDate(first.getPlatnostOD());
-            String validUntil = ViewHelper.convertLongToDate(first.getPlatnostDO());
+            String validFrom = ViewHelper.convertLongToDate(first.getValidFrom());
+            String validUntil = ViewHelper.convertLongToDate(first.getValidTo());
             String validityTitle = getString(R.string.pdf_import_validity_label, validFrom, validUntil);
             tvValidity.setText(validityTitle);
 
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(first.getPlatnostOD() > 0 ? first.getPlatnostOD() : System.currentTimeMillis());
+            cal.setTimeInMillis(first.getValidFrom() > 0 ? first.getValidFrom() : System.currentTimeMillis());
             int year = cal.get(Calendar.YEAR);
 
             boolean hasRegulatedData = first.getDistVT() > 0 || first.getJ0() > 0;
             boolean hasMissingCommercial = false;
             for (PriceListModel model : parsedPriceLists) {
-                if (model.getCenaVT() == 0.0 || model.getMesicniPlat() == 0.0) {
+                if (model.getPriceVT() == 0.0 || model.getMonthlyPayment() == 0.0) {
                     hasMissingCommercial = true;
                     break;
                 }
@@ -122,10 +122,10 @@ public class PdfImportSelectionFragment extends Fragment {
             }
             if (!hasRegulatedData) {
                 if (warningText.length() > 0) warningText.append("\n\n");
-                warningText.append(getString(R.string.pdf_import_missing_regulated_warning, year, first.getDistribuce()));
+                warningText.append(getString(R.string.pdf_import_missing_regulated_warning, year, first.getDistribution()));
             }
             if (!hasMissingCommercial && hasRegulatedData) {
-                if (PdfParserUtils.is2025BeforeSeptember(first.getPlatnostOD())) {
+                if (PdfParserUtils.is2025BeforeSeptember(first.getValidFrom())) {
                     warningText.append(getString(R.string.pdf_import_validity_warning_august, year));
                 } else {
                     warningText.append(getString(R.string.pdf_import_validity_warning, year));
@@ -140,7 +140,7 @@ public class PdfImportSelectionFragment extends Fragment {
 
         boolean has2025PreSep = false;
         for (PriceListModel model : parsedPriceLists) {
-            if (PdfParserUtils.is2025BeforeSeptember(model.getPlatnostOD())) {
+            if (PdfParserUtils.is2025BeforeSeptember(model.getValidFrom())) {
                 has2025PreSep = true;
                 break;
             }
@@ -182,9 +182,9 @@ public class PdfImportSelectionFragment extends Fragment {
 
 
     private boolean is2ndPeriod2025(PriceListModel model) {
-        if (model == null || model.getPlatnostOD() <= 0) return false;
+        if (model == null || model.getValidFrom() <= 0) return false;
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(model.getPlatnostOD());
+        cal.setTimeInMillis(model.getValidFrom());
         return cal.get(Calendar.YEAR) == 2025 && cal.get(Calendar.MONTH) >= Calendar.SEPTEMBER;
     }
 
@@ -201,7 +201,7 @@ public class PdfImportSelectionFragment extends Fragment {
 
         boolean hasAnyCommercialPrice = false;
         for (PriceListModel model : selected) {
-            if (model.getCenaVT() > 0 || model.getCenaNT() > 0 || model.getMesicniPlat() > 0) {
+            if (model.getPriceVT() > 0 || model.getPriceNT() > 0 || model.getMonthlyPayment() > 0) {
                 hasAnyCommercialPrice = true;
                 break;
             }
@@ -223,15 +223,15 @@ public class PdfImportSelectionFragment extends Fragment {
         List<String> duplicatesDiff = new ArrayList<>();
 
         for (PriceListModel model : selected) {
-            String dateFromStr = String.valueOf(model.getPlatnostOD());
-            int count = db.countPriceListItems(model.getRada(), model.getProdukt(), model.getSazba(), model.getFirma(), dateFromStr, model.getDistribuce());
+            String dateFromStr = String.valueOf(model.getValidFrom());
+            int count = db.countPriceListItems(model.getSeries(), model.getProduct(), model.getRate(), model.getCompany(), dateFromStr, model.getDistribution());
             if (count > 0) {
-                long existingId = db.idPriceListItem(model.getRada(), model.getProdukt(), model.getSazba(), model.getFirma(), dateFromStr, model.getDistribuce());
+                long existingId = db.idPriceListItem(model.getSeries(), model.getProduct(), model.getRate(), model.getCompany(), dateFromStr, model.getDistribution());
                 if (existingId > 0) {
                     PriceListModel existing = db.readPrice(existingId);
                     if (existing != null) {
                         String diff = buildDiffString(existing, model);
-                        duplicatesDiff.add("Sazba " + model.getSazba() + " (" + model.getRada() + "):\n" + diff);
+                        duplicatesDiff.add("Sazba " + model.getRate() + " (" + model.getSeries() + "):\n" + diff);
                     }
                 }
             }
@@ -270,8 +270,8 @@ public class PdfImportSelectionFragment extends Fragment {
     private void performDbSave(DataPriceListSource db, List<PriceListModel> toSave) {
         int savedCount = 0;
         for (PriceListModel model : toSave) {
-            String dateFromStr = String.valueOf(model.getPlatnostOD());
-            long existingId = db.idPriceListItem(model.getRada(), model.getProdukt(), model.getSazba(), model.getFirma(), dateFromStr, model.getDistribuce());
+            String dateFromStr = String.valueOf(model.getValidFrom());
+            long existingId = db.idPriceListItem(model.getSeries(), model.getProduct(), model.getRate(), model.getCompany(), dateFromStr, model.getDistribution());
             if (existingId > 0) {
                 db.updatePriceList(model, existingId);
                 savedCount++;
@@ -289,17 +289,17 @@ public class PdfImportSelectionFragment extends Fragment {
 
     private String buildDiffString(PriceListModel oldModel, PriceListModel newModel) {
         StringBuilder diff = new StringBuilder();
-        if (!oldModel.getCenaVT().equals(newModel.getCenaVT())) {
-            diff.append("  • VT: ").append(DecimalFormatHelper.df2.format(oldModel.getCenaVT()))
-                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getCenaVT())).append(" Kč\n");
+        if (!oldModel.getPriceVT().equals(newModel.getPriceVT())) {
+            diff.append("  • VT: ").append(DecimalFormatHelper.df2.format(oldModel.getPriceVT()))
+                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getPriceVT())).append(" Kč\n");
         }
-        if (!oldModel.getCenaNT().equals(newModel.getCenaNT())) {
-            diff.append("  • NT: ").append(DecimalFormatHelper.df2.format(oldModel.getCenaNT()))
-                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getCenaNT())).append(" Kč\n");
+        if (!oldModel.getPriceNT().equals(newModel.getPriceNT())) {
+            diff.append("  • NT: ").append(DecimalFormatHelper.df2.format(oldModel.getPriceNT()))
+                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getPriceNT())).append(" Kč\n");
         }
-        if (!oldModel.getMesicniPlat().equals(newModel.getMesicniPlat())) {
-            diff.append("  • Plat: ").append(DecimalFormatHelper.df2.format(oldModel.getMesicniPlat()))
-                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getMesicniPlat())).append(" Kč/měs\n");
+        if (!oldModel.getMonthlyPayment().equals(newModel.getMonthlyPayment())) {
+            diff.append("  • Plat: ").append(DecimalFormatHelper.df2.format(oldModel.getMonthlyPayment()))
+                    .append(" ➔ ").append(DecimalFormatHelper.df2.format(newModel.getMonthlyPayment())).append(" Kč/měs\n");
         }
         // CharSequence.isEmpty() vyžaduje API level 35+ (minSdk je 24)
         //noinspection SizeReplaceableByIsEmpty

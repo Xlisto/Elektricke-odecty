@@ -186,7 +186,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         priceList = dataPriceListSource.readPrice(invoice.getIdPriceList());
         dataPriceListSource.close();
 
-        hideNt(holder, priceList.getSazba().equals(InvoiceAbstract.D01) || priceList.getSazba().equals(InvoiceAbstract.D02));
+        hideNt(holder, priceList.getRate().equals(InvoiceAbstract.D01) || priceList.getRate().equals(InvoiceAbstract.D02));
 
         //nastavení regulovaného ceníku
         PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, invoice);
@@ -235,7 +235,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         holder.tvOtherServices.setText(context.getResources().getString(R.string.string_with_kc, DecimalFormatHelper.df2.format(otherServices)));
 
         double total = vtTotal + ntTotal + paymentTotal + poze + otherServices;
-        double totalDPH = total + (total * priceList.getDph() / 100);
+        double totalDPH = total + (total * priceList.getVat() / 100);
         holder.tvPriceTotal.setText(context.getResources().getString(R.string.total, DecimalFormatHelper.df2.format(total)));
         holder.tvPriceTotalDPH.setText(context.getResources().getString(R.string.total_with_tax, DecimalFormatHelper.df2.format(totalDPH)));
 
@@ -593,8 +593,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
         if (dateOf.equals(prevDate) && dateTo.equals(nextDate) && !isOverDateRegulPrice(priceListRegulBuilder, invoice)
                 && (((vtStart == prevVt && ntStart == prevNt) && vtEnd == nextVt && ntEnd == nextNt)
                 && invoice.getDateFrom() <= invoice.getDateTo()//porovnání začátku a konce data
-                && priceList.getPlatnostDO() >= invoice.getDateTo()
-                && priceList.getPlatnostOD() <= invoice.getDateFrom()
+                && priceList.getValidTo() >= invoice.getDateTo()
+                && priceList.getValidFrom() <= invoice.getDateFrom()
                 || (vtStart != prevVt && ntStart != prevNt && isChangedElectricMeter)
                 || (ntEnd != nextNt && isChangedElectricMeterNext)//výměna elektroměru
                 || (vtEnd != nextVt && isChangedElectricMeterNext)//výměna elektroměru
@@ -606,10 +606,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.MyViewHo
             holder.tvAlert.setTextColor(ContextCompat.getColor(context, R.color.color_red_alert));
             holder.imgAlert.setVisibility(View.VISIBLE);
             if (isOverDateRegulPrice(priceListRegulBuilder, invoice) ||
-                    (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo())) {
+                    (priceList.getValidTo() < invoice.getDateFrom() || priceList.getValidFrom() > invoice.getDateTo())) {
                 //zobrazení varovného textu na období státních regulací nebo na období platnosti ceníku
                 holder.tvAlert.setVisibility(View.VISIBLE);
-                if (priceList.getPlatnostDO() < invoice.getDateFrom() || priceList.getPlatnostOD() > invoice.getDateTo()) {
+                if (priceList.getValidTo() < invoice.getDateFrom() || priceList.getValidFrom() > invoice.getDateTo()) {
                     holder.tvAlert.setText(context.getResources().getString(R.string.alert_date_price_list));
                 }
                 if (invoice.getIdPriceList() == -1) {

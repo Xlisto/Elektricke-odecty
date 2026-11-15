@@ -68,7 +68,7 @@ public class YesNoDialogRecyclerViewAdapter extends RecyclerView.Adapter<YesNoDi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         PriceListModel priceList = priceLists.get(position);
-        holder.cbTitle.setText(holder.itemView.getContext().getString(R.string.price_list_item_label, priceList.getSazba(), priceList.getProdukt()));
+        holder.cbTitle.setText(holder.itemView.getContext().getString(R.string.price_list_item_label, priceList.getRate(), priceList.getProduct()));
         holder.cbTitle.setOnCheckedChangeListener((buttonView, isChecked) -> priceList.setChecked(isChecked));
         holder.cbTitle.setChecked(priceList.isChecked());
     }

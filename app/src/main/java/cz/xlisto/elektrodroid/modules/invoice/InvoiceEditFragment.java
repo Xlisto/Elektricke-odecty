@@ -83,7 +83,7 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(getActivity());
         dataPriceListSource.open();
         String priceListName = dataPriceListSource.readPrice(selectedIdPrice).getName();
-        String priceListSazba = dataPriceListSource.readPrice(selectedIdPrice).getSazba();
+        String priceListSazba = dataPriceListSource.readPrice(selectedIdPrice).getRate();
         boolean priceListIsEmpty = dataPriceListSource.readPrice(selectedIdPrice).isEmpty();
         dataPriceListSource.close();
 

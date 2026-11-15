@@ -314,17 +314,17 @@ public class PriceListComparisonResult implements Serializable {
 
     // Obchodní ceny stanovené dodavatelem s DPH
     public double getMerchantVtWithDph() {
-        return priceList.getCenaVT() * (1.0 + dphRate / 100.0);
+        return priceList.getPriceVT() * (1.0 + dphRate / 100.0);
     }
 
 
     public double getMerchantNtWithDph() {
-        return priceList.getCenaNT() * (1.0 + dphRate / 100.0);
+        return priceList.getPriceNT() * (1.0 + dphRate / 100.0);
     }
 
 
     public double getMerchantMonthlyWithDph() {
-        return priceList.getMesicniPlat() * (1.0 + dphRate / 100.0);
+        return priceList.getMonthlyPayment() * (1.0 + dphRate / 100.0);
     }
 
 

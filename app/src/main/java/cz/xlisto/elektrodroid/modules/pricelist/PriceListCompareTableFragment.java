@@ -71,7 +71,7 @@ public class PriceListCompareTableFragment extends Fragment {
 
         List<String> titles = new ArrayList<>();
         for (PriceListModel pl : priceLists) {
-            titles.add(pl.getNameWithPeriod() + " - " + pl.getDistribuce());
+            titles.add(pl.getNameWithPeriod() + " - " + pl.getDistribution());
         }
 
         ArrayAdapter<String> adapterLeft = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, titles);

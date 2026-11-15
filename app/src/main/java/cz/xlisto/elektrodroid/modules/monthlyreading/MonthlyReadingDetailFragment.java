@@ -596,7 +596,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
      * <p>
      * Postup:
      * - vypočítá jednorázovou cenu jističe voláním `Calculation.calculatePriceBreaker(...)`,
-     * - vybere hodnotu pro "činnost" jako maximum mezi `priceList.getCinnost()` a `priceList.getOte()`,
+     * - vybere hodnotu pro "činnost" jako maximum mezi `priceList.getActivity()` a `priceList.getOte()`,
      * - naplní pole `priceArray` hodnotami cen jednotlivých položek ve stejném pořadí,
      * jak je očekává `createTable(...)` (VT, NT, daně, služby, součty, měsíční platy atd.).
      * <p>
@@ -618,9 +618,9 @@ public class MonthlyReadingDetailFragment extends Fragment {
         }
 
         double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
-        double cinnost = Math.max(priceList.getCinnost(), priceList.getOte());
+        double cinnost = Math.max(priceList.getActivity(), priceList.getOte());
 
-        int year = priceList.getRokPlatnost();
+        int year = priceList.getValidityYear();
         if (monthlyReadingCurrently != null) {
             Calendar calendarStart = Calendar.getInstance();
             calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
@@ -635,20 +635,20 @@ public class MonthlyReadingDetailFragment extends Fragment {
         }
 
         priceArray = new double[]{
-                priceList.getCenaVT(),
+                priceList.getPriceVT(),
                 priceList.getDistVT(),
-                priceList.getDan(),
-                priceList.getSystemSluzby(),
-                priceList.getCenaVT() + priceList.getDistVT() + priceList.getDan() + priceList.getSystemSluzby(),
-                priceList.getCenaNT(),
+                priceList.getTax(),
+                priceList.getSystemServices(),
+                priceList.getPriceVT() + priceList.getDistVT() + priceList.getTax() + priceList.getSystemServices(),
+                priceList.getPriceNT(),
                 priceList.getDistNT(),
-                priceList.getDan(),
-                priceList.getSystemSluzby(),
-                priceList.getCenaNT() + priceList.getDistNT() + priceList.getDan() + priceList.getSystemSluzby(),
-                priceList.getMesicniPlat(),
+                priceList.getTax(),
+                priceList.getSystemServices(),
+                priceList.getPriceNT() + priceList.getDistNT() + priceList.getTax() + priceList.getSystemServices(),
+                priceList.getMonthlyPayment(),
                 jistic,
                 cinnost,
-                priceList.getMesicniPlat() + jistic + cinnost,
+                priceList.getMonthlyPayment() + jistic + cinnost,
                 pozeVal
         };
     }

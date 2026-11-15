@@ -93,17 +93,17 @@ public class PriceListViewModel extends AndroidViewModel {
         ReadRawJSON reader = new ReadRawJSON(getApplication());
         Calendar startCal = Calendar.getInstance();
         Calendar endCal = Calendar.getInstance();
-        startCal.setTimeInMillis(priceList.getPlatnostOD());
-        endCal.setTimeInMillis(priceList.getPlatnostDO());
+        startCal.setTimeInMillis(priceList.getValidFrom());
+        endCal.setTimeInMillis(priceList.getValidTo());
 
-        PriceListModel priceListWithRegulated = reader.read(startCal, endCal, priceList.getDistribuce(), priceList.getSazba());
-        priceList.setSystemSluzby(priceListWithRegulated.getSystemSluzby());
-        priceList.setCinnost(priceListWithRegulated.getCinnost());
+        PriceListModel priceListWithRegulated = reader.read(startCal, endCal, priceList.getDistribution(), priceList.getRate());
+        priceList.setSystemServices(priceListWithRegulated.getSystemServices());
+        priceList.setActivity(priceListWithRegulated.getActivity());
         priceList.setPoze1(priceListWithRegulated.getPoze1());
         priceList.setPoze2(priceListWithRegulated.getPoze2());
-        priceList.setDph(priceListWithRegulated.getDph());
-        priceList.setCinnost(priceListWithRegulated.getCinnost());
-        priceList.setDan(priceListWithRegulated.getDan());
+        priceList.setVat(priceListWithRegulated.getVat());
+        priceList.setActivity(priceListWithRegulated.getActivity());
+        priceList.setTax(priceListWithRegulated.getTax());
 
         priceList.setDistVT(priceListWithRegulated.getDistVT());
         priceList.setDistNT(priceListWithRegulated.getDistNT());

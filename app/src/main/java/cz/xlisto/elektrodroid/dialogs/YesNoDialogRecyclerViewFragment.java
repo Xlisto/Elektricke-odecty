@@ -77,7 +77,7 @@ public class YesNoDialogRecyclerViewFragment extends YesNoDialogFragment {
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireActivity()));
 
         if (!priceLists.isEmpty())
-            builder.setMessage("Zatrhněte všechny sazby, které chcete nahrát.\nCeník: " + priceLists.get(0).getRada());
+            builder.setMessage("Zatrhněte všechny sazby, které chcete nahrát.\nCeník: " + priceLists.get(0).getSeries());
         builder.setView(view);
 
         btnYes.setOnClickListener(v -> {
