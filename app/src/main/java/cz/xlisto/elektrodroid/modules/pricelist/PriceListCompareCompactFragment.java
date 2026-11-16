@@ -31,9 +31,9 @@ import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 
 /**
- * Kompaktní tabulkové zobrazení porovnání ceníků.
- * Zobrazuje parametry obou ceníků, průběžné rozdíly i součtové ceny.
- * Xlisto 01.03.2024 18:01
+ * Kompaktní tabulkové zobrazení porovnání dvou ceníků elektřiny.
+ * Vytváří dynamický {@link TableLayout} s rozepsáním jednotlivých složek cen, vyčíslením rozdílů
+ * a celkovým součtem bez DPH i s DPH s automatickým přizpůsobením velikosti písma.
  */
 public class PriceListCompareCompactFragment extends Fragment implements SelectedPriceListsInterface {
 
@@ -69,7 +69,9 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
 
 
     /**
-     * @return nová instance kompaktního porovnání ceníků
+     * Vytvoří novou instanci fragmentu {@link PriceListCompareCompactFragment}.
+     *
+     * @return nová instance {@link PriceListCompareCompactFragment}
      */
     public static PriceListCompareCompactFragment newInstance() {
         return new PriceListCompareCompactFragment();
@@ -88,7 +90,12 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
 
 
     /**
-     * Vytvoří zobrazení fragmentu a připraví tabulku porovnání.
+     * Vytvoří zobrazení fragmentu, inicializuje přepínače regulovaných cen a vytvoří srovnávací tabulku.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,6 +133,12 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     }
 
 
+    /**
+     * Zaregistruje posluchač rozvržení pro dynamické přizpůsobení velikosti písma v tabulce podle šířky obrazovky.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -149,6 +162,9 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
     }
 
 
+    /**
+     * Přepočítá a přizpůsobí velikost písma v tabulce při obnovení fragmentu.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -273,7 +289,8 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
 
 
     /**
-     * Vytvoří tabulku TableLayout
+     * Vytvoří a naplní dynamický {@link TableLayout} všemi řádky cenových položek, měrnými jednotkami
+     * a sloupci pro levý ceník, pravý ceník a jejich vyčíslený rozdíl.
      */
     private void createTable() {
         String kcMonth = getResources().getString(R.string.kc_mesic);
@@ -345,7 +362,8 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
 
 
     /**
-     * Aktualizuje tabulku TableLayout
+     * Přepočítá výstupní hodnoty pro levou i pravou stranu, rozdíly a celkové ceny s/bez DPH
+     * a aktualizuje texty v tabulce s automatickým skrytím řádků s nulovými cenami.
      */
     private void updateTable() {
         double[] consumptionLeft = priceConsumption(vt, nt, priceListLeft);

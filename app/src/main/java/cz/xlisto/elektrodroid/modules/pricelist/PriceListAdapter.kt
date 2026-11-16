@@ -277,8 +277,11 @@ class PriceListAdapter(
 
     /**
      * Zjistí, zda je atribut odfiltrován na právě jednu konkrétní hodnotu.
-     * Pokud filtr obsahuje více hodnot oddělených čárkou (např. "D01d,D02d"), vrací `false`,
+     * Pokud filtr obsahuje více hodnot oddělených středníkem (např. "D01d;D02d"), vrací `false`,
      * aby se atribut na položkách zobrazoval a položky byly odlišitelné.
+     *
+     * @param filterValue hodnota filtru k prověření
+     * @return `true` pokud filtr obsahuje právě jednu konkrétní hodnotu, jinak `false`
      */
     private fun isSingleValueFiltered(filterValue: String): Boolean {
         return filterValue != "%" &&
@@ -549,7 +552,10 @@ class PriceListAdapter(
 
     /**
      * Zkontroluje kompatibilitu sazby vybraného ceníku s již vybranými ceníky.
-     * Jednotarifní ceníky (D01d, D02d) nelze kombinovat s dvoutarifními sazbami.
+     * Jednotarifní ceníky (D01d, D02d) nelze kombinovat s dvoutarifními sazbami v režimu srovnání.
+     *
+     * @param candidate model ceníku navržený k výběru
+     * @return `true` pokud lze ceník vybrat a kombinovat s již vybranými ceníky, jinak `false`
      */
     private fun canSelectPriceList(candidate: PriceListModel): Boolean {
         if (!isCompareMode) return true

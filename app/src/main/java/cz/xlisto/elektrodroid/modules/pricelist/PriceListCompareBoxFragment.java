@@ -41,7 +41,9 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 /**
- * Hlavní kontejnerový fragment porovnávání ceníků obsahující 4 záložky (Přehled, Grafy, Výhodnost sazeb, Tabulka).
+ * Hlavní kontejnerový fragment pro porovnávání ceníků elektřiny.
+ * Obsahuje záložkové navigace (ViewPager2 + TabLayout) se 4 záložkami: Přehled, Grafy, Výhodnost sazeb a Tabulka,
+ * spravuje sdílený {@link PriceListsViewModel} a načítání/ukládání srovnávacích parametrů spotřeby.
  */
 public class PriceListCompareBoxFragment extends Fragment {
 
@@ -52,11 +54,23 @@ public class PriceListCompareBoxFragment extends Fragment {
 
     private final String[] tabTitles = new String[]{"Přehled", "Grafy", "Výhodnost sazeb", "Tabulka"};
 
+
+    /**
+     * Vytvoří novou výchozí instanci {@link PriceListCompareBoxFragment}.
+     *
+     * @return nová instance {@link PriceListCompareBoxFragment}
+     */
     public static PriceListCompareBoxFragment newInstance() {
         return new PriceListCompareBoxFragment();
     }
 
 
+    /**
+     * Vytvoří novou instanci {@link PriceListCompareBoxFragment} s předanými ID vybraných ceníků pro porovnání.
+     *
+     * @param selectedIds pole ID ceníků k porovnání
+     * @return nová instance {@link PriceListCompareBoxFragment}
+     */
     public static PriceListCompareBoxFragment newInstance(long[] selectedIds) {
         PriceListCompareBoxFragment fragment = new PriceListCompareBoxFragment();
         if (selectedIds != null && selectedIds.length > 0) {
@@ -67,6 +81,13 @@ public class PriceListCompareBoxFragment extends Fragment {
         return fragment;
     }
 
+
+    /**
+     * Inicializuje ViewModel {@link PriceListsViewModel}, načte uložené srovnávací parametry spotřeby pro aktuální odběrné místo
+     * a v případě předaných ID ceníků je načte z databáze a vloží do ViewModelu.
+     *
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,12 +112,29 @@ public class PriceListCompareBoxFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Vytvoří a vrátí rozvržení pohledu kontejneru pro porovnávání ceníků.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_compare_box, container, false);
     }
 
+
+    /**
+     * Inicializuje záložky {@link ViewPager2} a {@link TabLayout}, zaregistruje {@link MenuProvider} pro akční nabídku,
+     * nastaví posluchače výstupů fragmentů pro volbu parametrů i výběr ceníků a sleduje stav vybraných ceníků.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -174,6 +212,9 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Otevře fragment {@link PriceListFragment} v režimu výběru ceníků pro úpravu porovnávané sady ceníků.
+     */
     private void openSelectPriceLists() {
         List<PriceListModel> currentSelected = priceListsViewModel.getSelectedPriceLists().getValue();
         long[] selectedIdsArray = null;
@@ -188,6 +229,9 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Aktualizuje název položky nabídky pro výběr ceníků podle aktuálního počtu vybraných ceníků ve ViewModelu.
+     */
     private void updateSelectPriceListsMenuItem() {
         if (menuSelectPriceLists != null) {
             List<PriceListModel> priceLists = priceListsViewModel.getSelectedPriceLists().getValue();
@@ -201,6 +245,12 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří objekt {@link ConsuptionContainer} na základě parametrů z předaného {@link PriceListComparisonScenario}.
+     *
+     * @param scenario srovnávací scénář spotřeby
+     * @return nový objekt {@link ConsuptionContainer} se spotřebou a parametry jističe
+     */
     private ConsuptionContainer createContainerFromScenario(PriceListComparisonScenario scenario) {
         PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
         return new ConsuptionContainer(
@@ -215,6 +265,13 @@ public class PriceListCompareBoxFragment extends Fragment {
     }
 
 
+    /**
+     * Vytvoří objekt {@link ConsuptionContainer} z načteného objektu {@link JSONObject} a modelu odběrného místa.
+     *
+     * @param jsonObject             načtená konfigurace z nastavení
+     * @param subscriptionPointModel aktuální odběrné místo
+     * @return nový objekt {@link ConsuptionContainer}
+     */
     private ConsuptionContainer createContainerFromJson(JSONObject jsonObject, SubscriptionPointModel subscriptionPointModel) {
         return new ConsuptionContainer(
                 jsonObject.optDouble("vt", 1.0),
@@ -227,6 +284,10 @@ public class PriceListCompareBoxFragment extends Fragment {
         );
     }
 
+
+    /**
+     * Načte uložené srovnávací parametry pro aktuální odběrné místo z databáze nastavení a uplatní je ve ViewModelu.
+     */
     private void loadCompareParameters() {
         SubscriptionPointModel subscriptionPointModel = SubscriptionPoint.load(requireContext());
         if (subscriptionPointModel == null) {
@@ -248,12 +309,28 @@ public class PriceListCompareBoxFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Pager adaptér pro správu záložek vnořených fragmentů porovnání.
+     */
     private static class ComparePagerAdapter extends FragmentStateAdapter {
 
+        /**
+         * Vytvoří novou instanci adaptéru {@link ComparePagerAdapter}.
+         *
+         * @param fragment rodičovský fragment
+         */
         public ComparePagerAdapter(@NonNull Fragment fragment) {
             super(fragment);
         }
 
+
+        /**
+         * Vytvoří příslušný fragment záložky podle pozice.
+         *
+         * @param position pozice záložky (0 = Přehled, 1 = Grafy, 2 = Výhodnost sazeb, 3 = Tabulka)
+         * @return nový fragment pro danou záložku
+         */
         @NonNull
         @Override
         public Fragment createFragment(int position) {

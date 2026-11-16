@@ -35,10 +35,10 @@ import cz.xlisto.elektrodroid.utils.Calculation;
 
 
 /**
- * Fragment pro detailní porovnání ceníků.
- * Zobrazuje podrobné položky cen, rozdíly i výpočty s/bez DPH.
+ * Fragment pro detailní porovnání dvou ceníků elektřiny v přehledné tabulce.
+ * Zobrazuje podrobné rozepsání obchodních i regulovaných složek cen, distribuční sazby, jističů,
+ * poplatků za OTE/POZE a daní včetně vypočtených rozdílů a celkových součtů s/bez DPH.
  */
-
 public class PriceListCompareDetailFragment extends Fragment implements SelectedPriceListsInterface {
     private static final String KC_MWH = " Kč/MWh";
     private static final String KC = " Kč";
@@ -80,7 +80,9 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
 
 
     /**
-     * @return nová instance detailního porovnání ceníků
+     * Vytvoří novou instanci fragmentu {@link PriceListCompareDetailFragment}.
+     *
+     * @return nová instance {@link PriceListCompareDetailFragment}
      */
     public static PriceListCompareDetailFragment newInstance() {
         return new PriceListCompareDetailFragment();
@@ -106,6 +108,14 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Vytvoří a vrátí rozvržení pohledu fragmentu detailního porovnání ceníků.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -114,6 +124,13 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Inicializuje UI komponenty pro srovnání ceníků, nastaví posluchače přepínačů regulovaných cen
+     * a registruje posluchač výsledků pro příjem vybraných ceníků z {@link PriceListFragment}.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -222,6 +239,9 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Načte nastavení ceníků (regulovaný nebo neregulovaný ceník podle stavu přepínačů) a spustí jejich porovnání.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -236,6 +256,11 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Uloží ID porovnávaných ceníků a zadané parametry spotřeby do balíčku stavu.
+     *
+     * @param outState balíček pro uložení stavu
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -377,6 +402,10 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
     }
 
 
+    /**
+     * Provede kompletní porovnání levého a pravého ceníku, vypočítá celkové ceny s i bez DPH,
+     * zobrazí vyčíslované rozdíly jednotlivých složek a skryje nevyužité položky ceníku.
+     */
     private void comparePriceList() {
         //if (priceListRight != null) {
         if (priceListRight != null) {

@@ -182,14 +182,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getValidFrom()));
         btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getValidTo()));
         updateValidityRangeButtonText();
-        ivRada.setDefaultText(priceListModel.getSeries());
-        ivProdukt.setDefaultText(priceListModel.getProduct());
-        ivDodavatel.setDefaultText(priceListModel.getCompany());
-        ivVT.setDefaultText(df2.format(priceListModel.getPriceVT()));
-        ivNT.setDefaultText(df2.format(priceListModel.getPriceNT()));
-        ivPlat.setDefaultText(df2.format(priceListModel.getMonthlyPayment()));
-        ivVT1.setDefaultText(df2.format(priceListModel.getDistVT()));
-        ivNT1.setDefaultText(df2.format(priceListModel.getDistNT()));
+        ivSeries.setDefaultText(priceListModel.getSeries());
+        ivProduct.setDefaultText(priceListModel.getProduct());
+        ivCompany.setDefaultText(priceListModel.getCompany());
+        ivVt.setDefaultText(df2.format(priceListModel.getPriceVT()));
+        ivNt.setDefaultText(df2.format(priceListModel.getPriceNT()));
+        ivPayment.setDefaultText(df2.format(priceListModel.getMonthlyPayment()));
+        ivVtRegulated.setDefaultText(df2.format(priceListModel.getDistVT()));
+        ivNtRegulated.setDefaultText(df2.format(priceListModel.getDistNT()));
         ivJ0.setDefaultText(df2.format(priceListModel.getJ0()));
         ivJ1.setDefaultText(df2.format(priceListModel.getJ1()));
         ivJ2.setDefaultText(df2.format(priceListModel.getJ2()));
@@ -205,21 +205,21 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
         ivJ12.setDefaultText(df2.format(priceListModel.getJ12()));
         ivJ13.setDefaultText(df2.format(priceListModel.getJ13()));
         ivJ14.setDefaultText(df2.format(priceListModel.getJ14()));
-        ivOTE.setDefaultText(df2.format(priceListModel.getOte()));
-        ivCinnostOperatora.setDefaultText(df2.format(priceListModel.getActivity()));
-        ivOZE.setDefaultText(df2.format(priceListModel.getOze()));
-        ivPOZE1.setDefaultText(df2.format(priceListModel.getPoze1()));
-        ivPOZE2.setDefaultText(df2.format(priceListModel.getPoze2()));
-        ivSystemSluzby.setDefaultText(df2.format(priceListModel.getSystemServices()));
-        ivDan.setDefaultText(df2.format(priceListModel.getTax()));
-        ivDPH.setDefaultText(df2.format(priceListModel.getVat()));
+        ivOte.setDefaultText(df2.format(priceListModel.getOte()));
+        ivMarketOperatorActivity.setDefaultText(df2.format(priceListModel.getActivity()));
+        ivOze.setDefaultText(df2.format(priceListModel.getOze()));
+        ivPoze1.setDefaultText(df2.format(priceListModel.getPoze1()));
+        ivPoze2.setDefaultText(df2.format(priceListModel.getPoze2()));
+        ivSystemServices.setDefaultText(df2.format(priceListModel.getSystemServices()));
+        ivTax.setDefaultText(df2.format(priceListModel.getTax()));
+        ivVat.setDefaultText(df2.format(priceListModel.getVat()));
         if (priceListModel.getJ10() == 0 && priceListModel.getJ11() == 0
                 && priceListModel.getJ12() == 0 && priceListModel.getJ13() == 0
                 && priceListModel.getJ14() == 0) {
-            switchJistic.setChecked(false);
+            switchBreaker.setChecked(false);
             hideItemView();
         } else {
-            switchJistic.setChecked(true);
+            switchBreaker.setChecked(true);
             hideItemView();
         }
         setSpinners(priceListModel);
@@ -235,7 +235,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * a {@code postDelayed(...)} (prodleva 1300 ms).
      * - Před manipulací s UI ověřuje {@link #isAdded()} a kontroluje, že {@code priceListModel}
      * i cílové spinnery nejsou {@code null}.
-     * - Načítá dynamické pole distribučních území pro daný rok z {@link PriceListAddEditAbstract#getDistUzemiArrayForYear(int)}
+     * - Načítá dynamické pole distribučních území pro daný rok z {@link PriceListAddEditAbstract#getDistAreaArrayForYear(int)}
      * a pole sazeb z {@code R.array.sazby}, a pro nastavení výběru volá pomocnou metodu {@link #compare(String[], android.widget.Spinner, String)}.
      * <p>
      * Poznámky:
@@ -252,11 +252,11 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
             int year = priceListModel.getValidityYear();
-            String[] distribucniUzemi = PriceListAddEditAbstract.getDistUzemiArrayForYear(year);
+            String[] distribucniUzemi = PriceListAddEditAbstract.getDistAreaArrayForYear(year);
             String[] sazby = getResources().getStringArray(R.array.sazby);
 
-            compare(distribucniUzemi, spDistribucniUzemi, priceListModel.getDistribution());
-            compare(sazby, spSazba, priceListModel.getRate());
+            compare(distribucniUzemi, spDistArea, priceListModel.getDistribution());
+            compare(sazby, spRate, priceListModel.getRate());
         };
         handler.postDelayed(r, 1300);
     }
@@ -294,7 +294,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * @return id aktualizovaného záznamu z databáze, nebo 0L pokud aktualizace nebyla provedena kvůli nevalidním vstupům
      */
     private long updatePriceList(long itemId) {
-        if (spDistribucniUzemi.getSelectedItem().toString().equals(arrayDistUzemi[0]) || spSazba.getSelectedItem().toString().equals(arraySazba[0])) {
+        if (spDistArea.getSelectedItem().toString().equals(arrayDistArea[0]) || spRate.getSelectedItem().toString().equals(arrayRate[0])) {
             //pokud není vybráno distribuční uzemí nebo sazba k uložení nedojde, nemělo by k tomu nikdy dojít
             OwnAlertDialog.showDialog(requireActivity(), getString(R.string.alert_title), getString(R.string.alert_message_select_area));
             return 0L;

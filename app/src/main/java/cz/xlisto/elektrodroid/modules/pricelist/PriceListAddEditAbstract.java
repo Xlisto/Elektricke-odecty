@@ -99,22 +99,22 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     private static final int DEF_MIN_YEAR = 2021;
     private static final int DEF_MAX_YEAR = 2026;
 
-    String[] arrayDistUzemi;
-    String[] arraySazba;
-    int year, lastYear, selectionDistUzemi, selectionSazba;
+    String[] arrayDistArea;
+    String[] arrayRate;
+    int year, lastYear, selectionDistArea, selectionRate;
     boolean isFirstLoad = true;
     boolean closedDialog = false;
     Long itemId;
 
     Button btnFrom, btnUntil, btnBack, btnSave, btnReloadRegulPriceList;
     MaterialButton btnPlatnostRange;
-    LabelEditText ivRada, ivProdukt, ivDodavatel, ivVT, ivNT, ivPlat, ivVT1, ivNT1;
+    LabelEditText ivSeries, ivProduct, ivCompany, ivVt, ivNt, ivPayment, ivVtRegulated, ivNtRegulated;
     LabelEditText ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14;
-    LabelEditText ivOTE, ivCinnostOperatora, ivOZE, ivPOZE1, ivPOZE2, ivSystemSluzby, ivDan, ivDPH;
-    MaterialSwitch switchJistic;
-    Spinner spSazba, spDistribucniUzemi;
+    LabelEditText ivOte, ivMarketOperatorActivity, ivOze, ivPoze1, ivPoze2, ivSystemServices, ivTax, ivVat;
+    MaterialSwitch switchBreaker;
+    Spinner spRate, spDistArea;
     TextView tvNoPriceListDescription, tvNoPriceListTitle;
-    MySpinnerDistributorsAdapter adapterDistUzemi, adapterSazba;
+    MySpinnerDistributorsAdapter adapterDistArea, adapterRate;
     RelativeLayout rlNoPriceList;
 
 
@@ -148,14 +148,14 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         btnBack = view.findViewById(R.id.btnZpet);
         btnSave = view.findViewById(R.id.btnUloz);
         btnReloadRegulPriceList = view.findViewById(R.id.btnReloadRegulPriceList);
-        ivRada = view.findViewById(R.id.ivRada);
-        ivProdukt = view.findViewById(R.id.ivProdukt);
-        ivDodavatel = view.findViewById(R.id.ivDodavatel);
-        ivVT = view.findViewById(R.id.ivVT);//neregul
-        ivNT = view.findViewById(R.id.ivNT);
-        ivPlat = view.findViewById(R.id.ivPlat);
-        ivVT1 = view.findViewById(R.id.ivVT1);//regul
-        ivNT1 = view.findViewById(R.id.ivNT1);
+        ivSeries = view.findViewById(R.id.ivRada);
+        ivProduct = view.findViewById(R.id.ivProdukt);
+        ivCompany = view.findViewById(R.id.ivDodavatel);
+        ivVt = view.findViewById(R.id.ivVT);//neregul
+        ivNt = view.findViewById(R.id.ivNT);
+        ivPayment = view.findViewById(R.id.ivPlat);
+        ivVtRegulated = view.findViewById(R.id.ivVT1);//regul
+        ivNtRegulated = view.findViewById(R.id.ivNT1);
         ivJ0 = view.findViewById(R.id.ivJ0);
         ivJ1 = view.findViewById(R.id.ivJ1);
         ivJ2 = view.findViewById(R.id.ivJ2);
@@ -171,17 +171,17 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         ivJ12 = view.findViewById(R.id.ivJ12);
         ivJ13 = view.findViewById(R.id.ivJ13);
         ivJ14 = view.findViewById(R.id.ivJ14);
-        ivOTE = view.findViewById(R.id.ivOTE);
-        ivCinnostOperatora = view.findViewById(R.id.ivCinnostOperatoraTrhu);
-        ivOZE = view.findViewById(R.id.ivOZE);
-        ivPOZE1 = view.findViewById(R.id.ivPOZE1);
-        ivPOZE2 = view.findViewById(R.id.ivPOZE2);
-        ivSystemSluzby = view.findViewById(R.id.ivSystemoveSluzby);
-        ivDan = view.findViewById(R.id.ivDan);
-        ivDPH = view.findViewById(R.id.ivDPH);
-        switchJistic = view.findViewById(R.id.swJistic);
-        spDistribucniUzemi = view.findViewById(R.id.spDistribucniUzemiSeznam);
-        spSazba = view.findViewById(R.id.spSazbaSeznam);
+        ivOte = view.findViewById(R.id.ivOTE);
+        ivMarketOperatorActivity = view.findViewById(R.id.ivCinnostOperatoraTrhu);
+        ivOze = view.findViewById(R.id.ivOZE);
+        ivPoze1 = view.findViewById(R.id.ivPOZE1);
+        ivPoze2 = view.findViewById(R.id.ivPOZE2);
+        ivSystemServices = view.findViewById(R.id.ivSystemoveSluzby);
+        ivTax = view.findViewById(R.id.ivDan);
+        ivVat = view.findViewById(R.id.ivDPH);
+        switchBreaker = view.findViewById(R.id.swJistic);
+        spDistArea = view.findViewById(R.id.spDistribucniUzemiSeznam);
+        spRate = view.findViewById(R.id.spSazbaSeznam);
         tvNoPriceListDescription = view.findViewById(R.id.tvNoPriceListDescription);
         tvNoPriceListTitle = view.findViewById(R.id.tvNoPriceListTitle);
         rlNoPriceList = view.findViewById(R.id.rlNoPriceList);
@@ -225,7 +225,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         btnFrom.setOnClickListener(validityListener);
         btnUntil.setOnClickListener(validityListener);
 
-        switchJistic.setOnClickListener(v -> hideItemView());
+        switchBreaker.setOnClickListener(v -> hideItemView());
 
         btnBack.setOnClickListener(v -> {
             Keyboard.hide(requireActivity());
@@ -233,10 +233,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             getParentFragmentManager().popBackStack();
         });
 
-        selectionSazba = 0;
-        selectionDistUzemi = 0;
+        selectionRate = 0;
+        selectionDistArea = 0;
 
-        spSazba.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spRate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateNeregulatedPriceVisibility();
@@ -250,7 +250,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             }
         });
 
-        spDistribucniUzemi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spDistArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setRegulPrice();
@@ -269,16 +269,16 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             //Restore the fragment's state here
             btnFrom.setText(savedInstanceState.getString(BTN_FROM));
             btnUntil.setText(savedInstanceState.getString(BTN_UNTIL));
-            ivRada.setDefaultText(savedInstanceState.getString(RADA));
-            ivProdukt.setDefaultText(savedInstanceState.getString(PRODUKT));
-            ivDodavatel.setDefaultText(savedInstanceState.getString(DODAVATEL));
-            selectionDistUzemi = savedInstanceState.getInt(DISTRIBUCNI_UZEMI, 0);
-            selectionSazba = savedInstanceState.getInt(SAZBA_DISTRIBUCE, 0);
-            ivVT.setDefaultText(savedInstanceState.getString(VT_NEREGUL));
-            ivNT.setDefaultText(savedInstanceState.getString(NT_NEREGUL));
-            ivPlat.setDefaultText(savedInstanceState.getString(MESICNI_PLAT));
-            ivVT1.setDefaultText(savedInstanceState.getString(VT_REGUL));
-            ivNT1.setDefaultText(savedInstanceState.getString(NT_REGUL));
+            ivSeries.setDefaultText(savedInstanceState.getString(RADA));
+            ivProduct.setDefaultText(savedInstanceState.getString(PRODUKT));
+            ivCompany.setDefaultText(savedInstanceState.getString(DODAVATEL));
+            selectionDistArea = savedInstanceState.getInt(DISTRIBUCNI_UZEMI, 0);
+            selectionRate = savedInstanceState.getInt(SAZBA_DISTRIBUCE, 0);
+            ivVt.setDefaultText(savedInstanceState.getString(VT_NEREGUL));
+            ivNt.setDefaultText(savedInstanceState.getString(NT_NEREGUL));
+            ivPayment.setDefaultText(savedInstanceState.getString(MESICNI_PLAT));
+            ivVtRegulated.setDefaultText(savedInstanceState.getString(VT_REGUL));
+            ivNtRegulated.setDefaultText(savedInstanceState.getString(NT_REGUL));
             ivJ0.setDefaultText(savedInstanceState.getString(JISTIC0));
             ivJ1.setDefaultText(savedInstanceState.getString(JISTIC1));
             ivJ2.setDefaultText(savedInstanceState.getString(JISTIC2));
@@ -294,15 +294,15 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             ivJ12.setDefaultText(savedInstanceState.getString(JISTIC12));
             ivJ13.setDefaultText(savedInstanceState.getString(JISTIC13));
             ivJ14.setDefaultText(savedInstanceState.getString(JISTIC14));
-            ivOTE.setDefaultText(savedInstanceState.getString(OTE));
-            ivCinnostOperatora.setDefaultText(savedInstanceState.getString(CINNOST_OPERATORA));
-            ivOZE.setDefaultText(savedInstanceState.getString(OZE));
-            ivPOZE1.setDefaultText(savedInstanceState.getString(POZE1));
-            ivPOZE2.setDefaultText(savedInstanceState.getString(POZE2));
-            ivSystemSluzby.setDefaultText(savedInstanceState.getString(SYSTEMOVE_SLUZBY));
-            ivDan.setDefaultText(savedInstanceState.getString(DAN));
-            ivDPH.setDefaultText(savedInstanceState.getString(DPH));
-            switchJistic.setChecked(savedInstanceState.getBoolean(JISTIC));
+            ivOte.setDefaultText(savedInstanceState.getString(OTE));
+            ivMarketOperatorActivity.setDefaultText(savedInstanceState.getString(CINNOST_OPERATORA));
+            ivOze.setDefaultText(savedInstanceState.getString(OZE));
+            ivPoze1.setDefaultText(savedInstanceState.getString(POZE1));
+            ivPoze2.setDefaultText(savedInstanceState.getString(POZE2));
+            ivSystemServices.setDefaultText(savedInstanceState.getString(SYSTEMOVE_SLUZBY));
+            ivTax.setDefaultText(savedInstanceState.getString(DAN));
+            ivVat.setDefaultText(savedInstanceState.getString(DPH));
+            switchBreaker.setChecked(savedInstanceState.getBoolean(JISTIC));
             lastYear = savedInstanceState.getInt(LAST_YEAR);
             isFirstLoad = false;
 
@@ -397,16 +397,16 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putString(BTN_FROM, btnFrom.getText().toString());
         outState.putString(BTN_UNTIL, btnUntil.getText().toString());
-        outState.putString(RADA, ivRada.getText());
-        outState.putString(PRODUKT, ivProdukt.getText());
-        outState.putString(DODAVATEL, ivDodavatel.getText());
-        outState.putInt(SAZBA_DISTRIBUCE, spSazba.getSelectedItemPosition());
-        outState.putInt(DISTRIBUCNI_UZEMI, spDistribucniUzemi.getSelectedItemPosition());
-        outState.putString(VT_NEREGUL, ivVT.getText());
-        outState.putString(NT_NEREGUL, ivNT.getText());
-        outState.putString(MESICNI_PLAT, ivPlat.getText());
-        outState.putString(VT_REGUL, ivVT1.getText());
-        outState.putString(NT_REGUL, ivNT1.getText());
+        outState.putString(RADA, ivSeries.getText());
+        outState.putString(PRODUKT, ivProduct.getText());
+        outState.putString(DODAVATEL, ivCompany.getText());
+        outState.putInt(SAZBA_DISTRIBUCE, spRate.getSelectedItemPosition());
+        outState.putInt(DISTRIBUCNI_UZEMI, spDistArea.getSelectedItemPosition());
+        outState.putString(VT_NEREGUL, ivVt.getText());
+        outState.putString(NT_NEREGUL, ivNt.getText());
+        outState.putString(MESICNI_PLAT, ivPayment.getText());
+        outState.putString(VT_REGUL, ivVtRegulated.getText());
+        outState.putString(NT_REGUL, ivNtRegulated.getText());
         outState.putString(JISTIC0, ivJ0.getText());
         outState.putString(JISTIC1, ivJ1.getText());
         outState.putString(JISTIC2, ivJ2.getText());
@@ -422,15 +422,15 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         outState.putString(JISTIC12, ivJ12.getText());
         outState.putString(JISTIC13, ivJ13.getText());
         outState.putString(JISTIC14, ivJ14.getText());
-        outState.putString(OTE, ivOTE.getText());
-        outState.putString(CINNOST_OPERATORA, ivCinnostOperatora.getText());
-        outState.putString(OZE, ivOZE.getText());
-        outState.putString(POZE1, ivPOZE1.getText());
-        outState.putString(POZE2, ivPOZE2.getText());
-        outState.putString(SYSTEMOVE_SLUZBY, ivSystemSluzby.getText());
-        outState.putString(DAN, ivDan.getText());
-        outState.putString(DPH, ivDPH.getText());
-        outState.putBoolean(JISTIC, switchJistic.isChecked());
+        outState.putString(OTE, ivOte.getText());
+        outState.putString(CINNOST_OPERATORA, ivMarketOperatorActivity.getText());
+        outState.putString(OZE, ivOze.getText());
+        outState.putString(POZE1, ivPoze1.getText());
+        outState.putString(POZE2, ivPoze2.getText());
+        outState.putString(SYSTEMOVE_SLUZBY, ivSystemServices.getText());
+        outState.putString(DAN, ivTax.getText());
+        outState.putString(DPH, ivVat.getText());
+        outState.putBoolean(JISTIC, switchBreaker.isChecked());
 
         outState.putInt(LAST_YEAR, year);
     }
@@ -444,8 +444,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - použije {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()} a vykoná úlohu se zpožděním (1050 ms),
      * - před manipulací s UI ověří {@link #isAdded()} aby se zabránilo {@code IllegalStateException} pokud už fragment není připojen,
      * - načte pole sazeb z resources (`R.array.sazby`), vytvoří nový {@code MySpinnerDistributorsAdapter}
-     * a nastaví ho do `spSazba`,
-     * - obnoví předchozí výběr pomocí `selectionSazba`.
+     * a nastaví ho do `spRate`,
+     * - obnoví předchozí výběr pomocí `selectionRate`.
      * <p>
      * Poznámky:
      * - Všechny UI operace probíhají na hlavním vlákně.
@@ -453,16 +453,16 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - Metoda nijak nemění stav fragmentu mimo nastavení adaptéru a neprovádí I/O v pozadí.
      */
     void setSazbaAdapter() {
-        // zajistit, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
+        // zajistir, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
         Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
             if (!isAdded())
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
-            arraySazba = getResources().getStringArray(R.array.sazby);
-            adapterSazba = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arraySazba, year);
-            spSazba.setAdapter(adapterSazba);
-            spSazba.setSelection(selectionSazba, true);
+            arrayRate = getResources().getStringArray(R.array.sazby);
+            adapterRate = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayRate, year);
+            spRate.setAdapter(adapterRate);
+            spRate.setSelection(selectionRate, true);
             updateNeregulatedPriceVisibility();
         };
         handler.postDelayed(r, 1050);
@@ -476,7 +476,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @param year Rok platnosti ceníku
      * @return Pole řetězců sazeb s titulkem na indexu 0
      */
-    public static String[] getDistUzemiArrayForYear(int year) {
+    public static String[] getDistAreaArrayForYear(int year) {
         if (year >= 2021) {
             return new String[]{"Dist. území", "ČEZ", "EG.D", "PRE"};
         } else {
@@ -492,9 +492,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Provádí bezpečné nastavení dat a adaptéru na hlavním vlákně:
      * - použije {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()} a vykoná úlohu se zpožděním (1140 ms),
      * - před manipulací s UI ověří {@link #isAdded()} aby se zabránilo {@code IllegalStateException} pokud už fragment není připojen,
-     * - načte pole distribučních území z {@link #getDistUzemiArrayForYear(int)}, vytvoří nový {@link MySpinnerDistributorsAdapter}
-     * a nastaví ho do `spDistribucniUzemi`,
-     * - obnoví předchozí výběr pomocí `selectionDistUzemi`,
+     * - načte pole distribučních území z {@link #getDistAreaArrayForYear(int)}, vytvoří nový {@link MySpinnerDistributorsAdapter}
+     * a nastaví ho do `spDistArea`,
+     * - obnoví předchozí výběr pomocí `selectionDistArea`,
      * - po nastavení adaptéru zavolá {@link #evaluateRegulatedPriceAvailability()} pro aktualizaci stavu UI závislého na dostupnosti regulovaných cen.
      */
     void setDistribucniUzemiAdapter() {
@@ -504,10 +504,10 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             if (!isAdded())
                 return; // ochrana proti IllegalStateException když fragment už není připojen
 
-            arrayDistUzemi = getDistUzemiArrayForYear(year);
-            adapterDistUzemi = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistUzemi, year);
-            spDistribucniUzemi.setAdapter(adapterDistUzemi);
-            spDistribucniUzemi.setSelection(selectionDistUzemi, true);
+            arrayDistArea = getDistAreaArrayForYear(year);
+            adapterDistArea = new MySpinnerDistributorsAdapter(requireContext(), R.layout.spinner_view, arrayDistArea, year);
+            spDistArea.setAdapter(adapterDistArea);
+            spDistArea.setSelection(selectionDistArea, true);
             evaluateRegulatedPriceAvailability();
         };
         handler.postDelayed(r, 1140);
@@ -522,21 +522,21 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Položek ČEZ a PRE se změna netýká.
      */
     void changeDistributionSpinner() {
-        if (spDistribucniUzemi.getSelectedItemPosition() <= 0)
+        if (spDistArea.getSelectedItemPosition() <= 0)
             return;
 
-        String selected = spDistribucniUzemi.getSelectedItem().toString();
+        String selected = spDistArea.getSelectedItem().toString();
         if (selected.equals("PRE") || selected.equals("ČEZ"))
             return;
 
         if (year >= 2021) {
             if (!selected.equals("EG.D")) {
-                selectionDistUzemi = 2;
+                selectionDistArea = 2;
                 setDistribucniUzemiAdapter();
             }
         } else {
             if (!selected.equals("E.ON")) {
-                selectionDistUzemi = 2;
+                selectionDistArea = 2;
                 setDistribucniUzemiAdapter();
             }
         }
@@ -589,8 +589,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     void hideItemView() {
         //Zobrazí/skryje doplňkové hodnoty jističů u tarifu D57d
-        if (switchJistic.isChecked()) {
-            switchJistic.setText(R.string.zobrazeno_vice);
+        if (switchBreaker.isChecked()) {
+            switchBreaker.setText(R.string.zobrazeno_vice);
             ivJ10.setVisibility(VISIBLE);
             ivJ11.setVisibility(VISIBLE);
             ivJ12.setVisibility(VISIBLE);
@@ -598,7 +598,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             ivJ14.setVisibility(VISIBLE);
             ivJ8.setVisibility(GONE);
         } else {
-            switchJistic.setText(R.string.zobrazeno_mene);
+            switchBreaker.setText(R.string.zobrazeno_mene);
             ivJ10.setVisibility(GONE);
             ivJ11.setVisibility(GONE);
             ivJ12.setVisibility(GONE);
@@ -608,17 +608,17 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         }
 
         if (year >= 2016) {//když je větší než toto etDatum (nad 2016 rok)
-            ivOZE.setVisibility(View.GONE);
-            ivOTE.setVisibility(View.GONE);
-            ivCinnostOperatora.setVisibility(View.VISIBLE);
-            ivPOZE1.setVisibility(View.VISIBLE);
-            ivPOZE2.setVisibility(View.VISIBLE);
+            ivOze.setVisibility(View.GONE);
+            ivOte.setVisibility(View.GONE);
+            ivMarketOperatorActivity.setVisibility(View.VISIBLE);
+            ivPoze1.setVisibility(View.VISIBLE);
+            ivPoze2.setVisibility(View.VISIBLE);
         } else {
-            ivOZE.setVisibility(View.VISIBLE);
-            ivOTE.setVisibility(View.VISIBLE);
-            ivCinnostOperatora.setVisibility(View.GONE);
-            ivPOZE1.setVisibility(View.GONE);
-            ivPOZE2.setVisibility(View.GONE);
+            ivOze.setVisibility(View.VISIBLE);
+            ivOte.setVisibility(View.VISIBLE);
+            ivMarketOperatorActivity.setVisibility(View.GONE);
+            ivPoze1.setVisibility(View.GONE);
+            ivPoze2.setVisibility(View.GONE);
         }
     }
 
@@ -630,11 +630,11 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * případech musí být pole NT viditelné, aby bylo možné cenu zadat.</p>
      */
     void updateNeregulatedPriceVisibility() {
-        if (ivNT == null) {
+        if (ivNt == null) {
             return;
         }
 
-        ivNT.setVisibility(isNtOptionalForSelectedSazba() ? GONE : VISIBLE);
+        ivNt.setVisibility(isNtOptionalForSelectedSazba() ? GONE : VISIBLE);
     }
 
 
@@ -644,11 +644,11 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * @return {@code true} pro sazby D 01d a D 02d, jinak {@code false}
      */
     private boolean isNtOptionalForSelectedSazba() {
-        if (spSazba == null || spSazba.getSelectedItem() == null) {
+        if (spRate == null || spRate.getSelectedItem() == null) {
             return false;
         }
 
-        String selectedSazba = spSazba.getSelectedItem().toString()
+        String selectedSazba = spRate.getSelectedItem().toString()
                 .toLowerCase(Locale.ROOT)
                 .replace(" ", "");
         return "d01d".equals(selectedSazba) || "d02d".equals(selectedSazba);
@@ -679,9 +679,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         long validityFrom = ViewHelper.parseCalendarFromString(btnFrom.getText().toString()).getTimeInMillis();
         long validityUntil = ViewHelper.parseCalendarFromString(btnUntil.getText().toString()).getTimeInMillis();
 
-        double nt = isNtOptionalForSelectedSazba() ? 0D : ivNT.getDouble();
+        double nt = isNtOptionalForSelectedSazba() ? 0D : ivNt.getDouble();
 
-        return new PriceListModel(-1L, ivRada.getText(), ivProdukt.getText(), ivDodavatel.getText(), ivVT.getDouble(), nt, ivPlat.getDouble(), ivDan.getDouble(), spSazba.getSelectedItem().toString(), ivVT1.getDouble(), ivNT1.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(), ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(), ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemSluzby.getDouble(), ivCinnostOperatora.getDouble(), ivPOZE1.getDouble(), ivPOZE2.getDouble(), ivOZE.getDouble(), ivOTE.getDouble(), validityFrom, validityUntil, ivDPH.getDouble(), spDistribucniUzemi.getSelectedItem().toString(), autor, dateCreated, email);
+        return new PriceListModel(-1L, ivSeries.getText(), ivProduct.getText(), ivCompany.getText(), ivVt.getDouble(), nt, ivPayment.getDouble(), ivTax.getDouble(), spRate.getSelectedItem().toString(), ivVtRegulated.getDouble(), ivNtRegulated.getDouble(), ivJ0.getDouble(), ivJ1.getDouble(), ivJ2.getDouble(), ivJ3.getDouble(), ivJ4.getDouble(), ivJ5.getDouble(), ivJ6.getDouble(), ivJ7.getDouble(), ivJ8.getDouble(), ivJ9.getDouble(), ivJ10.getDouble(), ivJ11.getDouble(), ivJ12.getDouble(), ivJ13.getDouble(), ivJ14.getDouble(), ivSystemServices.getDouble(), ivMarketOperatorActivity.getDouble(), ivPoze1.getDouble(), ivPoze2.getDouble(), ivOze.getDouble(), ivOte.getDouble(), validityFrom, validityUntil, ivVat.getDouble(), spDistArea.getSelectedItem().toString(), autor, dateCreated, email);
     }
 
 
@@ -715,11 +715,11 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 Calendar startCal = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
                 Calendar endCal = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
 
-                PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistribucniUzemi.getSelectedItem().toString(), spSazba.getSelectedItem().toString());
+                PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistArea.getSelectedItem().toString(), spRate.getSelectedItem().toString());
 
                 double[] regulPrice = new double[]{priceListModel.getDistVT(), priceListModel.getDistNT(), priceListModel.getJ0(), priceListModel.getJ1(), priceListModel.getJ2(), priceListModel.getJ3(), priceListModel.getJ4(), priceListModel.getJ5(), priceListModel.getJ6(), priceListModel.getJ7(), priceListModel.getJ8(), priceListModel.getJ9(), priceListModel.getJ10(), priceListModel.getJ11(), priceListModel.getJ12(), priceListModel.getJ13(), priceListModel.getJ14(), priceListModel.getSystemServices(), priceListModel.getActivity(), priceListModel.getPoze1(), priceListModel.getPoze2(), priceListModel.getOze(), priceListModel.getOte(), priceListModel.getTax(), priceListModel.getVat()};
 
-                LabelEditText[] labelEditTexts = new LabelEditText[]{ivVT1, ivNT1, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemSluzby, ivCinnostOperatora, ivPOZE1, ivPOZE2, ivOZE, ivOTE, ivDan, ivDPH};
+                LabelEditText[] labelEditTexts = new LabelEditText[]{ivVtRegulated, ivNtRegulated, ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14, ivSystemServices, ivMarketOperatorActivity, ivPoze1, ivPoze2, ivOze, ivOte, ivTax, ivVat};
 
                 mainHandler.post(() -> {
                     if (!isAdded()) return;
@@ -730,7 +730,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                         labelEditTexts[i].setAllowChangeBackgroundColor(true);
                     }
 
-                    switchJistic.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) || (priceListModel.getJ12() != 0) || (priceListModel.getJ13() != 0));
+                    switchBreaker.setChecked((priceListModel.getJ10() != 0) || (priceListModel.getJ11() != 0) || (priceListModel.getJ12() != 0) || (priceListModel.getJ13() != 0));
 
                     hideItemView();
                     changeTitleOperatorTrhu();
@@ -1002,9 +1002,9 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     void changeTitleOperatorTrhu() {
         if (isAdded()) {
             if (getLongBtnStart() >= 1719784800000L) {//1.7.2024
-                ivCinnostOperatora.setLabel(getString(R.string.provoz_nesitove_infrastruktury));
+                ivMarketOperatorActivity.setLabel(getString(R.string.provoz_nesitove_infrastruktury));
             } else {
-                ivCinnostOperatora.setLabel(getString(R.string.cinnost_operatora_trhu));
+                ivMarketOperatorActivity.setLabel(getString(R.string.cinnost_operatora_trhu));
             }
         }
     }
@@ -1018,8 +1018,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     void changePriceOperatorTrhu() {
         if (isAdded() && getLongBtnStart() >= 1719784800000L && year == 2024) {//1.7.2024
-            ivCinnostOperatora.setDefaultText("9.24");
-            ivCinnostOperatora.setAllowChangeBackgroundColor(false);
+            ivMarketOperatorActivity.setDefaultText("9.24");
+            ivMarketOperatorActivity.setAllowChangeBackgroundColor(false);
         }
     }
 

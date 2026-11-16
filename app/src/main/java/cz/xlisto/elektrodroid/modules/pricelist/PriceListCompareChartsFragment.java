@@ -23,7 +23,8 @@ import cz.xlisto.elektrodroid.ownview.PriceListCompareChartView.DisplayMetric;
 
 
 /**
- * Záložka „Grafy“ pro vizualizaci vybraných cenových veličin a struktury ceny.
+ * Záložka „Grafy“ pro grafickou vizualizaci vybraných cenových veličin a struktury cen srovnávaných ceníků.
+ * Umožňuje přepínání zobrazené metriky v grafu {@link PriceListCompareChartView} pomocí rozbalovací nabídky (Spinner).
  */
 public class PriceListCompareChartsFragment extends Fragment {
 
@@ -56,11 +57,24 @@ public class PriceListCompareChartsFragment extends Fragment {
     };
 
 
+    /**
+     * Vytvoří novou instanci fragmentu {@link PriceListCompareChartsFragment}.
+     *
+     * @return nová instance {@link PriceListCompareChartsFragment}
+     */
     public static PriceListCompareChartsFragment newInstance() {
         return new PriceListCompareChartsFragment();
     }
 
 
+    /**
+     * Vytvoří a vrátí rozvržení pohledu záložky grafů.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,6 +82,13 @@ public class PriceListCompareChartsFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje komponenty UI záložky grafů, získá {@link PriceListsViewModel} z rodičovského fragmentu,
+     * nastaví adaptér a posluchač pro {@link Spinner} výběru metriky a přihlásí se k odběru výsledků srovnání.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -97,6 +118,10 @@ public class PriceListCompareChartsFragment extends Fragment {
     }
 
 
+    /**
+     * Zjistí vybranou metriku z rozbalovací nabídky {@link Spinner} a aktualizuje srovnávací graf
+     * {@link PriceListCompareChartView} s nejnovějšími výsledky z {@link PriceListsViewModel}.
+     */
     private void updateChart() {
         List<PriceListComparisonResult> results = viewModel.getComparisonResults().getValue();
         int selectedIndex = spMetricSelector.getSelectedItemPosition();

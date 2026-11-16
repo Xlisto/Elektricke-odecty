@@ -32,8 +32,9 @@ import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonScenar
 import cz.xlisto.elektrodroid.ownview.PriceListCompareChartView;
 
 /**
- * Záložka „Přehled“ pro zobrazení žebříčku ceníků seřazeného od nejlevnějšího s vyznačením úspor a oddělených tabulek pro obchodní, regulované a celkové součtové ceny.
- * U jednotarifních sazeb (D01d, D02d) automaticky skrývá řádky nízkého tarifu (NT).
+ * Záložka „Přehled“ pro zobrazení žebříčku ceníků seřazeného od nejlevnějšího s vyznačením úspor
+ * a oddělených srovnávacích tabulek pro obchodní, regulované a celkové součtové ceny.
+ * U jednotarifních sazeb (např. D01d, D02d) automaticky skrývá řádky nízkého tarifu (NT).
  */
 public class PriceListCompareOverviewFragment extends Fragment {
 
@@ -53,16 +54,39 @@ public class PriceListCompareOverviewFragment extends Fragment {
             {0xFFE0F7FA, 0xFF00838F}  // Světle azurová, tmavě azurový kód
     };
 
+
+    /**
+     * Vytvoří novou instanci {@link PriceListCompareOverviewFragment}.
+     *
+     * @return nová instance {@link PriceListCompareOverviewFragment}
+     */
     public static PriceListCompareOverviewFragment newInstance() {
         return new PriceListCompareOverviewFragment();
     }
 
+
+    /**
+     * Vytvoří a vrátí rozvržení pohledu pro záložku přehledu srovnání ceníků.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_compare_overview, container, false);
     }
 
+
+    /**
+     * Inicializuje komponenty UI, získá {@link PriceListsViewModel} z rodičovského fragmentu
+     * a přihlásí se k odběru změn srovnávacího scénáře a výsledků porovnání.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -81,6 +105,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
         viewModel.getComparisonResults().observe(getViewLifecycleOwner(), this::updateResultsUI);
     }
 
+
+    /**
+     * Aktualizuje textový souhrn parametrů srovnání (spotřeba VT/NT, jistič a délka období)
+     * na základě předaného scénáře.
+     *
+     * @param scenario srovnávací scénář spotřeby
+     */
     private void updateScenarioSummary(PriceListComparisonScenario scenario) {
         if (scenario == null) return;
         double vtMwh = scenario.getVtKwh() / 1000.0;
@@ -95,6 +126,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
         tvOverviewParamsSummary.setText(summary);
     }
 
+
+    /**
+     * Překreslí kompletní přehledové UI: tabulky obchodních, regulovaných a celkových cen,
+     * graf srovnání {@link PriceListCompareChartView} a karty žebříčku ceníků.
+     *
+     * @param results seznam výsledků srovnání ceníků {@link PriceListComparisonResult}
+     */
     private void updateResultsUI(List<PriceListComparisonResult> results) {
         if (results == null || results.isEmpty()) {
             llOverviewListContainer.removeAllViews();
@@ -215,6 +253,12 @@ public class PriceListCompareOverviewFragment extends Fragment {
     }
 
 
+    /**
+     * Sestaví textový podtitulek pro kartu ceníku v žebříčku (dodavatel, distribuce, platnost a POZE).
+     *
+     * @param res výsledek srovnání ceníku
+     * @return formátovaný řetězec podtitulku
+     */
     private String buildSubtitleText(PriceListComparisonResult res) {
         String periodText = res.getPriceList().getValidityText();
         String pozeInfo = res.getPozeTypeDescription();
@@ -231,6 +275,12 @@ public class PriceListCompareOverviewFragment extends Fragment {
     }
 
 
+    /**
+     * Zjistí, zda jsou všechny ceníky ve výsledcích jednotarifní.
+     *
+     * @param results seznam výsledků srovnání
+     * @return {@code true} pokud jsou všechny ceníky jednotarifní, jinak {@code false}
+     */
     private boolean isAllSingleTariff(List<PriceListComparisonResult> results) {
         if (results == null || results.isEmpty()) return false;
         for (PriceListComparisonResult res : results) {
@@ -241,6 +291,13 @@ public class PriceListCompareOverviewFragment extends Fragment {
         return true;
     }
 
+
+    /**
+     * Zjistí, zda se regulované složky ceny mezi porovnávanými ceníky liší.
+     *
+     * @param results seznam výsledků srovnání
+     * @return {@code true} pokud se regulované složky liší, jinak {@code false}
+     */
     private boolean areRegulatedComponentsDifferent(List<PriceListComparisonResult> results) {
         if (results == null || results.size() < 2) return false;
         PriceListComparisonResult first = results.get(0);
@@ -256,6 +313,15 @@ public class PriceListCompareOverviewFragment extends Fragment {
         return false;
     }
 
+
+    /**
+     * Vytvoří a naplní srovnávací tabulku klíčových cen (obchodních nebo regulovaných)
+     * s barevnými odznaky pro jednotlivé ceníky a korunkou pro nejvýhodnější hodnotu.
+     *
+     * @param container   kontejner {@link LinearLayout} pro vložení tabulky
+     * @param results     seznam výsledků srovnání
+     * @param isRegulated {@code true} pro regulované ceny, {@code false} pro obchodní ceny
+     */
     private void buildKeyPricesTable(LinearLayout container, List<PriceListComparisonResult> results, boolean isRegulated) {
         container.removeAllViews();
         float density = getResources().getDisplayMetrics().density;
@@ -418,6 +484,14 @@ public class PriceListCompareOverviewFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Vytvoří a naplní srovnávací tabulku celkových součtových cen (celkem VT, celkem NT, celkové fixní platby)
+     * s barevnými odznaky a zvýrazněním nejnižší ceny.
+     *
+     * @param container kontejner {@link LinearLayout} pro vložení tabulky
+     * @param results   seznam výsledků srovnání
+     */
     private void buildTotalPricesTable(LinearLayout container, List<PriceListComparisonResult> results) {
         container.removeAllViews();
         float density = getResources().getDisplayMetrics().density;
@@ -567,6 +641,14 @@ public class PriceListCompareOverviewFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Vrací hodnotu obchodní ceny pro konkrétní řádek tabulky (0 = VT, 1 = NT, 2 = stálá platba).
+     *
+     * @param res výsledek srovnání ceníku
+     * @param row index řádku
+     * @return hodnota obchodní ceny včetně DPH
+     */
     private double getMerchantRowVal(PriceListComparisonResult res, int row) {
         return switch (row) {
             case 0 -> res.getMerchantVtWithDph();
@@ -576,6 +658,14 @@ public class PriceListCompareOverviewFragment extends Fragment {
         };
     }
 
+
+    /**
+     * Vrací hodnotu regulované ceny pro konkrétní řádek tabulky (0 = distribuce VT, 1 = distribuce NT, 2 = jistič, 3 = POZE spotřeba, 4 = POZE jistič).
+     *
+     * @param res výsledek srovnání ceníku
+     * @param row index řádku
+     * @return hodnota regulované ceny včetně DPH
+     */
     private double getRegulatedRowVal(PriceListComparisonResult res, int row) {
         return switch (row) {
             case 0 -> res.getRegulatedVtWithDph();
@@ -587,6 +677,14 @@ public class PriceListCompareOverviewFragment extends Fragment {
         };
     }
 
+
+    /**
+     * Vrací hodnotu celkové součtové ceny pro konkrétní řádek tabulky (0 = celkem VT, 1 = celkem NT, 2 = celkové fixní platby).
+     *
+     * @param res výsledek srovnání ceníku
+     * @param row index řádku
+     * @return celková hodnota ceny včetně DPH
+     */
     private double getTotalRowVal(PriceListComparisonResult res, int row) {
         return switch (row) {
             case 0 -> res.getFullVtPricePerMwhWithDph();
