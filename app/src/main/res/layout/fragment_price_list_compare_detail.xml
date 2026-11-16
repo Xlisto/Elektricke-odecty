@@ -72,7 +72,7 @@
                         android:id="@+id/tvShowRegulPriceTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/ownprcUzemi"
+                        android:layout_below="@id/ownprcArea"
                         android:gravity="center_horizontal|center_vertical"
                         android:text="@string/zobrazit_regulovan_ceny" />
 
@@ -92,7 +92,7 @@
                         app:title="@string/dodavatel" />
 
                     <cz.xlisto.elektrodroid.ownview.OwnPriceListCompare
-                        android:id="@+id/ownprcUzemi"
+                        android:id="@+id/ownprcArea"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/ownprcDodavatel"

@@ -55,7 +55,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
 
     private double vt = 1, nt = 1, month = 1, phaze = 3, power = 25, servicesL = 0, servicesR = 0;
 
-    private OwnPriceListCompare ownprcRada, ownprcProdukt, ownprcSazba, ownprcDodavatel, ownprcUzemi;
+    private OwnPriceListCompare ownprcRada, ownprcProdukt, ownprcSazba, ownprcDodavatel, ownprcArea;
 
     private OwnPriceListCompare ownprcVT, ownprcNT, ownprcPayment;
 
@@ -122,7 +122,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         ownprcProdukt = view.findViewById(R.id.ownprcProdukt);
         ownprcSazba = view.findViewById(R.id.ownprcSazba);
         ownprcDodavatel = view.findViewById(R.id.ownprcDodavatel);
-        ownprcUzemi = view.findViewById(R.id.ownprcUzemi);
+        ownprcArea = view.findViewById(R.id.ownprcArea);
 
         ownprcVT = view.findViewById(R.id.ownprcVT);
         ownprcNT = view.findViewById(R.id.ownprcNT);
@@ -228,7 +228,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         priceListLeft = setPriceList(swLeft.isChecked(), priceListLeftRegul, priceListLeftNERegul);
         priceListRight = setPriceList(swRight.isChecked(), priceListRightRegul, priceListRightNERegul);
 
-        ownprcUzemi.visibleSeparator(false);
+        ownprcArea.visibleSeparator(false);
 
         Runnable r = this::comparePriceList;
         r.run();
@@ -354,7 +354,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         if (b) {
             swLeft.setVisibility(VISIBLE);
             tvShowRegulPriceLabel.setVisibility(VISIBLE);
-            ownprcUzemi.visibleSeparator(true);
+            ownprcArea.visibleSeparator(true);
         } else {
             swLeft.setVisibility(GONE);
         }
@@ -370,7 +370,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
         if (b) {
             swRight.setVisibility(VISIBLE);
             tvShowRegulPriceLabel.setVisibility(VISIBLE);
-            ownprcUzemi.visibleSeparator(true);
+            ownprcArea.visibleSeparator(true);
         } else {
             swRight.setVisibility(GONE);
         }
@@ -386,7 +386,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
             ownprcProdukt.setRight(priceListRight.getProduct());
             ownprcSazba.setRight(priceListRight.getRate());
             ownprcDodavatel.setRight(priceListRight.getCompany());
-            ownprcUzemi.setRight(priceListRight.getDistribution());
+            ownprcArea.setRight(priceListRight.getDistribution());
 
             ownprcVT.setRight(df2.format(priceListRight.getPriceVT()) + KC_MWH);
             ownprcNT.setRight(df2.format(priceListRight.getPriceNT()) + KC_MWH);
@@ -459,7 +459,7 @@ public class PriceListCompareDetailFragment extends Fragment implements Selected
             ownprcProdukt.setLeft(priceListLeft.getProduct());
             ownprcSazba.setLeft(priceListLeft.getRate());
             ownprcDodavatel.setLeft(priceListLeft.getCompany());
-            ownprcUzemi.setLeft(priceListLeft.getDistribution());
+            ownprcArea.setLeft(priceListLeft.getDistribution());
 
             ownprcVT.setLeft(df2.format(priceListLeft.getPriceVT()) + KC_MWH);
             ownprcNT.setLeft(df2.format(priceListLeft.getPriceNT()) + KC_MWH);
