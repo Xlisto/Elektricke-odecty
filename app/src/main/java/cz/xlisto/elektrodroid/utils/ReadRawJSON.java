@@ -20,7 +20,11 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 
 
 /**
- * Čtení JSON souborů (regulované ceny) z res/raw
+ * Třída pro čtení a parsování regulovaných cen elektřiny z interních JSON zdrojů aplikace (složka {@code res/raw}).
+ * <p>
+ * Zabezpečuje načítání cen distribučních sazeb (VT, NT), stálých měsíčních platů za jističe
+ * a ostatních regulovaných poplatků (systémové služby, činnost OTE, POZE, daň z elektřiny a DPH)
+ * pro zadané distribuční území, sazbu a časové období.
  */
 public class ReadRawJSON {
 
@@ -28,6 +32,7 @@ public class ReadRawJSON {
     private final Context context;
     private int year;
     private Calendar startCalBtn;
+    private Calendar endCalBtn;
     private String distUzemi, sazba;
     private final PriceListModel priceListModel;
     private static final String ROK = "rok";
@@ -62,9 +67,9 @@ public class ReadRawJSON {
 
 
     /**
-     * Konstruktor
+     * Konstruktor třídy {@code ReadRawJSON}.
      *
-     * @param context kontext aplikace
+     * @param context kontext aplikace, nebo {@code null} při spuštění v testovacím prostředí bez Android kontextu
      */
     public ReadRawJSON(Context context) {
         this.context = context;
@@ -73,31 +78,26 @@ public class ReadRawJSON {
 
 
     /**
-     * Načte regulované ceny z raw JSON zdrojů a naplní interní model `priceListModel`.
+     * Načte regulované ceny z raw JSON zdrojů a naplní interní objekt {@link PriceListModel}.
      * <p>
-     * Postup:
-     * - nastaví rok podle `startCal` (pomocí `DateUtil`),
-     * - uloží parametrické filtry `distUzemi` a `sazba` do polí instance,
-     * - načte obsahy souborů `res/raw/distribuce`, `res/raw/ostatni`, `res/raw/jistice`,
-     * - zavolá `parse` a `parseOther` pro naplnění `priceListModel`.
-     * <p>
-     * Vedlejší efekty:
-     * - mění stav instance (`this.year`, `this.distUzemi`, `this.sazba`),
-     * - aktualizuje a vrací interní `priceListModel`.
-     * <p>
-     * Poznámka:
-     * - parametr `endCal` není v současné implementaci použitý;
-     * pokud se má provádět filtrování podle období, je potřeba ho zpracovat.
+     * Postup načtení:
+     * <ul>
+     *   <li>Určí rok podle počátečního data {@code startCal}.</li>
+     *   <li>Uloží parametry pro filtrování (distribuční území a sazba).</li>
+     *   <li>Načte obsahy JSON souborů (distribuce, platby za jističe a ostatní poplatky).</li>
+     *   <li>Rozparsuje data a nastaví příslušné regulované ceny do {@link PriceListModel}.</li>
+     * </ul>
      *
-     * @param startCal  počáteční datum platnosti ceníku (použito pro určení roku)
-     * @param endCal    koncové datum platnosti (aktuálně nevyužito)
-     * @param distUzemi distribuční oblast pro filtrování
-     * @param sazba     distribuční sazba pro filtrování
-     * @return naplněný objekt `PriceListModel`
+     * @param startCal  počáteční datum platnosti pro určení roku a filtrování periody
+     * @param endCal    koncové datum platnosti pro filtrování periody (pokud je {@code null}, použije se {@code startCal})
+     * @param distUzemi název distribuční oblasti (např. ČEZ, EG.D, PRE)
+     * @param sazba     distribuční sazba (např. D 01d, D 25d)
+     * @return naplněný objekt {@link PriceListModel} s regulovanými cenami
      */
     public PriceListModel read(Calendar startCal, Calendar endCal, String distUzemi, String sazba) {
         this.year = new DateUtil(startCal).getYear();
         this.startCalBtn = startCal;
+        this.endCalBtn = (endCal != null) ? endCal : startCal;
         this.distUzemi = distUzemi;
         this.sazba = sazba;
         String distribuce = readRaw(R.raw.distribuce);
@@ -111,38 +111,77 @@ public class ReadRawJSON {
 
 
     /**
-     * Načte zdrojový soubor podle resource
+     * Načte textový obsah raw zdroje.
+     * <p>
+     * Pokud je k dispozici kontext aplikace, načte zdroj pomocí {@link android.content.res.Resources#openRawResource(int)}.
+     * V opačném případě (např. při unit testech na JVM) se pokusí načíst odpovídající soubor přímo z disku.
      *
-     * @param resource int
-     * @return String načteného ceníku
+     * @param resource ID zdroje v {@code R.raw}
+     * @return načtený JSON řetězec, nebo prázdný řetězec v případě chyby
      */
     private String readRaw(int resource) {
-        String json = "";
-        InputStream is = context.getResources().openRawResource(resource);
-        int size;
-        try {
-            size = is.available();
-            byte[] buffer = new byte[size];
-            int i = is.read(buffer);
-            is.close();
-            json = new String(buffer, StandardCharsets.UTF_8);
-            if (i == -1) {
-                throw new IOException("EOF reached while trying to read the whole file");
+        if (context != null) {
+            try (InputStream is = context.getResources().openRawResource(resource)) {
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                int i = is.read(buffer);
+                if (i == -1) {
+                    throw new IOException("EOF reached while trying to read the whole file");
+                }
+                return new String(buffer, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                Log.e(TAG, "readRaw: " + e.getMessage());
             }
-            return json;
-        } catch (IOException e) {
-            Log.e(TAG, "readRaw: " + e.getMessage());
+            return "";
+        } else {
+            return readRawFromFilesystem(resource);
         }
-        return json;
     }
 
 
     /**
-     * Prohledá objekt JSON a podle typu (distribuční oblast, vt, nt nebo ceny jističe) zavolá
-     * parseDistribuce nebo parseJistic
+     * Načte obsah JSON souboru z disku pro testovací prostředí bez Android kontextu.
      *
-     * @param s   String obsahující JSON s regulovanými cenami
-     * @param typ Typ (distribuce, jistice)
+     * @param resource ID zdroje v {@code R.raw}
+     * @return obsah souboru jako řetězec, nebo prázdný řetězec při neexistenci či chybě čtení
+     */
+    private String readRawFromFilesystem(int resource) {
+        String fileName;
+        if (resource == R.raw.distribuce) {
+            fileName = "distribuce.json";
+        } else if (resource == R.raw.ostatni) {
+            fileName = "ostatni.json";
+        } else if (resource == R.raw.jistice) {
+            fileName = "jistice.json";
+        } else {
+            return "";
+        }
+
+        try {
+            java.io.File file = new java.io.File("src/main/res/raw/" + fileName);
+            java.io.File targetFile = file.exists() ? file : new java.io.File("app/src/main/res/raw/" + fileName);
+            if (targetFile.exists()) {
+                try (InputStream is = new java.io.FileInputStream(targetFile)) {
+                    byte[] buffer = new byte[(int) targetFile.length()];
+                    int readBytes = is.read(buffer);
+                    if (readBytes > 0) {
+                        return new String(buffer, 0, readBytes, StandardCharsets.UTF_8);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "readRawFromFilesystem: " + e.getMessage());
+        }
+        return "";
+    }
+
+
+    /**
+     * Prohledá JSON pole pro aktuální rok a distribuční území a podle typu předá zpracování metodě
+     * {@link #parseDistribuce(JSONObject)} nebo {@link #parseJistice(JSONObject)}.
+     *
+     * @param s   JSON řetězec s daty regulovaných cen
+     * @param typ typ zpracovávaných dat (distribuce nebo jističe)
      */
     private void parse(String s, Typ typ) {
         try {
@@ -171,10 +210,11 @@ public class ReadRawJSON {
 
 
     /**
-     * Přečte JSON a přiřadí distribuční cenu vt a nt do objektu ceníku
+     * Vyhledá v JSON objektu distribuční území a konkrétní distribuční sazbu a přiřadí ceny distribuce VT a NT
+     * do objektu {@link #priceListModel}.
      *
-     * @param jsonObject JSONObject
-     * @throws JSONException vyjímka JSON
+     * @param jsonObject JSON objekt obsahující distribuční data pro dané území
+     * @throws JSONException při chybě parsování JSON struktury
      */
     private void parseDistribuce(JSONObject jsonObject) throws JSONException {
 
@@ -194,10 +234,11 @@ public class ReadRawJSON {
 
 
     /**
-     * Přečte JSON a přiřadí distribuční ceny jističů do objektu ceníku
+     * Vyhledá v JSON objektu distribuční území a konkrétní distribuční sazbu a přiřadí měsíční platby za jističe
+     * (J0 až J14) do objektu {@link #priceListModel}.
      *
-     * @param jsonObject JSONObject
-     * @throws JSONException vyjímka JSON
+     * @param jsonObject JSON objekt obsahující data plateb za jističe pro dané území
+     * @throws JSONException při chybě parsování JSON struktury
      */
     private void parseJistice(JSONObject jsonObject) throws JSONException {
         if (jsonObject.getString(DIST_UZEMI).equals(distUzemi)) {
@@ -229,20 +270,12 @@ public class ReadRawJSON {
 
 
     /**
-     * Zpracuje obsah pole `OSTATNI` z JSONu a přiřadí hodnoty do `priceListModel`.
+     * Zpracuje sekci {@code OSTATNI} z JSON zdroje a přiřadí hodnoty ostatních regulovaných poplatků
+     * (systémové služby, činnost OTE, POZE1, POZE2, DPH a daň) do objektu {@link #priceListModel}.
      * <p>
-     * Chování:
-     * - Najde objekt pro aktuální `year`.
-     * - Pokud je `OSTATNI` `JSONObject`, přiřadí jeho hodnoty přímo (SYSTEM_SLUZBY, CINNOST, POZE1, POZE2, DPH, DAN).
-     * - Pokud je `OSTATNI` `JSONArray`, očekává položky s poli `od` a `do` (formáty jako `1.1.`, `1.1`, `01.01`).
-     * Datumy se parsují pomocí `parseDate` a převedou na `Calendar` (rok = `this.year`).
-     * - Pro každou periodu se porovná inkluzivně: `startCalBtn >= startCalendarJson` a `endCalBtn <= endCalendarJson`.
-     * Pokud podmínka platí, použijí se hodnoty z té periody (s fallbackem pomocí `optDouble`) a zpracování končí.
-     * - Pokud žádná položka nevyhovuje nebo JSON neobsahuje `OSTATNI`, `priceListModel` zůstane beze změny.
-     * <p>
-     * Vedlejší efekty: aktualizuje interní `priceListModel`.
+     * Pokud sekce obsahuje pole period platností, vyhledá periodu odpovídající zadanému časovému rozmezí.
      *
-     * @param s JSON řetězec obsahující pole `OSTATNI`
+     * @param s JSON řetězec obsahující data ostatních poplatků
      */
     private void parseOther(String s) {
         try {
@@ -288,7 +321,8 @@ public class ReadRawJSON {
                     endCalJson.set(Calendar.SECOND, 59);
                     endCalJson.set(Calendar.MILLISECOND, 999);
 
-                    if (!startCalBtn.before(startCalJson) && !startCalBtn.after(endCalJson)) {
+                    Calendar endCalToUse = (endCalBtn != null) ? endCalBtn : startCalBtn;
+                    if (!startCalBtn.before(startCalJson) && !endCalToUse.after(endCalJson)) {
                         // přiřazení hodnot z periody (bezpečně pomocí opt*)
                         priceListModel.setSystemServices(otherPriceObj.optDouble(SYSTEM_SLUZBY, priceListModel.getSystemServices()));
                         priceListModel.setActivity(otherPriceObj.optDouble(CINNOST, priceListModel.getActivity()));
@@ -307,6 +341,12 @@ public class ReadRawJSON {
     }
 
 
+    /**
+     * Převede textový řetězec s datem ve formátu {@code D.M.} nebo {@code D.M} na pole s dnem a měsícem.
+     *
+     * @param date textový zápis data
+     * @return pole o 2 prvcích: {@code [den, měsíc (0-based)]}
+     */
     private int[] parseDate(String date) {
         int day = 1;
         int month = 0;
@@ -329,8 +369,15 @@ public class ReadRawJSON {
     }
 
 
+    /**
+     * Typ zpracovávaných regulovaných dat z JSON zdrojů.
+     */
     enum Typ {
+        /**
+         * Ceny za měsíční platby jističů.
+         */
         JISTIC,
+        /** Ceny za distribuci elektřiny (VT, NT). */
         DISTRIBUCE
     }
 
