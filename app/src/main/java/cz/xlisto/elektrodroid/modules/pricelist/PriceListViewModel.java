@@ -18,17 +18,32 @@ import cz.xlisto.elektrodroid.utils.Event;
 import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 
 
+/**
+ * ViewModel pro správu a uložení ceníků elektřiny.
+ * Zajišťuje asynchronní doplňování regulovaných složek cen z JSON konfigurace
+ * a jejich uložení do databáze ceníků.
+ */
 public class PriceListViewModel extends AndroidViewModel {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final MutableLiveData<Event<Boolean>> saveResultEvent = new MutableLiveData<>();
 
 
+    /**
+     * Vytvoří novou instanci {@link PriceListViewModel}.
+     *
+     * @param application aplikační kontext
+     */
     public PriceListViewModel(@NonNull Application application) {
         super(application);
     }
 
 
+    /**
+     * Vrací {@link LiveData} s událostí výstupního stavu operace uložení ceníků.
+     *
+     * @return {@link LiveData} obsahující {@link Event} s hodnotou {@code true} při úspěchu, {@code false} při chybě
+     */
     public LiveData<Event<Boolean>> getSaveResultEvent() {
         return saveResultEvent;
     }
@@ -37,18 +52,19 @@ public class PriceListViewModel extends AndroidViewModel {
     /**
      * Připraví a uloží dvě položky ceníku asynchronně.
      * <p>
-     * Pokud je {@code isAdd} true, obě položky se vloží jako nové záznamy.
-     * Pokud je {@code isAdd} false, první položka se aktualizuje (její id se nastaví na {@code itemId})
+     * Před uložením sloučí obě položky s regulovanými cenami načtenými z JSON konfigurace.
+     * Pokud je {@code isAdd} {@code true}, obě položky se vloží jako nové záznamy.
+     * Pokud je {@code isAdd} {@code false}, první položka se aktualizuje (její ID se nastaví na {@code itemId})
      * a druhá položka se vloží jako nový záznam.
      * <p>
-     * Operace probíhá v samostatném vlákně a používá {@code DataPriceListSource} pro přístup k databázi.
-     * Po dokončení se do {@code saveResultEvent} pošle {@code Event<Boolean>}:
-     * true = úspěch (oba vrácené id > 0), false = selhání nebo výjimka.
+     * Operace probíhá na pozadí a používá {@link DataPriceListSource} pro přístup k databázi.
+     * Po dokončení publikuje do {@link #getSaveResultEvent()} událost {@link Event}:
+     * {@code true} = úspěch (obě ID > 0), {@code false} = selhání nebo výjimka.
      *
-     * @param first  první model ceníku
-     * @param second druhý model ceníku
-     * @param isAdd  true = přidat obě položky, false = aktualizovat první a přidat druhou
-     * @param itemId id položky k aktualizaci (pouze při {@code isAdd == false})
+     * @param first  první model ceníku {@link PriceListModel}
+     * @param second druhý model ceníku {@link PriceListModel}
+     * @param isAdd  {@code true} pro vložení obou položek, {@code false} pro aktualizaci první a vložení druhé
+     * @param itemId ID položky k aktualizaci (použije se pouze při {@code isAdd == false})
      */
     public void preparePriceLists(PriceListModel first, PriceListModel second, boolean isAdd, Long itemId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -80,14 +96,14 @@ public class PriceListViewModel extends AndroidViewModel {
 
 
     /**
-     * Sloučí zadaný PriceListModel s regulovanými hodnotami načtenými z ReadRawJSON.
-     * Vytvoří interní Calendar objekty z polí platnostOD a platnostDO, zavolá ReadRawJSON.read(...)
-     * a zkopíruje vypočtené/regulované hodnoty (systemSluzby, cinnost, poze1/2, DPH, dan, distVT/distNT, J0..J14)
+     * Sloučí zadaný {@link PriceListModel} s regulovanými hodnotami načtenými pomocí {@link ReadRawJSON}.
+     * Vytvoří interní objekty {@link Calendar} z časů platnosti ceníku, načte regulované ceny
+     * a zkopíruje je (systémové služby, činnost OTE, POZE, DPH, daň z elektřiny, distribuce VT/NT, jističe J0-J14)
      * do předaného objektu.
-     * Metoda modifikuje vstupní objekt a zároveň jej vrací pro pohodlné řetězení.
+     * Metoda modifikuje vstupní objekt a zároveň jej vrací.
      *
-     * @param priceList vstupní PriceListModel, jehož hodnoty budou aktualizovány
-     * @return stejný objekt PriceListModel s aktualizovanými regulovanými hodnotami
+     * @param priceList vstupní {@link PriceListModel}, jehož hodnoty budou aktualizovány
+     * @return stejný objekt {@link PriceListModel} s doplněnými regulovanými hodnotami
      */
     private PriceListModel mergePriceLists(PriceListModel priceList) {
         ReadRawJSON reader = new ReadRawJSON(getApplication());
@@ -128,6 +144,9 @@ public class PriceListViewModel extends AndroidViewModel {
     }
 
 
+    /**
+     * Uvolní zdroje při zničení ViewModelu a ukončí probíhající úlohy v {@link ExecutorService}.
+     */
     @Override
     protected void onCleared() {
         executor.shutdownNow();

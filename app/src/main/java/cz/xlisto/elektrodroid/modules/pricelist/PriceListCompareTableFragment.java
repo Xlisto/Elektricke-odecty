@@ -22,7 +22,9 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 
 
 /**
- * Záložka „Tabulka“ pro detailní srovnávací tabulku mezi dvěma libovolnými ceníky z vybrané sady.
+ * Záložka „Tabulka“ pro detailní srovnávací tabulku mezi dvěma vybranými ceníky.
+ * Slouží k výběru levého a pravého ceníku z vybrané sady pomocí rozbalovacích nabídek (Spinner)
+ * a k jejich předání vnořenému fragmentu {@link PriceListCompareCompactFragment} pro vykreslení srovnání.
  */
 public class PriceListCompareTableFragment extends Fragment {
 
@@ -32,11 +34,24 @@ public class PriceListCompareTableFragment extends Fragment {
     private PriceListCompareCompactFragment compactFragment;
 
 
+    /**
+     * Vytvoří novou instanci {@link PriceListCompareTableFragment}.
+     *
+     * @return nová instance {@link PriceListCompareTableFragment}
+     */
     public static PriceListCompareTableFragment newInstance() {
         return new PriceListCompareTableFragment();
     }
 
 
+    /**
+     * Vytvoří a vrátí rozvržení pohledu fragmentu.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +59,13 @@ public class PriceListCompareTableFragment extends Fragment {
     }
 
 
+    /**
+     * Inicializuje ovládací prvky uživatelského rozhraní, získá {@link PriceListsViewModel} z rodičovského fragmentu,
+     * zobrazí vnořený {@link PriceListCompareCompactFragment} a přihlásí se k odběru změn vybraných ceníků.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -62,6 +84,12 @@ public class PriceListCompareTableFragment extends Fragment {
     }
 
 
+    /**
+     * Aktualizuje adaptéry a vybrané položky prvků {@link Spinner} pro levý a pravý ceník
+     * na základě dostupného seznamu ceníků z {@link PriceListsViewModel}.
+     *
+     * @param priceLists seznam dostupných ceníků {@link PriceListModel} k porovnání
+     */
     private void updateSpinners(List<PriceListModel> priceLists) {
         if (priceLists == null || priceLists.isEmpty()) {
             spTableLeftPriceList.setAdapter(null);
@@ -106,6 +134,10 @@ public class PriceListCompareTableFragment extends Fragment {
     }
 
 
+    /**
+     * Zjistí aktuální výběr levého a pravého ceníku v prvcích {@link Spinner} a předá tyto ceníky
+     * včetně parametrů spotřeby z {@link PriceListsViewModel} vnořenému fragmentu {@link PriceListCompareCompactFragment}.
+     */
     private void notifySelectedPriceLists() {
         List<PriceListModel> priceLists = viewModel.getSelectedPriceLists().getValue();
         if (priceLists == null || priceLists.isEmpty() || compactFragment == null) {

@@ -45,7 +45,8 @@ import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
 /**
  * Záložka „Výhodnost sazeb“ pro analýzu bodu zvratu (break-even point) a simulaci změny distribuční sazby.
- * Podporuje 2 posuvníky (VT a NT) pro modelovou spotřebu, 1 posuvník pro počet roků historie a rozbalovací kartu s technickými podmínkami přiznání sazeb.
+ * Podporuje 2 posuvníky (VT a NT) pro nastavení modelové spotřeby, 1 posuvník pro volbu počtu roků historie spotřeby
+ * a rozbalovací karty s technickými podmínkami přiznání jednotlivých distribučních sazeb.
  */
 public class PriceListCompareProfitabilityFragment extends Fragment {
 
@@ -74,16 +75,39 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
     private final Set<String> expandedTariffs = new HashSet<>();
     private final int[] lineColors = new int[]{0xFF1E88E5, 0xFF43A047, 0xFFFB8C00, 0xFF8E24AA};
 
+
+    /**
+     * Vytvoří novou instanci {@link PriceListCompareProfitabilityFragment}.
+     *
+     * @return nová instance {@link PriceListCompareProfitabilityFragment}
+     */
     public static PriceListCompareProfitabilityFragment newInstance() {
         return new PriceListCompareProfitabilityFragment();
     }
 
+
+    /**
+     * Vytvoří a vrátí rozvržení pohledu záložky výhodnosti sazeb.
+     *
+     * @param inflater           objekt pro nafouknutí rozvržení
+     * @param container          kontejner rodičovského pohledu
+     * @param savedInstanceState uložený stav fragmentu
+     * @return nafouknutý pohled {@link View}
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_price_list_compare_profitability, container, false);
     }
 
+
+    /**
+     * Inicializuje UI prvky záložky, propojí posluchače posuvníků, volby přepínače zdroje spotřeby
+     * a přihlásí se k odběru dat z {@link PriceListsViewModel}.
+     *
+     * @param view               pohled fragmentu
+     * @param savedInstanceState uložený stav fragmentu
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -137,6 +161,11 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> updateProfitabilityUI());
     }
 
+
+    /**
+     * Reaguje na změnu přepínače zdroje spotřeby (historická spotřeba vs. ručně zadaný model)
+     * a aktualizuje viditelnost odpovídajících posuvníků a scénář ve {@link PriceListsViewModel}.
+     */
     private void onSourceModeChanged() {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
@@ -154,6 +183,12 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Aktualizuje spotřebu ve vysokém tarifu (VT) v měřítku kWh ve scénáři na základě hodnoty z posuvníku MWh.
+     *
+     * @param vtValueMwh hodnota spotřeby VT v MWh z posuvníku
+     */
     private void updateVtFromSlider(float vtValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
@@ -163,6 +198,12 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.setScenario(activeScenario);
     }
 
+
+    /**
+     * Aktualizuje spotřebu v nízkém tarifu (NT) v měřítku kWh ve scénáři na základě hodnoty z posuvníku MWh.
+     *
+     * @param ntValueMwh hodnota spotřeby NT v MWh z posuvníku
+     */
     private void updateNtFromSlider(float ntValueMwh) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
@@ -172,6 +213,13 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.setScenario(activeScenario);
     }
 
+
+    /**
+     * Vypočítá průměrnou roční spotřebu z odečtů za zvolený počet roků do historie pro aktuální odběrné místo
+     * a nastaví vypočtené hodnoty VT a NT do srovnávacího scénáře.
+     *
+     * @param yearsCount počet roků historie odečtů pro výpočet průměru
+     */
     private void updateHistoryFromSlider(int yearsCount) {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
@@ -207,6 +255,14 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         viewModel.setScenario(activeScenario);
     }
 
+
+    /**
+     * Bezpečně nastaví hodnotu posuvníku {@link Slider} tak, aby ležela v povoleném rozsahu min-max
+     * a odpovídala nastavenému kroku.
+     *
+     * @param slider   posuvník {@link Slider} k nastavení
+     * @param rawValue požadovaná hodnota k nastavení
+     */
     private void setSliderValueSafely(Slider slider, float rawValue) {
         float min = slider.getValueFrom();
         float max = slider.getValueTo();
@@ -224,6 +280,12 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         slider.setValue(finalValue);
     }
 
+
+    /**
+     * Synchronizuje prvky uživatelského rozhraní (posuvníky a textové popisky) s aktuálním stavem {@link PriceListComparisonScenario}.
+     *
+     * @param scenario aktuální srovnávací scénář spotřeby
+     */
     private void syncUIWithScenario(PriceListComparisonScenario scenario) {
         if (scenario == null) return;
         isUpdatingFromCode = true;
@@ -263,6 +325,11 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         updateProfitabilityUI();
     }
 
+
+    /**
+     * Spočítá bod zvratu a roční náklady pomocí {@link BreakEvenCalculator}, vytvoří datové řady
+     * a překreslí graf výhodnosti {@link PriceListProfitabilityChartView} i rozbalovací karty technických podmínek.
+     */
     private void updateProfitabilityUI() {
         PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
         List<PriceListModel> selectedPriceLists = viewModel.getSelectedPriceLists().getValue();
@@ -309,6 +376,13 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         updateTechnicalConditionsUI(selectedPriceLists);
     }
 
+
+    /**
+     * Vytvoří a zobrazí rozbalovací karty technických podmínek přiznání distribučních sazeb
+     * pro unikátní sazby přítomné v seznamu porovnávaných ceníků.
+     *
+     * @param priceLists seznam porovnávaných ceníků {@link PriceListModel}
+     */
     private void updateTechnicalConditionsUI(List<PriceListModel> priceLists) {
         if (llTechnicalConditionsContainer == null) return;
         llTechnicalConditionsContainer.removeAllViews();

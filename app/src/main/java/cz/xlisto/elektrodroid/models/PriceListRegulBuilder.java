@@ -19,7 +19,7 @@ public class PriceListRegulBuilder extends PriceListModel {
     private PriceListModel priceList;
     private boolean isRegulPrice = false;
     private int year = -1;
-    private final String STROP = "Cenový strop: ";
+    private final String CAP = "Cenový strop: ";
     private final double MAX_VT_2023 = 5000d;
     private final double MAX_NT_2023 = 5000d;
     private final double MAX_PLAT_2023 = 130d;
@@ -111,7 +111,7 @@ public class PriceListRegulBuilder extends PriceListModel {
             setVtMax5000();
             setNtMax5000();
             setPoze0();
-            setPlatMax130();
+            setPaymentMax130();
             isRegulPrice = true;
         }
         //nastavení poze0
@@ -155,7 +155,7 @@ public class PriceListRegulBuilder extends PriceListModel {
     /**
      * Nastaví v ceníku zastropovanou cenu měsíčního platu
      */
-    private void setPlatMax130() {
+    private void setPaymentMax130() {
         if (priceList.getMonthlyPayment() > MAX_PLAT_2023)
             priceList.setMonthlyPayment(MAX_PLAT_2023);
     }
@@ -168,7 +168,7 @@ public class PriceListRegulBuilder extends PriceListModel {
      */
     public String getMaxVT() {
         if (year == 2023)
-            return STROP + df2.format(MAX_VT_2023);
+            return CAP + df2.format(MAX_VT_2023);
         return null;
     }
 
@@ -180,7 +180,7 @@ public class PriceListRegulBuilder extends PriceListModel {
      */
     public String getMaxNT() {
         if (year == 2023)
-            return STROP + df2.format(MAX_NT_2023);
+            return CAP + df2.format(MAX_NT_2023);
         return null;
     }
 
@@ -190,9 +190,9 @@ public class PriceListRegulBuilder extends PriceListModel {
      *
      * @return max měsíční plat
      */
-    public String getMaxPlat() {
+    public String getMaxPayment() {
         if (year == 2023)
-            return STROP + df2.format(MAX_PLAT_2023);
+            return CAP + df2.format(MAX_PLAT_2023);
         return null;
     }
 

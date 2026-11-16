@@ -5,15 +5,17 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 
 
 /**
- * Callback rozhraní pro předání vybraných ceníků a parametrů porovnání.
+ * Rozhraní pro předání vybraných ceníků a parametrů spotřeby při jejich porovnávání.
+ * Slouží k mezigrafické komunikaci mezi komponentami porovnání ceníků.
  */
 public interface SelectedPriceListsInterface {
+
     /**
-     * Předá aktuálně vybrané ceníky a vstupní parametry spotřeby.
+     * Voláno při výběru nebo změně porovnávaných ceníků a parametrů spotřeby.
      *
-     * @param priceListLeft        ceník na levé straně porovnání
-     * @param priceListRight       ceník na pravé straně porovnání
-     * @param consuptionContainer  vstupní parametry výpočtu
+     * @param priceListLeft       první (levý) {@link PriceListModel} určený k porovnání
+     * @param priceListRight      druhý (pravý) {@link PriceListModel} určený k porovnání
+     * @param consuptionContainer kontejner {@link ConsuptionContainer} se vstupními parametry spotřeby pro výpočet
      */
     void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, ConsuptionContainer consuptionContainer);
 }

@@ -18,20 +18,41 @@ import java.util.Calendar
 
 /**
  * Fragment pro zobrazení detailů ceníku elektřiny.
+ *
+ * Přehledně zobrazuje všechny složky ceníku včetně obchodní dodávky (VT, NT, stálý plat),
+ * distribuční sazby a jističů, regulovaných poplatků (systémové služby, OTE, POZE),
+ * daní (daň z elektřiny, DPH) a aplikovatelných cenových stropů a poznámek.
  */
 class PriceListDetailFragment : Fragment() {
 
     companion object {
+        /** Klíč příznaku výsledku pro mezigrafickou komunikaci mezi fragmenty. */
         const val PRICE_LIST_DETAIL_FRAGMENT = "price_list_detail_fragment"
+
+        /** Klíč předávaného ID ceníku ve výsledkovém balíčku. */
         const val PRICE_LIST_ID = "price_list_id"
+
         private const val PRICE_ID = "price_list_id"
         private const val SHOW_IN_FRAGMENT = "show_in_fragment"
 
+        /**
+         * Vytvoří novou instanci fragmentu pro zobrazení detailu ceníku.
+         *
+         * @param priceListId ID ceníku v databázi
+         * @return Nová instance [PriceListDetailFragment]
+         */
         @JvmStatic
         fun newInstance(priceListId: Long): PriceListDetailFragment {
             return newInstance(priceListId, showInFragment = false)
         }
 
+        /**
+         * Vytvoří novou instanci fragmentu s možností přizpůsobení rozvržení pro vnoření do jiného fragmentu.
+         *
+         * @param priceListId ID ceníku v databázi
+         * @param showInFragment `true` pokud se fragment zobrazuje vnořený (např. v režimu na šířku), jinak `false`
+         * @return Nová instance [PriceListDetailFragment]
+         */
         @JvmStatic
         fun newInstance(priceListId: Long, showInFragment: Boolean): PriceListDetailFragment {
             val fragment = PriceListDetailFragment()
@@ -43,17 +64,17 @@ class PriceListDetailFragment : Fragment() {
         }
     }
 
-    private lateinit var ldnDatum: LabelPriceDetail
-    private lateinit var ldnRada: LabelPriceDetail
-    private lateinit var ldnProdukt: LabelPriceDetail
-    private lateinit var ldnSazba: LabelPriceDetail
-    private lateinit var ldnDodavatel: LabelPriceDetail
-    private lateinit var ldnUzemi: LabelPriceDetail
-    private lateinit var ldnVTDodavka: LabelPriceDetail
-    private lateinit var ldnNTDodavka: LabelPriceDetail
-    private lateinit var ldnMesPlat: LabelPriceDetail
-    private lateinit var ldnVTDistribuce: LabelPriceDetail
-    private lateinit var ldnNTDistribuce: LabelPriceDetail
+    private lateinit var ldnDate: LabelPriceDetail
+    private lateinit var ldnSeries: LabelPriceDetail
+    private lateinit var ldnProduct: LabelPriceDetail
+    private lateinit var ldnRate: LabelPriceDetail
+    private lateinit var ldnCompany: LabelPriceDetail
+    private lateinit var ldnArea: LabelPriceDetail
+    private lateinit var ldnVtSupply: LabelPriceDetail
+    private lateinit var ldnNtSupply: LabelPriceDetail
+    private lateinit var ldnMonthlyPayment: LabelPriceDetail
+    private lateinit var ldnVtDistribution: LabelPriceDetail
+    private lateinit var ldnNtDistribution: LabelPriceDetail
     private lateinit var ldnJ0: LabelPriceDetail
     private lateinit var ldnJ1: LabelPriceDetail
     private lateinit var ldnJ2: LabelPriceDetail
@@ -69,25 +90,28 @@ class PriceListDetailFragment : Fragment() {
     private lateinit var ldnJ12: LabelPriceDetail
     private lateinit var ldnJ13: LabelPriceDetail
     private lateinit var ldnJ14: LabelPriceDetail
-    private lateinit var ldnSystemSluzby: LabelPriceDetail
-    private lateinit var ldnOTE: LabelPriceDetail
-    private lateinit var ldnPOZE1: LabelPriceDetail
-    private lateinit var ldnPOZE2: LabelPriceDetail
-    private lateinit var ldnDan: LabelPriceDetail
-    private lateinit var ldnDPH: LabelPriceDetail
+    private lateinit var ldnSystemServices: LabelPriceDetail
+    private lateinit var ldnOte: LabelPriceDetail
+    private lateinit var ldnPoze1: LabelPriceDetail
+    private lateinit var ldnPoze2: LabelPriceDetail
+    private lateinit var ldnTax: LabelPriceDetail
+    private lateinit var ldnVat: LabelPriceDetail
 
-    private lateinit var tvPoznamka: TextView
-    private lateinit var tvPoznamkaVT: TextView
-    private lateinit var tvPoznamkaNT: TextView
-    private lateinit var tvPoznamkaPlat: TextView
-    private lateinit var tvPoznamkaPOZE1: TextView
-    private lateinit var tvPoznamkaPOZE2: TextView
-    private lateinit var tvPoznamkaOTE: TextView
-    private lateinit var containerJistice: android.widget.LinearLayout
+    private lateinit var tvNote: TextView
+    private lateinit var tvNoteVt: TextView
+    private lateinit var tvNoteNt: TextView
+    private lateinit var tvNotePayment: TextView
+    private lateinit var tvNotePoze1: TextView
+    private lateinit var tvNotePoze2: TextView
+    private lateinit var tvNoteOte: TextView
+    private lateinit var containerBreakers: android.widget.LinearLayout
 
     private var priceId: Long = -1L
     private var showInFragment = false
 
+    /**
+     * Načte předané argumenty fragmentu (ID ceníku a příznak vnořeného zobrazení).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -96,6 +120,10 @@ class PriceListDetailFragment : Fragment() {
         }
     }
 
+    /**
+     * Vytvoří a vrátí strom pohledů fragmentu (v závislosti na orientaci obrazovky a vnoření),
+     * inicializuje komponenty UI a zaregistruje posluchač výsledků pro zobrazení zvoleného ceníku.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -106,26 +134,26 @@ class PriceListDetailFragment : Fragment() {
             v = inflater.inflate(R.layout.fragment_price_list_detail_infragment, container, false)
         }
 
-        ldnDatum = v.findViewById(R.id.ldnPlatnost)
-        ldnRada = v.findViewById(R.id.ldnRada)
-        ldnProdukt = v.findViewById(R.id.ldnProdukt)
-        ldnSazba = v.findViewById(R.id.ldnSazba)
-        ldnDodavatel = v.findViewById(R.id.ldnDodavatel)
-        ldnUzemi = v.findViewById(R.id.ldnUzemi)
-        tvPoznamka = v.findViewById(R.id.tvPoznamkaDetail)
+        ldnDate = v.findViewById(R.id.ldnPlatnost)
+        ldnSeries = v.findViewById(R.id.ldnRada)
+        ldnProduct = v.findViewById(R.id.ldnProdukt)
+        ldnRate = v.findViewById(R.id.ldnSazba)
+        ldnCompany = v.findViewById(R.id.ldnDodavatel)
+        ldnArea = v.findViewById(R.id.ldnUzemi)
+        tvNote = v.findViewById(R.id.tvPoznamkaDetail)
 
-        ldnVTDodavka = v.findViewById(R.id.ldn_VT_dodavka)
-        ldnNTDodavka = v.findViewById(R.id.ldn_NT_dodavka)
-        ldnMesPlat = v.findViewById(R.id.ldn_staly_plat)
-        tvPoznamkaVT = v.findViewById(R.id.tvPoznamkaVT)
-        tvPoznamkaNT = v.findViewById(R.id.tvPoznamkaNT)
-        tvPoznamkaPlat = v.findViewById(R.id.tvPoznamkaPlat)
-        tvPoznamkaPOZE1 = v.findViewById(R.id.tvPoznamkaPOZE1)
-        tvPoznamkaPOZE2 = v.findViewById(R.id.tvPoznamkaPOZE2)
-        tvPoznamkaOTE = v.findViewById(R.id.tvPoznamkaOTE)
+        ldnVtSupply = v.findViewById(R.id.ldn_VT_dodavka)
+        ldnNtSupply = v.findViewById(R.id.ldn_NT_dodavka)
+        ldnMonthlyPayment = v.findViewById(R.id.ldn_staly_plat)
+        tvNoteVt = v.findViewById(R.id.tvPoznamkaVT)
+        tvNoteNt = v.findViewById(R.id.tvPoznamkaNT)
+        tvNotePayment = v.findViewById(R.id.tvPoznamkaPlat)
+        tvNotePoze1 = v.findViewById(R.id.tvPoznamkaPOZE1)
+        tvNotePoze2 = v.findViewById(R.id.tvPoznamkaPOZE2)
+        tvNoteOte = v.findViewById(R.id.tvPoznamkaOTE)
 
-        ldnVTDistribuce = v.findViewById(R.id.ldn_VT_distribuce)
-        ldnNTDistribuce = v.findViewById(R.id.ldn_NT_distribuce)
+        ldnVtDistribution = v.findViewById(R.id.ldn_VT_distribuce)
+        ldnNtDistribution = v.findViewById(R.id.ldn_NT_distribuce)
 
         ldnJ0 = v.findViewById(R.id.ldn_J0)
         ldnJ1 = v.findViewById(R.id.ldn_J1)
@@ -143,15 +171,15 @@ class PriceListDetailFragment : Fragment() {
         ldnJ13 = v.findViewById(R.id.ldn_J13)
         ldnJ14 = v.findViewById(R.id.ldn_J14)
 
-        containerJistice = v.findViewById(R.id.containerJistice)
+        containerBreakers = v.findViewById(R.id.containerJistice)
 
-        ldnSystemSluzby = v.findViewById(R.id.ldn_systemove_sluzby)
-        ldnOTE = v.findViewById(R.id.ldn_OTE)
-        ldnPOZE1 = v.findViewById(R.id.ldn_POZE1)
-        ldnPOZE2 = v.findViewById(R.id.ldn_POZE2)
+        ldnSystemServices = v.findViewById(R.id.ldn_systemove_sluzby)
+        ldnOte = v.findViewById(R.id.ldn_OTE)
+        ldnPoze1 = v.findViewById(R.id.ldn_POZE1)
+        ldnPoze2 = v.findViewById(R.id.ldn_POZE2)
 
-        ldnDan = v.findViewById(R.id.ldn_dan)
-        ldnDPH = v.findViewById(R.id.ldn_DPH)
+        ldnTax = v.findViewById(R.id.ldn_dan)
+        ldnVat = v.findViewById(R.id.ldn_DPH)
 
         loadPrice(priceId)
 
@@ -168,6 +196,8 @@ class PriceListDetailFragment : Fragment() {
 
     /**
      * Načte a zobrazí detaily ceníku na základě zadaného ID ceníku.
+     *
+     * @param priceId ID ceníku k načtení z databáze
      */
     fun loadPrice(priceId: Long) {
         if (priceId <= 0) return
@@ -183,25 +213,25 @@ class PriceListDetailFragment : Fragment() {
         val dateStart = priceList.validFrom
         val dateEnd = priceList.validTo
 
-        ldnDatum.price =
+        ldnDate.price =
             "${ViewHelper.convertLongToDate(dateStart)} - ${
                 ViewHelper.convertLongToDate(
                     dateEnd
                 )
             }"
 
-        ldnRada.price = priceList.series
-        ldnProdukt.price = priceList.product
-        ldnSazba.price = priceList.rate
-        ldnDodavatel.price = priceList.company
-        ldnUzemi.price = PdfParserUtils.getFullDistribuceName(priceList.distribution)
+        ldnSeries.price = priceList.series
+        ldnProduct.price = priceList.product
+        ldnRate.price = priceList.rate
+        ldnCompany.price = priceList.company
+        ldnArea.price = PdfParserUtils.getFullDistribuceName(priceList.distribution)
 
-        ldnVTDodavka.price = df2.format(priceList.priceVT)
-        ldnNTDodavka.price = df2.format(priceList.priceNT)
-        ldnMesPlat.price = df2.format(priceList.monthlyPayment)
+        ldnVtSupply.price = df2.format(priceList.priceVT)
+        ldnNtSupply.price = df2.format(priceList.priceNT)
+        ldnMonthlyPayment.price = df2.format(priceList.monthlyPayment)
 
-        ldnVTDistribuce.price = df2.format(priceList.distVT)
-        ldnNTDistribuce.price = df2.format(priceList.distNT)
+        ldnVtDistribution.price = df2.format(priceList.distVT)
+        ldnNtDistribution.price = df2.format(priceList.distNT)
 
         val allBreakers = listOf(
             ldnJ0 to priceList.j0,
@@ -228,31 +258,31 @@ class PriceListDetailFragment : Fragment() {
                 view
             }
 
-        setupBreakersGrid(containerJistice, activeViews)
+        setupBreakersGrid(containerBreakers, activeViews)
 
-        ldnSystemSluzby.price = df2.format(priceList.systemServices)
-        ldnOTE.price = df2.format(priceList.activity)
-        ldnPOZE1.price = df2.format(priceList.poze1)
-        ldnPOZE2.price = df2.format(priceList.poze2)
+        ldnSystemServices.price = df2.format(priceList.systemServices)
+        ldnOte.price = df2.format(priceList.activity)
+        ldnPoze1.price = df2.format(priceList.poze1)
+        ldnPoze2.price = df2.format(priceList.poze2)
 
-        ldnDan.price = df2.format(priceList.tax)
-        ldnDPH.price = df2.format(priceList.vat)
+        ldnTax.price = df2.format(priceList.tax)
+        ldnVat.price = df2.format(priceList.vat)
 
-        val calendar = ViewHelper.parseCalendarFromString(ldnDatum.price)
+        val calendar = ViewHelper.parseCalendarFromString(ldnDate.price)
         val year = calendar[Calendar.YEAR]
         if (year < 2016) {
-            ldnOTE.price = df2.format(priceList.ote)
-            ldnOTE.label = getString(R.string.cinnost_ote)
-            ldnOTE.setItem(getString(R.string.kc_MWh))
-            ldnPOZE2.price = df2.format(priceList.oze)
-            ldnPOZE2.label = getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz)
-            ldnPOZE1.visibility = View.GONE
+            ldnOte.price = df2.format(priceList.ote)
+            ldnOte.label = getString(R.string.cinnost_ote)
+            ldnOte.setItem(getString(R.string.kc_MWh))
+            ldnPoze2.price = df2.format(priceList.oze)
+            ldnPoze2.label = getString(R.string.podpora_vykupu_el_z_oze_kvet_a_dz)
+            ldnPoze1.visibility = View.GONE
         }
 
         // Přenastavení ceníku pro rok 2024 (1719784800000 = 1.7.2024)
         if (dateStart >= 1719784800000L) {
-            ldnOTE.label = getString(R.string.provoz_nesitove_infrastruktury)
-            ldnOTE.setItem(getString(R.string.kc_om))
+            ldnOte.label = getString(R.string.provoz_nesitove_infrastruktury)
+            ldnOte.setItem(getString(R.string.kc_om))
         }
 
         val transition2024 = 1719784800000L // 1.7.2024
@@ -260,61 +290,67 @@ class PriceListDetailFragment : Fragment() {
         when (year) {
             2024 -> {
                 if (dateStart < transition2024 && dateEnd >= transition2024) {
-                    tvPoznamkaOTE.text = getText(R.string.provoz_nesitove_infrastruktury_poznamka)
-                    tvPoznamkaOTE.visibility = View.VISIBLE
+                    tvNoteOte.text = getText(R.string.provoz_nesitove_infrastruktury_poznamka)
+                    tvNoteOte.visibility = View.VISIBLE
                 } else {
-                    tvPoznamkaOTE.visibility = View.GONE
+                    tvNoteOte.visibility = View.GONE
                 }
             }
 
             2025 -> {
                 if (dateStart < transition2025 && dateEnd >= transition2025) {
-                    tvPoznamkaOTE.text = getText(R.string.nova_cena_infrastruktua_poznamka)
-                    tvPoznamkaOTE.visibility = View.VISIBLE
+                    tvNoteOte.text = getText(R.string.nova_cena_infrastruktua_poznamka)
+                    tvNoteOte.visibility = View.VISIBLE
                 } else {
-                    tvPoznamkaOTE.visibility = View.GONE
+                    tvNoteOte.visibility = View.GONE
                 }
             }
 
             else -> {
-                tvPoznamkaOTE.visibility = View.GONE
+                tvNoteOte.visibility = View.GONE
             }
         }
 
         // Poznámky a cenové stropy
         val priceListRegulBuilder = PriceListRegulBuilder(priceList, year)
-        val poznamka = priceListRegulBuilder.getNotes(requireActivity())
+        val note = priceListRegulBuilder.getNotes(requireActivity())
         val maxVT = priceListRegulBuilder.maxVT
         val maxNT = priceListRegulBuilder.maxNT
-        val maxPlat = priceListRegulBuilder.maxPlat
+        val maxPayment = priceListRegulBuilder.maxPayment
         val maxPOZE1 = priceListRegulBuilder.maxPOZE
 
         if (priceListRegulBuilder.isRegulPrice) {
-            tvPoznamka.text = poznamka
-            tvPoznamka.visibility = View.VISIBLE
+            tvNote.text = note
+            tvNote.visibility = View.VISIBLE
 
             // Zobrazení stropů přímo pod příslušným sloupcem (VT, NT, Měsíční plat)
-            setPoznamka(tvPoznamkaVT, maxVT)
-            setPoznamka(tvPoznamkaNT, maxNT)
+            setNote(tvNoteVt, maxVT)
+            setNote(tvNoteNt, maxNT)
             if (priceList.distNT == 0.0) {
-                tvPoznamkaNT.visibility = View.GONE
+                tvNoteNt.visibility = View.GONE
             }
-            setPoznamka(tvPoznamkaPlat, maxPlat)
+            setNote(tvNotePayment, maxPayment)
 
             // Zrušení POZE se zobrazuje pouze jednou pod sekcí Ostatní služby
-            setPoznamka(tvPoznamkaPOZE1, maxPOZE1)
-            tvPoznamkaPOZE2.visibility = View.GONE
+            setNote(tvNotePoze1, maxPOZE1)
+            tvNotePoze2.visibility = View.GONE
         } else {
-            tvPoznamka.visibility = View.GONE
-            tvPoznamkaVT.visibility = View.GONE
-            tvPoznamkaNT.visibility = View.GONE
-            tvPoznamkaPlat.visibility = View.GONE
-            tvPoznamkaPOZE1.visibility = View.GONE
-            tvPoznamkaPOZE2.visibility = View.GONE
+            tvNote.visibility = View.GONE
+            tvNoteVt.visibility = View.GONE
+            tvNoteNt.visibility = View.GONE
+            tvNotePayment.visibility = View.GONE
+            tvNotePoze1.visibility = View.GONE
+            tvNotePoze2.visibility = View.GONE
         }
     }
 
-    private fun setPoznamka(tv: TextView, s: String?) {
+    /**
+     * Nastaví text poznámky do zadaného [TextView] a upraví jeho viditelnost podle toho, zda je text neprázdný.
+     *
+     * @param tv Komponenta [TextView] pro zobrazení poznámky
+     * @param s Text poznámky k nastavení (nebo `null`/prázdný pro skrytí)
+     */
+    private fun setNote(tv: TextView, s: String?) {
         if (!s.isNullOrEmpty()) {
             tv.visibility = View.VISIBLE
             tv.text = s
@@ -325,6 +361,9 @@ class PriceListDetailFragment : Fragment() {
 
     /**
      * Dynamicky uspořádá seznam aktivních prvků jističů do dvou sloupců bez prázdných mezer.
+     *
+     * @param container Kontejnerové rozvržení [android.widget.LinearLayout] pro vložení řádků jističů
+     * @param visibleItems Seznam aktivních komponent [LabelPriceDetail] s nenulovou cenou jističe
      */
     private fun setupBreakersGrid(
         container: android.widget.LinearLayout,

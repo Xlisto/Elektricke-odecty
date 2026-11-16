@@ -5,6 +5,7 @@ import android.graphics.Shader
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -64,7 +65,11 @@ class PriceListFragment : Fragment() {
      * Strana zobrazení v porovnávacím nebo dvoupanelovém režimu (např. v rozvržení na šířku).
      */
     enum class Side {
-        LEFT, RIGHT
+        /** Levá strana porovnání nebo seznamu. */
+        LEFT,
+
+        /** Pravá strana porovnání nebo seznamu. */
+        RIGHT
     }
 
     companion object {
@@ -95,6 +100,7 @@ class PriceListFragment : Fragment() {
         private const val KEY_SELECTED_IDS = "keySelectedIds"
         private const val KEY_SELECTION_MODE_ACTIVE = "keySelectionModeActive"
 
+        /** Uložená instance vybraného ceníku pro předání výsledkového balíčku. */
         private var selectedPrice: PriceListModel? = null
 
         /**
@@ -194,6 +200,10 @@ class PriceListFragment : Fragment() {
             uri?.let { processSelectedPdf(it) }
         }
 
+    /**
+     * Inicializuje fragment, načte předané argumenty a obnoví stav z [savedInstanceState]
+     * (režim výběru, vybraná ID ceníků a stranu zobrazení).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         shpFilter = ShPFilter(requireContext())
@@ -230,6 +240,9 @@ class PriceListFragment : Fragment() {
         }
     }
 
+    /**
+     * Vytvoří a vrátí rozvržení fragmentu a zaregistruje [MenuProvider] pro obsluhu voleb v hlavní nabídce toolbar.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -341,6 +354,10 @@ class PriceListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_price_list, container, false)
     }
 
+    /**
+     * Inicializuje komponenty UI, registruje posluchače událostí a výsledků dialogů/fragmentů
+     * a načte počáteční data ceníků.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().invalidateOptionsMenu()
@@ -460,12 +477,18 @@ class PriceListFragment : Fragment() {
         }
     }
 
+    /**
+     * Obnoví viditelnost akčních tlačítek v závislosti na aktuálním režimu zobrazení.
+     */
     override fun onResume() {
         super.onResume()
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
         btnShowBack()
     }
 
+    /**
+     * Uloží do [outState] stav režimu výběru, vybrané ceníky a stav tlačítka Zpět.
+     */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putLong(ID_SELECTED_PRICE_LIST, idSelectedPriceList)
@@ -480,7 +503,10 @@ class PriceListFragment : Fragment() {
     }
 
     /**
-     * Ověří, zda je řetězec filtru data platným datem a ne zástupnou hodnotou.
+     * Ověří, zda je řetězec filtru data platným datem a nikoli zástupným symbolem či prázdnou hodnotou.
+     *
+     * @param dateStr Řetězec filtru data k ověření
+     * @return `true` pokud řetězec představuje platný filtr data, jinak `false`
      */
     private fun isDateFilterValid(dateStr: String?): Boolean {
         return !(dateStr.isNullOrBlank() || dateStr == "%" || dateStr == DataPriceListSource.VSE || dateStr.equals(
@@ -668,6 +694,9 @@ class PriceListFragment : Fragment() {
         parentFragmentManager.popBackStack()
     }
 
+    /**
+     * Uklízí pohled fragmentu a v případě potřeby odešle výsledek výběru volajícímu fragmentu.
+     */
     override fun onDestroyView() {
         if (!isResultReturned && (showSelectItem || isCompareMode)) {
             sendResultBundle()
@@ -930,6 +959,7 @@ class PriceListFragment : Fragment() {
                     }
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Chyba při čtení PDF", e)
                 requireActivity().runOnUiThread {
                     showProgressOverlay(false)
                     OwnAlertDialog.showDialog(
