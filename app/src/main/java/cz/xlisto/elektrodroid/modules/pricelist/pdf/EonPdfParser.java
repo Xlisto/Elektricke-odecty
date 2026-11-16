@@ -94,6 +94,9 @@ public class EonPdfParser implements PdfPriceListParser {
 
         // Rozpoznání zda jde o 2025 s počátkem před zářím
         boolean is2025Split = PdfParserUtils.is2025BeforeSeptember(platnostOD);
+        if (is2025Split) {
+            platnostOD = PdfParserUtils.normalize2025StartMillis(platnostOD);
+        }
         long platnostDO = is2025Split
                 ? PdfParserUtils.calculateEndOfAugust2025()
                 : PdfParserUtils.calculateEndOfYear(platnostOD > 0 ? platnostOD : System.currentTimeMillis());

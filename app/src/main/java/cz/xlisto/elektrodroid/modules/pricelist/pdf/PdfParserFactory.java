@@ -56,10 +56,8 @@ public class PdfParserFactory {
             result = new GenericPdfParser().parse(context, pdfText);
         }
 
-        if (context != null) {
-            for (PriceListModel model : result) {
-                applyRegulatedPricesFromRaw(context, model);
-            }
+        for (PriceListModel model : result) {
+            applyRegulatedPricesFromRaw(context, model);
         }
 
         return result;

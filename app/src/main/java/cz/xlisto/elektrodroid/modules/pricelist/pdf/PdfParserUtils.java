@@ -203,10 +203,10 @@ public class PdfParserUtils {
 
 
     /**
-     * Zjistí, zda datum v milisekundách spadá do roku 2025 a je před 1. 9. 2025.
+     * Zjistí, zda datum v milisekundách spadá do roku 2025 (nebo před něj) a je před 1. 9. 2025.
      *
      * @param startMillis Datum v milisekundách
-     * @return true pokud je datum v roce 2025 a před 1. zářím 2025
+     * @return true pokud je datum v roce 2025 (nebo dřívější) a před 1. zářím 2025
      */
     public static boolean is2025BeforeSeptember(long startMillis) {
         if (startMillis <= 0) return false;
@@ -214,7 +214,23 @@ public class PdfParserUtils {
         cal.setTimeInMillis(startMillis);
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
-        return year == 2025 && month < Calendar.SEPTEMBER;
+        return year < 2025 || (year == 2025 && month < Calendar.SEPTEMBER);
+    }
+
+
+    /**
+     * Pokud datum počátku spadá před rok 2025 a jedná se o ceník hodnocený pro rok 2025,
+     * upraví počáteční datum na 1. 1. 2025.
+     *
+     * @param startMillis Původní datum v milisekundách
+     * @return Upravené datum v milisekundách (minimálně 1. 1. 2025)
+     */
+    public static long normalize2025StartMillis(long startMillis) {
+        long start2025 = parseDateToMillis("1.1.2025");
+        if (is2025BeforeSeptember(startMillis) && startMillis < start2025) {
+            return start2025;
+        }
+        return startMillis;
     }
 
 
