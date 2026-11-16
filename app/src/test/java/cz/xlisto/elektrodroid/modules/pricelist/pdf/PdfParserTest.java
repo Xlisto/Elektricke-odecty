@@ -54,7 +54,7 @@ public class PdfParserTest {
             java.io.File file = new java.io.File(path);
             if (!file.exists()) continue;
 
-            try (org.apache.pdfbox.pdmodel.PDDocument doc = org.apache.pdfbox.pdmodel.PDDocument.load(file)) {
+            try (org.apache.pdfbox.pdmodel.PDDocument doc = org.apache.pdfbox.Loader.loadPDF(file)) {
                 org.apache.pdfbox.text.PDFTextStripper stripper = new org.apache.pdfbox.text.PDFTextStripper();
                 stripper.setSortByPosition(true);
                 String text = stripper.getText(doc);

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.JSONArray;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -74,7 +76,7 @@ public class PdfParserDataDrivenTest {
         System.out.println("Ověřuji PDF: " + pdfFile.getName() + " (počet JSON specifikací: " + jsonFiles.size() + ")");
 
         String pdfText;
-        try (PDDocument doc = PDDocument.load(pdfFile)) {
+        try (PDDocument doc = Loader.loadPDF(pdfFile)) {
             PDFTextStripper stripper = new PDFTextStripper();
             stripper.setSortByPosition(true);
             pdfText = stripper.getText(doc);
@@ -143,8 +145,9 @@ public class PdfParserDataDrivenTest {
                     .collect(Collectors.toMap(PriceListModel::getRate, item -> item, (r1, r2) -> r1));
 
             JSONArray expectedRates = expectedJson.getJSONArray("rates");
-            for (int i = 0; i < expectedRates.length(); i++) {
-                JSONObject rateJson = expectedRates.getJSONObject(i);
+            int ratesCount = expectedRates.length();
+            for (int index = 0; index < ratesCount; index++) {
+                JSONObject rateJson = expectedRates.getJSONObject(index);
                 String rateName = rateJson.getString("rate");
 
                 assertTrue("Sazba " + rateName + " by měla být v rozparsovaném období pro " + jsonFile.getName(),
@@ -268,7 +271,7 @@ public class PdfParserDataDrivenTest {
                 }
             } else if (!targetValidFromStr.isEmpty()) {
                 String modelValidFromStr = dateFormat.format(model.getValidFrom());
-                if (targetValidFromStr.equals(modelValidFromStr)) {
+                if (Objects.equals(targetValidFromStr, modelValidFromStr)) {
                     matches = true;
                 }
             }
