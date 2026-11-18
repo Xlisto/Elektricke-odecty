@@ -66,21 +66,35 @@ public class PrePdfParser implements PdfPriceListParser {
 
         // Detekce distribučního území z PDF
         String distribuce = DISTRIBUCE;
-        Pattern distPattern = Pattern.compile("Distribuční území:\\s*([^\n]+)", Pattern.CASE_INSENSITIVE);
+        Pattern distPattern = Pattern.compile("distribuční[m\\s]+území:?\\s*([^\n]+)", Pattern.CASE_INSENSITIVE);
         Matcher distMatcher = distPattern.matcher(pdfText);
         if (distMatcher.find()) {
             String group1 = distMatcher.group(1);
             if (group1 != null) {
-                String rawDist = group1.toUpperCase();
-                if (rawDist.contains("EG.D") || rawDist.contains("E.ON")) {
-                    distribuce = "EG.D";
-                } else if (rawDist.contains("PRE")) {
-                    distribuce = "PRE";
-                } else if (rawDist.contains("ČEZ") || rawDist.contains("CEZ")) {
-                    distribuce = "ČEZ";
-                }
+                distribuce = PdfParserUtils.getShortDistribuce(group1);
             }
         }
+        if (DISTRIBUCE.equals(distribuce)) {
+            String upperText = pdfText.toUpperCase();
+            if (upperText.contains("EG.D") || upperText.contains("E.ON")) {
+                distribuce = "EG.D";
+            } else if (upperText.contains("ČEZ DISTRIBUCE") || upperText.contains("CEZ DISTRIBUCE") || upperText.contains("ÚZEMÍ ČEZ")) {
+                distribuce = "ČEZ";
+            } else if (upperText.contains("PREDISTRIBUCE") || upperText.contains("PRE DISTRIBUCE")) {
+                distribuce = "PRE";
+            }
+        }
+
+        // Extrakce obchodních cen bez DPH
+        String cleanText = pdfText.replace('\u00a0', ' ').replace('–', '-');
+        boolean bracketIsWithoutVat = cleanText.toLowerCase().contains("v závorkách jsou bez dph")
+                || cleanText.toLowerCase().contains("v závorkách jsou bez dph.");
+
+        List<Double> vtPrices = extractRowPrices(cleanText, "ve vysokém tarifu", bracketIsWithoutVat);
+        List<Double> ntPrices = extractRowPrices(cleanText, "v nízkém tarifu", bracketIsWithoutVat);
+        List<Double> platPrices = extractRowPrices(cleanText, "Měsíční plat za odběrné místo", bracketIsWithoutVat);
+
+        double defaultPlat = !platPrices.isEmpty() ? platPrices.get(0) : 0.0;
 
         String[][] rateDefs = {
                 {"D 01d", "KLASIK 24"},
@@ -95,18 +109,22 @@ public class PrePdfParser implements PdfPriceListParser {
                 {"D 61d", "Víkend 24"}
         };
 
-        for (String[] def : rateDefs) {
+        for (int i = 0; i < rateDefs.length; i++) {
+            String[] def = rateDefs[i];
             String sazba = PdfParserUtils.formatSazba(def[0]);
             String rada = def[1];
+
+            double vt = getVtForRate(sazba, i, vtPrices);
+            double nt = getNtForRate(sazba, i, ntPrices);
 
             PriceListModel model = new PriceListModel(
                     0L,
                     rada,
                     produkt,
                     FIRMA,
-                    0.0,
-                    0.0,
-                    0.0,
+                    vt,
+                    nt,
+                    defaultPlat,
                     0.0, // daň bez DPH
                     sazba,
                     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, // regulované ceny se načítají z raw JSON
@@ -133,6 +151,125 @@ public class PrePdfParser implements PdfPriceListParser {
         }
 
         return result;
+    }
+
+
+    /**
+     * Získává část textu PDF odpovídající výhradně sekci obchodních cen PRE.
+     *
+     * @param text Celkový vyčištěný text z PDF
+     * @return Textový blok obsahující obchodní ceny
+     */
+    private String extractObchodniSection(String text) {
+        Pattern pattern = Pattern.compile("Cena za spotřebovanou elektřinu[\\s\\S]*?(?=CENA ZA DISTRIBUOVANÉ|Regulovaná cena|Podmínky|$)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(text);
+        String lastSection = null;
+        while (matcher.find()) {
+            lastSection = matcher.group(0);
+        }
+        if (lastSection != null) {
+            return lastSection;
+        }
+        return text;
+    }
+
+
+    /**
+     * Extrahuje číselné hodnoty obchodních cen bez DPH z konkrétního řádku PRE ceníku.
+     *
+     * @param text                Vyčištěný text z PDF
+     * @param headerRegex         Regulární výraz pro záhlaví řádku
+     * @param bracketIsWithoutVat true pokud jsou ceny bez DPH v tomto PDF v závorkách (formát PRE 2026)
+     * @return Seznam cen bez DPH v Kč
+     */
+    private List<Double> extractRowPrices(String text, String headerRegex, boolean bracketIsWithoutVat) {
+        String section = extractObchodniSection(text);
+        String[] lines = section.split("\r?\n");
+
+        boolean isPlat = headerRegex.toLowerCase().contains("měsíční plat");
+        int[] offsets = isPlat ? new int[]{0, 1, 2} : new int[]{0, -1, 1, -2, 2};
+
+        for (int i = lines.length - 1; i >= 0; i--) {
+            if (lines[i].toLowerCase().contains(headerRegex.toLowerCase())) {
+                for (int offset : offsets) {
+                    int targetIndex = i + offset;
+                    if (targetIndex >= 0 && targetIndex < lines.length) {
+                        List<Double> extracted = extractPricesFromLine(lines[targetIndex], bracketIsWithoutVat);
+                        if (!extracted.isEmpty()) {
+                            return extracted;
+                        }
+                    }
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
+
+    private List<Double> extractPricesFromLine(String line, boolean bracketIsWithoutVat) {
+        List<Double> prices = new ArrayList<>();
+        if (line == null || line.isEmpty()) return prices;
+
+        String targetText;
+        if (bracketIsWithoutVat) {
+            // V PRE 2026 ceníkách jsou ceny bez DPH uvnitř závorek: (3 570,00)
+            StringBuilder sb = new StringBuilder();
+            Matcher bm = Pattern.compile("\\(([^)]+)\\)").matcher(line);
+            while (bm.find()) {
+                String g = bm.group(1);
+                if (g != null) {
+                    sb.append(g).append(" ");
+                }
+            }
+            targetText = sb.toString();
+        } else {
+            // V PRE 2025 ceníkách jsou ceny bez DPH vně závorek: 3 200,00 (3 872,00)
+            targetText = line.replaceAll("\\([^)]*\\)", " ");
+        }
+
+        if (targetText.isEmpty()) {
+            return prices;
+        }
+
+        Pattern pricePattern = Pattern.compile("(\\d{1,3}(?:[\\s\\u00a0]\\d{3})*,\\d{2})");
+        Matcher pm = pricePattern.matcher(targetText);
+        while (pm.find()) {
+            double p = PdfParserUtils.parsePrice(pm.group(1));
+            if (p > 0) {
+                prices.add(p);
+            }
+        }
+        return prices;
+    }
+
+
+    private double getVtForRate(String sazba, int index, List<Double> vtPrices) {
+        if (vtPrices.isEmpty()) return 0.0;
+        if (vtPrices.size() == 10) return vtPrices.get(index);
+        if (sazba.contains("01d") || sazba.contains("02d")) return vtPrices.get(0);
+        if (sazba.contains("25d") || sazba.contains("26d"))
+            return vtPrices.size() > 1 ? vtPrices.get(1) : vtPrices.get(0);
+        if (sazba.contains("27d")) return vtPrices.size() > 2 ? vtPrices.get(2) : vtPrices.get(0);
+        if (sazba.contains("35d")) return vtPrices.size() > 3 ? vtPrices.get(3) : vtPrices.get(0);
+        if (sazba.contains("45d")) return vtPrices.size() > 4 ? vtPrices.get(4) : vtPrices.get(0);
+        if (sazba.contains("56d")) return vtPrices.size() > 5 ? vtPrices.get(5) : vtPrices.get(0);
+        if (sazba.contains("57d")) return vtPrices.size() > 6 ? vtPrices.get(6) : vtPrices.get(0);
+        if (sazba.contains("61d")) return vtPrices.size() > 7 ? vtPrices.get(7) : vtPrices.get(0);
+        return vtPrices.get(0);
+    }
+
+
+    private double getNtForRate(String sazba, int index, List<Double> ntPrices) {
+        if (ntPrices.isEmpty() || sazba.contains("01d") || sazba.contains("02d")) return 0.0;
+        if (ntPrices.size() == 10) return ntPrices.get(index);
+        if (sazba.contains("25d") || sazba.contains("26d")) return ntPrices.get(0);
+        if (sazba.contains("27d")) return ntPrices.size() > 1 ? ntPrices.get(1) : ntPrices.get(0);
+        if (sazba.contains("35d")) return ntPrices.size() > 2 ? ntPrices.get(2) : ntPrices.get(0);
+        if (sazba.contains("45d")) return ntPrices.size() > 3 ? ntPrices.get(3) : ntPrices.get(0);
+        if (sazba.contains("56d")) return ntPrices.size() > 4 ? ntPrices.get(4) : ntPrices.get(0);
+        if (sazba.contains("57d")) return ntPrices.size() > 5 ? ntPrices.get(5) : ntPrices.get(0);
+        if (sazba.contains("61d")) return ntPrices.size() > 6 ? ntPrices.get(6) : ntPrices.get(0);
+        return 0.0;
     }
 
 }

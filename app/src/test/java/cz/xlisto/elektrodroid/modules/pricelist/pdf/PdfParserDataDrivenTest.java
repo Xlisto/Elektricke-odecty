@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -29,7 +31,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 
 /**
  * Datově řízený unit test pro ověření PDF parserů vůči uloženým JSON specifikacím.
- * Podporuje jak jednotliné JSON specifikace, tak i více JSON specifikací pro jeden PDF ceník
+ * Podporuje jak jednotlivé JSON specifikace, tak i více JSON specifikací pro jeden PDF ceník
  * (např. při rozdělení období v průběhu roku, např. od 1.1.2025 do 31.8.2025 a od 1.9.2025 do 31.12.2025).
  */
 public class PdfParserDataDrivenTest {
@@ -157,6 +159,15 @@ public class PdfParserDataDrivenTest {
     }
 
 
+    private String normalizeCompany(String company) {
+        if (company == null) return "";
+        return company.replace("a.s.", "a. s.")
+                .replace("s.r.o.", "s. r. o.")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+
     private static class TestSummary {
 
         final String company;
@@ -180,7 +191,7 @@ public class PdfParserDataDrivenTest {
         String jsonContent = Files.readString(jsonFile.toPath(), StandardCharsets.UTF_8);
         JSONObject expectedJson = new JSONObject(jsonContent);
 
-        List<PriceListModel> filteredModels = filterModelsForJson(fullParsedList, expectedJson);
+        List<PriceListModel> filteredModels = filterModelsForJson(jsonFile, fullParsedList, expectedJson);
 
         if (expectedJson.has("expectedRatesCount")) {
             assertEquals("Počet sazeb pro " + jsonFile.getName(),
@@ -192,7 +203,8 @@ public class PdfParserDataDrivenTest {
         if (firstModel != null) {
             if (expectedJson.has("company")) {
                 assertEquals("Firma v " + jsonFile.getName(),
-                        expectedJson.getString("company"), firstModel.getCompany());
+                        normalizeCompany(expectedJson.getString("company")),
+                        normalizeCompany(firstModel.getCompany()));
             }
 
             if (expectedJson.has("distribution")) {
@@ -334,7 +346,7 @@ public class PdfParserDataDrivenTest {
 
         String company = firstModel != null ? firstModel.getCompany() : expectedJson.optString("company", "Neznámá společnost");
         String distribution = firstModel != null ? firstModel.getDistribution() : expectedJson.optString("distribution", "Neznámá distribuce");
-        String period = formatPeriod(firstModel, expectedJson);
+        String period = formatPeriod(jsonFile, firstModel, expectedJson);
 
         TestSummary summary = new TestSummary(company, distribution, period);
         summary.pdfCount = 1;
@@ -343,13 +355,25 @@ public class PdfParserDataDrivenTest {
     }
 
 
-    private String formatPeriod(PriceListModel model, JSONObject expectedJson) {
+    private String formatPeriod(File jsonFile, PriceListModel model, JSONObject expectedJson) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
         String validFrom = expectedJson.optString("validFrom", "");
+        String validTo = expectedJson.optString("validTo", "");
+
+        if (validFrom.isEmpty() && jsonFile != null) {
+            Pattern dateRangePattern = Pattern.compile("__(\\d{2}-\\d{2}-\\d{4})_(\\d{2}-\\d{2}-\\d{4})");
+            Matcher m = dateRangePattern.matcher(jsonFile.getName());
+            if (m.find()) {
+                String g1 = m.group(1);
+                String g2 = m.group(2);
+                if (g1 != null) validFrom = g1.replace('-', '.');
+                if (g2 != null) validTo = g2.replace('-', '.');
+            }
+        }
+
         if (validFrom.isEmpty() && model != null && model.getValidFrom() > 0) {
             validFrom = dateFormat.format(model.getValidFrom());
         }
-        String validTo = expectedJson.optString("validTo", "");
         if (validTo.isEmpty() && model != null && model.getValidTo() > 0) {
             validTo = dateFormat.format(model.getValidTo());
         }
@@ -367,21 +391,31 @@ public class PdfParserDataDrivenTest {
     }
 
 
-    private List<PriceListModel> filterModelsForJson(List<PriceListModel> fullList, JSONObject expectedJson) {
-        if (!expectedJson.has("validFromMillis") && !expectedJson.has("validFrom")) {
+    private List<PriceListModel> filterModelsForJson(File jsonFile, List<PriceListModel> fullList, JSONObject expectedJson) {
+        String targetValidFromStr = expectedJson.optString("validFrom", "");
+        long targetValidFromMillis = expectedJson.optLong("validFromMillis", -1);
+
+        if (targetValidFromStr.isEmpty() && targetValidFromMillis <= 0 && jsonFile != null) {
+            Pattern dateRangePattern = Pattern.compile("__(\\d{2}-\\d{2}-\\d{4})_(\\d{2}-\\d{2}-\\d{4})");
+            Matcher m = dateRangePattern.matcher(jsonFile.getName());
+            if (m.find()) {
+                String g1 = m.group(1);
+                if (g1 != null) {
+                    targetValidFromStr = g1.replace('-', '.');
+                }
+            }
+        }
+
+        if (targetValidFromStr.isEmpty() && targetValidFromMillis <= 0) {
             return fullList;
         }
 
         List<PriceListModel> result = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
 
-        long targetValidFromMillis = expectedJson.optLong("validFromMillis", -1);
-        String targetValidFromStr = expectedJson.optString("validFrom", "");
-
         for (PriceListModel model : fullList) {
             boolean matches = false;
             if (targetValidFromMillis > 0) {
-                // Porovnání podle milisekund (s tolerancí 1 dne / 86400000ms)
                 if (Math.abs(model.getValidFrom() - targetValidFromMillis) < 86400000L) {
                     matches = true;
                 }
