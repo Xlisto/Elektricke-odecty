@@ -59,6 +59,9 @@ public class PdfParserDataDrivenTest {
             return;
         }
 
+        Map<String, TestSummary> summaryMap = new java.util.LinkedHashMap<>();
+        int testedPdfCount = 0;
+
         for (File pdfFile : pdfFiles) {
             List<File> matchingJsonFiles = findMatchingJsonFiles(pdfFile);
 
@@ -67,12 +70,21 @@ public class PdfParserDataDrivenTest {
                 continue;
             }
 
-            testPdfWithJsonFiles(pdfFile, matchingJsonFiles);
+            testedPdfCount++;
+            List<TestSummary> pdfSummaries = testPdfWithJsonFiles(pdfFile, matchingJsonFiles);
+            for (TestSummary summary : pdfSummaries) {
+                String key = summary.company + "|" + summary.distribution + "|" + summary.period;
+                TestSummary existing = summaryMap.computeIfAbsent(key, k -> new TestSummary(summary.company, summary.distribution, summary.period));
+                existing.pdfCount += summary.pdfCount;
+                existing.jsonCount += summary.jsonCount;
+            }
         }
+
+        printSummaryTable(summaryMap, testedPdfCount);
     }
 
 
-    private void testPdfWithJsonFiles(File pdfFile, List<File> jsonFiles) throws Exception {
+    private List<TestSummary> testPdfWithJsonFiles(File pdfFile, List<File> jsonFiles) throws Exception {
         System.out.println("Ověřuji PDF: " + pdfFile.getName() + " (počet JSON specifikací: " + jsonFiles.size() + ")");
 
         String pdfText;
@@ -95,13 +107,74 @@ public class PdfParserDataDrivenTest {
                     new EonPdfParser().validateRowCalculations(pdfText, parsedList));
         }
 
+        List<TestSummary> summaries = new ArrayList<>();
         for (File jsonFile : jsonFiles) {
-            testSingleJsonSpecification(jsonFile, parsedList);
+            summaries.add(testSingleJsonSpecification(jsonFile, parsedList));
+        }
+
+        return summaries;
+    }
+
+
+    private void printSummaryTable(Map<String, TestSummary> summaryMap, int totalUniquePdfCount) {
+        System.out.println("\n=========================================================================================================");
+        System.out.println("                               SOUHRN KONTROLOVANÝCH PDF CENÍKŮ A SPECIFIKACÍ");
+        System.out.println("=========================================================================================================");
+        System.out.println("+---------------------------+--------------------+--------------------------------+---------------+-----------------------+");
+        System.out.printf("| %-25s | %-18s | %-30s | %-13s | %-21s |\n", "Společnost / Dodavatel", "Distribuční území", "Platnost / Ročník (Období)", "Počet ceníků", "Počet JSON specifikací");
+        System.out.println("+---------------------------+--------------------+--------------------------------+---------------+-----------------------+");
+
+        List<TestSummary> list = new ArrayList<>(summaryMap.values());
+        list.sort((a, b) -> {
+            int p = a.period.compareTo(b.period);
+            if (p != 0) return p;
+            int c = a.company.compareTo(b.company);
+            if (c != 0) return c;
+            return a.distribution.compareTo(b.distribution);
+        });
+
+        int totalJsons = 0;
+
+        for (TestSummary summary : list) {
+            System.out.printf("| %-25s | %-18s | %-30s | %13d | %21d |\n",
+                    truncate(summary.company, 25),
+                    truncate(summary.distribution, 18),
+                    truncate(summary.period, 30),
+                    summary.pdfCount,
+                    summary.jsonCount);
+            totalJsons += summary.jsonCount;
+        }
+
+        System.out.println("+---------------------------+--------------------+--------------------------------+---------------+-----------------------+");
+        System.out.printf("| %-25s | %-18s | %-30s | %13d | %21d |\n", "CELKEM", "", "", totalUniquePdfCount, totalJsons);
+        System.out.println("+---------------------------+--------------------+--------------------------------+---------------+-----------------------+\n");
+    }
+
+
+    private String truncate(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() <= maxLength ? text : text.substring(0, maxLength - 3) + "...";
+    }
+
+
+    private static class TestSummary {
+
+        final String company;
+        final String distribution;
+        final String period;
+        int pdfCount = 0;
+        int jsonCount = 0;
+
+
+        TestSummary(String company, String distribution, String period) {
+            this.company = company;
+            this.distribution = distribution;
+            this.period = period;
         }
     }
 
 
-    private void testSingleJsonSpecification(File jsonFile, List<PriceListModel> fullParsedList) throws Exception {
+    private TestSummary testSingleJsonSpecification(File jsonFile, List<PriceListModel> fullParsedList) throws Exception {
         System.out.println("  -> Kontrola vůči JSON: " + jsonFile.getName());
 
         String jsonContent = Files.readString(jsonFile.toPath(), StandardCharsets.UTF_8);
@@ -114,9 +187,9 @@ public class PdfParserDataDrivenTest {
                     expectedJson.getInt("expectedRatesCount"), filteredModels.size());
         }
 
-        if (!filteredModels.isEmpty()) {
-            PriceListModel firstModel = filteredModels.get(0);
+        PriceListModel firstModel = filteredModels.isEmpty() ? null : filteredModels.get(0);
 
+        if (firstModel != null) {
             if (expectedJson.has("company")) {
                 assertEquals("Firma v " + jsonFile.getName(),
                         expectedJson.getString("company"), firstModel.getCompany());
@@ -258,6 +331,39 @@ public class PdfParserDataDrivenTest {
                 }
             }
         }
+
+        String company = firstModel != null ? firstModel.getCompany() : expectedJson.optString("company", "Neznámá společnost");
+        String distribution = firstModel != null ? firstModel.getDistribution() : expectedJson.optString("distribution", "Neznámá distribuce");
+        String period = formatPeriod(firstModel, expectedJson);
+
+        TestSummary summary = new TestSummary(company, distribution, period);
+        summary.pdfCount = 1;
+        summary.jsonCount = 1;
+        return summary;
+    }
+
+
+    private String formatPeriod(PriceListModel model, JSONObject expectedJson) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
+        String validFrom = expectedJson.optString("validFrom", "");
+        if (validFrom.isEmpty() && model != null && model.getValidFrom() > 0) {
+            validFrom = dateFormat.format(model.getValidFrom());
+        }
+        String validTo = expectedJson.optString("validTo", "");
+        if (validTo.isEmpty() && model != null && model.getValidTo() > 0) {
+            validTo = dateFormat.format(model.getValidTo());
+        }
+
+        if (!validFrom.isEmpty() && !validTo.isEmpty()) {
+            String year = "";
+            if (validTo.length() >= 4) {
+                year = validTo.substring(validTo.length() - 4);
+            }
+            return year + " (" + validFrom + " – " + validTo + ")";
+        } else if (!validFrom.isEmpty()) {
+            return "od " + validFrom;
+        }
+        return "Neznámé období";
     }
 
 
