@@ -27,31 +27,42 @@ public class CezPdfParser implements PdfPriceListParser {
     public boolean canParse(String pdfText) {
         if (pdfText == null) return false;
         String text = pdfText.toUpperCase();
-        return (text.contains("ČEZ PRODEJ") || text.contains("CEZ PRODEJ") || text.contains("WWW.CEZ.CZ"))
-                && (text.contains("ČEZ DISTRIBUCE") || text.contains("CEZ DISTRIBUCE"));
+        return text.contains("ČEZ PRODEJ") || text.contains("CEZ PRODEJ") || text.contains("WWW.CEZ.CZ");
     }
 
 
     @Override
     public List<PriceListModel> parse(Context context, String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
-        if (pdfText == null) return result;
+        if (pdfText == null || pdfText.isEmpty()) return result;
+
+        String cleanText = pdfText.replace('\u00a0', ' ').replace('–', '-');
 
         // Název produktu
         String produkt = "Elektřina na dobu neurčitou";
-        Pattern produktPattern = Pattern.compile("Ceník elektřiny pro domácnosti\\s*\n\\s*([^\n]+)");
-        Matcher produktMatcher = produktPattern.matcher(pdfText);
+        Pattern produktPattern = Pattern.compile("Ceník elektřiny pro domácnosti\\s*\r?\n\\s*([^\r\n]+)", Pattern.CASE_INSENSITIVE);
+        Matcher produktMatcher = produktPattern.matcher(cleanText);
         if (produktMatcher.find()) {
             String pGroup = produktMatcher.group(1);
-            if (pGroup != null) {
+            if (pGroup != null && !pGroup.trim().isEmpty()) {
                 produkt = pGroup.trim();
+            }
+        }
+        if ("Elektřina na dobu neurčitou".equals(produkt)) {
+            Pattern altProduktPattern = Pattern.compile("(Elektřina\\s+[^\r\n]+)", Pattern.CASE_INSENSITIVE);
+            Matcher altProduktMatcher = altProduktPattern.matcher(cleanText);
+            if (altProduktMatcher.find()) {
+                String pGroup = altProduktMatcher.group(1);
+                if (pGroup != null && !pGroup.trim().isEmpty()) {
+                    produkt = pGroup.trim();
+                }
             }
         }
 
         // Datum platnosti od
         long platnostOD = 0;
         Pattern odPattern = Pattern.compile("Účinnost obchodních cen:\\s*od\\s*(\\d{1,2}\\.\\s*\\d{1,2}\\.\\s*\\d{4})", Pattern.CASE_INSENSITIVE);
-        Matcher odMatcher = odPattern.matcher(pdfText);
+        Matcher odMatcher = odPattern.matcher(cleanText);
         if (odMatcher.find()) {
             String dateGroup = odMatcher.group(1);
             if (dateGroup != null) {
@@ -59,8 +70,8 @@ public class CezPdfParser implements PdfPriceListParser {
             }
         }
         if (platnostOD == 0) {
-            Pattern altOdPattern = Pattern.compile("od\\s*(\\d{1,2}\\.\\s*\\d{1,2}\\.\\s*\\d{4})");
-            Matcher altOdMatcher = altOdPattern.matcher(pdfText);
+            Pattern altOdPattern = Pattern.compile("od\\s*(\\d{1,2}\\.\\s*\\d{1,2}\\.\\s*\\d{4})", Pattern.CASE_INSENSITIVE);
+            Matcher altOdMatcher = altOdPattern.matcher(cleanText);
             if (altOdMatcher.find()) {
                 String dateGroup = altOdMatcher.group(1);
                 if (dateGroup != null) {
@@ -80,19 +91,12 @@ public class CezPdfParser implements PdfPriceListParser {
 
         // Detekce distribučního území z PDF
         String distribuce = DISTRIBUCE;
-        Pattern distPattern = Pattern.compile("Distribuční území:\\s*([^\n]+)", Pattern.CASE_INSENSITIVE);
-        Matcher distMatcher = distPattern.matcher(pdfText);
+        Pattern distPattern = Pattern.compile("Distribuční území:\\s*([^\r\n]+)", Pattern.CASE_INSENSITIVE);
+        Matcher distMatcher = distPattern.matcher(cleanText);
         if (distMatcher.find()) {
             String group1 = distMatcher.group(1);
             if (group1 != null) {
-                String rawDist = group1.toUpperCase();
-                if (rawDist.contains("EG.D") || rawDist.contains("E.ON")) {
-                    distribuce = "EG.D";
-                } else if (rawDist.contains("PRE")) {
-                    distribuce = "PRE";
-                } else if (rawDist.contains("ČEZ") || rawDist.contains("CEZ")) {
-                    distribuce = "ČEZ";
-                }
+                distribuce = PdfParserUtils.getShortDistribuce(group1);
             }
         }
 
@@ -110,18 +114,19 @@ public class CezPdfParser implements PdfPriceListParser {
                 {"D 61d", "Víkend"}
         };
 
-        // Zkusíme najít dynamicky ceny z PDF pokud tam jsou vzory (v závorce bez DPH)
-        Pattern vtPattern = Pattern.compile("1\\s*Vysoký tarif Kč/MWh([^\n]+)");
-        Pattern ntPattern = Pattern.compile("2\\s*Nízký tarif Kč/MWh([^\n]+)");
-        Pattern platPattern = Pattern.compile("3\\s*Stálá platba Kč/měsíc([^\n]+)");
+        // Zkusíme najít dynamicky bloky cen z PDF pro VT, NT a Stálou platbu
+        Pattern vtPattern = Pattern.compile("1[\\t\\s.]*Vysoký tarif[\\s\\S]*?(?=\r?\n\\s*2[\\t\\s.]|2[\\t\\s.]*Nízký tarif)", Pattern.CASE_INSENSITIVE);
+        Pattern ntPattern = Pattern.compile("2[\\t\\s.]*Nízký tarif[\\s\\S]*?(?=\r?\n\\s*3[\\t\\s.]|3[\\t\\s.]*Stálá platba)", Pattern.CASE_INSENSITIVE);
+        Pattern platPattern = Pattern.compile("3[\\t\\s.]*Stálá platba[\\s\\S]*?(?=\r?\n\\s*4[\\t\\s.]|Distribuční část|Cena za distribuci|$)", Pattern.CASE_INSENSITIVE);
 
-        Matcher vtMatcher = vtPattern.matcher(pdfText);
-        Matcher ntMatcher = ntPattern.matcher(pdfText);
-        Matcher platMatcher = platPattern.matcher(pdfText);
+        Matcher vtMatcher = vtPattern.matcher(cleanText);
+        Matcher ntMatcher = ntPattern.matcher(cleanText);
+        Matcher platMatcher = platPattern.matcher(cleanText);
 
-        List<Double> parsedVtList = extractPricesFromLine(vtMatcher.find() ? vtMatcher.group(1) : "");
-        List<Double> parsedNtList = extractPricesFromLine(ntMatcher.find() ? ntMatcher.group(1) : "");
-        List<Double> parsedPlatList = extractPricesFromLine(platMatcher.find() ? platMatcher.group(1) : "");
+        String platBlock = platMatcher.find() ? platMatcher.group(0) : "";
+        List<Double> parsedVtList = extractPricesFromBlock(vtMatcher.find() ? vtMatcher.group(0) : "");
+        List<Double> parsedNtList = extractPricesFromBlock(ntMatcher.find() ? ntMatcher.group(0) : "");
+        List<Double> parsedPlatList = extractPricesFromBlock(platBlock);
 
         for (int i = 0; i < rateDefs.length; i++) {
             String sazba = PdfParserUtils.formatSazba(rateDefs[i][0]);
@@ -132,7 +137,7 @@ public class CezPdfParser implements PdfPriceListParser {
             // D 01d a D 02d nemají nízký tarif
             double nt = 0.0;
             if (!sazba.contains("01d") && !sazba.contains("02d")) {
-                int ntIndex = i - 2; // Nízký tarif má 8 hodnot pro D25d až D61d
+                int ntIndex = (parsedNtList.size() == 10) ? i : i - 2;
                 if (ntIndex >= 0 && ntIndex < parsedNtList.size() && parsedNtList.get(ntIndex) > 0) {
                     nt = parsedNtList.get(ntIndex);
                 }
@@ -177,17 +182,38 @@ public class CezPdfParser implements PdfPriceListParser {
     }
 
 
-    private List<Double> extractPricesFromLine(String line) {
+    /**
+     * Extrahuje ceny bez DPH (v závorce) z vybraného textového bloku.
+     * Pokud ceny v závorce nenajde, zkusí načíst číselné hodnoty.
+     *
+     * @param block Textový blok příslušné řádky/sekce
+     * @return Seznam vyextrahovaných cen bez DPH
+     */
+    private List<Double> extractPricesFromBlock(String block) {
         List<Double> prices = new ArrayList<>();
-        if (line == null || line.isEmpty()) return prices;
+        if (block == null || block.isEmpty()) return prices;
 
+        // V ČEZ cenících jsou ceny bez DPH v závorce: (2 950,41)
         Pattern bracketPattern = Pattern.compile("\\(([^)]+)\\)");
-        Matcher matcher = bracketPattern.matcher(line);
+        Matcher matcher = bracketPattern.matcher(block);
         while (matcher.find()) {
             String val = matcher.group(1);
             if (val != null) {
                 double price = PdfParserUtils.parsePrice(val);
                 if (price > 0) {
+                    prices.add(price);
+                }
+            }
+        }
+
+        // Záložní řešení pokud v závorkách žádná cena nebyla
+        if (prices.isEmpty()) {
+            Pattern numberPattern = Pattern.compile("\\b(\\d{1,3}(?:[\\s\\u00a0]\\d{3})*(?:[,.]\\d{1,2})?)\\b");
+            Matcher numMatcher = numberPattern.matcher(block);
+            while (numMatcher.find()) {
+                String val = numMatcher.group(1);
+                double price = PdfParserUtils.parsePrice(val);
+                if (price > 10) {
                     prices.add(price);
                 }
             }
