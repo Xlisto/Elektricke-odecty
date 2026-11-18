@@ -42,7 +42,6 @@ public class PdfParserTest {
 
     private static final String CRE_SAMPLE_TEXT = "ČESKÁ REGIONÁLNÍ ENERGETIKA A.S.\nPlatný od 1. 1. 2026\nPRODUKTOVÁ ŘADA: FUTURE 2022 DISTRIBUČNÍ ÚZEMÍ: PREDISTRIBUCE, a.s.\n";
 
-
     @Test
     public void testRealEonPdfFiles() throws Exception {
         String[] paths = {
@@ -138,6 +137,9 @@ public class PdfParserTest {
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
+
+        // Křížová kontrola správnosti podle číslovaných řádků ceníku
+        assertTrue("Křížová kontrola podle číslovaných řádků by měla projít", parser.validateRowCalculations(EON_SAMPLE_TEXT, items));
     }
 
 

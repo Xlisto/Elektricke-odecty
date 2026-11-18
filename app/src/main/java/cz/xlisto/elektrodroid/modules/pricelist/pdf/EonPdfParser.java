@@ -112,11 +112,21 @@ public class EonPdfParser implements PdfPriceListParser {
             distribuce = "EG.D";
         }
 
-        // Extrakce obchodních cen bez DPH
-        // V E.ON ceníku jsou 5 řad: Klasik (D01d, D02d), Aku (D25d, D26d, D27d), Kombi (D35d), Přímotop (D45d, D56d, D57d), Víkend (D61d)
-        List<Double> vtPrices = extractRowPrices(cleanText, "Cena ve vysokém tarifu \\(VT\\)");
-        List<Double> ntPrices = extractRowPrices(cleanText, "Cena v nízkém tarifu \\(NT\\)");
-        List<Double> platPrices = extractRowPrices(cleanText, "Stálý měsíční plat");
+        // Extrakce obchodních cen bez DPH z číslovaných řádků
+        // V E.ON ceníku: ř. 01 (VT), ř. 02 (NT), ř. 03 (Stálý plat)
+        // V E.ON ceníku je 5 řad: Klasik (D01d, D02d), Aku (D25d, D26d, D27d), Kombi (D35d), Přímotop (D45d, D56d, D57d), Víkend (D61d)
+        List<Double> vtPrices = extractRowPricesByNumber(cleanText, "01", "Cena ve vysokém tarifu \\(VT\\)");
+        if (vtPrices.isEmpty()) {
+            vtPrices = extractRowPrices(cleanText, "Cena ve vysokém tarifu \\(VT\\)");
+        }
+        List<Double> ntPrices = extractRowPricesByNumber(cleanText, "02", "Cena v nízkém tarifu \\(NT\\)");
+        if (ntPrices.isEmpty()) {
+            ntPrices = extractRowPrices(cleanText, "Cena v nízkém tarifu \\(NT\\)");
+        }
+        List<Double> platPrices = extractRowPricesByNumber(cleanText, "03", "Stálý měsíční plat");
+        if (platPrices.isEmpty()) {
+            platPrices = extractRowPrices(cleanText, "Stálý měsíční plat");
+        }
 
         // Fallback na 1. stranu ceníku pokud se z tabulky na 2. straně nezískalo 5 cen
         if (vtPrices.size() < 5) {
@@ -185,6 +195,146 @@ public class EonPdfParser implements PdfPriceListParser {
         }
 
         return result;
+    }
+
+
+    /**
+     * Získává část textu PDF odpovídající výhradně sekci obchodních cen
+     * (od "Obchodní cena za dodávku elektřiny" po "Regulovaná cena").
+     *
+     * @param text Celkový vyčištěný text z PDF
+     * @return Textový blok obsahující pouze obchodní ceny
+     */
+    private String extractObchodniSection(String text) {
+        Pattern pattern = Pattern.compile("Obchodní cena za dodávku elektřiny[\\s\\S]*?(?=Regulovaná cena|Celková jednotková|Ostatní regulované|$)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group(0);
+        }
+        return text;
+    }
+
+
+    /**
+     * Extrahuje číselné hodnoty obchodních cen bez DPH z konkrétního číslovaného řádku (např. 01, 02, 03) v E.ON ceníku.
+     *
+     * @param text        Extrahovaný a vyčištěný text z PDF
+     * @param rowNumLong  Číslo řádku s úvodní nulou (např. "01", "02", "03")
+     * @param headerRegex Regulární výraz pro vyhledání záhlaví řádku cen
+     * @return Seznam přečtených cenových hodnot bez DPH
+     */
+    private List<Double> extractRowPricesByNumber(String text, String rowNumLong, String headerRegex) {
+        List<Double> prices = new ArrayList<>();
+        if (text == null || text.isEmpty()) return prices;
+
+        String section = extractObchodniSection(text);
+
+        // 1. Zkusíme řádek s číslem 01/02/03 obsahující ceny bez DPH
+        Pattern pattern = Pattern.compile(headerRegex + "[^\n]*?\n\\s*([^\n]*?\\b" + rowNumLong + "\\b[^\n]*)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(section);
+        if (matcher.find()) {
+            prices.addAll(extractPricesFromLine(matcher.group(1)));
+        }
+
+        // 2. Pokud záhlaví obsahuje číslo řádku na stejném řádku jako název, ceny bez DPH jsou na následujícím řádku
+        if (prices.isEmpty()) {
+            Pattern altPattern = Pattern.compile(headerRegex + "[^\n]*?\\b" + rowNumLong + "\\b[^\n]*?\n\\s*([^\n]+)", Pattern.CASE_INSENSITIVE);
+            Matcher altMatcher = altPattern.matcher(section);
+            if (altMatcher.find()) {
+                prices.addAll(extractPricesFromLine(altMatcher.group(1)));
+            }
+        }
+
+        return prices;
+    }
+
+
+    /**
+     * Extrahuje seznam číselných cen ve formátu X XXX,XX z daného řádku.
+     *
+     * @param line Řádek textu
+     * @return Seznam cen v Kč
+     */
+    private List<Double> extractPricesFromLine(String line) {
+        List<Double> prices = new ArrayList<>();
+        if (line == null || line.isEmpty()) return prices;
+        Pattern pricePattern = Pattern.compile("(\\d{1,3}(?:[\\s\\u00a0]\\d{3})*,\\d{2})");
+        Matcher pm = pricePattern.matcher(line);
+        while (pm.find()) {
+            double p = PdfParserUtils.parsePrice(pm.group(1));
+            if (p > 0) {
+                prices.add(p);
+            }
+        }
+        return prices;
+    }
+
+
+    /**
+     * Křížová kontrola správnosti načtených cen podle číslovaných řádků ceníku E.ON.
+     * Ověřuje, zda obchodní cena VT (řádek 01) je menší než celková jednotková cena VT (řádek 25).
+     *
+     * @param pdfText      Text ceníku z PDF
+     * @param parsedModels Seznam načtených ceníkových modelů
+     * @return true pokud celková cena (řádek 25) odpovídá očekávání nebo řádek 25 v PDF chybí
+     */
+    public boolean validateRowCalculations(String pdfText, List<PriceListModel> parsedModels) {
+        if (pdfText == null || parsedModels == null || parsedModels.isEmpty()) return true;
+
+        String cleanText = pdfText.replace('\u00a0', ' ').replace('–', '-');
+
+        // Vyhledá blok řádku 25 (Celková cena VT) - např. "Cena ve vysokém tarifu (VT)... 25" nebo "25... Vysoký tarif"
+        Pattern totalVtPattern = Pattern.compile("25[\\t\\s.]*Cena ve vysokém tarifu|Celková jednotková cena[\\s\\S]*?Vysoký tarif[\\s\\S]*?25\\b|Vysoký tarif[^\n]*?\n[^\n]*?25\\b", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = totalVtPattern.matcher(cleanText);
+        if (matcher.find()) {
+            List<Double> totalVtList = extractPricesFromBlock(matcher.group(0));
+            if (!totalVtList.isEmpty()) {
+                for (int i = 0; i < Math.min(parsedModels.size(), totalVtList.size()); i++) {
+                    PriceListModel model = parsedModels.get(i);
+                    double totalVtInPdf = totalVtList.get(i);
+                    // Obchodní cena VT (řádek 01) musí být menší než celková jednotková cena VT (řádek 25)
+                    if (model.getPriceVT() > 0 && totalVtInPdf > 0 && model.getPriceVT() >= totalVtInPdf) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Extrahuje číselné hodnoty cen bez DPH z vybraného textového bloku pro účely křížové kontroly.
+     *
+     * @param block Textový blok příslušné řádky/sekce
+     * @return Seznam vyextrahovaných cen bez DPH
+     */
+    private List<Double> extractPricesFromBlock(String block) {
+        List<Double> prices = new ArrayList<>();
+        if (block == null || block.isEmpty()) return prices;
+
+        String[] lines = block.split("\r?\n");
+        String targetLine = lines.length > 1 ? lines[lines.length - 1] : block;
+
+        Pattern pricePattern = Pattern.compile("(\\d{1,3}(?:[\\s\\u00a0]\\d{3})*,\\d{2})");
+        Matcher pm = pricePattern.matcher(targetLine);
+        while (pm.find()) {
+            double p = PdfParserUtils.parsePrice(pm.group(1));
+            if (p > 100) {
+                prices.add(p);
+            }
+        }
+
+        if (prices.isEmpty()) {
+            Matcher pmBlock = pricePattern.matcher(block);
+            while (pmBlock.find()) {
+                double p = PdfParserUtils.parsePrice(pmBlock.group(1));
+                if (p > 100) {
+                    prices.add(p);
+                }
+            }
+        }
+        return prices;
     }
 
 
