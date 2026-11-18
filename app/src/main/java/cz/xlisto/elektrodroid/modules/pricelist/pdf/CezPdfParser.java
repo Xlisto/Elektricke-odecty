@@ -114,7 +114,11 @@ public class CezPdfParser implements PdfPriceListParser {
                 {"D 61d", "Víkend"}
         };
 
-        // Zkusíme najít dynamicky bloky cen z PDF pro VT, NT a Stálou platbu
+        // Zkusíme najít dynamicky bloky cen z PDF podle číslovaných řádků ČEZ ceníku:
+        // Řádek 1 = Obchodní cena: Vysoký tarif (VT)
+        // Řádek 2 = Obchodní cena: Nízký tarif (NT)
+        // Řádek 3 = Obchodní cena: Stálá platba Kč/měsíc
+        // Řádek 4 = Distribuční cena: Vysoký tarif (VT)
         Pattern vtPattern = Pattern.compile("1[\\t\\s.]*Vysoký tarif[\\s\\S]*?(?=\r?\n\\s*2[\\t\\s.]|2[\\t\\s.]*Nízký tarif)", Pattern.CASE_INSENSITIVE);
         Pattern ntPattern = Pattern.compile("2[\\t\\s.]*Nízký tarif[\\s\\S]*?(?=\r?\n\\s*3[\\t\\s.]|3[\\t\\s.]*Stálá platba)", Pattern.CASE_INSENSITIVE);
         Pattern platPattern = Pattern.compile("3[\\t\\s.]*Stálá platba[\\s\\S]*?(?=\r?\n\\s*4[\\t\\s.]|Distribuční část|Cena za distribuci|$)", Pattern.CASE_INSENSITIVE);
@@ -219,6 +223,37 @@ public class CezPdfParser implements PdfPriceListParser {
             }
         }
         return prices;
+    }
+
+
+    /**
+     * Křížová kontrola správnosti načtených cen podle číslovaných řádků ceníku.
+     * Ověřuje, zda obchodní cena VT (řádek 1) je menší než celková jednotková cena VT (řádek 26).
+     *
+     * @param pdfText      Text ceníku z PDF
+     * @param parsedModels Seznam načtených ceníkových modelů
+     * @return true pokud celková cena (řádek 26) odpovídá očekávání nebo řádek 26 v PDF chybí
+     */
+    public boolean validateRowCalculations(String pdfText, List<PriceListModel> parsedModels) {
+        if (pdfText == null || parsedModels == null || parsedModels.isEmpty()) return true;
+
+        String cleanText = pdfText.replace('\u00a0', ' ').replace('–', '-');
+        Pattern totalVtPattern = Pattern.compile("26[\\t\\s.]*Vysoký tarif[\\s\\S]*?(?=\r?\n\\s*27[\\t\\s.]|27[\\t\\s.]*Nízký tarif|$)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = totalVtPattern.matcher(cleanText);
+        if (matcher.find()) {
+            List<Double> totalVtList = extractPricesFromBlock(matcher.group(0));
+            if (!totalVtList.isEmpty()) {
+                for (int i = 0; i < Math.min(parsedModels.size(), totalVtList.size()); i++) {
+                    PriceListModel model = parsedModels.get(i);
+                    double totalVtInPdf = totalVtList.get(i);
+                    // Obchodní cena VT (řádek 1) musí být menší než celková cena (řádek 26)
+                    if (model.getPriceVT() > 0 && totalVtInPdf > 0 && model.getPriceVT() >= totalVtInPdf) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

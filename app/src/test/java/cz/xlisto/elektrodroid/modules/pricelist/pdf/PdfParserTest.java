@@ -91,6 +91,9 @@ public class PdfParserTest {
         assertEquals(2026, cal.get(Calendar.YEAR));
         assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
         assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
+
+        // Křížová kontrola správnosti podle číslovaných řádků ceníku
+        assertTrue("Křížová kontrola podle číslovaných řádků by měla projít", parser.validateRowCalculations(CEZ_SAMPLE_TEXT, items));
     }
 
 

@@ -85,6 +85,11 @@ public class PdfParserDataDrivenTest {
         List<PriceListModel> parsedList = PdfParserFactory.parsePdf(null, pdfText);
         assertNotNull("Výsledek parsování PDF " + pdfFile.getName() + " nesmí být null", parsedList);
 
+        if (pdfText.contains("ČEZ PRODEJ") || pdfText.contains("CEZ PRODEJ")) {
+            assertTrue("Křížová kontrola číslovaných řádků ČEZ pro " + pdfFile.getName() + " selhala",
+                    new CezPdfParser().validateRowCalculations(pdfText, parsedList));
+        }
+
         for (File jsonFile : jsonFiles) {
             testSingleJsonSpecification(jsonFile, parsedList);
         }
