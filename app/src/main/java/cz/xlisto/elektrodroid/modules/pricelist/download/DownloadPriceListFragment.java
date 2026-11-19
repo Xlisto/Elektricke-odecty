@@ -88,7 +88,6 @@ public class DownloadPriceListFragment extends Fragment {
         list.add(new SupplierDownloadModel("E.ON Energie, a.s. / EG.D", "https://www.eon.cz/domacnosti/zakaznicka-pece/ceniky/"));
         list.add(new SupplierDownloadModel("Pražská energetika, a. s. (PRE)", "https://www.pre.cz/cs/domacnosti/elektrina/prehled-produktu/"));
         list.add(new SupplierDownloadModel("CENTROPOL ENERGY, a. s.", "https://www.centropol.cz/ceniky/"));
-        list.add(new SupplierDownloadModel("Česká Regionální Energetika a.s.", "https://www.cr-energetika.cz/ke-stazeni/"));
         list.add(new SupplierDownloadModel("innogy Energie, s.r.o.", "https://www.innogy.cz/ceniky/"));
         list.add(new SupplierDownloadModel("MND Energie a.s.", "https://www.mnd.cz/elektrina-domacnosti"));
         list.add(new SupplierDownloadModel("TEDOM energie s.r.o.", "https://www.tedomenergie.cz/ceniky"));

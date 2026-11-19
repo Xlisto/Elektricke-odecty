@@ -40,8 +40,6 @@ public class PdfParserTest {
 
     private static final String INNOGY_SAMPLE_TEXT = "innogy Energie, s.r.o.\nelektřina Optimal 36 CENÍK ELEKTŘINY V KATEGORII DOMÁCNOST\nCeník je platný od 1. 11. 2026.\nč připojeno k distribuční soustavě EG.D, s.r.o.\n";
 
-    private static final String CRE_SAMPLE_TEXT = "ČESKÁ REGIONÁLNÍ ENERGETIKA A.S.\nPlatný od 1. 1. 2026\nPRODUKTOVÁ ŘADA: FUTURE 2022 DISTRIBUČNÍ ÚZEMÍ: PREDISTRIBUCE, a.s.\n";
-
     @Test
     public void testRealEonPdfFiles() throws Exception {
         String[] paths = {
@@ -200,28 +198,6 @@ public class PdfParserTest {
         assertEquals("D 01d", d01.getRate());
         assertEquals("innogy Energie, s.r.o.", d01.getCompany());
         assertEquals("EG.D", d01.getDistribution());
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(d01.getValidTo());
-        assertEquals(2026, cal.get(Calendar.YEAR));
-        assertEquals(Calendar.DECEMBER, cal.get(Calendar.MONTH));
-        assertEquals(31, cal.get(Calendar.DAY_OF_MONTH));
-    }
-
-
-    @Test
-    public void testCrePdfParser() {
-        CrePdfParser parser = new CrePdfParser();
-        assertTrue("ČRE parser by měl detekovat text", parser.canParse(CRE_SAMPLE_TEXT));
-
-        List<PriceListModel> items = parser.parse(null, CRE_SAMPLE_TEXT);
-        assertNotNull(items);
-        assertEquals("ČRE ceník by měl obsahovat 10 sazeb", 10, items.size());
-
-        PriceListModel d01 = items.get(0);
-        assertEquals("D 01d", d01.getRate());
-        assertEquals("Česká Regionální Energetika a.s.", d01.getCompany());
-        assertEquals("PRE", d01.getDistribution());
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(d01.getValidTo());

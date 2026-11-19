@@ -14,7 +14,7 @@ import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 /**
  * Továrna pro výběr a spuštění odpovídajícího PDF parseru ceníků elektřiny.
  * <p>
- * Registruje dostupné parsery pro jednotlivé dodavatele (ČEZ, PRE, E.ON, Centropol, MND, innogy, ČRE)
+ * Registruje dostupné parsery pro jednotlivé dodavatele (ČEZ, PRE, E.ON, Centropol, MND, innogy, TEDOM)
  * a zajišťuje záložní zpracování obecných ceníků včetně doplňování regulovaných cen z databáze aplikace.
  */
 public class PdfParserFactory {
@@ -28,7 +28,6 @@ public class PdfParserFactory {
         parsers.add(new CentropolPdfParser());
         parsers.add(new MndPdfParser());
         parsers.add(new InnogyPdfParser());
-        parsers.add(new CrePdfParser());
         parsers.add(new TedomPdfParser());
     }
 
