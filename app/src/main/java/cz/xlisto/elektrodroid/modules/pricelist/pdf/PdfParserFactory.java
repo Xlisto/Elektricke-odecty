@@ -106,7 +106,7 @@ public class PdfParserFactory {
                     model.setSystemServices(regModel.getSystemServices());
                 if (model.getActivity() == 0.0) model.setActivity(regModel.getActivity());
                 if (model.getPoze1() == 0.0) model.setPoze1(regModel.getPoze1());
-                if (!model.getCompany().contains("CENTROPOL") && !model.getCompany().contains("TEDOM") && model.getPoze2() == 0.0) {
+                if (!model.getCompany().contains("CENTROPOL") && !model.getCompany().contains("TEDOM") && !model.getCompany().contains("MND") && model.getPoze2() == 0.0) {
                     model.setPoze2(regModel.getPoze2());
                 }
                 if (model.getTax() == 0.0) model.setTax(regModel.getTax());
