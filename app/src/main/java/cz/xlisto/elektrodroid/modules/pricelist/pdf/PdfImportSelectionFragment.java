@@ -117,17 +117,21 @@ public class PdfImportSelectionFragment extends Fragment {
             }
 
             StringBuilder warningText = new StringBuilder();
-            if (hasMissingCommercial) {
-                warningText.append(getString(R.string.pdf_import_missing_commercial_warning));
-            }
             if (!hasRegulatedData) {
-                if (warningText.length() > 0) warningText.append("\n\n");
-                warningText.append(getString(R.string.pdf_import_missing_regulated_warning, year, first.getDistribution()));
-            }
-            if (!hasMissingCommercial && hasRegulatedData) {
+                warningText.append(getString(R.string.pdf_import_inconsistent_data_warning, year));
+                btnSave.setEnabled(false);
+                btnSave.setAlpha(0.5f);
+            } else {
+                btnSave.setEnabled(true);
+                btnSave.setAlpha(1.0f);
+                if (hasMissingCommercial) {
+                    warningText.append(getString(R.string.pdf_import_missing_commercial_warning));
+                }
                 if (PdfParserUtils.is2025BeforeSeptember(first.getValidFrom())) {
+                    if (warningText.length() > 0) warningText.append("\n\n");
                     warningText.append(getString(R.string.pdf_import_validity_warning_august, year));
                 } else {
+                    if (warningText.length() > 0) warningText.append("\n\n");
                     warningText.append(getString(R.string.pdf_import_validity_warning, year));
                 }
             }
@@ -196,6 +200,20 @@ public class PdfImportSelectionFragment extends Fragment {
         List<PriceListModel> selected = adapter.getSelectedItems();
         if (selected.isEmpty()) {
             Toast.makeText(requireContext(), R.string.pdf_import_no_rates_selected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PriceListModel first = selected.get(0);
+        boolean hasRegulatedData = first.getDistVT() > 0 || first.getJ0() > 0;
+        if (!hasRegulatedData) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(first.getValidFrom() > 0 ? first.getValidFrom() : System.currentTimeMillis());
+            int year = cal.get(Calendar.YEAR);
+            OwnAlertDialog.showDialog(
+                    requireActivity(),
+                    getString(R.string.pdf_import_inconsistent_data_blocked_title),
+                    getString(R.string.pdf_import_inconsistent_data_blocked_message, year)
+            );
             return;
         }
 

@@ -285,4 +285,25 @@ public class PdfParserTest {
         assertEquals(59, cal.get(Calendar.SECOND));
     }
 
+
+    @Test
+    public void testFuture2027UnreleasedRegulatedPrices() {
+        String innogy2027Text = "innogy Energie, s.r.o.\nelektřina Standard 270101 CENÍK ELEKTŘINY V KATEGORII DOMÁCNOST\nCeník je platný od 1. 1. 2027.\npřipojeno k distribuční soustavě EG.D, s.r.o.\n";
+        InnogyPdfParser parser = new InnogyPdfParser();
+        assertTrue("Innogy parser by měl detekovat text pro rok 2027", parser.canParse(innogy2027Text));
+
+        List<PriceListModel> items = PdfParserFactory.parsePdf(null, innogy2027Text);
+        assertNotNull(items);
+        assertTrue("Ceník pro rok 2027 by měl obsahovat sazby", !items.isEmpty());
+
+        PriceListModel model = items.get(0);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(model.getValidFrom());
+        assertEquals(2027, cal.get(Calendar.YEAR));
+
+        // Regulované ceny pro rok 2027 nebyly ERÚ vydány (v raw JSON neexistují)
+        boolean hasRegulatedData = model.getDistVT() > 0 || model.getJ0() > 0;
+        assertTrue("Pro rok 2027 bez vydaných regulovaných cen ERÚ nesmí být v modelu regulovaná data", !hasRegulatedData);
+    }
+
 }
