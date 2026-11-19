@@ -75,10 +75,6 @@ public class PdfParserFactory {
      */
     private static void applyRegulatedPricesFromRaw(Context context, PriceListModel model) {
         try {
-            if (model.getDistVT() > 0 || model.getJ0() > 0) {
-                // Model již obsahuje regulované ceny načtené přímo z PDF
-                return;
-            }
             ReadRawJSON reader = new ReadRawJSON(context);
             Calendar startCal = Calendar.getInstance();
             Calendar endCal = Calendar.getInstance();
@@ -89,29 +85,32 @@ public class PdfParserFactory {
             PriceListModel regModel = reader.read(startCal, endCal, shortDist, model.getRate());
 
             if (regModel != null && (regModel.getDistVT() > 0 || regModel.getJ0() > 0)) {
-                model.setDistVT(regModel.getDistVT());
-                model.setDistNT(regModel.getDistNT());
-                model.setJ0(regModel.getJ0());
-                model.setJ1(regModel.getJ1());
-                model.setJ2(regModel.getJ2());
-                model.setJ3(regModel.getJ3());
-                model.setJ4(regModel.getJ4());
-                model.setJ5(regModel.getJ5());
-                model.setJ6(regModel.getJ6());
-                model.setJ7(regModel.getJ7());
-                model.setJ8(regModel.getJ8());
-                model.setJ9(regModel.getJ9());
-                model.setJ10(regModel.getJ10());
-                model.setJ11(regModel.getJ11());
-                model.setJ12(regModel.getJ12());
-                model.setJ13(regModel.getJ13());
-                model.setJ14(regModel.getJ14());
-                model.setSystemServices(regModel.getSystemServices());
-                model.setActivity(regModel.getActivity());
-                model.setPoze1(regModel.getPoze1());
-                model.setPoze2(regModel.getPoze2());
-                model.setTax(regModel.getTax());
-                if (regModel.getVat() > 0) {
+                if (model.getDistVT() == 0.0) model.setDistVT(regModel.getDistVT());
+                if (model.getDistNT() == 0.0) model.setDistNT(regModel.getDistNT());
+                if (model.getJ0() == 0.0) model.setJ0(regModel.getJ0());
+                if (model.getJ1() == 0.0) model.setJ1(regModel.getJ1());
+                if (model.getJ2() == 0.0) model.setJ2(regModel.getJ2());
+                if (model.getJ3() == 0.0) model.setJ3(regModel.getJ3());
+                if (model.getJ4() == 0.0) model.setJ4(regModel.getJ4());
+                if (model.getJ5() == 0.0) model.setJ5(regModel.getJ5());
+                if (model.getJ6() == 0.0) model.setJ6(regModel.getJ6());
+                if (model.getJ7() == 0.0) model.setJ7(regModel.getJ7());
+                if (model.getJ8() == 0.0) model.setJ8(regModel.getJ8());
+                if (model.getJ9() == 0.0) model.setJ9(regModel.getJ9());
+                if (model.getJ10() == 0.0) model.setJ10(regModel.getJ10());
+                if (model.getJ11() == 0.0) model.setJ11(regModel.getJ11());
+                if (model.getJ12() == 0.0) model.setJ12(regModel.getJ12());
+                if (model.getJ13() == 0.0) model.setJ13(regModel.getJ13());
+                if (model.getJ14() == 0.0) model.setJ14(regModel.getJ14());
+                if (model.getSystemServices() == 0.0)
+                    model.setSystemServices(regModel.getSystemServices());
+                if (model.getActivity() == 0.0) model.setActivity(regModel.getActivity());
+                if (model.getPoze1() == 0.0) model.setPoze1(regModel.getPoze1());
+                if (!model.getCompany().contains("CENTROPOL") && !model.getCompany().contains("TEDOM") && model.getPoze2() == 0.0) {
+                    model.setPoze2(regModel.getPoze2());
+                }
+                if (model.getTax() == 0.0) model.setTax(regModel.getTax());
+                if (regModel.getVat() > 0 && model.getVat() == 0.0) {
                     model.setVat(regModel.getVat());
                 }
             }
