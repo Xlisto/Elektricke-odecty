@@ -10,6 +10,7 @@ import android.content.Context;
 public class ShPPriceList extends ShP {
     public static final String SHOW_BUTTONS_PRICE_LIST = "showButtonsPriceList";
     public static final String SHOW_ID_ITEM_PRICE_LIST = "showIdItemPriceList";
+    public static final String PDF_WARNING_DEFERRED_UNTIL = "pdfWarningDeferredUntil";
 
 
     public ShPPriceList(Context context) {

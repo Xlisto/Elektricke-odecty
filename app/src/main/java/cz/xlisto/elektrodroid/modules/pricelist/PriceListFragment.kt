@@ -31,6 +31,7 @@ import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog
+import cz.xlisto.elektrodroid.dialogs.PdfWarningDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
@@ -46,6 +47,7 @@ import cz.xlisto.elektrodroid.modules.settings.SettingsFragment
 import cz.xlisto.elektrodroid.ownview.ViewHelper
 import cz.xlisto.elektrodroid.shp.ShPAddEditInvoice
 import cz.xlisto.elektrodroid.shp.ShPFilter
+import cz.xlisto.elektrodroid.shp.ShPPriceList
 import cz.xlisto.elektrodroid.utils.DetectScreenMode
 import cz.xlisto.elektrodroid.utils.FragmentChange
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint
@@ -297,7 +299,7 @@ class PriceListFragment : Fragment() {
                     }
 
                     R.id.menu_action_add_pdf_pricelist -> {
-                        pdfPickerLauncher.launch("application/pdf")
+                        startPdfImport()
                         true
                     }
 
@@ -466,6 +468,17 @@ class PriceListFragment : Fragment() {
             UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
             requireActivity().invalidateOptionsMenu()
             btnShowBack()
+        }
+
+        // Posluchač varovného dialogu před importem PDF
+        childFragmentManager.setFragmentResultListener(
+            PdfWarningDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val confirmed = bundle.getBoolean(PdfWarningDialogFragment.RESULT_CONFIRMED, false)
+            if (confirmed) {
+                pdfPickerLauncher.launch("application/pdf")
+            }
         }
 
         onLoadData()
@@ -992,7 +1005,7 @@ class PriceListFragment : Fragment() {
                 }
 
                 R.id.menu_action_add_pdf_pricelist -> {
-                    pdfPickerLauncher.launch("application/pdf")
+                    startPdfImport()
                     true
                 }
 
@@ -1000,5 +1013,22 @@ class PriceListFragment : Fragment() {
             }
         }
         popupMenu.show()
+    }
+
+    /**
+     * Zkontroluje, zda se má zobrazit varovný dialog před importem PDF ceníku.
+     * Pokud ano, zobrazí [PdfWarningDialogFragment]. Pokud ne, spustí výběr PDF.
+     */
+    private fun startPdfImport() {
+        val shp = ShPPriceList(requireContext())
+        val deferredUntil = shp.get(ShPPriceList.PDF_WARNING_DEFERRED_UNTIL, 0L)
+        val now = System.currentTimeMillis()
+
+        if (now < deferredUntil) {
+            pdfPickerLauncher.launch("application/pdf")
+        } else {
+            val dialog = PdfWarningDialogFragment.newInstance()
+            dialog.show(childFragmentManager, PdfWarningDialogFragment.TAG)
+        }
     }
 }

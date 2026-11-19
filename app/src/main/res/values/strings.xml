@@ -627,6 +627,10 @@
     <string name="pdf_import_2025_split_checkbox">Vytvořit i ceníky pro 2. období roku 2025 (01. 09. 2025 – 31. 12. 2025) s novou cenou za provoz nesíťové infrastruktury (12,45 Kč bez DPH)</string>
     <string name="pdf_import_task_extracting">Extrahování textu z PDF dokumentu…</string>
     <string name="pdf_import_task_parsing">Parsování sazeb a regulovaných cen…</string>
+    <string name="pdf_import_warning_title">Upozornění při importu PDF</string>
+    <string name="pdf_import_warning_message">Jedná se o strojové čtení ceníku, které je otestováno na vybraném vzorku ceníků z roku 2025 a 2026 a není vyloučena chyba při čtení.</string>
+    <string name="pdf_import_warning_snooze_checkbox">Nezobrazovat tento dialog 1 měsíc</string>
+    <string name="continue_text">Pokračovat</string>
     <string name="download_price_lists">Stáhnout ceníky</string>
     <string name="download_price_lists_info">Vyberte dodavatele. V prohlížeči se otevře jeho oficiální stránka s ceníky, kde si můžete stáhnout požadovaný PDF ceník (případně po zvolení distribučního území či období) a následně jej v aplikaci načíst přes tlačítko PDF+.</string>
     <string name="open_in_browser">Otevřít stránku</string>
