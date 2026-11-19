@@ -109,6 +109,11 @@ public class PdfParserDataDrivenTest {
                     new EonPdfParser().validateRowCalculations(pdfText, parsedList));
         }
 
+        if (new TedomPdfParser().canParse(pdfText)) {
+            assertTrue("Křížová kontrola číslovaných řádků TEDOM pro " + pdfFile.getName() + " selhala",
+                    new TedomPdfParser().validateRowCalculations(pdfText, parsedList));
+        }
+
         List<TestSummary> summaries = new ArrayList<>();
         for (File jsonFile : jsonFiles) {
             summaries.add(testSingleJsonSpecification(jsonFile, parsedList));
@@ -295,6 +300,9 @@ public class PdfParserDataDrivenTest {
                             rateJson.getDouble("poze1"), parsedModel.getPoze1(), 0.01);
                 }
                 if (rateJson.has("poze2")) {
+                    if (Math.abs(rateJson.getDouble("poze2") - parsedModel.getPoze2()) > 0.01) {
+                        System.out.println("FAIL poze2 in " + jsonFile.getName() + ": expected " + rateJson.getDouble("poze2") + " but got " + parsedModel.getPoze2() + ", model validFrom=" + parsedModel.getValidFrom() + " validTo=" + parsedModel.getValidTo() + " product=" + parsedModel.getProduct());
+                    }
                     assertEquals("poze2 u " + rateName + " v " + jsonFile.getName(),
                             rateJson.getDouble("poze2"), parsedModel.getPoze2(), 0.01);
                 }

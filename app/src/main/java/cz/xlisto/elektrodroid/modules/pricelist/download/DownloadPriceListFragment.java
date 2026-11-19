@@ -91,6 +91,7 @@ public class DownloadPriceListFragment extends Fragment {
         list.add(new SupplierDownloadModel("Česká Regionální Energetika a.s.", "https://www.cr-energetika.cz/ke-stazeni/"));
         list.add(new SupplierDownloadModel("innogy Energie, s.r.o.", "https://www.innogy.cz/ceniky/"));
         list.add(new SupplierDownloadModel("MND Energie a.s.", "https://www.mnd.cz/elektrina-domacnosti"));
+        list.add(new SupplierDownloadModel("TEDOM energie s.r.o.", "https://www.tedomenergie.cz/ceniky"));
         return list;
     }
 

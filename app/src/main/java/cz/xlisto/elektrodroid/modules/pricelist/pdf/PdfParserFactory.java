@@ -29,6 +29,7 @@ public class PdfParserFactory {
         parsers.add(new MndPdfParser());
         parsers.add(new InnogyPdfParser());
         parsers.add(new CrePdfParser());
+        parsers.add(new TedomPdfParser());
     }
 
     /**
@@ -75,6 +76,10 @@ public class PdfParserFactory {
      */
     private static void applyRegulatedPricesFromRaw(Context context, PriceListModel model) {
         try {
+            if (model.getDistVT() > 0 || model.getJ0() > 0) {
+                // Model již obsahuje regulované ceny načtené přímo z PDF
+                return;
+            }
             ReadRawJSON reader = new ReadRawJSON(context);
             Calendar startCal = Calendar.getInstance();
             Calendar endCal = Calendar.getInstance();
