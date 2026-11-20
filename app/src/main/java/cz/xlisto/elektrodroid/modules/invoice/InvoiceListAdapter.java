@@ -250,10 +250,15 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         viewHolder.tvNTmin.setText(DecimalFormatHelper.df2.format(invoice.getMinNT()));
         viewHolder.tvNTmax.setText(DecimalFormatHelper.df2.format(invoice.getMaxNT()));
 
-        showButtons(viewHolder, position);
+        if (invoice.getIdFak() == -1) {
+            viewHolder.btnNumberInvoice.setVisibility(View.GONE);
+            viewHolder.btnDeleteInvoice.setVisibility(View.GONE);
+        } else {
+            viewHolder.btnNumberInvoice.setVisibility(View.VISIBLE);
+            viewHolder.btnDeleteInvoice.setVisibility(View.VISIBLE);
+        }
 
-        viewHolder.btnNumberInvoice.setEnabled(invoice.getIdFak() != -1);
-        viewHolder.btnDeleteInvoice.setEnabled(invoice.getIdFak() != -1);
+        showButtons(viewHolder, position);
 
         checkDate(position, viewHolder);
     }
@@ -410,7 +415,11 @@ public class InvoiceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void showButtons(MyViewHolder holder, int position) {
         if (position == showButtons) {
             holder.lnButtons1.setVisibility(View.VISIBLE);
-            holder.lnButtons2.setVisibility(View.VISIBLE);
+            if (holder.id == -1) {
+                holder.lnButtons2.setVisibility(View.GONE);
+            } else {
+                holder.lnButtons2.setVisibility(View.VISIBLE);
+            }
             selectedIdFak = holder.id;
         } else {
             holder.lnButtons1.setVisibility(View.GONE);

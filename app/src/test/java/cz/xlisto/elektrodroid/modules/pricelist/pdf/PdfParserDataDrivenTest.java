@@ -427,7 +427,7 @@ public class PdfParserDataDrivenTest {
                 if (Math.abs(model.getValidFrom() - targetValidFromMillis) < 86400000L) {
                     matches = true;
                 }
-            } else if (!targetValidFromStr.isEmpty()) {
+            } else {
                 String modelValidFromStr = dateFormat.format(model.getValidFrom());
                 if (Objects.equals(targetValidFromStr, modelValidFromStr)) {
                     matches = true;

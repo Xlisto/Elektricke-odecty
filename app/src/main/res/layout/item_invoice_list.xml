@@ -90,8 +90,8 @@
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditInvoiceList"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:id="@+id/btnShowPaymentList"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -100,7 +100,7 @@
                 android:maxLines="1"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:text="@string/btn_number_invoice"
+                android:text="@string/btn_advance_payments"
                 app:autoSizeMaxTextSize="14sp"
                 app:autoSizeMinTextSize="10sp"
                 app:autoSizeTextType="uniform" />
@@ -132,8 +132,8 @@
             android:visibility="gone">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnShowPaymentList"
-                style="@style/Widget.Material3.Button.TonalButton"
+                android:id="@+id/btnEditInvoiceList"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -142,7 +142,7 @@
                 android:maxLines="1"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
-                android:text="@string/btn_advance_payments"
+                android:text="@string/btn_number_invoice"
                 app:autoSizeMaxTextSize="14sp"
                 app:autoSizeMinTextSize="10sp"
                 app:autoSizeTextType="uniform" />
