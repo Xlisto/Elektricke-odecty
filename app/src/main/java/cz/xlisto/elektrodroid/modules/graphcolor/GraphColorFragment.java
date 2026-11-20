@@ -38,6 +38,8 @@ import cz.xlisto.elektrodroid.databaze.DataGraphColor;
 import cz.xlisto.elektrodroid.dialogs.GraphColorDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Fragment pro nastavení barev grafu VT/NT s moderním Material 3 rozhraním.
@@ -45,7 +47,7 @@ import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
  * práci s historií, rychlými vzorníky, vizuálními výřezy témat v mřížce 5x2 a uložení vybraných hodnot.
  * Xlisto 17.10.2023 21:13
  */
-public class GraphColorFragment extends Fragment {
+public class GraphColorFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String KEY_VT_COLOR = "key_vt_color";
     private static final String KEY_NT_COLOR = "key_nt_color";
@@ -234,6 +236,9 @@ public class GraphColorFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (requireActivity() instanceof MainActivity) {
+            ((MainActivity) requireActivity()).updateAppBarBackgroundAndSystemBars();
+        }
         loadHistoryColors();
         if (vtColor != null && ntColor != null) {
             // Aplikujeme obnovené/neuložené barvy z paměti po rotaci
@@ -243,6 +248,7 @@ public class GraphColorFragment extends Fragment {
             // První načtení z databáze
             loadColorsFromDb();
         }
+        updateViewPadding();
     }
 
 
@@ -496,6 +502,44 @@ public class GraphColorFragment extends Fragment {
         ntColor = graphColorView.getColorNTHTML();
 
         updateUIColors(colors[0], colors[1]);
+    }
+
+
+    public void updateViewPadding() {
+        if (getView() == null || !isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() instanceof androidx.core.widget.NestedScrollView) {
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
+                androidx.core.widget.NestedScrollView scrollView =
+                        (androidx.core.widget.NestedScrollView) getView();
+                if (scrollView.getChildCount() > 0) {
+                    View content = scrollView.getChildAt(0);
+                    content.setPadding(
+                            (int) (16 * density),
+                            topPaddingPx + (int) (16 * density),
+                            (int) (16 * density),
+                            (int) (16 * density)
+                    );
+                }
+            } else {
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 }

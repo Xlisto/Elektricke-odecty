@@ -50,6 +50,8 @@ import org.json.JSONException;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.dialogs.BackupUploadDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -66,28 +68,8 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 /**
  * Fragment pro správu zálohování a obnovy dat aplikace.
- *
- * <p>Zajišťuje UI pro vytváření ZIP záloh, výběr složky pro ukládání a zobrazení
- * existujících záložních souborů v {@code RecyclerView}. Spolupracuje s
- * {@code BackupViewModel} pro asynchronní načítání souborů a udržování stavu
- * (loading, dostupnost oprávnění). Obsahuje handlery pro zpracování výsledků
- * ukládání a obnovy a používá {@code ActivityResultLauncher} pro výběr adresáře.</p>
- *
- * <p>Implementuje {@code NetworkCallbackImpl.NetworkChangeListener} pro reakci na
- * změny síťové dostupnosti (aktualizace dat). Kontroluje a vyžaduje oprávnění
- * k přístupu k URI přes utilitu {@code Files} a spravuje registraci síťového
- * callbacku v cyklu života fragmentu.</p>
- *
- * <p>Akce pro vytvoření zálohy, výběr cílové složky a hromadné operace nad
- * vybranými položkami jsou dostupné přes AppBar menu. Stav vícenásobného
- * výběru je ukládán přes {@code savedInstanceState} a po rotaci obrazovky
- * znovu obnoven podle URI souborů.</p>
- *
- * @see BackupViewModel
- * @see Files
- * @see NetworkCallbackImpl.NetworkChangeListener
  */
-public class BackupFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
+public class BackupFragment extends Fragment implements NetworkCallbackImpl.NetworkChangeListener, OnPaddingChangeListener {
 
     private static final String TAG = "BackupFragment";
     private static final String FLAG_DIALOG_FRAGMENT_DELETE_SELECTED = "backupDialogFragmentDeleteSelected";
@@ -346,6 +328,14 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
 
         rlDescriptionPermission = view.findViewById(R.id.rlDescriptionPermission);
         recyclerView = view.findViewById(R.id.recyclerViewBackup);
+        if (recyclerView != null) {
+            recyclerView.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
 
         requireContext();
@@ -487,6 +477,38 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         super.onResume();
         uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         backupViewModel.checkPermission(requireActivity(), uri);
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (recyclerView != null) {
+                recyclerView.setClipToPadding(false);
+                recyclerView.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

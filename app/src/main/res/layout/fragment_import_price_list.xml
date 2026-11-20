@@ -22,10 +22,9 @@
         android:id="@+id/recyclerViewImportExport"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/description_import"
-        android:layoutAnimation="@anim/layout_animation_fall_down" />
+        android:clipToPadding="false"
+        android:contentDescription="@string/description_import" />
 
     <include layout="@layout/layout_progress_bar" />
-
 
 </RelativeLayout>

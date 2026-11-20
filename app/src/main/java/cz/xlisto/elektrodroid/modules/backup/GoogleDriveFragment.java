@@ -67,18 +67,14 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * UI vrstva pro správu Google Drive záloh.
- *
- * <p>Fragment zajišťuje přihlášení/odhlášení přes {@link CredentialHelper}, načtení seznamu
- * dostupných záloh z Google Drive, reakci na změny konektivity a obsluhu akcí uživatele
- * (obnovení nebo smazání vybrané zálohy).</p>
- *
- * <p>Stav hromadného mazání je synchronizován přes {@link GoogleDriveViewModel}, takže průběh
- * a výsledek operace zůstává konzistentní i po změně konfigurace (např. rotace obrazovky).</p>
  */
-public class GoogleDriveFragment extends Fragment implements CredentialHelper.CredentialListener, GoogleDriveService.OnFilesLoadedListener, NetworkCallbackImpl.NetworkChangeListener, BackupAdapter.SelectionChangeListener, BackupAdapter.DeleteStateListener {
+public class GoogleDriveFragment extends Fragment implements CredentialHelper.CredentialListener, GoogleDriveService.OnFilesLoadedListener, NetworkCallbackImpl.NetworkChangeListener, BackupAdapter.SelectionChangeListener, BackupAdapter.DeleteStateListener, OnPaddingChangeListener {
 
     private static final String TAG = "GoogleDriveFragment";
     private static final int MENU_ACTION_GOOGLE_SIGN = R.id.menu_action_google_sign;
@@ -224,6 +220,14 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_google_drive, container, false);
         recyclerView = view.findViewById(R.id.rvGoogleDriveFiles);
+        if (recyclerView != null) {
+            recyclerView.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         tvAlertNoInternet = view.findViewById(R.id.tvAlertNoInternet);
         tvPendingUploadAlert = view.findViewById(R.id.tvPendingUploadAlert);
@@ -1387,6 +1391,44 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
             restoredFiles.add(file);
         }
         return restoredFiles;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (recyclerView != null) {
+                recyclerView.setClipToPadding(false);
+                recyclerView.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 }

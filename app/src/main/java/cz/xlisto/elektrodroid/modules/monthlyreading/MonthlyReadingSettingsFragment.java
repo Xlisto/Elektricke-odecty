@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,6 +88,44 @@ public class MonthlyReadingSettingsFragment extends Fragment {
     }
 
 
+    private void updateSettingsPadding(@NonNull View view) {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        float density = getResources().getDisplayMetrics().density;
+        int basePadding = (int) (12 * density);
+        int topPadding = mainActivity.getTopBarTotalHeight();
+        int bottomPadding = mainActivity.getBottomPanelMarginPx();
+
+        view.setPadding(
+                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                0,
+                basePadding + mainActivity.getEffectiveNavBarInsetRight(),
+                0
+        );
+
+        ScrollView scrollView = view.findViewById(R.id.monthlyReadingSettingsScroll);
+        if (scrollView != null) {
+            scrollView.setPadding(0, topPadding, 0, 0);
+            scrollView.setClipToPadding(false);
+        }
+
+        LinearLayout bottomButtons = view.findViewById(R.id.llBottomButtons);
+        if (bottomButtons != null) {
+            bottomButtons.setPadding(0, 0, 0, bottomPadding);
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            updateSettingsPadding(getView());
+        }
+    }
+
+
     /**
      * Tovární metoda pro vytvoření nové instance {@link MonthlyReadingSettingsFragment}.
      *
@@ -156,6 +196,8 @@ public class MonthlyReadingSettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateSettingsPadding(view);
+        view.post(() -> updateSettingsPadding(view));
 
         if (requireActivity() instanceof MainActivity) {
             ((MainActivity) requireActivity()).setToolbarTitle(getString(R.string.options_monthly_readings));

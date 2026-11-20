@@ -42,6 +42,9 @@ import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.modules.backup.SaveDataToBackupFile;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
@@ -62,7 +65,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  * souhrnnou bilanci záloh oproti spotřebě, umožňuje přechod do podrobností odečtu nebo
  * nastavení zobrazení a kontroluje potřebu rozdělení ceníků pro roky 2024 a 2025.
  */
-public class MonthlyReadingFragment extends Fragment {
+public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeListener {
 
     /**
      * Tag pro logování zpráv z {@link MonthlyReadingFragment}.
@@ -286,8 +289,18 @@ public class MonthlyReadingFragment extends Fragment {
         tvBalanceStatus = view.findViewById(R.id.tvBalanceStatus);
         updateFilterLabel();
 
+        if (rv != null) {
+            rv.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
+
         fab.setOnClickListener(v -> addMonthlyReading());
         showDetailFragment(idCurrentlyReading, idPreviousReading);
+        updateRecyclerViewPadding();
     }
 
 
@@ -301,6 +314,39 @@ public class MonthlyReadingFragment extends Fragment {
 
         loadDataFromDatabase();
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

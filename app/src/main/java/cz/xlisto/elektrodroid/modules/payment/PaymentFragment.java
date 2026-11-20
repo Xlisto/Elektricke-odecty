@@ -35,6 +35,8 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PaymentModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.UIHelper;
 
@@ -42,7 +44,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
 /**
  * Fragment zobrazující zálohové platby
  */
-public class PaymentFragment extends Fragment {
+public class PaymentFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String TAG = "PaymentFragment";
     private static final String ID_FAK = "idFak";
@@ -178,6 +180,36 @@ public class PaymentFragment extends Fragment {
         setTotal();
         setRecyclerView();
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(0, 0, 0, 0);
+            }
+
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

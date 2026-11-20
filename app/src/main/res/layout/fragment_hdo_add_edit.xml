@@ -1,112 +1,37 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/hdoEditorScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/lnButtons">
+        android:layout_above="@id/lnButtons"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="16dp">
 
-            <LinearLayout
-                android:id="@+id/lnDatePre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/rlDaysOut"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceBodySmall" />
-
-            </LinearLayout>
-
-
-            <RelativeLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/lnDatePre"
-                android:background="@drawable/shape_monthly_reading_gray"
-                android:padding="2dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_item">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:text="@string/from"
-                            android:textAlignment="center" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:text="@string/until"
-                            android:textAlignment="center" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/lnDatePickers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TimePicker
-                            android:id="@+id/tpFrom"
-                            style="@android:style/Widget.Material.Light.TimePicker"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:timePickerMode="spinner" />
-
-                        <TimePicker
-                            android:id="@+id/tpUntil"
-                            style="@android:style/Widget.Material.Light.TimePicker"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:timePickerMode="spinner" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/lnDatePickers"
-                        android:orientation="vertical" />
-                </RelativeLayout>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rlDaysOut"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shape_monthly_reading_gray"
-                android:padding="2dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_item">
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
                     <LinearLayout
                         android:id="@+id/lnDays1"
@@ -116,106 +41,158 @@
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbMonday"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:checked="false"
                             android:minHeight="48dp"
                             android:text="@string/mon" />
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbTuesday"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:checked="false"
                             android:minHeight="48dp"
                             android:text="@string/tue" />
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/cbWednesday"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:checked="false"
                             android:minHeight="48dp"
                             android:text="@string/wed" />
-
-                        <com.google.android.material.checkbox.MaterialCheckBox
-                            android:id="@+id/cbThursday"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:checked="false"
-                            android:minHeight="48dp"
-                            android:text="@string/thu" />
-
-                        <com.google.android.material.checkbox.MaterialCheckBox
-                            android:id="@+id/cbFriday"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:checked="false"
-                            android:minHeight="48dp"
-                            android:text="@string/fri" />
-
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/lnDays1"
                         android:orientation="horizontal">
 
                         <com.google.android.material.checkbox.MaterialCheckBox
-                            android:id="@+id/cbSaturday"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/cbThursday"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:checked="false"
                             android:minHeight="48dp"
-                            android:text="@string/sat" />
+                            android:text="@string/thu" />
 
                         <com.google.android.material.checkbox.MaterialCheckBox
-                            android:id="@+id/cbSunday"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/cbFriday"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:checked="false"
                             android:minHeight="48dp"
-                            android:text="@string/sun" />
+                            android:text="@string/fri" />
 
-
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/cbSaturday"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:minHeight="48dp"
+                            android:text="@string/sat" />
                     </LinearLayout>
-                </RelativeLayout>
-            </RelativeLayout>
 
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbSunday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="@string/sun" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        </RelativeLayout>
-    </ScrollView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/from"
+                            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/until"
+                            android:textAppearance="?attr/textAppearanceTitleSmall" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/lnDatePickers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <TimePicker
+                            android:id="@+id/tpFrom"
+                            style="@android:style/Widget.Material.Light.TimePicker"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:timePickerMode="spinner" />
+
+                        <TimePicker
+                            android:id="@+id/tpUntil"
+                            style="@android:style/Widget.Material.Light.TimePicker"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:timePickerMode="spinner" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/lnButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="end">
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddEditHdoBack"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zpet"
-            android:textColor="@color/primary_text_button_color" />
+            android:text="@string/zpet" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddEditHdoSave"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add"
-            android:textColor="@color/primary_text_button_color" />
+            android:layout_marginStart="8dp"
+            android:text="@string/add" />
     </LinearLayout>
 </RelativeLayout>

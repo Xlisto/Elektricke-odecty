@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false"
-        android:padding="10dp">
+        android:layout_alignParentEnd="false">
 
         <TextView
             android:id="@+id/tvPendingUploadAlert"
@@ -30,7 +29,8 @@
             android:id="@+id/rvGoogleDriveFiles"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/tvPendingUploadAlert" />
+            android:layout_below="@id/tvPendingUploadAlert"
+            android:clipToPadding="false" />
 
         <TextView
             android:id="@+id/tvAlertNoInternet"

@@ -27,6 +27,7 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper
 import cz.xlisto.elektrodroid.shp.ShPFilter
 import cz.xlisto.elektrodroid.shp.ShPPriceList
 import cz.xlisto.elektrodroid.utils.Calculation
+import cz.xlisto.elektrodroid.utils.DetectScreenMode
 import cz.xlisto.elektrodroid.utils.FragmentChange
 import cz.xlisto.elektrodroid.utils.Round
 
@@ -436,6 +437,11 @@ class PriceListAdapter(
         setShowPositionItem(showButtons)
         if (position == showButtons) {
             holder.lnButtons.visibility = View.VISIBLE
+            if (context is FragmentActivity && DetectScreenMode.isLandscape(context)) {
+                holder.btnDetail.visibility = View.GONE
+            } else {
+                holder.btnDetail.visibility = View.VISIBLE
+            }
         } else {
             holder.lnButtons.visibility = View.GONE
         }

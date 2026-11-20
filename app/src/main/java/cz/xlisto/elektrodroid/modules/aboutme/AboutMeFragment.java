@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.VersionModel;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.AppReviewHelper;
 
 
@@ -37,7 +39,10 @@ import cz.xlisto.elektrodroid.utils.AppReviewHelper;
  * <p>Obsahuje také odkaz na zásady ochrany osobních údajů, vyvolání hodnocení aplikace v Google Play
  * a ruční kontrolu dostupnosti aktualizací.</p>
  */
-public class AboutMeFragment extends Fragment {
+public class AboutMeFragment extends Fragment implements OnPaddingChangeListener {
+
+    private RecyclerView recyclerView;
+    private View bottomLinks;
 
     /**
      * Vytvoří novou instanci {@link AboutMeFragment}.
@@ -85,7 +90,16 @@ public class AboutMeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_about_me, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView = view.findViewById(R.id.list);
+        bottomLinks = view.findViewById(R.id.llBottomLinks);
+        if (recyclerView != null) {
+            recyclerView.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         TextView tvLinkPrivatePolicy = view.findViewById(R.id.tvLinkPrivatePolicy);
 
         List<VersionModel> versions = readRawFile(requireContext(), R.raw.version);
@@ -109,11 +123,6 @@ public class AboutMeFragment extends Fragment {
             startActivity(browserIntent);
         });
 
-        TextView tvRateApp = view.findViewById(R.id.tvRateApp);
-        if (tvRateApp != null) {
-            tvRateApp.setOnClickListener(v -> AppReviewHelper.requestReview(requireActivity(), true));
-        }
-
         TextView tvCheckUpdate = view.findViewById(R.id.tvCheckUpdate);
         if (tvCheckUpdate != null) {
             tvCheckUpdate.setOnClickListener(v -> {
@@ -123,7 +132,52 @@ public class AboutMeFragment extends Fragment {
             });
         }
 
+        updateRecyclerViewPadding();
         return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (recyclerView != null) {
+                recyclerView.setClipToPadding(false);
+                recyclerView.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), (int) (8 * density));
+            }
+
+            if (bottomLinks != null) {
+                ViewGroup.MarginLayoutParams lp =
+                        (ViewGroup.MarginLayoutParams) bottomLinks.getLayoutParams();
+                if (lp != null) {
+                    lp.bottomMargin = mainAct.getBottomPanelMarginPx();
+                    bottomLinks.setLayoutParams(lp);
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

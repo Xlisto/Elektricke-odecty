@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
@@ -138,6 +139,18 @@ public class PriceListCompareBoxFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (requireActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) requireActivity();
+            int topPadding = mainActivity.getTopBarTotalHeight();
+            int bottomPadding = mainActivity.getEffectiveNavBarInsetBottom();
+            view.setPadding(
+                    mainActivity.getEffectiveNavBarInsetLeft(),
+                    topPadding,
+                    mainActivity.getEffectiveNavBarInsetRight(),
+                    bottomPadding
+            );
+        }
 
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(new MenuProvider() {

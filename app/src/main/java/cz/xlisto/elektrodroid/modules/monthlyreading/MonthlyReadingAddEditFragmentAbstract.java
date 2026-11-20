@@ -29,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,11 +61,13 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Abstraktní třída pro přidání a editaci měsíčního odečtu.
  */
-public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment implements NetworkCallbackImpl.NetworkChangeListener {
+public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment implements NetworkCallbackImpl.NetworkChangeListener, OnPaddingChangeListener {
 
     Button btnBack, btnSave, btnDate, btnSelectPriceList;
     LabelEditText labVT, labNT, labPayment, labDescription, labOtherService;
@@ -251,6 +254,49 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         setShowDescription();
         setShowAddPayment();
         setShowCbSendBackup();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int basePadding = (int) (10 * density);
+            int topPaddingPx = mainAct.getTopBarTotalHeight() + basePadding;
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth() + basePadding;
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight() + basePadding;
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
+            }
+
+            ScrollView sv = getView() != null ? getView().findViewById(R.id.scrollView) : null;
+            if (sv == null && getView() instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) getView();
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    if (child instanceof ScrollView) {
+                        sv = (ScrollView) child;
+                        break;
+                    }
+                }
+            }
+
+            if (sv != null) {
+                sv.setClipToPadding(false);
+                sv.setPadding(0, topPaddingPx, 0, 0);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 

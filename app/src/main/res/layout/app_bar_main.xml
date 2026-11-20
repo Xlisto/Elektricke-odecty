@@ -3,22 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
+    <!-- Vrstva 1: Kontejner fragmentů (spodní vrstva, plná obrazovka, ostrý RecyclerView) -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/myBottomNavigation"
-        android:layout_below="@id/appBarLayout"
         tools:layout="@layout/fragment_price_list" />
 
+    <!-- Vrstva 2: BlurView (prostřední vrstva, výškově omezená výhradně na oblast AppBaru) -->
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentTop="true"
+        android:clickable="false"
+        android:focusable="false" />
+
+    <!-- Vrstva 3: AppBarLayout & MaterialToolbar (horní vrstva s ostrými texty a ikonami) -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
         android:theme="@style/Theme.Odecty.AppBarOverlay"
         app:elevation="0dp">
 
@@ -26,7 +36,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorSurfaceContainer"
+            android:background="@android:color/transparent"
             app:popupTheme="@style/Theme.Odecty.PopupOverlay">
 
             <include layout="@layout/my_toolbar" />
@@ -34,31 +44,75 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <cz.xlisto.elektrodroid.ownview.MyBottomNavigationView
-        android:id="@+id/myBottomNavigation"
+    <View
+        android:id="@+id/bottomScrim"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_alignParentBottom="true"
-        android:background="?attr/colorSurfaceContainer"
-        app:itemIconTint="@color/bnv"
-        app:itemTextColor="@color/bnv"
-        app:menu="@menu/menu_main_bottom" />
+        android:background="@drawable/bg_bottom_scrim"
+        android:clickable="false"
+        android:focusable="false" />
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="72dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/floatingNavCard"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="@color/surface_container_translucent"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="8dp"
+        app:strokeColor="@color/outline_translucent"
+        app:strokeWidth="1dp">
+
+        <cz.xlisto.elektrodroid.ownview.MyBottomNavigationView
+            android:id="@+id/myBottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:elevation="0dp"
+            app:itemIconSize="24dp"
+            app:itemIconTint="@color/bottom_nav_item_color"
+            app:itemRippleColor="?attr/colorControlHighlight"
+            app:itemTextColor="@color/bottom_nav_item_color"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/menu_main_bottom"
+            app:paddingBottomSystemWindowInsets="false"
+            app:paddingLeftSystemWindowInsets="false"
+            app:paddingRightSystemWindowInsets="false"
+            app:paddingTopSystemWindowInsets="false" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/floatingLeftNavCard"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_below="@id/appBarLayout"
-        android:layout_alignParentBottom="true"
-        android:theme="@style/NavigationItemNoRipple"
-        android:background="?attr/colorSurfaceContainer"
-        app:itemTextColor="@color/bnv"
-        app:itemIconTint="@color/bnv"
-        app:itemBackground="@drawable/nav_item_background"
-        app:itemIconSize="24dp"
-        app:itemHorizontalPadding="12dp"
-        app:itemIconPadding="0dp"
-        app:menu="@menu/menu_main_left" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/surface_container_translucent"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:strokeColor="@color/outline_translucent"
+        app:strokeWidth="1dp">
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:theme="@style/NavigationItemNoRipple"
+            app:itemHorizontalPadding="12dp"
+            app:itemIconPadding="0dp"
+            app:itemIconSize="24dp"
+            app:itemIconTint="@color/bottom_nav_item_color"
+            app:itemTextColor="@color/bottom_nav_item_color"
+            app:menu="@menu/menu_main_left" />
+
+    </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

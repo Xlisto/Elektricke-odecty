@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import cz.xlisto.elektrodroid.MainActivity
 import cz.xlisto.elektrodroid.R
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
@@ -23,7 +25,7 @@ import java.util.Calendar
  * distribuční sazby a jističů, regulovaných poplatků (systémové služby, OTE, POZE),
  * daní (daň z elektřiny, DPH) a aplikovatelných cenových stropů a poznámek.
  */
-class PriceListDetailFragment : Fragment() {
+class PriceListDetailFragment : Fragment(), OnPaddingChangeListener {
 
     companion object {
         /** Klíč příznaku výsledku pro mezigrafickou komunikaci mezi fragmenty. */
@@ -104,7 +106,7 @@ class PriceListDetailFragment : Fragment() {
     private lateinit var tvNotePoze1: TextView
     private lateinit var tvNotePoze2: TextView
     private lateinit var tvNoteOte: TextView
-    private lateinit var containerBreakers: android.widget.LinearLayout
+    private var containerBreakers: android.widget.LinearLayout? = null
 
     private var priceId: Long = -1L
     private var showInFragment = false
@@ -129,10 +131,7 @@ class PriceListDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        var v = inflater.inflate(R.layout.fragment_price_list_detail, container, false)
-        if (showInFragment && DetectScreenMode.isLandscape(requireActivity())) {
-            v = inflater.inflate(R.layout.fragment_price_list_detail_infragment, container, false)
-        }
+        val v = inflater.inflate(R.layout.fragment_price_list_detail, container, false)
 
         ldnDate = v.findViewById(R.id.ldnPlatnost)
         ldnSeries = v.findViewById(R.id.ldnRada)
@@ -192,6 +191,47 @@ class PriceListDetailFragment : Fragment() {
         }
 
         return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        updateViewPadding()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateViewPadding()
+    }
+
+    fun updateViewPadding() {
+        if (!isAdded) return
+        val act = activity as? MainActivity ?: return
+        val density = resources.displayMetrics.density
+
+        val topPaddingPx = act.getTopBarTotalHeight() + (30 * density).toInt()
+        val bottomPaddingPx = if (act.isNavRail) {
+            act.effectiveNavBarInsetBottom + (16 * density).toInt()
+        } else {
+            act.effectiveNavBarInsetBottom + (112 * density).toInt()
+        }
+        val leftPaddingPx = act.getLeftNavTotalWidth()
+        val rightPaddingPx = act.effectiveNavBarInsetRight
+
+        val v = view ?: return
+        v.alpha = 1.0f
+        if (v is ViewGroup) {
+            v.clipToPadding = false
+            v.setPadding(
+                (5 * density).toInt(),
+                topPaddingPx,
+                (5 * density).toInt(),
+                bottomPaddingPx
+            )
+        }
+    }
+
+    override fun onPaddingChanged() {
+        updateViewPadding()
     }
 
     /**
@@ -258,7 +298,7 @@ class PriceListDetailFragment : Fragment() {
                 view
             }
 
-        setupBreakersGrid(containerBreakers, activeViews)
+        containerBreakers?.let { setupBreakersGrid(it, activeViews) }
 
         ldnSystemServices.price = df2.format(priceList.systemServices)
         ldnOte.price = df2.format(priceList.activity)

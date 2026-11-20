@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -37,6 +38,8 @@ import cz.xlisto.elektrodroid.modules.backup.RecoverData;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.permission.Files;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.JSONPriceList;
 
 
@@ -45,7 +48,7 @@ import cz.xlisto.elektrodroid.utils.JSONPriceList;
  * Umožňuje výběr ceníku, kontrolu přepsání a uložení do zvolené složky.
  * Xlisto 12.12.2023 11:17
  */
-public class ExportPriceListFragment extends Fragment {
+public class ExportPriceListFragment extends Fragment implements OnPaddingChangeListener {
 
     private RecyclerView recyclerView;
     private ExportPriceListAdapter exportPriceListAdapter;
@@ -115,6 +118,14 @@ public class ExportPriceListFragment extends Fragment {
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
         recyclerView = view.findViewById(R.id.recyclerViewExport);
+        if (recyclerView != null) {
+            recyclerView.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
 
         //posluchač dialogu pro vytvoření zálohy
         requireActivity().getSupportFragmentManager().setFragmentResultListener(FLAG_DIALOG_FRAGMENT_EXPORT, this, (requestKey, result) -> {
@@ -174,6 +185,38 @@ public class ExportPriceListFragment extends Fragment {
         exportPriceListAdapter = new ExportPriceListAdapter(getContext(), priceListSumModels);
         recyclerView.setAdapter(exportPriceListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (recyclerView != null) {
+                recyclerView.setClipToPadding(false);
+                recyclerView.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 }

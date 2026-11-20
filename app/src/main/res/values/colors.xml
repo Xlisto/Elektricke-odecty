@@ -29,6 +29,11 @@
     <color name="md_theme_outline">#74777F</color>
     <color name="md_theme_outlineVariant">#C4C6D0</color>
 
+    <!-- Vlastní semantické průsvitné barvy (Light) -->
+    <color name="surface_container_translucent">#F2F9F9FF</color>
+    <color name="outline_translucent">#1F000000</color>
+    <color name="surface_container_scrim">#80F9F9FF</color>
+
     <!-- Legacy / Compatibility Colors Mapped to M3 Light -->
     <color name="purple_200">#A0C6FF</color>
     <color name="purple_700">#004491</color>

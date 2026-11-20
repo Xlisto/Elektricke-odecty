@@ -10,7 +10,7 @@
         android:id="@+id/menu_hdo_toggle_view"
         android:icon="@drawable/ic_clock_24"
         android:title="@string/toggle_hdo_view_mode"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_hdo_load"
         android:title="@string/load_hdo"

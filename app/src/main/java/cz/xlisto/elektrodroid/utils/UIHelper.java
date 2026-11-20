@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
@@ -58,6 +59,7 @@ public class UIHelper {
             if (buttonType == ShPSettings.ADD_BUTTON_TYPE_FAB) {
                 if (fab != null) {
                     fab.setVisibility(View.VISIBLE);
+                    updateFabPosition(fab, context);
                 }
                 if (addMenuItem != null) {
                     addMenuItem.setVisible(false);
@@ -76,6 +78,29 @@ public class UIHelper {
             }
             if (addMenuItem != null) {
                 addMenuItem.setVisible(false);
+            }
+        }
+    }
+
+
+    /**
+     * Přizpůsobí pozici FAB tlačítka tak, aby leželo nad plovoucím spodním navigačním panelem.
+     *
+     * @param fab     FloatingActionButton tlačítko
+     * @param context kontext aplikace
+     */
+    public static void updateFabPosition(FloatingActionButton fab, Context context) {
+        if (fab == null || context == null) return;
+        if (context instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) context;
+            float density = context.getResources().getDisplayMetrics().density;
+            ViewGroup.MarginLayoutParams fabLp = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            if (fabLp != null) {
+                int targetMarginBottom = mainAct.getBottomPanelMarginPx() + (int) (8 * density);
+                if (fabLp.bottomMargin != targetMarginBottom) {
+                    fabLp.bottomMargin = targetMarginBottom;
+                    fab.setLayoutParams(fabLp);
+                }
             }
         }
     }

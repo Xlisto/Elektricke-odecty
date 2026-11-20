@@ -12,11 +12,17 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.view.Menu;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import eightbitlab.com.blurview.BlurAlgorithm;
+import eightbitlab.com.blurview.BlurView;
+import eightbitlab.com.blurview.RenderEffectBlur;
+import eightbitlab.com.blurview.RenderScriptBlur;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,6 +79,20 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
+import android.os.Build;
+import android.view.ViewGroup;
+
+import androidx.core.graphics.ColorUtils;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
+import com.google.android.material.color.MaterialColors;
+
+import cz.xlisto.elektrodroid.ui.FloatingNavManager;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Hlavní aktivita aplikace Elektrodroid.
@@ -94,6 +114,14 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     private Fragment actualFragment;
     private MyBottomNavigationView myBottomNavigationView;
     private NavigationView myNavigationView;
+    private View floatingNavCard;
+    private View floatingLeftNavCard;
+    private FloatingNavManager floatingNavManager;
+    private BlurView blurView;
+    private int statusBarInsetTop = 0;
+    private int navBarInsetBottom = 0;
+    private int navBarInsetLeft = 0;
+    private int navBarInsetRight = 0;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private Toolbar toolbar;
@@ -112,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
         setContentView(R.layout.activity_main);
         setupPendingUploadScheduler();
         schedulePendingBackupUploadIfNeeded();
@@ -131,7 +162,39 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         appUpdateHelper.checkForUpdate(false);
         setConfiguration(getResources().getConfiguration());
         myBottomNavigationView = findViewById(R.id.myBottomNavigation);
+        if (myBottomNavigationView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(myBottomNavigationView, (v, insets) -> {
+                v.setPadding(0, 0, 0, 0);
+                if (v instanceof ViewGroup) {
+                    ViewGroup vg = (ViewGroup) v;
+                    for (int i = 0; i < vg.getChildCount(); i++) {
+                        vg.getChildAt(i).setPadding(0, 0, 0, 0);
+                    }
+                }
+                return insets;
+            });
+        }
         myNavigationView = findViewById(R.id.navigationView);
+        floatingNavCard = findViewById(R.id.floatingNavCard);
+        floatingLeftNavCard = findViewById(R.id.floatingLeftNavCard);
+        floatingNavManager = new FloatingNavManager(this, myBottomNavigationView, floatingNavCard);
+        setupBlurView();
+
+        updateAppBarBackgroundAndSystemBars();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+            statusBarInsetTop = sysBars.top;
+            navBarInsetBottom = sysBars.bottom;
+            navBarInsetLeft = sysBars.left;
+            navBarInsetRight = sysBars.right;
+
+            updateTopBarPadding();
+            updateFloatingNavCardMargins();
+            notifyPaddingChanged();
+            return insets;
+        });
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         shPMainActivity = new ShPMainActivity(getApplicationContext());
 
@@ -602,11 +665,234 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         ShPSettings shPSettings = new ShPSettings(getApplicationContext());
         boolean showBottomNavigation = shPSettings.get(ShPSettings.SHOW_BOTTOM_NAVIGATION, true);
         boolean showLeftNavigation = shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true);
-        myBottomNavigationView.setVisibility(orientation == 1 && showBottomNavigation ? View.VISIBLE : View.GONE);
-        // V landscape nahrazuje levé menu spodní navigaci.
+
+        boolean isPortrait = orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (floatingNavCard != null) {
+            floatingNavCard.setVisibility(isPortrait && showBottomNavigation ? View.VISIBLE : View.GONE);
+        }
+        if (myBottomNavigationView != null) {
+            myBottomNavigationView.setVisibility(isPortrait && showBottomNavigation ? View.VISIBLE : View.GONE);
+        }
+
         boolean showLeftReplacement = orientation == Configuration.ORIENTATION_LANDSCAPE
                 && (showBottomNavigation || showLeftNavigation);
-        myNavigationView.setVisibility(showLeftReplacement ? View.VISIBLE : View.GONE);
+        if (floatingLeftNavCard != null) {
+            floatingLeftNavCard.setVisibility(showLeftReplacement ? View.VISIBLE : View.GONE);
+        }
+        if (myNavigationView != null) {
+            myNavigationView.setVisibility(showLeftReplacement ? View.VISIBLE : View.GONE);
+        }
+    }
+
+
+    public boolean isNavRail() {
+        return orientation == Configuration.ORIENTATION_LANDSCAPE
+                || (myBottomNavigationView != null && myBottomNavigationView.getVisibility() != View.VISIBLE);
+    }
+
+
+    public boolean isTablet() {
+        return getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    }
+
+
+    public int getEffectiveNavBarInsetBottom() {
+        return navBarInsetBottom;
+    }
+
+
+    public int getEffectiveNavBarInsetLeft() {
+        return navBarInsetLeft;
+    }
+
+
+    public int getEffectiveNavBarInsetRight() {
+        return navBarInsetRight;
+    }
+
+
+    public void setBottomNavCompact(boolean compact) {
+        if (floatingNavManager != null) {
+            floatingNavManager.setCompact(compact);
+        }
+    }
+
+
+    public int getBottomPanelMarginPx() {
+        return floatingNavManager != null
+                ? floatingNavManager.getBottomPanelMarginPx()
+                : (navBarInsetBottom + (int) (100 * getResources().getDisplayMetrics().density));
+    }
+
+
+    public void updateBottomPanelMarginValue(int marginPx) {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        float density = getResources().getDisplayMetrics().density;
+        int targetFabMarginBottom = marginPx + (int) (4 * density);
+        for (Fragment f : fragments) {
+            if (f != null && f.isVisible() && f.getView() != null) {
+                View fab = f.getView().findViewById(R.id.fab);
+                if (fab == null) {
+                    fab = f.getView().findViewById(R.id.fabHdo);
+                }
+                if (fab != null) {
+                    ViewGroup.MarginLayoutParams fabLp = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+                    if (fabLp != null && fabLp.bottomMargin != targetFabMarginBottom) {
+                        fabLp.bottomMargin = targetFabMarginBottom;
+                        fab.setLayoutParams(fabLp);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Konfiguruje [BlurView] pro dynamické rozostření obsahu pod horní lištou.
+     * <p>
+     * Propojí [BlurView] s kořenovým rozvržením [drawer_layout] a podle verze systému Android
+     * zvolí [RenderEffectBlur] (Android 12+) nebo [RenderScriptBlur] (starší verze).
+     */
+    private void setupBlurView() {
+        blurView = findViewById(R.id.blurView);
+        if (blurView != null) {
+            blurView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            blurView.setBlurEnabled(false);
+        }
+
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        if (appBarLayout == null) return;
+
+        int surfaceColor = MaterialColors.getColor(
+                appBarLayout,
+                com.google.android.material.R.attr.colorSurface,
+                0
+        );
+        GradientDrawable appBarGradient = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        surfaceColor,
+                        ColorUtils.setAlphaComponent(surfaceColor, 244),
+                        ColorUtils.setAlphaComponent(surfaceColor, 128),
+                        ColorUtils.setAlphaComponent(surfaceColor, 0)
+                }
+        );
+        appBarLayout.setBackground(appBarGradient);
+
+        Toolbar appToolbar = toolbar != null ? toolbar : findViewById(R.id.toolbar);
+        if (appToolbar != null) {
+            appToolbar.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+    }
+
+
+    public int getTopBarTotalHeight() {
+        float density = getResources().getDisplayMetrics().density;
+        if (blurView != null && blurView.getHeight() > 0) {
+            return blurView.getHeight();
+        }
+        Toolbar tb = toolbar != null ? toolbar : findViewById(R.id.toolbar);
+        int toolbarHeight = (tb != null && tb.getHeight() > 0) ? tb.getHeight() : (int) (56 * density);
+        return statusBarInsetTop + toolbarHeight;
+    }
+
+
+    public int getLeftNavTotalWidth() {
+        if (!isNavRail() || floatingLeftNavCard == null || floatingLeftNavCard.getVisibility() != View.VISIBLE) {
+            return getEffectiveNavBarInsetLeft();
+        }
+        float density = getResources().getDisplayMetrics().density;
+        int cardWidth = floatingLeftNavCard.getWidth() > 0 ? floatingLeftNavCard.getWidth() : (int) (72 * density);
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) floatingLeftNavCard.getLayoutParams();
+        int leftMargin = lp != null ? lp.leftMargin : (getEffectiveNavBarInsetLeft() + (int) (16 * density));
+        return leftMargin + cardWidth + (int) (12 * density);
+    }
+
+
+    public void updateAppBarBackgroundAndSystemBars() {
+        boolean isDarkTheme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (windowInsetsController != null) {
+            windowInsetsController.setAppearanceLightStatusBars(!isDarkTheme);
+            windowInsetsController.setAppearanceLightNavigationBars(!isDarkTheme);
+        }
+
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        if (appBarLayout != null) {
+            appBarLayout.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+
+        int surfaceColor = appBarLayout != null
+                ? MaterialColors.getColor(appBarLayout, com.google.android.material.R.attr.colorSurface, 0)
+                : android.graphics.Color.WHITE;
+        getWindow().setStatusBarColor(surfaceColor);
+
+        setupBlurView();
+    }
+
+
+    public void updateTopBarPadding() {
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        if (appBarLayout != null) {
+            appBarLayout.setPadding(0, statusBarInsetTop, 0, 0);
+        }
+
+        if (blurView != null) {
+            float density = getResources().getDisplayMetrics().density;
+            Toolbar tb = toolbar != null ? toolbar : findViewById(R.id.toolbar);
+            int toolbarHeight = (tb != null && tb.getHeight() > 0) ? tb.getHeight() : (int) (56 * density);
+            int totalHeight = statusBarInsetTop + toolbarHeight;
+
+            ViewGroup.LayoutParams lp = blurView.getLayoutParams();
+            if (lp != null && lp.height != totalHeight) {
+                lp.height = totalHeight;
+                blurView.setLayoutParams(lp);
+            }
+        }
+    }
+
+
+    public void updateFloatingNavCardMargins() {
+        float density = getResources().getDisplayMetrics().density;
+        int baseMargin = (int) (16 * density);
+
+        if (floatingNavCard != null) {
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) floatingNavCard.getLayoutParams();
+            if (lp != null) {
+                lp.leftMargin = baseMargin + getEffectiveNavBarInsetLeft();
+                lp.rightMargin = baseMargin + getEffectiveNavBarInsetRight();
+                lp.bottomMargin = baseMargin + getEffectiveNavBarInsetBottom();
+                floatingNavCard.setLayoutParams(lp);
+            }
+        }
+        if (floatingLeftNavCard != null) {
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) floatingLeftNavCard.getLayoutParams();
+            if (lp != null) {
+                lp.leftMargin = baseMargin + getEffectiveNavBarInsetLeft();
+                lp.topMargin = getTopBarTotalHeight() + (int) (8 * density);
+                lp.bottomMargin = baseMargin + getEffectiveNavBarInsetBottom();
+                floatingLeftNavCard.setLayoutParams(lp);
+            }
+        }
+    }
+
+
+    public void notifyPaddingChanged() {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        for (Fragment f : fragments) {
+            if (f != null && f.isVisible()) {
+                if (f instanceof OnPaddingChangeListener) {
+                    ((OnPaddingChangeListener) f).onPaddingChanged();
+                }
+            }
+        }
     }
 
 

@@ -34,17 +34,22 @@ import java.nio.charset.StandardCharsets;
 
 import cz.xlisto.elektrodroid.R;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Fragment s nápovědou z README renderovanou do HTML.
  */
-public class HelpFragment extends Fragment {
+public class HelpFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String HELP_ASSET_PATH = "help/readme.md";
     private static final String HELP_ASSET_FALLBACK_PATH = "help/README.md";
     private static final String HELP_BASE_URL = "file:///android_asset/help/";
     private static final Pattern HEADING_PATTERN = Pattern.compile("^\\s{0,3}(#{1,6})\\s+(.*?)\\s*#*\\s*$");
     private static final Pattern HTML_HEADING_PATTERN = Pattern.compile("<h([1-6])>(.*?)</h\\1>", Pattern.DOTALL);
+    private WebView webView;
+    private int helpTopPaddingPx;
+    private int helpBottomPaddingPx;
 
 
     public HelpFragment() {
@@ -67,13 +72,62 @@ public class HelpFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        WebView webView = view.findViewById(R.id.webViewHelp);
+        webView = view.findViewById(R.id.webViewHelp);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(false);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadDataWithBaseURL(HELP_BASE_URL, buildHelpHtml(requireContext()), "text/html", "UTF-8", null);
+        updateViewPadding();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx()
+                    + (int) (16 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (webView != null) {
+                webView.setPadding(0, 0, 0, 0);
+                webView.setClipToPadding(false);
+                webView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+                webView.setVerticalScrollBarEnabled(true);
+                helpTopPaddingPx = topPaddingPx;
+                helpBottomPaddingPx = bottomPaddingPx;
+                webView.loadDataWithBaseURL(
+                        HELP_BASE_URL,
+                        buildHelpHtml(requireContext()),
+                        "text/html",
+                        "UTF-8",
+                        null
+                );
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 
@@ -83,11 +137,16 @@ public class HelpFragment extends Fragment {
         Node document = parser.parse(markdown);
         HtmlRenderer renderer = HtmlRenderer.builder().escapeHtml(false).build();
         String body = addHeadingIds(renderer.render(document), extractHeadingSlugs(markdown));
+        float density = getResources().getDisplayMetrics().density;
+        int topPaddingCssPx = (int) ((helpTopPaddingPx / density) + 8);
+        int bottomPaddingCssPx = (int) ((helpBottomPaddingPx / density) + 16);
         return "<!doctype html>"
                 + "<html><head><meta charset=\"utf-8\">"
                 + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
                 + "<style>"
-                + "body{font-family:sans-serif;margin:0;padding:16px;line-height:1.5;color:#222;}"
+                + "body{font-family:sans-serif;margin:0;"
+                + "padding:" + topPaddingCssPx + "px 16px " + bottomPaddingCssPx + "px;"
+                + "line-height:1.5;color:#222;}"
                 + "img{max-width:100%;height:auto;}"
                 + "pre,code{white-space:pre-wrap;}"
                 + "table{border-collapse:collapse;max-width:100%;}"
@@ -176,8 +235,3 @@ public class HelpFragment extends Fragment {
     }
 
 }
-
-
-
-
-

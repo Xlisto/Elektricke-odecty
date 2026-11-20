@@ -37,6 +37,8 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -56,7 +58,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  * předání vybraných dat do ostatních modulů aplikace přes {@link ShPSubscriptionPoint}
  * a spuštění dialogu pro úpravu detailů.
  */
-public class SubscriptionPointFragment extends Fragment {
+public class SubscriptionPointFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String FLAG_DELETE_SUBSCRIPTION_POINT = "flagDeleteSubscriptionPoint";
     private static final int FREQUENCY_MONTHLY = 0;
@@ -319,6 +321,7 @@ public class SubscriptionPointFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateViewPadding();
         ShPSubscriptionPoint shp = new ShPSubscriptionPoint(getActivity());
         DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(getActivity());
         dataSubscriptionPointSource.open();
@@ -872,6 +875,37 @@ public class SubscriptionPointFragment extends Fragment {
      */
     private void showDeleteDialog() {
         YesNoDialogFragment.newInstance(getString(R.string.smazat_odberne_misto2), FLAG_DELETE_SUBSCRIPTION_POINT).show(requireActivity().getSupportFragmentManager(), "yesNoDialog");
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+            }
+            if (sc != null) {
+                sc.setClipToPadding(false);
+                sc.setPadding(0, 0, 0, bottomPaddingPx);
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 }

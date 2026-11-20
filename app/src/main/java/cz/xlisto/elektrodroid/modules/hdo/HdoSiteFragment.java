@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.shp.ShPPreCodes;
@@ -238,9 +239,27 @@ public class HdoSiteFragment extends Fragment {
     }
 
 
+    private void updateEditorPadding(@NonNull View view) {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        float density = getResources().getDisplayMetrics().density;
+        int basePadding = (int) (10 * density);
+
+        view.setPadding(
+                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                mainActivity.getTopBarTotalHeight() + basePadding,
+                basePadding + mainActivity.getEffectiveNavBarInsetRight(),
+                mainActivity.getBottomPanelMarginPx()
+        );
+    }
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateEditorPadding(view);
+        view.post(() -> updateEditorPadding(view));
         spDistributionArea = view.findViewById(R.id.spDistributionArea);
         spDistrict = view.findViewById(R.id.spDistrict);
         Button btnHdoSite = view.findViewById(R.id.btnHdoSite);
@@ -478,6 +497,9 @@ public class HdoSiteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getView() != null) {
+            updateEditorPadding(getView());
+        }
 
         //handler pro povolení vymazání obsahu arraylistu
         Message message = new Message();
@@ -567,7 +589,6 @@ public class HdoSiteFragment extends Fragment {
         HdoAdapter hdoAdapter = new HdoAdapter(hdoModels, rvHdoSite, false);
         rvHdoSite.setAdapter(hdoAdapter);
         rvHdoSite.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvHdoSite.scheduleLayoutAnimation();
     }
 
 

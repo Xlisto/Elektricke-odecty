@@ -37,7 +37,6 @@
         android:layout_above="@+id/tvTotal"
         android:layout_below="@id/lnOutSp"
         android:contentDescription="@string/detail_invoice_description"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:paddingEnd="10dp"

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,6 +31,7 @@ import java.util.Arrays;
 import android.util.Log;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
@@ -189,6 +192,8 @@ public class MonthlyReadingDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateDetailPadding(view);
+        view.post(() -> updateDetailPadding(view));
         tvDate = view.findViewById(R.id.tvDateMonthDetail);
         tvDateScope = view.findViewById(R.id.tvDateScopeMonthDetail);
         TextView tvVT = view.findViewById(R.id.tvVTMonthDetail);
@@ -217,6 +222,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
                     // Nyní jsou rozměry k dispozici
                     screenWidth = view.getWidth() - view.getPaddingStart() - view.getPaddingEnd();
+                    updateDateHeaderLayout(screenWidth);
 
                     resizeTextViews();
                 }
@@ -235,6 +241,9 @@ public class MonthlyReadingDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getView() != null) {
+            updateDetailPadding(getView());
+        }
         // Pokud zatím nemáme načtené záznamy, pokusíme se je načíst.
         if (monthlyReadingCurrently == null || monthlyReadingPrevious == null) {
             loadMonthlyReading();
@@ -312,6 +321,63 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
         if (tlVt.getChildCount() == 0)
             tvsVt = createTable(tlVt, tableVt, priceArray, marginInPx, consuptionVt, consuptionNt, month);
+    }
+
+
+    private void updateDateHeaderLayout(int availableWidth) {
+        if (tvDate == null || tvDateScope == null) return;
+
+        if (!(tvDate.getParent() instanceof LinearLayout)) return;
+        LinearLayout header = (LinearLayout) tvDate.getParent();
+        float density = getResources().getDisplayMetrics().density;
+        boolean useTwoLines = availableWidth < (int) (520 * density);
+
+        header.setOrientation(useTwoLines ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams dateParams = (LinearLayout.LayoutParams) tvDate.getLayoutParams();
+        LinearLayout.LayoutParams scopeParams = (LinearLayout.LayoutParams) tvDateScope.getLayoutParams();
+
+        if (useTwoLines) {
+            dateParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
+            dateParams.weight = 0f;
+            scopeParams.width = LinearLayout.LayoutParams.MATCH_PARENT;
+            scopeParams.weight = 0f;
+            tvDateScope.setGravity(Gravity.START);
+            tvDateScope.setMaxLines(2);
+        } else {
+            dateParams.width = 0;
+            dateParams.weight = 1f;
+            scopeParams.width = 0;
+            scopeParams.weight = 1.5f;
+            tvDateScope.setGravity(Gravity.END);
+            tvDateScope.setMaxLines(1);
+        }
+        tvDate.setLayoutParams(dateParams);
+        tvDateScope.setLayoutParams(scopeParams);
+    }
+
+
+    private void updateDetailPadding(@NonNull View view) {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        float density = getResources().getDisplayMetrics().density;
+        int basePadding = (int) (2 * density);
+        int topPadding = requireActivity().getResources().getConfiguration().orientation
+                == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                ? (int) (8 * density)
+                : mainActivity.getTopBarTotalHeight();
+        int bottomPadding = mainActivity.getBottomPanelMarginPx();
+
+        view.setPadding(basePadding, topPadding, basePadding, bottomPadding);
+        if (view instanceof NestedScrollView) {
+            ((NestedScrollView) view).setClipToPadding(false);
+        }
+        view.post(() -> {
+            int availableWidth = view.getWidth() - view.getPaddingStart() - view.getPaddingEnd();
+            screenWidth = availableWidth;
+            updateDateHeaderLayout(availableWidth);
+            resizeTextViews();
+        });
     }
 
 
@@ -579,7 +645,10 @@ public class MonthlyReadingDetailFragment extends Fragment {
             // Přidání mezery po specifických řádcích
             if (i == 5 || i == 10 || i == 14) {
                 TableRow spaceRow = new TableRow(requireContext());
-                TableRow.LayoutParams spaceLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, DensityUtils.dpToPx(requireContext(), 800)); // Převod DP na PX pro výšku
+                TableRow.LayoutParams spaceLayoutParams = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        DensityUtils.dpToPx(requireContext(), 8)
+                );
                 spaceRow.setLayoutParams(spaceLayoutParams);
                 TextView tv = new TextView(requireContext());
                 spaceRow.addView(tv);

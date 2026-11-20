@@ -16,12 +16,14 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Fragment zahrnující záložky a fragmenty záznamů faktury, detaily faktury a plateb faktury.
  */
-public class InvoiceTabFragment extends Fragment {
+public class InvoiceTabFragment extends Fragment implements OnPaddingChangeListener {
     private static final String TABLE_FAK = "tableFak";
     private static final String TABLE_NOW = "tableNow";
     private static final String TABLE_PAY = "tablePay";
@@ -150,5 +152,34 @@ public class InvoiceTabFragment extends Fragment {
                 Objects.requireNonNull(tabLayout.getTabAt(position)).select();
             }
         });
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 }

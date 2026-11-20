@@ -37,6 +37,9 @@ import cz.xlisto.elektrodroid.dialogs.SetDefaultMetersDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.SettingsInvoiceDialogFragment;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
@@ -52,7 +55,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  * a přechod na detail faktury nebo platby.
  * Používá tovární metodu {@link #newInstance()} pro vytvoření instance.
  */
-public class InvoiceListFragment extends Fragment {
+public class InvoiceListFragment extends Fragment implements OnPaddingChangeListener {
 
     public static final String INVOICE_NUMBER_EDIT_LISTENER = "invoice_number_edit_listener";
     public static final String INVOICE_NUMBER_ADD_LISTENER = "invoice_number_add_listener";
@@ -235,6 +238,14 @@ public class InvoiceListFragment extends Fragment {
         llAlertNoInvoice = view.findViewById(R.id.lnAlertFirstMeters);
         fab = view.findViewById(R.id.fab);
         rv = view.findViewById(R.id.recycleViewInvoiceList);
+        if (rv != null) {
+            rv.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         TextView tvNoInvoice = view.findViewById(R.id.tvAlertInvoiceList);
         btnSetFirstMeters.setOnClickListener(v -> showAddFirstMetersDialog());
         fab.setOnClickListener(v -> showAddInvoiceDialog());
@@ -243,6 +254,7 @@ public class InvoiceListFragment extends Fragment {
             tvNoInvoice.setVisibility(View.VISIBLE);
             rv.setVisibility(View.INVISIBLE);
         }
+        updateRecyclerViewPadding();
     }
 
 
@@ -254,6 +266,39 @@ public class InvoiceListFragment extends Fragment {
         super.onResume();
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
         loadDataAndSetAdapter();
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

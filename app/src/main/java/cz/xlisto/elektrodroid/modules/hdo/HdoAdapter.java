@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int selectedPosition;
     private final boolean clickables;
     private boolean isGraphicMode = false;
+    private FragmentActivity fragmentActivity;
 
 
     /**
@@ -104,6 +106,20 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.items = items;
         this.recyclerView = recyclerView;
         this.clickables = clickables;
+        Context context = recyclerView.getContext();
+        this.fragmentActivity = findFragmentActivity(context);
+    }
+
+
+    private FragmentActivity findFragmentActivity(Context context) {
+        Context current = context;
+        while (current instanceof ContextWrapper) {
+            if (current instanceof FragmentActivity) {
+                return (FragmentActivity) current;
+            }
+            current = ((ContextWrapper) current).getBaseContext();
+        }
+        return current instanceof FragmentActivity ? (FragmentActivity) current : null;
     }
 
 
@@ -399,14 +415,23 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 selectedId = hdoModel.getId();
                 selectedPosition = position;
                 HdoEditFragment hdoEditFragment = HdoEditFragment.newInstance(hdoModel);
-                FragmentChange.replace(((FragmentActivity) v.getContext()), hdoEditFragment, FragmentChange.Transaction.MOVE, true);
+                FragmentActivity activity = findFragmentActivity(v.getContext());
+                if (activity == null) activity = fragmentActivity;
+                if (activity != null) {
+                    FragmentChange.replace(activity, hdoEditFragment, FragmentChange.Transaction.MOVE, true);
+                }
             });
 
             myHolder.btnDelete.setOnClickListener(v -> {
                 HdoModel hdoModel = items.get(position);
                 selectedId = hdoModel.getId();
                 selectedPosition = position;
-                YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE).show(((FragmentActivity) v.getContext()).getSupportFragmentManager(), TAG);
+                FragmentActivity activity = findFragmentActivity(v.getContext());
+                if (activity == null) activity = fragmentActivity;
+                if (activity != null) {
+                    YesNoDialogFragment.newInstance("Odstranit záznam HDO", FLAG_HDO_ADAPTER_DELETE)
+                            .show(activity.getSupportFragmentManager(), TAG);
+                }
             });
             bindButtonsState(myHolder, position);
         }

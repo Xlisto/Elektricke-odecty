@@ -33,10 +33,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -77,20 +82,23 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  * @version 2.0 (modernizováno s ActivityResultContracts)
  * @since 26.05.2023
  */
-public class HdoFragment extends Fragment {
+public class HdoFragment extends Fragment implements OnPaddingChangeListener {
 
     private Timer timer;
     private SubscriptionPointModel subscriptionPoint;
     private TextView tvTimeHdo, tvTimeDifference, tvAlertHdo, tvDateHdo;
     private LinearLayout llRelaysStatusContainer;
+    private LinearLayout llHdoContainer;
     private ImageView imageViewIconNT;
     private Spinner spReleSettings;
     private RecyclerView rvHdo;
+    private MaterialButtonToggleGroup hdoViewToggleGroup;
     private long idSubscriptionPoint, timeDifferent;
     private ArrayList<HdoModel> hdoModels = new ArrayList<>();
     private HdoAdapter hdoAdapter;
     private FloatingActionButton fab;
     private MenuItem addMenuItem;
+    private Menu hdoMenu;
 
     //překreslení gui
     private final Runnable timerTick = this::setTime;
@@ -122,6 +130,7 @@ public class HdoFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_hdo, menu);
+                hdoMenu = menu;
                 addMenuItem = menu.findItem(R.id.menu_action_add_hdo);
                 UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), true);
                 ShPHdo shPHdo = new ShPHdo(requireContext());
@@ -143,26 +152,7 @@ public class HdoFragment extends Fragment {
                     ShPHdo shPHdo = new ShPHdo(requireContext());
                     boolean currentGraphic = shPHdo.isGraphicMode();
                     boolean newGraphic = !currentGraphic;
-                    shPHdo.setGraphicMode(newGraphic);
-
-                    if (newGraphic) {
-                        if (spReleSettings != null) {
-                            spReleSettings.setVisibility(View.GONE);
-                        }
-                        updateCardHdoFilterVisibility();
-                        loadData(null);
-                        setupRecyclerViewLayoutManager(true);
-                    } else {
-                        loadReles();
-                        String selectedRele = null;
-                        if (spReleSettings != null && spReleSettings.getSelectedItem() != null) {
-                            selectedRele = spReleSettings.getSelectedItem().toString();
-                        }
-                        loadData(selectedRele);
-                        setupRecyclerViewLayoutManager(false);
-                    }
-
-                    requireActivity().invalidateOptionsMenu();
+                    setHdoViewMode(newGraphic);
                     return true;
                 } else if (menuItem.getItemId() == R.id.menu_hdo_load) {
                     HdoSiteFragment hdoSite = HdoSiteFragment.newInstance();
@@ -198,18 +188,37 @@ public class HdoFragment extends Fragment {
         tvTimeDifference = view.findViewById(R.id.tvTimeDifference);
         tvAlertHdo = view.findViewById(R.id.tvAlertHdo);
         tvDateHdo = view.findViewById(R.id.tvHdoDate);
+        llHdoContainer = view.findViewById(R.id.llHdoContainer);
         llRelaysStatusContainer = view.findViewById(R.id.llRelaysStatusContainer);
         rvHdo = view.findViewById(R.id.rvHdo);
-        rvHdo.setItemAnimator(null);
+        if (rvHdo != null) {
+            rvHdo.setItemAnimator(null);
+            rvHdo.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         new ShPHdo(requireContext()).set(ShPHdo.ARG_RUNNING_SERVICE, false);
         spReleSettings = view.findViewById(R.id.spReleSettings);
         imageViewIconNT = view.findViewById(R.id.imageViewIconNT);
         fab = view.findViewById(R.id.fabHdo);
+        hdoViewToggleGroup = view.findViewById(R.id.hdoViewToggleGroup);
+        ShPHdo shPHdo = new ShPHdo(requireContext());
+        if (hdoViewToggleGroup != null) {
+            hdoViewToggleGroup.check(shPHdo.isGraphicMode()
+                    ? R.id.btnHdoGraphicView
+                    : R.id.btnHdoListView);
+            hdoViewToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+                if (!isChecked) return;
+                setHdoViewMode(checkedId == R.id.btnHdoGraphicView);
+            });
+        }
 
         ImageView btnMinimizeHdo = view.findViewById(R.id.btnMinimizeHdo);
         LinearLayout llHdoClockDetails = view.findViewById(R.id.llHdoClockDetails);
 
-        ShPHdo shPHdo = new ShPHdo(requireContext());
         boolean isMinimized = shPHdo.get(ShPHdo.ARG_HDO_CLOCK_MINIMIZED, false);
         applyClockMinimizedState(isMinimized);
 
@@ -268,6 +277,7 @@ public class HdoFragment extends Fragment {
                 }
             }
         });
+        updateRecyclerViewPadding();
     }
 
 
@@ -287,6 +297,7 @@ public class HdoFragment extends Fragment {
             imageViewIconNT.setVisibility(View.GONE);
             return;
         }
+        updateRecyclerViewPadding();
         DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
         dataSettingsSource.open();
         timeDifferent = dataSettingsSource.loadTimeShift(idSubscriptionPoint);
@@ -602,6 +613,49 @@ public class HdoFragment extends Fragment {
     }
 
 
+    private void setHdoViewMode(boolean isGraphic) {
+        new ShPHdo(requireContext()).setGraphicMode(isGraphic);
+
+        if (hdoViewToggleGroup != null) {
+            hdoViewToggleGroup.check(isGraphic
+                    ? R.id.btnHdoGraphicView
+                    : R.id.btnHdoListView);
+        }
+
+        if (isGraphic) {
+            if (spReleSettings != null) {
+                spReleSettings.setVisibility(View.GONE);
+            }
+            updateCardHdoFilterVisibility();
+            loadData(null);
+            setupRecyclerViewLayoutManager(true);
+        } else {
+            loadReles();
+            String selectedRele = null;
+            if (spReleSettings != null && spReleSettings.getSelectedItem() != null) {
+                selectedRele = spReleSettings.getSelectedItem().toString();
+            }
+            loadData(selectedRele);
+            setupRecyclerViewLayoutManager(false);
+        }
+
+        requireActivity().invalidateOptionsMenu();
+        updateHdoToggleMenuItem(isGraphic);
+    }
+
+
+    private void updateHdoToggleMenuItem(boolean isGraphic) {
+        if (hdoMenu == null) return;
+        MenuItem toggleItem = hdoMenu.findItem(R.id.menu_hdo_toggle_view);
+        if (toggleItem != null) {
+            toggleItem.setVisible(true);
+            toggleItem.setEnabled(true);
+            toggleItem.setIcon(isGraphic ? R.drawable.ic_list_24 : R.drawable.ic_clock_24);
+            toggleItem.setTitle(isGraphic ? R.string.show_as_list : R.string.show_as_graphic);
+        }
+    }
+
+
     /**
      * Načte seznam dostupných relé z databáze a nastaví spinner.
      * Spinner se zobrazí pouze pokud existuje více než jedno relé.
@@ -655,7 +709,6 @@ public class HdoFragment extends Fragment {
         hdoAdapter.setGraphicMode(isGraphic);
         rvHdo.setAdapter(hdoAdapter);
         setupRecyclerViewLayoutManager(isGraphic);
-        rvHdo.scheduleLayoutAnimation();
     }
 
 
@@ -723,6 +776,47 @@ public class HdoFragment extends Fragment {
             btnMinimizeHdo.setImageResource(R.drawable.ic_expand_more_24);
             btnMinimizeHdo.setContentDescription(getString(R.string.minimize));
         }
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (llHdoContainer != null) {
+                llHdoContainer.setPadding(
+                        0,
+                        topPaddingPx,
+                        0,
+                        0
+                );
+            }
+
+            if (rvHdo != null) {
+                rvHdo.setClipToPadding(false);
+                rvHdo.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

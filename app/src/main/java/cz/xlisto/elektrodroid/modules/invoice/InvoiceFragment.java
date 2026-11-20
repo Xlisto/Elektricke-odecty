@@ -54,6 +54,8 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.BalanceStatusUiHelper;
 import cz.xlisto.elektrodroid.shp.ShPInvoice;
 import cz.xlisto.elektrodroid.utils.Calculation;
@@ -67,7 +69,7 @@ import cz.xlisto.elektrodroid.utils.UIHelper;
  * Fragment zobrazení jednotlivých záznamů ve faktuře
  * Xlisto 04.02.2023 10:52
  */
-public class InvoiceFragment extends Fragment {
+public class InvoiceFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String ID_FAK = "idFak";
     private static final String TABLE_FAK = "tableFak";
@@ -396,6 +398,44 @@ public class InvoiceFragment extends Fragment {
         setRecyclerView();
         setTotalTextView();
         setShowAddButtonAddItemInvoice();
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(0, 0, 0, 0);
+            }
+
+            if (tvTotal != null) {
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvTotal.getLayoutParams();
+                if (lp != null && lp.bottomMargin != bottomPaddingPx) {
+                    lp.bottomMargin = bottomPaddingPx;
+                    tvTotal.setLayoutParams(lp);
+                }
+            }
+
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), (int) (4 * density));
+            }
+            UIHelper.updateFabPosition(fab, getActivity());
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 
@@ -501,7 +541,6 @@ public class InvoiceFragment extends Fragment {
         invoiceAdapter = new InvoiceAdapter(requireActivity(), invoices, table, subscriptionPoint, poze.getTypePoze(), rv, viewModel);
         invoiceAdapter.setShowCheckBoxSelect(showCheckBoxSelect);
         rv.setAdapter(invoiceAdapter);
-        rv.scheduleLayoutAnimation();
     }
 
 

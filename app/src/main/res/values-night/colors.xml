@@ -29,6 +29,11 @@
     <color name="md_theme_outline">#8E909A</color>
     <color name="md_theme_outlineVariant">#44474F</color>
 
+    <!-- Vlastní semantické průsvitné barvy (Dark) -->
+    <color name="surface_container_translucent">#F2111318</color>
+    <color name="outline_translucent">#26FFFFFF</color>
+    <color name="surface_container_scrim">#A0111318</color>
+
     <!-- Legacy / Compatibility Colors Mapped to M3 Dark -->
     <color name="purple_200">#ADC6FF</color>
     <color name="color_red_alert">#FF897D</color>

@@ -50,6 +50,8 @@ import java.util.concurrent.Executors;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -87,11 +89,13 @@ import cz.xlisto.elektrodroid.utils.FragmentChange;
  * - Zapisuje/aktualizuje záznamy v databázi, mění shared preferences (aktuální fragment/filtr),
  * naviguje uživatele a zobrazuje Snackbar/Toast pro informace a výzvy k akci.
  * <p>
- * Poznámky k implementaci:
- * - Statické proměnné `singlePriceLists` a `doublePriceList` slouží k předání dat mezi callbacky dialogů.
- * - Importní logika používá kontrolu počtu záznamů v DB: 0 = vložit, 1 = připravit přepsání, >1 = řešit konflikt.
+ import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
+
+ /**
+ * Fragment pro import ceníků z externího adresáře (JSON zálohy).
  */
-public class ImportPriceListFragment extends Fragment {
+public class ImportPriceListFragment extends Fragment implements OnPaddingChangeListener {
 
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_1_PRICES = "exportDialogFragment1Prices";
     public static final String FLAG_DIALOG_FRAGMENT_EXPORT_IMPORT_2_PRICES = "exportDialogFragment2Prices";
@@ -185,6 +189,14 @@ public class ImportPriceListFragment extends Fragment {
         requireActivity().invalidateOptionsMenu();
         shPBackup = new ShPBackup(requireContext());
         recyclerView = view.findViewById(R.id.recyclerViewImportExport);
+        if (recyclerView != null) {
+            recyclerView.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         lnProgressBar = view.findViewById(R.id.lnProgressBar);
         btnSelectFolder = view.findViewById(R.id.btnSelectFolder);
         tvDescriptionPermition = view.findViewById(R.id.tvDescriptionPermission);
@@ -194,7 +206,6 @@ public class ImportPriceListFragment extends Fragment {
             if (documentFiles != null) {
                 importExportAdapter = new ImportPriceListAdapter(requireActivity(), documentFiles, recyclerView);
                 recyclerView.setAdapter(importExportAdapter);
-                recyclerView.scheduleLayoutAnimation();
                 recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
             }
         });
@@ -308,6 +319,38 @@ public class ImportPriceListFragment extends Fragment {
         super.onResume();
         uri = Uri.parse(shPBackup.get(ShPBackup.FOLDER_BACKUP, RecoverData.DEF_URI));
         importPriceListViewModel.checkPermission(requireActivity(), uri);
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+            }
+
+            if (recyclerView != null) {
+                recyclerView.setClipToPadding(false);
+                recyclerView.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 

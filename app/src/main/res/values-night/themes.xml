@@ -39,9 +39,14 @@
         <item name="colorOutline">@color/md_theme_outline</item>
         <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
 
+        <!-- Custom Translucent Attributes -->
+        <item name="colorSurfaceContainerTranslucent">@color/surface_container_translucent</item>
+        <item name="colorOutlineTranslucent">@color/outline_translucent</item>
+        <item name="colorSurfaceContainerScrim">@color/surface_container_scrim</item>
+
         <!-- Status bar and Navigation bar color according to M3 standard. -->
-        <item name="android:statusBarColor">@color/md_theme_surfaceContainer</item>
-        <item name="android:navigationBarColor">@color/md_theme_surfaceContainer</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
 
         <item name="android:itemBackground">@color/menuBackgroundColor</item>
@@ -49,12 +54,20 @@
         <item name="background">@color/color_bar</item>
     </style>
 
-    <style name="Theme.Odecty.NoActionBar">
+    <style name="Theme.Odecty.NoActionBar" parent="Theme.Odecty">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Odecty.AppBarOverlay" parent="ThemeOverlay.Material3.ActionBar" />
+    <style name="Theme.Odecty.AppBarOverlay" parent="ThemeOverlay.Material3.ActionBar">
+        <item name="colorSurfaceContainerTranslucent">@color/surface_container_translucent</item>
+        <item name="colorOutlineTranslucent">@color/outline_translucent</item>
+        <item name="colorSurfaceContainerScrim">@color/surface_container_scrim</item>
+    </style>
 
-    <style name="Theme.Odecty.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
+    <style name="Theme.Odecty.PopupOverlay" parent="ThemeOverlay.Material3.Dark">
+        <item name="colorSurfaceContainerTranslucent">@color/surface_container_translucent</item>
+        <item name="colorOutlineTranslucent">@color/outline_translucent</item>
+        <item name="colorSurfaceContainerScrim">@color/surface_container_scrim</item>
+    </style>
 </resources>

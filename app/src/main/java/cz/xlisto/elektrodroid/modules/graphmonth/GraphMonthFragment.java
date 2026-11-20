@@ -22,11 +22,13 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.shp.ShPGraphMonth;
 
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 /**
  * Xlisto 20.08.2023 21:53
  */
-public class GraphMonthFragment extends Fragment {
+public class GraphMonthFragment extends Fragment implements OnPaddingChangeListener {
 
     private final String ARG_IS_SHOW_PERIOD = "isShowPeriod";
     private final String ARG_IS_SHOW_VT = "isShowVT";
@@ -181,6 +183,7 @@ public class GraphMonthFragment extends Fragment {
             setGraphMonthView();
         }
         setupTooltips();
+        updateViewPadding();
         return view;
     }
 
@@ -188,6 +191,7 @@ public class GraphMonthFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        updateViewPadding();
         requireActivity().invalidateOptionsMenu();
 
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
@@ -421,6 +425,29 @@ public class GraphMonthFragment extends Fragment {
             return 0;
         }
         return compareMonth;
+    }
+
+
+    public void updateViewPadding() {
+        if (getView() == null || !isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 }

@@ -8,42 +8,45 @@
     tools:context=".modules.invoice.InvoiceListFragment">
 
     <LinearLayout
-        android:id="@+id/lnAlertFirstMeters"
+        android:id="@+id/llInvoiceListContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/shape_background_red"
-        android:gravity="end"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/lnAlertFirstMeters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@string/no_invoice_alert" />
+            android:background="@drawable/shape_background_red"
+            android:gravity="end"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnSetFirstMeters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/no_invoice_alert" />
+
+            <Button
+                android:id="@+id/btnSetFirstMeters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleViewInvoiceList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:animateLayoutChanges="false"
+            android:clipToPadding="false"
+            android:contentDescription="@string/description_invoice"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp" />
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycleViewInvoiceList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/lnAlertFirstMeters"
-        android:layout_alignParentTop="false"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:animateLayoutChanges="false"
-        android:contentDescription="@string/description_invoice"
-        android:layoutAnimation="@anim/layout_animation_fall_down"
-        android:paddingStart="5dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="5dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

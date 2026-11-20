@@ -54,14 +54,15 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint
 import cz.xlisto.elektrodroid.utils.UIHelper
 import java.util.Calendar
 import java.util.concurrent.Executors
+import cz.xlisto.elektrodroid.MainActivity
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener
 
 /**
- * Fragment pro zobrazení, filtrování, import a výběr ceníků elektřiny.
- *
  * Umožňuje procházet uložené ceníky, aplikovat filtry, importovat ceníky z PDF dokumentů
  * dodavatelů, mazat nevyužité či vybrané ceníky a vybírat ceníky pro porovnání nebo přiřazení k fakturám.
  */
-class PriceListFragment : Fragment() {
+class PriceListFragment : Fragment(), OnPaddingChangeListener {
 
     /**
      * Strana zobrazení v porovnávacím nebo dvoupanelovém režimu (např. v rozvržení na šířku).
@@ -176,6 +177,7 @@ class PriceListFragment : Fragment() {
 
     private lateinit var rv: RecyclerView
     private lateinit var cardTopInfo: View
+    private lateinit var priceListContainer: View
     private lateinit var tvCountPriceItem: TextView
     private lateinit var tvSelectionCount: TextView
     private lateinit var containerSelectionActions: View
@@ -367,6 +369,10 @@ class PriceListFragment : Fragment() {
         fab = view.findViewById(R.id.fab)
         fab.setOnClickListener { v -> showAddPriceListMenu(v) }
         rv = view.findViewById(R.id.rv_price_list)
+        rv.addOnScrollListener(FloatingNavScrollListener { compact ->
+            (activity as? MainActivity)?.setBottomNavCompact(compact)
+        })
+        priceListContainer = view.findViewById(R.id.llPriceListContainer)
         cardTopInfo = view.findViewById(R.id.cardTopInfo)
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist)
         tvSelectionCount = view.findViewById(R.id.tvSelectionCount)
@@ -377,6 +383,7 @@ class PriceListFragment : Fragment() {
         overlayPdfProgress = view.findViewById(R.id.overlayPdfProgress)
         cardPdfProgress = view.findViewById(R.id.cardPdfProgress)
         tvPdfProgressTask = view.findViewById(R.id.tvPdfProgressTask)
+        updateRecyclerViewPadding()
 
         btnClearSelection.setOnClickListener {
             selectedIds.clear()
@@ -497,6 +504,53 @@ class PriceListFragment : Fragment() {
         super.onResume()
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
         btnShowBack()
+        updateRecyclerViewPadding()
+    }
+
+    fun updateRecyclerViewPadding() {
+        if (!::rv.isInitialized || !isAdded) return
+        val act = activity as? MainActivity ?: return
+        val density = resources.displayMetrics.density
+
+        val topPaddingPx = act.getTopBarTotalHeight()
+        val bottomPaddingPx = if (act.isNavRail) {
+            act.effectiveNavBarInsetBottom + (16 * density).toInt()
+        } else {
+            act.effectiveNavBarInsetBottom + (112 * density).toInt()
+        }
+        val leftPaddingPx = act.getLeftNavTotalWidth()
+        val rightPaddingPx = act.effectiveNavBarInsetRight
+
+        view?.alpha = 1.0f
+        view?.setPadding(leftPaddingPx, 0, rightPaddingPx, 0)
+
+        if (::priceListContainer.isInitialized) {
+            priceListContainer.setPadding(
+                0,
+                topPaddingPx,
+                0,
+                0
+            )
+        }
+
+        if (::cardTopInfo.isInitialized) {
+            cardTopInfo.visibility = View.VISIBLE
+        }
+
+        rv.clipToPadding = false
+        rv.setPadding(
+            (5 * density).toInt(),
+            (4 * density).toInt(),
+            (5 * density).toInt(),
+            bottomPaddingPx
+        )
+        if (::fab.isInitialized) {
+            UIHelper.updateFabPosition(fab, activity)
+        }
+    }
+
+    override fun onPaddingChanged() {
+        updateRecyclerViewPadding()
     }
 
     /**

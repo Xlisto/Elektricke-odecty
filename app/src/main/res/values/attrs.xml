@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="colorSurfaceContainerTranslucent" format="color" />
+    <attr name="colorOutlineTranslucent" format="color" />
+    <attr name="colorSurfaceContainerScrim" format="color" />
+
     <declare-styleable name="LabelEditText">
         <attr name="label" format="string" />
         <attr name="defaultText" format="string" />
@@ -17,7 +21,6 @@
         <attr name="android:gravity"/>
         <attr name="changedBackgroundEditText" format="reference"/>
         <attr name="labelSizeText" format="integer"/>
-
     </declare-styleable>
 
     <declare-styleable name="LabelPriceDetail">

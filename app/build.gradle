@@ -179,4 +179,5 @@ dependencies {
     implementation libs.play.app.update
     implementation libs.re2j
     implementation libs.pdfbox.android
+    implementation libs.blurview
 }

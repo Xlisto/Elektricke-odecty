@@ -1,205 +1,253 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?android:attr/buttonBarButtonStyle"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:clipToPadding="false">
 
     <LinearLayout
-        android:id="@+id/lnDistributionArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
-            android:id="@+id/spDistributionArea"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:entries="@array/distribucni_uzemi_kratke"
-            android:minHeight="48dp" />
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
 
-        <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
-            android:id="@+id/spDistrict"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:id="@+id/lnDistributionArea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <Spinner
+                        android:id="@+id/spDistributionArea"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:entries="@array/distribucni_uzemi_kratke"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+
+                    <Spinner
+                        android:id="@+id/spDistrict"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnCodeEgd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <Spinner
+                        android:id="@+id/spA"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:labelFor="@id/textView45"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+
+                    <Spinner
+                        android:id="@+id/spB"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:labelFor="@id/textView46"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+
+                    <Spinner
+                        android:id="@+id/spPB"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:labelFor="@id/textView47"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+
+                    <TextView
+                        android:id="@+id/textView45"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/a" />
+
+                    <TextView
+                        android:id="@+id/textView46"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dp" />
+
+                    <TextView
+                        android:id="@+id/textView47"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/b" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/hdo_code"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etHdoCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autofillHints="@string/code_example"
+                            android:inputType="text"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="48dp" />
-    </LinearLayout>
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
 
-    <LinearLayout
-        android:id="@+id/lnCode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/lnCodeEgd"
-        android:orientation="horizontal"
-        android:weightSum="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etHdoCode"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.00"
-            android:autofillHints="@string/code_example"
-            android:hint="@string/hint_hdo_code"
-            android:inputType="text"
-            android:minHeight="48dp" />
+                <LinearLayout
+                    android:id="@+id/lnHdoButtons1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hdo_code" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnHdoSite"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/load_www" />
 
-    </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnHdoLoadData"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/load_time" />
+                </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/lnCodeEgd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lnDistributionArea"
-        android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/lnHdoButtons2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveHdo"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/save_time" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnClipData"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/save_to_clipboard" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
-            android:id="@+id/spA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@id/textView45"
-            android:minHeight="48dp" />
-
-        <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
-            android:id="@+id/spB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@id/textView46"
-            android:minHeight="48dp" />
-
-        <Spinner
-            android:popupBackground="?attr/colorSurfaceContainerHigh"
-            android:id="@+id/spPB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@id/textView47"
-            android:minHeight="48dp" />
+            android:id="@+id/spDateEgd"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
         <TextView
-            android:id="@+id/textView45"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvValidityDate"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:labelFor="@+id/spA"
-            android:text="@string/a" />
+            android:layout_marginVertical="8dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <TextView
-            android:id="@+id/textView46"
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dp" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
 
-        <TextView
-            android:id="@+id/textView47"
-            android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="120dp">
+
+                <TextView
+                    android:id="@+id/tvAlertHdoSite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="@string/write_hdo"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="visible" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHdoSite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:clipToPadding="false" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <include
+            layout="@layout/layout_progress_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/b" />
-
+            android:layout_marginTop="12dp" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lnHdoButtons1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lnCode"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHdoSite"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/load_www"
-            android:textColor="@color/primary_text_button_color" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHdoLoadData"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/load_time"
-            android:textColor="@color/primary_text_button_color" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lnHdoButtons2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lnHdoButtons1"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveHdo"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/save_time"
-            android:textColor="@color/primary_text_button_color" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnClipData"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/save_to_clipboard"
-            android:textColor="@color/primary_text_button_color" />
-    </LinearLayout>
-
-    <include layout="@layout/layout_progress_bar" />
-
-    <Spinner
-        android:popupBackground="?attr/colorSurfaceContainerHigh"
-        android:id="@+id/spDateEgd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lnHdoButtons2"
-        android:minHeight="48dp" />
-
-    <TextView
-        android:id="@+id/tvAlertHdoSite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_item"
-        android:padding="10dp"
-        android:text="@string/write_hdo"
-        android:textAlignment="center"
-        android:textAppearance="?attr/textAppearanceTitleLarge"
-        android:visibility="visible" />
-
-    <TextView
-        android:id="@+id/tvValidityDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/spDateEgd" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvHdoSite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvValidityDate"
-        android:layoutAnimation="@anim/layout_animation_fall_down" />
-
-</RelativeLayout>
+</androidx.core.widget.NestedScrollView>

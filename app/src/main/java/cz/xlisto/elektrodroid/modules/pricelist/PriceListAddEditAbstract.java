@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.dialogs.PriceListValidityDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
@@ -132,6 +134,39 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     }
 
 
+    private void updateEditorPadding(View view) {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        float density = getResources().getDisplayMetrics().density;
+        int basePadding = (int) (10 * density);
+        int topPadding = mainActivity.getTopBarTotalHeight() + basePadding;
+        int bottomPadding = mainActivity.getBottomPanelMarginPx();
+
+        view.setPadding(
+                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                0,
+                basePadding + mainActivity.getEffectiveNavBarInsetRight(),
+                bottomPadding
+        );
+
+        ScrollView scrollView = view.findViewById(R.id.scrollView);
+        if (scrollView != null) {
+            scrollView.setPadding(0, topPadding, 0, 0);
+            scrollView.setClipToPadding(false);
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            updateEditorPadding(getView());
+        }
+    }
+
+
     /**
      * Inicializuje komponenty uživatelského rozhraní, nastaví posluchače událostí
      * a obnoví předchozí stav fragmentu.
@@ -142,6 +177,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateEditorPadding(view);
+        view.post(() -> updateEditorPadding(view));
         btnFrom = view.findViewById(R.id.btnPlatnostOD);
         btnUntil = view.findViewById(R.id.btnPlatnostDO);
         btnPlatnostRange = view.findViewById(R.id.btnPlatnostRange);

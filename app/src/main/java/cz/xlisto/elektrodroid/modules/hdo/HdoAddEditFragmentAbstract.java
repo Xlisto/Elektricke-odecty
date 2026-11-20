@@ -7,16 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import java.util.Locale;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.HdoModel;
 
@@ -62,6 +65,8 @@ public class HdoAddEditFragmentAbstract extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        updateEditorPadding(view);
+        view.post(() -> updateEditorPadding(view));
         timePickerFrom = view.findViewById(R.id.tpFrom);
         timePickerUntil = view.findViewById(R.id.tpUntil);
         timePickerFrom.setIs24HourView(true);
@@ -87,6 +92,48 @@ public class HdoAddEditFragmentAbstract extends Fragment {
             timePickerUntil.setHour(savedInstanceState.getInt(ARG_HOUR_UNTIL));
             timePickerUntil.setMinute(savedInstanceState.getInt(ARG_MINUTE_UNTIL));
             initDays();
+        }
+    }
+
+
+    private void updateEditorPadding(@NonNull View view) {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        float density = getResources().getDisplayMetrics().density;
+        int basePadding = (int) (10 * density);
+        int topPadding = mainActivity.getTopBarTotalHeight() + basePadding;
+
+        view.setPadding(
+                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                0,
+                basePadding + mainActivity.getEffectiveNavBarInsetRight(),
+                0
+        );
+
+        NestedScrollView nestedScrollView = view.findViewById(R.id.hdoEditorScrollView);
+        if (nestedScrollView != null) {
+            nestedScrollView.setPadding(0, topPadding, 0, 0);
+            nestedScrollView.setClipToPadding(false);
+        }
+
+        LinearLayout buttons = view.findViewById(R.id.lnButtons);
+        if (buttons != null) {
+            buttons.setPadding(
+                    0,
+                    0,
+                    0,
+                    mainActivity.getBottomPanelMarginPx()
+            );
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            updateEditorPadding(getView());
         }
     }
 

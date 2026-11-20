@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
@@ -33,6 +34,8 @@ import cz.xlisto.elektrodroid.models.InvoiceListSumModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.NumbersMeter;
 import cz.xlisto.elektrodroid.shp.ShPDashBoard;
+import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
@@ -40,7 +43,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Dashboard - přehled důležitých informací
  * Xlisto 26.12.2023 16:55
  */
-public class DashBoardFragment extends Fragment {
+public class DashBoardFragment extends Fragment implements OnPaddingChangeListener {
 
     private RecyclerView rv;
     private ImageButton btnLeftShowInvoiceSum, btnRightShowInvoiceSum;
@@ -74,6 +77,14 @@ public class DashBoardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
         rv = view.findViewById(R.id.rvInvoiceSum);
+        if (rv != null) {
+            rv.addOnScrollListener(new FloatingNavScrollListener(compact -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).setBottomNavCompact(compact);
+                }
+                return kotlin.Unit.INSTANCE;
+            }));
+        }
         btnLeftShowInvoiceSum = view.findViewById(R.id.imgBtnLeftDashBoard);
         btnRightShowInvoiceSum = view.findViewById(R.id.imgBtnRightDashBoard);
         RelativeLayout rlGraphTotalConsuptionButtons = view.findViewById(R.id.rlGraphTotalConsuptionButtons);
@@ -320,6 +331,44 @@ public class DashBoardFragment extends Fragment {
 
         numbersMeterVT.setCurrentNumber(VT);
         numbersMeterNT.setCurrentNumber(NT);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateRecyclerViewPadding();
+    }
+
+
+    public void updateRecyclerViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+            }
+
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateRecyclerViewPadding();
     }
 
 
