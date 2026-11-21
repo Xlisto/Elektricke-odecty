@@ -169,6 +169,8 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
         btnSave.setOnClickListener(v -> saveSelectedPriceLists());
+
+        updateViewPadding();
     }
 
 
@@ -343,21 +345,19 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
             MainActivity mainAct = (MainActivity) getActivity();
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
-            int bottomPaddingPx = mainAct.isNavRail()
-                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
-                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx();
             int leftPaddingPx = mainAct.getLeftNavTotalWidth();
             int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
 
             if (getView() != null) {
                 getView().setAlpha(1.0f);
-                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
             }
 
             RecyclerView rv = getView() != null ? getView().findViewById(R.id.rvPdfRates) : null;
             if (rv != null) {
                 rv.setClipToPadding(false);
-                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), (int) (4 * density));
             }
         }
     }
