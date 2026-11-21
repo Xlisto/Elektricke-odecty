@@ -793,16 +793,12 @@ public class HdoFragment extends Fragment implements OnPaddingChangeListener {
 
             if (getView() != null) {
                 getView().setAlpha(1.0f);
-                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
-            }
-
-            if (llHdoContainer != null) {
-                llHdoContainer.setPadding(
-                        0,
-                        topPaddingPx,
-                        0,
-                        0
-                );
+                if (llHdoContainer != null) {
+                    getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
+                    llHdoContainer.setPadding(0, topPaddingPx, 0, 0);
+                } else {
+                    getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+                }
             }
 
             if (rvHdo != null) {

@@ -103,28 +103,22 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (10 * density);
         int topPadding = mainActivity.getTopBarTotalHeight() + basePadding;
-
-        view.setPadding(
-                basePadding + mainActivity.getLeftNavTotalWidth(),
-                0,
-                basePadding + mainActivity.getEffectiveNavBarInsetRight(),
-                0
-        );
+        int bottomPadding = mainActivity.getBottomPanelMarginPx();
+        int leftPadding = basePadding + mainActivity.getLeftNavTotalWidth();
+        int rightPadding = basePadding + mainActivity.getEffectiveNavBarInsetRight();
 
         NestedScrollView nestedScrollView = view.findViewById(R.id.hdoEditorScrollView);
         if (nestedScrollView != null) {
+            view.setPadding(leftPadding, 0, rightPadding, bottomPadding);
             nestedScrollView.setPadding(0, topPadding, 0, 0);
             nestedScrollView.setClipToPadding(false);
+        } else {
+            view.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
         }
 
         LinearLayout buttons = view.findViewById(R.id.lnButtons);
         if (buttons != null) {
-            buttons.setPadding(
-                    0,
-                    0,
-                    0,
-                    mainActivity.getBottomPanelMarginPx()
-            );
+            buttons.setPadding(0, 0, 0, 0);
         }
     }
 
