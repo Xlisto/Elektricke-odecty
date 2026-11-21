@@ -841,7 +841,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     public void updateTopBarPadding() {
         View appBarLayout = findViewById(R.id.appBarLayout);
         if (appBarLayout != null) {
-            appBarLayout.setPadding(0, statusBarInsetTop, 0, 0);
+            appBarLayout.setPadding(
+                    getEffectiveNavBarInsetLeft(),
+                    statusBarInsetTop,
+                    getEffectiveNavBarInsetRight(),
+                    0
+            );
         }
 
         if (blurView != null) {
