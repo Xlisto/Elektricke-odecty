@@ -212,25 +212,23 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment implements
             if (getView() != null) {
                 getView().setAlpha(1.0f);
                 getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
-            }
-
-            View sv = getView() != null ? getView().findViewById(R.id.scrollView) : null;
-            if (sv == null && getView() instanceof ViewGroup) {
-                ViewGroup vg = (ViewGroup) getView();
-                for (int i = 0; i < vg.getChildCount(); i++) {
-                    View child = vg.getChildAt(i);
-                    if (child instanceof ScrollView || (child instanceof ViewGroup && !(child instanceof Button))) {
-                        sv = child;
-                        break;
-                    }
+                if (getView() instanceof ViewGroup) {
+                    findAndPadScrollViews((ViewGroup) getView(), topPaddingPx);
                 }
             }
+        }
+    }
 
-            if (sv != null) {
-                if (sv instanceof ViewGroup) {
-                    ((ViewGroup) sv).setClipToPadding(false);
-                }
-                sv.setPadding(0, topPaddingPx, 0, 0);
+
+    private void findAndPadScrollViews(ViewGroup vg, int topPadding) {
+        for (int i = 0; i < vg.getChildCount(); i++) {
+            View child = vg.getChildAt(i);
+            if (child instanceof ScrollView) {
+                ScrollView sv = (ScrollView) child;
+                sv.setClipToPadding(false);
+                sv.setPadding(0, topPadding, 0, 0);
+            } else if (child instanceof ViewGroup) {
+                findAndPadScrollViews((ViewGroup) child, topPadding);
             }
         }
     }

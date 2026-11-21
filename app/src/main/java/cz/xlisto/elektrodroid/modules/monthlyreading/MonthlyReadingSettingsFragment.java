@@ -98,7 +98,7 @@ public class MonthlyReadingSettingsFragment extends Fragment {
         int bottomPadding = mainActivity.getBottomPanelMarginPx();
 
         view.setPadding(
-                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                basePadding + mainActivity.getLeftNavTotalWidth(),
                 0,
                 basePadding + mainActivity.getEffectiveNavBarInsetRight(),
                 0

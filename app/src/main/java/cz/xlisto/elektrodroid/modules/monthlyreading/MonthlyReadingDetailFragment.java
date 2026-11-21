@@ -325,6 +325,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     private void updateDateHeaderLayout(int availableWidth) {
+        if (!isAdded() || getContext() == null) return;
         if (tvDate == null || tvDateScope == null) return;
 
         if (!(tvDate.getParent() instanceof LinearLayout)) return;
@@ -357,12 +358,12 @@ public class MonthlyReadingDetailFragment extends Fragment {
 
 
     private void updateDetailPadding(@NonNull View view) {
-        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+        if (!isAdded() || getContext() == null || !(getActivity() instanceof MainActivity)) return;
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
+        MainActivity mainActivity = (MainActivity) getActivity();
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (2 * density);
-        int topPadding = requireActivity().getResources().getConfiguration().orientation
+        int topPadding = getResources().getConfiguration().orientation
                 == android.content.res.Configuration.ORIENTATION_LANDSCAPE
                 ? (int) (8 * density)
                 : mainActivity.getTopBarTotalHeight();
@@ -373,6 +374,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
             ((NestedScrollView) view).setClipToPadding(false);
         }
         view.post(() -> {
+            if (!isAdded() || getContext() == null) return;
             int availableWidth = view.getWidth() - view.getPaddingStart() - view.getPaddingEnd();
             screenWidth = availableWidth;
             updateDateHeaderLayout(availableWidth);

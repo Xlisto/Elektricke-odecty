@@ -105,7 +105,7 @@ public class HdoAddEditFragmentAbstract extends Fragment {
         int topPadding = mainActivity.getTopBarTotalHeight() + basePadding;
 
         view.setPadding(
-                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                basePadding + mainActivity.getLeftNavTotalWidth(),
                 0,
                 basePadding + mainActivity.getEffectiveNavBarInsetRight(),
                 0

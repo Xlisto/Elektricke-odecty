@@ -144,16 +144,28 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         int bottomPadding = mainActivity.getBottomPanelMarginPx();
 
         view.setPadding(
-                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                basePadding + mainActivity.getLeftNavTotalWidth(),
                 0,
                 basePadding + mainActivity.getEffectiveNavBarInsetRight(),
                 bottomPadding
         );
 
-        ScrollView scrollView = view.findViewById(R.id.scrollView);
-        if (scrollView != null) {
-            scrollView.setPadding(0, topPadding, 0, 0);
-            scrollView.setClipToPadding(false);
+        if (view instanceof ViewGroup) {
+            findAndPadScrollViews((ViewGroup) view, topPadding);
+        }
+    }
+
+
+    private void findAndPadScrollViews(ViewGroup vg, int topPadding) {
+        for (int i = 0; i < vg.getChildCount(); i++) {
+            View child = vg.getChildAt(i);
+            if (child instanceof ScrollView) {
+                ScrollView sv = (ScrollView) child;
+                sv.setClipToPadding(false);
+                sv.setPadding(0, topPadding, 0, 0);
+            } else if (child instanceof ViewGroup) {
+                findAndPadScrollViews((ViewGroup) child, topPadding);
+            }
         }
     }
 

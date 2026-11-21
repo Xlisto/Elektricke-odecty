@@ -247,7 +247,7 @@ public class HdoSiteFragment extends Fragment {
         int basePadding = (int) (10 * density);
 
         view.setPadding(
-                basePadding + mainActivity.getEffectiveNavBarInsetLeft(),
+                basePadding + mainActivity.getLeftNavTotalWidth(),
                 mainActivity.getTopBarTotalHeight() + basePadding,
                 basePadding + mainActivity.getEffectiveNavBarInsetRight(),
                 mainActivity.getBottomPanelMarginPx()
