@@ -809,7 +809,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return getEffectiveNavBarInsetLeft();
         }
         float density = getResources().getDisplayMetrics().density;
-        int cardWidth = floatingLeftNavCard.getWidth() > 0 ? floatingLeftNavCard.getWidth() : (int) (72 * density);
+        int cardWidth = floatingLeftNavCard.getWidth() > 0 ? floatingLeftNavCard.getWidth() : (int) (56 * density);
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) floatingLeftNavCard.getLayoutParams();
         int leftMargin = lp != null ? lp.leftMargin : (getEffectiveNavBarInsetLeft() + (int) (16 * density));
         return leftMargin + cardWidth + (int) (12 * density);
@@ -876,7 +876,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) floatingLeftNavCard.getLayoutParams();
             if (lp != null) {
                 lp.leftMargin = baseMargin + getEffectiveNavBarInsetLeft();
-                lp.topMargin = getTopBarTotalHeight() + (int) (8 * density);
+                lp.topMargin = (int) (8 * density);
                 lp.bottomMargin = baseMargin + getEffectiveNavBarInsetBottom();
                 floatingLeftNavCard.setLayoutParams(lp);
             }
