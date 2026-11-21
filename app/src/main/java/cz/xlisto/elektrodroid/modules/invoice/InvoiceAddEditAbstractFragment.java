@@ -27,6 +27,11 @@ import cz.xlisto.elektrodroid.dialogs.InvoiceDateRangeDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+
+import android.widget.ScrollView;
+
+import cz.xlisto.elektrodroid.MainActivity;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -41,7 +46,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Abstraktní třída pro třídy přidání/úpravy položek faktury.
  * Xlisto 04.02.2023 11:58
  */
-public abstract class InvoiceAddEditAbstractFragment extends Fragment {
+public abstract class InvoiceAddEditAbstractFragment extends Fragment implements OnPaddingChangeListener {
 
     static final String TABLE = "table";
     static final String ID_FAK = "idFak";
@@ -235,7 +240,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putLong(SELECTED_ID_INVOICE, selectedIdInvoice);
         if (isShowFragment) {
             outState.putString(BTN_DATE_OF, btnDateStart.getText().toString());
@@ -249,6 +253,55 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment {
             outState.putLong(SELECTED_ID_PRICE, selectedIdPrice);
             outState.putString(SELECTED_TEXT_PRICE_LIST, btnSelectPriceList.getText().toString());
         }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateEditorPadding();
+    }
+
+
+    public void updateEditorPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int basePadding = (int) (10 * density);
+            int topPaddingPx = mainAct.getTopBarTotalHeight() + basePadding;
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth() + basePadding;
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight() + basePadding;
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
+            }
+
+            ScrollView sv = getView() != null ? getView().findViewById(R.id.scrollView) : null;
+            if (sv == null && getView() instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) getView();
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    if (child instanceof ScrollView) {
+                        sv = (ScrollView) child;
+                        break;
+                    }
+                }
+            }
+
+            if (sv != null) {
+                sv.setClipToPadding(false);
+                sv.setPadding(0, topPaddingPx, 0, 0);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateEditorPadding();
     }
 
 

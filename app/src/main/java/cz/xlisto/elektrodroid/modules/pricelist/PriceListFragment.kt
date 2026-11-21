@@ -1002,7 +1002,12 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                 requireActivity().runOnUiThread {
                     showProgressOverlay(true, getString(R.string.pdf_import_task_parsing))
                 }
-                val priceLists = PdfParserFactory.parsePdf(requireContext(), pdfText)
+                val isKnownCompany = PdfParserFactory.isKnownCompany(pdfText)
+                val priceLists = if (isKnownCompany) {
+                    PdfParserFactory.parsePdf(requireContext(), pdfText)
+                } else {
+                    emptyList()
+                }
 
                 val hasValidPrices =
                     priceLists.any { it.priceVT > 0 || it.priceNT > 0 || it.monthlyPayment > 0 }
@@ -1018,10 +1023,15 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                             true
                         )
                     } else {
+                        val message = if (!isKnownCompany) {
+                            getString(R.string.pdf_import_unknown_supplier_message)
+                        } else {
+                            getString(R.string.pdf_import_cannot_read_message)
+                        }
                         OwnAlertDialog.showDialog(
                             requireActivity(),
                             getString(R.string.pdf_import_cannot_read_title),
-                            getString(R.string.pdf_import_cannot_read_message)
+                            message
                         )
                     }
                 }

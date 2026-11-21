@@ -32,12 +32,31 @@ public class PdfParserFactory {
     }
 
     /**
+     * Zjistí, zda předaný text z PDF dokumentu patří některému z otestovaných a podporovaných dodavatelů
+     * (ČEZ, PRE, E.ON, Centropol, MND, innogy, TEDOM).
+     *
+     * @param pdfText Extrahovaný text z PDF souboru
+     * @return true pokud text odpovídá některému z otestovaných dodavatelů, jinak false
+     */
+    public static boolean isKnownCompany(String pdfText) {
+        if (pdfText == null || pdfText.isEmpty()) {
+            return false;
+        }
+        for (PdfPriceListParser parser : parsers) {
+            if (parser.canParse(pdfText)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Vybere vhodný parser podle obsahu textu z PDF, rozparsuje ceníkové položky
      * a pokusí se získat a aktualizovat regulované ceny z interních JSON zdrojů aplikace.
      *
      * @param context Kontext aplikace pro načtení regulovaných cen z JSON zdrojů
      * @param pdfText Extrahovaný text z PDF dokumentu
-     * @return Seznam získaných objektů {@link PriceListModel} pro jednotlivé distribuční sazby
+     * @return Seznam získaných objektů {@link PriceListModel} pro jednotlivé distribuční sazby, nebo prázdný seznam
      */
     public static List<PriceListModel> parsePdf(Context context, String pdfText) {
         if (pdfText == null || pdfText.isEmpty()) {
@@ -53,7 +72,8 @@ public class PdfParserFactory {
         }
 
         if (result == null) {
-            result = new GenericPdfParser().parse(context, pdfText);
+            // Pokud se nejedná o známou otestovanou společnost, ceník nelze přečíst
+            return new ArrayList<>();
         }
 
         for (PriceListModel model : result) {

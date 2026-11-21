@@ -19,13 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 
 /**
  * Fragment zobrazující seznam dodavatelů a odkazů na jejich oficiální stránky s ceníky ke stažení.
  */
-public class DownloadPriceListFragment extends Fragment {
+public class DownloadPriceListFragment extends Fragment implements OnPaddingChangeListener {
 
     public static final String TAG = "DownloadPriceListFragment";
 
@@ -74,6 +76,45 @@ public class DownloadPriceListFragment extends Fragment {
         rv.setAdapter(adapter);
 
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+            }
+
+            RecyclerView rv = getView() != null ? getView().findViewById(R.id.rvSuppliers) : null;
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 

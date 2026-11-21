@@ -15,16 +15,20 @@ import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
 
+import android.widget.ScrollView;
+
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
 /**
  * Abstraktní třída pro přidávání a úpravu odběrného místa.
  */
-public abstract class SubscriptionPointAddEditAbstract extends Fragment {
+public abstract class SubscriptionPointAddEditAbstract extends Fragment implements OnPaddingChangeListener {
 
     private static final String TAG = "SubscriptionPointAddEditAbstract";
     private static final String NAME = "name";
@@ -78,6 +82,55 @@ public abstract class SubscriptionPointAddEditAbstract extends Fragment {
             Keyboard.hide(requireActivity());
             getParentFragmentManager().popBackStack();
         });
+    }
+
+
+    public void updateEditorPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int basePadding = (int) (10 * density);
+            int topPaddingPx = mainAct.getTopBarTotalHeight() + basePadding;
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth() + basePadding;
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight() + basePadding;
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
+            }
+
+            ScrollView sv = getView() != null ? getView().findViewById(R.id.scrollView) : null;
+            if (sv == null && getView() instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) getView();
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    if (child instanceof ScrollView) {
+                        sv = (ScrollView) child;
+                        break;
+                    }
+                }
+            }
+
+            if (sv != null) {
+                sv.setClipToPadding(false);
+                sv.setPadding(0, topPaddingPx, 0, 0);
+            }
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateEditorPadding();
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateEditorPadding();
     }
 
 

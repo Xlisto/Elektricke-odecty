@@ -23,16 +23,20 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import android.widget.ScrollView;
+
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.PaymentModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
 /**
  * Abstraktní třída pro přidání a editaci platby.
  */
-public abstract class PaymentAddEditFragmentAbstract extends Fragment {
+public abstract class PaymentAddEditFragmentAbstract extends Fragment implements OnPaddingChangeListener {
     public static final String FLAG_RESULT_PAYMENT_FRAGMENT = "flagResultPaymentFragment";
     static final String ID_FAK = "id_fak";
     static final String ID_PAYMENT = "id_payment";
@@ -193,6 +197,56 @@ public abstract class PaymentAddEditFragmentAbstract extends Fragment {
         datePicker.show(getParentFragmentManager(), "PAYMENT_DATE_PICKER");
     }
 
+
+    public void updateEditorPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int basePadding = (int) (10 * density);
+            int topPaddingPx = mainAct.getTopBarTotalHeight() + basePadding;
+            int bottomPaddingPx = mainAct.getBottomPanelMarginPx();
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth() + basePadding;
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight() + basePadding;
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
+            }
+
+            View sv = getView() != null ? getView().findViewById(R.id.scrollView) : null;
+            if (sv == null && getView() instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) getView();
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    if (child instanceof ScrollView || (child instanceof ViewGroup && !(child instanceof Button))) {
+                        sv = child;
+                        break;
+                    }
+                }
+            }
+
+            if (sv != null) {
+                if (sv instanceof ViewGroup) {
+                    ((ViewGroup) sv).setClipToPadding(false);
+                }
+                sv.setPadding(0, topPaddingPx, 0, 0);
+            }
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateEditorPadding();
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateEditorPadding();
+    }
 
     /**
      * Aktualizuje zobrazený text data v poli podle hodnoty z Pickeru/kalendáře.

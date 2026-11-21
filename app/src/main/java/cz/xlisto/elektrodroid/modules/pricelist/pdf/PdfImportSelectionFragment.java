@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
@@ -29,12 +30,13 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 
 /**
  * Fragment pro náhled a výběr sazeb načtených z PDF ceníku.
  */
-public class PdfImportSelectionFragment extends Fragment {
+public class PdfImportSelectionFragment extends Fragment implements OnPaddingChangeListener {
 
     public static final String TAG = "PdfImportSelectionFragment";
     private static final String ARG_PARSED_PRICELISTS = "ARG_PARSED_PRICELISTS";
@@ -325,6 +327,45 @@ public class PdfImportSelectionFragment extends Fragment {
             diff.append("  • Bez rozdílu (identické hodnoty)\n");
         }
         return diff.toString().trim();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() != null) {
+                getView().setAlpha(1.0f);
+                getView().setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, 0);
+            }
+
+            RecyclerView rv = getView() != null ? getView().findViewById(R.id.rvPdfRates) : null;
+            if (rv != null) {
+                rv.setClipToPadding(false);
+                rv.setPadding((int) (5 * density), (int) (4 * density), (int) (5 * density), bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 }
