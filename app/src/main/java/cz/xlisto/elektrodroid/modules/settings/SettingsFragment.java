@@ -23,10 +23,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 
 
 /**
@@ -36,7 +38,7 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
  * Po změně přepínače se hodnoty ihned uloží do {@link ShPSettings} a odešlou se výsledky
  * pro aktualizaci fragmentů i aktivity.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements OnPaddingChangeListener {
 
     private CheckBox chNotificationPermission;
     private CheckBox chExactAlarmPermission;
@@ -123,9 +125,11 @@ public class SettingsFragment extends Fragment {
         chUseSetAlarm.setChecked(shPSettings.get(ShPSettings.USE_HDO_SET_ALARM, false));
 
         CheckBox chHdoOldReminderEnabled = view.findViewById(R.id.chHdoOldReminderEnabled);
-        final ShPHdo shPHdo = new ShPHdo(requireContext());
-        chHdoOldReminderEnabled.setChecked(!shPHdo.get(ShPHdo.HDO_OLD_REMINDER_DISABLED, false));
-        chHdoOldReminderEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> shPHdo.set(ShPHdo.HDO_OLD_REMINDER_DISABLED, !isChecked));
+        if (chHdoOldReminderEnabled != null) {
+            final ShPHdo shPHdo = new ShPHdo(requireContext());
+            chHdoOldReminderEnabled.setChecked(!shPHdo.get(ShPHdo.HDO_OLD_REMINDER_DISABLED, false));
+            chHdoOldReminderEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> shPHdo.set(ShPHdo.HDO_OLD_REMINDER_DISABLED, !isChecked));
+        }
 
         chUseSetAlarm.setOnCheckedChangeListener((buttonView, isChecked) -> {
             shPSettings.set(ShPSettings.USE_HDO_SET_ALARM, isChecked);
@@ -153,13 +157,41 @@ public class SettingsFragment extends Fragment {
 
 
     /**
-     * Po návratu do popředí aktualizuje stavy systémových oprávnění.
+     * Po návratu do popředí aktualizuje stavy systémových oprávnění a vypočte padding.
      */
     @Override
     public void onResume() {
         super.onResume();
         syncNotificationPermissionState();
         syncExactAlarmPermissionState();
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded()) return;
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainAct = (MainActivity) getActivity();
+            float density = getResources().getDisplayMetrics().density;
+            int topPaddingPx = mainAct.getTopBarTotalHeight();
+            int bottomPaddingPx = mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
+                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth();
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
+
+            if (getView() instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) getView();
+                vg.setClipToPadding(false);
+                vg.setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
+            }
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 
