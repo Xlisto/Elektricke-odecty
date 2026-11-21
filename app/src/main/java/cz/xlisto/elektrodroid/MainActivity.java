@@ -32,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -211,6 +212,17 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateAppBarNavigationIcon);
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentViewCreated(@NonNull FragmentManager fm, @NonNull Fragment f, @NonNull View v, @Nullable Bundle savedInstanceState) {
+                if (f.getId() == R.id.fragmentContainerView) {
+                    if (v.getBackground() == null) {
+                        v.setBackgroundColor(MaterialColors.getColor(v, android.R.attr.colorBackground));
+                    }
+                    v.setClickable(true);
+                }
+            }
+        }, false);
 
         //spodní lišta
         myBottomNavigationView.setOnItemSelectedListener(item -> {
