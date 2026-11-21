@@ -132,8 +132,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="4dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="2dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/shape_monthly_reading_gray"
             android:orientation="vertical"
             android:padding="2dp">
@@ -146,18 +148,18 @@
                 android:padding="6dp">
 
                 <Spinner
-                    android:popupBackground="?attr/colorSurfaceContainerHigh"
                     android:id="@+id/spReleSettings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/description_rele"
-                    android:minHeight="48dp" />
+                    android:minHeight="48dp"
+                    android:popupBackground="?attr/colorSurfaceContainerHigh" />
 
                 <TextView
                     android:id="@+id/tvHdoDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginStart="2dp"
                     android:gravity="center_horizontal"
                     android:textSize="14sp" />
 
