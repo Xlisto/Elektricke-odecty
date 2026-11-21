@@ -67,7 +67,6 @@ import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
 import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
-import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
 import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 

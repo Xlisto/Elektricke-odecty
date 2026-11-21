@@ -30,7 +30,6 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.VersionModel;
 import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener;
 import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
-import cz.xlisto.elektrodroid.utils.AppReviewHelper;
 
 
 /**
