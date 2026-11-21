@@ -38,6 +38,7 @@ import cz.xlisto.elektrodroid.dialogs.PriceListComparisonParametersDialogFragmen
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.models.PriceListComparisonScenario;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
@@ -46,7 +47,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Obsahuje záložkové navigace (ViewPager2 + TabLayout) se 4 záložkami: Přehled, Grafy, Výhodnost sazeb a Tabulka,
  * spravuje sdílený {@link PriceListsViewModel} a načítání/ukládání srovnávacích parametrů spotřeby.
  */
-public class PriceListCompareBoxFragment extends Fragment {
+public class PriceListCompareBoxFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String TAG = "PriceListCompareBoxFragment";
     private PriceListsViewModel priceListsViewModel;
@@ -140,17 +141,7 @@ public class PriceListCompareBoxFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (requireActivity() instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) requireActivity();
-            int topPadding = mainActivity.getTopBarTotalHeight();
-            int bottomPadding = mainActivity.getEffectiveNavBarInsetBottom();
-            view.setPadding(
-                    mainActivity.getEffectiveNavBarInsetLeft(),
-                    topPadding,
-                    mainActivity.getEffectiveNavBarInsetRight(),
-                    bottomPadding
-            );
-        }
+        updateViewPadding();
 
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(new MenuProvider() {
@@ -222,6 +213,35 @@ public class PriceListCompareBoxFragment extends Fragment {
         });
 
         priceListsViewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), priceLists -> updateSelectPriceListsMenuItem());
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateViewPadding();
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
+    }
+
+
+    public void updateViewPadding() {
+        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        int topPadding = mainActivity.getTopBarTotalHeight();
+        int bottomPadding = mainActivity.getBottomPanelMarginPx();
+        if (getView() != null) {
+            getView().setPadding(
+                    mainActivity.getLeftNavTotalWidth() + mainActivity.getEffectiveNavBarInsetLeft(),
+                    topPadding,
+                    mainActivity.getEffectiveNavBarInsetRight(),
+                    bottomPadding
+            );
+        }
     }
 
 
