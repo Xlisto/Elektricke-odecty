@@ -15,7 +15,6 @@ import cz.xlisto.elektrodroid.models.PriceListRegulBuilder
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserUtils
 import cz.xlisto.elektrodroid.ownview.LabelPriceDetail
 import cz.xlisto.elektrodroid.ownview.ViewHelper
-import cz.xlisto.elektrodroid.utils.DetectScreenMode
 import java.util.Calendar
 
 /**
@@ -208,23 +207,31 @@ class PriceListDetailFragment : Fragment(), OnPaddingChangeListener {
         val act = activity as? MainActivity ?: return
         val density = resources.displayMetrics.density
 
-        val topPaddingPx = act.getTopBarTotalHeight() + (30 * density).toInt()
+        val topPaddingPx = act.getTopBarTotalHeight() + (6 * density).toInt()
         val bottomPaddingPx = if (act.isNavRail) {
             act.effectiveNavBarInsetBottom + (16 * density).toInt()
         } else {
             act.effectiveNavBarInsetBottom + (112 * density).toInt()
         }
-        val leftPaddingPx = act.getLeftNavTotalWidth()
-        val rightPaddingPx = act.effectiveNavBarInsetRight
+
+        val isRightColumn =
+            showInFragment || (act.isNavRail && view?.parent is ViewGroup && (view?.parent as ViewGroup).id == R.id.fl_price_list_right)
+        val leftPaddingPx = if (isRightColumn) {
+            (2 * density).toInt()
+        } else {
+            act.getLeftNavTotalWidth() + (2 * density).toInt()
+        }
+
+        val rightPaddingPx = (5 * density).toInt()
 
         val v = view ?: return
         v.alpha = 1.0f
         if (v is ViewGroup) {
             v.clipToPadding = false
             v.setPadding(
-                (5 * density).toInt(),
+                leftPaddingPx,
                 topPaddingPx,
-                (5 * density).toInt(),
+                rightPaddingPx,
                 bottomPaddingPx
             )
         }
