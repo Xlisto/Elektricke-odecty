@@ -287,6 +287,12 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
         tvAlert = view.findViewById(R.id.tvAlertMonthlyReading);
         tvMonthlyReadingFilter = view.findViewById(R.id.tvMonthlyReadingFilter);
         tvBalanceStatus = view.findViewById(R.id.tvBalanceStatus);
+        if (tvBalanceStatus != null) {
+            tvBalanceStatus.setOnClickListener(v -> {
+                MonthlyReadingSettingsFragment monthlyReadingSettingsFragment = MonthlyReadingSettingsFragment.newInstance(from, to);
+                FragmentChange.replace(requireActivity(), monthlyReadingSettingsFragment, MOVE, true);
+            });
+        }
         updateFilterLabel();
 
         if (rv != null) {
@@ -310,6 +316,9 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setToolbarTitle(getResources().getString(R.string.month_reads));
+        }
         promptPriceListUpdateIfNeeded();
 
         loadDataFromDatabase();
@@ -320,8 +329,7 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
 
     public void updateRecyclerViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()
@@ -335,9 +343,22 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
                 getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
             }
 
+            boolean isBalanceStatusVisible = tvBalanceStatus != null && tvBalanceStatus.getVisibility() == View.VISIBLE;
+
+            if (tvBalanceStatus != null) {
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvBalanceStatus.getLayoutParams();
+                if (lp != null) {
+                    if (lp.topMargin != topPaddingPx) {
+                        lp.topMargin = topPaddingPx;
+                        tvBalanceStatus.setLayoutParams(lp);
+                    }
+                }
+            }
+
             if (rv != null) {
                 rv.setClipToPadding(false);
-                rv.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+                int rvTopPadding = isBalanceStatusVisible ? (int) (4 * density) : topPaddingPx;
+                rv.setPadding((int) (5 * density), rvTopPadding, (int) (5 * density), bottomPaddingPx);
             }
             UIHelper.updateFabPosition(fab, getActivity());
         }
@@ -347,6 +368,11 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
     @Override
     public void onPaddingChanged() {
         updateRecyclerViewPadding();
+        for (Fragment child : getChildFragmentManager().getFragments()) {
+            if (child instanceof OnPaddingChangeListener && child.isVisible()) {
+                ((OnPaddingChangeListener) child).onPaddingChanged();
+            }
+        }
     }
 
 
@@ -429,10 +455,29 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
      * @param monthlyReadings seznam aktuálně zobrazených měsíčních odečtů po aplikaci filtru
      */
     private void updateBalanceStatus(@Nullable ArrayList<MonthlyReadingModel> monthlyReadings) {
-        if (tvBalanceStatus == null || !isFilterActive() || subscriptionPoint == null || monthlyReadings == null || monthlyReadings.size() < 2) {
+        if (tvBalanceStatus == null || !isFilterActive() || subscriptionPoint == null) {
             if (tvBalanceStatus != null) {
                 BalanceStatusUiHelper.hideBalanceStatus(tvBalanceStatus);
+                updateRecyclerViewPadding();
             }
+            return;
+        }
+
+        String filterText = getString(
+                R.string.show_period,
+                ViewHelper.convertLongToDate(from),
+                ViewHelper.convertLongToDate(to)
+        );
+
+        if (monthlyReadings == null || monthlyReadings.size() < 2) {
+            int totalRecords = monthlyReadings != null ? monthlyReadings.size() : 0;
+            String text = filterText + "<br/>" + getString(R.string.records, totalRecords);
+            BalanceStatusUiHelper.showBalanceStatus(
+                    tvBalanceStatus,
+                    InvoiceBalanceHelper.BalanceState.BALANCED,
+                    text
+            );
+            updateRecyclerViewPadding();
             return;
         }
 
@@ -454,7 +499,7 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
                 }
                 includedPeriods++;
 
-                if (shPMonthlyReading.get(REGUL_PRICE, false)) {
+                if (shPMonthlyReading != null && shPMonthlyReading.get(REGUL_PRICE, false)) {
                     PriceListRegulBuilder priceListRegulBuilder = new PriceListRegulBuilder(priceList, previousReading);
                     priceList = priceListRegulBuilder.getRegulPriceList();
                 }
@@ -486,15 +531,17 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
         }
 
         if (includedPeriods == 0) {
-            BalanceStatusUiHelper.hideBalanceStatus(tvBalanceStatus);
+            int totalRecords = monthlyReadings.size();
+            String text = filterText + "<br/>" + getString(R.string.records, totalRecords);
+            BalanceStatusUiHelper.showBalanceStatus(
+                    tvBalanceStatus,
+                    InvoiceBalanceHelper.BalanceState.BALANCED,
+                    text
+            );
+            updateRecyclerViewPadding();
             return;
         }
 
-        String filterText = getString(
-                R.string.show_period,
-                ViewHelper.convertLongToDate(from),
-                ViewHelper.convertLongToDate(to)
-        );
         int totalRecords = monthlyReadings.size();
         InvoiceBalanceHelper.BalanceState state = InvoiceBalanceHelper.getBalanceState(totalBalance);
         String text = switch (state) {
@@ -522,6 +569,7 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
                 state,
                 text
         );
+        updateRecyclerViewPadding();
     }
 
 

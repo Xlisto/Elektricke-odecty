@@ -22,29 +22,13 @@
         style="@style/StyleTvAlert"
         tools:text="@string/create_place" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/rvMonthlyReading"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        android:contentDescription="@string/add_nem_monthly_reading"
-        android:focusable="true"
-        android:src="@drawable/ic_add_24"
-        app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
-
     <!-- Sdílený stavový widget (stejný vizuál jako u faktur) pro bilanci filtrovaných odečtů. -->
     <TextView
         android:id="@+id/tvBalanceStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvMonthlyReadingFilter"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/shape_monthly_reading_yes"
         android:gravity="center"
@@ -58,12 +42,24 @@
         android:id="@+id/rvMonthlyReading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
         android:layout_below="@id/tvBalanceStatus"
-        android:layout_marginTop="-2dp"
         android:layout_marginBottom="2dp"
         android:clipToPadding="false"
         android:contentDescription="@string/description_monthly_reading"
         android:padding="5dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
+        android:contentDescription="@string/add_nem_monthly_reading"
+        android:focusable="true"
+        android:src="@drawable/ic_add_24"
+        app:backgroundTint="@color/floatingButtonTint"
+        app:tint="@color/floatingButtonBackground" />
 
 </RelativeLayout>

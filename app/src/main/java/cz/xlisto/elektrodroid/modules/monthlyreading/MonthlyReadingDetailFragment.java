@@ -39,6 +39,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.utils.Calculation;
 import cz.xlisto.elektrodroid.utils.DensityUtils;
 import cz.xlisto.elektrodroid.utils.DifferenceDate;
@@ -49,7 +50,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Fragment zobrazující detail záznamu měsíčního odečtu energie a provádějící související cenové výpočty.
  * <p>
  * Účel:
- * - zobrazit informace o měsíčním odečtu (datums, start/end stavy, spotřeby),
+ * - zobrazit informace o měsíčním odečtu (datumy, start/end stavy, spotřeby),
  * - načíst příslušný ceník a subscription point, případně přepočítat regulovanou cenu,
  * - vytvořit tabulku položek s jednotkovými cenami a částkami (VT/NT, daně, služby, měsíční platby apod.),
  * - upravit velikost písma a rozložení tak, aby se texty vešly do dostupné šířky.
@@ -69,7 +70,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * - většina operací musí probíhat na hlavním (UI) vlákně — není thread-safe,
  * - očekává konzistentní data v `priceList` a `subscriptionPoint` (není plně validováno uvnitř metody).
  */
-public class MonthlyReadingDetailFragment extends Fragment {
+public class MonthlyReadingDetailFragment extends Fragment implements OnPaddingChangeListener {
 
     public static final String TAG = "MonthlyReadingDetailFragment";
     private static final String ARG_ID_CURRENT = "id_current";
@@ -328,8 +329,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
         if (!isAdded() || getContext() == null) return;
         if (tvDate == null || tvDateScope == null) return;
 
-        if (!(tvDate.getParent() instanceof LinearLayout)) return;
-        LinearLayout header = (LinearLayout) tvDate.getParent();
+        if (!(tvDate.getParent() instanceof LinearLayout header)) return;
         float density = getResources().getDisplayMetrics().density;
         boolean useTwoLines = availableWidth < (int) (520 * density);
 
@@ -357,19 +357,27 @@ public class MonthlyReadingDetailFragment extends Fragment {
     }
 
 
-    private void updateDetailPadding(@NonNull View view) {
-        if (!isAdded() || getContext() == null || !(getActivity() instanceof MainActivity)) return;
+    @Override
+    public void onPaddingChanged() {
+        if (getView() != null) {
+            updateDetailPadding(getView());
+        }
+    }
 
-        MainActivity mainActivity = (MainActivity) getActivity();
+
+    private void updateDetailPadding(@NonNull View view) {
+        if (!isAdded() || getContext() == null || !(getActivity() instanceof MainActivity mainActivity))
+            return;
+
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (2 * density);
-        int topPadding = getResources().getConfiguration().orientation
-                == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-                ? (int) (8 * density)
-                : mainActivity.getTopBarTotalHeight();
+        boolean isEmbedded = getParentFragment() != null;
+        int leftPadding = isEmbedded ? basePadding : basePadding + mainActivity.getLeftNavTotalWidth();
+        int rightPadding = isEmbedded ? basePadding : basePadding + mainActivity.getEffectiveNavBarInsetRight();
+        int topPadding = mainActivity.getTopBarTotalHeight();
         int bottomPadding = mainActivity.getBottomPanelMarginPx();
 
-        view.setPadding(basePadding, topPadding, basePadding, bottomPadding);
+        view.setPadding(leftPadding, topPadding, rightPadding, bottomPadding);
         if (view instanceof NestedScrollView) {
             ((NestedScrollView) view).setClipToPadding(false);
         }
@@ -623,7 +631,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
                     else if (j == 1)
                         tv.setText(getString(R.string.jed_cena));
                     else tv.setText(getString(R.string.celkem));
-                } else {//těloo tabulky
+                } else {//tělo tabulky
                     if (j == 0)
                         tv.setText(tableString[i]);
                     else if (j == 1) {
@@ -691,19 +699,7 @@ public class MonthlyReadingDetailFragment extends Fragment {
         double jistic = Calculation.calculatePriceBreaker(priceList, subscriptionPoint.getCountPhaze(), subscriptionPoint.getPhaze());
         double cinnost = Math.max(priceList.getActivity(), priceList.getOte());
 
-        int year = priceList.getValidityYear();
-        if (monthlyReadingCurrently != null) {
-            Calendar calendarStart = Calendar.getInstance();
-            calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
-            year = calendarStart.get(Calendar.YEAR);
-        }
-
-        double pozeVal = priceList.getPoze2();
-        if (year < PriceListModel.NEW_POZE_YEAR) {
-            pozeVal = priceList.getOze();
-        } else if (year == 2026) {
-            pozeVal = priceList.getPoze1();
-        }
+        double pozeVal = getPozeVal();
 
         priceArray = new double[]{
                 priceList.getPriceVT(),
@@ -722,6 +718,24 @@ public class MonthlyReadingDetailFragment extends Fragment {
                 priceList.getMonthlyPayment() + jistic + cinnost,
                 pozeVal
         };
+    }
+
+
+    private double getPozeVal() {
+        int year = priceList.getValidityYear();
+        if (monthlyReadingCurrently != null) {
+            Calendar calendarStart = Calendar.getInstance();
+            calendarStart.setTimeInMillis(monthlyReadingCurrently.getDate());
+            year = calendarStart.get(Calendar.YEAR);
+        }
+
+        double pozeVal = priceList.getPoze2();
+        if (year < PriceListModel.NEW_POZE_YEAR) {
+            pozeVal = priceList.getOze();
+        } else if (year == 2026) {
+            pozeVal = priceList.getPoze1();
+        }
+        return pozeVal;
     }
 
 
