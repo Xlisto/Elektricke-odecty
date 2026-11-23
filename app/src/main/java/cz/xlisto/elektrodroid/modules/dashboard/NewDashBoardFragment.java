@@ -145,9 +145,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private TextView tvPeriodDateRange;
     private View viewPeriodVtColor;
     private TextView tvPeriodVtValue;
+    private TextView tvPeriodVtPercent;
     private View layoutPeriodNtRow;
     private View viewPeriodNtColor;
     private TextView tvPeriodNtValue;
+    private TextView tvPeriodNtPercent;
     private DashboardPeriodBarView viewPeriodBar;
     private DashboardDonutChartView viewPeriodDonut;
 
@@ -312,9 +314,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvPeriodDateRange = view.findViewById(R.id.tvPeriodDateRange);
         viewPeriodVtColor = view.findViewById(R.id.viewPeriodVtColor);
         tvPeriodVtValue = view.findViewById(R.id.tvPeriodVtValue);
+        tvPeriodVtPercent = view.findViewById(R.id.tvPeriodVtPercent);
         layoutPeriodNtRow = view.findViewById(R.id.layoutPeriodNtRow);
         viewPeriodNtColor = view.findViewById(R.id.viewPeriodNtColor);
         tvPeriodNtValue = view.findViewById(R.id.tvPeriodNtValue);
+        tvPeriodNtPercent = view.findViewById(R.id.tvPeriodNtPercent);
         viewPeriodBar = view.findViewById(R.id.viewPeriodBar);
         viewPeriodDonut = view.findViewById(R.id.viewPeriodDonut);
 
@@ -1201,6 +1205,25 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
             tvPeriodVtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(displayedPeriodVtKwh))));
             tvPeriodNtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(displayedPeriodNtKwh))));
+
+            double totalKwh = Math.max(0.0, displayedPeriodVtKwh) + Math.max(0.0, displayedPeriodNtKwh);
+            int vtPct;
+            int ntPct;
+            if (totalKwh > 0.0001) {
+                vtPct = (int) Math.round((Math.max(0.0, displayedPeriodVtKwh) / totalKwh) * 100.0);
+                vtPct = Math.max(0, Math.min(100, vtPct));
+                ntPct = 100 - vtPct;
+            } else {
+                vtPct = 0;
+                ntPct = 0;
+            }
+            if (tvPeriodVtPercent != null) {
+                tvPeriodVtPercent.setText(String.format(Locale.getDefault(), "(%d %%)", vtPct));
+            }
+            if (tvPeriodNtPercent != null) {
+                tvPeriodNtPercent.setText(String.format(Locale.getDefault(), "(%d %%)", ntPct));
+            }
+
             applyNtRowVisibilityFraction(displayedPeriodNtVisibility);
         });
         periodValuesAnimator.start();

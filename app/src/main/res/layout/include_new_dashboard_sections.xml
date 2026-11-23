@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:adjustViewBounds="true"
+                android:alpha="0.32"
                 android:importantForAccessibility="no"
                 android:scaleType="fitEnd"
                 android:src="@drawable/bg_dashboard_price_landscape"
@@ -552,6 +553,15 @@
                             android:textSize="15.5sp"
                             android:textStyle="bold"
                             tools:text="639 kWh" />
+
+                        <TextView
+                            android:id="@+id/tvPeriodVtPercent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="13sp"
+                            tools:text="(49 %)" />
                     </LinearLayout>
 
                     <!-- Řádek NT -->
@@ -585,6 +595,15 @@
                             android:textSize="15.5sp"
                             android:textStyle="bold"
                             tools:text="671 kWh" />
+
+                        <TextView
+                            android:id="@+id/tvPeriodNtPercent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="13sp"
+                            tools:text="(51 %)" />
                     </LinearLayout>
 
                     <!-- Horizontální poměrový pruh -->
