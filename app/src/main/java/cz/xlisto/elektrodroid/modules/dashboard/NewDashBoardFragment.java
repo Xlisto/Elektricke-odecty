@@ -91,18 +91,22 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * <p>
  * Zobrazuje:
  * <ul>
- *     <li>Přepínač odběrného místa</li>
+ *     <li>Přepínač odběrného místa (lokální přepínání v rámci přehledu; globální výběr se přepne až při přechodu do jiného fragmentu)</li>
  *     <li>Aktuální cenu elektřiny (VT/NT) s přepínači Celková/Neregulovaná a DPH + čas dalšího přepnutí HDO</li>
  *     <li>Rychlé dlaždice: Měsíční odečty, 24hodinové analogové hodiny HDO, Nový odečet</li>
- *     <li>Spotřebu aktuálního období (VT/NT pruh + donut graf)</li>
- *     <li>Přehled spotřeby (sloupcový graf s přepínačem Měsíční / Roční)</li>
+ *     <li>Spotřebu aktuálního období (VT/NT pruh + donut graf) s proklikem do aktuálního nevyfakturovaného období</li>
+ *     <li>Přehled spotřeby (sloupcový graf s přepínačem Měsíční / Roční, procentní změnou a odhadem neúplného období) s proklikem do grafu</li>
  *     <li>Vyúčtování aktuálního období (Zálohy, Náklady, Přeplatek/Nedoplatek) a seznam posledních faktur</li>
  * </ul>
  * Rozložení sekcí je řízeno přes {@link DashboardLayoutManager} pro budoucí uživatelské přizpůsobení.
  */
 public class NewDashBoardFragment extends Fragment implements OnPaddingChangeListener {
 
+    /**
+     * Maximální počet sloupců zobrazených ve sloupcovém grafu přehledu spotřeby.
+     */
     private static final int MAX_BAR_ENTRIES = 5;
+    /** Maximální počet posledních vyúčtovaných faktur zobrazených v sekci vyúčtování. */
     private static final int MAX_RECENT_INVOICES = 4;
 
     private NestedScrollView nsvNewDashboard;
@@ -171,7 +175,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private View layoutLastInvoicesSection;
     private LinearLayout llInvoicesContainer;
 
+    /** Klíč pro uložení lokálně vybraného odběrného místa do {@link Bundle}. */
     private static final String STATE_SELECTED_LOCAL_POINT_ID = "stateSelectedLocalPointId";
+    /** Doba trvání plynulých přechodových animací hodnot a stavů v přehledu (v ms). */
     private static final long PERIOD_ANIMATION_DURATION_MS = 550L;
 
     private ShPDashBoard shPDashBoard;
@@ -226,11 +232,20 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     };
 
 
+    /**
+     * Vytvoří novou instanci fragmentu {@link NewDashBoardFragment}.
+     *
+     * @return nová instance fragmentu
+     */
     public static NewDashBoardFragment newInstance() {
         return new NewDashBoardFragment();
     }
 
 
+    /**
+     * Obnoví lokálně zvolené odběrné místo z uloženého stavu a zaregistruje posluchač
+     * pro aktualizaci odběrných míst z dialogu {@link SubscriptionPointDialogFragment}.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -248,6 +263,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Uloží ID aktuálně lokálně vybraného odběrného místa pro případ znovuvytvoření fragmentu.
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -255,6 +273,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nafoukne rozložení přehledové obrazovky {@code fragment_new_dashboard}.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -262,6 +283,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Inicializuje formátování čísel, správce předvoleb a rozložení, naváže UI komponenty,
+     * zaregistruje posluchače a načte data odběrných míst.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -283,6 +308,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Vyhledá všechny pohledy v rozložení fragmentu a naváže obsluhu kliknutí
+     * na rychlé dlaždice, kartu spotřeby období, kartu přehledu spotřeby a souhrn vyúčtování.
+     *
+     * @param view kořenový pohled fragmentu
+     */
     private void bindViews(@NonNull View view) {
         nsvNewDashboard = view.findViewById(R.id.nsvNewDashboard);
         btnPrevSubscriptionPoint = view.findViewById(R.id.btnPrevSubscriptionPoint);
@@ -385,7 +416,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Otevře obrazovku fakturace pro aktuální nevyfakturované období.
+     * Otevře obrazovku fakturace ({@link InvoiceTabFragment}) pro aktuální nevyfakturované období ({@code idFak = -1L}).
+     * Před přechodem synchronizuje případně lokálně přepnuté odběrné místo a resetuje stav tlačítek v adaptérech.
      */
     private void openCurrentUninvoicedPeriod() {
         if (currentPoint == null) return;
@@ -405,6 +437,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nastaví posluchač posunu nad {@link NestedScrollView}, který při posunu o více než 12 dp
+     * přepíná kompaktní režim spodní navigace v {@link MainActivity}.
+     */
     private void setupScrollListener() {
         if (nsvNewDashboard == null) return;
         final int thresholdPx = (int) (12 * getResources().getDisplayMetrics().density);
@@ -437,6 +473,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Inicializuje přepínače z uložených předvoleb {@link ShPDashBoard} a naváže posluchače
+     * pro změnu režimu ceny, DPH, typu grafu spotřeby a přepínání odběrného místa.
+     */
     private void setupListeners() {
         boolean showTotalKwh = shPDashBoard.get(ShPDashBoard.PRICE_SHOW_TOTAL_KWH, true);
         boolean withVat = shPDashBoard.get(ShPDashBoard.PRICE_WITH_VAT, true);
@@ -481,6 +521,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Aktualizuje text přepínače mezi celkovou a neregulovanou cenou za kWh.
+     *
+     * @param isTotal {@code true} pro celkovou cenu, {@code false} pro neregulovanou složku
+     */
     private void updatePriceTotalSwitchLabel(boolean isTotal) {
         swPriceTotalKwh.setText(isTotal
                 ? R.string.dashboard_price_total_label
@@ -488,6 +533,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Aktualizuje podtitulek karty přehledu spotřeby a popisek přepínače podle zvoleného režimu grafu.
+     *
+     * @param isYearly {@code true} pro roční přehled, {@code false} pro měsíční přehled
+     */
     private void updateConsumptionSwitchLabels(boolean isYearly) {
         tvConsumptionChartSubtitle.setText(isYearly
                 ? R.string.dashboard_yearly_consumption_subtitle
@@ -498,6 +548,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Načte všechna odběrná místa a určí zobrazené odběrné místo (přednostně dříve zvolené lokální,
+     * jinak globálně aktivní). Při prázdném seznamu skryje obsah a zobrazí upozornění; jinak obnoví
+     * Toolbar, přepínač odběrného místa a všechny datové sekce.
+     */
     private void loadSubscriptionPointsAndRefresh() {
         allSubscriptionPoints = SubscriptionPoint.getAllSubscriptionPoints(requireContext());
         SubscriptionPointModel activeGlobal = SubscriptionPoint.load(requireContext());
@@ -541,6 +596,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nastaví viditelnost kontejnerů s kartami přehledu pro rozložení na výšku i na šířku.
+     *
+     * @param visibility konstanta viditelnosti pohledu (např. {@link View#VISIBLE} nebo {@link View#GONE})
+     */
     private void setContentContainersVisibility(int visibility) {
         if (llDashboardPortraitContainer != null) {
             llDashboardPortraitContainer.setVisibility(visibility);
@@ -552,7 +612,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Přepne odběrné místo pouze lokálně v rámci přehledu (nemění globální odběrné místo aplikace).
+     * Přepne odběrné místo pouze lokálně v rámci přehledu (nemění globální odběrné místo aplikace),
+     * uloží index zobrazeného místa v {@link ShPDashBoard} a obnoví všechny sekce.
+     *
+     * @param index index cílového odběrného místa v seznamu {@code allSubscriptionPoints}
      */
     private void selectSubscriptionPoint(int index) {
         if (index < 0 || index >= allSubscriptionPoints.size()) {
@@ -588,6 +651,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Aktualizuje zobrazený název odběrného místa a viditelnost, povolení i průhlednost
+     * navigačních šipek pro přepínání mezi odběrnými místy.
+     */
     private void updateSwitcherUi() {
         if (currentPoint == null) return;
         tvSubscriptionPointName.setText(currentPoint.getName());
@@ -609,6 +676,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Obnoví všechny datové a grafické sekce přehledu pro aktuálně vybrané odběrné místo.
+     */
     private void refreshAllSections() {
         if (currentPoint == null || !isAdded()) return;
         loadAndApplyUserVtNtColors();
@@ -700,8 +770,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         PriceListModel priceList = loadCurrentPriceList(currentPoint);
         if (priceList == null) {
-            tvPriceVtValue.setText("0,00");
-            tvPriceNtValue.setText("0,00");
+            String zeroPrice = DecimalFormatHelper.df2.format(0.0);
+            tvPriceVtValue.setText(zeroPrice);
+            tvPriceNtValue.setText(zeroPrice);
             return;
         }
 
@@ -732,6 +803,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Vyhledá aktuální ceník pro zadané odběrné místo. Nejprve čte ID ceníku z posledního
+     * měsíčního odečtu, a pokud není k dispozici, z posledního záznamu v aktuálním období ({@code TED})
+     * nebo z historie faktur ({@code FAK}).
+     *
+     * @param point odběrné místo, pro které se ceník hledá
+     * @return načtený {@link PriceListModel}, nebo {@code null}, pokud ceník nelze určit či načíst
+     */
     @Nullable
     private PriceListModel loadCurrentPriceList(@NonNull SubscriptionPointModel point) {
         long priceListId = -1L;
@@ -895,7 +974,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         boolean sameLabel = startLabel.equals(targetLabel);
         boolean sameTime;
-        if (startMillis <= 0L && sanitizedTargetMillis <= 0L) {
+        if (startMillis <= 0L && sanitizedTargetMillis == 0L) {
             sameTime = true;
         } else if (startMillis > 0L && sanitizedTargetMillis > 0L) {
             sameTime = timeFormat.format(startMillis).equals(timeFormat.format(sanitizedTargetMillis));
@@ -936,6 +1015,17 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Promítne průběžný krok animace přechodu popisku a času příští změny HDO do pohledů
+     * na kartě aktuální ceny.
+     *
+     * @param startMillis  výchozí čas přepnutí HDO v ms ({@code <= 0}, pokud nebyl nastaven)
+     * @param targetMillis cílový čas přepnutí HDO v ms ({@code <= 0}, pokud HDO není nastaveno)
+     * @param startLabel   výchozí text popisku
+     * @param targetLabel  cílový text popisku
+     * @param fraction     průběh animace v intervalu {@code 0f..1f}
+     * @param timeFormat   formátovač pro zobrazení času
+     */
     private void bindHdoNextSwitchDisplay(long startMillis,
                                           long targetMillis,
                                           @NonNull String startLabel,
@@ -1040,6 +1130,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Aplikuje interpolovaný poměr zvýraznění aktivní sazby na boxy VT a NT na kartě aktuální ceny.
+     *
+     * @param ntActiveRatio míra aktivace nízkého tarifu v intervalu {@code 0f} (aktivní VT) až {@code 1f} (aktivní NT)
+     */
     private void bindTariffBoxHighlight(float ntActiveRatio) {
         if (!isAdded()) return;
 
@@ -1080,6 +1175,24 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nastaví barvu pozadí, ohraničení, textů a viditelnost/škálu ikony zaškrtnutí
+     * jednoho tarifního boxu (VT nebo NT) podle míry jeho aktivace.
+     *
+     * @param box                 kontejner tarifního boxu
+     * @param bgDrawable          sdílený {@link GradientDrawable} použitý jako pozadí boxu
+     * @param tvLabel             popisek sazby (VT/NT)
+     * @param tvValue             textová hodnota ceny
+     * @param tvUnit              text jednotky ceny
+     * @param ivCheck             ikona zaškrtnutí aktivní sazby
+     * @param activeRatio         míra aktivace v intervalu {@code 0f..1f}
+     * @param colorInactiveBg     barva pozadí neaktivního boxu
+     * @param colorActiveBg       barva pozadí aktivního boxu
+     * @param colorInactiveStroke barva ohraničení neaktivního boxu
+     * @param colorOnSurface      barva textu v neaktivním stavu
+     * @param colorWhite          barva textu v aktivním stavu
+     * @param strokeWidthPx       šířka ohraničení v pixelech
+     */
     private void bindSingleTariffBox(@NonNull View box,
                                      @NonNull GradientDrawable bgDrawable,
                                      @NonNull TextView tvLabel,
@@ -1121,7 +1234,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Načte data pro "Spotřeba období", "Vyúčtování" a "Poslední faktury".
+     * Načte data pro karty „Spotřeba období“, „Vyúčtování“ a seznam až {@link #MAX_RECENT_INVOICES}
+     * posledních vyúčtovaných faktur s proklikem do {@link InvoiceTabFragment}.
      */
     private void refreshPeriodBillingAndInvoices() {
         if (currentPoint == null || !isAdded()) return;
@@ -1137,21 +1251,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             invoiceLists = invoiceSource.loadInvoiceLists(currentPoint);
 
             // Určení aktivního období (nejprve období bez faktury idFak == -1L, případně nejnovější faktura)
-            InvoiceListModel activePeriodModel = null;
-            for (InvoiceListModel item : invoiceLists) {
-                if (item.getIdFak() == -1L && item.getMinDate() > 0 && item.getMaxDate() > 0) {
-                    activePeriodModel = item;
-                    break;
-                }
-            }
-            if (activePeriodModel == null && !invoiceLists.isEmpty()) {
-                for (InvoiceListModel item : invoiceLists) {
-                    if (item.getMinDate() > 0 && item.getMaxDate() > 0) {
-                        activePeriodModel = item;
-                        break;
-                    }
-                }
-            }
+            InvoiceListModel activePeriodModel = getActivePeriodModel(invoiceLists);
 
             double targetBillingAdvancesKc = 0.0;
             double targetBillingCostsKc = 0.0;
@@ -1270,6 +1370,44 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Vybere aktivní fakturační období ze seznamu: upřednostní nevyfakturované období ({@code idFak == -1L})
+     * s platným rozsahem dat, jinak vrátí první období s platnými daty.
+     *
+     * @param invoiceLists seznam fakturačních období odběrného místa
+     * @return vybraný {@link InvoiceListModel}, nebo {@code null}, pokud žádné vhodné období neexistuje
+     */
+    @Nullable
+    private static InvoiceListModel getActivePeriodModel(ArrayList<InvoiceListModel> invoiceLists) {
+        InvoiceListModel activePeriodModel = null;
+        for (InvoiceListModel item : invoiceLists) {
+            if (item.getIdFak() == -1L && item.getMinDate() > 0 && item.getMaxDate() > 0) {
+                activePeriodModel = item;
+                break;
+            }
+        }
+        if (activePeriodModel == null && !invoiceLists.isEmpty()) {
+            for (InvoiceListModel item : invoiceLists) {
+                if (item.getMinDate() > 0 && item.getMaxDate() > 0) {
+                    activePeriodModel = item;
+                    break;
+                }
+            }
+        }
+        return activePeriodModel;
+    }
+
+
+    /**
+     * Vykreslí štítek přeplatku/nedoplatku s interpolovanou barvou pozadí i textu,
+     * zaokrouhlenou částkou a plynulou animací přechodu popisku.
+     *
+     * @param balanceKc    aktuální saldo (zálohy mínus náklady) v Kč
+     * @param colorRatio   poměr přechodu barvy mezi přeplatkem ({@code 0f}) a nedoplatkem ({@code 1f})
+     * @param startLabel   výchozí text popisku
+     * @param targetLabel  cílový text popisku
+     * @param animFraction průběh animace v intervalu {@code 0f..1f}
+     */
     private void bindBalanceBadge(double balanceKc,
                                   float colorRatio,
                                   @NonNull String startLabel,
@@ -1334,6 +1472,13 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Vrátí lokalizovaný popisek stavu vyúčtování (přeplatek, nedoplatek nebo vyrovnáno)
+     * podle znaménka zaokrouhleného salda.
+     *
+     * @param roundedBalanceKc zaokrouhlený rozdíl záloh a nákladů v Kč
+     * @return lokalizovaný text popisku salda
+     */
     @NonNull
     private String getBalanceLabelForValue(long roundedBalanceKc) {
         if (roundedBalanceKc > 0) {
@@ -1346,6 +1491,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Zkrátí textový rozsah dvou dat formátu {@code dd.MM.yyyy} vynecháním roku u počátečního data,
+     * pokud obě data spadají do téhož kalendářního roku.
+     *
+     * @param startDate počáteční datum období
+     * @param endDate   koncové datum období
+     * @return naformátovaný textový rozsah období
+     */
     @NonNull
     private String formatShortPeriodRange(@NonNull String startDate, @NonNull String endDate) {
         if (startDate.length() >= 10 && endDate.length() >= 10) {
@@ -1359,6 +1512,18 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Spočítá souhrn spotřeby VT/NT, uhrazených záloh, celkových nákladů s DPH
+     * (včetně POZE podle roku platnosti ceníku, dalších služeb a slev) a vyhodnotí,
+     * zda se jedná o jednosazbový tarif.
+     *
+     * @param invoiceSource   otevřený zdroj faktur a plateb
+     * @param priceListSource otevřený zdroj ceníků
+     * @param point           odběrné místo
+     * @param idFak           identifikátor faktury, nebo {@code -1L} pro aktuální nevyfakturované období
+     * @param table           název zdrojové tabulky ({@code TED} nebo {@code FAK})
+     * @return vypočtený souhrn období {@link PeriodSummary}
+     */
     @NonNull
     private PeriodSummary computeInvoiceSummary(@NonNull DataInvoiceSource invoiceSource,
                                                 @NonNull DataPriceListSource priceListSource,
@@ -1417,10 +1582,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 if (priceList.getValidityYear() < NEW_POZE_YEAR) {
                     price[3] = ntVtMwh * regulPriceList.getOze();
                 } else {
-                    price[3] = ntVtMwh * regulPriceList.getPoze2();
-                    if (priceList.getValidityYear() == 2026) {
-                        price[3] = ntVtMwh * regulPriceList.getPoze1();
-                    }
+                    price[3] = ntVtMwh * (priceList.getValidityYear() == 2026
+                            ? regulPriceList.getPoze1()
+                            : regulPriceList.getPoze2());
                 }
             } else {
                 price[3] = point.getCountPhaze() * point.getPhaze() * differentDate * regulPriceList.getPoze1();
@@ -1451,8 +1615,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Plynule odanimuje přičítání/odečítání číselných hodnot VT a NT v kartě "Spotřeba období"
-     * a postupné zobrazení či skrytí řádku NT u jednosazbového tarifu (D 01d, D 02d).
+     * Plynule odanimuje přičítání/odečítání číselných hodnot VT a NT v kartě „Spotřeba období“
+     * a postupné zobrazení či skrytí řádku NT u jednosazbového tarifu ({@code D 01d}, {@code D 02d}).
+     *
+     * @param targetVtKwh    cílová spotřeba VT v kWh
+     * @param targetNtKwh    cílová spotřeba NT v kWh
+     * @param isSingleTariff {@code true}, pokud jde o jednosazbový tarif a řádek NT se má skrýt
      */
     private void animatePeriodConsumptionValues(double targetVtKwh, double targetNtKwh, boolean isSingleTariff) {
         final double targetVt = Math.max(0.0, targetVtKwh);
@@ -1512,9 +1680,18 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Plynule odanimuje přičítání/odečítání číselných hodnot a datumového rozsahu v kartě "Vyúčtování"
-     * (Období, Zálohy, Náklady, Přeplatek/Nedoplatek včetně plynulého přechodu barev a textu štítku
-     * i spotřeby a celkové ceny s DPH v seznamu Posledních faktur).
+     * Plynule odanimuje přičítání/odečítání číselných hodnot a datumového rozsahu v kartě „Vyúčtování“
+     * (období, zálohy, náklady, přeplatek/nedoplatek včetně přechodu barev a textu štítku
+     * i spotřeby a celkové ceny s DPH v seznamu posledních faktur).
+     *
+     * @param targetAdvancesKc             cílová výše záloh v Kč
+     * @param targetCostsKc                cílová výše nákladů v Kč
+     * @param targetMinDateMillis          počáteční datum aktivního období v ms (nebo {@code <= 0})
+     * @param targetMaxDateMillis          koncové datum aktivního období v ms (nebo {@code <= 0})
+     * @param invoiceConsumptionViews      textová pole spotřeb v řádcích posledních faktur
+     * @param targetInvoiceConsumptionsKwh cílové spotřeby posledních faktur v kWh
+     * @param invoiceAmountViews           textová pole částek v řádcích posledních faktur
+     * @param targetInvoiceAmountsKc       cílové částky posledních faktur s DPH v Kč
      */
     private void animateBillingValues(double targetAdvancesKc,
                                       double targetCostsKc,
@@ -1616,6 +1793,16 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Aktualizuje zobrazení rozsahu dat v kartě spotřeby období i v kartě vyúčtování
+     * v průběhu animace, včetně plynulého zobrazení nebo skrytí při přechodu z/do prázdného stavu.
+     *
+     * @param startMinDate  výchozí počáteční datum v ms
+     * @param startMaxDate  výchozí koncové datum v ms
+     * @param targetMinDate cílové počáteční datum v ms
+     * @param targetMaxDate cílové koncové datum v ms
+     * @param fraction      průběh animace v intervalu {@code 0f..1f}
+     */
     private void bindAnimatedPeriodDates(long startMinDate,
                                          long startMaxDate,
                                          long targetMinDate,
@@ -1673,6 +1860,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nastaví výšku, horní okraj, průhlednost a viditelnost řádku NT v kartě spotřeby období
+     * podle průběhu přechodu mezi jednosazbovým a dvousazbovým tarifem.
+     *
+     * @param fraction míra zobrazení řádku NT v intervalu {@code 0f} (skryto) až {@code 1f} (plně zobrazeno)
+     */
     private void applyNtRowVisibilityFraction(float fraction) {
         if (layoutPeriodNtRow == null || !isAdded()) {
             return;
@@ -1701,22 +1894,29 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         if (clamped <= 0.005f) {
             layoutPeriodNtRow.setAlpha(0f);
             layoutPeriodNtRow.setVisibility(View.GONE);
-        } else if (clamped >= 0.995f) {
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            lp.topMargin = fullTopMargin;
-            layoutPeriodNtRow.setLayoutParams(lp);
-            layoutPeriodNtRow.setAlpha(1f);
-            layoutPeriodNtRow.setVisibility(View.VISIBLE);
         } else {
-            lp.height = Math.max(1, Math.round(ntRowMeasuredHeight * clamped));
-            lp.topMargin = Math.round(fullTopMargin * clamped);
+            if (clamped >= 0.995f) {
+                lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                lp.topMargin = fullTopMargin;
+                layoutPeriodNtRow.setAlpha(1f);
+            } else {
+                lp.height = Math.max(1, Math.round(ntRowMeasuredHeight * clamped));
+                lp.topMargin = Math.round(fullTopMargin * clamped);
+                layoutPeriodNtRow.setAlpha(clamped);
+            }
             layoutPeriodNtRow.setLayoutParams(lp);
-            layoutPeriodNtRow.setAlpha(clamped);
             layoutPeriodNtRow.setVisibility(View.VISIBLE);
         }
     }
 
 
+    /**
+     * Rozpozná, zda název distribuční sazby odpovídá jednosazbovému tarifu
+     * ({@code D 01d} nebo {@code D 02d}, včetně varianty bez mezery).
+     *
+     * @param rate název distribuční sazby z ceníku
+     * @return {@code true} pro jednosazbový tarif, jinak {@code false}
+     */
     private boolean isSingleTariffRate(@Nullable String rate) {
         if (rate == null || rate.trim().isEmpty()) {
             return false;
@@ -1802,17 +2002,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
                 ArrayList<ConsuptionModel> yearlyList = container.yearConsuption();
                 if (yearlyList != null && !yearlyList.isEmpty()) {
-                    List<ConsumptionForecastHelper.YearlyRecord> yearlyRecords = new ArrayList<>(yearlyList.size());
-                    for (int i = 0; i < yearlyList.size(); i++) {
-                        ConsuptionModel y = yearlyList.get(i);
-                        String label = y.getYearAsString() != null ? y.getYearAsString() : "";
-                        yearlyRecords.add(new ConsumptionForecastHelper.YearlyRecord(
-                                y.getYearAsInt(),
-                                y.getConsuptionVT() != null ? y.getConsuptionVT() : 0.0,
-                                y.getConsuptionNT() != null ? y.getConsuptionNT() : 0.0,
-                                label
-                        ));
-                    }
+                    List<ConsumptionForecastHelper.YearlyRecord> yearlyRecords = createYearlyRecords(yearlyList);
 
                     yearlyChartEntries.addAll(ConsumptionForecastHelper.buildYearlyEntries(
                             yearlyRecords,
@@ -1833,6 +2023,36 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Převede roční modely spotřeby {@link ConsuptionModel} na vstupní záznamy
+     * {@link ConsumptionForecastHelper.YearlyRecord} pro sestavení sloupcového grafu a odhadu.
+     *
+     * @param yearlyList seznam ročních spotřeb z databáze
+     * @return seznam převedených ročních záznamů
+     */
+    @NonNull
+    private static List<ConsumptionForecastHelper.YearlyRecord> createYearlyRecords(ArrayList<ConsuptionModel> yearlyList) {
+        List<ConsumptionForecastHelper.YearlyRecord> yearlyRecords = new ArrayList<>(yearlyList.size());
+        for (int i = 0; i < yearlyList.size(); i++) {
+            ConsuptionModel y = yearlyList.get(i);
+            String label = y.getYearAsString() != null ? y.getYearAsString() : "";
+            yearlyRecords.add(new ConsumptionForecastHelper.YearlyRecord(
+                    y.getYearAsInt(),
+                    y.getConsuptionVT() != null ? y.getConsuptionVT() : 0.0,
+                    y.getConsuptionNT() != null ? y.getConsuptionNT() : 0.0,
+                    label
+            ));
+        }
+        return yearlyRecords;
+    }
+
+
+    /**
+     * Převede textovou reprezentaci čísla měsíce na celé číslo.
+     *
+     * @param monthStr textové číslo měsíce
+     * @return číslo měsíce, nebo {@code -1} při prázdném či neplatném vstupu
+     */
     private int parseMonthNumber(@Nullable String monthStr) {
         if (monthStr == null || monthStr.trim().isEmpty()) {
             return -1;
@@ -1845,6 +2065,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Extrahuje zkrácený popisek měsíce (část před první mezerou) pro osu X sloupcového grafu.
+     *
+     * @param shortDateMonth zkrácený textový popis měsíce (např. měsíc a rok)
+     * @return krátký popisek měsíce, nebo prázdný řetězec
+     */
     @NonNull
     private String extractShortMonthLabel(@Nullable String shortDateMonth) {
         if (shortDateMonth == null || shortDateMonth.trim().isEmpty()) {
@@ -1859,12 +2085,23 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Předá grafu {@link DashboardConsumptionBarChartView} měsíční nebo roční sadu položek
+     * podle aktuálního stavu přepínače.
+     */
     private void refreshConsumptionChartDisplay() {
         boolean isYearly = swConsumptionYearly.isChecked();
         viewConsumptionBarChart.setEntries(isYearly ? yearlyChartEntries : monthlyChartEntries);
     }
 
 
+    /**
+     * Vyhodnotí barvu z aktuálního motivu podle atributu; pokud atribut v motivu neexistuje,
+     * vrátí výchozí tmavou barvu {@code 0xFF1C1B1F}.
+     *
+     * @param attrRes ID atributu barvy v motivu
+     * @return vyhodnocená barva ve formátu ARGB
+     */
     private int resolveAttrColor(int attrRes) {
         TypedValue tv = new TypedValue();
         if (requireContext().getTheme().resolveAttribute(attrRes, tv, true)) {
@@ -1874,6 +2111,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Nastaví titulek obrazovky v Toolbaru, aktualizuje odsazení podle navigace,
+     * znovu načte data odběrných míst a spustí periodické obnovování stavu HDO každých 30 sekund.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -1887,6 +2128,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Zastaví periodické obnovování stavu HDO a zruší všechny běžící přechodové animace.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -1910,6 +2154,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Přepočítá a nastaví vnitřní odsazení posuvného kontejneru podle rozměrů horní lišty,
+     * postranní nebo spodní navigace a systémových okrajů z {@link MainActivity}.
+     */
     public void updatePadding() {
         if (!isAdded()) return;
         if (getActivity() instanceof MainActivity mainAct) {
@@ -1930,28 +2178,26 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Reaguje na změnu odsazení navigace nebo systémových lišt přepočtem odsazení obsahu.
+     */
     @Override
     public void onPaddingChanged() {
         updatePadding();
     }
 
 
-    private static class PeriodSummary {
-
-        final double vtKwh;
-        final double ntKwh;
-        final double advancesKc;
-        final double costsWithTaxKc;
-        final boolean isSingleTariff;
-
-
-        PeriodSummary(double vtKwh, double ntKwh, double advancesKc, double costsWithTaxKc, boolean isSingleTariff) {
-            this.vtKwh = vtKwh;
-            this.ntKwh = ntKwh;
-            this.advancesKc = advancesKc;
-            this.costsWithTaxKc = costsWithTaxKc;
-            this.isSingleTariff = isSingleTariff;
-        }
+    /**
+     * Neměnný souhrn spotřeby, záloh, celkových nákladů a typu tarifu pro jedno fakturační období.
+     *
+     * @param vtKwh          spotřeba ve vysokém tarifu (kWh)
+     * @param ntKwh          spotřeba v nízkém tarifu (kWh)
+     * @param advancesKc     součet uhrazených záloh (Kč)
+     * @param costsWithTaxKc celkové náklady období včetně DPH po odečtení slev (Kč)
+     * @param isSingleTariff {@code true}, pokud jde o jednosazbový tarif
+     */
+    private record PeriodSummary(double vtKwh, double ntKwh, double advancesKc,
+                                 double costsWithTaxKc, boolean isSingleTariff) {
 
     }
 
