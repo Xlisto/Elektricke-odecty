@@ -884,6 +884,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="dashboard_yearly_consumption_subtitle">Roční spotřeba (kWh)</string>
     <string name="dashboard_toggle_monthly">Měsíční</string>
     <string name="dashboard_toggle_yearly">Roční</string>
+    <string name="dashboard_chart_forecast_legend">Odhad</string>
     <string name="dashboard_billing_title">Vyúčtování</string>
     <string name="dashboard_billing_period_format">Období: %1$s</string>
     <string name="dashboard_advances_label">Zálohy</string>

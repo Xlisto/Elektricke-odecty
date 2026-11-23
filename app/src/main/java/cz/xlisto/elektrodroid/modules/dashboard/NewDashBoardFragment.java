@@ -55,6 +55,7 @@ import cz.xlisto.elektrodroid.models.ConsuptionModel;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
+import cz.xlisto.elektrodroid.models.MonthlyConsuptionModel;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PozeModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -1730,7 +1731,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Načte měsíční a roční spotřebu pro kartu "Přehled spotřeby".
+     * Načte měsíční a roční spotřebu pro kartu "Přehled spotřeby" včetně výpočtu
+     * procentní změny a odhadu (předpokládané spotřeby) neúplného aktuálního měsíce / roku.
      */
     private void refreshConsumptionOverviewData() {
         monthlyChartEntries.clear();
@@ -1738,37 +1740,88 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         if (currentPoint == null || !isAdded()) return;
 
+        PriceListModel currentPriceList = loadCurrentPriceList(currentPoint);
+        String distributionRate = currentPriceList != null ? currentPriceList.getRate() : null;
+        Calendar nowCal = Calendar.getInstance();
+        int nowYear = nowCal.get(Calendar.YEAR);
+        int nowMonth = nowCal.get(Calendar.MONTH) + 1;
+
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
         try {
             dataGraphMonth.open();
             ConsuptionContainer container = dataGraphMonth.loadConsuptions(currentPoint);
             if (container != null) {
+                List<ConsumptionForecastHelper.MonthlyRecord> monthlyRecords = new ArrayList<>();
                 ArrayList<ConsuptionModel> monthlyList = container.monthlyConsuption();
                 if (monthlyList != null && !monthlyList.isEmpty()) {
-                    int startIdx = Math.max(0, monthlyList.size() - MAX_BAR_ENTRIES);
-                    for (int i = startIdx; i < monthlyList.size(); i++) {
+                    Calendar dateCal = Calendar.getInstance();
+                    for (int i = 0; i < monthlyList.size(); i++) {
                         ConsuptionModel m = monthlyList.get(i);
+                        int month = parseMonthNumber(m.getDateMonth());
+                        if (month < 1 || month > 12) continue;
+                        int year = m.getYearAsInt();
+                        int daysInMonth = ConsumptionForecastHelper.getDaysInMonth(year, month);
+                        int coveredDay = daysInMonth;
+                        int spanDays = daysInMonth;
+
+                        if (m instanceof MonthlyConsuptionModel mm) {
+                            long lastDate = mm.getLastDate();
+                            if (lastDate > 0L) {
+                                dateCal.setTimeInMillis(lastDate);
+                                coveredDay = dateCal.get(Calendar.DAY_OF_MONTH);
+                                long startDate = mm.getStartDate();
+                                if (startDate > 0L && lastDate >= startDate) {
+                                    long diffDays = Math.round((lastDate - startDate) / 86_400_000.0);
+                                    spanDays = Math.max(1, (int) diffDays);
+                                } else {
+                                    spanDays = coveredDay;
+                                }
+                            }
+                        }
+
                         String label = extractShortMonthLabel(m.getDateMonthAsStringShort());
-                        monthlyChartEntries.add(new DashboardConsumptionBarChartView.BarEntry(
-                                label,
+                        monthlyRecords.add(new ConsumptionForecastHelper.MonthlyRecord(
+                                year,
+                                month,
                                 m.getConsuptionVT() != null ? m.getConsuptionVT() : 0.0,
-                                m.getConsuptionNT() != null ? m.getConsuptionNT() : 0.0
+                                m.getConsuptionNT() != null ? m.getConsuptionNT() : 0.0,
+                                coveredDay,
+                                spanDays,
+                                label
                         ));
                     }
+
+                    monthlyChartEntries.addAll(ConsumptionForecastHelper.buildMonthlyEntries(
+                            monthlyRecords,
+                            MAX_BAR_ENTRIES,
+                            nowYear,
+                            nowMonth,
+                            distributionRate
+                    ));
                 }
 
                 ArrayList<ConsuptionModel> yearlyList = container.yearConsuption();
                 if (yearlyList != null && !yearlyList.isEmpty()) {
-                    int startIdx = Math.max(0, yearlyList.size() - MAX_BAR_ENTRIES);
-                    for (int i = startIdx; i < yearlyList.size(); i++) {
+                    List<ConsumptionForecastHelper.YearlyRecord> yearlyRecords = new ArrayList<>(yearlyList.size());
+                    for (int i = 0; i < yearlyList.size(); i++) {
                         ConsuptionModel y = yearlyList.get(i);
                         String label = y.getYearAsString() != null ? y.getYearAsString() : "";
-                        yearlyChartEntries.add(new DashboardConsumptionBarChartView.BarEntry(
-                                label,
+                        yearlyRecords.add(new ConsumptionForecastHelper.YearlyRecord(
+                                y.getYearAsInt(),
                                 y.getConsuptionVT() != null ? y.getConsuptionVT() : 0.0,
-                                y.getConsuptionNT() != null ? y.getConsuptionNT() : 0.0
+                                y.getConsuptionNT() != null ? y.getConsuptionNT() : 0.0,
+                                label
                         ));
                     }
+
+                    yearlyChartEntries.addAll(ConsumptionForecastHelper.buildYearlyEntries(
+                            yearlyRecords,
+                            monthlyRecords,
+                            MAX_BAR_ENTRIES,
+                            nowYear,
+                            nowMonth,
+                            distributionRate
+                    ));
                 }
             }
         } catch (Exception ignored) {
@@ -1777,6 +1830,18 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         }
 
         refreshConsumptionChartDisplay();
+    }
+
+
+    private int parseMonthNumber(@Nullable String monthStr) {
+        if (monthStr == null || monthStr.trim().isEmpty()) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(monthStr.trim());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
 

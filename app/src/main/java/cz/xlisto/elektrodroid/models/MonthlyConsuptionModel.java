@@ -16,6 +16,7 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
     private final ArrayList<Double> VT = new ArrayList<>();
     private final ArrayList<Double> NT = new ArrayList<>();
     private final ArrayList<Long> dates = new ArrayList<>();
+    private long startDate = -1L;
     private Double consuptionVT;
     private Double consuptionNT;
     private int anim;
@@ -226,6 +227,36 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      */
     public Long getDate(int i) {
         return dates.get(i);
+    }
+
+
+    /**
+     * Nastaví počáteční datum období (datum předchozího odečtu po posunu).
+     *
+     * @param startDate počáteční datum v milisekundách
+     */
+    public void setStartDate(long startDate) {
+        this.startDate = startDate;
+    }
+
+
+    /**
+     * Vrátí počáteční datum období (datum předchozího odečtu po posunu), nebo {@code -1L}, pokud není nastaveno.
+     *
+     * @return počáteční datum v milisekundách
+     */
+    public long getStartDate() {
+        return startDate;
+    }
+
+
+    /**
+     * Vrátí poslední zaznamenané datum odečtu v tomto měsíci, nebo {@code -1L}, pokud neexistuje.
+     *
+     * @return poslední datum v milisekundách
+     */
+    public long getLastDate() {
+        return dates.isEmpty() ? -1L : dates.get(dates.size() - 1);
     }
 
 

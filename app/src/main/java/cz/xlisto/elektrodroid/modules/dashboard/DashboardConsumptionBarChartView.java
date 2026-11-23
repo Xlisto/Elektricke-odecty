@@ -6,9 +6,11 @@ import static cz.xlisto.elektrodroid.utils.DensityUtils.dpToPx;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -26,9 +28,9 @@ import cz.xlisto.elektrodroid.R;
 
 /**
  * Skládaný sloupcový graf (VT + NT) pro kartu "Přehled spotřeby"
- * s podporou měsíčního a ročního zobrazení a plynulou animací celého grafu:
- * výšky sloupců, změny počtu sloupců (šířky a horizontálního rozložení)
- * i změny rozsahu hodnot a vodorovných os mřížky.
+ * s podporou měsíčního a ročního zobrazení, plynulou animací celého grafu,
+ * čárkovaným dokreslením předpokládané spotřeby aktuálního neúplného období
+ * a procentní změnou oproti předchozímu sloupci (od 2. sloupce dále).
  */
 public class DashboardConsumptionBarChartView extends View {
 
@@ -42,12 +44,27 @@ public class DashboardConsumptionBarChartView extends View {
         public final String label;
         public final double vt;
         public final double nt;
+        public final double projectedTotal;
+        @Nullable
+        public final Double changePercent;
 
 
         public BarEntry(@NonNull String label, double vt, double nt) {
+            this(label, vt, nt, 0.0, null);
+        }
+
+
+        public BarEntry(@NonNull String label,
+                        double vt,
+                        double nt,
+                        double projectedTotal,
+                        @Nullable Double changePercent) {
             this.label = label;
             this.vt = Math.max(0.0, vt);
             this.nt = Math.max(0.0, nt);
+            double actual = this.vt + this.nt;
+            this.projectedTotal = Math.max(actual, projectedTotal);
+            this.changePercent = changePercent;
         }
 
 
@@ -55,18 +72,44 @@ public class DashboardConsumptionBarChartView extends View {
             return vt + nt;
         }
 
+
+        /**
+         * Vrátí efektivní celkovou výšku sloupce (včetně případné předpokládané spotřeby).
+         */
+        public double getEffectiveTotal() {
+            return Math.max(getTotal(), projectedTotal);
+        }
+
+
+        /**
+         * Vrátí {@code true}, pokud má sloupec nenulový předpokládaný dodatek nad skutečnou spotřebou.
+         */
+        public boolean hasForecast() {
+            return projectedTotal > getTotal() + 0.5;
+        }
+
     }
 
 
     private Paint paintVt;
     private Paint paintNt;
+    private Paint paintForecastFill;
+    private Paint paintForecastStroke;
     private Paint paintGrid;
     private Paint paintAxisText;
     private Paint paintLabelText;
     private Paint paintLegendText;
+    private Paint paintPercentText;
+
+    private int colorPercentDecrease;
+    private int colorPercentIncrease;
+    private int colorPercentNeutral;
+
     private final RectF rectBuffer = new RectF();
     private final Path barClipPath = new Path();
+    private final Path forecastPath = new Path();
     private final float[] barCornerRadii = new float[8];
+    private final float[] flatCornerRadii = new float[8];
 
     private final List<BarEntry> startEntries = new ArrayList<>();
     private final List<BarEntry> targetEntries = new ArrayList<>();
@@ -104,6 +147,10 @@ public class DashboardConsumptionBarChartView extends View {
     private void init() {
         int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface, 0xFF1C1B1F);
 
+        colorPercentDecrease = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_decrease);
+        colorPercentIncrease = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_increase);
+        colorPercentNeutral = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_neutral);
+
         paintVt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintVt.setStyle(Paint.Style.FILL);
         paintVt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt));
@@ -111,6 +158,20 @@ public class DashboardConsumptionBarChartView extends View {
         paintNt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintNt.setStyle(Paint.Style.FILL);
         paintNt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt));
+
+        paintForecastFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintForecastFill.setStyle(Paint.Style.FILL);
+        paintForecastFill.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill));
+
+        paintForecastStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintForecastStroke.setStyle(Paint.Style.STROKE);
+        paintForecastStroke.setStrokeWidth(dpToPx(getContext(), 1.5f));
+        paintForecastStroke.setStrokeCap(Paint.Cap.ROUND);
+        paintForecastStroke.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_stroke));
+        paintForecastStroke.setPathEffect(new DashPathEffect(
+                new float[]{dpToPx(getContext(), 4f), dpToPx(getContext(), 3f)},
+                0f
+        ));
 
         paintGrid = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintGrid.setStyle(Paint.Style.STROKE);
@@ -134,7 +195,13 @@ public class DashboardConsumptionBarChartView extends View {
         paintLegendText.setStyle(Paint.Style.FILL);
         paintLegendText.setColor(colorOnSurface);
         paintLegendText.setTextAlign(Paint.Align.LEFT);
-        paintLegendText.setTextSize(dpToPx(getContext(), 12f));
+        paintLegendText.setTextSize(dpToPx(getContext(), 11.5f));
+
+        paintPercentText = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paintPercentText.setStyle(Paint.Style.FILL);
+        paintPercentText.setTextAlign(Paint.Align.CENTER);
+        paintPercentText.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        paintPercentText.setTextSize(dpToPx(getContext(), 9.5f));
     }
 
 
@@ -175,7 +242,7 @@ public class DashboardConsumptionBarChartView extends View {
         float snapshotBarCount = getDisplayedBarCount();
         int snapshotStep = (animFraction < 0.5f) ? startStep : targetStep;
 
-        // 2. Výpočet cílového stavu
+        // 2. Výpočet cílového stavu (včetně případného předpokladu pro škálování osy Y)
         targetEntries.clear();
         if (barEntries != null) {
             targetEntries.addAll(barEntries);
@@ -183,7 +250,7 @@ public class DashboardConsumptionBarChartView extends View {
 
         double maxTotal = 0.0;
         for (BarEntry entry : targetEntries) {
-            maxTotal = Math.max(maxTotal, entry.getTotal());
+            maxTotal = Math.max(maxTotal, entry.getEffectiveTotal());
         }
         targetStep = computeNiceStep(maxTotal);
         targetMaxAxisValue = targetStep * 4f;
@@ -213,7 +280,7 @@ public class DashboardConsumptionBarChartView extends View {
             startMaxAxisValue = targetMaxAxisValue;
             startBarCount = targetBarCount;
             for (BarEntry target : targetEntries) {
-                startEntries.add(new BarEntry(target.label, 0.0, 0.0));
+                startEntries.add(new BarEntry(target.label, 0.0, 0.0, 0.0, target.changePercent));
             }
         } else {
             startEntries.addAll(snapshotEntries);
@@ -242,16 +309,23 @@ public class DashboardConsumptionBarChartView extends View {
         for (int i = 0; i < maxCount; i++) {
             double vt = getInterpolatedVt(i);
             double nt = getInterpolatedNt(i);
+            double projected = getInterpolatedProjectedTotal(i);
             String label;
+            Double pct;
             if (i < targetEntries.size()) {
                 label = targetEntries.get(i).label;
+                pct = (animFraction >= 0.5f || i >= startEntries.size())
+                        ? targetEntries.get(i).changePercent
+                        : startEntries.get(i).changePercent;
             } else if (i < startEntries.size()) {
                 label = startEntries.get(i).label;
+                pct = startEntries.get(i).changePercent;
             } else {
                 label = "";
+                pct = null;
             }
-            if (i < targetEntries.size() || vt + nt > 0.5) {
-                result.add(new BarEntry(label, vt, nt));
+            if (i < targetEntries.size() || Math.max(vt + nt, projected) > 0.5) {
+                result.add(new BarEntry(label, vt, nt, projected, pct));
             }
         }
         return result;
@@ -283,6 +357,23 @@ public class DashboardConsumptionBarChartView extends View {
     }
 
 
+    private double getInterpolatedProjectedTotal(int index) {
+        double from = (index < startEntries.size()) ? startEntries.get(index).getEffectiveTotal() : 0.0;
+        double to = (index < targetEntries.size()) ? targetEntries.get(index).getEffectiveTotal() : 0.0;
+        return from + (to - from) * animFraction;
+    }
+
+
+    private boolean hasAnyDisplayedForecast() {
+        for (BarEntry entry : targetEntries) {
+            if (entry.hasForecast()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -302,9 +393,16 @@ public class DashboardConsumptionBarChartView extends View {
             return;
         }
 
-        float topPad = dpToPx(getContext(), 10f);
+        // Rezervujeme dostatečný prostor nahoře, aby popisek % nikdy nevyjel mimo viditelnou oblast ani u max. sloupce
+        float defaultPercentTextSize = dpToPx(getContext(), 9.5f);
+        paintPercentText.setTextSize(defaultPercentTextSize);
+        Paint.FontMetrics pctFm = paintPercentText.getFontMetrics();
+        float pctTextHeight = pctFm.descent - pctFm.ascent;
+        float pctGap = dpToPx(getContext(), 4f);
+
+        float topPad = pctTextHeight + pctGap + dpToPx(getContext(), 4f);
         float bottomPad = dpToPx(getContext(), 22f);
-        float legendWidth = dpToPx(getContext(), 54f);
+        float legendWidth = dpToPx(getContext(), 58f);
         float minAxisPad = dpToPx(getContext(), 32f);
         float textExtraPad = dpToPx(getContext(), 10f);
 
@@ -360,7 +458,7 @@ public class DashboardConsumptionBarChartView extends View {
         paintGrid.setAlpha(255);
         paintAxisText.setAlpha(180);
 
-        // 2. Vykreslení sloupců (VT dole, NT nahoře) s plynulou animací výšky i počtu sloupců
+        // 2. Vykreslení sloupců (VT dole, NT nahoře, případný čárkovaný odhad a % změna)
         int totalBarsToRender = Math.max(startEntries.size(), targetEntries.size());
         if (totalBarsToRender > 0) {
             float displayedBarCount = getDisplayedBarCount();
@@ -376,13 +474,14 @@ public class DashboardConsumptionBarChartView extends View {
             barCornerRadii[6] = 0f;
             barCornerRadii[7] = 0f;
 
-            // Oříznutí oblasti sloupců a popisků osy X, aby při změně počtu sloupců nepřetékaly do legendy
+            // Oříznutí oblasti sloupců a popisků, aby při změně počtu sloupců nepřetékaly do legendy
             int chartClipSave = canvas.save();
-            canvas.clipRect(chartLeft, 0f, chartRight + dpToPx(getContext(), 4f), h);
+            canvas.clipRect(chartLeft - dpToPx(getContext(), 2f), 0f, chartRight + dpToPx(getContext(), 4f), h);
 
             for (int i = 0; i < totalBarsToRender; i++) {
                 double vtVal = getInterpolatedVt(i);
                 double ntVal = getInterpolatedNt(i);
+                double projectedVal = getInterpolatedProjectedTotal(i);
 
                 float slotCenterX = chartLeft + (i + 0.5f) * slotWidth;
                 float barLeft = slotCenterX - barWidth / 2f;
@@ -403,14 +502,26 @@ public class DashboardConsumptionBarChartView extends View {
 
                 float vtHeight = Math.max(0f, (float) ((vtVal / displayedMaxAxis) * chartHeight));
                 float ntHeight = Math.max(0f, (float) ((ntVal / displayedMaxAxis) * chartHeight));
-                float totalHeight = Math.min(chartHeight, vtHeight + ntHeight);
+                float actualHeight = Math.min(chartHeight, vtHeight + ntHeight);
+                float projectedHeight = Math.min(
+                        chartHeight,
+                        Math.max(actualHeight, (float) ((projectedVal / displayedMaxAxis) * chartHeight))
+                );
+                boolean hasProjectedExtension = projectedHeight - actualHeight > dpToPx(getContext(), 1.5f);
 
-                if (totalHeight > 0.5f && barAlpha > 0) {
-                    float barTop = chartBottom - totalHeight;
-                    rectBuffer.set(barLeft, barTop, barRight, chartBottom);
+                float actualTop = chartBottom - actualHeight;
+                float visualTop = chartBottom - projectedHeight;
+
+                // 2a. Skutečná spotřeba (VT + NT)
+                if (actualHeight > 0.5f && barAlpha > 0) {
+                    rectBuffer.set(barLeft, actualTop, barRight, chartBottom);
 
                     barClipPath.reset();
-                    barClipPath.addRoundRect(rectBuffer, barCornerRadii, Path.Direction.CW);
+                    barClipPath.addRoundRect(
+                            rectBuffer,
+                            hasProjectedExtension ? flatCornerRadii : barCornerRadii,
+                            Path.Direction.CW
+                    );
 
                     int save = canvas.save();
                     canvas.clipPath(barClipPath);
@@ -432,7 +543,38 @@ public class DashboardConsumptionBarChartView extends View {
                     canvas.restoreToCount(save);
                 }
 
-                // Popisek na ose X (s plynulým prolínáním při změně textu nebo počtu sloupců)
+                // 2b. Čárkované doplnění předpokládané spotřeby aktuálního období
+                if (hasProjectedExtension && barAlpha > 0) {
+                    drawForecastExtension(
+                            canvas,
+                            barLeft,
+                            barRight,
+                            visualTop,
+                            actualTop,
+                            actualHeight,
+                            chartBottom,
+                            cornerRadius,
+                            barVisibility
+                    );
+                }
+
+                // 2c. Procentní změna nad sloupcem (na prvním sloupci se nikdy nezobrazuje)
+                if (i > 0 && barAlpha > 0) {
+                    drawPercentLabel(
+                            canvas,
+                            i,
+                            slotCenterX,
+                            slotWidth,
+                            visualTop,
+                            chartLeft,
+                            chartRight,
+                            pctGap,
+                            defaultPercentTextSize,
+                            barVisibility
+                    );
+                }
+
+                // 2d. Popisek na ose X (s plynulým prolínáním při změně textu nebo počtu sloupců)
                 drawXAxisLabel(canvas, i, slotCenterX, chartBottom + dpToPx(getContext(), 15f));
             }
 
@@ -442,22 +584,275 @@ public class DashboardConsumptionBarChartView extends View {
             canvas.restoreToCount(chartClipSave);
         }
 
-        // 3. Legenda vpravo (VT a NT)
+        // 3. Legenda vpravo (VT, NT a při přítomnosti odhadu také čárkovaná položka "Odhad")
+        drawLegend(canvas, chartRight, chartTop, chartHeight);
+    }
+
+
+    private void drawForecastExtension(@NonNull Canvas canvas,
+                                       float barLeft,
+                                       float barRight,
+                                       float projectedTop,
+                                       float actualTop,
+                                       float actualHeight,
+                                       float chartBottom,
+                                       float cornerRadius,
+                                       float visibility) {
+        float bottomY = actualHeight > 0.5f ? actualTop : chartBottom;
+        if (bottomY - projectedTop <= 0.5f) {
+            return;
+        }
+
+        // Jemná průsvitná výplň odhadované části
+        rectBuffer.set(barLeft, projectedTop, barRight, bottomY);
+        barClipPath.reset();
+        barClipPath.addRoundRect(rectBuffer, barCornerRadii, Path.Direction.CW);
+
+        int baseFillColor = ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill);
+        int baseFillAlpha = (baseFillColor >>> 24) & 0xFF;
+        paintForecastFill.setColor(baseFillColor);
+        paintForecastFill.setAlpha(Math.round(baseFillAlpha * visibility));
+        canvas.drawPath(barClipPath, paintForecastFill);
+
+        // Čárkovaný obrys horní a bočních hran
+        float halfStroke = paintForecastStroke.getStrokeWidth() / 2f;
+        float fl = barLeft + halfStroke;
+        float fr = barRight - halfStroke;
+        float ft = projectedTop + halfStroke;
+        float fb = actualHeight > 0.5f ? actualTop : chartBottom - halfStroke;
+        if (fr <= fl || fb <= ft) {
+            return;
+        }
+
+        float r = Math.min(cornerRadius, Math.min((fr - fl) / 2f, fb - ft));
+        forecastPath.reset();
+        forecastPath.moveTo(fl, fb);
+        forecastPath.lineTo(fl, ft + r);
+        if (r > 0.5f) {
+            rectBuffer.set(fl, ft, fl + 2f * r, ft + 2f * r);
+            forecastPath.arcTo(rectBuffer, 180f, 90f, false);
+        }
+        forecastPath.lineTo(fr - r, ft);
+        if (r > 0.5f) {
+            rectBuffer.set(fr - 2f * r, ft, fr, ft + 2f * r);
+            forecastPath.arcTo(rectBuffer, 270f, 90f, false);
+        }
+        forecastPath.lineTo(fr, fb);
+
+        paintForecastStroke.setAlpha(Math.max(0, Math.min(255, Math.round(230 * visibility))));
+        canvas.drawPath(forecastPath, paintForecastStroke);
+    }
+
+
+    private void drawPercentLabel(@NonNull Canvas canvas,
+                                  int index,
+                                  float slotCenterX,
+                                  float slotWidth,
+                                  float visualBarTop,
+                                  float chartLeft,
+                                  float chartRight,
+                                  float pctGap,
+                                  float defaultTextSize,
+                                  float barVisibility) {
+        if (index <= 0) {
+            return;
+        }
+
+        Double oldPct = (index < startEntries.size()) ? startEntries.get(index).changePercent : null;
+        Double newPct = (index < targetEntries.size()) ? targetEntries.get(index).changePercent : null;
+
+        String oldText = formatChangePercent(oldPct);
+        String newText = formatChangePercent(newPct);
+
+        if (oldText != null && oldText.equals(newText)) {
+            drawSinglePercentText(
+                    canvas,
+                    newText,
+                    resolvePercentColor(newPct),
+                    slotCenterX,
+                    slotWidth,
+                    visualBarTop,
+                    chartLeft,
+                    chartRight,
+                    pctGap,
+                    defaultTextSize,
+                    barVisibility
+            );
+            return;
+        }
+
+        if (oldText != null && animFraction < 1f) {
+            float alpha = (1f - animFraction) * barVisibility;
+            if (alpha > 0.02f) {
+                drawSinglePercentText(
+                        canvas,
+                        oldText,
+                        resolvePercentColor(oldPct),
+                        slotCenterX,
+                        slotWidth,
+                        visualBarTop,
+                        chartLeft,
+                        chartRight,
+                        pctGap,
+                        defaultTextSize,
+                        alpha
+                );
+            }
+        }
+
+        if (newText != null && animFraction > 0f) {
+            float alpha = animFraction * barVisibility;
+            if (alpha > 0.02f) {
+                drawSinglePercentText(
+                        canvas,
+                        newText,
+                        resolvePercentColor(newPct),
+                        slotCenterX,
+                        slotWidth,
+                        visualBarTop,
+                        chartLeft,
+                        chartRight,
+                        pctGap,
+                        defaultTextSize,
+                        alpha
+                );
+            }
+        }
+    }
+
+
+    private void drawSinglePercentText(@NonNull Canvas canvas,
+                                       @NonNull String text,
+                                       int color,
+                                       float slotCenterX,
+                                       float slotWidth,
+                                       float visualBarTop,
+                                       float chartLeft,
+                                       float chartRight,
+                                       float pctGap,
+                                       float defaultTextSize,
+                                       float alphaFraction) {
+        paintPercentText.setTextSize(defaultTextSize);
+        float maxTextWidth = Math.max(dpToPx(getContext(), 22f), slotWidth - dpToPx(getContext(), 2f));
+        float measuredWidth = paintPercentText.measureText(text);
+        if (measuredWidth > maxTextWidth && measuredWidth > 0f) {
+            float minTextSize = dpToPx(getContext(), 7.5f);
+            float scaledSize = Math.max(minTextSize, defaultTextSize * (maxTextWidth / measuredWidth));
+            paintPercentText.setTextSize(scaledSize);
+            measuredWidth = paintPercentText.measureText(text);
+        }
+
+        Paint.FontMetrics fm = paintPercentText.getFontMetrics();
+        // Ochrana horního okraje: i při maximální výšce sloupce zůstane popisek vždy uvnitř grafu
+        float minSafeBaselineY = dpToPx(getContext(), 2f) - fm.ascent;
+        float desiredBaselineY = visualBarTop - pctGap - fm.descent;
+        float baselineY = Math.max(minSafeBaselineY, desiredBaselineY);
+
+        // Ochrana bočních okrajů oblasti grafu
+        float halfW = measuredWidth / 2f;
+        float minX = chartLeft + halfW;
+        float maxX = chartRight - halfW;
+        float x = (minX <= maxX)
+                ? Math.max(minX, Math.min(maxX, slotCenterX))
+                : slotCenterX;
+
+        paintPercentText.setColor(color);
+        paintPercentText.setAlpha(Math.max(0, Math.min(255, Math.round(255 * alphaFraction))));
+        canvas.drawText(text, x, baselineY, paintPercentText);
+    }
+
+
+    @Nullable
+    private String formatChangePercent(@Nullable Double changePercent) {
+        if (changePercent == null || Double.isNaN(changePercent) || Double.isInfinite(changePercent)) {
+            return null;
+        }
+        long rounded = Math.round(changePercent);
+        if (rounded > 999L) {
+            return ">999%";
+        }
+        if (rounded < -999L) {
+            return "<-999%";
+        }
+        if (rounded > 0L) {
+            return "+" + rounded + "%";
+        }
+        return rounded + "%";
+    }
+
+
+    private int resolvePercentColor(@Nullable Double changePercent) {
+        if (changePercent == null) {
+            return colorPercentNeutral;
+        }
+        long rounded = Math.round(changePercent);
+        if (rounded > 0L) {
+            return colorPercentIncrease;
+        }
+        if (rounded < 0L) {
+            return colorPercentDecrease;
+        }
+        return colorPercentNeutral;
+    }
+
+
+    private void drawLegend(@NonNull Canvas canvas, float chartRight, float chartTop, float chartHeight) {
         float legendX = chartRight + dpToPx(getContext(), 10f);
         float boxSize = dpToPx(getContext(), 11f);
         float boxCorner = dpToPx(getContext(), 2.5f);
-        float centerY = chartTop + chartHeight * 0.35f;
+        boolean showForecastLegend = hasAnyDisplayedForecast();
+        float rowSpacing = dpToPx(getContext(), 21f);
+        int itemCount = showForecastLegend ? 3 : 2;
+        float blockHeight = (itemCount - 1) * rowSpacing + boxSize;
+        float startY = chartTop + Math.max(0f, (chartHeight - blockHeight) * 0.45f);
 
         // VT legenda
-        rectBuffer.set(legendX, centerY, legendX + boxSize, centerY + boxSize);
+        paintVt.setAlpha(255);
+        rectBuffer.set(legendX, startY, legendX + boxSize, startY + boxSize);
         canvas.drawRoundRect(rectBuffer, boxCorner, boxCorner, paintVt);
-        canvas.drawText(getContext().getString(R.string.kwh_vt), legendX + boxSize + dpToPx(getContext(), 6f), centerY + boxSize - dpToPx(getContext(), 1f), paintLegendText);
+        canvas.drawText(
+                getContext().getString(R.string.kwh_vt),
+                legendX + boxSize + dpToPx(getContext(), 6f),
+                startY + boxSize - dpToPx(getContext(), 1f),
+                paintLegendText
+        );
 
         // NT legenda
-        float ntLegendY = centerY + dpToPx(getContext(), 22f);
+        float ntLegendY = startY + rowSpacing;
+        paintNt.setAlpha(255);
         rectBuffer.set(legendX, ntLegendY, legendX + boxSize, ntLegendY + boxSize);
         canvas.drawRoundRect(rectBuffer, boxCorner, boxCorner, paintNt);
-        canvas.drawText(getContext().getString(R.string.kwh_nt), legendX + boxSize + dpToPx(getContext(), 6f), ntLegendY + boxSize - dpToPx(getContext(), 1f), paintLegendText);
+        canvas.drawText(
+                getContext().getString(R.string.kwh_nt),
+                legendX + boxSize + dpToPx(getContext(), 6f),
+                ntLegendY + boxSize - dpToPx(getContext(), 1f),
+                paintLegendText
+        );
+
+        // Legenda čárkovaného odhadu (jen pokud je odhad v grafu zobrazen)
+        if (showForecastLegend) {
+            float forecastLegendY = ntLegendY + rowSpacing;
+            int baseFillColor = ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill);
+            paintForecastFill.setColor(baseFillColor);
+            rectBuffer.set(legendX, forecastLegendY, legendX + boxSize, forecastLegendY + boxSize);
+            canvas.drawRoundRect(rectBuffer, boxCorner, boxCorner, paintForecastFill);
+
+            paintForecastStroke.setAlpha(230);
+            float halfStroke = paintForecastStroke.getStrokeWidth() / 2f;
+            rectBuffer.set(
+                    legendX + halfStroke,
+                    forecastLegendY + halfStroke,
+                    legendX + boxSize - halfStroke,
+                    forecastLegendY + boxSize - halfStroke
+            );
+            canvas.drawRoundRect(rectBuffer, boxCorner, boxCorner, paintForecastStroke);
+            canvas.drawText(
+                    getContext().getString(R.string.dashboard_chart_forecast_legend),
+                    legendX + boxSize + dpToPx(getContext(), 6f),
+                    forecastLegendY + boxSize - dpToPx(getContext(), 1f),
+                    paintLegendText
+            );
+        }
     }
 
 

@@ -696,7 +696,7 @@
             <cz.xlisto.elektrodroid.modules.dashboard.DashboardConsumptionBarChartView
                 android:id="@+id/viewConsumptionBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="132dp"
+                android:layout_height="146dp"
                 android:layout_marginTop="6dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -112,6 +112,11 @@
     <color name="dashboard_switcher_btn_bg">#F2F4F8</color>
     <color name="dashboard_switcher_btn_stroke">#D5D9E2</color>
     <color name="dashboard_divider">#E5E8F0</color>
+    <color name="dashboard_chart_percent_decrease">#137333</color>
+    <color name="dashboard_chart_percent_increase">#C5221F</color>
+    <color name="dashboard_chart_percent_neutral">#5F6368</color>
+    <color name="dashboard_chart_forecast_stroke">#74777F</color>
+    <color name="dashboard_chart_forecast_fill">#1A005CBB</color>
 
     <!-- Odznaky původu a stavu ceníku (Light) -->
     <color name="pricelist_badge_pdf_bg">#E8F0FE</color>

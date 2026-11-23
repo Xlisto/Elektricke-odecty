@@ -94,7 +94,9 @@ public class DataGraphMonth extends DataSource {
                     monthlyConsuptions.get(monthlyConsuptions.size() - 1).setDates(actualDate);
                 } else {
                     //proč potřebuji předchozí datum v modelu spotřeby?
-                    monthlyConsuptions.add(new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate));
+                    MonthlyConsuptionModel model = new MonthlyConsuptionModel(actualVT, actualNT, previousVT, previousNT, actualDate);
+                    model.setStartDate(previousDate);
+                    monthlyConsuptions.add(model);
                 }
             }
         }
