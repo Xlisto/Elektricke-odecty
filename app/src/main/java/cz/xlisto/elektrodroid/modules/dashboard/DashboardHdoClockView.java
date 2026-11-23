@@ -60,16 +60,10 @@ public class DashboardHdoClockView extends View {
     /**
      * Stav jedné výseče HDO na ciferníku (úhel začátku, délka výseče, relativní poloměr a barva).
      */
-    private static class SectorState {
+    private record SectorState(RelayType type, float startAngle, float sweepAngle,
+                               float radiusRatio, int color) {
 
-        final RelayType type;
-        final float startAngle;
-        final float sweepAngle;
-        final float radiusRatio;
-        final int color;
-
-
-        SectorState(@NonNull RelayType type, float startAngle, float sweepAngle, float radiusRatio, int color) {
+        private SectorState(@NonNull RelayType type, float startAngle, float sweepAngle, float radiusRatio, int color) {
             this.type = type;
             this.startAngle = startAngle;
             this.sweepAngle = sweepAngle;
@@ -83,18 +77,21 @@ public class DashboardHdoClockView extends View {
     /**
      * Dvojice počátečního a cílového stavu výseče pro plynulou interpolaci (posun začátku/konce/poloměru).
      */
-    private static class SectorTransition {
+    private record SectorTransition(SectorState from, SectorState to) {
 
-        final SectorState from;
-        final SectorState to;
-
-
-        SectorTransition(@NonNull SectorState from, @NonNull SectorState to) {
+        private SectorTransition(@NonNull SectorState from, @NonNull SectorState to) {
             this.from = from;
             this.to = to;
         }
 
 
+        /**
+         * Interpoluje stav výseče mezi {@link #from} a {@link #to} pro daný průběh animace.
+         *
+         * @param fraction       průběh animace v intervalu {@code 0..1}
+         * @param colorEvaluator evaluátor pro plynulý přechod barvy výseče
+         * @return interpolovaný stav výseče {@link SectorState}
+         */
         SectorState interpolate(float fraction, @NonNull ArgbEvaluator colorEvaluator) {
             float start = from.startAngle + (to.startAngle - from.startAngle) * fraction;
             float sweep = from.sweepAngle + (to.sweepAngle - from.sweepAngle) * fraction;
@@ -105,7 +102,7 @@ public class DashboardHdoClockView extends View {
             return new SectorState(to.type, start, sweep, ratio, color);
         }
 
-    }
+        }
 
     private Paint paintDialBg;
     private Paint paintDialStroke;
@@ -165,9 +162,12 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Inicializuje štětce ({@link Paint}) a barvy ciferníku i relé HDO podle aktuálního motivu.
+     */
     private void init() {
         int colorPrimary = ContextCompat.getColor(getContext(), R.color.dashboard_teal_primary);
-        int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface, 0xFF1C1B1F);
+        int colorOnSurface = resolveColorOnSurface();
         int colorSurfaceBg = ContextCompat.getColor(getContext(), R.color.dashboard_price_card_start);
 
         colorHdoTuv = ContextCompat.getColor(getContext(), R.color.color_hdo_time_TUV);
@@ -211,20 +211,17 @@ public class DashboardHdoClockView extends View {
     }
 
 
-    private int resolveAttrColor(int attrRes, int fallback) {
+    /**
+     * Načte barvu atributu {@code colorOnSurface} z aktuálního motivu s výchozí tmavou rezervou.
+     *
+     * @return výsledná ARGB barva popředí
+     */
+    private int resolveColorOnSurface() {
         TypedValue tv = new TypedValue();
-        if (getContext().getTheme().resolveAttribute(attrRes, tv, true)) {
+        if (getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true)) {
             return tv.data;
         }
-        return fallback;
-    }
-
-
-    /**
-     * Nastaví seznam HDO modelů a časový posun elektroměru (s animací přechodu).
-     */
-    public void setHdoData(@Nullable List<HdoModel> models, long timeShiftMillis) {
-        setHdoData(models, timeShiftMillis, true);
+        return 0xFF1C1B1F;
     }
 
 
@@ -258,6 +255,20 @@ public class DashboardHdoClockView extends View {
             return;
         }
 
+        long startTimeMillis = getStartTimeMillis(targetTimeMillis);
+        lastDisplayedTimeMillis = targetTimeMillis;
+
+        startMorphAnimation(previousSectors, targetSectors, startTimeMillis, targetTimeMillis);
+    }
+
+
+    /**
+     * Určí výchozí čas pro animaci ručičky – buď poslední zobrazený čas, nebo půlnoc cílového dne při prvním zobrazení.
+     *
+     * @param targetTimeMillis cílový čas v milisekundách
+     * @return počáteční čas animace ručičky v milisekundách
+     */
+    private long getStartTimeMillis(long targetTimeMillis) {
         long startTimeMillis;
         if (lastDisplayedTimeMillis > 0) {
             startTimeMillis = lastDisplayedTimeMillis;
@@ -270,12 +281,13 @@ public class DashboardHdoClockView extends View {
             midnight.set(Calendar.MILLISECOND, 0);
             startTimeMillis = midnight.getTimeInMillis();
         }
-        lastDisplayedTimeMillis = targetTimeMillis;
-
-        startMorphAnimation(previousSectors, targetSectors, startTimeMillis, targetTimeMillis);
+        return startTimeMillis;
     }
 
 
+    /**
+     * Rozvine vstupní záznamy HDO do týdenního rozvrhu spínání pomocí {@link BuilderHDOStack} se zohledněním posunu času.
+     */
     private void rebuildWeekModels() {
         if (!rawModels.isEmpty()) {
             this.weekModels = BuilderHDOStack.build(new ArrayList<>(rawModels), timeShift);
@@ -287,6 +299,9 @@ public class DashboardHdoClockView extends View {
 
     /**
      * Sestaví seznam dnešních výsečí HDO seřazených podle druhu relé (TUV, TAR, PV) a času začátku.
+     *
+     * @param dayCal kalendář reprezentující den, pro který se mají výseče vyfiltrovat
+     * @return seznam výsečí {@link SectorState} od vnějšího kruhu k vnitřnímu
      */
     @NonNull
     private List<SectorState> buildTodaySectors(@NonNull Calendar dayCal) {
@@ -340,6 +355,10 @@ public class DashboardHdoClockView extends View {
     /**
      * Spáruje předchozí a nové výseče tak, aby se při změně odběrného místa plynule posunuly
      * jejich začátky, konce i poloměry mezikruží.
+     *
+     * @param oldSectors výchozí výseče před změnou
+     * @param newSectors cílové výseče po změně
+     * @return seznam animovaných přechodů {@link SectorTransition}
      */
     @NonNull
     private List<SectorTransition> buildTransitions(@NonNull List<SectorState> oldSectors,
@@ -398,6 +417,14 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Spáruje dvě seřazené sady výsečí po indexech: přebývající nové výseče se plynule rozevřou
+     * z nulové délky, přebývající staré se po směru hodinových ručiček uzavřou.
+     *
+     * @param oldList        původní výseče dané skupiny relé
+     * @param newList        nové výseče dané skupiny relé
+     * @param outTransitions cílový seznam, do kterého se přidají vytvořené přechody
+     */
     private void pairSectorLists(@NonNull List<SectorState> oldList,
                                  @NonNull List<SectorState> newList,
                                  @NonNull List<SectorTransition> outTransitions) {
@@ -436,6 +463,12 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Rozdělí seznam výsečí do mapy podle typu relé {@link RelayType}.
+     *
+     * @param sectors vstupní výseče
+     * @return mapa typů relé na odpovídající seznam výsečí
+     */
     @NonNull
     private Map<RelayType, List<SectorState>> groupByType(@NonNull List<SectorState> sectors) {
         Map<RelayType, List<SectorState>> map = new EnumMap<>(RelayType.class);
@@ -452,6 +485,14 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Spustí souběžnou plynulou animaci posunu ručičky času a přechodu výsečí HDO.
+     *
+     * @param fromSectors    počáteční výseče
+     * @param toSectors      cílové výseče
+     * @param fromTimeMillis počáteční čas ručičky v milisekundách
+     * @param toTimeMillis   cílový čas ručičky v milisekundách
+     */
     private void startMorphAnimation(@NonNull List<SectorState> fromSectors,
                                      @NonNull List<SectorState> toSectors,
                                      long fromTimeMillis,
@@ -494,6 +535,12 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Vrátí aktuálně vykreslované výseče – během animace jejich interpolovaný mezistav seřazený
+     * od vnějšího k vnitřnímu kruhu, mimo animaci cílový seznam {@link #currentDisplayedSectors}.
+     *
+     * @return seznam výsečí připravený k vykreslení
+     */
     @NonNull
     private List<SectorState> getInterpolatedSectors() {
         if (morphAnimator == null || !morphAnimator.isRunning() || activeTransitions.isEmpty()) {
@@ -512,17 +559,24 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Vrátí barvu výseče odpovídající zadanému typu relé HDO.
+     *
+     * @param type typ relé
+     * @return ARGB barva výseče
+     */
     private int getColorForRelayType(@NonNull RelayType type) {
-        if (type == RelayType.TUV) {
-            return colorHdoTuv;
-        }
-        if (type == RelayType.PV) {
-            return colorHdoPv;
-        }
-        return colorHdoTar;
+        return switch (type) {
+            case TUV -> colorHdoTuv;
+            case PV -> colorHdoPv;
+            case TAR -> colorHdoTar;
+        };
     }
 
 
+    /**
+     * Zruší a uvolní probíhající animátory výsečí i ručičky.
+     */
     private void cancelAnimations() {
         if (morphAnimator != null) {
             morphAnimator.cancel();
@@ -535,6 +589,9 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Po připojení pohledu k oknu spustí pravidelnou aktualizaci polohy ručičky každých 30 sekund.
+     */
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -543,6 +600,9 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Po odpojení pohledu od okna zastaví periodické překreslování a zruší běžící animace.
+     */
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -551,6 +611,12 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Vykreslí 24hodinový ciferník: pozadí, výseče HDO, hodinové značky, popisky hodin,
+     * vnější obrys a ručičku aktuálního (případně animovaného) času.
+     *
+     * @param canvas plátno pro vykreslení pohledu
+     */
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
@@ -636,6 +702,9 @@ public class DashboardHdoClockView extends View {
 
     /**
      * Rozpozná druh spínaného relé HDO podle názvu relé (shodně s původním {@link GraphTotalHdoView}).
+     *
+     * @param rele název nebo označení relé (může být {@code null})
+     * @return rozpoznaný {@link RelayType}; při prázdném nebo neznámém názvu vrací {@link RelayType#TAR}
      */
     @NonNull
     private RelayType classifyRelayType(@Nullable String rele) {
@@ -655,6 +724,13 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Porovná, zda dvě instance {@link Calendar} představují stejný kalendářní den (rok a den v roce).
+     *
+     * @param c1 první kalendář
+     * @param c2 druhý kalendář
+     * @return {@code true}, pokud oba kalendáře nejsou {@code null} a shodují se v roce a dni v roce
+     */
     private boolean isSameDay(@Nullable Calendar c1, @Nullable Calendar c2) {
         if (c1 == null || c2 == null) {
             return false;
@@ -664,6 +740,13 @@ public class DashboardHdoClockView extends View {
     }
 
 
+    /**
+     * Převede čas ve formátu {@code HH:mm} na úhel na 24hodinovém ciferníku (ve stupních,
+     * kde {@code 00:00} odpovídá {@code 270°} nahoře, jedna hodina je {@code 15°} a minuta {@code 0,25°}).
+     *
+     * @param time časový řetězec ve formátu {@code HH:mm}
+     * @return úhel ve stupních; při neplatném nebo {@code null} vstupu vrací {@code 270f}
+     */
     private float convertTimeToAngle(@Nullable String time) {
         if (time == null || !time.contains(":")) {
             return 270f;
