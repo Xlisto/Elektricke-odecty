@@ -65,6 +65,10 @@ public class ReadRawJSON {
     private final static String POZE1 = "POZE1";
     private final static String POZE2 = "POZE2";
 
+    private static volatile String cachedDistribuceJson;
+    private static volatile String cachedOstatniJson;
+    private static volatile String cachedJisticeJson;
+
 
     /**
      * Konstruktor třídy {@code ReadRawJSON}.
@@ -100,13 +104,47 @@ public class ReadRawJSON {
         this.endCalBtn = (endCal != null) ? endCal : startCal;
         this.distUzemi = distUzemi;
         this.sazba = sazba;
-        String distribuce = readRaw(R.raw.distribuce);
-        String ostatni = readRaw(R.raw.ostatni);
-        String jistice = readRaw(R.raw.jistice);
+        String distribuce = getCachedRaw(R.raw.distribuce);
+        String ostatni = getCachedRaw(R.raw.ostatni);
+        String jistice = getCachedRaw(R.raw.jistice);
         parse(distribuce, Typ.DISTRIBUCE);
         parseOther(ostatni);
         parse(jistice, Typ.JISTIC);
         return priceListModel;
+    }
+
+
+    /**
+     * Vrátí obsah raw JSON zdroje s využitím mezipaměti (in-memory cache),
+     * aby se zabránilo opakovanému I/O čtení stejných souborů.
+     *
+     * @param resource ID zdroje v {@code R.raw}
+     * @return načtený JSON řetězec
+     */
+    private String getCachedRaw(int resource) {
+        if (resource == R.raw.distribuce) {
+            String cached = cachedDistribuceJson;
+            if (cached == null || cached.isEmpty()) {
+                cached = readRaw(resource);
+                if (!cached.isEmpty()) cachedDistribuceJson = cached;
+            }
+            return cached;
+        } else if (resource == R.raw.ostatni) {
+            String cached = cachedOstatniJson;
+            if (cached == null || cached.isEmpty()) {
+                cached = readRaw(resource);
+                if (!cached.isEmpty()) cachedOstatniJson = cached;
+            }
+            return cached;
+        } else if (resource == R.raw.jistice) {
+            String cached = cachedJisticeJson;
+            if (cached == null || cached.isEmpty()) {
+                cached = readRaw(resource);
+                if (!cached.isEmpty()) cachedJisticeJson = cached;
+            }
+            return cached;
+        }
+        return readRaw(resource);
     }
 
 

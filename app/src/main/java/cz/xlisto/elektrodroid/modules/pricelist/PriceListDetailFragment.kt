@@ -105,6 +105,11 @@ class PriceListDetailFragment : Fragment(), OnPaddingChangeListener {
     private lateinit var tvNotePoze1: TextView
     private lateinit var tvNotePoze2: TextView
     private lateinit var tvNoteOte: TextView
+    private lateinit var containerDetailOriginBadge: View
+    private lateinit var ivDetailOriginIcon: android.widget.ImageView
+    private lateinit var tvDetailOriginTitle: TextView
+    private lateinit var tvDetailOriginDescription: TextView
+    private lateinit var tvDetailOriginDiff: TextView
     private var containerBreakers: android.widget.LinearLayout? = null
 
     private var priceId: Long = -1L
@@ -131,6 +136,12 @@ class PriceListDetailFragment : Fragment(), OnPaddingChangeListener {
         savedInstanceState: Bundle?,
     ): View? {
         val v = inflater.inflate(R.layout.fragment_price_list_detail, container, false)
+
+        containerDetailOriginBadge = v.findViewById(R.id.containerDetailOriginBadge)
+        ivDetailOriginIcon = v.findViewById(R.id.ivDetailOriginIcon)
+        tvDetailOriginTitle = v.findViewById(R.id.tvDetailOriginTitle)
+        tvDetailOriginDescription = v.findViewById(R.id.tvDetailOriginDescription)
+        tvDetailOriginDiff = v.findViewById(R.id.tvDetailOriginDiff)
 
         ldnDate = v.findViewById(R.id.ldnPlatnost)
         ldnSeries = v.findViewById(R.id.ldnRada)
@@ -256,6 +267,39 @@ class PriceListDetailFragment : Fragment(), OnPaddingChangeListener {
         dataPriceListSource.close()
 
         if (priceList == null) return
+
+        val originType = PriceListOriginHelper.classify(requireContext(), priceList)
+        PriceListOriginHelper.bindBadge(
+            requireContext(),
+            originType,
+            containerDetailOriginBadge,
+            ivDetailOriginIcon,
+            tvDetailOriginTitle,
+            false
+        )
+        val textColor = androidx.core.content.ContextCompat.getColor(
+            requireContext(),
+            originType.textColorRes
+        )
+        tvDetailOriginDescription.setText(originType.detailLabelRes)
+        tvDetailOriginDescription.setTextColor(textColor)
+
+        if (originType == PriceListOriginHelper.OriginType.CUSTOM_REGULATED) {
+            val diffs =
+                PriceListOriginHelper.getDifferingRegulatedFields(requireContext(), priceList)
+            if (diffs.isNotEmpty()) {
+                tvDetailOriginDiff.text = getString(
+                    R.string.pricelist_origin_custom_regul_diff_prefix,
+                    diffs.joinToString(", ")
+                )
+                tvDetailOriginDiff.setTextColor(textColor)
+                tvDetailOriginDiff.visibility = View.VISIBLE
+            } else {
+                tvDetailOriginDiff.visibility = View.GONE
+            }
+        } else {
+            tvDetailOriginDiff.visibility = View.GONE
+        }
 
         val dateStart = priceList.validFrom
         val dateEnd = priceList.validTo

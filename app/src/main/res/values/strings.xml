@@ -896,4 +896,17 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="dashboard_invoice_consumption_format">Spotřeba: %1$s kWh</string>
     <string name="dashboard_invoice_amount_with_vat_format">%1$s Kč s DPH</string>
     <string name="dashboard_subscription_point_switched">Odběrné místo bylo přepnuto na: %1$s</string>
+
+    <!-- Původ a stav regulovaných cen ceníku -->
+    <string name="pricelist_origin_filter_hint">Původ a stav regulovaných cen</string>
+    <string name="pricelist_origin_pdf_short">Načteno z PDF (bez úprav)</string>
+    <string name="pricelist_origin_pdf_detail">Ceník kompletně načtený z PDF dodavatele s oficiálními regulovanými cenami bez zásahu uživatele</string>
+    <string name="pricelist_origin_app_regul_short">Ručně zadaný ceník • Regul. ceny z aplikace</string>
+    <string name="pricelist_origin_app_regul_detail">Ceník má regulované ceny plně shodné s uloženými regulovanými cenami v aplikaci</string>
+    <string name="pricelist_origin_custom_regul_short">Upravené regulované ceny</string>
+    <string name="pricelist_origin_custom_regul_detail">Některé regulované ceny v ceníku se neshodují s uloženými regulovanými cenami v aplikaci</string>
+    <string name="pricelist_origin_custom_regul_diff_prefix">Odlišné položky oproti aplikaci: %1$s</string>
+    <string name="pricelist_origin_custom_regul_period_mismatch">Období platnosti zasahuje do více regulačních období v rámci roku</string>
+    <string name="pricelist_origin_manual_short">Kompletně ručně zadaný ceník</string>
+    <string name="pricelist_origin_manual_detail">Kompletně ručně vytvořený ceník (pro toto období nejsou v aplikaci uložené automatické regulované ceny)</string>
 </resources>

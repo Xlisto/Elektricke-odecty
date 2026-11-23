@@ -13,6 +13,7 @@ public class ShPFilter extends ShP {
     public static final String SAZBA = "filtrSazba";
     public static final String COMPANY = "filtrDodavatel";
     public static final String AREA = "filtrUzemi";
+    public static final String ORIGIN = "filtrPuvod";
     public static final String DATE_START = "filtrDateStart";
     public static final String DATE_END = "filtrDateEnd";
     public static final String DEFAULT = "%";
@@ -91,6 +92,7 @@ public class ShPFilter extends ShP {
                 || isValueFiltered(get(SAZBA, DEFAULT))
                 || isValueFiltered(get(COMPANY, DEFAULT))
                 || isValueFiltered(get(AREA, DEFAULT))
+                || isValueFiltered(get(ORIGIN, DEFAULT))
                 || isValueFiltered(get(DATE_START, DEFAULT))
                 || isValueFiltered(get(DATE_END, DEFAULT));
     }

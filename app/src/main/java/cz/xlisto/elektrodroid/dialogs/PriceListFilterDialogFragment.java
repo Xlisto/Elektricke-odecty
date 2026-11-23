@@ -5,6 +5,7 @@ import static cz.xlisto.elektrodroid.shp.ShPFilter.AREA;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.COMPANY;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.DATE_END;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.DATE_START;
+import static cz.xlisto.elektrodroid.shp.ShPFilter.ORIGIN;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.PRODUKT;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.RADA;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.SAZBA;
@@ -41,13 +42,14 @@ import java.util.Set;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DBHelperPriceList;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.modules.pricelist.PriceListOriginHelper;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPFilter;
 
 /**
  * Dialog ve stylu Material Design 3 pro filtraci ceníků.
- * Umožňuje vícenásobný výběr položek (multi-select) pro řadu, produkt, sazbu, dodavatele i distribuční území
- * a poskytuje výběr dat platnosti pomocí kalendáře a rychlých předvoleb roků.
+ * Umožňuje vícenásobný výběr položek (multi-select) pro řadu, produkt, sazbu, dodavatele, distribuční území
+ * i původ/typ ceníku a poskytuje výběr dat platnosti pomocí kalendáře a rychlých předvoleb roků.
  */
 public class PriceListFilterDialogFragment extends DialogFragment {
 
@@ -55,8 +57,8 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     public static final String RESULT = "result";
     private static final String ARG_FILTER_TYPE = "argFilterType";
 
-    private TextInputLayout tilRada, tilProdukt, tilSazba, tilCompany, tilArea;
-    private TextInputEditText etRada, etProdukt, etSazba, etCompany, etArea;
+    private TextInputLayout tilRada, tilProdukt, tilSazba, tilCompany, tilArea, tilOrigin;
+    private TextInputEditText etRada, etProdukt, etSazba, etCompany, etArea, etOrigin;
 
     private TextInputLayout tilDateFrom, tilDateTo;
     private TextInputEditText etDateFrom, etDateTo;
@@ -68,12 +70,14 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     private final Set<String> selectedSazba = new LinkedHashSet<>();
     private final Set<String> selectedCompany = new LinkedHashSet<>();
     private final Set<String> selectedArea = new LinkedHashSet<>();
+    private final Set<String> selectedOrigin = new LinkedHashSet<>();
 
     private ArrayList<String> optionsRada = new ArrayList<>();
     private ArrayList<String> optionsProdukt = new ArrayList<>();
     private ArrayList<String> optionsSazba = new ArrayList<>();
     private ArrayList<String> optionsCompany = new ArrayList<>();
     private ArrayList<String> optionsArea = new ArrayList<>();
+    private ArrayList<String> optionsOrigin = new ArrayList<>();
 
     private String dateStart = "%", dateEnd = "%";
 
@@ -186,6 +190,9 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         tilArea = view.findViewById(R.id.tilArea);
         etArea = view.findViewById(R.id.etArea);
 
+        tilOrigin = view.findViewById(R.id.tilOrigin);
+        etOrigin = view.findViewById(R.id.etOrigin);
+
         tilDateFrom = view.findViewById(R.id.tilDateFrom);
         tilDateTo = view.findViewById(R.id.tilDateTo);
         etDateFrom = view.findViewById(R.id.etDateFrom);
@@ -202,6 +209,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         disableKeyboard(etSazba);
         disableKeyboard(etCompany);
         disableKeyboard(etArea);
+        disableKeyboard(etOrigin);
         disableKeyboard(etDateFrom);
         disableKeyboard(etDateTo);
     }
@@ -229,6 +237,10 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         View.OnClickListener clickArea = v -> openMultiChoiceDialog(R.string.distribucni_uzemi, optionsArea, selectedArea, etArea);
         etArea.setOnClickListener(clickArea);
         tilArea.setEndIconOnClickListener(clickArea);
+
+        View.OnClickListener clickOrigin = v -> openMultiChoiceDialog(R.string.pricelist_origin_filter_hint, optionsOrigin, selectedOrigin, etOrigin);
+        etOrigin.setOnClickListener(clickOrigin);
+        tilOrigin.setEndIconOnClickListener(clickOrigin);
 
         View.OnClickListener listenerFrom = v -> openDatePickerFrom();
         etDateFrom.setOnClickListener(listenerFrom);
@@ -339,12 +351,14 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         optionsCompany = dataPriceListSource.readPriceListCount(DBHelperPriceList.FIRMA);
         optionsArea = dataPriceListSource.readPriceListCount(DBHelperPriceList.DISTRIBUCE);
         dataPriceListSource.close();
+        optionsOrigin = PriceListOriginHelper.getFilterOptions(requireContext());
 
         updateFieldText(selectedRada, etRada);
         updateFieldText(selectedProdukt, etProdukt);
         updateFieldText(selectedSazba, etSazba);
         updateFieldText(selectedCompany, etCompany);
         updateFieldText(selectedArea, etArea);
+        updateFieldText(selectedOrigin, etOrigin);
     }
 
 
@@ -386,6 +400,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         shpFilter.set(SAZBA, formatSetToPreference(selectedSazba));
         shpFilter.set(COMPANY, formatSetToPreference(selectedCompany));
         shpFilter.set(AREA, formatSetToPreference(selectedArea));
+        shpFilter.set(ORIGIN, formatSetToPreference(selectedOrigin));
         shpFilter.set(DATE_START, dateStart);
         shpFilter.set(DATE_END, dateEnd);
     }
@@ -396,6 +411,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         parsePreferenceToSet(shpFilter.get(SAZBA, VSE), selectedSazba);
         parsePreferenceToSet(shpFilter.get(COMPANY, VSE), selectedCompany);
         parsePreferenceToSet(shpFilter.get(AREA, VSE), selectedArea);
+        parsePreferenceToSet(shpFilter.get(ORIGIN, VSE), selectedOrigin);
 
         dateStart = shpFilter.get(DATE_START, VSE);
         dateEnd = shpFilter.get(DATE_END, VSE);
@@ -418,11 +434,15 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         selectedArea.clear();
         selectedArea.add(VSE);
 
+        selectedOrigin.clear();
+        selectedOrigin.add(VSE);
+
         updateFieldText(selectedRada, etRada);
         updateFieldText(selectedProdukt, etProdukt);
         updateFieldText(selectedSazba, etSazba);
         updateFieldText(selectedCompany, etCompany);
         updateFieldText(selectedArea, etArea);
+        updateFieldText(selectedOrigin, etOrigin);
 
         applyPresetAllDates();
     }

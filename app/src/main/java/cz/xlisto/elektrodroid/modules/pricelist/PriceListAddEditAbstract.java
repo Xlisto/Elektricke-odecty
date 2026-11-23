@@ -289,7 +289,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateNeregulatedPriceVisibility();
-                setRegulPrice();
+                onSpinnerSelectionChanged();
             }
 
 
@@ -302,7 +302,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         spDistArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setRegulPrice();
+                onSpinnerSelectionChanged();
             }
 
 
@@ -735,6 +735,15 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
+     * Reaguje na změnu výběru ve spinnerech sazby nebo distribučního území.
+     * Výchozí chování automaticky načte regulované ceny podle aktuálního výběru.
+     */
+    protected void onSpinnerSelectionChanged() {
+        setRegulPrice();
+    }
+
+
+    /**
      * Načte regulované ceny asynchronně a aplikuje je do UI.
      * <p>
      * Chování:
@@ -751,7 +760,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * (např. podle viditelnosti tlačítka pro načtení). ReadRawJSON zodpovídá za detailní
      * zpracování/parsing dat.
      */
-
     void setRegulPrice() {
         if (year < DEF_MIN_YEAR) return;
 

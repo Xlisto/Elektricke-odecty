@@ -13,10 +13,14 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.PriceListModel;
+import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
@@ -31,11 +35,12 @@ import cz.xlisto.elektrodroid.utils.Keyboard;
  * - vytvoření instance pomocí {@link #newInstance(long)}
  * - načtení modelu z databáze v {@code onCreate/onViewCreated}
  * - naplnění UI hodnotami modelu (datum, ceny, sazby, distribuční území)
+ * - zvýraznění regulovaných položek, které se liší od oficiálních cen v aplikaci
  * - validace a aktualizace záznamu přes {@link #updatePriceList(long)}
  * <p>
  * Poznámky implementace:
  * - používá {@code DataPriceListSource} pro čtení a zápis dat
- * - spinnery jsou nastaveny asynchronně v {@code setSpinners(PriceListModel)}
+ * - spinnery jsou nastaveny asynchronně v {@code setSpinners(PriceListModel)} bez přepsání uložených regulovaných cen
  * - zachází s kontrolou datových podmínek a skrytím volitelných polí
  *
  * @see PriceListAddEditAbstract
@@ -46,6 +51,7 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     private final static String IS_FIRST_LOAD = "isFirstLoad";
     private PriceListModel priceListModel;
     private static final String ARG_ID = "id";
+    private boolean allowSpinnerAutoReload = false;
 
 
     public PriceListEditFragment() {
@@ -108,9 +114,17 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        allowSpinnerAutoReload = false;
         if (savedInstanceState == null) {
             loadItemPrice(itemId);
             setItemPrice();
+        } else {
+            new Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                if (isAdded()) {
+                    allowSpinnerAutoReload = true;
+                    highlightDifferingRegulatedFields(createPriceListWithCurrentSpinners());
+                }
+            }, 1350);
         }
         btnSave.setOnClickListener(v -> {
             if (updatePriceList(itemId) > 0) {
@@ -118,6 +132,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
                 getParentFragmentManager().popBackStack();
             }
         });
+    }
+
+
+    @Override
+    protected void onSpinnerSelectionChanged() {
+        if (allowSpinnerAutoReload) {
+            setRegulPrice();
+        }
     }
 
 
@@ -171,16 +193,14 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
      * - Formátuje číselné hodnoty pomocí {@code df2} a nastavuje je do příslušných input view.
      * - Nastavuje textová pole (řada, produkt, dodavatel) a hodnoty sazeb/distancí.
      * - Podle hodnot J10..J14 upraví stav {@code switchJistic} a zavolá {@link #hideItemView()}.
-     * - Nakonec volá {@link #setSpinners(PriceListModel)} pro nastavení spinnerů.
-     * <p>
-     * Vedlejší efekty:
-     * - Mění stav UI komponent; metoda předpokládá, že fragment je připojen a všechna view jsou inicializována.
+     * - Zvýrazní regulované položky, které se liší od referenčních cen v aplikaci.
      *
      * @throws NullPointerException pokud {@code priceListModel} nebo některé widgety jsou {@code null}
      */
     private void setItemPrice() {
         btnFrom.setText(ViewHelper.convertLongToDate(priceListModel.getValidFrom()));
         btnUntil.setText(ViewHelper.convertLongToDate(priceListModel.getValidTo()));
+        year = getYearBtnStart();
         updateValidityRangeButtonText();
         ivSeries.setDefaultText(priceListModel.getSeries());
         ivProduct.setDefaultText(priceListModel.getProduct());
@@ -222,30 +242,22 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
             switchBreaker.setChecked(true);
             hideItemView();
         }
-        setSpinners(priceListModel);
+        changeTitleOperatorTrhu();
+        highlightDifferingRegulatedFields(priceListModel);
     }
 
 
     /**
      * Nastaví spinnery distribučního území a sazby podle hodnot v předaném
      * {@code PriceListModel} s drobným zpožděním, aby měly adaptéry čas na inicializaci.
-     * <p>
-     * Popis:
-     * - Spouští operaci na hlavním vlákně pomocí {@link android.os.Handler} s {@link android.os.Looper#getMainLooper()}
-     * a {@code postDelayed(...)} (prodleva 1300 ms).
-     * - Před manipulací s UI ověřuje {@link #isAdded()} a kontroluje, že {@code priceListModel}
-     * i cílové spinnery nejsou {@code null}.
-     * - Načítá dynamické pole distribučních území pro daný rok z {@link PriceListAddEditAbstract#getDistAreaArrayForYear(int)}
-     * a pole sazeb z {@code R.array.sazby}, a pro nastavení výběru volá pomocnou metodu {@link #compare(String[], android.widget.Spinner, String)}.
-     * <p>
-     * Poznámky:
-     * - Všechny UI operace probíhají na hlavním vlákně.
-     * - Prodleva je záměrná, aby bylo jisté, že adaptéry spinnerů jsou inicializované.
-     * - Metoda neprovádí I/O v pozadí; načítání resources je rychlé, ale kontroluje životní cyklus fragmentu.
+     * Po nastavení výběru povolí automatické přenačtení regulovaných cen při budoucí ruční změně spinnerů.
      *
      * @param priceListModel model ceníku obsahující hodnoty pro nastavení spinnerů; pokud je {@code null}, metoda nic neprovádí
      */
     private void setSpinners(PriceListModel priceListModel) {
+        if (priceListModel == null) {
+            return;
+        }
         Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
             if (!isAdded())
@@ -257,8 +269,96 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
 
             compare(distribucniUzemi, spDistArea, priceListModel.getDistribution());
             compare(sazby, spRate, priceListModel.getRate());
+            handler.postDelayed(() -> {
+                if (isAdded()) {
+                    allowSpinnerAutoReload = true;
+                }
+            }, 150);
         };
         handler.postDelayed(r, 1300);
+    }
+
+
+    /**
+     * Porovná na pozadí uložené regulované položky ceníku s oficiálními regulovanými cenami v aplikaci
+     * a odlišná pole v UI vizuálně zvýrazní.
+     *
+     * @param model model ceníku k porovnání s referenčními cenami
+     */
+    private void highlightDifferingRegulatedFields(@Nullable PriceListModel model) {
+        if (model == null || getContext() == null) {
+            return;
+        }
+        android.content.Context appContext = requireContext().getApplicationContext();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(android.os.Looper.getMainLooper());
+
+        executor.execute(() -> {
+            try {
+                PriceListModel ref = PriceListOriginHelper.getReferenceRegulatedPriceList(appContext, model);
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    boolean hasValidReference = ref != null
+                            && !(ref.getDistVT() == 0.0 && ref.getJ0() == 0.0)
+                            && ref.getVat() > 0.0;
+
+                    LabelEditText[] fields = new LabelEditText[]{
+                            ivVtRegulated, ivNtRegulated,
+                            ivJ0, ivJ1, ivJ2, ivJ3, ivJ4, ivJ5, ivJ6, ivJ7, ivJ8, ivJ9, ivJ10, ivJ11, ivJ12, ivJ13, ivJ14,
+                            ivSystemServices, ivMarketOperatorActivity, ivPoze1, ivPoze2, ivOze, ivOte, ivTax, ivVat
+                    };
+
+                    if (!hasValidReference) {
+                        for (LabelEditText field : fields) {
+                            field.setChangedBackgroundEditText(R.drawable.error_edittext_background);
+                            field.setAllowChangeBackgroundColor(true);
+                            field.setHighlightChangedBackground(false);
+                        }
+                        return;
+                    }
+
+                    double[] actualValues = new double[]{
+                            model.getDistVT(), model.getDistNT(),
+                            model.getJ0(), model.getJ1(), model.getJ2(), model.getJ3(), model.getJ4(),
+                            model.getJ5(), model.getJ6(), model.getJ7(), model.getJ8(), model.getJ9(),
+                            model.getJ10(), model.getJ11(), model.getJ12(), model.getJ13(), model.getJ14(),
+                            model.getSystemServices(), model.getActivity(), model.getPoze1(), model.getPoze2(),
+                            model.getOze(), model.getOte(), model.getTax(), model.getVat()
+                    };
+                    double[] refValues = new double[]{
+                            ref.getDistVT(), ref.getDistNT(),
+                            ref.getJ0(), ref.getJ1(), ref.getJ2(), ref.getJ3(), ref.getJ4(),
+                            ref.getJ5(), ref.getJ6(), ref.getJ7(), ref.getJ8(), ref.getJ9(),
+                            ref.getJ10(), ref.getJ11(), ref.getJ12(), ref.getJ13(), ref.getJ14(),
+                            ref.getSystemServices(), ref.getActivity(), ref.getPoze1(), ref.getPoze2(),
+                            ref.getOze(), ref.getOte(), ref.getTax(), ref.getVat()
+                    };
+
+                    for (int i = 0; i < fields.length; i++) {
+                        boolean differs = !PriceListOriginHelper.nearlyEqual(actualValues[i], refValues[i]);
+                        fields[i].setChangedBackgroundEditText(R.drawable.error_edittext_background);
+                        fields[i].setAllowChangeBackgroundColor(true);
+                        fields[i].setHighlightChangedBackground(differs);
+                    }
+                });
+            } finally {
+                executor.shutdown();
+            }
+        });
+    }
+
+
+    /**
+     * Sestaví {@link PriceListModel} z aktuálních hodnot v UI po obnovení stavu, pokud jsou spinnery připravené.
+     *
+     * @return model ceníku s hodnotami z UI, nebo {@code null} pokud spinnery ještě nemají vybrané položky
+     */
+    @Nullable
+    private PriceListModel createPriceListWithCurrentSpinners() {
+        if (spDistArea.getSelectedItem() == null || spRate.getSelectedItem() == null) {
+            return null;
+        }
+        return createPriceList();
     }
 
 

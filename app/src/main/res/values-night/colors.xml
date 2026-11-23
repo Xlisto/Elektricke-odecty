@@ -102,4 +102,21 @@
     <color name="dashboard_switcher_btn_bg">#282A2F</color>
     <color name="dashboard_switcher_btn_stroke">#3E424B</color>
     <color name="dashboard_divider">#2E313A</color>
+
+    <!-- Odznaky původu a stavu ceníku (Dark) -->
+    <color name="pricelist_badge_pdf_bg">#14294A</color>
+    <color name="pricelist_badge_pdf_stroke">#2C4C80</color>
+    <color name="pricelist_badge_pdf_text">#ADC6FF</color>
+
+    <color name="pricelist_badge_app_regul_bg">#14331D</color>
+    <color name="pricelist_badge_app_regul_stroke">#285C36</color>
+    <color name="pricelist_badge_app_regul_text">#81C784</color>
+
+    <color name="pricelist_badge_custom_regul_bg">#3B2607</color>
+    <color name="pricelist_badge_custom_regul_stroke">#754E14</color>
+    <color name="pricelist_badge_custom_regul_text">#FFB74D</color>
+
+    <color name="pricelist_badge_manual_bg">#282A2F</color>
+    <color name="pricelist_badge_manual_stroke">#44474F</color>
+    <color name="pricelist_badge_manual_text">#C5C6D0</color>
 </resources>

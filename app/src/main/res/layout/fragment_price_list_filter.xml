@@ -118,7 +118,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="8dp"
             android:hint="@string/distribucni_uzemi"
             app:endIconDrawable="@drawable/ic_expand_more_24"
             app:endIconMode="custom"
@@ -135,6 +135,31 @@
                 android:inputType="none"
                 android:singleLine="true"
                 tools:text="EG.D" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Původ a stav regulovaných cen -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilOrigin"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="@string/pricelist_origin_filter_hint"
+            app:endIconDrawable="@drawable/ic_expand_more_24"
+            app:endIconMode="custom"
+            app:endIconTint="?attr/colorPrimary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOrigin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:singleLine="true"
+                tools:text="Načteno z PDF (bez úprav)" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Datum platnosti -->

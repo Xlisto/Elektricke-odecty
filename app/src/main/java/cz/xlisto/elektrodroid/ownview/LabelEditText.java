@@ -585,6 +585,20 @@ public class LabelEditText extends RelativeLayout {
 
 
     /**
+     * Okamžitě zobrazí nebo skryje zvýrazněné pozadí {@link EditText} bez nutnosti změny textu.
+     *
+     * @param highlight {@code true} pro nastavení zvýrazněného pozadí, {@code false} pro výchozí pozadí
+     */
+    public void setHighlightChangedBackground(boolean highlight) {
+        if (highlight && changedBackgroundEditText != 0) {
+            editText.setBackground(ContextCompat.getDrawable(getContext(), changedBackgroundEditText));
+        } else {
+            editText.setBackground(originalBackgroundDrawable);
+        }
+    }
+
+
+    /**
      * Vrátí obsah EditTextu
      *
      * @return vrátí obsah EditTextu jako String

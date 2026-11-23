@@ -105,6 +105,10 @@ class PriceListAdapter(
         val rbSelectItem: MaterialRadioButton = itemView.findViewById(R.id.rbPriceList)
         val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         val tvSubtitle: TextView = itemView.findViewById(R.id.tvSubtitle)
+        val containerOriginBadge: View = itemView.findViewById(R.id.containerOriginBadge)
+        val ivOriginBadgeIcon: android.widget.ImageView =
+            itemView.findViewById(R.id.ivOriginBadgeIcon)
+        val tvOriginBadgeText: TextView = itemView.findViewById(R.id.tvOriginBadgeText)
         val containerNT: View = itemView.findViewById(R.id.containerNT)
         val tvPriceVT: TextView = itemView.findViewById(R.id.tvPriceVT)
         val tvPriceNT: TextView = itemView.findViewById(R.id.tvPriceNT)
@@ -388,6 +392,17 @@ class PriceListAdapter(
         val extraDetailsStr = extraDetailsList.joinToString(" • ")
         holder.tvSubtitle.text =
             if (extraDetailsStr.isEmpty()) dateText else "$dateText • $extraDetailsStr"
+
+        // Odznak původu ceníku a stavu regulovaných cen
+        val originType = PriceListOriginHelper.classify(context, priceList)
+        PriceListOriginHelper.bindBadge(
+            context,
+            originType,
+            holder.containerOriginBadge,
+            holder.ivOriginBadgeIcon,
+            holder.tvOriginBadgeText,
+            false
+        )
     }
 
     /**

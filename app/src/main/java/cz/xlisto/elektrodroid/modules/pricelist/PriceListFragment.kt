@@ -736,6 +736,15 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             dateEnd
         )
 
+        val originFilter = shpFilter.get(ShPFilter.ORIGIN, ShPFilter.DEFAULT)
+        if (PriceListOriginHelper.isOriginFilterActive(originFilter)) {
+            priceListModels = ArrayList(
+                priceListModels.filter {
+                    PriceListOriginHelper.matchesOriginFilter(requireContext(), it, originFilter)
+                }
+            )
+        }
+
         if (isSingleSelectPicker && idSelectedPriceList > 0) {
             var existingSelected = priceListModels.find { it.id == idSelectedPriceList }
             if (existingSelected == null) {

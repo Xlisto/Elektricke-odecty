@@ -29,6 +29,67 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
+                <!-- Odznak původu ceníku a stavu regulovaných cen -->
+                <LinearLayout
+                    android:id="@+id/containerDetailOriginBadge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_pricelist_badge_app_regul"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="6dp">
+
+                    <ImageView
+                        android:id="@+id/ivDetailOriginIcon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginEnd="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_check_circle_24"
+                        app:tint="@color/pricelist_badge_app_regul_text" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvDetailOriginTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="@color/pricelist_badge_app_regul_text"
+                            android:textStyle="bold"
+                            tools:text="Ručně zadaný ceník • Regul. ceny z aplikace" />
+
+                        <TextView
+                            android:id="@+id/tvDetailOriginDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/pricelist_badge_app_regul_text"
+                            tools:text="Ceník má regulované ceny plně shodné s uloženými regulovanými cenami v aplikaci" />
+
+                        <TextView
+                            android:id="@+id/tvDetailOriginDiff"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
+                            android:textColor="@color/pricelist_badge_custom_regul_text"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Odlišné položky oproti aplikaci: Distribuce VT, Systémové služby"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- Datum platnosti -->
                 <cz.xlisto.elektrodroid.ownview.LabelPriceDetail
                     android:id="@+id/ldnPlatnost"
