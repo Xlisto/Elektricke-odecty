@@ -77,18 +77,13 @@ public final class ConsumptionForecastHelper {
 
     /**
      * Jednoduchý vstupní záznam měsíční spotřeby oddělený od Android/DB vrstev.
+     *
+     * @param month             1..12
+     * @param coveredDayOfMonth 1..daysInMonth
+     * @param spanDays          počet dní pokrytých spotřebou (>= 1)
      */
-    public static final class MonthlyRecord {
-
-        public final int year;
-        public final int month; // 1..12
-        public final double vt;
-        public final double nt;
-        public final int coveredDayOfMonth; // 1..daysInMonth
-        public final int spanDays;          // počet dní pokrytých spotřebou (>= 1)
-        @NonNull
-        public final String shortLabel;
-
+    public record MonthlyRecord(int year, int month, double vt, double nt, int coveredDayOfMonth,
+                                int spanDays, @NonNull String shortLabel) {
 
         public MonthlyRecord(int year,
                              int month,
@@ -118,14 +113,7 @@ public final class ConsumptionForecastHelper {
     /**
      * Jednoduchý vstupní záznam roční spotřeby.
      */
-    public static final class YearlyRecord {
-
-        public final int year;
-        public final double vt;
-        public final double nt;
-        @NonNull
-        public final String label;
-
+    public record YearlyRecord(int year, double vt, double nt, @NonNull String label) {
 
         public YearlyRecord(int year, double vt, double nt, @NonNull String label) {
             this.year = year;
