@@ -148,6 +148,16 @@ public class DashboardConsumptionBarChartView extends View {
 
 
     /**
+     * Nastaví uživatelské barvy pro vysoký (VT) a nízký (NT) tarif.
+     */
+    public void setColors(int colorVt, int colorNt) {
+        paintVt.setColor(colorVt);
+        paintNt.setColor(colorNt);
+        invalidate();
+    }
+
+
+    /**
      * Nastaví položky sloupcového grafu a plynule odanimuje přechod celého grafu.
      */
     public void setEntries(@Nullable List<BarEntry> barEntries) {

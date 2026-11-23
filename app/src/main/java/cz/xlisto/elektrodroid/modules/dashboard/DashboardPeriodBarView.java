@@ -75,6 +75,16 @@ public class DashboardPeriodBarView extends View {
 
 
     /**
+     * Nastaví uživatelské barvy pro vysoký (VT) a nízký (NT) tarif.
+     */
+    public void setColors(int colorVt, int colorNt) {
+        paintVt.setColor(colorVt);
+        paintNt.setColor(colorNt);
+        invalidate();
+    }
+
+
+    /**
      * Nastaví hodnoty spotřeby VT a NT a plynule odanimuje změnu poměru.
      */
     public void setConsumption(double vtValue, double ntValue) {

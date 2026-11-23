@@ -28,7 +28,9 @@
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no"
                 android:scaleType="fitEnd"
-                android:src="@drawable/bg_dashboard_price_landscape" />
+                android:src="@drawable/bg_dashboard_price_landscape"
+                app:tint="@color/dashboard_teal_primary"
+                app:tintMode="src_atop" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -529,6 +531,7 @@
                         android:orientation="horizontal">
 
                         <View
+                            android:id="@+id/viewPeriodVtColor"
                             android:layout_width="14dp"
                             android:layout_height="10dp"
                             android:background="@color/dashboard_teal_vt" />
@@ -561,6 +564,7 @@
                         android:orientation="horizontal">
 
                         <View
+                            android:id="@+id/viewPeriodNtColor"
                             android:layout_width="14dp"
                             android:layout_height="10dp"
                             android:background="@color/dashboard_teal_nt" />

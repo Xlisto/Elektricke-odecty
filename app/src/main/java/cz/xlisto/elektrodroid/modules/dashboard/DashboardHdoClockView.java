@@ -166,7 +166,7 @@ public class DashboardHdoClockView extends View {
 
 
     private void init() {
-        int colorPrimaryTeal = ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt);
+        int colorPrimary = ContextCompat.getColor(getContext(), R.color.dashboard_teal_primary);
         int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface, 0xFF1C1B1F);
         int colorSurfaceBg = ContextCompat.getColor(getContext(), R.color.dashboard_price_card_start);
 
@@ -181,7 +181,7 @@ public class DashboardHdoClockView extends View {
         paintDialStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintDialStroke.setStyle(Paint.Style.STROKE);
         paintDialStroke.setStrokeWidth(dpToPx(getContext(), 1.5f));
-        paintDialStroke.setColor(colorPrimaryTeal);
+        paintDialStroke.setColor(colorPrimary);
 
         paintSector = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintSector.setStyle(Paint.Style.FILL);

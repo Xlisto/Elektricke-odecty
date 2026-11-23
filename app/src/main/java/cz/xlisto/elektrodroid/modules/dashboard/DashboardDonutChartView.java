@@ -125,6 +125,16 @@ public class DashboardDonutChartView extends View {
 
 
     /**
+     * Nastaví uživatelské barvy pro vysoký (VT) a nízký (NT) tarif.
+     */
+    public void setColors(int colorVt, int colorNt) {
+        paintVt.setColor(colorVt);
+        paintNt.setColor(colorNt);
+        invalidate();
+    }
+
+
+    /**
      * Nastaví spotřebu VT a NT v kWh a plynule odanimuje přechod výsečí i středové hodnoty.
      */
     public void setConsumption(double vtValue, double ntValue) {

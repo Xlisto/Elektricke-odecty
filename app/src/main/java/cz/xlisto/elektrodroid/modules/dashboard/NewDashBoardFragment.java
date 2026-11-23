@@ -143,8 +143,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     // 3. Karta: Spotřeba období
     private TextView tvPeriodDateRange;
+    private View viewPeriodVtColor;
     private TextView tvPeriodVtValue;
     private View layoutPeriodNtRow;
+    private View viewPeriodNtColor;
     private TextView tvPeriodNtValue;
     private DashboardPeriodBarView viewPeriodBar;
     private DashboardDonutChartView viewPeriodDonut;
@@ -308,8 +310,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         viewHdoClock = view.findViewById(R.id.viewHdoClock);
 
         tvPeriodDateRange = view.findViewById(R.id.tvPeriodDateRange);
+        viewPeriodVtColor = view.findViewById(R.id.viewPeriodVtColor);
         tvPeriodVtValue = view.findViewById(R.id.tvPeriodVtValue);
         layoutPeriodNtRow = view.findViewById(R.id.layoutPeriodNtRow);
+        viewPeriodNtColor = view.findViewById(R.id.viewPeriodNtColor);
         tvPeriodNtValue = view.findViewById(R.id.tvPeriodNtValue);
         viewPeriodBar = view.findViewById(R.id.viewPeriodBar);
         viewPeriodDonut = view.findViewById(R.id.viewPeriodDonut);
@@ -557,11 +561,52 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     private void refreshAllSections() {
         if (currentPoint == null || !isAdded()) return;
+        loadAndApplyUserVtNtColors();
         refreshPriceValues();
         refreshMeterStateValues();
         refreshHdoAndPriceHighlight(true);
         refreshPeriodBillingAndInvoices();
         refreshConsumptionOverviewData();
+    }
+
+
+    /**
+     * Načte uživatelské barvy pro vysoký (VT) a nízký (NT) tarif z databáze nastavení
+     * a promítne je do legendy, poměrového pruhu, prstencového grafu i sloupcového grafu spotřeby.
+     */
+    private void loadAndApplyUserVtNtColors() {
+        if (!isAdded()) return;
+        int colorVt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_vt);
+        int colorNt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_nt);
+
+        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
+        try {
+            dataSettingsSource.open();
+            int[] colors = dataSettingsSource.loadColorVTNT();
+            if (colors != null && colors.length >= 2) {
+                colorVt = colors[0];
+                colorNt = colors[1];
+            }
+        } catch (Exception ignored) {
+        } finally {
+            dataSettingsSource.close();
+        }
+
+        if (viewPeriodVtColor != null) {
+            viewPeriodVtColor.setBackgroundColor(colorVt);
+        }
+        if (viewPeriodNtColor != null) {
+            viewPeriodNtColor.setBackgroundColor(colorNt);
+        }
+        if (viewPeriodBar != null) {
+            viewPeriodBar.setColors(colorVt, colorNt);
+        }
+        if (viewPeriodDonut != null) {
+            viewPeriodDonut.setColors(colorVt, colorNt);
+        }
+        if (viewConsumptionBarChart != null) {
+            viewConsumptionBarChart.setColors(colorVt, colorNt);
+        }
     }
 
 
