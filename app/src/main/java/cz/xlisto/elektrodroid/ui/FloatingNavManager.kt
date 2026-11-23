@@ -50,7 +50,7 @@ class FloatingNavManager(
         val cardHeightPx = if (floatingNavCard != null && floatingNavCard.height > 0) {
             floatingNavCard.height
         } else {
-            ((if (isCompact) 62 else 80) * density).toInt()
+            ((if (isCompact) 56 else 80) * density).toInt()
         }
         return calculatePanelMarginForHeight(cardHeightPx)
     }
@@ -58,6 +58,7 @@ class FloatingNavManager(
     fun updateCenteredBottomMargin() {
         val nav = bottomNav as? BottomNavigationView ?: return
         nav.setPadding(0, 0, 0, 0)
+        nav.minimumHeight = 0
 
         val lp = nav.layoutParams as? ViewGroup.MarginLayoutParams
         if (lp != null && (lp.topMargin != 0 || lp.bottomMargin != 0)) {
@@ -69,9 +70,11 @@ class FloatingNavManager(
         for (i in 0 until nav.childCount) {
             val child = nav.getChildAt(i)
             child.setPadding(0, 0, 0, 0)
+            child.minimumHeight = 0
             if (child is ViewGroup) {
                 for (j in 0 until child.childCount) {
                     val item = child.getChildAt(j)
+                    item.minimumHeight = 0
                     if (item.paddingBottom > 0) {
                         item.setPadding(item.paddingLeft, item.paddingTop, item.paddingRight, 0)
                     }
@@ -115,6 +118,7 @@ class FloatingNavManager(
         if (isCompact == compact) return
         isCompact = compact
 
+        updateCenteredBottomMargin()
         labelAlphaAnimator?.cancel()
         val density = activity.resources.displayMetrics.density
 
@@ -122,29 +126,26 @@ class FloatingNavManager(
             initialCardHeightPx = card.height
         }
 
-        var labelDifferencePx = 18f * density
-        fun findItemLabelDifference(vg: ViewGroup) {
-            for (i in 0 until vg.childCount) {
-                val child = vg.getChildAt(i)
-                if (child is TextView && child.height > 0) {
-                    val lp = child.layoutParams as? ViewGroup.MarginLayoutParams
-                    val topMargin = lp?.topMargin?.toFloat() ?: (0f * density)
-                    val bottomMargin = lp?.bottomMargin?.toFloat() ?: 0f
-                    labelDifferencePx = child.height.toFloat() + topMargin + bottomMargin
-                    return
-                } else if (child is ViewGroup) {
-                    findItemLabelDifference(child)
-                }
-            }
-        }
-        findItemLabelDifference(nav)
+        val contentContainer =
+            nav.findViewById<View>(com.google.android.material.R.id.navigation_bar_item_content_container)
+        val iconContainer =
+            nav.findViewById<View>(com.google.android.material.R.id.navigation_bar_item_icon_container)
 
         val expandedHeightPx =
             if (initialCardHeightPx > 0) initialCardHeightPx else (80 * density).toInt()
         val compactHeightPx =
-            (expandedHeightPx - labelDifferencePx).toInt().coerceAtLeast((48 * density).toInt())
+            if (contentContainer != null && iconContainer != null && iconContainer.height > 0) {
+                val contentTopMargin =
+                    (contentContainer.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin
+                        ?: contentContainer.top
+                val topSpacingPx = contentTopMargin + iconContainer.top
+                (topSpacingPx * 2 + iconContainer.height).coerceAtLeast((48 * density).toInt())
+            } else {
+                (56 * density).toInt()
+            }
 
-        val startHeightPx = if (compact) expandedHeightPx else compactHeightPx
+        val startHeightPx =
+            if (card.height > 0) card.height else if (compact) expandedHeightPx else compactHeightPx
         val targetHeightPx = if (compact) compactHeightPx else expandedHeightPx
 
         val startAlpha = if (compact) 1f else 0f
