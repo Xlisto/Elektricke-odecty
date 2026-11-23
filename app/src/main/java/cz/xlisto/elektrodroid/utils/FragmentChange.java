@@ -19,11 +19,11 @@ public class FragmentChange {
 
 
     /**
-     * Vymění fragment, výměnu animuje
-     * Do BackStacku se nepřidá
+     * Vymění fragment v hlavním kontejneru a výměnu animuje bez přidání do back stacku.
      *
-     * @param fa       FragmentActivity
-     * @param fragment Fragment
+     * @param fa          Aktivita obsahující kontejner fragmentů
+     * @param fragment    Nový fragment, který se má zobrazit
+     * @param transaction Typ animačního přechodu ({@link Transaction#MOVE} nebo {@link Transaction#ALPHA})
      */
     public static void replace(FragmentActivity fa, Fragment fragment, Transaction transaction) {
         replace(fa, fragment, transaction, false);
@@ -31,25 +31,29 @@ public class FragmentChange {
 
 
     /**
-     * Vymění fragment, výměnu animuje
+     * Vymění fragment v hlavním kontejneru, nastaví animační přechod a volitelně přidá transakci do back stacku.
+     * <p>
+     * Při přechodu typu {@link Transaction#ALPHA} vymaže celý back stack a v {@link MainActivity}
+     * zruší kompaktní režim spodní plovoucí navigace.
      *
-     * @param fa       FragmentActivity
-     * @param fragment Fragment
-     * @param add      true pro přidání do backstacku
+     * @param fa          Aktivita obsahující kontejner fragmentů
+     * @param fragment    Nový fragment, který se má zobrazit
+     * @param transaction Typ animačního přechodu ({@link Transaction#MOVE} nebo {@link Transaction#ALPHA})
+     * @param add         {@code true}, pokud se má transakce přidat do back stacku
      */
     public static void replace(FragmentActivity fa, Fragment fragment, Transaction transaction, boolean add) {
         FragmentManager fragmentManager = fa.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (transaction == Transaction.MOVE) {
-            fragmentTransaction.setCustomAnimations(R.anim.from_right, R.anim.to_left, R.anim.from_left, R.anim.to_right);
-        }
-
-        if (transaction == Transaction.ALPHA) {
-            fragmentTransaction.setCustomAnimations(R.anim.show, R.anim.hide, R.anim.show, R.anim.hide);
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);//přesun na začátek
-            if (fa instanceof MainActivity mainActivity) {
-                mainActivity.setBottomNavCompact(false);
+        switch (transaction) {
+            case MOVE ->
+                    fragmentTransaction.setCustomAnimations(R.anim.from_right, R.anim.to_left, R.anim.from_left, R.anim.to_right);
+            case ALPHA -> {
+                fragmentTransaction.setCustomAnimations(R.anim.show, R.anim.hide, R.anim.show, R.anim.hide);
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);//přesun na začátek
+                if (fa instanceof MainActivity mainActivity) {
+                    mainActivity.setBottomNavCompact(false);
+                }
             }
         }
 

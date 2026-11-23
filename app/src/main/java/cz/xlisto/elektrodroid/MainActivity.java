@@ -133,12 +133,17 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     private AppUpdateHelper appUpdateHelper;
 
 
+    /**
+     * Inicializuje hlavní aktivitu, nastaví režim edge-to-edge, plovoucí navigaci, toolbar,
+     * posluchače systémových insetů, sledování síťové konektivity a obnoví nebo zobrazí výchozí fragment.
+     *
+     * @param savedInstanceState Uložený stav aktivity při obnovení, nebo {@code null} při prvním spuštění
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        setSystemBarColors(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT);
         setContentView(R.layout.activity_main);
         setupPendingUploadScheduler();
         schedulePendingBackupUploadIfNeeded();
@@ -161,8 +166,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (myBottomNavigationView != null) {
             ViewCompat.setOnApplyWindowInsetsListener(myBottomNavigationView, (v, insets) -> {
                 v.setPadding(0, 0, 0, 0);
-                if (v instanceof ViewGroup) {
-                    ViewGroup vg = (ViewGroup) v;
+                if (v instanceof ViewGroup vg) {
                     for (int i = 0; i < vg.getChildCount(); i++) {
                         vg.getChildAt(i).setPadding(0, 0, 0, 0);
                     }
@@ -513,6 +517,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Zpracuje nový příchozí {@link Intent} u již běžící instance aktivity
+     * (např. po kliknutí na notifikaci HDO nebo připomenutí měsíčního odečtu).
+     *
+     * @param intent Nový příchozí intent
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -524,6 +534,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Při návratu aktivity do popředí aktualizuje viditelnost navigačních panelů,
+     * naplánuje odeslání čekajících záloh a ověří stav probíhající aktualizace aplikace.
+     */
+    @Override
     protected void onResume() {
         super.onResume();
         //nastavení viditelnosti levé a spodní lišty podle orientace obrazovky
@@ -535,6 +550,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Odregistruje síťový callback a posluchače aktualizací aplikace při rušení aktivity.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -547,11 +565,21 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Vrátí instanci pomocné třídy pro správu aktualizací aplikace přes Google Play.
+     *
+     * @return Instance {@link AppUpdateHelper}
+     */
     public AppUpdateHelper getAppUpdateHelper() {
         return appUpdateHelper;
     }
 
 
+    /**
+     * Uloží index vybrané položky navigace a instanci aktuálně zobrazeného fragmentu.
+     *
+     * @param outState Bundle pro uložení stavu aktivity
+     */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -563,6 +591,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Vytvoří položky v hlavním menu toolbaru (výběr odběrného místa a nastavení aplikace).
+     *
+     * @param menu Cílové menu toolbaru
+     * @return {@code true} pro zobrazení menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
@@ -571,6 +605,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Zpracuje výběr položky v menu toolbaru nebo kliknutí na tlačítko zpět v AppBaru.
+     *
+     * @param item Vybraná položka menu
+     * @return {@code true}, pokud byla událost obsloužena
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home && getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -593,7 +633,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
-    //pro skrytí položky menu
+    /**
+     * Dynamicky upraví viditelnost položky pro přepnutí odběrného místa v menu toolbaru.
+     * Položka je viditelná pouze u podporovaných fragmentů a pokud existuje více než jedno odběrné místo.
+     *
+     * @param menu Menu toolbaru před zobrazením
+     * @return Výsledek volání nadřazené metody
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         //Seznam fragmentů, pro které je volba odběrného místa v menu povolená
@@ -666,7 +712,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Nastaví viditelnost bottomNavigationView
+     * Nastaví viditelnost spodního a levého plovoucího navigačního panelu podle aktuální orientace
+     * obrazovky a uživatelského nastavení.
      */
     private void setVisibilityNavigation() {
         ShPSettings shPSettings = new ShPSettings(getApplicationContext());
@@ -692,32 +739,62 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Určuje, zda je aktivní režim postranní navigace (orientace na šířku nebo skrytý spodní panel).
+     *
+     * @return {@code true}, pokud se místo spodního panelu používá postranní navigace
+     */
     public boolean isNavRail() {
         return orientation == Configuration.ORIENTATION_LANDSCAPE
                 || (myBottomNavigationView != null && myBottomNavigationView.getVisibility() != View.VISIBLE);
     }
 
 
+    /**
+     * Určuje, zda zařízení odpovídá rozměrům tabletu ({@code smallestScreenWidthDp >= 600}).
+     *
+     * @return {@code true}, pokud jde o tablet
+     */
     public boolean isTablet() {
         return getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 
 
+    /**
+     * Vrátí aktuální spodní inset systémové navigační lišty v pixelech.
+     *
+     * @return Spodní inset v pixelech
+     */
     public int getEffectiveNavBarInsetBottom() {
         return navBarInsetBottom;
     }
 
 
+    /**
+     * Vrátí aktuální levý inset systémových lišt nebo výřezu displeje v pixelech.
+     *
+     * @return Levý inset v pixelech
+     */
     public int getEffectiveNavBarInsetLeft() {
         return navBarInsetLeft;
     }
 
 
+    /**
+     * Vrátí aktuální pravý inset systémových lišt nebo výřezu displeje v pixelech.
+     *
+     * @return Pravý inset v pixelech
+     */
     public int getEffectiveNavBarInsetRight() {
         return navBarInsetRight;
     }
 
 
+    /**
+     * Přepne spodní plovoucí navigační panel do kompaktního nebo plného zobrazení.
+     *
+     * @param compact {@code true} pro kompaktní režim (bez popisků), {@code false} pro plnou výšku
+     */
     public void setBottomNavCompact(boolean compact) {
         if (floatingNavManager != null) {
             floatingNavManager.setCompact(compact);
@@ -725,6 +802,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Vrátí aktuální spodní odsazení (v pixelech) od spodní hrany obrazovky nad plovoucí navigační panel.
+     *
+     * @return Spodní odsazení v pixelech
+     */
     public int getBottomPanelMarginPx() {
         return floatingNavManager != null
                 ? floatingNavManager.getBottomPanelMarginPx()
@@ -732,6 +814,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Aktualizuje spodní margin plovoucích akčních tlačítek (FAB) ve všech viditelných fragmentech
+     * podle aktuální výšky spodního navigačního panelu.
+     *
+     * @param marginPx Požadované základní spodní odsazení nad navigačním panelem v pixelech
+     */
     public void updateBottomPanelMarginValue(int marginPx) {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         float density = getResources().getDisplayMetrics().density;
@@ -755,10 +843,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Konfiguruje [BlurView] pro dynamické rozostření obsahu pod horní lištou.
-     * <p>
-     * Propojí [BlurView] s kořenovým rozvržením [drawer_layout] a podle verze systému Android
-     * zvolí [RenderEffectBlur] (Android 12+) nebo [RenderScriptBlur] (starší verze).
+     * Nastaví průhledný přechod (gradient) pozadí horní lišty ({@code appBarLayout}) a vypne {@link BlurView}.
      */
     private void setupBlurView() {
         blurView = findViewById(R.id.blurView);
@@ -800,6 +885,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Vrátí celkovou výšku horní lišty včetně stavového řádku (status baru) v pixelech.
+     *
+     * @return Celková výška horní lišty v pixelech
+     */
     public int getTopBarTotalHeight() {
         float density = getResources().getDisplayMetrics().density;
         if (blurView != null && blurView.getHeight() > 0) {
@@ -811,6 +901,12 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Vrátí celkovou šířku levého plovoucího navigačního panelu včetně systémového insetu a odsazení.
+     * Pokud levý panel není zobrazen, vrací pouze levý systémový inset.
+     *
+     * @return Celkové levé odsazení v pixelech
+     */
     public int getLeftNavTotalWidth() {
         if (!isNavRail() || floatingLeftNavCard == null || floatingLeftNavCard.getVisibility() != View.VISIBLE) {
             return getEffectiveNavBarInsetLeft();
@@ -823,13 +919,15 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Aktualizuje vzhled systémových lišt (světlé/tmavé ikony podle aktuálního motivu)
+     * a nastaví pozadí horního AppBaru.
+     */
     public void updateAppBarBackgroundAndSystemBars() {
         boolean isDarkTheme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(!isDarkTheme);
-            windowInsetsController.setAppearanceLightNavigationBars(!isDarkTheme);
-        }
+        windowInsetsController.setAppearanceLightStatusBars(!isDarkTheme);
+        windowInsetsController.setAppearanceLightNavigationBars(!isDarkTheme);
 
         View appBarLayout = findViewById(R.id.appBarLayout);
         if (appBarLayout != null) {
@@ -839,12 +937,33 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         int surfaceColor = appBarLayout != null
                 ? MaterialColors.getColor(appBarLayout, com.google.android.material.R.attr.colorSurface, 0)
                 : android.graphics.Color.WHITE;
-        getWindow().setStatusBarColor(surfaceColor);
+        setSystemBarColors(surfaceColor, null);
 
         setupBlurView();
     }
 
 
+    /**
+     * Nastaví barvu stavové a navigační lišty pro zpětnou kompatibilitu se staršími verzemi Androidu (API &lt; 35).
+     * Od Androidu 15 (API 35) jsou metody {@code setStatusBarColor} a {@code setNavigationBarColor} zastaralé,
+     * protože systém vynucuje režim edge-to-edge a lišty jsou průhledné automaticky.
+     *
+     * @param statusBarColor     Barva stavové lišty
+     * @param navigationBarColor Barva navigační lišty (nebo {@code null}, pokud se nemá měnit)
+     */
+    @SuppressWarnings("deprecation")
+    private void setSystemBarColors(int statusBarColor, @Nullable Integer navigationBarColor) {
+        getWindow().setStatusBarColor(statusBarColor);
+        if (navigationBarColor != null) {
+            getWindow().setNavigationBarColor(navigationBarColor);
+        }
+    }
+
+
+    /**
+     * Aktualizuje vnitřní odsazení horního {@code appBarLayout} a výšku {@link BlurView}
+     * podle aktuálních systémových insetů.
+     */
     public void updateTopBarPadding() {
         View appBarLayout = findViewById(R.id.appBarLayout);
         if (appBarLayout != null) {
@@ -871,6 +990,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Aktualizuje vnější marginy spodní a levé plovoucí navigační karty podle systémových insetů.
+     */
     public void updateFloatingNavCardMargins() {
         float density = getResources().getDisplayMetrics().density;
         int baseMargin = (int) (16 * density);
@@ -896,6 +1018,10 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     }
 
 
+    /**
+     * Upozorní všechny viditelné fragmenty implementující {@link OnPaddingChangeListener},
+     * že došlo ke změně systémových insetů nebo rozměrů navigačních panelů.
+     */
     public void notifyPaddingChanged() {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment f : fragments) {
@@ -950,10 +1076,11 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Aktualizuje toolbar pro režim výběru více položek
+     * Aktualizuje toolbar pro režim výběru více položek.
      *
-     * @param selectedCount počet vybraných položek
-     * @param isMultiSelect {@code true}, pokud je aktivní režim výběru
+     * @param selectedCount         Počet vybraných položek
+     * @param isMultiSelect         {@code true}, pokud je aktivní režim výběru
+     * @param cancelSelectionAction Akce provedená po kliknutí na tlačítko zavření výběru v toolbaru
      */
     public void updateToolbarForSelection(int selectedCount, boolean isMultiSelect, @Nullable Runnable cancelSelectionAction) {
         selectionNavigationActive = isMultiSelect;
@@ -1097,6 +1224,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     /**
      * Zpracuje kliknutí na HDO notifikaci: nastaví odběrné místo a otevře HDO fragment.
      *
+     * @param intent         Příchozí intent aktivity
+     * @param navigationView Postranní navigační menu (drawer) pro označení aktivní položky
      * @return {@code true}, pokud intent obsahoval akci HDO notifikace
      */
     private boolean handleHdoNotificationIntent(@Nullable Intent intent, @Nullable NavigationView navigationView) {
@@ -1133,6 +1262,8 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     /**
      * Zpracuje kliknutí na notifikaci připomenutí měsíčního odečtu.
      *
+     * @param intent         Příchozí intent aktivity
+     * @param navigationView Postranní navigační menu (drawer) pro označení aktivní položky
      * @return {@code true}, pokud intent obsahoval akci připomenutí měsíčního odečtu
      */
     private boolean handleMonthlyReadingReminderIntent(@Nullable Intent intent, @Nullable NavigationView navigationView) {
