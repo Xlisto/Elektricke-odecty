@@ -2,6 +2,8 @@ package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -15,13 +17,24 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
  * <p>
  * Detekuje PDF dokumenty MND, extrahuje název produktu, platnost OD/DO, distribuční území
  * a sestaví ceníkové položky pro jednotlivé distribuční sazby. Obchodní ceny se vyhledávají
- * z obchodní tabulky v příloze ceníku.
+ * primárně z obchodní tabulky v příloze ceníku se záložním zpracováním vertikální tabulky.
  */
 public class MndPdfParser implements PdfPriceListParser {
 
+    /**
+     * Název dodavatele zapisovaný do výsledných instancí {@link PriceListModel}.
+     */
     private static final String FIRMA = "MND Energie a.s.";
+    /** Výchozí distribuční území použité v případě, že oblast není v textu PDF rozpoznána. */
     private static final String DISTRIBUCE = "EG.D";
 
+
+    /**
+     * Ověří, zda předaný text PDF patří ceníku dodavatele MND Energie.
+     *
+     * @param pdfText extrahovaný text PDF dokumentu
+     * @return {@code true}, pokud text obsahuje identifikátor MND ({@code MND ENERGIE}, {@code MND.CZ} nebo {@code MND}); jinak {@code false}
+     */
     @Override
     public boolean canParse(String pdfText) {
         if (pdfText == null) return false;
@@ -29,6 +42,19 @@ public class MndPdfParser implements PdfPriceListParser {
         return text.contains("MND ENERGIE") || text.contains("MND.CZ") || text.contains("MND");
     }
 
+
+    /**
+     * Zpracuje text PDF ceníku MND a sestaví seznam ceníků pro jednotlivé distribuční sazby.
+     * <p>
+     * Extrahuje název produktu, období platnosti (včetně případného stropu „do konce ...“
+     * a rozdělení roku 2025 na dvě období před a od září), distribuční území a obchodní ceny
+     * VT, NT a stálého měsíčního platu. Regulované složky ponechává nulové pro dynamické načtení
+     * z interního JSON souboru.
+     *
+     * @param context aplikační kontext vyžadovaný rozhraním {@link PdfPriceListParser} (v této implementaci se nepoužívá)
+     * @param pdfText extrahovaný text PDF ceníku
+     * @return seznam sestavených položek {@link PriceListModel}; při prázdném nebo {@code null} vstupu prázdný seznam
+     */
     @Override
     public List<PriceListModel> parse(Context context, String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
@@ -80,25 +106,7 @@ public class MndPdfParser implements PdfPriceListParser {
             if (monthGroup != null && yearGroup != null) {
                 String monthName = monthGroup.toLowerCase();
                 int yearStrop = Integer.parseInt(yearGroup);
-                Calendar calStrop = Calendar.getInstance();
-                calStrop.set(Calendar.YEAR, yearStrop);
-                if (monthName.contains("březn")) {
-                    calStrop.set(Calendar.MONTH, Calendar.MARCH);
-                    calStrop.set(Calendar.DAY_OF_MONTH, 31);
-                } else if (monthName.contains("červn")) {
-                    calStrop.set(Calendar.MONTH, Calendar.JUNE);
-                    calStrop.set(Calendar.DAY_OF_MONTH, 30);
-                } else if (monthName.contains("září")) {
-                    calStrop.set(Calendar.MONTH, Calendar.SEPTEMBER);
-                    calStrop.set(Calendar.DAY_OF_MONTH, 30);
-                } else if (monthName.contains("prosinc")) {
-                    calStrop.set(Calendar.MONTH, Calendar.DECEMBER);
-                    calStrop.set(Calendar.DAY_OF_MONTH, 31);
-                }
-                calStrop.set(Calendar.HOUR_OF_DAY, 23);
-                calStrop.set(Calendar.MINUTE, 59);
-                calStrop.set(Calendar.SECOND, 59);
-                calStrop.set(Calendar.MILLISECOND, 999);
+                Calendar calStrop = getCalStrop(yearStrop, monthName);
                 long endOfYear = PdfParserUtils.calculateEndOfYear(platnostOD > 0 ? platnostOD : System.currentTimeMillis());
                 platnostDO = Math.min(endOfYear, calStrop.getTimeInMillis());
             }
@@ -191,15 +199,9 @@ public class MndPdfParser implements PdfPriceListParser {
             List<Double> b = extractBracketPricesFromText(l);
             if (!b.isEmpty() && currentMode != null) {
                 switch (currentMode) {
-                    case "plat":
-                        plats.addAll(b);
-                        break;
-                    case "vt":
-                        vts.addAll(b);
-                        break;
-                    case "nt":
-                        nts.addAll(b);
-                        break;
+                    case "plat" -> plats.addAll(b);
+                    case "vt" -> vts.addAll(b);
+                    case "nt" -> nts.addAll(b);
                 }
             }
         }
@@ -327,11 +329,51 @@ public class MndPdfParser implements PdfPriceListParser {
     }
 
 
+    /**
+     * Vytvoří datum konce platnosti (poslední den měsíce v čase {@code 23:59:59.999})
+     * podle roku a českého názvu čtvrtletního měsíce z textu cenového stropu.
+     *
+     * @param yearStrop rok konce platnosti
+     * @param monthName název měsíce malými písmeny (očekává kořen slov březen, červen, září nebo prosinec)
+     * @return instance {@link Calendar} nastavená na konec odpovídajícího měsíce
+     */
+    @NonNull
+    private static Calendar getCalStrop(int yearStrop, String monthName) {
+        Calendar calStrop = Calendar.getInstance();
+        calStrop.set(Calendar.YEAR, yearStrop);
+        if (monthName.contains("březn")) {
+            calStrop.set(Calendar.MONTH, Calendar.MARCH);
+            calStrop.set(Calendar.DAY_OF_MONTH, 31);
+        } else if (monthName.contains("červn")) {
+            calStrop.set(Calendar.MONTH, Calendar.JUNE);
+            calStrop.set(Calendar.DAY_OF_MONTH, 30);
+        } else if (monthName.contains("září")) {
+            calStrop.set(Calendar.MONTH, Calendar.SEPTEMBER);
+            calStrop.set(Calendar.DAY_OF_MONTH, 30);
+        } else if (monthName.contains("prosinc")) {
+            calStrop.set(Calendar.MONTH, Calendar.DECEMBER);
+            calStrop.set(Calendar.DAY_OF_MONTH, 31);
+        }
+        calStrop.set(Calendar.HOUR_OF_DAY, 23);
+        calStrop.set(Calendar.MINUTE, 59);
+        calStrop.set(Calendar.SECOND, 59);
+        calStrop.set(Calendar.MILLISECOND, 999);
+        return calStrop;
+    }
+
+
+    /**
+     * Extrahuje z řádku textu všechny kladné číselné ceny uzavřené v hranatých závorkách {@code [...]}.
+     * Popisky {@code [bez DPH]} jsou ignorovány.
+     *
+     * @param text jeden řádek obchodní tabulky z PDF
+     * @return seznam nalezených kladných cen v pořadí výskytu; při prázdném nebo {@code null} vstupu prázdný seznam
+     */
     private List<Double> extractBracketPricesFromText(String text) {
         List<Double> prices = new ArrayList<>();
         if (text == null || text.isEmpty()) return prices;
 
-        Pattern bracketPattern = Pattern.compile("\\[([^]]+)\\]");
+        Pattern bracketPattern = Pattern.compile("\\[([^]]+)]");
         Matcher matcher = bracketPattern.matcher(text);
         while (matcher.find()) {
             String val = matcher.group(1);
