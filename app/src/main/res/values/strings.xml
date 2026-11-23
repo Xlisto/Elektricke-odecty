@@ -892,6 +892,16 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="dashboard_overpayment_label">Přeplatek</string>
     <string name="dashboard_underpayment_label">Nedoplatek</string>
     <string name="dashboard_balanced_label">Vyrovnáno</string>
+    <string name="dashboard_billing_bar_costs_percent_format">Náklady %1$d %%</string>
+    <string name="dashboard_billing_bar_costs_over_max">Náklady &gt;999 %</string>
+    <string name="dashboard_billing_bar_no_advances">Bez záloh</string>
+    <string name="dashboard_billing_bar_overpayment_percent_format">Přeplatek +%1$d %%</string>
+    <string name="dashboard_billing_bar_overpayment_under_one">Přeplatek &lt;1 %</string>
+    <string name="dashboard_billing_bar_underpayment_percent_format">Nedoplatek -%1$d %%</string>
+    <string name="dashboard_billing_bar_underpayment_over_max">Nedoplatek &lt;-999 %</string>
+    <string name="dashboard_billing_bar_underpayment_under_one">Nedoplatek &lt;1 %</string>
+    <string name="dashboard_billing_bar_balanced_percent">Vyrovnáno (100 %)</string>
+    <string name="dashboard_billing_bar_empty_percent">0 %</string>
     <string name="dashboard_last_invoices_title">Poslední faktury</string>
     <string name="dashboard_invoice_number_format">č. %1$s</string>
     <string name="dashboard_invoice_consumption_format">Spotřeba: %1$s kWh</string>

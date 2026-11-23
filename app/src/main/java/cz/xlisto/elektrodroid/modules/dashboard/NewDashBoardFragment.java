@@ -7,6 +7,7 @@ import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -172,6 +173,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private LinearLayout boxBillingBalance;
     private TextView tvBillingBalanceLabel;
     private TextView tvBillingBalanceValue;
+    private DashboardBillingBalanceBarView viewBillingBalanceBar;
+    private TextView tvBillingBarUnderpayment;
+    private TextView tvBillingBarRatio;
+    private TextView tvBillingBarOverpayment;
     private View layoutLastInvoicesSection;
     private LinearLayout llInvoicesContainer;
 
@@ -376,6 +381,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         boxBillingBalance = view.findViewById(R.id.boxBillingBalance);
         tvBillingBalanceLabel = view.findViewById(R.id.tvBillingBalanceLabel);
         tvBillingBalanceValue = view.findViewById(R.id.tvBillingBalanceValue);
+        viewBillingBalanceBar = view.findViewById(R.id.viewBillingBalanceBar);
+        tvBillingBarUnderpayment = view.findViewById(R.id.tvBillingBarUnderpayment);
+        tvBillingBarRatio = view.findViewById(R.id.tvBillingBarRatio);
+        tvBillingBarOverpayment = view.findViewById(R.id.tvBillingBarOverpayment);
         layoutLastInvoicesSection = view.findViewById(R.id.layoutLastInvoicesSection);
         llInvoicesContainer = view.findViewById(R.id.llInvoicesContainer);
 
@@ -1352,6 +1361,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             }
 
             layoutLastInvoicesSection.setVisibility(addedInvoices > 0 ? View.VISIBLE : View.GONE);
+            if (viewBillingBalanceBar != null) {
+                viewBillingBalanceBar.setValues(targetBillingAdvancesKc, targetBillingCostsKc);
+            }
             animateBillingValues(
                     targetBillingAdvancesKc,
                     targetBillingCostsKc,
@@ -1487,6 +1499,96 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             return getString(R.string.dashboard_underpayment_label);
         } else {
             return getString(R.string.dashboard_balanced_label);
+        }
+    }
+
+
+    /**
+     * Aktualizuje textové popisky směru (nedoplatek / přeplatek) a procentuálního poměru
+     * pod bilaterálním ukazatelem v kartě „Vyúčtování“.
+     *
+     * @param advancesKc aktuálně zobrazovaná výše záloh v Kč
+     * @param costsKc    aktuálně zobrazovaná výše nákladů v Kč
+     */
+    private void bindBillingBalancePercentages(double advancesKc, double costsKc) {
+        if (!isAdded()
+                || tvBillingBarUnderpayment == null
+                || tvBillingBarRatio == null
+                || tvBillingBarOverpayment == null) {
+            return;
+        }
+
+        double cleanAdvances = Math.max(0.0, advancesKc);
+        double cleanCosts = Math.max(0.0, costsKc);
+        long roundedAdvances = Math.round(cleanAdvances);
+        long roundedCosts = Math.round(cleanCosts);
+        long roundedBalance = roundedAdvances - roundedCosts;
+
+        int costsPct = DashboardBillingBalanceBarView.calculateCostsToAdvancesPercent(cleanAdvances, cleanCosts);
+        int balancePct = DashboardBillingBalanceBarView.calculateBalancePercent(cleanAdvances, cleanCosts);
+
+        int colorMuted = resolveAttrColor(com.google.android.material.R.attr.colorOnSurfaceVariant);
+        int colorOver = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text);
+        int colorUnder = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text);
+
+        // Středový popisek (poměr nákladů vůči zálohám)
+        boolean isBalancedHighlight = false;
+        if (roundedAdvances == 0L && roundedCosts == 0L) {
+            tvBillingBarRatio.setText(R.string.dashboard_billing_bar_empty_percent);
+        } else if (costsPct < 0) {
+            tvBillingBarRatio.setText(R.string.dashboard_billing_bar_no_advances);
+        } else if (roundedBalance == 0L) {
+            tvBillingBarRatio.setText(R.string.dashboard_billing_bar_balanced_percent);
+            isBalancedHighlight = true;
+        } else if (costsPct > 999) {
+            tvBillingBarRatio.setText(R.string.dashboard_billing_bar_costs_over_max);
+        } else {
+            tvBillingBarRatio.setText(getString(R.string.dashboard_billing_bar_costs_percent_format, costsPct));
+        }
+        tvBillingBarRatio.setTypeface(null, isBalancedHighlight ? Typeface.BOLD : Typeface.NORMAL);
+
+        // Levý (nedoplatek) a pravý (přeplatek) popisek
+        if (roundedBalance > 0L) {
+            tvBillingBarUnderpayment.setText(R.string.dashboard_underpayment_label);
+            tvBillingBarUnderpayment.setTextColor(colorMuted);
+            tvBillingBarUnderpayment.setTypeface(null, Typeface.NORMAL);
+            tvBillingBarUnderpayment.setAlpha(0.65f);
+
+            if (balancePct > 0) {
+                tvBillingBarOverpayment.setText(getString(R.string.dashboard_billing_bar_overpayment_percent_format, balancePct));
+            } else {
+                tvBillingBarOverpayment.setText(R.string.dashboard_billing_bar_overpayment_under_one);
+            }
+            tvBillingBarOverpayment.setTextColor(colorOver);
+            tvBillingBarOverpayment.setTypeface(null, Typeface.BOLD);
+            tvBillingBarOverpayment.setAlpha(1f);
+        } else if (roundedBalance < 0L) {
+            int underPct = Math.abs(balancePct);
+            if (underPct > 999) {
+                tvBillingBarUnderpayment.setText(R.string.dashboard_billing_bar_underpayment_over_max);
+            } else if (underPct > 0) {
+                tvBillingBarUnderpayment.setText(getString(R.string.dashboard_billing_bar_underpayment_percent_format, underPct));
+            } else {
+                tvBillingBarUnderpayment.setText(R.string.dashboard_billing_bar_underpayment_under_one);
+            }
+            tvBillingBarUnderpayment.setTextColor(colorUnder);
+            tvBillingBarUnderpayment.setTypeface(null, Typeface.BOLD);
+            tvBillingBarUnderpayment.setAlpha(1f);
+
+            tvBillingBarOverpayment.setText(R.string.dashboard_overpayment_label);
+            tvBillingBarOverpayment.setTextColor(colorMuted);
+            tvBillingBarOverpayment.setTypeface(null, Typeface.NORMAL);
+            tvBillingBarOverpayment.setAlpha(0.65f);
+        } else {
+            tvBillingBarUnderpayment.setText(R.string.dashboard_underpayment_label);
+            tvBillingBarUnderpayment.setTextColor(colorMuted);
+            tvBillingBarUnderpayment.setTypeface(null, Typeface.NORMAL);
+            tvBillingBarUnderpayment.setAlpha(0.65f);
+
+            tvBillingBarOverpayment.setText(R.string.dashboard_overpayment_label);
+            tvBillingBarOverpayment.setTextColor(colorMuted);
+            tvBillingBarOverpayment.setTypeface(null, Typeface.NORMAL);
+            tvBillingBarOverpayment.setAlpha(0.65f);
         }
     }
 
@@ -1762,6 +1864,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                     targetLabel,
                     fraction
             );
+            bindBillingBalancePercentages(displayedBillingAdvancesKc, displayedBillingCostsKc);
 
             int count = Math.min(invoiceAmountViews.size(), targetInvoiceAmountsKc.size());
             for (int i = 0; i < count; i++) {
