@@ -82,14 +82,17 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
 
-        long idPriceList = shPAddEditMonthlyReading.get(ARG_LAST_ID_SELECTED_PRICE_LIST, 0L);
-        if (idPriceList > 0) {
-            loadPriceList(idPriceList);
-            viewModel.setSelectedPriceList(priceListFromDatabase);
+        if (savedInstanceState == null) {
+            long idPriceList = resolveInitialPriceListId();
+            if (idPriceList > 0) {
+                loadPriceList(idPriceList);
+                selectedPriceList = priceListFromDatabase;
+                viewModel.setSelectedPriceList(priceListFromDatabase);
+            }
         }
 
         btnSave.setOnClickListener(v -> {
-            if (selectedPriceList.getId() > 0 || cbChangeMeter.isChecked() || getCountMonthlyReading() == 0) {
+            if ((selectedPriceList != null && selectedPriceList.getId() > 0) || cbChangeMeter.isChecked() || getCountMonthlyReading() == 0) {
                 //načítám poslední měsíční odečet
                 DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getContext());
                 dataMonthlyReadingSource.open();
@@ -102,6 +105,14 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
 
                 MonthlyReadingModel lastMonthlyReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
                 dataMonthlyReadingSource.close();
+
+                if (selectedPriceList != null && selectedPriceList.getId() > 0) {
+                    shPAddEditMonthlyReading.set(
+                            cz.xlisto.elektrodroid.shp.ShPAddEditMonthlyReading.getLastPriceListKey(tableO),
+                            selectedPriceList.getId()
+                    );
+                    shPAddEditMonthlyReading.set(ARG_LAST_ID_SELECTED_PRICE_LIST, selectedPriceList.getId());
+                }
 
                 //přidat platbu: true; první odečet: false
                 if (cbAddPayment.isChecked() && !cbChangeMeter.isChecked() && getCountMonthlyReading() != 0) {
@@ -180,11 +191,44 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
             if (selectedPriceList != null) {
                 btnSelectPriceList.setText(selectedPriceList.getName());
                 viewModel.setSelectedPriceList(selectedPriceList);
+                shPAddEditMonthlyReading.set(
+                        cz.xlisto.elektrodroid.shp.ShPAddEditMonthlyReading.getLastPriceListKey(tableO),
+                        selectedPriceList.getId()
+                );
                 shPAddEditMonthlyReading.set(ARG_LAST_ID_SELECTED_PRICE_LIST, selectedPriceList.getId());
             } else {
                 btnSelectPriceList.setText(getResources().getString(R.string.vyberCenik));
             }
         });
+    }
+
+
+    /**
+     * Zjistí ID výchozího ceníku pro nový měsíční odečet:
+     * 1. Poslední uložený ceník v posledním měsíčním odečtu daného odběrného místa v databázi.
+     * 2. Poslední vybraný ceník pro dané odběrné místo v SharedPreferences.
+     * 3. Globální poslední vybraný ceník v SharedPreferences.
+     *
+     * @return ID ceníku nebo 0L
+     */
+    private long resolveInitialPriceListId() {
+        if (tableO != null && !tableO.isEmpty()) {
+            DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(requireContext());
+            dataMonthlyReadingSource.open();
+            MonthlyReadingModel lastReading = dataMonthlyReadingSource.loadLastMonthlyReadingByDate(tableO);
+            dataMonthlyReadingSource.close();
+            if (lastReading != null && lastReading.getPriceListId() > 0) {
+                return lastReading.getPriceListId();
+            }
+        }
+        long idFromTablePref = shPAddEditMonthlyReading.get(
+                cz.xlisto.elektrodroid.shp.ShPAddEditMonthlyReading.getLastPriceListKey(tableO),
+                0L
+        );
+        if (idFromTablePref > 0) {
+            return idFromTablePref;
+        }
+        return shPAddEditMonthlyReading.get(ARG_LAST_ID_SELECTED_PRICE_LIST, 0L);
     }
 
 

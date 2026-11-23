@@ -101,6 +101,7 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
             isChangeMeter = monthlyReading.isChangeMeter();
 
             loadPriceList(monthlyReading.getPriceListId());
+            selectedPriceList = priceListFromDatabase;
 
             viewModel.setIsChangeMeter(isChangeMeter);
             viewModel.setIsFirstLoad(isFirstLoad);

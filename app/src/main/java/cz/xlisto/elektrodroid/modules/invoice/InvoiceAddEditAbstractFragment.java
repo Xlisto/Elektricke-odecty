@@ -167,7 +167,11 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment implements
 
         btnSelectPriceList.setOnClickListener(v -> {
             saveSharedPreferences();
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedIdPrice);
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(
+                    true,
+                    selectedIdPrice,
+                    cz.xlisto.elektrodroid.shp.ShPFilter.FilterType.INVOICE
+            );
             Keyboard.hide(requireActivity());
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });

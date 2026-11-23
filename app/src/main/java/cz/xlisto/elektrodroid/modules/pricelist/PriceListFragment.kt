@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -93,6 +94,9 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         /** Klíč příznaku režimu porovnávání ceníků. */
         const val FLAG_IS_COMPARE_MODE = "flagIsCompareMode"
 
+        /** Klíč pro předání typu kontextu filtru ceníků. */
+        const val FLAG_FILTER_TYPE = "flagFilterType"
+
         /** Klíč výsledku s potvrzením smazání vybraných ceníků. */
         const val FLAG_RESULT_DELETE_SELECTED_PRICELISTS = "flagResultDeleteSelectedPriceLists"
 
@@ -115,7 +119,31 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
          */
         @JvmStatic
         fun newInstance(selectedItem: Boolean, idSelectedPriceList: Long): PriceListFragment {
-            return newInstance(selectedItem, idSelectedPriceList, null, null, false)
+            return newInstance(
+                selectedItem,
+                idSelectedPriceList,
+                null,
+                null,
+                false,
+                ShPFilter.FilterType.GENERAL
+            )
+        }
+
+        /**
+         * Vytvoří novou instanci fragmentu pro výběr jednoho ceníku se specifickým kontextem filtru.
+         *
+         * @param selectedItem Zda se má zobrazit režim výběru položky
+         * @param idSelectedPriceList ID aktuálně vybraného ceníku
+         * @param filterType Typ kontextu filtru ceníků ([ShPFilter.FilterType])
+         * @return Nová instance [PriceListFragment]
+         */
+        @JvmStatic
+        fun newInstance(
+            selectedItem: Boolean,
+            idSelectedPriceList: Long,
+            filterType: ShPFilter.FilterType
+        ): PriceListFragment {
+            return newInstance(selectedItem, idSelectedPriceList, null, null, false, filterType)
         }
 
         /**
@@ -132,7 +160,14 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             idSelectedPriceList: Long,
             side: Side?
         ): PriceListFragment {
-            return newInstance(selectedItem, idSelectedPriceList, null, side, false)
+            return newInstance(
+                selectedItem,
+                idSelectedPriceList,
+                null,
+                side,
+                false,
+                ShPFilter.FilterType.GENERAL
+            )
         }
 
         /**
@@ -143,15 +178,18 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
          * @param initialSelectedIds Výchozí pole ID vybraných ceníků
          * @param side Strana zobrazení
          * @param isCompareMode Zda se má fragment otevřít v režimu srovnání ceníků
+         * @param filterType Typ kontextu filtru ceníků
          * @return Nová instance [PriceListFragment]
          */
         @JvmStatic
+        @JvmOverloads
         fun newInstance(
             selectedItem: Boolean,
             idSelectedPriceList: Long,
             initialSelectedIds: LongArray?,
             side: Side?,
-            isCompareMode: Boolean = false
+            isCompareMode: Boolean = false,
+            filterType: ShPFilter.FilterType = ShPFilter.FilterType.GENERAL
         ): PriceListFragment {
             val fragment = PriceListFragment()
             val args = Bundle()
@@ -162,12 +200,14 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             }
             args.putSerializable(FLAG_SIDE, side)
             args.putBoolean(FLAG_IS_COMPARE_MODE, isCompareMode)
+            args.putString(FLAG_FILTER_TYPE, filterType.name)
             fragment.arguments = args
             return fragment
         }
     }
 
     private lateinit var shpFilter: ShPFilter
+    private var filterType: ShPFilter.FilterType = ShPFilter.FilterType.GENERAL
     private var showSelectItem = false
     private var isSelectionModeActive = false
     private var isCompareMode = false
@@ -175,9 +215,15 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     private var side: Side? = null
     private var idFragment = 0
 
+    private val isSingleSelectPicker: Boolean
+        get() = showSelectItem && !isCompareMode
+
     private lateinit var rv: RecyclerView
     private lateinit var cardTopInfo: View
     private lateinit var priceListContainer: View
+    private lateinit var containerFilterBadge: View
+    private lateinit var ivFilterTypeIcon: ImageView
+    private lateinit var tvFilterTypeBadge: TextView
     private lateinit var tvCountPriceItem: TextView
     private lateinit var tvSelectionCount: TextView
     private lateinit var containerSelectionActions: View
@@ -197,6 +243,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     private val selectedIds: MutableSet<Long> = HashSet()
     private var isFilterOnlySelected = false
     private var isResultReturned = false
+    private var shouldScrollToSelected = true
 
     /** Launcher pro výběr PDF souboru ceníku ze zařízení. */
     private val pdfPickerLauncher =
@@ -210,13 +257,19 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        shpFilter = ShPFilter(requireContext())
+        selectedPrice = null
 
         arguments?.let {
             showSelectItem = it.getBoolean(SHOW_SELECT_ITEM)
             idSelectedPriceList = it.getLong(ID_SELECTED_PRICE_LIST)
             side = BundleCompat.getSerializable(it, FLAG_SIDE, Side::class.java)
             isCompareMode = it.getBoolean(FLAG_IS_COMPARE_MODE, false)
+            val typeName = it.getString(FLAG_FILTER_TYPE, ShPFilter.FilterType.GENERAL.name)
+            filterType = try {
+                ShPFilter.FilterType.valueOf(typeName)
+            } catch (_: IllegalArgumentException) {
+                ShPFilter.FilterType.GENERAL
+            }
             val initialIds = it.getLongArray(FLAG_SELECTED_IDS)
             if (initialIds != null) {
                 selectedIds.clear()
@@ -232,12 +285,21 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             idSelectedPriceList = it.getLong(ID_SELECTED_PRICE_LIST)
             idFragment = it.getInt(ARG_ID_FRAGMENT)
             side = BundleCompat.getSerializable(it, FLAG_SIDE, Side::class.java)
+            val typeName = it.getString(FLAG_FILTER_TYPE, filterType.name)
+            filterType = try {
+                ShPFilter.FilterType.valueOf(typeName)
+            } catch (_: IllegalArgumentException) {
+                ShPFilter.FilterType.GENERAL
+            }
             val savedIds = it.getLongArray(KEY_SELECTED_IDS)
             if (savedIds != null) {
                 selectedIds.clear()
                 savedIds.forEach { id -> selectedIds.add(id) }
             }
+            shouldScrollToSelected = false
         }
+
+        shpFilter = ShPFilter(requireContext(), filterType)
 
         if (idSelectedPriceList > 0 && isSelectionModeActive) {
             selectedIds.add(idSelectedPriceList)
@@ -306,7 +368,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                     }
 
                     R.id.menu_filter_pricelist -> {
-                        PriceListFilterDialogFragment.newInstance()
+                        PriceListFilterDialogFragment.newInstance(filterType)
                             .show(requireActivity().supportFragmentManager, TAG)
                         true
                     }
@@ -374,6 +436,9 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         })
         priceListContainer = view.findViewById(R.id.llPriceListContainer)
         cardTopInfo = view.findViewById(R.id.cardTopInfo)
+        containerFilterBadge = view.findViewById(R.id.containerFilterBadge)
+        ivFilterTypeIcon = view.findViewById(R.id.ivFilterTypeIcon)
+        tvFilterTypeBadge = view.findViewById(R.id.tvFilterTypeBadge)
         tvCountPriceItem = view.findViewById(R.id.tvPocetMist)
         tvSelectionCount = view.findViewById(R.id.tvSelectionCount)
         containerSelectionActions = view.findViewById(R.id.containerSelectionActions)
@@ -384,6 +449,11 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         cardPdfProgress = view.findViewById(R.id.cardPdfProgress)
         tvPdfProgressTask = view.findViewById(R.id.tvPdfProgressTask)
         updateRecyclerViewPadding()
+
+        containerFilterBadge.setOnClickListener {
+            PriceListFilterDialogFragment.newInstance(filterType)
+                .show(requireActivity().supportFragmentManager, TAG)
+        }
 
         btnClearSelection.setOnClickListener {
             selectedIds.clear()
@@ -563,6 +633,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         outState.putBoolean(KEY_SELECTION_MODE_ACTIVE, isSelectionModeActive)
         outState.putInt(ARG_ID_FRAGMENT, idFragment)
         outState.putSerializable(FLAG_SIDE, side)
+        outState.putString(FLAG_FILTER_TYPE, filterType.name)
         outState.putLongArray(KEY_SELECTED_IDS, selectedIds.toLongArray())
         if (::btnBack.isInitialized) {
             outState.putString(BTN_BACK_TEXT, btnBack.text.toString())
@@ -583,11 +654,47 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     }
 
     /**
+     * Aktualizuje vizuální štítek informující o tom, který ze tří filtrů ceníků je právě používán.
+     */
+    private fun updateFilterTypeBadge() {
+        if (!::tvFilterTypeBadge.isInitialized || !::ivFilterTypeIcon.isInitialized) return
+        val isActive = shpFilter.isFilterActive
+        when (filterType) {
+            ShPFilter.FilterType.MONTHLY_READING -> {
+                ivFilterTypeIcon.setImageResource(R.drawable.ic_monthly_reading)
+                tvFilterTypeBadge.setText(
+                    if (isActive) R.string.filter_badge_monthly_active
+                    else R.string.filter_badge_monthly_inactive
+                )
+            }
+
+            ShPFilter.FilterType.INVOICE -> {
+                ivFilterTypeIcon.setImageResource(R.drawable.ic_receipt_24)
+                tvFilterTypeBadge.setText(
+                    if (isActive) R.string.filter_badge_invoice_active
+                    else R.string.filter_badge_invoice_inactive
+                )
+            }
+
+            ShPFilter.FilterType.GENERAL -> {
+                ivFilterTypeIcon.setImageResource(R.drawable.ic_filter_alt_24)
+                tvFilterTypeBadge.setText(
+                    if (isActive) R.string.filter_badge_general_active
+                    else R.string.filter_badge_general_inactive
+                )
+            }
+        }
+    }
+
+    /**
      * Načte seznam ceníků z databáze podle aplikovaných filtrů a aktualizuje počítadlo ceníků.
+     * V režimu výběru jednoho ceníku pro záznam (měsíční odečty / faktury) zajistí, že aktuálně
+     * nastavený ceník záznamu bude v seznamu vždy zobrazen a předvybrán.
      */
     fun onLoadData() {
         btnBack.text = getString(R.string.zpet)
         subscriptionPoint = SubscriptionPoint.load(requireActivity())
+        updateFilterTypeBadge()
 
         val rada = shpFilter.get(ShPFilter.RADA, ShPFilter.DEFAULT)
         val produkt = shpFilter.get(ShPFilter.PRODUKT, ShPFilter.DEFAULT)
@@ -628,6 +735,21 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             dateStart,
             dateEnd
         )
+
+        if (isSingleSelectPicker && idSelectedPriceList > 0) {
+            var existingSelected = priceListModels.find { it.id == idSelectedPriceList }
+            if (existingSelected == null) {
+                val selectedFromDb = dataPriceListSource.readPrice(idSelectedPriceList)
+                if (selectedFromDb != null && selectedFromDb.id > 0 && !selectedFromDb.isEmpty) {
+                    priceListModels.add(0, selectedFromDb)
+                    existingSelected = selectedFromDb
+                }
+            }
+            if (selectedPrice == null && existingSelected != null) {
+                selectedPrice = existingSelected
+            }
+        }
+
         val totalCountPriceList = dataPriceListSource.countPriceItems()
         dataPriceListSource.close()
 
@@ -660,7 +782,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                 if (priceList != null) {
                     btnBack.text = getString(R.string.vybrat)
                     idSelectedPriceList = priceList.id
-                    if (!isSelectionModeActive) {
+                    if (!isSelectionModeActive || isSingleSelectPicker) {
                         val bundle = Bundle()
                         bundle.putLong(PRICE_LIST_ID, idSelectedPriceList)
                         parentFragmentManager.setFragmentResult(PRICE_LIST_DETAIL_FRAGMENT, bundle)
@@ -674,16 +796,29 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                 selectedIds.addAll(ids)
                 updateSelectionUiState()
             },
-            isCompareMode = isCompareMode
+            isCompareMode = isCompareMode,
+            isSingleSelectionMode = isSingleSelectPicker,
+            filterType = filterType
         )
 
         // Sync selectedIds with adapter
         priceListAdapter?.selectedIds?.clear()
         priceListAdapter?.selectedIds?.addAll(selectedIds)
 
+        val layoutManager = LinearLayoutManager(requireContext())
         rv.adapter = priceListAdapter
-        rv.layoutManager = LinearLayoutManager(requireContext())
+        rv.layoutManager = layoutManager
         updateSelectionUiState()
+
+        if (isSingleSelectPicker && shouldScrollToSelected && idSelectedPriceList > 0) {
+            val selectedIndex = priceListModels.indexOfFirst { it.id == idSelectedPriceList }
+            if (selectedIndex >= 0) {
+                rv.post {
+                    layoutManager.scrollToPositionWithOffset(selectedIndex, 0)
+                }
+                shouldScrollToSelected = false
+            }
+        }
     }
 
     /**
@@ -710,6 +845,11 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
      * Aktualizuje stav informační lišty vybraných ceníků, textu počítadla a tlačítka akce.
      */
     private fun updateSelectionUiState() {
+        if (isSingleSelectPicker) {
+            containerSelectionActions.visibility = View.GONE
+            return
+        }
+
         val totalSelected = selectedIds.size
         val visibleSelected = priceListModels.count { selectedIds.contains(it.id) }
         val hiddenSelected = totalSelected - visibleSelected
@@ -741,6 +881,16 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     private fun sendResultBundle() {
         if (isResultReturned) return
         isResultReturned = true
+
+        if (isSingleSelectPicker && selectedPrice == null && idSelectedPriceList > 0) {
+            selectedPrice = priceListModels.find { it.id == idSelectedPriceList } ?: run {
+                val dataPriceListSource = DataPriceListSource(requireContext())
+                dataPriceListSource.open()
+                val pl = dataPriceListSource.readPrice(idSelectedPriceList)
+                dataPriceListSource.close()
+                if (pl != null && pl.id > 0 && !pl.isEmpty) pl else null
+            }
+        }
 
         val shPAddEditInvoice = ShPAddEditInvoice(context)
         shPAddEditInvoice.set(ShPAddEditInvoice.SELECTED_ID_PRICE, idSelectedPriceList)

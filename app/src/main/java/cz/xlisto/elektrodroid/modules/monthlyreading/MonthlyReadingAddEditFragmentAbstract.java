@@ -232,7 +232,12 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         btnSelectPriceList.setOnClickListener(v -> {
             saveSharedPreferences();
 
-            PriceListFragment priceListFragment = PriceListFragment.newInstance(true, selectedPriceList.getId());
+            long currentPriceListId = selectedPriceList != null ? selectedPriceList.getId() : -1L;
+            PriceListFragment priceListFragment = PriceListFragment.newInstance(
+                    true,
+                    currentPriceListId,
+                    cz.xlisto.elektrodroid.shp.ShPFilter.FilterType.MONTHLY_READING
+            );
 
             FragmentChange.replace(requireActivity(), priceListFragment, MOVE, true);
         });

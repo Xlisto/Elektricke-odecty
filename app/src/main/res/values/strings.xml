@@ -107,6 +107,15 @@
     <string name="sp_produkt">Produkt</string>
 
     <string name="filtr_ceniku">Filtr ceníků</string>
+    <string name="filtr_ceniku_obecny">Filtr ceníků – Obecný</string>
+    <string name="filtr_ceniku_mesicni_odecty">Filtr ceníků – Měsíční odečty</string>
+    <string name="filtr_ceniku_faktury">Filtr ceníků – Faktury</string>
+    <string name="filter_badge_general_active">Obecný filtr (aktivní)</string>
+    <string name="filter_badge_general_inactive">Obecný filtr (všechny ceníky)</string>
+    <string name="filter_badge_monthly_active">Filtr pro měsíční odečty (aktivní)</string>
+    <string name="filter_badge_monthly_inactive">Filtr pro měsíční odečty (všechny ceníky)</string>
+    <string name="filter_badge_invoice_active">Filtr pro faktury (aktivní)</string>
+    <string name="filter_badge_invoice_inactive">Filtr pro faktury (všechny ceníky)</string>
     <string name="filtr_nastav">Nastav filtr</string>
     <string name="zrusit">Zrušit</string>
     <string name="filtr_reset">Resetovat všechny filtry</string>

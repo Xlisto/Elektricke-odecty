@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.radiobutton.MaterialRadioButton
 import cz.xlisto.elektrodroid.R
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource
@@ -35,15 +36,18 @@ import cz.xlisto.elektrodroid.utils.Round
  * Adaptér RecyclerView pro zobrazení a správu položek ceníků podle pravidel Material Design 3.
  *
  * Zajišťuje kompaktní trojřádkové rozvržení položek, dynamické skrývání údajů určených aktivními filtry,
- * vícenásobný výběr položek pomocí checkboxů a správnou manipulaci s regulovanými cenami.
+ * vícenásobný výběr položek pomocí checkboxů, jednoduchý výběr pomocí radiobuttonu a správnou manipulaci s regulovanými cenami.
  *
  * @property items seznam modelů ceníků ke zobrazení
  * @property subscriptionPoint odběrné místo pro výpočet cen
- * @property isSelectionMode příznak, zda je aktivní režim vícenásobného výběru pomocí checkboxů
+ * @property isSelectionMode příznak, zda je aktivní režim výběru
  * @property idSelectedPriceList ID primárně vybraného ceníku
  * @property onClickItemListener posluchač pro reakci na výchozí výběr nebo klepnutí na ceník
  * @property recyclerView objekt [RecyclerView], ve kterém je adaptér použit
  * @property onSelectionChangedListener volitelný posluchač pro informování o změně vícenásobného výběru
+ * @property isCompareMode příznak, zda jde o režim porovnávání více ceníků
+ * @property isSingleSelectionMode příznak, zda jde o výběr pouze jednoho ceníku (pomocí RadioButtonu)
+ * @property filterType typ kontextu filtru ceníků
  */
 class PriceListAdapter(
     private var items: ArrayList<PriceListModel>,
@@ -53,7 +57,9 @@ class PriceListAdapter(
     private val onClickItemListener: OnClickItemListener,
     private val recyclerView: RecyclerView,
     private val onSelectionChangedListener: OnSelectionChangedListener? = null,
-    private val isCompareMode: Boolean = false
+    private val isCompareMode: Boolean = false,
+    private val isSingleSelectionMode: Boolean = false,
+    private val filterType: ShPFilter.FilterType = ShPFilter.FilterType.GENERAL
 ) : RecyclerView.Adapter<PriceListAdapter.MyViewHolder>() {
 
     companion object {
@@ -96,6 +102,7 @@ class PriceListAdapter(
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: MaterialCardView = itemView.findViewById(R.id.cardPriceListItem)
         val cbSelectItem: MaterialCheckBox = itemView.findViewById(R.id.cbPriceList)
+        val rbSelectItem: MaterialRadioButton = itemView.findViewById(R.id.rbPriceList)
         val tvTitle: TextView = itemView.findViewById(R.id.tvTitle)
         val tvSubtitle: TextView = itemView.findViewById(R.id.tvSubtitle)
         val containerNT: View = itemView.findViewById(R.id.containerNT)
@@ -114,7 +121,7 @@ class PriceListAdapter(
 
     private val context: Context = recyclerView.context
     private val shPPriceList = ShPPriceList(context)
-    private val shPFilter = ShPFilter(context)
+    private val shPFilter = ShPFilter(context, filterType)
 
     /** Množina vybraných ID ceníků udržená napříč filtrací. */
     val selectedIds: MutableSet<Long> = HashSet()
@@ -162,8 +169,35 @@ class PriceListAdapter(
         // 2. Výpočet a zobrazení cenových údajů (Řádek 3)
         bindPrices(holder, priceList)
 
-        // 3. Režim výběru nebo běžný režim s tlačítkami
-        if (isSelectionMode) {
+        // 3. Režim výběru (Single-select s RadioButtonem vs. Multi-select s CheckBoxem) nebo běžný režim s tlačítkami
+        if (isSingleSelectionMode) {
+            holder.cbSelectItem.visibility = View.GONE
+            holder.rbSelectItem.visibility = View.VISIBLE
+            holder.rbSelectItem.isClickable = false
+            holder.rbSelectItem.isFocusable = false
+            holder.rbSelectItem.isChecked = (priceList.id == idSelectedPriceList)
+            holder.lnButtons.visibility = View.GONE
+
+            holder.cardView.setOnClickListener {
+                val previousSelectedId = idSelectedPriceList
+                idSelectedPriceList = priceList.id
+                selectedIds.clear()
+                selectedIds.add(priceList.id)
+                holder.rbSelectItem.isChecked = true
+
+                if (previousSelectedId != priceList.id) {
+                    val prevIndex = items.indexOfFirst { it.id == previousSelectedId }
+                    if (prevIndex >= 0) {
+                        notifyItemChanged(prevIndex)
+                    }
+                    notifyItemChanged(position)
+                }
+
+                onClickItemListener.setClickPriceListListener(priceList)
+                onSelectionChangedListener?.onSelectionChanged(selectedIds)
+            }
+        } else if (isSelectionMode) {
+            holder.rbSelectItem.visibility = View.GONE
             holder.cbSelectItem.visibility = View.VISIBLE
             holder.cbSelectItem.isClickable = false
             holder.cbSelectItem.isFocusable = false
@@ -195,6 +229,7 @@ class PriceListAdapter(
             }
         } else {
             holder.cbSelectItem.visibility = View.GONE
+            holder.rbSelectItem.visibility = View.GONE
 
             holder.cardView.setOnClickListener {
                 TransitionManager.beginDelayedTransition(recyclerView)

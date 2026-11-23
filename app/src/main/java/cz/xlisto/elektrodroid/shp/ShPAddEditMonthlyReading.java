@@ -25,4 +25,18 @@ public class ShPAddEditMonthlyReading extends ShP {
         this.context = context;
     }
 
+
+    /**
+     * Vrací klíč pro poslední vybraný ceník vztažený ke konkrétní tabulce odběrného místa.
+     *
+     * @param tableO název tabulky měsíčních odečtů odběrného místa
+     * @return klíč do SharedPreferences
+     */
+    public static String getLastPriceListKey(String tableO) {
+        if (tableO == null || tableO.trim().isEmpty()) {
+            return ARG_LAST_ID_SELECTED_PRICE_LIST;
+        }
+        return ARG_LAST_ID_SELECTED_PRICE_LIST + "_" + tableO;
+    }
+
 }

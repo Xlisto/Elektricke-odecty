@@ -53,6 +53,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
 
     public static final String FLAG_RESULT_FILTER_DIALOG_FRAGMENT = "flagPriceListFilterDialogFragment";
     public static final String RESULT = "result";
+    private static final String ARG_FILTER_TYPE = "argFilterType";
 
     private TextInputLayout tilRada, tilProdukt, tilSazba, tilCompany, tilArea;
     private TextInputEditText etRada, etProdukt, etSazba, etCompany, etArea;
@@ -77,6 +78,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     private String dateStart = "%", dateEnd = "%";
 
     private ShPFilter shpFilter;
+    private ShPFilter.FilterType filterType = ShPFilter.FilterType.GENERAL;
     private boolean isUserSelectingPreset = false;
 
     public PriceListFilterDialogFragment() {
@@ -84,13 +86,30 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     }
 
     public static PriceListFilterDialogFragment newInstance() {
-        return new PriceListFilterDialogFragment();
+        return newInstance(ShPFilter.FilterType.GENERAL);
+    }
+
+
+    public static PriceListFilterDialogFragment newInstance(ShPFilter.FilterType filterType) {
+        PriceListFilterDialogFragment fragment = new PriceListFilterDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_FILTER_TYPE, (filterType != null ? filterType : ShPFilter.FilterType.GENERAL).name());
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        shpFilter = new ShPFilter(getContext());
+        if (getArguments() != null) {
+            String typeName = getArguments().getString(ARG_FILTER_TYPE, ShPFilter.FilterType.GENERAL.name());
+            try {
+                filterType = ShPFilter.FilterType.valueOf(typeName);
+            } catch (IllegalArgumentException ignored) {
+                filterType = ShPFilter.FilterType.GENERAL;
+            }
+        }
+        shpFilter = new ShPFilter(getContext(), filterType);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_filter, null);
 
@@ -98,7 +117,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         setupListeners(dialogView);
 
         builder.setView(dialogView);
-        builder.setTitle(R.string.filtr_ceniku);
+        builder.setTitle(getDialogTitleRes());
         builder.setPositiveButton(R.string.filtr_nastav, null);
         builder.setNegativeButton(R.string.zrusit, (dialog, which) -> {
         });
@@ -124,6 +143,15 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+
+    private int getDialogTitleRes() {
+        return switch (filterType) {
+            case MONTHLY_READING -> R.string.filtr_ceniku_mesicni_odecty;
+            case INVOICE -> R.string.filtr_ceniku_faktury;
+            default -> R.string.filtr_ceniku_obecny;
+        };
     }
 
     @Override
