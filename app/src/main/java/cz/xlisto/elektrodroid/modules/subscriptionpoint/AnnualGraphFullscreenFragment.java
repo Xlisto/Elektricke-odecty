@@ -14,15 +14,18 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
 import cz.xlisto.elektrodroid.dialogs.OwnAlertDialog;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
+import cz.xlisto.elektrodroid.utils.DensityUtils;
 
 /**
  * Celoobrazovkový fragment pro zobrazení kompletní historie roční spotřeby a cen za všechna dostupná období.
  */
-public class AnnualGraphFullscreenFragment extends Fragment {
+public class AnnualGraphFullscreenFragment extends Fragment implements OnPaddingChangeListener {
 
     private static final String ARG_SUBSCRIPTION_POINT_ID = "argSubscriptionPointId";
     private static final String STATE_PORTRAIT_PROMPT_SHOWN = "portraitPromptShown";
@@ -91,12 +94,43 @@ public class AnnualGraphFullscreenFragment extends Fragment {
         }
 
         loadAndDisplayData();
+        updateViewPadding();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        updateViewPadding();
         checkPortraitOrientationPrompt();
+    }
+
+
+    /**
+     * Aktualizuje vnitřní odsazení kořenového rozvržení podle výšky horní lišty (AppBar),
+     * levého/spodního navigačního panelu a systémových insetů.
+     */
+    public void updateViewPadding() {
+        View rootView = getView();
+        if (rootView == null || !isAdded()) {
+            return;
+        }
+        if (getActivity() instanceof MainActivity mainAct) {
+            int basePaddingPx = DensityUtils.dpToPx(requireContext(), 4);
+            int topPaddingPx = mainAct.getTopBarTotalHeight() + basePaddingPx;
+            int leftPaddingPx = mainAct.getLeftNavTotalWidth() + basePaddingPx;
+            int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight() + basePaddingPx;
+            int bottomPaddingPx = (mainAct.isNavRail()
+                    ? mainAct.getEffectiveNavBarInsetBottom()
+                    : mainAct.getBottomPanelMarginPx()) + basePaddingPx;
+
+            rootView.setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
+        }
+    }
+
+
+    @Override
+    public void onPaddingChanged() {
+        updateViewPadding();
     }
 
 

@@ -313,6 +313,7 @@ public class GraphAnnualOverviewView extends View {
         if (accessibilityHelper != null) {
             accessibilityHelper.invalidateRoot();
         }
+        requestLayout();
         invalidate();
     }
 
@@ -579,6 +580,7 @@ public class GraphAnnualOverviewView extends View {
      */
     public void setShowYAxes(boolean showYAxes) {
         this.showYAxes = showYAxes;
+        requestLayout();
         invalidate();
     }
 
@@ -1390,16 +1392,13 @@ public class GraphAnnualOverviewView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
+        int action = event.getActionMasked();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();
                 downY = event.getY();
                 isTouchSlopExceeded = false;
                 selectedYearIndexOnDown = findYearIndexAt(downX);
-                if (getParent() != null) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                }
                 return true;
 
             case MotionEvent.ACTION_MOVE:
@@ -1407,9 +1406,6 @@ public class GraphAnnualOverviewView extends View {
                 float dy = Math.abs(event.getY() - downY);
                 if (dx > touchSlop || dy > touchSlop) {
                     isTouchSlopExceeded = true;
-                    if (dy > dx && getParent() != null) {
-                        getParent().requestDisallowInterceptTouchEvent(false);
-                    }
                 }
                 return true;
 
