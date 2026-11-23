@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nsvNewDashboard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dashboard_bg"
+    android:clipToPadding="false"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="12dp">
+
+        <!-- Přepínač odběrného místa (< [ikona domu] Domov >) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSubscriptionSwitcher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:cardBackgroundColor="@color/dashboard_card_bg"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/dashboard_card_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp">
+
+                <ImageButton
+                    android:id="@+id/btnPrevSubscriptionPoint"
+                    android:layout_width="36dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_dashboard_switcher_btn"
+                    android:contentDescription="@string/btn_left_content_description_sum_invoices"
+                    android:src="@drawable/ic_chevron_left_24" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_subscription_point"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvSubscriptionPointName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="15.5sp"
+                        android:textStyle="bold"
+                        tools:text="Domov" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnNextSubscriptionPoint"
+                    android:layout_width="36dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_dashboard_switcher_btn"
+                    android:contentDescription="@string/btn_right_content_description_sum_invoices"
+                    android:src="@drawable/ic_chevron_right_24" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Upozornění při neexistujícím odběrném místě -->
+        <TextView
+            android:id="@+id/tvAlertNoSubscriptionPoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:gravity="center"
+            android:text="@string/create_place"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <!-- Kontejner sekcí v režimu na výšku (portrait) -->
+        <LinearLayout
+            android:id="@+id/llDashboardPortraitContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/include_new_dashboard_sections" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

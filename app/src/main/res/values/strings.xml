@@ -856,4 +856,32 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="app_is_up_to_date">Aplikace je aktuální.</string>
     <string name="update_check_error">Nepodařilo se zkontrolovat aktualizace.</string>
     <string name="update_check_button">Zkontrolovat aktualizace</string>
+
+    <!-- Nový přehled (Dashboard) -->
+    <string name="switch_to_old_dashboard">Přepnout na původní přehled</string>
+    <string name="switch_to_new_dashboard">Přepnout na nový přehled</string>
+    <string name="dashboard_current_price_title">Aktuální cena elektřiny</string>
+    <string name="dashboard_price_total_label">Celková</string>
+    <string name="dashboard_price_unregulated_label">Neregulovaná</string>
+    <string name="dashboard_price_vat_label">DPH</string>
+    <string name="dashboard_price_kwh_unit">Kč/kWh</string>
+    <string name="dashboard_hdo_next_switch_label">HDO další přepnutí</string>
+    <string name="dashboard_hdo_not_set">HDO není nastaveno</string>
+    <string name="dashboard_quick_monthly_readings">Měsíční\nodečty</string>
+    <string name="dashboard_quick_new_reading">Nový\nodečet</string>
+    <string name="dashboard_period_consumption_title">Spotřeba období</string>
+    <string name="dashboard_consumption_overview_title">Přehled spotřeby</string>
+    <string name="dashboard_monthly_consumption_subtitle">Měsíční spotřeba (kWh)</string>
+    <string name="dashboard_yearly_consumption_subtitle">Roční spotřeba (kWh)</string>
+    <string name="dashboard_toggle_monthly">Měsíční</string>
+    <string name="dashboard_toggle_yearly">Roční</string>
+    <string name="dashboard_billing_title">Vyúčtování</string>
+    <string name="dashboard_billing_period_format">Období: %1$s</string>
+    <string name="dashboard_advances_label">Zálohy</string>
+    <string name="dashboard_costs_label">Náklady</string>
+    <string name="dashboard_overpayment_label">Přeplatek</string>
+    <string name="dashboard_underpayment_label">Nedoplatek</string>
+    <string name="dashboard_balanced_label">Vyrovnáno</string>
+    <string name="dashboard_last_invoices_title">Poslední faktury</string>
+    <string name="dashboard_invoice_number_format">č. %1$s</string>
 </resources>

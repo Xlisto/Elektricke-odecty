@@ -42,6 +42,7 @@ import cz.xlisto.elektrodroid.modules.backup.BackupFragment;
 import cz.xlisto.elektrodroid.modules.backup.GoogleDriveFragment;
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.modules.dashboard.DashBoardFragment;
+import cz.xlisto.elektrodroid.modules.dashboard.NewDashBoardFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ExportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.exportimportpricelist.ImportPriceListFragment;
 import cz.xlisto.elektrodroid.modules.help.HelpFragment;
@@ -60,6 +61,7 @@ import cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragmen
 import cz.xlisto.elektrodroid.ownview.MyBottomNavigationView;
 import cz.xlisto.elektrodroid.services.HdoNotice;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderNotice;
+import cz.xlisto.elektrodroid.shp.ShPDashBoard;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.utils.AppReviewHelper;
 import cz.xlisto.elektrodroid.utils.AppUpdateHelper;
@@ -233,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(0).setChecked(true));
                 selectedItemIndex = 0;
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_dashboard);
-                actualFragment = DashBoardFragment.newInstance();
+                actualFragment = createDashboardFragment();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 setToolbarTitle(getResources().getString(R.string.dashboard));
                 return true;
@@ -290,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 navigationView.setCheckedItem(R.id.menu_dashboard);
                 myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
                 shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_dashboard);
-                actualFragment = DashBoardFragment.newInstance();
+                actualFragment = createDashboardFragment();
                 FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
                 setToolbarTitle(getResources().getString(R.string.dashboard));
                 return true;
@@ -340,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             long itemId = item.getItemId();
             if (itemId == R.id.menu_dashboard) {
                 myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
-                actualFragment = DashBoardFragment.newInstance();
+                actualFragment = createDashboardFragment();
                 setToolbarTitle(getResources().getString(R.string.dashboard));
                 selectedItemIndex = 0;
                 b = true;
@@ -592,7 +594,19 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Vytvoří položky v hlavním menu toolbaru (výběr odběrného místa a nastavení aplikace).
+     * Vytvoří instanci fragmentu přehledu podle volby uživatele (nový nebo původní přehled).
+     *
+     * @return Instance {@link NewDashBoardFragment} nebo {@link DashBoardFragment}
+     */
+    private Fragment createDashboardFragment() {
+        ShPDashBoard shPDashBoard = new ShPDashBoard(getApplicationContext());
+        boolean useNewDashboard = shPDashBoard.get(ShPDashBoard.USE_NEW_DASHBOARD, true);
+        return useNewDashboard ? NewDashBoardFragment.newInstance() : DashBoardFragment.newInstance();
+    }
+
+
+    /**
+     * Vytvoří položky v hlavním menu toolbaru (výběr odběrného místa, přepnutí přehledu a nastavení aplikace).
      *
      * @param menu Cílové menu toolbaru
      * @return {@code true} pro zobrazení menu
@@ -600,6 +614,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, Menu.NONE, getResources().getString(R.string.subscription_point));
+        menu.add(0, 2, Menu.NONE, getResources().getString(R.string.switch_to_old_dashboard));
         menu.add(0, 1, Menu.NONE, getResources().getString(R.string.settings_app));
         return true;
     }
@@ -629,13 +644,24 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             setToolbarTitle(getResources().getString(R.string.settings_app));
             return true;
         }
+        if (item.getItemId() == 2) {
+            ShPDashBoard shPDashBoard = new ShPDashBoard(getApplicationContext());
+            boolean currentlyNew = shPDashBoard.get(ShPDashBoard.USE_NEW_DASHBOARD, true);
+            shPDashBoard.set(ShPDashBoard.USE_NEW_DASHBOARD, !currentlyNew);
+            actualFragment = createDashboardFragment();
+            FragmentChange.replace(MainActivity.this, actualFragment, ALPHA);
+            setToolbarTitle(getResources().getString(R.string.dashboard));
+            invalidateOptionsMenu();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
 
     /**
-     * Dynamicky upraví viditelnost položky pro přepnutí odběrného místa v menu toolbaru.
-     * Položka je viditelná pouze u podporovaných fragmentů a pokud existuje více než jedno odběrné místo.
+     * Dynamicky upraví viditelnost položky pro přepnutí odběrného místa a přepnutí verze přehledu v menu toolbaru.
+     * Položka pro odběrné místo je viditelná pouze u podporovaných fragmentů a pokud existuje více než jedno odběrné místo.
+     * Položka pro přepnutí přehledu je viditelná pouze tehdy, když je zobrazen přehled (starý nebo nový).
      *
      * @param menu Menu toolbaru před zobrazením
      * @return Výsledek volání nadřazené metody
@@ -649,6 +675,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 "ExportPriceListFragment",
                 "ImportPriceListFragment",
                 "DashBoardFragment",
+                "NewDashBoardFragment",
                 "MonthlyReadingFragment",
                 "MonthlyReadingSettingsFragment",
                 "PriceListFragment",
@@ -680,6 +707,20 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (item != null) {
             int countSubscriptionPoints = SubscriptionPoint.count(getApplicationContext());
             item.setVisible(countSubscriptionPoints > 1 && isFragmentVisible);
+        }
+
+        MenuItem switchDashboardItem = menu.findItem(2);
+        if (switchDashboardItem != null) {
+            Fragment oldDashboard = getSupportFragmentManager().findFragmentByTag("DashBoardFragment");
+            Fragment newDashboard = getSupportFragmentManager().findFragmentByTag("NewDashBoardFragment");
+            boolean isOldVisible = oldDashboard != null && oldDashboard.isVisible();
+            boolean isNewVisible = newDashboard != null && newDashboard.isVisible();
+            switchDashboardItem.setVisible(isOldVisible || isNewVisible);
+            if (isNewVisible) {
+                switchDashboardItem.setTitle(R.string.switch_to_old_dashboard);
+            } else if (isOldVisible) {
+                switchDashboardItem.setTitle(R.string.switch_to_new_dashboard);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }

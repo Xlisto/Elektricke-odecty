@@ -90,4 +90,26 @@
     <color name="dialog_button_text_disabled">#74777F</color>
 
     <color name="progress_overlay_bg">#D9F9F9FF</color>
+
+    <!-- New Dashboard (Light) -->
+    <color name="dashboard_bg">#F2F4F8</color>
+    <color name="dashboard_card_bg">#FFFFFF</color>
+    <color name="dashboard_card_stroke">#E0E4EC</color>
+    <color name="dashboard_price_card_start">#E2F6F3</color>
+    <color name="dashboard_price_card_end">#B9E7E0</color>
+    <color name="dashboard_price_card_stroke">#A5DCD4</color>
+    <color name="dashboard_price_box_inactive_bg">#D9EEF4F3</color>
+    <color name="dashboard_price_box_inactive_stroke">#B8D8D3</color>
+    <color name="dashboard_price_box_active_bg">#00897B</color>
+    <color name="dashboard_teal_primary">#00796B</color>
+    <color name="dashboard_teal_vt">#00796B</color>
+    <color name="dashboard_teal_nt">#5AD2C5</color>
+    <color name="dashboard_overpayment_bg">#D4F4DC</color>
+    <color name="dashboard_overpayment_text">#136528</color>
+    <color name="dashboard_underpayment_bg">#FFDAD6</color>
+    <color name="dashboard_underpayment_text">#BA1A1A</color>
+    <color name="dashboard_pylon_color">#4000695C</color>
+    <color name="dashboard_switcher_btn_bg">#F2F4F8</color>
+    <color name="dashboard_switcher_btn_stroke">#D5D9E2</color>
+    <color name="dashboard_divider">#E5E8F0</color>
 </resources>
