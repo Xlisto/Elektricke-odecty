@@ -58,7 +58,7 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int selectedPosition;
     private final boolean clickables;
     private boolean isGraphicMode = false;
-    private FragmentActivity fragmentActivity;
+    private final FragmentActivity fragmentActivity;
 
 
     /**
