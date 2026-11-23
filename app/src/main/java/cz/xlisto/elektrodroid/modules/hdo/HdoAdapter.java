@@ -113,13 +113,13 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private FragmentActivity findFragmentActivity(Context context) {
         Context current = context;
-        while (current instanceof ContextWrapper) {
-            if (current instanceof FragmentActivity) {
-                return (FragmentActivity) current;
+        while (current instanceof ContextWrapper wrapper) {
+            if (current instanceof FragmentActivity activity) {
+                return activity;
             }
-            current = ((ContextWrapper) current).getBaseContext();
+            current = wrapper.getBaseContext();
         }
-        return current instanceof FragmentActivity ? (FragmentActivity) current : null;
+        return null;
     }
 
 
@@ -399,8 +399,8 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 } else {
                     if (showButtons >= 0) {
                         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(showButtons);
-                        if (viewHolder instanceof MyViewHolder) {
-                            collapseButtons((MyViewHolder) viewHolder);
+                        if (viewHolder instanceof MyViewHolder prevHolder) {
+                            collapseButtons(prevHolder);
                         } else if (viewHolder != null) {
                             viewHolder.itemView.findViewById(R.id.lnButtonsHdo).setVisibility(View.GONE);
                         }

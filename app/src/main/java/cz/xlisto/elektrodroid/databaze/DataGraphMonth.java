@@ -10,7 +10,6 @@ import java.util.Calendar;
 import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
 import cz.xlisto.elektrodroid.models.ConsuptionModel;
 import cz.xlisto.elektrodroid.models.MonthlyConsuptionModel;
-import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.models.YearConsuptionModel;
 import cz.xlisto.elektrodroid.modules.graphmonth.ConsuptionContainer;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
