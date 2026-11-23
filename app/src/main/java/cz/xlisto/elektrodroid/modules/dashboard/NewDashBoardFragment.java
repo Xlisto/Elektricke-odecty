@@ -2,8 +2,10 @@ package cz.xlisto.elektrodroid.modules.dashboard;
 
 
 import static cz.xlisto.elektrodroid.models.PriceListModel.NEW_POZE_YEAR;
+import static cz.xlisto.elektrodroid.utils.DensityUtils.dpToPx;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +13,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +60,7 @@ import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.graphmonth.ConsuptionContainer;
 import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoTime;
+import cz.xlisto.elektrodroid.modules.invoice.InvoiceAbstract;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceAdapter;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceTabFragment;
 import cz.xlisto.elektrodroid.modules.invoice.MyViewPagerAdapter;
@@ -138,6 +142,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     // 3. Karta: Spotřeba období
     private TextView tvPeriodDateRange;
     private TextView tvPeriodVtValue;
+    private View layoutPeriodNtRow;
     private TextView tvPeriodNtValue;
     private DashboardPeriodBarView viewPeriodBar;
     private DashboardDonutChartView viewPeriodDonut;
@@ -158,6 +163,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private LinearLayout llInvoicesContainer;
 
     private static final String STATE_SELECTED_LOCAL_POINT_ID = "stateSelectedLocalPointId";
+    private static final long PERIOD_ANIMATION_DURATION_MS = 550L;
 
     private ShPDashBoard shPDashBoard;
     private DashboardLayoutManager layoutManager;
@@ -165,6 +171,13 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private int currentPointIndex = 0;
     private SubscriptionPointModel currentPoint;
     private long selectedLocalPointId = -1L;
+
+    private double displayedPeriodVtKwh = 0.0;
+    private double displayedPeriodNtKwh = 0.0;
+    private float displayedPeriodNtVisibility = 1f;
+    private boolean hasInitializedPeriodValues = false;
+    private int ntRowMeasuredHeight = 0;
+    private ValueAnimator periodValuesAnimator;
 
     private final List<DashboardConsumptionBarChartView.BarEntry> monthlyChartEntries = new ArrayList<>();
     private final List<DashboardConsumptionBarChartView.BarEntry> yearlyChartEntries = new ArrayList<>();
@@ -281,6 +294,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         tvPeriodDateRange = view.findViewById(R.id.tvPeriodDateRange);
         tvPeriodVtValue = view.findViewById(R.id.tvPeriodVtValue);
+        layoutPeriodNtRow = view.findViewById(R.id.layoutPeriodNtRow);
         tvPeriodNtValue = view.findViewById(R.id.tvPeriodNtValue);
         viewPeriodBar = view.findViewById(R.id.viewPeriodBar);
         viewPeriodDonut = view.findViewById(R.id.viewPeriodDonut);
@@ -804,19 +818,20 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 String fullDateRange = startDate + " – " + endDate;
 
                 tvPeriodDateRange.setText(fullDateRange);
-                tvPeriodVtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(summary.vtKwh))));
-                tvPeriodNtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(summary.ntKwh))));
-                viewPeriodBar.setConsumption(summary.vtKwh, summary.ntKwh);
-                viewPeriodDonut.setConsumption(summary.vtKwh, summary.ntKwh);
+                double effectiveNtKwh = summary.isSingleTariff ? 0.0 : summary.ntKwh;
+                animatePeriodConsumptionValues(summary.vtKwh, effectiveNtKwh, summary.isSingleTariff);
+                viewPeriodBar.setConsumption(summary.vtKwh, effectiveNtKwh);
+                viewPeriodDonut.setConsumption(summary.vtKwh, effectiveNtKwh);
 
                 tvBillingPeriod.setText(getString(R.string.dashboard_billing_period_format, formatShortPeriodRange(startDate, endDate)));
                 tvBillingAdvances.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(summary.advancesKc))));
                 tvBillingCosts.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(summary.costsWithTaxKc))));
                 bindBalanceBadge(summary.advancesKc - summary.costsWithTaxKc);
             } else {
+                PriceListModel fallbackPl = loadCurrentPriceList(currentPoint);
+                boolean isSingle = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
                 tvPeriodDateRange.setText("");
-                tvPeriodVtValue.setText("0 kWh");
-                tvPeriodNtValue.setText("0 kWh");
+                animatePeriodConsumptionValues(0.0, 0.0, isSingle);
                 viewPeriodBar.setConsumption(0, 0);
                 viewPeriodDonut.setConsumption(0, 0);
 
@@ -942,19 +957,29 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         double discountWithTax = invoiceSource.sumDiscountWithTax(idFak, point.getTablePLATBY());
 
         if (records == null || records.isEmpty()) {
-            return new PeriodSummary(0, 0, advances, 0);
+            PriceListModel fallbackPl = loadCurrentPriceList(point);
+            boolean isSingle = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
+            return new PeriodSummary(0, 0, advances, 0, isSingle);
         }
 
         PozeModel poze = Calculation.getPoze(records, point.getCountPhaze(), point.getPhaze(), requireContext());
         double totalDph = 0.0;
         double totalVtMwh = 0.0;
         double totalNtMwh = 0.0;
+        boolean hasAnyRate = false;
+        boolean allSingleTariff = true;
 
         for (int i = 0; i < records.size(); i++) {
             InvoiceModel invoice = records.get(i);
             PriceListModel priceList = priceListSource.readPrice(invoice.getIdPriceList());
             if (priceList == null) {
                 priceList = new PriceListModel();
+            }
+            if (priceList.getRate() != null && !priceList.getRate().trim().isEmpty()) {
+                hasAnyRate = true;
+                if (!isSingleTariffRate(priceList.getRate())) {
+                    allSingleTariff = false;
+                }
             }
             PriceListModel regulPriceList = new PriceListRegulBuilder(priceList, invoice).getRegulPriceList();
             String dateOf = ViewHelper.convertLongToDate(invoice.getDateFrom());
@@ -998,8 +1023,113 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             }
         }
 
+        boolean isSingleTariff = hasAnyRate && allSingleTariff && (totalNtMwh <= 0.0);
+        if (!hasAnyRate && totalNtMwh <= 0.0) {
+            PriceListModel fallbackPl = loadCurrentPriceList(point);
+            isSingleTariff = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
+        }
+
         double totalWithTax = Math.max(0.0, totalDph - discountWithTax);
-        return new PeriodSummary(totalVtMwh * 1000.0, totalNtMwh * 1000.0, advances, totalWithTax);
+        return new PeriodSummary(totalVtMwh * 1000.0, totalNtMwh * 1000.0, advances, totalWithTax, isSingleTariff);
+    }
+
+
+    /**
+     * Plynule odanimuje přičítání/odečítání číselných hodnot VT a NT v kartě "Spotřeba období"
+     * a postupné zobrazení či skrytí řádku NT u jednosazbového tarifu (D 01d, D 02d).
+     */
+    private void animatePeriodConsumptionValues(double targetVtKwh, double targetNtKwh, boolean isSingleTariff) {
+        final double targetVt = Math.max(0.0, targetVtKwh);
+        final double targetNt = isSingleTariff ? 0.0 : Math.max(0.0, targetNtKwh);
+        final float targetNtVis = isSingleTariff ? 0f : 1f;
+
+        if (periodValuesAnimator != null) {
+            periodValuesAnimator.cancel();
+            periodValuesAnimator = null;
+        }
+
+        if (!hasInitializedPeriodValues) {
+            displayedPeriodNtVisibility = targetNtVis;
+            applyNtRowVisibilityFraction(targetNtVis);
+            hasInitializedPeriodValues = true;
+        }
+
+        final double startVt = displayedPeriodVtKwh;
+        final double startNt = displayedPeriodNtKwh;
+        final float startNtVis = displayedPeriodNtVisibility;
+
+        periodValuesAnimator = ValueAnimator.ofFloat(0f, 1f);
+        periodValuesAnimator.setDuration(PERIOD_ANIMATION_DURATION_MS);
+        periodValuesAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        periodValuesAnimator.addUpdateListener(anim -> {
+            if (!isAdded()) return;
+            float fraction = (float) anim.getAnimatedValue();
+            displayedPeriodVtKwh = startVt + (targetVt - startVt) * fraction;
+            displayedPeriodNtKwh = startNt + (targetNt - startNt) * fraction;
+            displayedPeriodNtVisibility = startNtVis + (targetNtVis - startNtVis) * fraction;
+
+            tvPeriodVtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(displayedPeriodVtKwh))));
+            tvPeriodNtValue.setText(String.format(Locale.getDefault(), "%s kWh", integerFormat.format(Math.round(displayedPeriodNtKwh))));
+            applyNtRowVisibilityFraction(displayedPeriodNtVisibility);
+        });
+        periodValuesAnimator.start();
+    }
+
+
+    private void applyNtRowVisibilityFraction(float fraction) {
+        if (layoutPeriodNtRow == null || !isAdded()) {
+            return;
+        }
+        float clamped = Math.max(0f, Math.min(1f, fraction));
+        int fullTopMargin = Math.max(0, dpToPx(requireContext(), 6f));
+
+        if (ntRowMeasuredHeight <= 0) {
+            if (layoutPeriodNtRow.getHeight() > 0) {
+                ntRowMeasuredHeight = layoutPeriodNtRow.getHeight();
+            } else {
+                int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                layoutPeriodNtRow.measure(widthSpec, heightSpec);
+                ntRowMeasuredHeight = Math.max(dpToPx(requireContext(), 20f), layoutPeriodNtRow.getMeasuredHeight());
+            }
+        }
+
+        ViewGroup.LayoutParams rawLp = layoutPeriodNtRow.getLayoutParams();
+        if (!(rawLp instanceof ViewGroup.MarginLayoutParams lp)) {
+            layoutPeriodNtRow.setAlpha(clamped);
+            layoutPeriodNtRow.setVisibility(clamped <= 0.005f ? View.GONE : View.VISIBLE);
+            return;
+        }
+
+        if (clamped <= 0.005f) {
+            layoutPeriodNtRow.setAlpha(0f);
+            layoutPeriodNtRow.setVisibility(View.GONE);
+        } else if (clamped >= 0.995f) {
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            lp.topMargin = fullTopMargin;
+            layoutPeriodNtRow.setLayoutParams(lp);
+            layoutPeriodNtRow.setAlpha(1f);
+            layoutPeriodNtRow.setVisibility(View.VISIBLE);
+        } else {
+            lp.height = Math.max(1, Math.round(ntRowMeasuredHeight * clamped));
+            lp.topMargin = Math.round(fullTopMargin * clamped);
+            layoutPeriodNtRow.setLayoutParams(lp);
+            layoutPeriodNtRow.setAlpha(clamped);
+            layoutPeriodNtRow.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private boolean isSingleTariffRate(@Nullable String rate) {
+        if (rate == null || rate.trim().isEmpty()) {
+            return false;
+        }
+        String trimmed = rate.trim();
+        if (InvoiceAbstract.D01.equalsIgnoreCase(trimmed) || InvoiceAbstract.D02.equalsIgnoreCase(trimmed)) {
+            return true;
+        }
+        String compact = trimmed.replace(" ", "");
+        return "D01d".equalsIgnoreCase(compact) || "D02d".equalsIgnoreCase(compact);
     }
 
 
@@ -1097,6 +1227,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     public void onPause() {
         super.onPause();
         hdoHandler.removeCallbacks(hdoRefreshRunnable);
+        if (periodValuesAnimator != null) {
+            periodValuesAnimator.cancel();
+            periodValuesAnimator = null;
+        }
     }
 
 
@@ -1132,13 +1266,15 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         final double ntKwh;
         final double advancesKc;
         final double costsWithTaxKc;
+        final boolean isSingleTariff;
 
 
-        PeriodSummary(double vtKwh, double ntKwh, double advancesKc, double costsWithTaxKc) {
+        PeriodSummary(double vtKwh, double ntKwh, double advancesKc, double costsWithTaxKc, boolean isSingleTariff) {
             this.vtKwh = vtKwh;
             this.ntKwh = ntKwh;
             this.advancesKc = advancesKc;
             this.costsWithTaxKc = costsWithTaxKc;
+            this.isSingleTariff = isSingleTariff;
         }
 
     }
