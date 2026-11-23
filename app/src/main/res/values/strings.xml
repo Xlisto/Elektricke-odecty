@@ -884,5 +884,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="dashboard_balanced_label">Vyrovnáno</string>
     <string name="dashboard_last_invoices_title">Poslední faktury</string>
     <string name="dashboard_invoice_number_format">č. %1$s</string>
+    <string name="dashboard_invoice_consumption_format">Spotřeba: %1$s kWh</string>
+    <string name="dashboard_invoice_amount_with_vat_format">%1$s Kč s DPH</string>
     <string name="dashboard_subscription_point_switched">Odběrné místo bylo přepnuto na: %1$s</string>
 </resources>

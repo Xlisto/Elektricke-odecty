@@ -5,7 +5,9 @@ import static cz.xlisto.elektrodroid.models.PriceListModel.NEW_POZE_YEAR;
 import static cz.xlisto.elektrodroid.utils.DensityUtils.dpToPx;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
+import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -178,6 +180,19 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private boolean hasInitializedPeriodValues = false;
     private int ntRowMeasuredHeight = 0;
     private ValueAnimator periodValuesAnimator;
+
+    private double displayedBillingAdvancesKc = 0.0;
+    private double displayedBillingCostsKc = 0.0;
+    private long displayedBillingMinDate = 0L;
+    private long displayedBillingMaxDate = 0L;
+    private float displayedBalanceColorRatio = 0f;
+    private String displayedBalanceLabel = "";
+    private boolean hasInitializedBillingValues = false;
+    private GradientDrawable balanceBgDrawable;
+    private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+    private final List<Double> displayedRecentInvoiceAmountsKc = new ArrayList<>();
+    private final List<Double> displayedRecentInvoiceConsumptionsKwh = new ArrayList<>();
+    private ValueAnimator billingValuesAnimator;
 
     private final List<DashboardConsumptionBarChartView.BarEntry> monthlyChartEntries = new ArrayList<>();
     private final List<DashboardConsumptionBarChartView.BarEntry> yearlyChartEntries = new ArrayList<>();
@@ -808,43 +823,42 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 }
             }
 
+            double targetBillingAdvancesKc = 0.0;
+            double targetBillingCostsKc = 0.0;
+            long targetMinDate = 0L;
+            long targetMaxDate = 0L;
+
             if (activePeriodModel != null) {
                 long idFak = activePeriodModel.getIdFak();
                 String table = (idFak == -1L) ? currentPoint.getTableTED() : currentPoint.getTableFAK();
                 PeriodSummary summary = computeInvoiceSummary(invoiceSource, priceListSource, currentPoint, idFak, table);
 
-                String startDate = ViewHelper.convertLongToDate(activePeriodModel.getMinDate());
-                String endDate = ViewHelper.convertLongToDate(activePeriodModel.getMaxDate());
-                String fullDateRange = startDate + " – " + endDate;
+                targetMinDate = activePeriodModel.getMinDate();
+                targetMaxDate = activePeriodModel.getMaxDate();
 
-                tvPeriodDateRange.setText(fullDateRange);
                 double effectiveNtKwh = summary.isSingleTariff ? 0.0 : summary.ntKwh;
                 animatePeriodConsumptionValues(summary.vtKwh, effectiveNtKwh, summary.isSingleTariff);
                 viewPeriodBar.setConsumption(summary.vtKwh, effectiveNtKwh);
                 viewPeriodDonut.setConsumption(summary.vtKwh, effectiveNtKwh);
 
-                tvBillingPeriod.setText(getString(R.string.dashboard_billing_period_format, formatShortPeriodRange(startDate, endDate)));
-                tvBillingAdvances.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(summary.advancesKc))));
-                tvBillingCosts.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(summary.costsWithTaxKc))));
-                bindBalanceBadge(summary.advancesKc - summary.costsWithTaxKc);
+                targetBillingAdvancesKc = summary.advancesKc;
+                targetBillingCostsKc = summary.costsWithTaxKc;
             } else {
                 PriceListModel fallbackPl = loadCurrentPriceList(currentPoint);
                 boolean isSingle = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
-                tvPeriodDateRange.setText("");
                 animatePeriodConsumptionValues(0.0, 0.0, isSingle);
                 viewPeriodBar.setConsumption(0, 0);
                 viewPeriodDonut.setConsumption(0, 0);
-
-                tvBillingPeriod.setText("");
-                tvBillingAdvances.setText("0 Kč");
-                tvBillingCosts.setText("0 Kč");
-                bindBalanceBadge(0);
             }
 
             // Poslední faktury (pouze vyúčtované faktury idFak != -1L)
             llInvoicesContainer.removeAllViews();
             int addedInvoices = 0;
             LayoutInflater inflater = LayoutInflater.from(requireContext());
+            List<TextView> invoiceConsumptionViews = new ArrayList<>();
+            List<Double> targetInvoiceConsumptionsKwh = new ArrayList<>();
+            List<TextView> invoiceAmountViews = new ArrayList<>();
+            List<Double> targetInvoiceAmountsKc = new ArrayList<>();
 
             for (int pos = 0; pos < invoiceLists.size(); pos++) {
                 InvoiceListModel invItem = invoiceLists.get(pos);
@@ -866,6 +880,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 View row = inflater.inflate(R.layout.item_dashboard_invoice_row, llInvoicesContainer, false);
                 TextView tvNumber = row.findViewById(R.id.tvInvoiceNumber);
                 TextView tvDates = row.findViewById(R.id.tvInvoiceDates);
+                TextView tvConsumption = row.findViewById(R.id.tvInvoiceConsumption);
                 TextView tvAmount = row.findViewById(R.id.tvInvoiceAmount);
 
                 tvNumber.setText(getString(R.string.dashboard_invoice_number_format, invItem.getNumberInvoice()));
@@ -876,7 +891,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 } else {
                     tvDates.setText("");
                 }
-                tvAmount.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(invSummary.costsWithTaxKc))));
+
+                double totalInvoiceKwh = invSummary.vtKwh + (invSummary.isSingleTariff ? 0.0 : invSummary.ntKwh);
+                invoiceConsumptionViews.add(tvConsumption);
+                targetInvoiceConsumptionsKwh.add(totalInvoiceKwh);
+                invoiceAmountViews.add(tvAmount);
+                targetInvoiceAmountsKc.add(invSummary.costsWithTaxKc);
 
                 final long clickedIdFak = invItem.getIdFak();
                 final int clickedPos = pos;
@@ -902,6 +922,16 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             }
 
             layoutLastInvoicesSection.setVisibility(addedInvoices > 0 ? View.VISIBLE : View.GONE);
+            animateBillingValues(
+                    targetBillingAdvancesKc,
+                    targetBillingCostsKc,
+                    targetMinDate,
+                    targetMaxDate,
+                    invoiceConsumptionViews,
+                    targetInvoiceConsumptionsKwh,
+                    invoiceAmountViews,
+                    targetInvoiceAmountsKc
+            );
         } catch (Exception ignored) {
         } finally {
             priceListSource.close();
@@ -910,22 +940,78 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
-    private void bindBalanceBadge(double balanceKc) {
+    private void bindBalanceBadge(double balanceKc,
+                                  float colorRatio,
+                                  @NonNull String startLabel,
+                                  @NonNull String targetLabel,
+                                  float animFraction) {
+        if (!isAdded()) return;
+
         long rounded = Math.round(balanceKc);
-        if (rounded >= 0) {
-            boxBillingBalance.setBackgroundResource(R.drawable.bg_dashboard_overpayment);
-            int textColor = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text);
-            tvBillingBalanceLabel.setTextColor(textColor);
-            tvBillingBalanceValue.setTextColor(textColor);
-            tvBillingBalanceLabel.setText(rounded > 0 ? R.string.dashboard_overpayment_label : R.string.dashboard_balanced_label);
-            tvBillingBalanceValue.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.abs(rounded))));
+        float clampedColorRatio = Math.max(0f, Math.min(1f, colorRatio));
+
+        int colorOverBg = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_bg);
+        int colorUnderBg = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_bg);
+        int colorOverText = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text);
+        int colorUnderText = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text);
+
+        int bgColor = (int) argbEvaluator.evaluate(clampedColorRatio, colorOverBg, colorUnderBg);
+        int textColor = (int) argbEvaluator.evaluate(clampedColorRatio, colorOverText, colorUnderText);
+
+        if (balanceBgDrawable == null) {
+            balanceBgDrawable = new GradientDrawable();
+            balanceBgDrawable.setShape(GradientDrawable.RECTANGLE);
+            balanceBgDrawable.setCornerRadius(dpToPx(requireContext(), 12f));
+        }
+        balanceBgDrawable.setColor(bgColor);
+        if (boxBillingBalance.getBackground() != balanceBgDrawable) {
+            boxBillingBalance.setBackground(balanceBgDrawable);
+        }
+
+        tvBillingBalanceLabel.setTextColor(textColor);
+        tvBillingBalanceValue.setTextColor(textColor);
+        tvBillingBalanceValue.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.abs(rounded))));
+
+        if (startLabel.equals(targetLabel) || animFraction >= 0.999f) {
+            tvBillingBalanceLabel.setText(targetLabel);
+            tvBillingBalanceLabel.setAlpha(1f);
+            tvBillingBalanceLabel.setTranslationY(0f);
+            tvBillingBalanceLabel.setScaleX(1f);
+            tvBillingBalanceLabel.setScaleY(1f);
+            displayedBalanceLabel = targetLabel;
         } else {
-            boxBillingBalance.setBackgroundResource(R.drawable.bg_dashboard_underpayment);
-            int textColor = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text);
-            tvBillingBalanceLabel.setTextColor(textColor);
-            tvBillingBalanceValue.setTextColor(textColor);
-            tvBillingBalanceLabel.setText(R.string.dashboard_underpayment_label);
-            tvBillingBalanceValue.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.abs(rounded))));
+            float maxShiftPx = dpToPx(requireContext(), 5f);
+            if (animFraction < 0.5f) {
+                float outProgress = animFraction * 2f;
+                tvBillingBalanceLabel.setText(startLabel);
+                tvBillingBalanceLabel.setAlpha(1f - outProgress);
+                tvBillingBalanceLabel.setTranslationY(-maxShiftPx * outProgress);
+                float scale = 1f - 0.12f * outProgress;
+                tvBillingBalanceLabel.setScaleX(scale);
+                tvBillingBalanceLabel.setScaleY(scale);
+                displayedBalanceLabel = startLabel;
+            } else {
+                float inProgress = (animFraction - 0.5f) * 2f;
+                tvBillingBalanceLabel.setText(targetLabel);
+                tvBillingBalanceLabel.setAlpha(inProgress);
+                tvBillingBalanceLabel.setTranslationY(maxShiftPx * (1f - inProgress));
+                float scale = 0.88f + 0.12f * inProgress;
+                tvBillingBalanceLabel.setScaleX(scale);
+                tvBillingBalanceLabel.setScaleY(scale);
+                displayedBalanceLabel = targetLabel;
+            }
+        }
+    }
+
+
+    @NonNull
+    private String getBalanceLabelForValue(long roundedBalanceKc) {
+        if (roundedBalanceKc > 0) {
+            return getString(R.string.dashboard_overpayment_label);
+        } else if (roundedBalanceKc < 0) {
+            return getString(R.string.dashboard_underpayment_label);
+        } else {
+            return getString(R.string.dashboard_balanced_label);
         }
     }
 
@@ -1073,6 +1159,168 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             applyNtRowVisibilityFraction(displayedPeriodNtVisibility);
         });
         periodValuesAnimator.start();
+    }
+
+
+    /**
+     * Plynule odanimuje přičítání/odečítání číselných hodnot a datumového rozsahu v kartě "Vyúčtování"
+     * (Období, Zálohy, Náklady, Přeplatek/Nedoplatek včetně plynulého přechodu barev a textu štítku
+     * i spotřeby a celkové ceny s DPH v seznamu Posledních faktur).
+     */
+    private void animateBillingValues(double targetAdvancesKc,
+                                      double targetCostsKc,
+                                      long targetMinDateMillis,
+                                      long targetMaxDateMillis,
+                                      @NonNull List<TextView> invoiceConsumptionViews,
+                                      @NonNull List<Double> targetInvoiceConsumptionsKwh,
+                                      @NonNull List<TextView> invoiceAmountViews,
+                                      @NonNull List<Double> targetInvoiceAmountsKc) {
+        final double targetAdvances = Math.max(0.0, targetAdvancesKc);
+        final double targetCosts = Math.max(0.0, targetCostsKc);
+        final long targetRoundedBalance = Math.round(targetAdvances - targetCosts);
+        final float targetColorRatio = (targetRoundedBalance < 0) ? 1f : 0f;
+        final String targetLabel = getBalanceLabelForValue(targetRoundedBalance);
+
+        if (billingValuesAnimator != null) {
+            billingValuesAnimator.cancel();
+            billingValuesAnimator = null;
+        }
+
+        if (!hasInitializedBillingValues) {
+            displayedBalanceColorRatio = targetColorRatio;
+            displayedBalanceLabel = targetLabel;
+            displayedBillingMinDate = targetMinDateMillis;
+            displayedBillingMaxDate = targetMaxDateMillis;
+            hasInitializedBillingValues = true;
+        }
+
+        final double startAdvances = displayedBillingAdvancesKc;
+        final double startCosts = displayedBillingCostsKc;
+        final long startMinDate = displayedBillingMinDate;
+        final long startMaxDate = displayedBillingMaxDate;
+        final float startColorRatio = displayedBalanceColorRatio;
+        final String startLabel = (displayedBalanceLabel == null || displayedBalanceLabel.isEmpty())
+                ? targetLabel
+                : displayedBalanceLabel;
+        final List<Double> startInvoiceAmounts = new ArrayList<>(displayedRecentInvoiceAmountsKc);
+        final List<Double> startInvoiceConsumptions = new ArrayList<>(displayedRecentInvoiceConsumptionsKwh);
+
+        displayedRecentInvoiceAmountsKc.clear();
+        for (int i = 0; i < targetInvoiceAmountsKc.size(); i++) {
+            displayedRecentInvoiceAmountsKc.add(i < startInvoiceAmounts.size() ? startInvoiceAmounts.get(i) : 0.0);
+        }
+
+        displayedRecentInvoiceConsumptionsKwh.clear();
+        for (int i = 0; i < targetInvoiceConsumptionsKwh.size(); i++) {
+            displayedRecentInvoiceConsumptionsKwh.add(i < startInvoiceConsumptions.size() ? startInvoiceConsumptions.get(i) : 0.0);
+        }
+
+        billingValuesAnimator = ValueAnimator.ofFloat(0f, 1f);
+        billingValuesAnimator.setDuration(PERIOD_ANIMATION_DURATION_MS);
+        billingValuesAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        billingValuesAnimator.addUpdateListener(anim -> {
+            if (!isAdded()) return;
+            float fraction = (float) anim.getAnimatedValue();
+            displayedBillingAdvancesKc = startAdvances + (targetAdvances - startAdvances) * fraction;
+            displayedBillingCostsKc = startCosts + (targetCosts - startCosts) * fraction;
+            displayedBalanceColorRatio = startColorRatio + (targetColorRatio - startColorRatio) * fraction;
+
+            bindAnimatedPeriodDates(startMinDate, startMaxDate, targetMinDateMillis, targetMaxDateMillis, fraction);
+
+            tvBillingAdvances.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(displayedBillingAdvancesKc))));
+            tvBillingCosts.setText(String.format(Locale.getDefault(), "%s Kč", integerFormat.format(Math.round(displayedBillingCostsKc))));
+            bindBalanceBadge(
+                    displayedBillingAdvancesKc - displayedBillingCostsKc,
+                    displayedBalanceColorRatio,
+                    startLabel,
+                    targetLabel,
+                    fraction
+            );
+
+            int count = Math.min(invoiceAmountViews.size(), targetInvoiceAmountsKc.size());
+            for (int i = 0; i < count; i++) {
+                double fromAmount = (i < startInvoiceAmounts.size()) ? startInvoiceAmounts.get(i) : 0.0;
+                double toAmount = targetInvoiceAmountsKc.get(i);
+                double currentAmount = fromAmount + (toAmount - fromAmount) * fraction;
+                if (i < displayedRecentInvoiceAmountsKc.size()) {
+                    displayedRecentInvoiceAmountsKc.set(i, currentAmount);
+                }
+                invoiceAmountViews.get(i).setText(
+                        getString(R.string.dashboard_invoice_amount_with_vat_format, integerFormat.format(Math.round(currentAmount)))
+                );
+            }
+
+            int consCount = Math.min(invoiceConsumptionViews.size(), targetInvoiceConsumptionsKwh.size());
+            for (int i = 0; i < consCount; i++) {
+                double fromCons = (i < startInvoiceConsumptions.size()) ? startInvoiceConsumptions.get(i) : 0.0;
+                double toCons = targetInvoiceConsumptionsKwh.get(i);
+                double currentCons = fromCons + (toCons - fromCons) * fraction;
+                if (i < displayedRecentInvoiceConsumptionsKwh.size()) {
+                    displayedRecentInvoiceConsumptionsKwh.set(i, currentCons);
+                }
+                invoiceConsumptionViews.get(i).setText(
+                        getString(R.string.dashboard_invoice_consumption_format, integerFormat.format(Math.round(currentCons)))
+                );
+            }
+        });
+        billingValuesAnimator.start();
+    }
+
+
+    private void bindAnimatedPeriodDates(long startMinDate,
+                                         long startMaxDate,
+                                         long targetMinDate,
+                                         long targetMaxDate,
+                                         float fraction) {
+        boolean hasStart = startMinDate > 0L && startMaxDate > 0L;
+        boolean hasTarget = targetMinDate > 0L && targetMaxDate > 0L;
+
+        if (hasStart && hasTarget) {
+            displayedBillingMinDate = Math.round(startMinDate + (targetMinDate - startMinDate) * (double) fraction);
+            displayedBillingMaxDate = Math.round(startMaxDate + (targetMaxDate - startMaxDate) * (double) fraction);
+            String startDate = ViewHelper.convertLongToDate(displayedBillingMinDate);
+            String endDate = ViewHelper.convertLongToDate(displayedBillingMaxDate);
+
+            tvPeriodDateRange.setAlpha(1f);
+            tvPeriodDateRange.setText(String.format(Locale.getDefault(), "%s – %s", startDate, endDate));
+
+            tvBillingPeriod.setAlpha(1f);
+            tvBillingPeriod.setText(getString(R.string.dashboard_billing_period_format, formatShortPeriodRange(startDate, endDate)));
+        } else if (hasTarget) {
+            displayedBillingMinDate = targetMinDate;
+            displayedBillingMaxDate = targetMaxDate;
+            String startDate = ViewHelper.convertLongToDate(targetMinDate);
+            String endDate = ViewHelper.convertLongToDate(targetMaxDate);
+
+            tvPeriodDateRange.setAlpha(fraction);
+            tvPeriodDateRange.setText(String.format(Locale.getDefault(), "%s – %s", startDate, endDate));
+
+            tvBillingPeriod.setAlpha(fraction);
+            tvBillingPeriod.setText(getString(R.string.dashboard_billing_period_format, formatShortPeriodRange(startDate, endDate)));
+        } else if (hasStart) {
+            if (fraction < 0.995f) {
+                String startDate = ViewHelper.convertLongToDate(startMinDate);
+                String endDate = ViewHelper.convertLongToDate(startMaxDate);
+                tvPeriodDateRange.setAlpha(1f - fraction);
+                tvPeriodDateRange.setText(String.format(Locale.getDefault(), "%s – %s", startDate, endDate));
+                tvBillingPeriod.setAlpha(1f - fraction);
+                tvBillingPeriod.setText(getString(R.string.dashboard_billing_period_format, formatShortPeriodRange(startDate, endDate)));
+            } else {
+                displayedBillingMinDate = 0L;
+                displayedBillingMaxDate = 0L;
+                tvPeriodDateRange.setAlpha(1f);
+                tvPeriodDateRange.setText("");
+                tvBillingPeriod.setAlpha(1f);
+                tvBillingPeriod.setText("");
+            }
+        } else {
+            displayedBillingMinDate = 0L;
+            displayedBillingMaxDate = 0L;
+            tvPeriodDateRange.setAlpha(1f);
+            tvPeriodDateRange.setText("");
+            tvBillingPeriod.setAlpha(1f);
+            tvBillingPeriod.setText("");
+        }
     }
 
 
@@ -1230,6 +1478,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         if (periodValuesAnimator != null) {
             periodValuesAnimator.cancel();
             periodValuesAnimator = null;
+        }
+        if (billingValuesAnimator != null) {
+            billingValuesAnimator.cancel();
+            billingValuesAnimator = null;
         }
     }
 
