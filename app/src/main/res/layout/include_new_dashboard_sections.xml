@@ -4,22 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- 1. KARTA: AKTUÁLNÍ CENA ELEKTŘINY -->
-    <FrameLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardCurrentPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/bg_dashboard_price_card">
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/dashboard_price_card_stroke"
+        app:strokeWidth="1dp">
 
-        <!-- Dekorativní sloup vysokého napětí na pozadí vpravo -->
-        <ImageView
-            android:layout_width="76dp"
-            android:layout_height="136dp"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="6dp"
-            android:importantForAccessibility="no"
-            android:scaleType="fitEnd"
-            android:src="@drawable/ic_electric_pylon" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_dashboard_price_card">
+
+            <!-- Dekorativní krajina se sloupem vysokého napětí na pozadí -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="no"
+                android:scaleType="fitEnd"
+                android:src="@drawable/bg_dashboard_price_landscape" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -260,7 +269,8 @@
                     tools:text="21:41" />
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- 2. SEKCE: 3 RYCHLÉ DLAŽDICE (Měsíční odečty se stavem měřidla | 24h HDO hodiny | Nový odečet) -->
     <LinearLayout
