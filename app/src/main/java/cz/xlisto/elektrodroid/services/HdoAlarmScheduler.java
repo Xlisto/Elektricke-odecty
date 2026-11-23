@@ -41,6 +41,14 @@ public final class HdoAlarmScheduler {
 
     private static final String LOG_TAG = "HdoAlarmScheduler";
     private static final int MAX_DAYS_LOOKAHEAD = 400;
+    /**
+     * Týdenní horizont pro výpočet nejbližšího přepnutí HDO v přehledu (ve dnech).
+     */
+    private static final int WEEKLY_LOOKAHEAD_DAYS = 7;
+    /**
+     * Bezpečnostní limit pro navazování souvislých intervalů HDO přes půlnoc.
+     */
+    private static final int MAX_CONTIGUOUS_EXTENSIONS = 16;
 
     private HdoAlarmScheduler() {
     }
@@ -299,17 +307,84 @@ public final class HdoAlarmScheduler {
     /**
      * Najde nejbližší čas spuštění ze seznamu HDO modelů (např. pro dané relé),
      * s plynulým navazováním souvislých aktivních intervalů přes půlnoc.
+     * <p>
+     * Pokud je pro aktuální datum platný alespoň jeden HDO záznam, respektuje datum platnosti
+     * ({@code dateFrom}–{@code dateUntil}) v týdenním horizontu. Jestliže jsou uložená data HDO
+     * neaktuální/prošlá a žádnému záznamu dnes platnost nesedí, použije záložní týdenní rozvrh
+     * podle dnů v týdnu a svátků (shodně s vyhodnocením aktivního tarifu a 24h hodin HDO),
+     * aby se nezobrazovalo přepnutí za desítky či stovky dní.
+     *
+     * @param models    seznam HDO modelů (např. pro zvolené relé)
+     * @param type      typ události ({@link #TYPE_START} nebo {@link #TYPE_END})
+     * @param nowMillis aktuální reálný čas v milisekundách
+     * @param timeShift časový posun elektroměru v milisekundách
+     * @return reálný čas nejbližšího přepnutí v milisekundách, nebo {@code -1L} při neplatných datech
      */
     public static long findNextTriggerForModels(List<HdoModel> models, int type, long nowMillis, long timeShift) {
         if (models == null || models.isEmpty()) return -1L;
 
+        Date meterToday = new Date(nowMillis + timeShift);
+        long result = -1L;
+        if (hasAnyModelValidOnDate(models, meterToday)) {
+            result = findNextTriggerForModelsInternal(models, type, nowMillis, timeShift, false);
+        }
+        if (result <= 0L) {
+            result = findNextTriggerForModelsInternal(models, type, nowMillis, timeShift, true);
+        }
+        return result;
+    }
+
+
+    /**
+     * Ověří, zda alespoň jeden nesváteční HDO záznam v seznamu spadá svým rozsahem platnosti
+     * ({@code dateFrom}–{@code dateUntil}) do zadaného data (nebo datum platnosti neomezuje).
+     *
+     * @param models seznam HDO modelů
+     * @param date   datum, vůči kterému se platnost vyhodnocuje
+     * @return {@code true}, pokud existuje alespoň jeden záznam platný pro dané datum
+     */
+    private static boolean hasAnyModelValidOnDate(List<HdoModel> models, Date date) {
+        for (HdoModel model : models) {
+            boolean modelIsHoliday = model.getSv() == 1 || "SVÁTEK".equalsIgnoreCase(model.getDateFrom());
+            if (modelIsHoliday) {
+                continue;
+            }
+            Date[] range = cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDateRange(
+                    model.getDateFrom(), model.getDateUntil(), date);
+            Date dateFrom = range != null ? range[0] : null;
+            Date dateUntil = range != null ? range[1] : null;
+            if (isDateInRange(date, dateFrom, dateUntil)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Interní výpočet nejbližšího přepnutí HDO nad seznamem modelů v týdenním horizontu
+     * ({@link #WEEKLY_LOOKAHEAD_DAYS}) s volbou, zda ignorovat kalendářní rozmezí platnosti
+     * ({@code dateFrom}–{@code dateUntil}).
+     *
+     * @param models          seznam HDO modelů
+     * @param type            typ události ({@link #TYPE_START} nebo {@link #TYPE_END})
+     * @param nowMillis       aktuální reálný čas v milisekundách
+     * @param timeShift       časový posun elektroměru v milisekundách
+     * @param ignoreDateRange {@code true} pro záložní vyhodnocení podle dnů v týdnu bez kontroly kalendářního rozmezí
+     * @return reálný čas nejbližšího přepnutí v milisekundách, nebo {@code -1L}
+     */
+    private static long findNextTriggerForModelsInternal(List<HdoModel> models,
+                                                         int type,
+                                                         long nowMillis,
+                                                         long timeShift,
+                                                         boolean ignoreDateRange) {
         if (type == TYPE_END) {
             HdoModel activeModel = null;
             long activeEnd = -1L;
 
             for (HdoModel model : models) {
-                long endTrigger = findNextTrigger(model, TYPE_END, nowMillis, timeShift);
-                long startTrigger = findNextTrigger(model, TYPE_START, nowMillis, timeShift);
+                long endTrigger = findNextTrigger(model, TYPE_END, nowMillis, timeShift, WEEKLY_LOOKAHEAD_DAYS, ignoreDateRange);
+                long startTrigger = findNextTrigger(model, TYPE_START, nowMillis, timeShift, WEEKLY_LOOKAHEAD_DAYS, ignoreDateRange);
 
                 if (endTrigger > 0L && (startTrigger <= 0L || endTrigger < startTrigger)) {
                     if (activeEnd < 0L || endTrigger > activeEnd) {
@@ -322,16 +397,18 @@ public final class HdoAlarmScheduler {
             if (activeModel != null) {
                 long currentEnd = activeEnd;
                 boolean extended = true;
+                int extensions = 0;
 
-                while (extended) {
+                while (extended && extensions < MAX_CONTIGUOUS_EXTENSIONS) {
                     extended = false;
                     for (HdoModel model : models) {
-                        long startTrigger = findNextTrigger(model, TYPE_START, currentEnd - 60000L, timeShift);
+                        long startTrigger = findNextTrigger(model, TYPE_START, currentEnd - 60000L, timeShift, WEEKLY_LOOKAHEAD_DAYS, ignoreDateRange);
                         if (startTrigger > 0L && Math.abs(startTrigger - currentEnd) <= 60000L) {
-                            long nextEnd = findNextTrigger(model, TYPE_END, currentEnd + 1000L, timeShift);
+                            long nextEnd = findNextTrigger(model, TYPE_END, currentEnd + 1000L, timeShift, WEEKLY_LOOKAHEAD_DAYS, ignoreDateRange);
                             if (nextEnd > currentEnd) {
                                 currentEnd = nextEnd;
                                 extended = true;
+                                extensions++;
                                 break;
                             }
                         }
@@ -343,7 +420,7 @@ public final class HdoAlarmScheduler {
 
         long earliest = -1L;
         for (HdoModel model : models) {
-            long trigger = findNextTrigger(model, type, nowMillis, timeShift);
+            long trigger = findNextTrigger(model, type, nowMillis, timeShift, WEEKLY_LOOKAHEAD_DAYS, ignoreDateRange);
             if (trigger > 0L) {
                 if (earliest < 0L || trigger < earliest) {
                     earliest = trigger;
@@ -364,6 +441,29 @@ public final class HdoAlarmScheduler {
      * Najde nejbližší čas spuštění alarmu od aktuálního času, zohledňující časový posun (time shift) elektroměru.
      */
     private static long findNextTrigger(HdoModel model, int type, long nowMillis, long timeShift) {
+        return findNextTrigger(model, type, nowMillis, timeShift, MAX_DAYS_LOOKAHEAD, false);
+    }
+
+
+    /**
+     * Najde nejbližší čas spuštění nebo ukončení HDO pro jeden model v zadaném horizontu dní.
+     * Pro {@link #TYPE_END} kontroluje i předchozí den ({@code offset = -1}), aby správně zachytil
+     * intervaly přecházející přes půlnoc (např. {@code 22:00–06:00} po půlnoci).
+     *
+     * @param model            HDO záznam
+     * @param type             typ události ({@link #TYPE_START} nebo {@link #TYPE_END})
+     * @param nowMillis        aktuální reálný čas v milisekundách
+     * @param timeShift        časový posun elektroměru v milisekundách
+     * @param maxDaysLookahead maximální počet dní dopředu pro hledání
+     * @param ignoreDateRange  {@code true}, pokud se nemá filtrovat podle {@code dateFrom}–{@code dateUntil}
+     * @return reálný čas přepnutí v milisekundách, nebo {@code -1L}
+     */
+    private static long findNextTrigger(HdoModel model,
+                                        int type,
+                                        long nowMillis,
+                                        long timeShift,
+                                        int maxDaysLookahead,
+                                        boolean ignoreDateRange) {
         long meterNowMillis = nowMillis + timeShift;
 
         Calendar startOfToday = Calendar.getInstance();
@@ -373,7 +473,8 @@ public final class HdoAlarmScheduler {
         startOfToday.set(Calendar.SECOND, 0);
         startOfToday.set(Calendar.MILLISECOND, 0);
 
-        for (int offset = 0; offset <= MAX_DAYS_LOOKAHEAD; offset++) {
+        int startOffset = (type == TYPE_END) ? -1 : 0;
+        for (int offset = startOffset; offset <= maxDaysLookahead; offset++) {
             Calendar day = (Calendar) startOfToday.clone();
             day.add(Calendar.DAY_OF_YEAR, offset);
 
@@ -382,11 +483,13 @@ public final class HdoAlarmScheduler {
 
             if (!modelIsHoliday || !isHolidayDay) {
                 if (modelIsHoliday) continue;
-                Date[] range = cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDateRange(model.getDateFrom(), model.getDateUntil(), day.getTime());
-                Date dateFrom = range != null ? range[0] : null;
-                Date dateUntil = range != null ? range[1] : null;
-                if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {
-                    continue;
+                if (!ignoreDateRange) {
+                    Date[] range = cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper.parseDateRange(model.getDateFrom(), model.getDateUntil(), day.getTime());
+                    Date dateFrom = range != null ? range[0] : null;
+                    Date dateUntil = range != null ? range[1] : null;
+                    if (!isDateInRange(day.getTime(), dateFrom, dateUntil)) {
+                        continue;
+                    }
                 }
                 if (!isDayEnabled(model, day.get(Calendar.DAY_OF_WEEK))) {
                     continue;

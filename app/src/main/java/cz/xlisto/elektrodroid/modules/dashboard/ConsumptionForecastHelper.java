@@ -15,7 +15,12 @@ import java.util.Map;
 
 /**
  * Pomocná třída pro výpočet odhadu (předpokládané spotřeby) neúplného aktuálního měsíce
- * a neúplného aktuálního roku a pro výpočet procentní změny mezi sousedními sloupci grafu.
+ * a neúplného aktuálního roku a pro výpočet procentní změny průměrné denní spotřeby
+ * (kWh/den) mezi sousedními sloupci grafu.
+ * <p>
+ * Procentní změna srovnává průměrnou denní spotřebu (kWh/den), aby porovnání nebylo
+ * zkresleno rozdílným počtem dní v jednotlivých obdobích (např. únor 28 dní vs. březen 31 dní
+ * nebo neúplný odečtový interval).
  * <p>
  * Odhad zohledňuje:
  * <ul>
@@ -132,7 +137,8 @@ public final class ConsumptionForecastHelper {
 
     /**
      * Sestaví položky pro měsíční sloupcový graf včetně předpokládané spotřeby aktuálního neúplného
-     * měsíce a procentní změny nad sloupci (první zobrazený sloupec procento nikdy nemá).
+     * měsíce a procentní změny průměrné denní spotřeby (kWh/den) nad sloupci
+     * (první zobrazený sloupec procento nikdy nemá).
      *
      * @param allMonthlyRecords všechny chronologicky seřazené měsíční záznamy odběrného místa
      * @param maxEntries        maximální počet zobrazených sloupců z konce seznamu
@@ -157,13 +163,14 @@ public final class ConsumptionForecastHelper {
         double[] historicalAvg = computeHistoricalMonthAverages(allMonthlyRecords, nowYear);
 
         int startIdx = Math.max(0, allMonthlyRecords.size() - maxEntries);
-        List<Double> effectiveTotals = new ArrayList<>(allMonthlyRecords.size() - startIdx);
+        List<Double> dailyAverages = new ArrayList<>(allMonthlyRecords.size() - startIdx);
         List<Double> projectedTotals = new ArrayList<>(allMonthlyRecords.size() - startIdx);
 
         for (int i = startIdx; i < allMonthlyRecords.size(); i++) {
             MonthlyRecord record = allMonthlyRecords.get(i);
             double actual = record.getTotal();
             double projected = actual;
+            int effectiveDays = record.spanDays;
 
             if (isIncompleteCurrentMonth(record, nowYear, nowMonth)) {
                 projected = forecastIncompleteMonth(
@@ -174,14 +181,18 @@ public final class ConsumptionForecastHelper {
                         nowYear,
                         nowMonth
                 );
+                int daysInMonth = getDaysInMonth(record.year, record.month);
+                int remainingDays = Math.max(0, daysInMonth - record.coveredDayOfMonth);
+                effectiveDays = Math.max(1, record.spanDays + remainingDays);
             }
+            double effectiveTotal = Math.max(actual, projected);
             projectedTotals.add(projected);
-            effectiveTotals.add(Math.max(actual, projected));
+            dailyAverages.add(effectiveTotal / Math.max(1, effectiveDays));
         }
 
-        for (int offset = 0; offset < effectiveTotals.size(); offset++) {
+        for (int offset = 0; offset < dailyAverages.size(); offset++) {
             MonthlyRecord record = allMonthlyRecords.get(startIdx + offset);
-            Double changePercent = computeChangePercent(effectiveTotals, offset);
+            Double changePercent = computeChangePercent(dailyAverages, offset);
             result.add(new DashboardConsumptionBarChartView.BarEntry(
                     record.shortLabel,
                     record.vt,
@@ -196,7 +207,8 @@ public final class ConsumptionForecastHelper {
 
     /**
      * Sestaví položky pro roční sloupcový graf včetně předpokládané spotřeby aktuálního neúplného
-     * roku a procentní změny nad sloupci (první zobrazený sloupec procento nikdy nemá).
+     * roku a procentní změny průměrné denní spotřeby (kWh/den) nad sloupci
+     * (první zobrazený sloupec procento nikdy nemá).
      *
      * @param allYearlyRecords  všechny chronologicky seřazené roční záznamy odběrného místa
      * @param allMonthlyRecords všechny chronologicky seřazené měsíční záznamy (pro přesnou sezónní a historickou predikci)
@@ -224,7 +236,7 @@ public final class ConsumptionForecastHelper {
         double[] historicalAvg = computeHistoricalMonthAverages(safeMonthly, nowYear);
 
         int startIdx = Math.max(0, allYearlyRecords.size() - maxEntries);
-        List<Double> effectiveTotals = new ArrayList<>(allYearlyRecords.size() - startIdx);
+        List<Double> dailyAverages = new ArrayList<>(allYearlyRecords.size() - startIdx);
         List<Double> projectedTotals = new ArrayList<>(allYearlyRecords.size() - startIdx);
 
         for (int i = startIdx; i < allYearlyRecords.size(); i++) {
@@ -242,13 +254,15 @@ public final class ConsumptionForecastHelper {
                         nowMonth
                 );
             }
+            double effectiveTotal = Math.max(actual, projected);
+            int effectiveDays = computeEffectiveYearDays(yRecord.year, safeMonthly, nowYear, nowMonth);
             projectedTotals.add(projected);
-            effectiveTotals.add(Math.max(actual, projected));
+            dailyAverages.add(effectiveTotal / Math.max(1, effectiveDays));
         }
 
-        for (int offset = 0; offset < effectiveTotals.size(); offset++) {
+        for (int offset = 0; offset < dailyAverages.size(); offset++) {
             YearlyRecord yRecord = allYearlyRecords.get(startIdx + offset);
-            Double changePercent = computeChangePercent(effectiveTotals, offset);
+            Double changePercent = computeChangePercent(dailyAverages, offset);
             result.add(new DashboardConsumptionBarChartView.BarEntry(
                     yRecord.label,
                     yRecord.vt,
@@ -262,17 +276,72 @@ public final class ConsumptionForecastHelper {
 
 
     /**
-     * Vypočítá procentní změnu oproti předchozímu zobrazenému sloupci.
-     * Pro první sloupec ({@code index == 0}) vždy vrací {@code null}.
+     * Spočítá efektivní počet dní pokrytých spotřebou pro zadaný kalendářní rok.
+     * Zohledňuje skutečné odečtové intervaly a u aktuálního neúplného roku přičítá
+     * i zbývající predikované dny a měsíce do konce roku.
+     *
+     * @param year       hodnocený kalendářní rok
+     * @param allMonthly všechny měsíční záznamy odběrného místa
+     * @param nowYear    aktuální kalendářní rok
+     * @param nowMonth   aktuální kalendářní měsíc (1..12)
+     * @return efektivní počet dní (>= 1)
+     */
+    static int computeEffectiveYearDays(int year,
+                                        @NonNull List<MonthlyRecord> allMonthly,
+                                        int nowYear,
+                                        int nowMonth) {
+        int recordedDays = 0;
+        int lastRecordedMonth = 0;
+        MonthlyRecord lastMonthRecord = null;
+
+        for (MonthlyRecord r : allMonthly) {
+            if (r.year == year) {
+                recordedDays += r.spanDays;
+                if (r.month > lastRecordedMonth) {
+                    lastRecordedMonth = r.month;
+                    lastMonthRecord = r;
+                }
+            }
+        }
+
+        if (recordedDays <= 0) {
+            return getDaysInYear(year);
+        }
+
+        if (year == nowYear && lastMonthRecord != null) {
+            int remainingDays = 0;
+            if (isIncompleteCurrentMonth(lastMonthRecord, nowYear, nowMonth)) {
+                int daysInLastMonth = getDaysInMonth(year, lastRecordedMonth);
+                remainingDays += Math.max(0, daysInLastMonth - lastMonthRecord.coveredDayOfMonth);
+            }
+            for (int month = lastRecordedMonth + 1; month <= 12; month++) {
+                remainingDays += getDaysInMonth(year, month);
+            }
+            return Math.max(1, recordedDays + remainingDays);
+        }
+
+        return recordedDays;
+    }
+
+
+    /**
+     * Vypočítá procentní změnu oproti předchozímu zobrazenému sloupci na základě
+     * porovnávaných hodnot (průměrná denní spotřeba v kWh/den).
+     * Pro první sloupec ({@code index == 0}), chybějící předchozí období nebo nulovou
+     * předchozí spotřebu vrací {@code null}.
+     *
+     * @param comparableValues hodnoty pro porovnání jednotlivých sloupců
+     * @param index            index aktuálního sloupce
+     * @return procentní změna oproti předchozímu sloupci, nebo {@code null}
      */
     @Nullable
-    static Double computeChangePercent(@NonNull List<Double> effectiveTotals, int index) {
-        if (index <= 0 || index >= effectiveTotals.size()) {
+    static Double computeChangePercent(@NonNull List<Double> comparableValues, int index) {
+        if (index <= 0 || index >= comparableValues.size()) {
             return null;
         }
-        double previous = effectiveTotals.get(index - 1);
-        double current = effectiveTotals.get(index);
-        if (previous <= 0.001) {
+        double previous = comparableValues.get(index - 1);
+        double current = comparableValues.get(index);
+        if (!Double.isFinite(previous) || !Double.isFinite(current) || previous <= 0.0001) {
             return null;
         }
         return ((current - previous) / previous) * 100.0;
@@ -688,11 +757,27 @@ public final class ConsumptionForecastHelper {
 
     /**
      * Vrátí počet dní v daném měsíci (zohledňuje přestupné roky).
+     *
+     * @param year  kalendářní rok
+     * @param month měsíc (1..12)
+     * @return počet dní v měsíci
      */
     public static int getDaysInMonth(int year, int month) {
         int safeMonth = Math.max(1, Math.min(12, month));
         Calendar cal = new GregorianCalendar(year, safeMonth - 1, 1);
         return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+
+    /**
+     * Vrátí počet dní v daném kalendářním roce (365 nebo 366 v přestupném roce).
+     *
+     * @param year kalendářní rok
+     * @return počet dní v roce
+     */
+    public static int getDaysInYear(int year) {
+        Calendar cal = new GregorianCalendar(year, Calendar.JANUARY, 1);
+        return cal.getActualMaximum(Calendar.DAY_OF_YEAR);
     }
 
 }

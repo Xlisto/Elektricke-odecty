@@ -15,13 +15,14 @@ import java.util.List;
 
 
 /**
- * Jednotkové testy pro {@link ConsumptionForecastHelper} – procentní změny a odhad
- * neúplného aktuálního měsíce i roku se zohledněním sezónnosti (topení) a historie.
+ * Jednotkové testy pro {@link ConsumptionForecastHelper} – procentní změny založené na průměrné
+ * denní spotřebě (kWh/den) a odhad neúplného aktuálního měsíce i roku se zohledněním sezónnosti
+ * (topení) a historie.
  */
 public class ConsumptionForecastHelperTest {
 
     @Test
-    public void buildMonthlyEntries_firstBarHasNoPercent_subsequentBarsShowPercentChange() {
+    public void buildMonthlyEntries_firstBarHasNoPercent_subsequentBarsCompareDailyAverage() {
         List<ConsumptionForecastHelper.MonthlyRecord> records = Arrays.asList(
                 new ConsumptionForecastHelper.MonthlyRecord(2026, 4, 200, 200, 30, 30, "IV."),
                 new ConsumptionForecastHelper.MonthlyRecord(2026, 5, 150, 150, 31, 31, "V."),
@@ -36,16 +37,71 @@ public class ConsumptionForecastHelperTest {
         assertNull(entries.get(0).changePercent);
         assertFalse(entries.get(0).hasForecast());
 
-        // 400 -> 300 = -25 %
+        // Duben: 400 / 30 = 13.333 kWh/den -> Květen: 300 / 31 = 9.677 kWh/den => -27.42 %
         Double pct1 = entries.get(1).changePercent;
         assertNotNull(pct1);
-        assertEquals(-25.0, pct1, 0.01);
+        assertEquals(((300.0 / 31.0) - (400.0 / 30.0)) / (400.0 / 30.0) * 100.0, pct1, 0.01);
 
-        // 300 -> 360 = +20 %
+        // Květen: 300 / 31 = 9.677 kWh/den -> Červen: 360 / 30 = 12.0 kWh/den => +24.0 %
         Double pct2 = entries.get(2).changePercent;
         assertNotNull(pct2);
-        assertEquals(20.0, pct2, 0.01);
+        assertEquals(((360.0 / 30.0) - (300.0 / 31.0)) / (300.0 / 31.0) * 100.0, pct2, 0.01);
         assertFalse(entries.get(2).hasForecast());
+    }
+
+
+    @Test
+    public void buildMonthlyEntries_differentMonthLengthsWithSameDailyRateProduceZeroPercent() {
+        // Únor 2026 (28 dní): 280 kWh -> 10 kWh/den
+        // Březen 2026 (31 dní): 310 kWh -> 10 kWh/den
+        // Duben 2026 (20 zaznamenaných dní): 200 kWh -> 10 kWh/den
+        List<ConsumptionForecastHelper.MonthlyRecord> records = Arrays.asList(
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 2, 140, 140, 28, 28, "II."),
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 3, 155, 155, 31, 31, "III."),
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 4, 100, 100, 20, 20, "IV.")
+        );
+
+        List<DashboardConsumptionBarChartView.BarEntry> entries =
+                ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
+
+        assertEquals(3, entries.size());
+        assertNull(entries.get(0).changePercent);
+        Double pct1 = entries.get(1).changePercent;
+        assertNotNull(pct1);
+        assertEquals(0.0, pct1, 0.01);
+        Double pct2 = entries.get(2).changePercent;
+        assertNotNull(pct2);
+        assertEquals(0.0, pct2, 0.01);
+    }
+
+
+    @Test
+    public void buildMonthlyEntries_zeroPreviousConsumptionHasNoPercentChange() {
+        List<ConsumptionForecastHelper.MonthlyRecord> records = Arrays.asList(
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 4, 0, 0, 30, 30, "IV."),
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 5, 150, 150, 31, 31, "V.")
+        );
+
+        List<DashboardConsumptionBarChartView.BarEntry> entries =
+                ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
+
+        assertEquals(2, entries.size());
+        assertNull(entries.get(0).changePercent);
+        assertNull(entries.get(1).changePercent);
+    }
+
+
+    @Test
+    public void buildMonthlyEntries_singlePeriodHasNoPercentChange() {
+        List<ConsumptionForecastHelper.MonthlyRecord> records = List.of(
+                new ConsumptionForecastHelper.MonthlyRecord(2026, 5, 150, 150, 31, 31, "V.")
+        );
+
+        List<DashboardConsumptionBarChartView.BarEntry> entries =
+                ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
+
+        assertEquals(1, entries.size());
+        assertNull(entries.get(0).changePercent);
     }
 
 
@@ -68,9 +124,9 @@ public class ConsumptionForecastHelperTest {
         assertEquals(300.0, currentNov.getTotal(), 0.01);
         // 10 dní = 300 kWh a historie listopadu = 900 kWh -> odhad celého listopadu je 900 kWh
         assertEquals(900.0, currentNov.projectedTotal, 1.0);
-        // Oproti říjnu (600 kWh) je odhad 900 kWh (+50 %)
+        // Denní průměr: říjen 600/31 = 19.355 kWh/den -> listopad (odhad) 900/30 = 30.0 kWh/den => +55.0 %
         assertNotNull(currentNov.changePercent);
-        assertEquals(50.0, currentNov.changePercent, 0.5);
+        assertEquals(((900.0 / 30.0) - (600.0 / 31.0)) / (600.0 / 31.0) * 100.0, currentNov.changePercent, 0.5);
     }
 
 
@@ -136,6 +192,35 @@ public class ConsumptionForecastHelperTest {
         assertEquals(sum2025, entry2026.projectedTotal, 1.0);
         assertNotNull(entry2026.changePercent);
         assertEquals(0.0, entry2026.changePercent, 0.1);
+    }
+
+
+    @Test
+    public void buildYearlyEntries_partialPastYearAndFullYearCompareDailyAverage() {
+        List<ConsumptionForecastHelper.MonthlyRecord> monthly = new ArrayList<>();
+        // Rok 2024: pouze 2 měsíce (listopad 30 dní + prosinec 31 dní = 61 dní) při 10 kWh/den => 610 kWh
+        monthly.add(new ConsumptionForecastHelper.MonthlyRecord(2024, 11, 150, 150, 30, 30, "XI."));
+        monthly.add(new ConsumptionForecastHelper.MonthlyRecord(2024, 12, 155, 155, 31, 31, "XII."));
+        // Rok 2025: všech 12 měsíců (365 dní) při 10 kWh/den => 3650 kWh
+        for (int m = 1; m <= 12; m++) {
+            int days = ConsumptionForecastHelper.getDaysInMonth(2025, m);
+            monthly.add(new ConsumptionForecastHelper.MonthlyRecord(2025, m, days * 5.0, days * 5.0, days, days, m + "."));
+        }
+
+        List<ConsumptionForecastHelper.YearlyRecord> yearly = Arrays.asList(
+                new ConsumptionForecastHelper.YearlyRecord(2024, 305, 305, "2024"),
+                new ConsumptionForecastHelper.YearlyRecord(2025, 1825, 1825, "2025")
+        );
+
+        List<DashboardConsumptionBarChartView.BarEntry> entries =
+                ConsumptionForecastHelper.buildYearlyEntries(yearly, monthly, 5, 2026, 4, "D02d");
+
+        assertEquals(2, entries.size());
+        assertNull(entries.get(0).changePercent);
+        Double pct = entries.get(1).changePercent;
+        assertNotNull(pct);
+        // Oba roky mají průměrnou denní spotřebu přesně 10 kWh/den => změna 0 %
+        assertEquals(0.0, pct, 0.01);
     }
 
 

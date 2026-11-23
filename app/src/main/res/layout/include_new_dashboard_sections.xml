@@ -64,36 +64,84 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Přepínače: Celková / Neregulovaná cena + DPH -->
+            <!-- Přepínače: Celková / Obchodní cena + DPH -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="44dp"
-                android:gravity="end|center_vertical"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/swPriceTotalKwh"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/togglePriceType"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:gravity="end|center_vertical"
-                    android:minHeight="36dp"
-                    android:text="@string/dashboard_price_total_label"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="12.5sp" />
+                    android:layout_weight="1"
+                    app:checkedButton="@id/btnPriceTotal"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPriceTotal"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="34dp"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:maxLines="1"
+                        android:minWidth="0dp"
+                        android:minHeight="34dp"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="0dp"
+                        android:text="@string/dashboard_price_total_label"
+                        android:textColor="@color/selector_dashboard_price_toggle_text"
+                        android:textSize="11.5sp"
+                        app:autoSizeMaxTextSize="11.5sp"
+                        app:autoSizeMinTextSize="9.5sp"
+                        app:autoSizeStepGranularity="0.5sp"
+                        app:autoSizeTextType="uniform"
+                        app:backgroundTint="@color/selector_dashboard_price_toggle_bg"
+                        app:cornerRadius="10dp"
+                        app:strokeColor="@color/dashboard_price_box_inactive_stroke"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPriceCommercial"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="34dp"
+                        android:layout_weight="1"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:maxLines="1"
+                        android:minWidth="0dp"
+                        android:minHeight="34dp"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="0dp"
+                        android:text="@string/dashboard_price_commercial_label"
+                        android:textColor="@color/selector_dashboard_price_toggle_text"
+                        android:textSize="11.5sp"
+                        app:autoSizeMaxTextSize="11.5sp"
+                        app:autoSizeMinTextSize="9.5sp"
+                        app:autoSizeStepGranularity="0.5sp"
+                        app:autoSizeTextType="uniform"
+                        app:backgroundTint="@color/selector_dashboard_price_toggle_bg"
+                        app:cornerRadius="10dp"
+                        app:strokeColor="@color/dashboard_price_box_inactive_stroke"
+                        app:strokeWidth="1dp" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/swPriceVat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="8dp"
                     android:checked="true"
                     android:minHeight="36dp"
                     android:text="@string/dashboard_price_vat_label"
                     android:textColor="?attr/colorOnSurface"
-                    android:textSize="12.5sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <!-- Dva boxy: VT a NT -->
@@ -239,45 +287,63 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Spodní řádek: HDO další přepnutí -->
+            <!-- Spodní řádek: HDO další přepnutí a odpočet -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_clock_24"
-                    app:tint="?attr/colorOnSurface" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_clock_24"
+                        app:tint="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tvHdoNextSwitchLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="@string/dashboard_hdo_next_switch_day_label"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvHdoNextSwitchTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/dashboard_teal_primary"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold"
+                        tools:text="Čt 01:30" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tvHdoNextSwitchLabel"
+                    android:id="@+id/tvHdoCountdown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="@string/dashboard_hdo_next_switch_label"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="13.5sp" />
-
-                <TextView
-                    android:id="@+id/tvHdoNextSwitchTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:textColor="@color/dashboard_teal_primary"
-                    android:textSize="15.5sp"
-                    android:textStyle="bold"
-                    tools:text="21:41" />
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="1dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="Do přepnutí zbývá: 2 h 15 min"
+                    tools:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- 2. SEKCE: 3 RYCHLÉ DLAŽDICE (Měsíční odečty se stavem měřidla | 24h HDO hodiny | Nový odečet) -->
+    <!-- 2. SEKCE: 3 RYCHLÉ DLAŽDICE (Měsíční odečty se stavem měřidla a datem posledního odečtu | 24h HDO hodiny | Nový odečet) -->
     <LinearLayout
         android:id="@+id/layoutQuickActions"
         android:layout_width="match_parent"
@@ -286,7 +352,7 @@
         android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <!-- Dlaždice 1: Měsíční odečty + grafický stav elektroměru (VT / NT) -->
+        <!-- Dlaždice 1: Měsíční odečty + grafický stav elektroměru (VT / NT) + datum posledního odečtu -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardQuickMonthlyReadings"
             android:layout_width="0dp"
@@ -382,6 +448,21 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
                 </LinearLayout>
+
+                <!-- Datum posledního odečtu pod stavem měřidla -->
+                <TextView
+                    android:id="@+id/tvLastReadingDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:maxLines="2"
+                    android:text="@string/dashboard_last_reading_none"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="9.5sp"
+                    tools:ignore="SmallSp"
+                    tools:text="Poslední odečet: 01.09.2026" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -698,6 +779,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="146dp"
                 android:layout_marginTop="6dp" />
+
+            <TextView
+                android:id="@+id/tvConsumptionChangeNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/dashboard_consumption_change_note"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -965,6 +1057,31 @@
                     android:divider="@color/dashboard_divider"
                     android:orientation="vertical"
                     android:showDividers="middle" />
+
+                <TextView
+                    android:id="@+id/tvNoRecentInvoices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="8dp"
+                    android:text="@string/dashboard_no_recent_invoices"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShowAllInvoices"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="2dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/dashboard_show_all_invoices"
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

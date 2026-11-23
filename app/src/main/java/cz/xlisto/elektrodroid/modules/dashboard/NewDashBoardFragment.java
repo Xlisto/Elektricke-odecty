@@ -29,12 +29,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumMap;
@@ -51,7 +52,6 @@ import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.format.DecimalFormatHelper;
-import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
 import cz.xlisto.elektrodroid.models.ConsuptionModel;
 import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.InvoiceListModel;
@@ -68,6 +68,7 @@ import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoTime;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceAbstract;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceAdapter;
+import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceTabFragment;
 import cz.xlisto.elektrodroid.modules.invoice.MyViewPagerAdapter;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingAddFragment;
@@ -93,7 +94,7 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  * Zobrazuje:
  * <ul>
  *     <li>Přepínač odběrného místa (lokální přepínání v rámci přehledu; globální výběr se přepne až při přechodu do jiného fragmentu)</li>
- *     <li>Aktuální cenu elektřiny (VT/NT) s přepínači Celková/Neregulovaná a DPH + čas dalšího přepnutí HDO</li>
+ *     <li>Aktuální cenu elektřiny (VT/NT) s přepínačem Celková/Obchodní cena, volbou DPH a informací o dalším přepnutí HDO</li>
  *     <li>Rychlé dlaždice: Měsíční odečty, 24hodinové analogové hodiny HDO, Nový odečet</li>
  *     <li>Spotřebu aktuálního období (VT/NT pruh + donut graf) s proklikem do aktuálního nevyfakturovaného období</li>
  *     <li>Přehled spotřeby (sloupcový graf s přepínačem Měsíční / Roční, procentní změnou a odhadem neúplného období) s proklikem do grafu</li>
@@ -108,7 +109,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      */
     private static final int MAX_BAR_ENTRIES = 5;
     /** Maximální počet posledních vyúčtovaných faktur zobrazených v sekci vyúčtování. */
-    private static final int MAX_RECENT_INVOICES = 4;
+    private static final int MAX_RECENT_INVOICES = 3;
 
     private NestedScrollView nsvNewDashboard;
     private ImageButton btnPrevSubscriptionPoint;
@@ -129,7 +130,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private View cardBilling;
 
     // 1. Karta: Aktuální cena elektřiny
-    private MaterialSwitch swPriceTotalKwh;
+    private MaterialButtonToggleGroup togglePriceType;
     private MaterialSwitch swPriceVat;
     private LinearLayout boxPriceVt;
     private LinearLayout boxPriceNt;
@@ -143,11 +144,13 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private TextView tvPriceNtUnit;
     private TextView tvHdoNextSwitchLabel;
     private TextView tvHdoNextSwitchTime;
+    private TextView tvHdoCountdown;
 
     // 2. Sekce: Rychlé dlaždice
     private NumbersMeter numbersMeterDashboardVT;
     private NumbersMeter numbersMeterDashboardNT;
     private DashboardHdoClockView viewHdoClock;
+    private TextView tvLastReadingDate;
 
     // 3. Karta: Spotřeba období
     private TextView tvPeriodDateRange;
@@ -165,6 +168,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private TextView tvConsumptionChartSubtitle;
     private MaterialSwitch swConsumptionYearly;
     private DashboardConsumptionBarChartView viewConsumptionBarChart;
+    private TextView tvConsumptionChangeNote;
 
     // 5. Karta: Vyúčtování a poslední faktury
     private TextView tvBillingPeriod;
@@ -179,18 +183,30 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private TextView tvBillingBarOverpayment;
     private View layoutLastInvoicesSection;
     private LinearLayout llInvoicesContainer;
+    private TextView tvNoRecentInvoices;
 
     /** Klíč pro uložení lokálně vybraného odběrného místa do {@link Bundle}. */
     private static final String STATE_SELECTED_LOCAL_POINT_ID = "stateSelectedLocalPointId";
     /** Doba trvání plynulých přechodových animací hodnot a stavů v přehledu (v ms). */
     private static final long PERIOD_ANIMATION_DURATION_MS = 550L;
+    /**
+     * Doba trvání plynulé animace čísel cen VT/NT při přepnutí typu ceny nebo DPH (v ms).
+     */
+    private static final long PRICE_ANIMATION_DURATION_MS = 350L;
 
     private ShPDashBoard shPDashBoard;
     private DashboardLayoutManager layoutManager;
     private ArrayList<SubscriptionPointModel> allSubscriptionPoints = new ArrayList<>();
     private int currentPointIndex = 0;
     private SubscriptionPointModel currentPoint;
+    @Nullable
+    private PriceListModel cachedCurrentPriceList;
     private long selectedLocalPointId = -1L;
+
+    private double displayedPriceVtKwh = 0.0;
+    private double displayedPriceNtKwh = 0.0;
+    private boolean hasInitializedPriceValues = false;
+    private ValueAnimator priceValuesAnimator;
 
     private double displayedPeriodVtKwh = 0.0;
     private double displayedPeriodNtKwh = 0.0;
@@ -213,7 +229,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private GradientDrawable boxPriceVtBgDrawable;
     private GradientDrawable boxPriceNtBgDrawable;
     private ValueAnimator tariffHighlightAnimator;
-    private long displayedHdoNextSwitchMillis = 0L;
+    private String displayedHdoNextSwitchTimeText = "";
     private String displayedHdoNextSwitchLabel = "";
     private boolean hasInitializedHdoNextSwitch = false;
     private ValueAnimator hdoNextSwitchAnimator;
@@ -230,7 +246,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         @Override
         public void run() {
             if (isAdded() && currentPoint != null) {
-                refreshHdoAndPriceHighlight(false);
+                refreshHdoAndPriceHighlightPeriodic();
             }
             hdoHandler.postDelayed(this, 30_000L);
         }
@@ -309,7 +325,6 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         setupScrollListener();
         applyModularLayout();
         setupListeners();
-        loadSubscriptionPointsAndRefresh();
     }
 
 
@@ -337,7 +352,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         cardConsumptionOverview = view.findViewById(R.id.cardConsumptionOverview);
         cardBilling = view.findViewById(R.id.cardBilling);
 
-        swPriceTotalKwh = view.findViewById(R.id.swPriceTotalKwh);
+        togglePriceType = view.findViewById(R.id.togglePriceType);
         swPriceVat = view.findViewById(R.id.swPriceVat);
         boxPriceVt = view.findViewById(R.id.boxPriceVt);
         boxPriceNt = view.findViewById(R.id.boxPriceNt);
@@ -351,6 +366,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvPriceNtUnit = view.findViewById(R.id.tvPriceNtUnit);
         tvHdoNextSwitchLabel = view.findViewById(R.id.tvHdoNextSwitchLabel);
         tvHdoNextSwitchTime = view.findViewById(R.id.tvHdoNextSwitchTime);
+        tvHdoCountdown = view.findViewById(R.id.tvHdoCountdown);
 
         MaterialCardView cardQuickMonthlyReadings = view.findViewById(R.id.cardQuickMonthlyReadings);
         MaterialCardView cardQuickHdoClock = view.findViewById(R.id.cardQuickHdoClock);
@@ -358,6 +374,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         numbersMeterDashboardVT = view.findViewById(R.id.numbersMeterDashboardVT);
         numbersMeterDashboardNT = view.findViewById(R.id.numbersMeterDashboardNT);
         viewHdoClock = view.findViewById(R.id.viewHdoClock);
+        tvLastReadingDate = view.findViewById(R.id.tvLastReadingDate);
 
         tvPeriodDateRange = view.findViewById(R.id.tvPeriodDateRange);
         viewPeriodVtColor = view.findViewById(R.id.viewPeriodVtColor);
@@ -373,6 +390,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvConsumptionChartSubtitle = view.findViewById(R.id.tvConsumptionChartSubtitle);
         swConsumptionYearly = view.findViewById(R.id.swConsumptionYearly);
         viewConsumptionBarChart = view.findViewById(R.id.viewConsumptionBarChart);
+        tvConsumptionChangeNote = view.findViewById(R.id.tvConsumptionChangeNote);
 
         View layoutBillingSummary = view.findViewById(R.id.layoutBillingSummary);
         tvBillingPeriod = view.findViewById(R.id.tvBillingPeriod);
@@ -387,6 +405,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvBillingBarOverpayment = view.findViewById(R.id.tvBillingBarOverpayment);
         layoutLastInvoicesSection = view.findViewById(R.id.layoutLastInvoicesSection);
         llInvoicesContainer = view.findViewById(R.id.llInvoicesContainer);
+        tvNoRecentInvoices = view.findViewById(R.id.tvNoRecentInvoices);
+        MaterialButton btnShowAllInvoices = view.findViewById(R.id.btnShowAllInvoices);
 
         cardQuickMonthlyReadings.setOnClickListener(v -> {
             if (currentPoint == null) return;
@@ -412,6 +432,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         cardPeriodConsumption.setOnClickListener(v -> openCurrentUninvoicedPeriod());
         layoutBillingSummary.setOnClickListener(v -> openCurrentUninvoicedPeriod());
+        if (btnShowAllInvoices != null) {
+            btnShowAllInvoices.setOnClickListener(v -> openAllInvoicesSection());
+        }
 
         cardConsumptionOverview.setOnClickListener(v -> {
             if (currentPoint == null) return;
@@ -421,6 +444,22 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                     : GraphMonthFragment.PERIOD_MONTH;
             FragmentChange.replace(requireActivity(), GraphMonthFragment.newInstance(initialPeriod), MOVE, true);
         });
+    }
+
+
+    /**
+     * Přejde do existující sekce Fakturace ({@link InvoiceListFragment}) prostřednictvím
+     * hlavního navigačního mechanismu v {@link MainActivity}. Před přechodem synchronizuje
+     * případně lokálně přepnuté odběrné místo.
+     */
+    private void openAllInvoicesSection() {
+        if (currentPoint == null || !isAdded()) return;
+        applyDashboardSubscriptionPointIfChanged();
+        if (getActivity() instanceof MainActivity mainActivity) {
+            mainActivity.onCheckedNavigationItem(R.id.meni_invoice);
+        } else {
+            FragmentChange.replace(requireActivity(), InvoiceListFragment.newInstance(), MOVE, true);
+        }
     }
 
 
@@ -484,22 +523,22 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Inicializuje přepínače z uložených předvoleb {@link ShPDashBoard} a naváže posluchače
-     * pro změnu režimu ceny, DPH, typu grafu spotřeby a přepínání odběrného místa.
+     * pro změnu režimu ceny (celková / obchodní), DPH, typu grafu spotřeby a přepínání odběrného místa.
      */
     private void setupListeners() {
         boolean showTotalKwh = shPDashBoard.get(ShPDashBoard.PRICE_SHOW_TOTAL_KWH, true);
         boolean withVat = shPDashBoard.get(ShPDashBoard.PRICE_WITH_VAT, true);
         boolean yearlyChart = shPDashBoard.get(ShPDashBoard.CHART_YEARLY_MODE, false);
 
-        swPriceTotalKwh.setChecked(showTotalKwh);
-        updatePriceTotalSwitchLabel(showTotalKwh);
+        togglePriceType.check(showTotalKwh ? R.id.btnPriceTotal : R.id.btnPriceCommercial);
         swPriceVat.setChecked(withVat);
         swConsumptionYearly.setChecked(yearlyChart);
         updateConsumptionSwitchLabels(yearlyChart);
 
-        swPriceTotalKwh.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            shPDashBoard.set(ShPDashBoard.PRICE_SHOW_TOTAL_KWH, isChecked);
-            updatePriceTotalSwitchLabel(isChecked);
+        togglePriceType.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) return;
+            boolean isTotal = checkedId == R.id.btnPriceTotal;
+            shPDashBoard.set(ShPDashBoard.PRICE_SHOW_TOTAL_KWH, isTotal);
             refreshPriceValues();
         });
 
@@ -527,18 +566,6 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 selectSubscriptionPoint(currentPointIndex);
             }
         });
-    }
-
-
-    /**
-     * Aktualizuje text přepínače mezi celkovou a neregulovanou cenou za kWh.
-     *
-     * @param isTotal {@code true} pro celkovou cenu, {@code false} pro neregulovanou složku
-     */
-    private void updatePriceTotalSwitchLabel(boolean isTotal) {
-        swPriceTotalKwh.setText(isTotal
-                ? R.string.dashboard_price_total_label
-                : R.string.dashboard_price_unregulated_label);
     }
 
 
@@ -687,38 +714,50 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Obnoví všechny datové a grafické sekce přehledu pro aktuálně vybrané odběrné místo.
+     * Sdílená data z databáze (uživatelské barvy VT/NT, posun času, poslední odečet a aktuální ceník)
+     * načítá jednou za obnovení, aby se zabránilo zbytečným opakovaným dotazům do databáze.
      */
     private void refreshAllSections() {
         if (currentPoint == null || !isAdded()) return;
-        loadAndApplyUserVtNtColors();
+
+        int[] userColors = null;
+        long timeShift = 0L;
+        DataSettingsSource settingsSource = new DataSettingsSource(requireContext());
+        try {
+            settingsSource.open();
+            userColors = settingsSource.loadColorVTNT();
+            timeShift = settingsSource.loadTimeShift(currentPoint.getId());
+        } catch (Exception ignored) {
+        } finally {
+            settingsSource.close();
+        }
+
+        MonthlyReadingModel lastReading = loadLastMonthlyReading(currentPoint);
+        cachedCurrentPriceList = loadCurrentPriceList(currentPoint, lastReading);
+
+        applyUserVtNtColors(userColors);
         refreshPriceValues();
-        refreshMeterStateValues();
-        refreshHdoAndPriceHighlight(true);
-        refreshPeriodBillingAndInvoices();
-        refreshConsumptionOverviewData();
+        refreshMeterStateValues(lastReading);
+        refreshHdoAndPriceHighlight(true, timeShift);
+        refreshPeriodBillingAndInvoices(cachedCurrentPriceList);
+        refreshConsumptionOverviewData(cachedCurrentPriceList);
     }
 
 
     /**
-     * Načte uživatelské barvy pro vysoký (VT) a nízký (NT) tarif z databáze nastavení
-     * a promítne je do legendy, poměrového pruhu, prstencového grafu i sloupcového grafu spotřeby.
+     * Promítne uživatelské barvy pro vysoký (VT) a nízký (NT) tarif do legendy,
+     * poměrového pruhu, prstencového grafu i sloupcového grafu spotřeby.
+     *
+     * @param colors pole dvou ARGB barev {@code [colorVt, colorNt]}, nebo {@code null} pro výchozí barvy
      */
-    private void loadAndApplyUserVtNtColors() {
+    private void applyUserVtNtColors(@Nullable int[] colors) {
         if (!isAdded()) return;
         int colorVt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_vt);
         int colorNt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_nt);
 
-        DataSettingsSource dataSettingsSource = new DataSettingsSource(requireContext());
-        try {
-            dataSettingsSource.open();
-            int[] colors = dataSettingsSource.loadColorVTNT();
-            if (colors != null && colors.length >= 2) {
-                colorVt = colors[0];
-                colorNt = colors[1];
-            }
-        } catch (Exception ignored) {
-        } finally {
-            dataSettingsSource.close();
+        if (colors != null && colors.length >= 2) {
+            colorVt = colors[0];
+            colorNt = colors[1];
         }
 
         if (viewPeriodVtColor != null) {
@@ -740,53 +779,73 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Načte poslední stav elektroměru (VT a NT) z měsíčních odečtů a zobrazí jej v grafických počítadlech {@link NumbersMeter}.
+     * Načte poslední zaznamenaný měsíční odečet (podle data odečtu, nikoli pořadí vložení)
+     * z databáze zadaného odběrného místa.
+     *
+     * @param point odběrné místo
+     * @return poslední {@link MonthlyReadingModel}, nebo {@code null}, pokud žádný odečet neexistuje
      */
-    private void refreshMeterStateValues() {
-        if (currentPoint == null || !isAdded()) return;
-        if (numbersMeterDashboardVT == null || numbersMeterDashboardNT == null) return;
-
-        double vt = 0.0;
-        double nt = 0.0;
+    @Nullable
+    private MonthlyReadingModel loadLastMonthlyReading(@NonNull SubscriptionPointModel point) {
         DataMonthlyReadingSource readingSource = new DataMonthlyReadingSource(requireContext());
         try {
             readingSource.open();
-            double[] lastVtNt = readingSource.loadLastVtNt(currentPoint.getTableO());
-            if (lastVtNt != null && lastVtNt.length >= 2) {
-                vt = lastVtNt[0];
-                nt = lastVtNt[1];
-            }
-        } catch (Exception ignored) {
+            return readingSource.loadLastMonthlyReadingByDate(point.getTableO());
+        } catch (Exception e) {
+            return null;
         } finally {
             readingSource.close();
         }
-
-        int maxMeter = 9_999_999;
-        int vtTenths = (int) Math.min(maxMeter, Math.max(0L, Math.round(vt * 10.0)));
-        int ntTenths = (int) Math.min(maxMeter, Math.max(0L, Math.round(nt * 10.0)));
-
-        numbersMeterDashboardVT.setCurrentNumber(vtTenths);
-        numbersMeterDashboardNT.setCurrentNumber(ntTenths);
     }
 
 
     /**
-     * Načte aktuální ceník pro vybrané odběrné místo a spočítá cenu VT a NT (Kč/kWh)
-     * podle stavu přepínačů (Celková / Neregulovaná a S DPH / Bez DPH).
+     * Aktualizuje grafické počítadlo stavu elektroměru (VT a NT) a datum posledního
+     * zaznamenaného odečtu v oblasti rychlých akcí.
+     *
+     * @param lastReading poslední měsíční odečet odběrného místa podle data odečtu, nebo {@code null}
+     */
+    private void refreshMeterStateValues(@Nullable MonthlyReadingModel lastReading) {
+        if (currentPoint == null || !isAdded()) return;
+
+        double vt = (lastReading != null) ? lastReading.getVt() : 0.0;
+        double nt = (lastReading != null) ? lastReading.getNt() : 0.0;
+
+        if (numbersMeterDashboardVT != null && numbersMeterDashboardNT != null) {
+            int maxMeter = 9_999_999;
+            int vtTenths = (int) Math.min(maxMeter, Math.max(0L, Math.round(vt * 10.0)));
+            int ntTenths = (int) Math.min(maxMeter, Math.max(0L, Math.round(nt * 10.0)));
+
+            numbersMeterDashboardVT.setCurrentNumber(vtTenths);
+            numbersMeterDashboardNT.setCurrentNumber(ntTenths);
+        }
+
+        if (tvLastReadingDate != null) {
+            if (lastReading != null && lastReading.getDate() > 0L) {
+                String formattedDate = ViewHelper.convertLongToDate(lastReading.getDate());
+                tvLastReadingDate.setText(getString(R.string.dashboard_last_reading_format, formattedDate));
+            } else {
+                tvLastReadingDate.setText(R.string.dashboard_last_reading_none);
+            }
+        }
+    }
+
+
+    /**
+     * Spočítá a zobrazí cenu VT a NT (Kč/kWh) z aktuálního ceníku odběrného místa
+     * podle stavu přepínačů (Celková cena / Obchodní cena a DPH) s plynulou animací čísel.
      */
     private void refreshPriceValues() {
         if (currentPoint == null || !isAdded()) return;
 
-        PriceListModel priceList = loadCurrentPriceList(currentPoint);
+        PriceListModel priceList = cachedCurrentPriceList;
         if (priceList == null) {
-            String zeroPrice = DecimalFormatHelper.df2.format(0.0);
-            tvPriceVtValue.setText(zeroPrice);
-            tvPriceNtValue.setText(zeroPrice);
+            animatePriceValues(0.0, 0.0);
             return;
         }
 
         PriceListModel effectivePriceList = new PriceListRegulBuilder(priceList).getRegulPriceList();
-        boolean showTotal = swPriceTotalKwh.isChecked();
+        boolean showTotal = togglePriceType.getCheckedButtonId() != R.id.btnPriceCommercial;
         boolean withVat = swPriceVat.isChecked();
 
         double vtPriceKwh;
@@ -807,8 +866,62 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             ntPriceKwh *= vatMultiplier;
         }
 
-        tvPriceVtValue.setText(DecimalFormatHelper.df2.format(vtPriceKwh));
-        tvPriceNtValue.setText(DecimalFormatHelper.df2.format(ntPriceKwh));
+        animatePriceValues(vtPriceKwh, ntPriceKwh);
+    }
+
+
+    /**
+     * Plynule odanimuje změnu číselných hodnot aktuální ceny VT a NT (Kč/kWh),
+     * například při přepnutí mezi celkovou a obchodní cenou, změně DPH nebo přepnutí odběrného místa.
+     * Při prvním zobrazení nastaví hodnoty okamžitě bez animace z nuly.
+     *
+     * @param targetVtKwh cílová cena vysokého tarifu (Kč/kWh)
+     * @param targetNtKwh cílová cena nízkého tarifu (Kč/kWh)
+     */
+    private void animatePriceValues(double targetVtKwh, double targetNtKwh) {
+        if (!isAdded()) return;
+
+        final double targetVt = Math.max(0.0, targetVtKwh);
+        final double targetNt = Math.max(0.0, targetNtKwh);
+
+        if (priceValuesAnimator != null) {
+            priceValuesAnimator.cancel();
+            priceValuesAnimator = null;
+        }
+
+        if (!hasInitializedPriceValues) {
+            displayedPriceVtKwh = targetVt;
+            displayedPriceNtKwh = targetNt;
+            hasInitializedPriceValues = true;
+            tvPriceVtValue.setText(DecimalFormatHelper.df2.format(displayedPriceVtKwh));
+            tvPriceNtValue.setText(DecimalFormatHelper.df2.format(displayedPriceNtKwh));
+            return;
+        }
+
+        if (Math.abs(targetVt - displayedPriceVtKwh) < 0.0005
+                && Math.abs(targetNt - displayedPriceNtKwh) < 0.0005) {
+            displayedPriceVtKwh = targetVt;
+            displayedPriceNtKwh = targetNt;
+            tvPriceVtValue.setText(DecimalFormatHelper.df2.format(displayedPriceVtKwh));
+            tvPriceNtValue.setText(DecimalFormatHelper.df2.format(displayedPriceNtKwh));
+            return;
+        }
+
+        final double startVt = displayedPriceVtKwh;
+        final double startNt = displayedPriceNtKwh;
+
+        priceValuesAnimator = ValueAnimator.ofFloat(0f, 1f);
+        priceValuesAnimator.setDuration(PRICE_ANIMATION_DURATION_MS);
+        priceValuesAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        priceValuesAnimator.addUpdateListener(anim -> {
+            if (!isAdded()) return;
+            float fraction = (float) anim.getAnimatedValue();
+            displayedPriceVtKwh = startVt + (targetVt - startVt) * fraction;
+            displayedPriceNtKwh = startNt + (targetNt - startNt) * fraction;
+            tvPriceVtValue.setText(DecimalFormatHelper.df2.format(displayedPriceVtKwh));
+            tvPriceNtValue.setText(DecimalFormatHelper.df2.format(displayedPriceNtKwh));
+        });
+        priceValuesAnimator.start();
     }
 
 
@@ -817,24 +930,16 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      * měsíčního odečtu, a pokud není k dispozici, z posledního záznamu v aktuálním období ({@code TED})
      * nebo z historie faktur ({@code FAK}).
      *
-     * @param point odběrné místo, pro které se ceník hledá
+     * @param point       odběrné místo, pro které se ceník hledá
+     * @param lastReading již načtený poslední měsíční odečet odběrného místa (může být {@code null})
      * @return načtený {@link PriceListModel}, nebo {@code null}, pokud ceník nelze určit či načíst
      */
     @Nullable
-    private PriceListModel loadCurrentPriceList(@NonNull SubscriptionPointModel point) {
-        long priceListId = -1L;
-
-        DataMonthlyReadingSource readingSource = new DataMonthlyReadingSource(requireContext());
-        try {
-            readingSource.open();
-            MonthlyReadingModel lastReading = readingSource.loadLastMonthlyReadingByDate(point.getTableO());
-            if (lastReading != null && lastReading.getPriceListId() > 0) {
-                priceListId = lastReading.getPriceListId();
-            }
-        } catch (Exception ignored) {
-        } finally {
-            readingSource.close();
-        }
+    private PriceListModel loadCurrentPriceList(@NonNull SubscriptionPointModel point,
+                                                @Nullable MonthlyReadingModel lastReading) {
+        long priceListId = (lastReading != null && lastReading.getPriceListId() > 0)
+                ? lastReading.getPriceListId()
+                : -1L;
 
         if (priceListId <= 0) {
             DataInvoiceSource invoiceSource = new DataInvoiceSource(requireContext());
@@ -872,11 +977,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
 
     /**
-     * Aktualizuje stav HDO (zda běží NT nebo VT, čas dalšího přepnutí a ciferník 24h hodin).
-     *
-     * @param animateClock true pokud se má animovat přechod ciferníku (např. při změně odběrného místa)
+     * Periodicky aktualizuje stav HDO (zda běží NT nebo VT, čas dalšího přepnutí, odpočet a ciferník 24h hodin)
+     * bez úvodní animace ciferníku, včetně načtení časového posunu elektroměru z databáze nastavení.
      */
-    private void refreshHdoAndPriceHighlight(boolean animateClock) {
+    private void refreshHdoAndPriceHighlightPeriodic() {
         if (currentPoint == null || !isAdded()) return;
 
         long timeShift = 0L;
@@ -888,6 +992,20 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         } finally {
             settingsSource.close();
         }
+
+        refreshHdoAndPriceHighlight(false, timeShift);
+    }
+
+
+    /**
+     * Aktualizuje stav HDO (zda běží NT nebo VT, čas dalšího přepnutí, odpočet a ciferník 24h hodin)
+     * ze stejného zdroje HDO dat a se shodným časovým posunem elektroměru.
+     *
+     * @param animateClock {@code true}, pokud se má animovat přechod ciferníku (např. při změně odběrného místa)
+     * @param timeShift    časový posun elektroměru v milisekundách
+     */
+    private void refreshHdoAndPriceHighlight(boolean animateClock, long timeShift) {
+        if (currentPoint == null || !isAdded()) return;
 
         ArrayList<HdoModel> allHdoModels = new ArrayList<>();
         ArrayList<HdoModel> activeRelayModels = new ArrayList<>();
@@ -915,13 +1033,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         if (activeRelayModels == null || activeRelayModels.isEmpty()) {
             applyTariffBoxHighlight(false);
-            applyHdoNextSwitchTime(0L);
+            applyHdoNextSwitchDisplay(getString(R.string.dashboard_hdo_not_set), "", null);
             return;
         }
 
         long nowMillis = System.currentTimeMillis();
+        long meterNowMillis = nowMillis + timeShift;
         Calendar meterCal = Calendar.getInstance();
-        meterCal.setTimeInMillis(nowMillis + timeShift);
+        meterCal.setTimeInMillis(meterNowMillis);
 
         boolean isNtActive = HdoTime.checkHdo(activeRelayModels, meterCal);
         applyTariffBoxHighlight(isNtActive);
@@ -929,32 +1048,48 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         int nextType = isNtActive ? HdoAlarmScheduler.TYPE_END : HdoAlarmScheduler.TYPE_START;
         long nextTriggerMillis = HdoAlarmScheduler.findNextTriggerForModels(activeRelayModels, nextType, nowMillis, timeShift);
 
-        if (nextTriggerMillis > 0) {
-            applyHdoNextSwitchTime(nextTriggerMillis + timeShift);
+        DashboardHdoFormatHelper.FormattedHdoSwitch formatted = (nextTriggerMillis > 0L)
+                ? DashboardHdoFormatHelper.formatNextSwitch(nextTriggerMillis + timeShift, meterNowMillis)
+                : DashboardHdoFormatHelper.FormattedHdoSwitch.invalid();
+
+        if (formatted.valid()) {
+            String targetLabel = getString(
+                    formatted.isToday()
+                            ? R.string.dashboard_hdo_next_switch_today_label
+                            : R.string.dashboard_hdo_next_switch_day_label
+            );
+            String countdownText = (formatted.remainingText() != null)
+                    ? getString(R.string.dashboard_hdo_remaining_format, formatted.remainingText())
+                    : null;
+            applyHdoNextSwitchDisplay(targetLabel, formatted.timeText(), countdownText);
         } else {
-            applyHdoNextSwitchTime(0L);
+            applyHdoNextSwitchDisplay(getString(R.string.dashboard_hdo_invalid_data), "", null);
         }
     }
 
 
     /**
-     * Aktualizuje zobrazení popisku a času následující změny HDO.
-     * Při změně času nebo stavu HDO (např. při přepnutí odběrného místa či přepnutí tarifu)
-     * plynule animuje přechod času i popisku.
+     * Aktualizuje zobrazení popisku, absolutního času následujícího přepnutí HDO a relativního
+     * odpočtu zbývající doby. Při změně údajů plynule animuje přechod textů.
      *
-     * @param targetDisplayMillis cílový čas následující změny HDO (včetně případného posunu času elektroměru),
-     *                            nebo hodnota {@code <= 0}, pokud HDO není nastaveno
+     * @param targetLabel    cílový text popisku (např. {@code HDO: další přepnutí dnes v})
+     * @param targetTimeText naformátovaný absolutní čas přepnutí (např. {@code 21:41} nebo {@code Čt 01:30}), nebo prázdný řetězec
+     * @param countdownText  naformátovaný text zbývající doby do přepnutí, nebo {@code null} pro skrytí odpočtu
      */
-    private void applyHdoNextSwitchTime(long targetDisplayMillis) {
+    private void applyHdoNextSwitchDisplay(@NonNull String targetLabel,
+                                           @NonNull String targetTimeText,
+                                           @Nullable String countdownText) {
         if (!isAdded()) return;
 
-        final long sanitizedTargetMillis = Math.max(0L, targetDisplayMillis);
-        final String targetLabel = getString(
-                sanitizedTargetMillis > 0L
-                        ? R.string.dashboard_hdo_next_switch_label
-                        : R.string.dashboard_hdo_not_set
-        );
-        final SimpleDateFormat timeFormat = SimpleDateFormatHelper.getOnlyTime();
+        if (tvHdoCountdown != null) {
+            if (countdownText != null && !countdownText.isEmpty()) {
+                tvHdoCountdown.setText(countdownText);
+                tvHdoCountdown.setVisibility(View.VISIBLE);
+            } else {
+                tvHdoCountdown.setText("");
+                tvHdoCountdown.setVisibility(View.GONE);
+            }
+        }
 
         if (hdoNextSwitchAnimator != null) {
             hdoNextSwitchAnimator.cancel();
@@ -962,45 +1097,36 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         }
 
         if (!hasInitializedHdoNextSwitch) {
-            displayedHdoNextSwitchMillis = sanitizedTargetMillis;
+            displayedHdoNextSwitchTimeText = targetTimeText;
             displayedHdoNextSwitchLabel = targetLabel;
             hasInitializedHdoNextSwitch = true;
             bindHdoNextSwitchDisplay(
-                    sanitizedTargetMillis,
-                    sanitizedTargetMillis,
+                    targetTimeText,
+                    targetTimeText,
                     targetLabel,
                     targetLabel,
-                    1f,
-                    timeFormat
+                    1f
             );
             return;
         }
 
-        final long startMillis = displayedHdoNextSwitchMillis;
+        final String startTimeText = (displayedHdoNextSwitchTimeText != null) ? displayedHdoNextSwitchTimeText : "";
         final String startLabel = (displayedHdoNextSwitchLabel == null || displayedHdoNextSwitchLabel.isEmpty())
                 ? targetLabel
                 : displayedHdoNextSwitchLabel;
 
         boolean sameLabel = startLabel.equals(targetLabel);
-        boolean sameTime;
-        if (startMillis <= 0L && sanitizedTargetMillis == 0L) {
-            sameTime = true;
-        } else if (startMillis > 0L && sanitizedTargetMillis > 0L) {
-            sameTime = timeFormat.format(startMillis).equals(timeFormat.format(sanitizedTargetMillis));
-        } else {
-            sameTime = false;
-        }
+        boolean sameTime = startTimeText.equals(targetTimeText);
 
         if (sameLabel && sameTime) {
-            displayedHdoNextSwitchMillis = sanitizedTargetMillis;
+            displayedHdoNextSwitchTimeText = targetTimeText;
             displayedHdoNextSwitchLabel = targetLabel;
             bindHdoNextSwitchDisplay(
-                    sanitizedTargetMillis,
-                    sanitizedTargetMillis,
+                    targetTimeText,
+                    targetTimeText,
                     targetLabel,
                     targetLabel,
-                    1f,
-                    timeFormat
+                    1f
             );
             return;
         }
@@ -1012,12 +1138,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             if (!isAdded()) return;
             float fraction = (float) anim.getAnimatedValue();
             bindHdoNextSwitchDisplay(
-                    startMillis,
-                    sanitizedTargetMillis,
+                    startTimeText,
+                    targetTimeText,
                     startLabel,
                     targetLabel,
-                    fraction,
-                    timeFormat
+                    fraction
             );
         });
         hdoNextSwitchAnimator.start();
@@ -1028,19 +1153,17 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      * Promítne průběžný krok animace přechodu popisku a času příští změny HDO do pohledů
      * na kartě aktuální ceny.
      *
-     * @param startMillis  výchozí čas přepnutí HDO v ms ({@code <= 0}, pokud nebyl nastaven)
-     * @param targetMillis cílový čas přepnutí HDO v ms ({@code <= 0}, pokud HDO není nastaveno)
-     * @param startLabel   výchozí text popisku
-     * @param targetLabel  cílový text popisku
-     * @param fraction     průběh animace v intervalu {@code 0f..1f}
-     * @param timeFormat   formátovač pro zobrazení času
+     * @param startTimeText  výchozí naformátovaný čas přepnutí HDO
+     * @param targetTimeText cílový naformátovaný čas přepnutí HDO
+     * @param startLabel     výchozí text popisku
+     * @param targetLabel    cílový text popisku
+     * @param fraction       průběh animace v intervalu {@code 0f..1f}
      */
-    private void bindHdoNextSwitchDisplay(long startMillis,
-                                          long targetMillis,
+    private void bindHdoNextSwitchDisplay(@NonNull String startTimeText,
+                                          @NonNull String targetTimeText,
                                           @NonNull String startLabel,
                                           @NonNull String targetLabel,
-                                          float fraction,
-                                          @NonNull SimpleDateFormat timeFormat) {
+                                          float fraction) {
         if (!isAdded()) return;
 
         float maxShiftPx = dpToPx(requireContext(), 4f);
@@ -1064,35 +1187,26 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             displayedHdoNextSwitchLabel = targetLabel;
         }
 
-        boolean hasStart = startMillis > 0L;
-        boolean hasTarget = targetMillis > 0L;
-
-        if (hasStart && hasTarget) {
-            displayedHdoNextSwitchMillis = Math.round(startMillis + (targetMillis - startMillis) * (double) fraction);
+        if (startTimeText.equals(targetTimeText) || fraction >= 0.999f) {
+            tvHdoNextSwitchTime.setText(targetTimeText);
             tvHdoNextSwitchTime.setAlpha(1f);
             tvHdoNextSwitchTime.setTranslationY(0f);
-            tvHdoNextSwitchTime.setText(timeFormat.format(displayedHdoNextSwitchMillis));
-        } else if (hasTarget) {
-            displayedHdoNextSwitchMillis = targetMillis;
-            tvHdoNextSwitchTime.setText(timeFormat.format(targetMillis));
-            tvHdoNextSwitchTime.setAlpha(fraction);
-            tvHdoNextSwitchTime.setTranslationY(maxShiftPx * (1f - fraction));
-        } else if (hasStart) {
-            if (fraction < 0.995f) {
-                tvHdoNextSwitchTime.setText(timeFormat.format(startMillis));
-                tvHdoNextSwitchTime.setAlpha(1f - fraction);
-                tvHdoNextSwitchTime.setTranslationY(-maxShiftPx * fraction);
-            } else {
-                displayedHdoNextSwitchMillis = 0L;
-                tvHdoNextSwitchTime.setText("");
-                tvHdoNextSwitchTime.setAlpha(1f);
-                tvHdoNextSwitchTime.setTranslationY(0f);
-            }
+            tvHdoNextSwitchTime.setVisibility(targetTimeText.isEmpty() ? View.GONE : View.VISIBLE);
+            displayedHdoNextSwitchTimeText = targetTimeText;
+        } else if (fraction < 0.5f) {
+            float outProgress = fraction * 2f;
+            tvHdoNextSwitchTime.setText(startTimeText);
+            tvHdoNextSwitchTime.setVisibility(startTimeText.isEmpty() ? View.GONE : View.VISIBLE);
+            tvHdoNextSwitchTime.setAlpha(1f - outProgress);
+            tvHdoNextSwitchTime.setTranslationY(-maxShiftPx * outProgress);
+            displayedHdoNextSwitchTimeText = startTimeText;
         } else {
-            displayedHdoNextSwitchMillis = 0L;
-            tvHdoNextSwitchTime.setText("");
-            tvHdoNextSwitchTime.setAlpha(1f);
-            tvHdoNextSwitchTime.setTranslationY(0f);
+            float inProgress = (fraction - 0.5f) * 2f;
+            tvHdoNextSwitchTime.setText(targetTimeText);
+            tvHdoNextSwitchTime.setVisibility(targetTimeText.isEmpty() ? View.GONE : View.VISIBLE);
+            tvHdoNextSwitchTime.setAlpha(inProgress);
+            tvHdoNextSwitchTime.setTranslationY(maxShiftPx * (1f - inProgress));
+            displayedHdoNextSwitchTimeText = targetTimeText;
         }
     }
 
@@ -1244,9 +1358,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Načte data pro karty „Spotřeba období“, „Vyúčtování“ a seznam až {@link #MAX_RECENT_INVOICES}
-     * posledních vyúčtovaných faktur s proklikem do {@link InvoiceTabFragment}.
+     * posledních fakturačních období s proklikem do {@link InvoiceTabFragment}.
+     *
+     * @param fallbackPriceList aktuální ceník pro fallback rozpoznání jednosazbového tarifu
      */
-    private void refreshPeriodBillingAndInvoices() {
+    private void refreshPeriodBillingAndInvoices(@Nullable PriceListModel fallbackPriceList) {
         if (currentPoint == null || !isAdded()) return;
 
         DataInvoiceSource invoiceSource = new DataInvoiceSource(requireContext());
@@ -1270,7 +1386,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             if (activePeriodModel != null) {
                 long idFak = activePeriodModel.getIdFak();
                 String table = (idFak == -1L) ? currentPoint.getTableTED() : currentPoint.getTableFAK();
-                PeriodSummary summary = computeInvoiceSummary(invoiceSource, priceListSource, currentPoint, idFak, table);
+                PeriodSummary summary = computeInvoiceSummary(invoiceSource, priceListSource, currentPoint, idFak, table, fallbackPriceList);
 
                 targetMinDate = activePeriodModel.getMinDate();
                 targetMaxDate = activePeriodModel.getMaxDate();
@@ -1283,14 +1399,13 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 targetBillingAdvancesKc = summary.advancesKc;
                 targetBillingCostsKc = summary.costsWithTaxKc;
             } else {
-                PriceListModel fallbackPl = loadCurrentPriceList(currentPoint);
-                boolean isSingle = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
+                boolean isSingle = fallbackPriceList != null && isSingleTariffRate(fallbackPriceList.getRate());
                 animatePeriodConsumptionValues(0.0, 0.0, isSingle);
                 viewPeriodBar.setConsumption(0, 0);
                 viewPeriodDonut.setConsumption(0, 0);
             }
 
-            // Poslední faktury (pouze vyúčtované faktury idFak != -1L)
+            // Poslední faktury (maximálně MAX_RECENT_INVOICES položek)
             llInvoicesContainer.removeAllViews();
             int addedInvoices = 0;
             LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -1298,6 +1413,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             List<Double> targetInvoiceConsumptionsKwh = new ArrayList<>();
             List<TextView> invoiceAmountViews = new ArrayList<>();
             List<Double> targetInvoiceAmountsKc = new ArrayList<>();
+
+            int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface);
+            int colorOnSurfaceVariant = resolveAttrColor(com.google.android.material.R.attr.colorOnSurfaceVariant);
 
             for (int pos = 0; pos < invoiceLists.size(); pos++) {
                 InvoiceListModel invItem = invoiceLists.get(pos);
@@ -1313,7 +1431,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                         priceListSource,
                         currentPoint,
                         invItem.getIdFak(),
-                        currentPoint.getTableFAK()
+                        currentPoint.getTableFAK(),
+                        fallbackPriceList
                 );
 
                 View row = inflater.inflate(R.layout.item_dashboard_invoice_row, llInvoicesContainer, false);
@@ -1322,7 +1441,20 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 TextView tvConsumption = row.findViewById(R.id.tvInvoiceConsumption);
                 TextView tvAmount = row.findViewById(R.id.tvInvoiceAmount);
 
-                tvNumber.setText(getString(R.string.dashboard_invoice_number_format, invItem.getNumberInvoice()));
+                String rawNumber = invItem.getNumberInvoice();
+                boolean isWithoutInvoiceNumber = invItem.getIdFak() == -1L
+                        || rawNumber == null
+                        || rawNumber.trim().isEmpty();
+                if (isWithoutInvoiceNumber) {
+                    tvNumber.setText(R.string.dashboard_invoice_without_number);
+                    tvNumber.setTypeface(null, Typeface.ITALIC);
+                    tvNumber.setTextColor(colorOnSurfaceVariant);
+                } else {
+                    tvNumber.setText(getString(R.string.dashboard_invoice_number_format, rawNumber.trim()));
+                    tvNumber.setTypeface(null, Typeface.BOLD);
+                    tvNumber.setTextColor(colorOnSurface);
+                }
+
                 if (invItem.getMinDate() > 0 && invItem.getMaxDate() > 0) {
                     String dFrom = ViewHelper.convertLongToDate(invItem.getMinDate());
                     String dTo = ViewHelper.convertLongToDate(invItem.getMaxDate());
@@ -1360,7 +1492,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 addedInvoices++;
             }
 
-            layoutLastInvoicesSection.setVisibility(addedInvoices > 0 ? View.VISIBLE : View.GONE);
+            layoutLastInvoicesSection.setVisibility(View.VISIBLE);
+            llInvoicesContainer.setVisibility(addedInvoices > 0 ? View.VISIBLE : View.GONE);
+            if (tvNoRecentInvoices != null) {
+                tvNoRecentInvoices.setVisibility(addedInvoices == 0 ? View.VISIBLE : View.GONE);
+            }
+
             if (viewBillingBalanceBar != null) {
                 viewBillingBalanceBar.setValues(targetBillingAdvancesKc, targetBillingCostsKc);
             }
@@ -1619,11 +1756,12 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      * (včetně POZE podle roku platnosti ceníku, dalších služeb a slev) a vyhodnotí,
      * zda se jedná o jednosazbový tarif.
      *
-     * @param invoiceSource   otevřený zdroj faktur a plateb
-     * @param priceListSource otevřený zdroj ceníků
-     * @param point           odběrné místo
-     * @param idFak           identifikátor faktury, nebo {@code -1L} pro aktuální nevyfakturované období
-     * @param table           název zdrojové tabulky ({@code TED} nebo {@code FAK})
+     * @param invoiceSource     otevřený zdroj faktur a plateb
+     * @param priceListSource   otevřený zdroj ceníků
+     * @param point             odběrné místo
+     * @param idFak             identifikátor faktury, nebo {@code -1L} pro aktuální nevyfakturované období
+     * @param table             název zdrojové tabulky ({@code TED} nebo {@code FAK})
+     * @param fallbackPriceList aktuální ceník pro fallback rozpoznání jednosazbového tarifu
      * @return vypočtený souhrn období {@link PeriodSummary}
      */
     @NonNull
@@ -1631,7 +1769,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                                                 @NonNull DataPriceListSource priceListSource,
                                                 @NonNull SubscriptionPointModel point,
                                                 long idFak,
-                                                @NonNull String table) {
+                                                @NonNull String table,
+                                                @Nullable PriceListModel fallbackPriceList) {
         ArrayList<InvoiceModel> records = invoiceSource.loadInvoices(idFak, table);
         double advances = invoiceSource.sumAdvancePaymentsOnly(idFak, point.getTablePLATBY());
         if (advances <= 0) {
@@ -1640,8 +1779,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         double discountWithTax = invoiceSource.sumDiscountWithTax(idFak, point.getTablePLATBY());
 
         if (records == null || records.isEmpty()) {
-            PriceListModel fallbackPl = loadCurrentPriceList(point);
-            boolean isSingle = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
+            boolean isSingle = fallbackPriceList != null && isSingleTariffRate(fallbackPriceList.getRate());
             return new PeriodSummary(0, 0, advances, 0, isSingle);
         }
 
@@ -1707,8 +1845,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         boolean isSingleTariff = hasAnyRate && allSingleTariff && (totalNtMwh <= 0.0);
         if (!hasAnyRate && totalNtMwh <= 0.0) {
-            PriceListModel fallbackPl = loadCurrentPriceList(point);
-            isSingleTariff = fallbackPl != null && isSingleTariffRate(fallbackPl.getRate());
+            isSingleTariff = fallbackPriceList != null && isSingleTariffRate(fallbackPriceList.getRate());
         }
 
         double totalWithTax = Math.max(0.0, totalDph - discountWithTax);
@@ -2035,15 +2172,16 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Načte měsíční a roční spotřebu pro kartu "Přehled spotřeby" včetně výpočtu
-     * procentní změny a odhadu (předpokládané spotřeby) neúplného aktuálního měsíce / roku.
+     * procentní změny průměrné denní spotřeby (kWh/den) a odhadu neúplného aktuálního měsíce / roku.
+     *
+     * @param currentPriceList aktuální ceník pro určení distribuční sazby (může být {@code null})
      */
-    private void refreshConsumptionOverviewData() {
+    private void refreshConsumptionOverviewData(@Nullable PriceListModel currentPriceList) {
         monthlyChartEntries.clear();
         yearlyChartEntries.clear();
 
         if (currentPoint == null || !isAdded()) return;
 
-        PriceListModel currentPriceList = loadCurrentPriceList(currentPoint);
         String distributionRate = currentPriceList != null ? currentPriceList.getRate() : null;
         Calendar nowCal = Calendar.getInstance();
         int nowYear = nowCal.get(Calendar.YEAR);
@@ -2190,11 +2328,25 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Předá grafu {@link DashboardConsumptionBarChartView} měsíční nebo roční sadu položek
-     * podle aktuálního stavu přepínače.
+     * podle aktuálního stavu přepínače a zobrazí vysvětlení procentních změn, pokud je
+     * v grafu zobrazena alespoň jedna procentní změna.
      */
     private void refreshConsumptionChartDisplay() {
         boolean isYearly = swConsumptionYearly.isChecked();
-        viewConsumptionBarChart.setEntries(isYearly ? yearlyChartEntries : monthlyChartEntries);
+        List<DashboardConsumptionBarChartView.BarEntry> activeEntries =
+                isYearly ? yearlyChartEntries : monthlyChartEntries;
+        viewConsumptionBarChart.setEntries(activeEntries);
+
+        if (tvConsumptionChangeNote != null) {
+            boolean hasAnyPercent = false;
+            for (DashboardConsumptionBarChartView.BarEntry entry : activeEntries) {
+                if (entry.changePercent != null) {
+                    hasAnyPercent = true;
+                    break;
+                }
+            }
+            tvConsumptionChangeNote.setVisibility(hasAnyPercent ? View.VISIBLE : View.GONE);
+        }
     }
 
 
@@ -2238,6 +2390,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     public void onPause() {
         super.onPause();
         hdoHandler.removeCallbacks(hdoRefreshRunnable);
+        if (priceValuesAnimator != null) {
+            priceValuesAnimator.cancel();
+            priceValuesAnimator = null;
+        }
         if (periodValuesAnimator != null) {
             periodValuesAnimator.cancel();
             periodValuesAnimator = null;
