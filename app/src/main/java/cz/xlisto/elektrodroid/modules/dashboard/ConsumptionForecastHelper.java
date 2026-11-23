@@ -304,7 +304,7 @@ public final class ConsumptionForecastHelper {
         double actual = current.getTotal();
         int daysInMonth = getDaysInMonth(current.year, current.month);
         int remainingDays = Math.max(0, daysInMonth - current.coveredDayOfMonth);
-        if (remainingDays <= 0) {
+        if (remainingDays == 0) {
             return actual;
         }
 
