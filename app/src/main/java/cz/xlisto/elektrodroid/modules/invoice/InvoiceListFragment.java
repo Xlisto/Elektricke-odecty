@@ -272,8 +272,7 @@ public class InvoiceListFragment extends Fragment implements OnPaddingChangeList
 
     public void updateRecyclerViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()
@@ -287,9 +286,23 @@ public class InvoiceListFragment extends Fragment implements OnPaddingChangeList
                 getView().setPadding(leftPaddingPx, 0, rightPaddingPx, 0);
             }
 
+            boolean isAlertVisible = llAlertNoInvoice != null && llAlertNoInvoice.getVisibility() == View.VISIBLE;
+
+            if (llAlertNoInvoice != null) {
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) llAlertNoInvoice.getLayoutParams();
+                if (lp != null) {
+                    int alertTopMargin = topPaddingPx + (int) (5 * density);
+                    if (lp.topMargin != alertTopMargin) {
+                        lp.topMargin = alertTopMargin;
+                        llAlertNoInvoice.setLayoutParams(lp);
+                    }
+                }
+            }
+
             if (rv != null) {
                 rv.setClipToPadding(false);
-                rv.setPadding((int) (5 * density), topPaddingPx, (int) (5 * density), bottomPaddingPx);
+                int rvTopPadding = isAlertVisible ? (int) (4 * density) : topPaddingPx;
+                rv.setPadding((int) (5 * density), rvTopPadding, (int) (5 * density), bottomPaddingPx);
             }
             UIHelper.updateFabPosition(fab, getActivity());
         }
@@ -310,7 +323,9 @@ public class InvoiceListFragment extends Fragment implements OnPaddingChangeList
         dataSubscriptionPointSource.open();
         SubscriptionPointModel subscriptionPoint = dataSubscriptionPointSource.loadSubscriptionPoint(idSubscriptionPoint);
         if (subscriptionPoint == null) {
+            dataSubscriptionPointSource.close();
             llAlertNoInvoice.setVisibility(View.GONE);
+            updateRecyclerViewPadding();
             return;
         }
         tablePay = subscriptionPoint.getTablePLATBY();
@@ -331,6 +346,8 @@ public class InvoiceListFragment extends Fragment implements OnPaddingChangeList
         } else {
             llAlertNoInvoice.setVisibility(View.GONE);
         }
+
+        updateRecyclerViewPadding();
 
         invoiceAdapter = new InvoiceListAdapter(requireContext(), invoices, rv);
         rv.setAdapter(invoiceAdapter);
