@@ -3,6 +3,7 @@ package cz.xlisto.elektrodroid.modules.dashboard;
 
 import static cz.xlisto.elektrodroid.utils.DensityUtils.dpToPx;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,6 +12,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,9 +25,12 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Skládaný sloupcový graf (VT + NT) pro kartu "Přehled spotřeby" s podporou měsíčního a ročního zobrazení.
+ * Skládaný sloupcový graf (VT + NT) pro kartu "Přehled spotřeby"
+ * s podporou měsíčního a ročního zobrazení a plynulou animací výšky sloupců při změně dat.
  */
 public class DashboardConsumptionBarChartView extends View {
+
+    private static final long ANIMATION_DURATION_MS = 550L;
 
     /**
      * Datová položka jednoho sloupce grafu.
@@ -51,6 +56,23 @@ public class DashboardConsumptionBarChartView extends View {
     }
 
 
+    /**
+     * Normalizované poměry výšky VT a NT jednoho sloupce vůči výšce grafu (0..1).
+     */
+    private static class BarHeightRatio {
+
+        final float vtRatio;
+        final float ntRatio;
+
+
+        BarHeightRatio(float vtRatio, float ntRatio) {
+            this.vtRatio = vtRatio;
+            this.ntRatio = ntRatio;
+        }
+
+    }
+
+
     private Paint paintVt;
     private Paint paintNt;
     private Paint paintGrid;
@@ -62,6 +84,12 @@ public class DashboardConsumptionBarChartView extends View {
     private final float[] barCornerRadii = new float[8];
 
     private final List<BarEntry> entries = new ArrayList<>();
+    private final List<BarHeightRatio> startRatios = new ArrayList<>();
+    private final List<BarHeightRatio> targetRatios = new ArrayList<>();
+    private int currentStep = 200;
+    private int currentMaxAxisValue = 800;
+    private float animFraction = 1f;
+    private ValueAnimator animator;
 
 
     public DashboardConsumptionBarChartView(Context context) {
@@ -129,14 +157,107 @@ public class DashboardConsumptionBarChartView extends View {
 
 
     /**
-     * Nastaví položky sloupcového grafu.
+     * Nastaví položky sloupcového grafu a plynule odanimuje přechod výšky sloupců.
      */
     public void setEntries(@Nullable List<BarEntry> barEntries) {
+        setEntries(barEntries, true);
+    }
+
+
+    /**
+     * Nastaví položky sloupcového grafu s možností volby animace.
+     */
+    public void setEntries(@Nullable List<BarEntry> barEntries, boolean animate) {
+        List<BarHeightRatio> currentDisplayed = getCurrentInterpolatedRatios();
+
         entries.clear();
         if (barEntries != null) {
             entries.addAll(barEntries);
         }
-        invalidate();
+
+        double maxTotal = 0.0;
+        for (BarEntry entry : entries) {
+            maxTotal = Math.max(maxTotal, entry.getTotal());
+        }
+        currentStep = computeNiceStep(maxTotal);
+        currentMaxAxisValue = currentStep * 4;
+
+        targetRatios.clear();
+        startRatios.clear();
+        for (int i = 0; i < entries.size(); i++) {
+            BarEntry entry = entries.get(i);
+            float vtR = currentMaxAxisValue > 0 ? (float) (entry.vt / currentMaxAxisValue) : 0f;
+            float ntR = currentMaxAxisValue > 0 ? (float) (entry.nt / currentMaxAxisValue) : 0f;
+            targetRatios.add(new BarHeightRatio(vtR, ntR));
+
+            if (i < currentDisplayed.size()) {
+                startRatios.add(currentDisplayed.get(i));
+            } else {
+                startRatios.add(new BarHeightRatio(0f, 0f));
+            }
+        }
+
+        if (animator != null) {
+            animator.cancel();
+            animator = null;
+        }
+
+        if (!animate || !isAttachedToWindow() || entries.isEmpty()) {
+            animFraction = 1f;
+            invalidate();
+            return;
+        }
+
+        animFraction = 0f;
+        animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(ANIMATION_DURATION_MS);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.addUpdateListener(anim -> {
+            animFraction = (float) anim.getAnimatedValue();
+            invalidate();
+        });
+        animator.start();
+    }
+
+
+    @NonNull
+    private List<BarHeightRatio> getCurrentInterpolatedRatios() {
+        int count = targetRatios.size();
+        List<BarHeightRatio> result = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            result.add(new BarHeightRatio(getInterpolatedVtRatio(i), getInterpolatedNtRatio(i)));
+        }
+        return result;
+    }
+
+
+    private float getInterpolatedVtRatio(int index) {
+        if (index < 0 || index >= targetRatios.size()) {
+            return 0f;
+        }
+        float to = targetRatios.get(index).vtRatio;
+        float from = (index < startRatios.size()) ? startRatios.get(index).vtRatio : 0f;
+        return from + (to - from) * animFraction;
+    }
+
+
+    private float getInterpolatedNtRatio(int index) {
+        if (index < 0 || index >= targetRatios.size()) {
+            return 0f;
+        }
+        float to = targetRatios.get(index).ntRatio;
+        float from = (index < startRatios.size()) ? startRatios.get(index).ntRatio : 0f;
+        return from + (to - from) * animFraction;
+    }
+
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (animator != null) {
+            animator.cancel();
+            animator = null;
+        }
     }
 
 
@@ -153,13 +274,8 @@ public class DashboardConsumptionBarChartView extends View {
         float bottomPad = dpToPx(getContext(), 22f);
         float legendWidth = dpToPx(getContext(), 54f);
 
-        // Výpočet maximální hodnoty na ose Y (zaokrouhleno na 4 kroky)
-        double maxTotal = 0.0;
-        for (BarEntry entry : entries) {
-            maxTotal = Math.max(maxTotal, entry.getTotal());
-        }
-        int step = computeNiceStep(maxTotal);
-        int maxAxisValue = step * 4;
+        int step = currentStep;
+        int maxAxisValue = currentMaxAxisValue;
 
         String maxLabel = String.valueOf(maxAxisValue);
         float leftAxisWidth = Math.max(dpToPx(getContext(), 32f), paintAxisText.measureText(maxLabel) + dpToPx(getContext(), 10f));
@@ -182,7 +298,7 @@ public class DashboardConsumptionBarChartView extends View {
             canvas.drawText(String.valueOf(val), chartLeft - dpToPx(getContext(), 6f), y + axisTextOffset, paintAxisText);
         }
 
-        // 2. Vykreslení sloupců (VT dole, NT nahoře)
+        // 2. Vykreslení sloupců (VT dole, NT nahoře) s plynulou animací výšky
         if (!entries.isEmpty()) {
             int count = entries.size();
             float slotWidth = chartWidth / count;
@@ -199,12 +315,15 @@ public class DashboardConsumptionBarChartView extends View {
 
             for (int i = 0; i < count; i++) {
                 BarEntry entry = entries.get(i);
+                float vtRatio = getInterpolatedVtRatio(i);
+                float ntRatio = getInterpolatedNtRatio(i);
+
                 float slotCenterX = chartLeft + (i + 0.5f) * slotWidth;
                 float barLeft = slotCenterX - barWidth / 2f;
                 float barRight = slotCenterX + barWidth / 2f;
 
-                float vtHeight = (float) ((entry.vt / maxAxisValue) * chartHeight);
-                float ntHeight = (float) ((entry.nt / maxAxisValue) * chartHeight);
+                float vtHeight = Math.max(0f, vtRatio * chartHeight);
+                float ntHeight = Math.max(0f, ntRatio * chartHeight);
                 float totalHeight = Math.min(chartHeight, vtHeight + ntHeight);
 
                 if (totalHeight > 0.5f) {

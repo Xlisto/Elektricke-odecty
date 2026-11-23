@@ -3,6 +3,7 @@ package cz.xlisto.elektrodroid.modules.dashboard;
 
 import static cz.xlisto.elektrodroid.utils.DensityUtils.dpToPx;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,6 +11,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,9 +25,12 @@ import cz.xlisto.elektrodroid.R;
 
 
 /**
- * Kruhový prstencový graf (donut chart) pro kartu "Spotřeba období" se zobrazením celkové spotřeby v kWh uprostřed.
+ * Kruhový prstencový graf (donut chart) pro kartu "Spotřeba období"
+ * se zobrazením celkové spotřeby v kWh uprostřed a plynulou animací výsečí při změně dat.
  */
 public class DashboardDonutChartView extends View {
+
+    private static final long ANIMATION_DURATION_MS = 550L;
 
     private Paint paintVt;
     private Paint paintNt;
@@ -34,8 +39,12 @@ public class DashboardDonutChartView extends View {
     private Paint paintUnitText;
     private final RectF arcRect = new RectF();
 
-    private double vt = 0.0;
-    private double nt = 0.0;
+    private float displayedVtRatio = 0.5f;
+    private float displayedTotalSweep = 0f;
+    private double displayedTotalValue = 0.0;
+    private boolean hasInitializedRatio = false;
+    private ValueAnimator animator;
+
     private final DecimalFormat integerFormat;
 
 
@@ -116,12 +125,67 @@ public class DashboardDonutChartView extends View {
 
 
     /**
-     * Nastaví spotřebu VT a NT v kWh.
+     * Nastaví spotřebu VT a NT v kWh a plynule odanimuje přechod výsečí i středové hodnoty.
      */
     public void setConsumption(double vtValue, double ntValue) {
-        this.vt = Math.max(0.0, vtValue);
-        this.nt = Math.max(0.0, ntValue);
-        invalidate();
+        setConsumption(vtValue, ntValue, true);
+    }
+
+
+    /**
+     * Nastaví spotřebu VT a NT v kWh s možností volby animace.
+     */
+    public void setConsumption(double vtValue, double ntValue, boolean animate) {
+        double cleanVt = Math.max(0.0, vtValue);
+        double cleanNt = Math.max(0.0, ntValue);
+        final double targetTotal = cleanVt + cleanNt;
+        final float targetSweep = targetTotal > 0.0 ? 360f : 0f;
+        final float targetVtRatio = targetTotal > 0.0 ? (float) (cleanVt / targetTotal) : displayedVtRatio;
+
+        if (!hasInitializedRatio && targetTotal > 0.0) {
+            displayedVtRatio = targetVtRatio;
+            hasInitializedRatio = true;
+        }
+
+        if (animator != null) {
+            animator.cancel();
+            animator = null;
+        }
+
+        if (!animate || !isAttachedToWindow()) {
+            displayedVtRatio = targetVtRatio;
+            displayedTotalSweep = targetSweep;
+            displayedTotalValue = targetTotal;
+            hasInitializedRatio = targetTotal > 0.0;
+            invalidate();
+            return;
+        }
+
+        final float startVtRatio = displayedVtRatio;
+        final float startSweep = displayedTotalSweep;
+        final double startTotal = displayedTotalValue;
+
+        animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(ANIMATION_DURATION_MS);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            displayedVtRatio = startVtRatio + (targetVtRatio - startVtRatio) * fraction;
+            displayedTotalSweep = startSweep + (targetSweep - startSweep) * fraction;
+            displayedTotalValue = startTotal + (targetTotal - startTotal) * fraction;
+            invalidate();
+        });
+        animator.start();
+    }
+
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (animator != null) {
+            animator.cancel();
+            animator = null;
+        }
     }
 
 
@@ -143,23 +207,37 @@ public class DashboardDonutChartView extends View {
 
         arcRect.set(cx - radius, cy - radius, cx + radius, cy + radius);
 
-        double total = vt + nt;
-        if (total <= 0.0) {
-            canvas.drawArc(arcRect, 0f, 360f, false, paintEmpty);
-        } else {
-            float vtSweep = (float) ((vt / total) * 360.0);
-            float ntSweep = 360f - vtSweep;
-            float gapDegrees = (vt > 0 && nt > 0) ? 3f : 0f;
+        // Podkladový kruh
+        canvas.drawArc(arcRect, 0f, 360f, false, paintEmpty);
 
-            if (vt > 0) {
-                canvas.drawArc(arcRect, -90f + gapDegrees / 2f, Math.max(0f, vtSweep - gapDegrees), false, paintVt);
+        if (displayedTotalSweep > 0.5f) {
+            float clampedRatio = Math.min(1f, Math.max(0f, displayedVtRatio));
+            float vtSweep = displayedTotalSweep * clampedRatio;
+            float ntSweep = displayedTotalSweep - vtSweep;
+            boolean hasBoth = vtSweep > 1.5f && ntSweep > 1.5f;
+            float gapDegrees = hasBoth ? 3f : 0f;
+
+            if (vtSweep > 0.5f) {
+                canvas.drawArc(
+                        arcRect,
+                        -90f + gapDegrees / 2f,
+                        Math.max(0f, vtSweep - gapDegrees),
+                        false,
+                        paintVt
+                );
             }
-            if (nt > 0) {
-                canvas.drawArc(arcRect, -90f + vtSweep + gapDegrees / 2f, Math.max(0f, ntSweep - gapDegrees), false, paintNt);
+            if (ntSweep > 0.5f) {
+                canvas.drawArc(
+                        arcRect,
+                        -90f + vtSweep + gapDegrees / 2f,
+                        Math.max(0f, ntSweep - gapDegrees),
+                        false,
+                        paintNt
+                );
             }
         }
 
-        String totalStr = integerFormat.format(Math.round(total));
+        String totalStr = integerFormat.format(Math.round(Math.max(0.0, displayedTotalValue)));
         canvas.drawText(totalStr, cx, cy - dpToPx(getContext(), 1f), paintValueText);
         canvas.drawText("kWh", cx, cy + dpToPx(getContext(), 12f), paintUnitText);
     }
