@@ -175,7 +175,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         @Override
         public void run() {
             if (isAdded() && currentPoint != null) {
-                refreshHdoAndPriceHighlight();
+                refreshHdoAndPriceHighlight(false);
             }
             hdoHandler.postDelayed(this, 30_000L);
         }
@@ -530,7 +530,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         if (currentPoint == null || !isAdded()) return;
         refreshPriceValues();
         refreshMeterStateValues();
-        refreshHdoAndPriceHighlight();
+        refreshHdoAndPriceHighlight(true);
         refreshPeriodBillingAndInvoices();
         refreshConsumptionOverviewData();
     }
@@ -661,8 +661,10 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     /**
      * Aktualizuje stav HDO (zda běží NT nebo VT, čas dalšího přepnutí a ciferník 24h hodin).
+     *
+     * @param animateClock true pokud se má animovat přechod ciferníku (např. při změně odběrného místa)
      */
-    private void refreshHdoAndPriceHighlight() {
+    private void refreshHdoAndPriceHighlight(boolean animateClock) {
         if (currentPoint == null || !isAdded()) return;
 
         long timeShift = 0L;
@@ -697,7 +699,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             hdoSource.close();
         }
 
-        viewHdoClock.setHdoData(allHdoModels, timeShift);
+        viewHdoClock.setHdoData(allHdoModels, timeShift, animateClock);
 
         if (activeRelayModels == null || activeRelayModels.isEmpty()) {
             applyTariffBoxHighlight(false);
