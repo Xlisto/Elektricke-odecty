@@ -33,6 +33,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumMap;
@@ -194,6 +195,15 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private boolean hasInitializedBillingValues = false;
     private GradientDrawable balanceBgDrawable;
     private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+    private float displayedTariffNtRatio = 0f;
+    private boolean hasInitializedTariffHighlight = false;
+    private GradientDrawable boxPriceVtBgDrawable;
+    private GradientDrawable boxPriceNtBgDrawable;
+    private ValueAnimator tariffHighlightAnimator;
+    private long displayedHdoNextSwitchMillis = 0L;
+    private String displayedHdoNextSwitchLabel = "";
+    private boolean hasInitializedHdoNextSwitch = false;
+    private ValueAnimator hdoNextSwitchAnimator;
     private final List<Double> displayedRecentInvoiceAmountsKc = new ArrayList<>();
     private final List<Double> displayedRecentInvoiceConsumptionsKwh = new ArrayList<>();
     private ValueAnimator billingValuesAnimator;
@@ -781,8 +791,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         if (activeRelayModels == null || activeRelayModels.isEmpty()) {
             applyTariffBoxHighlight(false);
-            tvHdoNextSwitchLabel.setText(R.string.dashboard_hdo_not_set);
-            tvHdoNextSwitchTime.setText("");
+            applyHdoNextSwitchTime(0L);
             return;
         }
 
@@ -797,44 +806,280 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         long nextTriggerMillis = HdoAlarmScheduler.findNextTriggerForModels(activeRelayModels, nextType, nowMillis, timeShift);
 
         if (nextTriggerMillis > 0) {
-            tvHdoNextSwitchLabel.setText(R.string.dashboard_hdo_next_switch_label);
-            String formattedTime = SimpleDateFormatHelper.getOnlyTime().format(nextTriggerMillis + timeShift);
-            tvHdoNextSwitchTime.setText(formattedTime);
+            applyHdoNextSwitchTime(nextTriggerMillis + timeShift);
         } else {
-            tvHdoNextSwitchLabel.setText(R.string.dashboard_hdo_not_set);
-            tvHdoNextSwitchTime.setText("");
+            applyHdoNextSwitchTime(0L);
         }
     }
 
 
+    /**
+     * Aktualizuje zobrazení popisku a času následující změny HDO.
+     * Při změně času nebo stavu HDO (např. při přepnutí odběrného místa či přepnutí tarifu)
+     * plynule animuje přechod času i popisku.
+     *
+     * @param targetDisplayMillis cílový čas následující změny HDO (včetně případného posunu času elektroměru),
+     *                            nebo hodnota {@code <= 0}, pokud HDO není nastaveno
+     */
+    private void applyHdoNextSwitchTime(long targetDisplayMillis) {
+        if (!isAdded()) return;
+
+        final long sanitizedTargetMillis = Math.max(0L, targetDisplayMillis);
+        final String targetLabel = getString(
+                sanitizedTargetMillis > 0L
+                        ? R.string.dashboard_hdo_next_switch_label
+                        : R.string.dashboard_hdo_not_set
+        );
+        final SimpleDateFormat timeFormat = SimpleDateFormatHelper.getOnlyTime();
+
+        if (hdoNextSwitchAnimator != null) {
+            hdoNextSwitchAnimator.cancel();
+            hdoNextSwitchAnimator = null;
+        }
+
+        if (!hasInitializedHdoNextSwitch) {
+            displayedHdoNextSwitchMillis = sanitizedTargetMillis;
+            displayedHdoNextSwitchLabel = targetLabel;
+            hasInitializedHdoNextSwitch = true;
+            bindHdoNextSwitchDisplay(
+                    sanitizedTargetMillis,
+                    sanitizedTargetMillis,
+                    targetLabel,
+                    targetLabel,
+                    1f,
+                    timeFormat
+            );
+            return;
+        }
+
+        final long startMillis = displayedHdoNextSwitchMillis;
+        final String startLabel = (displayedHdoNextSwitchLabel == null || displayedHdoNextSwitchLabel.isEmpty())
+                ? targetLabel
+                : displayedHdoNextSwitchLabel;
+
+        boolean sameLabel = startLabel.equals(targetLabel);
+        boolean sameTime;
+        if (startMillis <= 0L && sanitizedTargetMillis <= 0L) {
+            sameTime = true;
+        } else if (startMillis > 0L && sanitizedTargetMillis > 0L) {
+            sameTime = timeFormat.format(startMillis).equals(timeFormat.format(sanitizedTargetMillis));
+        } else {
+            sameTime = false;
+        }
+
+        if (sameLabel && sameTime) {
+            displayedHdoNextSwitchMillis = sanitizedTargetMillis;
+            displayedHdoNextSwitchLabel = targetLabel;
+            bindHdoNextSwitchDisplay(
+                    sanitizedTargetMillis,
+                    sanitizedTargetMillis,
+                    targetLabel,
+                    targetLabel,
+                    1f,
+                    timeFormat
+            );
+            return;
+        }
+
+        hdoNextSwitchAnimator = ValueAnimator.ofFloat(0f, 1f);
+        hdoNextSwitchAnimator.setDuration(PERIOD_ANIMATION_DURATION_MS);
+        hdoNextSwitchAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        hdoNextSwitchAnimator.addUpdateListener(anim -> {
+            if (!isAdded()) return;
+            float fraction = (float) anim.getAnimatedValue();
+            bindHdoNextSwitchDisplay(
+                    startMillis,
+                    sanitizedTargetMillis,
+                    startLabel,
+                    targetLabel,
+                    fraction,
+                    timeFormat
+            );
+        });
+        hdoNextSwitchAnimator.start();
+    }
+
+
+    private void bindHdoNextSwitchDisplay(long startMillis,
+                                          long targetMillis,
+                                          @NonNull String startLabel,
+                                          @NonNull String targetLabel,
+                                          float fraction,
+                                          @NonNull SimpleDateFormat timeFormat) {
+        if (!isAdded()) return;
+
+        float maxShiftPx = dpToPx(requireContext(), 4f);
+
+        if (startLabel.equals(targetLabel) || fraction >= 0.999f) {
+            tvHdoNextSwitchLabel.setText(targetLabel);
+            tvHdoNextSwitchLabel.setAlpha(1f);
+            tvHdoNextSwitchLabel.setTranslationY(0f);
+            displayedHdoNextSwitchLabel = targetLabel;
+        } else if (fraction < 0.5f) {
+            float outProgress = fraction * 2f;
+            tvHdoNextSwitchLabel.setText(startLabel);
+            tvHdoNextSwitchLabel.setAlpha(1f - outProgress);
+            tvHdoNextSwitchLabel.setTranslationY(-maxShiftPx * outProgress);
+            displayedHdoNextSwitchLabel = startLabel;
+        } else {
+            float inProgress = (fraction - 0.5f) * 2f;
+            tvHdoNextSwitchLabel.setText(targetLabel);
+            tvHdoNextSwitchLabel.setAlpha(inProgress);
+            tvHdoNextSwitchLabel.setTranslationY(maxShiftPx * (1f - inProgress));
+            displayedHdoNextSwitchLabel = targetLabel;
+        }
+
+        boolean hasStart = startMillis > 0L;
+        boolean hasTarget = targetMillis > 0L;
+
+        if (hasStart && hasTarget) {
+            displayedHdoNextSwitchMillis = Math.round(startMillis + (targetMillis - startMillis) * (double) fraction);
+            tvHdoNextSwitchTime.setAlpha(1f);
+            tvHdoNextSwitchTime.setTranslationY(0f);
+            tvHdoNextSwitchTime.setText(timeFormat.format(displayedHdoNextSwitchMillis));
+        } else if (hasTarget) {
+            displayedHdoNextSwitchMillis = targetMillis;
+            tvHdoNextSwitchTime.setText(timeFormat.format(targetMillis));
+            tvHdoNextSwitchTime.setAlpha(fraction);
+            tvHdoNextSwitchTime.setTranslationY(maxShiftPx * (1f - fraction));
+        } else if (hasStart) {
+            if (fraction < 0.995f) {
+                tvHdoNextSwitchTime.setText(timeFormat.format(startMillis));
+                tvHdoNextSwitchTime.setAlpha(1f - fraction);
+                tvHdoNextSwitchTime.setTranslationY(-maxShiftPx * fraction);
+            } else {
+                displayedHdoNextSwitchMillis = 0L;
+                tvHdoNextSwitchTime.setText("");
+                tvHdoNextSwitchTime.setAlpha(1f);
+                tvHdoNextSwitchTime.setTranslationY(0f);
+            }
+        } else {
+            displayedHdoNextSwitchMillis = 0L;
+            tvHdoNextSwitchTime.setText("");
+            tvHdoNextSwitchTime.setAlpha(1f);
+            tvHdoNextSwitchTime.setTranslationY(0f);
+        }
+    }
+
+
+    /**
+     * Aktualizuje zvýraznění aktivní sazby (VT / NT) na kartě aktuální ceny elektřiny.
+     * Při změně aktivní sazby plynule animuje přechod barvy pozadí, ohraničení, textů i ikony zaškrtnutí.
+     *
+     * @param isNtActive {@code true}, pokud je aktivní nízký tarif (NT), jinak {@code false} (VT)
+     */
     private void applyTariffBoxHighlight(boolean isNtActive) {
+        if (!isAdded()) return;
+
+        final float targetNtRatio = isNtActive ? 1f : 0f;
+
+        if (tariffHighlightAnimator != null) {
+            tariffHighlightAnimator.cancel();
+            tariffHighlightAnimator = null;
+        }
+
+        if (!hasInitializedTariffHighlight) {
+            displayedTariffNtRatio = targetNtRatio;
+            hasInitializedTariffHighlight = true;
+            bindTariffBoxHighlight(displayedTariffNtRatio);
+            return;
+        }
+
+        if (Math.abs(targetNtRatio - displayedTariffNtRatio) < 0.001f) {
+            displayedTariffNtRatio = targetNtRatio;
+            bindTariffBoxHighlight(displayedTariffNtRatio);
+            return;
+        }
+
+        final float startNtRatio = displayedTariffNtRatio;
+        tariffHighlightAnimator = ValueAnimator.ofFloat(startNtRatio, targetNtRatio);
+        tariffHighlightAnimator.setDuration(PERIOD_ANIMATION_DURATION_MS);
+        tariffHighlightAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        tariffHighlightAnimator.addUpdateListener(anim -> {
+            if (!isAdded()) return;
+            displayedTariffNtRatio = (float) anim.getAnimatedValue();
+            bindTariffBoxHighlight(displayedTariffNtRatio);
+        });
+        tariffHighlightAnimator.start();
+    }
+
+
+    private void bindTariffBoxHighlight(float ntActiveRatio) {
+        if (!isAdded()) return;
+
+        float clampedNtRatio = Math.max(0f, Math.min(1f, ntActiveRatio));
+        float vtActiveRatio = 1f - clampedNtRatio;
+
+        int colorActiveBg = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_active_bg);
+        int colorInactiveBg = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_bg);
+        int colorInactiveStroke = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_stroke);
         int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface);
         int colorWhite = ContextCompat.getColor(requireContext(), android.R.color.white);
+        float cornerRadiusPx = dpToPx(requireContext(), 14f);
+        int strokeWidthPx = Math.max(1, dpToPx(requireContext(), 1f));
 
-        if (isNtActive) {
-            boxPriceVt.setBackgroundResource(R.drawable.bg_dashboard_price_box_inactive);
-            tvLabelVt.setTextColor(colorOnSurface);
-            tvPriceVtValue.setTextColor(colorOnSurface);
-            tvPriceVtUnit.setTextColor(colorOnSurface);
-            ivCheckVt.setVisibility(View.GONE);
+        if (boxPriceVtBgDrawable == null) {
+            boxPriceVtBgDrawable = new GradientDrawable();
+            boxPriceVtBgDrawable.setShape(GradientDrawable.RECTANGLE);
+            boxPriceVtBgDrawable.setCornerRadius(cornerRadiusPx);
+        }
+        if (boxPriceNtBgDrawable == null) {
+            boxPriceNtBgDrawable = new GradientDrawable();
+            boxPriceNtBgDrawable.setShape(GradientDrawable.RECTANGLE);
+            boxPriceNtBgDrawable.setCornerRadius(cornerRadiusPx);
+        }
 
-            boxPriceNt.setBackgroundResource(R.drawable.bg_dashboard_price_box_active);
-            tvLabelNt.setTextColor(colorWhite);
-            tvPriceNtValue.setTextColor(colorWhite);
-            tvPriceNtUnit.setTextColor(colorWhite);
-            ivCheckNt.setVisibility(View.VISIBLE);
+        bindSingleTariffBox(
+                boxPriceVt, boxPriceVtBgDrawable,
+                tvLabelVt, tvPriceVtValue, tvPriceVtUnit, ivCheckVt,
+                vtActiveRatio, colorInactiveBg, colorActiveBg, colorInactiveStroke,
+                colorOnSurface, colorWhite, strokeWidthPx
+        );
+        bindSingleTariffBox(
+                boxPriceNt, boxPriceNtBgDrawable,
+                tvLabelNt, tvPriceNtValue, tvPriceNtUnit, ivCheckNt,
+                clampedNtRatio, colorInactiveBg, colorActiveBg, colorInactiveStroke,
+                colorOnSurface, colorWhite, strokeWidthPx
+        );
+    }
+
+
+    private void bindSingleTariffBox(@NonNull View box,
+                                     @NonNull GradientDrawable bgDrawable,
+                                     @NonNull TextView tvLabel,
+                                     @NonNull TextView tvValue,
+                                     @NonNull TextView tvUnit,
+                                     @NonNull ImageView ivCheck,
+                                     float activeRatio,
+                                     int colorInactiveBg,
+                                     int colorActiveBg,
+                                     int colorInactiveStroke,
+                                     int colorOnSurface,
+                                     int colorWhite,
+                                     int strokeWidthPx) {
+        int bgColor = (int) argbEvaluator.evaluate(activeRatio, colorInactiveBg, colorActiveBg);
+        int strokeColor = (int) argbEvaluator.evaluate(activeRatio, colorInactiveStroke, colorActiveBg);
+        int textColor = (int) argbEvaluator.evaluate(activeRatio, colorOnSurface, colorWhite);
+
+        bgDrawable.setColor(bgColor);
+        bgDrawable.setStroke(strokeWidthPx, strokeColor);
+        if (box.getBackground() != bgDrawable) {
+            box.setBackground(bgDrawable);
+        }
+
+        tvLabel.setTextColor(textColor);
+        tvValue.setTextColor(textColor);
+        tvUnit.setTextColor(textColor);
+
+        if (activeRatio <= 0.01f) {
+            ivCheck.setVisibility(View.GONE);
+            ivCheck.setAlpha(0f);
         } else {
-            boxPriceVt.setBackgroundResource(R.drawable.bg_dashboard_price_box_active);
-            tvLabelVt.setTextColor(colorWhite);
-            tvPriceVtValue.setTextColor(colorWhite);
-            tvPriceVtUnit.setTextColor(colorWhite);
-            ivCheckVt.setVisibility(View.VISIBLE);
-
-            boxPriceNt.setBackgroundResource(R.drawable.bg_dashboard_price_box_inactive);
-            tvLabelNt.setTextColor(colorOnSurface);
-            tvPriceNtValue.setTextColor(colorOnSurface);
-            tvPriceNtUnit.setTextColor(colorOnSurface);
-            ivCheckNt.setVisibility(View.GONE);
+            ivCheck.setVisibility(View.VISIBLE);
+            ivCheck.setAlpha(activeRatio);
+            float scale = 0.6f + 0.4f * activeRatio;
+            ivCheck.setScaleX(scale);
+            ivCheck.setScaleY(scale);
         }
     }
 
@@ -1550,6 +1795,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         if (billingValuesAnimator != null) {
             billingValuesAnimator.cancel();
             billingValuesAnimator = null;
+        }
+        if (tariffHighlightAnimator != null) {
+            tariffHighlightAnimator.cancel();
+            tariffHighlightAnimator = null;
+        }
+        if (hdoNextSwitchAnimator != null) {
+            hdoNextSwitchAnimator.cancel();
+            hdoNextSwitchAnimator = null;
         }
     }
 
