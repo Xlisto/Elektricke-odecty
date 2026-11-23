@@ -61,6 +61,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.PriceListRegulBuilder;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.graphmonth.ConsuptionContainer;
+import cz.xlisto.elektrodroid.modules.graphmonth.GraphMonthFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoTime;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceAbstract;
@@ -336,6 +337,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         swConsumptionYearly = view.findViewById(R.id.swConsumptionYearly);
         viewConsumptionBarChart = view.findViewById(R.id.viewConsumptionBarChart);
 
+        View layoutBillingSummary = view.findViewById(R.id.layoutBillingSummary);
         tvBillingPeriod = view.findViewById(R.id.tvBillingPeriod);
         tvBillingAdvances = view.findViewById(R.id.tvBillingAdvances);
         tvBillingCosts = view.findViewById(R.id.tvBillingCosts);
@@ -366,6 +368,39 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
             );
             FragmentChange.replace(requireActivity(), addFragment, MOVE, true);
         });
+
+        cardPeriodConsumption.setOnClickListener(v -> openCurrentUninvoicedPeriod());
+        layoutBillingSummary.setOnClickListener(v -> openCurrentUninvoicedPeriod());
+
+        cardConsumptionOverview.setOnClickListener(v -> {
+            if (currentPoint == null) return;
+            applyDashboardSubscriptionPointIfChanged();
+            int initialPeriod = swConsumptionYearly.isChecked()
+                    ? GraphMonthFragment.PERIOD_YEAR
+                    : GraphMonthFragment.PERIOD_MONTH;
+            FragmentChange.replace(requireActivity(), GraphMonthFragment.newInstance(initialPeriod), MOVE, true);
+        });
+    }
+
+
+    /**
+     * Otevře obrazovku fakturace pro aktuální nevyfakturované období.
+     */
+    private void openCurrentUninvoicedPeriod() {
+        if (currentPoint == null) return;
+        applyDashboardSubscriptionPointIfChanged();
+        InvoiceAdapter.resetShowButtons();
+        PaymentAdapter.resetShowButtons();
+        InvoiceTabFragment tabFragment = InvoiceTabFragment.newInstance(
+                currentPoint.getTableFAK(),
+                currentPoint.getTableTED(),
+                currentPoint.getTablePLATBY(),
+                currentPoint.getTableO(),
+                -1L,
+                0,
+                MyViewPagerAdapter.TypeTabs.INVOICE
+        );
+        FragmentChange.replace(requireActivity(), tabFragment, MOVE, true);
     }
 
 
@@ -1777,6 +1812,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.dashboard));
+        }
         updatePadding();
         loadSubscriptionPointsAndRefresh();
         hdoHandler.removeCallbacks(hdoRefreshRunnable);

@@ -30,6 +30,13 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
  */
 public class GraphMonthFragment extends Fragment implements OnPaddingChangeListener {
 
+    public static final int PERIOD_MONTH = 0;
+    public static final int PERIOD_YEAR = 1;
+    public static final int PERIOD_COMPARE_MONTH = 2;
+
+    private static final String ARG_INITIAL_PERIOD = "initialPeriod";
+    private static final String STATE_INITIAL_PERIOD_APPLIED = "initialPeriodApplied";
+
     private final String ARG_IS_SHOW_PERIOD = "isShowPeriod";
     private final String ARG_IS_SHOW_VT = "isShowVT";
     private final String ARG_IS_SHOW_NT = "isShowNT";
@@ -44,9 +51,10 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
 
     private boolean showVT = true;
     private boolean showNT = true;
-    private int showPeriod = 1; // 0 - month, 1 - year, 2 - month compare
+    private int showPeriod = PERIOD_YEAR; // 0 - month, 1 - year, 2 - month compare
     private int compareMonth = 0;
     private boolean showTypeGraph = true;
+    private boolean initialPeriodApplied = false;
     private ShPGraphMonth shPGraphMonth;
     private ConsuptionContainer consuptionContainer;
 
@@ -56,9 +64,27 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
     }
 
 
+    /**
+     * Vytvoří instanci fragmentu grafu spotřeby s předvoleným obdobím zobrazení.
+     *
+     * @param initialPeriod Počáteční režim období ({@link #PERIOD_MONTH}, {@link #PERIOD_YEAR} nebo {@link #PERIOD_COMPARE_MONTH})
+     * @return Nová instance {@link GraphMonthFragment}
+     */
+    public static GraphMonthFragment newInstance(int initialPeriod) {
+        GraphMonthFragment fragment = new GraphMonthFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_INITIAL_PERIOD, initialPeriod);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            initialPeriodApplied = savedInstanceState.getBoolean(STATE_INITIAL_PERIOD_APPLIED, false);
+        }
 
         //posluchač změny odběrného místa
         requireActivity().getSupportFragmentManager().setFragmentResultListener(SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
@@ -193,6 +219,9 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
         super.onResume();
         updateViewPadding();
         requireActivity().invalidateOptionsMenu();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.graph_month));
+        }
 
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
         consuptionContainer = dataGraphMonth.loadConsuptions();
@@ -207,7 +236,16 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
 
         setImageIconZoom();
 
-        showPeriod = shPGraphMonth.get(ARG_IS_SHOW_PERIOD, 1);
+        Bundle args = getArguments();
+        if (!initialPeriodApplied && args != null && args.containsKey(ARG_INITIAL_PERIOD)) {
+            int initialPeriod = args.getInt(ARG_INITIAL_PERIOD, PERIOD_YEAR);
+            if (initialPeriod >= PERIOD_MONTH && initialPeriod <= PERIOD_COMPARE_MONTH) {
+                shPGraphMonth.set(ShPGraphMonth.ARG_IS_SHOW_PERIOD, initialPeriod);
+            }
+            initialPeriodApplied = true;
+        }
+
+        showPeriod = shPGraphMonth.get(ARG_IS_SHOW_PERIOD, PERIOD_YEAR);
         showTypeGraph = shPGraphMonth.get(ARG_TYPE_GRAPH, true);
         showVT = shPGraphMonth.get(ARG_IS_SHOW_VT, true);
         showNT = shPGraphMonth.get(ARG_IS_SHOW_NT, true);
@@ -228,6 +266,7 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
         outState.putBoolean(ARG_IS_SHOW_NT, showNT);
         outState.putBoolean(ARG_TYPE_GRAPH, showTypeGraph);
         outState.putInt(ARG_COMPARE_MONTH, compareMonth);
+        outState.putBoolean(STATE_INITIAL_PERIOD_APPLIED, initialPeriodApplied);
     }
 
 

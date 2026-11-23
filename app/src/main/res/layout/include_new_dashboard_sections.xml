@@ -463,6 +463,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:focusable="true"
         app:cardBackgroundColor="@color/dashboard_card_bg"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
@@ -629,6 +631,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:focusable="true"
         app:cardBackgroundColor="@color/dashboard_card_bg"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
@@ -712,158 +716,170 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="12dp">
+            android:orientation="vertical">
 
-            <!-- Hlavička Vyúčtování -->
             <LinearLayout
+                android:id="@+id/layoutBillingSummary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="10dp">
 
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_calculator_24" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:text="@string/dashboard_billing_title"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="15.5sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvBillingPeriod"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="12.5sp"
-                    tools:text="Období: 19.05. – 31.08.2026" />
-            </LinearLayout>
-
-            <!-- Zálohy | Náklady | Přeplatek/Nedoplatek -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <!-- Zálohy -->
+                <!-- Hlavička Vyúčtování -->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingVertical="4dp">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_calculator_24" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/dashboard_advances_label"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvBillingAdvances"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:maxLines="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="@string/dashboard_billing_title"
                         android:textColor="?attr/colorOnSurface"
                         android:textSize="15.5sp"
-                        android:textStyle="bold"
-                        tools:text="18 000 Kč" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="34dp"
-                    android:background="@color/dashboard_divider" />
-
-                <!-- Náklady -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingVertical="4dp">
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvBillingPeriod"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/dashboard_costs_label"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvBillingCosts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:maxLines="1"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="15.5sp"
-                        android:textStyle="bold"
-                        tools:text="7 748 Kč" />
+                        android:textSize="12.5sp"
+                        tools:text="Období: 19.05. – 31.08.2026" />
                 </LinearLayout>
 
-                <!-- Přeplatek / Nedoplatek -->
+                <!-- Zálohy | Náklady | Přeplatek/Nedoplatek -->
                 <LinearLayout
-                    android:id="@+id/boxBillingBalance"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1.15"
-                    android:background="@drawable/bg_dashboard_overpayment"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="7dp">
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tvBillingBalanceLabel"
-                        android:layout_width="wrap_content"
+                    <!-- Zálohy -->
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/dashboard_overpayment_label"
-                        android:textColor="@color/dashboard_overpayment_text"
-                        android:textSize="12sp" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
 
-                    <TextView
-                        android:id="@+id/tvBillingBalanceValue"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_advances_label"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBillingAdvances"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:maxLines="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15.5sp"
+                            android:textStyle="bold"
+                            tools:text="18 000 Kč" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="34dp"
+                        android:background="@color/dashboard_divider" />
+
+                    <!-- Náklady -->
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:maxLines="1"
-                        android:textColor="@color/dashboard_overpayment_text"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="10 252 Kč" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_costs_label"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBillingCosts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:maxLines="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="15.5sp"
+                            android:textStyle="bold"
+                            tools:text="7 748 Kč" />
+                    </LinearLayout>
+
+                    <!-- Přeplatek / Nedoplatek -->
+                    <LinearLayout
+                        android:id="@+id/boxBillingBalance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1.15"
+                        android:background="@drawable/bg_dashboard_overpayment"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="7dp">
+
+                        <TextView
+                            android:id="@+id/tvBillingBalanceLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_overpayment_label"
+                            android:textColor="@color/dashboard_overpayment_text"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBillingBalanceValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:maxLines="1"
+                            android:textColor="@color/dashboard_overpayment_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="10 252 Kč" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/dashboard_divider" />
 
             <!-- Poslední faktury -->
             <LinearLayout
                 android:id="@+id/layoutLastInvoicesSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingBottom="12dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/dashboard_divider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
