@@ -6,11 +6,11 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 
 import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
 import cz.xlisto.elektrodroid.models.ConsuptionModel;
 import cz.xlisto.elektrodroid.models.MonthlyConsuptionModel;
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.models.YearConsuptionModel;
 import cz.xlisto.elektrodroid.modules.graphmonth.ConsuptionContainer;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
@@ -34,12 +34,25 @@ public class DataGraphMonth extends DataSource {
 
     /**
      * Z databáze s měsíčními odečty sestaví ArrayList s celkovou měsíční spotřebou
+     * pro aktuálně vybrané globální odběrné místo.
      *
-     * @return ArrayList sestavený z objektů SpotrebaFaktura, který reprezentuje celkovou měsíční spotřebu
+     * @return {@link ConsuptionContainer} s měsíční a roční spotřebou
      */
     public ConsuptionContainer loadConsuptions() {
-        if (SubscriptionPoint.load(context) == null) return null;
-        String table = (Objects.requireNonNull(SubscriptionPoint.load(context))).getTableO();
+        return loadConsuptions(SubscriptionPoint.load(context));
+    }
+
+
+    /**
+     * Z databáze s měsíčními odečty sestaví ArrayList s celkovou měsíční spotřebou
+     * pro zadané odběrné místo.
+     *
+     * @param subscriptionPoint odběrné místo, pro které se má spotřeba načíst
+     * @return {@link ConsuptionContainer} s měsíční a roční spotřebou
+     */
+    public ConsuptionContainer loadConsuptions(cz.xlisto.elektrodroid.models.SubscriptionPointModel subscriptionPoint) {
+        if (subscriptionPoint == null) return null;
+        String table = subscriptionPoint.getTableO();
         if (table == null) return null;
         String orderBy = DbHelper.DATUM + " ASC, " + DbHelper.PRVNI_ODECET + " ASC";
         boolean add;

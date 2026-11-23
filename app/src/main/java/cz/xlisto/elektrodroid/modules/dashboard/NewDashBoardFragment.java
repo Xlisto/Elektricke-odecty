@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -156,11 +157,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     private View layoutLastInvoicesSection;
     private LinearLayout llInvoicesContainer;
 
+    private static final String STATE_SELECTED_LOCAL_POINT_ID = "stateSelectedLocalPointId";
+
     private ShPDashBoard shPDashBoard;
     private DashboardLayoutManager layoutManager;
     private ArrayList<SubscriptionPointModel> allSubscriptionPoints = new ArrayList<>();
     private int currentPointIndex = 0;
     private SubscriptionPointModel currentPoint;
+    private long selectedLocalPointId = -1L;
 
     private final List<DashboardConsumptionBarChartView.BarEntry> monthlyChartEntries = new ArrayList<>();
     private final List<DashboardConsumptionBarChartView.BarEntry> yearlyChartEntries = new ArrayList<>();
@@ -186,11 +190,24 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            selectedLocalPointId = savedInstanceState.getLong(STATE_SELECTED_LOCAL_POINT_ID, -1L);
+        }
         requireActivity().getSupportFragmentManager().setFragmentResultListener(
                 SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
                 this,
-                (requestKey, result) -> loadSubscriptionPointsAndRefresh()
+                (requestKey, result) -> {
+                    selectedLocalPointId = -1L;
+                    loadSubscriptionPointsAndRefresh();
+                }
         );
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(STATE_SELECTED_LOCAL_POINT_ID, selectedLocalPointId);
     }
 
 
@@ -283,16 +300,19 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
         cardQuickMonthlyReadings.setOnClickListener(v -> {
             if (currentPoint == null) return;
+            applyDashboardSubscriptionPointIfChanged();
             FragmentChange.replace(requireActivity(), MonthlyReadingFragment.newInstance(), MOVE, true);
         });
 
         cardQuickHdoClock.setOnClickListener(v -> {
             if (currentPoint == null) return;
+            applyDashboardSubscriptionPointIfChanged();
             FragmentChange.replace(requireActivity(), HdoFragment.newInstance(), MOVE, true);
         });
 
         cardQuickNewReading.setOnClickListener(v -> {
             if (currentPoint == null) return;
+            applyDashboardSubscriptionPointIfChanged();
             MonthlyReadingAddFragment addFragment = MonthlyReadingAddFragment.newInstance(
                     currentPoint.getTableO(),
                     currentPoint.getTablePLATBY()
@@ -397,9 +417,9 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
 
     private void loadSubscriptionPointsAndRefresh() {
         allSubscriptionPoints = SubscriptionPoint.getAllSubscriptionPoints(requireContext());
-        SubscriptionPointModel active = SubscriptionPoint.load(requireContext());
+        SubscriptionPointModel activeGlobal = SubscriptionPoint.load(requireContext());
 
-        if (allSubscriptionPoints == null || allSubscriptionPoints.isEmpty() || active == null) {
+        if (allSubscriptionPoints == null || allSubscriptionPoints.isEmpty() || activeGlobal == null) {
             currentPoint = null;
             tvSubscriptionPointName.setText(R.string.no_subsriptionpoint);
             btnPrevSubscriptionPoint.setVisibility(View.INVISIBLE);
@@ -412,14 +432,26 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvAlertNoSubscriptionPoint.setVisibility(View.GONE);
         setContentContainersVisibility(View.VISIBLE);
 
-        currentPointIndex = 0;
+        long targetPointId = (selectedLocalPointId != -1L) ? selectedLocalPointId : activeGlobal.getId();
+        currentPointIndex = -1;
         for (int idx = 0; idx < allSubscriptionPoints.size(); idx++) {
-            if (allSubscriptionPoints.get(idx).getId() == active.getId()) {
+            if (allSubscriptionPoints.get(idx).getId() == targetPointId) {
                 currentPointIndex = idx;
                 break;
             }
         }
+        if (currentPointIndex < 0) {
+            currentPointIndex = 0;
+            for (int idx = 0; idx < allSubscriptionPoints.size(); idx++) {
+                if (allSubscriptionPoints.get(idx).getId() == activeGlobal.getId()) {
+                    currentPointIndex = idx;
+                    break;
+                }
+            }
+        }
+
         currentPoint = allSubscriptionPoints.get(currentPointIndex);
+        selectedLocalPointId = currentPoint.getId();
         MainActivityHelper.updateToolbarAndLoadData(requireActivity());
         updateSwitcherUi();
         refreshAllSections();
@@ -436,17 +468,40 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
     }
 
 
+    /**
+     * Přepne odběrné místo pouze lokálně v rámci přehledu (nemění globální odběrné místo aplikace).
+     */
     private void selectSubscriptionPoint(int index) {
         if (index < 0 || index >= allSubscriptionPoints.size()) {
             return;
         }
         currentPointIndex = index;
         currentPoint = allSubscriptionPoints.get(index);
+        selectedLocalPointId = currentPoint.getId();
         shPDashBoard.set(ShPDashBoard.SHOW_INVOICE_SUM, index);
-        SubscriptionPoint.setCurrentSelection(requireContext(), currentPoint.getId());
-        MainActivityHelper.updateToolbarAndLoadData(requireActivity());
         updateSwitcherUi();
         refreshAllSections();
+    }
+
+
+    /**
+     * Pokud se lokálně zobrazené odběrné místo v přehledu liší od globálního odběrného místa aplikace,
+     * při přechodu do jiného fragmentu přepne globální odběrné místo a zobrazí uživateli upozornění.
+     */
+    private void applyDashboardSubscriptionPointIfChanged() {
+        if (currentPoint == null || !isAdded()) {
+            return;
+        }
+        SubscriptionPointModel globalPoint = SubscriptionPoint.load(requireContext());
+        if (globalPoint == null || globalPoint.getId() != currentPoint.getId()) {
+            SubscriptionPoint.setCurrentSelection(requireContext(), currentPoint.getId());
+            MainActivityHelper.updateToolbarAndLoadData(requireActivity());
+            Toast.makeText(
+                    requireContext(),
+                    getString(R.string.dashboard_subscription_point_switched, currentPoint.getName()),
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
     }
 
 
@@ -809,6 +864,8 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 final long clickedIdFak = invItem.getIdFak();
                 final int clickedPos = pos;
                 row.setOnClickListener(v -> {
+                    if (currentPoint == null) return;
+                    applyDashboardSubscriptionPointIfChanged();
                     InvoiceAdapter.resetShowButtons();
                     PaymentAdapter.resetShowButtons();
                     InvoiceTabFragment tabFragment = InvoiceTabFragment.newInstance(
@@ -956,7 +1013,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         DataGraphMonth dataGraphMonth = new DataGraphMonth(requireContext());
         try {
             dataGraphMonth.open();
-            ConsuptionContainer container = dataGraphMonth.loadConsuptions();
+            ConsuptionContainer container = dataGraphMonth.loadConsuptions(currentPoint);
             if (container != null) {
                 ArrayList<ConsuptionModel> monthlyList = container.monthlyConsuption();
                 if (monthlyList != null && !monthlyList.isEmpty()) {
