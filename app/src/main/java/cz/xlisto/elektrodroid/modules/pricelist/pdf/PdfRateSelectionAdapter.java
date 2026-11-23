@@ -30,7 +30,11 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelectionAdapter.ViewHolder> {
 
+    /**
+     * Seznam načtených ceníkových sazeb zobrazovaných v adaptéru.
+     */
     private final List<PriceListModel> items;
+    /** Množina indexů aktuálně zaškrtnutých položek v seznamu {@link #items}. */
     private final Set<Integer> selectedIndices;
 
 
@@ -67,7 +71,7 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
 
 
     /**
-     * Propojí data ceníkové sazby na dané pozici s prvnky v držiteli pohledu.
+     * Propojí data ceníkové sazby na dané pozici s prvky v držiteli pohledu.
      *
      * @param holder   Držitel pohledu {@link ViewHolder}
      * @param position Pozice položky v seznamu
@@ -157,20 +161,28 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
 
 
     /**
-     * Aktualizuje seznam ceníkových položek a znovunačte zaškrtnuté indexy.
+     * Nahradí seznam ceníkových položek novými daty, označí všechny nové položky
+     * jako zaškrtnuté a upozorní adaptér na odebrání starých a vložení nových položek.
      *
-     * @param newItems Nový seznam položek
+     * @param newItems Nový seznam ceníkových sazeb (může být {@code null})
      */
     public void updateItems(List<PriceListModel> newItems) {
-        this.items.clear();
-        if (newItems != null) {
+        int oldSize = this.items.size();
+        if (oldSize > 0) {
+            this.items.clear();
+            notifyItemRangeRemoved(0, oldSize);
+        }
+        if (newItems != null && !newItems.isEmpty()) {
             this.items.addAll(newItems);
         }
         this.selectedIndices.clear();
-        for (int i = 0; i < this.items.size(); i++) {
+        int newSize = this.items.size();
+        for (int i = 0; i < newSize; i++) {
             selectedIndices.add(i);
         }
-        notifyDataSetChanged();
+        if (newSize > 0) {
+            notifyItemRangeInserted(0, newSize);
+        }
     }
 
 
@@ -179,8 +191,11 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        /** Zaškrtávací pole pro výběr ceníkové sazby k importu. */
         CheckBox cbSelectRate;
+        /** Textové pole s názvem sazby, produktovou řadou a dobou platnosti. */
         TextView tvRateName;
+        /** Textové pole se souhrnem cen za VT, NT a stálý měsíční plat. */
         TextView tvPricesInfo;
 
 
