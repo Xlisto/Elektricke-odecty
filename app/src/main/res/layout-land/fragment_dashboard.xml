@@ -57,7 +57,8 @@
             android:id="@+id/rlGraphTotalConsuptionMetersSum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/llMeter">
+            android:layout_below="@id/llMeter"
+            android:baselineAligned="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -105,6 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/rlGraphTotalConsuptionButtons"
             android:background="@drawable/shape_border"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <RelativeLayout
