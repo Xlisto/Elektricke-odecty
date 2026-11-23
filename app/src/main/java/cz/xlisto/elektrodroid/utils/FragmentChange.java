@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
 
 
@@ -47,6 +48,9 @@ public class FragmentChange {
         if (transaction == Transaction.ALPHA) {
             fragmentTransaction.setCustomAnimations(R.anim.show, R.anim.hide, R.anim.show, R.anim.hide);
             fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);//přesun na začátek
+            if (fa instanceof MainActivity mainActivity) {
+                mainActivity.setBottomNavCompact(false);
+            }
         }
 
         if (fragment != null)
