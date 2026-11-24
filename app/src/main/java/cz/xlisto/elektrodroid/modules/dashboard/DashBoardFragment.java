@@ -245,14 +245,14 @@ public class DashBoardFragment extends Fragment implements OnPaddingChangeListen
      */
     private void setImgButton() {
         if (showInvoiceSum == 0)
-            btnLeftShowInvoiceSum.setImageResource(R.mipmap.ic_graph_month_left_gray);
+            btnLeftShowInvoiceSum.setImageResource(R.mipmap.ic_dashboard_left_gray);
         else
-            btnLeftShowInvoiceSum.setImageResource(R.mipmap.ic_graph_month_left);
+            btnLeftShowInvoiceSum.setImageResource(R.mipmap.ic_dashboard_left);
 
         if (showInvoiceSum == invoiceListSumModel.size() - 1)
-            btnRightShowInvoiceSum.setImageResource(R.mipmap.ic_graph_month_right_gray);
+            btnRightShowInvoiceSum.setImageResource(R.mipmap.ic_dashboard_right_gray);
         else
-            btnRightShowInvoiceSum.setImageResource(R.mipmap.ic_graph_month_right);
+            btnRightShowInvoiceSum.setImageResource(R.mipmap.ic_dashboard_right);
     }
 
 

@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
                 android:contentDescription="@string/btn_left_content_description_sum_invoices"
-                android:src="@mipmap/ic_graph_month_left" />
+                android:src="@mipmap/ic_dashboard_left" />
 
             <ImageButton
                 android:id="@+id/imgBtnRightDashBoard"
@@ -36,7 +36,7 @@
                 android:layout_alignParentEnd="true"
                 android:backgroundTint="@android:color/transparent"
                 android:contentDescription="@string/btn_right_content_description_sum_invoices"
-                android:src="@mipmap/ic_graph_month_right" />
+                android:src="@mipmap/ic_dashboard_right" />
 
             <TextView
                 android:id="@+id/tvNameDashBoard"

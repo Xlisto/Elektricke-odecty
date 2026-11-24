@@ -31,7 +31,7 @@
             android:layout_marginTop="3dp"
             android:clickable="false"
             android:contentDescription="@string/ikona"
-            android:src="@mipmap/ic_price_list" />
+            android:src="@mipmap/ic_import_price_list" />
 
         <LinearLayout
             android:id="@+id/lnButtonsExportImport"
