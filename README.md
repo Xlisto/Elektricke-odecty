@@ -11,17 +11,46 @@ Hlavním účelem aplikace je poskytnout uživateli průběžný přehled o tom,
 
 Aplikace pracuje s vysokým tarifem (VT), nízkým tarifem (NT), měsíčními zálohami, ceníky, fakturami, stálými platbami a dalšími položkami, které se podílejí na výsledné ceně elektřiny. Výpočty slouží jako uživatelská kontrola a orientační přehled. Skutečné vyúčtování je vždy určeno fakturou dodavatele elektrické energie.
 
-## Odběrná místa
+### Odběrná místa
 
-Odběrné místo představuje konkrétní místo spotřeby elektřiny, například byt, dům, garáž nebo chatu. V aplikaci lze vést více odběrných míst současně. Veškeré měsíční odečty, faktury, použité ceníky a další záznamy se vždy vztahují k aktuálně vybranému odběrnému místu.
+Odběrné místo představuje konkrétní místo spotřeby elektřiny, například byt, dům, garáž nebo chatu.
+V aplikaci lze vést více odběrných míst současně. Veškeré měsíční odečty, faktury, použité ceníky a
+další záznamy jsou vedeny samostatně pro jednotlivá odběrná místa.
 
 Obrazovka odběrných míst je rozdělena na dvě části: **Správa odběrného místa** a **Notifikace** (v
-režimu na výšku) nebo na zobrazení detailů vlevo a záložek vpravo (v režimu na šířku). V části *
-*Správa odběrného místa** se vybírá aktuální odběrné místo a zobrazují se jeho základní údaje.
-Aktuální odběrné místo se vybírá pomocí rozbalovacího seznamu v horní části obrazovky. Pod ním se
-zobrazují například poznámka, hodnota hlavního jističe, číslo elektroměru a číslo odběrného místa.
-Tyto údaje pomáhají odlišit jednotlivá místa a zároveň slouží jako podklad pro některé výpočty,
-zejména u hodnot souvisejících s hlavním jističem.
+režimu na výšku) nebo na zobrazení detailů vlevo a záložek vpravo (v režimu na šířku).
+
+#### Výběr odběrného místa
+
+Aplikace umožňuje dva způsoby výběru odběrného místa, které se liší svým účelem:
+
+- **Rychlý výběr odběrného místa** – pomocí rozbalovacího seznamu v horní části obrazovky lze rychle
+  přepínat mezi evidovanými odběrnými místy, zobrazovat jejich základní údaje, grafy spotřeby a
+  spravovat nastavení notifikací. Tento výběr nemění aktivní odběrné místo pro celou aplikaci.
+- **Změna aktivního odběrného místa** – pokud chce uživatel změnit odběrné místo, se kterým pracuje
+  celá aplikace, je nutné v nabídce **Menu → Odběrné místo** otevřít dialog pro výběr odběrného
+  místa a vybrat požadované místo. Tím se změní aktivní odběrné místo pro ostatní části aplikace,
+  například měsíční odečty, fakturaci a přehled spotřeby.
+
+Název aktuálně aktivního odběrného místa pro celou aplikaci je zobrazen v záhlaví obrazovky pod
+jejím názvem. Může se tedy lišit od názvu odběrného místa vybraného v rozbalovacím seznamu.
+
+> **Upozornění:** Změna odběrného místa v rozbalovacím seznamu slouží pouze k jeho zobrazení a
+> správě. Nemá vliv na výběr aktivního odběrného místa v ostatních částech aplikace.
+
+#### Správa odběrného místa
+
+V části **Správa odběrného místa** se zobrazují základní údaje odběrného místa vybraného v
+rozbalovacím seznamu:
+
+- Název odběrného místa.
+- Popis nebo poznámka.
+- Počet fází a jmenovitý proud hlavního jističe (například 3 × 25 A).
+- Číslo elektroměru.
+- Číslo odběrného místa.
+
+Tyto údaje pomáhají odlišit jednotlivá odběrná místa a zároveň slouží jako podklad pro některé
+výpočty, zejména pro stanovení poplatků souvisejících s hodnotou hlavního jističe.
 
 Součástí je také **Přehledový kombinovaný graf roční spotřeby a průměrných cen**, který zobrazuje 4
 po sobě jdoucí roky. Graf přehledně kombinuje skládané sloupce spotřeby vysokého (VT) a nízkého
@@ -105,7 +134,11 @@ zejména oprávnění pro notifikace a přesné alarmy.
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_5.jpg" alt="Odběrné místo 5" style="height: 300px;" />
+  <img src="screenshots/odb_5.jpg" alt="Odběrné místo 5" style="height: 500px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/odb_6.jpg" alt="Odběrné místo 6" style="height: 300px;" />
 </p>
 
 ## Ceník

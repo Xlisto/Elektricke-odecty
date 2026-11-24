@@ -990,4 +990,13 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="widget_balance_costs_compact_format">Náklady: %1$s</string>
 
     <string name="widget_new_reading_action_label">Nový odečet</string>
+
+    <!-- Porovnání ceníků -->
+    <string name="price_list_compare_metric_label">Srovnávaná veličina:</string>
+    <string name="price_list_compare_input_params_title">Vstupní parametry porovnání</string>
+    <string name="price_list_compare_unregulated_prices_title">Neregulované ceny – Dodavatel (s DPH)</string>
+    <string name="price_list_compare_regulated_prices_title">Regulované ceny (s DPH)</string>
+    <string name="price_list_compare_total_prices_title">Celkové součtové ceny (s DPH)</string>
+    <string name="price_list_compare_annual_costs_chart_title">Graf celkových ročních nákladů</string>
+    <string name="price_list_compare_ranking_title">Žebříček vyhodnocených ceníků</string>
 </resources>
