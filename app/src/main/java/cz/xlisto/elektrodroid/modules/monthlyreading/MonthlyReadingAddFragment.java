@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BundleCompat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
@@ -29,6 +31,7 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
+import cz.xlisto.elektrodroid.shp.ShPSettings;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 
 
@@ -89,9 +92,19 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
                 selectedPriceList = priceListFromDatabase;
                 viewModel.setSelectedPriceList(priceListFromDatabase);
             }
+            if (viewModel.getWidgetContainer().getValue() == null) {
+                ShPSettings shPSettings = new ShPSettings(requireContext());
+                if (shPSettings.isAutoSetCurrentDateNewReading()) {
+                    btnDate.setText(ViewHelper.convertLongToDate(Calendar.getInstance().getTimeInMillis()));
+                }
+            }
         }
 
         btnSave.setOnClickListener(v -> {
+            if (!isValidDateText(btnDate.getText().toString())) {
+                Snackbar.make(requireView(), R.string.vyberteDatum, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
             if ((selectedPriceList != null && selectedPriceList.getId() > 0) || cbChangeMeter.isChecked() || getCountMonthlyReading() == 0) {
                 //načítám poslední měsíční odečet
                 DataMonthlyReadingSource dataMonthlyReadingSource = new DataMonthlyReadingSource(getContext());
@@ -229,6 +242,26 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
             return idFromTablePref;
         }
         return shPAddEditMonthlyReading.get(ARG_LAST_ID_SELECTED_PRICE_LIST, 0L);
+    }
+
+
+    /**
+     * Ověří, zda text tlačítka data obsahuje platné datum ve formátu dd.MM.yyyy.
+     *
+     * @param dateText text z tlačítka pro výběr data
+     * @return {@code true}, pokud je datum platné, jinak {@code false}
+     */
+    private boolean isValidDateText(@Nullable String dateText) {
+        if (dateText == null || dateText.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            SimpleDateFormat sdf = ViewHelper.getSimpleDateFormat();
+            sdf.setLenient(false);
+            return sdf.parse(dateText.trim()) != null;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
 

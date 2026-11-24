@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataHdoSource;
 import cz.xlisto.elektrodroid.models.HdoModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 
 /**
  * BroadcastReceiver pro zpracování naplánovaných HDO alarmů.
@@ -94,5 +95,6 @@ public class HdoAlarmReceiver extends BroadcastReceiver {
 
         HdoNotice.setNotice(context, title, context.getString(R.string.hdo_service_name), content, subscriptionPointId);
         HdoAlarmScheduler.scheduleNextForType(context, table, model, type);
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 }

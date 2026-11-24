@@ -29,6 +29,7 @@ import cz.xlisto.elektrodroid.models.InvoiceListSumModel;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.InvoiceSumModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.utils.Calculation;
 
 
@@ -58,7 +59,9 @@ public class DataInvoiceSource extends DataSource {
      * @return long id faktury
      */
     public long insertInvoiceList(String numberInvoiceList, long idSubscriptionPoint) {
-        return database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
+        long id = database.insert(TABLE_NAME_INVOICES, null, createContentValue(numberInvoiceList, idSubscriptionPoint));
+        WidgetUpdateManager.notifySubscriptionPointChanged(context, idSubscriptionPoint);
+        return id;
     }
 
 
@@ -70,6 +73,7 @@ public class DataInvoiceSource extends DataSource {
      */
     public void insertInvoice(String table, InvoiceModel invoice) {
         database.insert(table, null, createContentValue(invoice));
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -92,6 +96,7 @@ public class DataInvoiceSource extends DataSource {
     public void updateInvoiceList(String number, long id) {
         database.update(TABLE_NAME_INVOICES, createContentValue(number),
                 COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        WidgetUpdateManager.notifySubscriptionPointChanged(context, -1L);
     }
 
 
@@ -194,6 +199,7 @@ public class DataInvoiceSource extends DataSource {
     public void updateInvoice(long id, String table, InvoiceModel invoice) {
         database.update(table, createContentValue(invoice),
                 COLUMN_ID + " = ? ", new String[]{String.valueOf(id)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -355,6 +361,7 @@ public class DataInvoiceSource extends DataSource {
     public void deleteInvoice(String table, long itemId) {
         database.delete(table, "_id=?",
                 new String[]{String.valueOf(itemId)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -369,6 +376,7 @@ public class DataInvoiceSource extends DataSource {
                 new String[]{String.valueOf(idFak)});
         database.delete(TABLE_NAME_INVOICES, COLUMN_ID + "=?",
                 new String[]{String.valueOf(idFak)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -378,6 +386,7 @@ public class DataInvoiceSource extends DataSource {
     public void deleteAllInvoices(String table) {
         database.delete(table, null, null);
         database.execSQL("DELETE FROM sqlite_sequence WHERE name='" + table + "';");
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 

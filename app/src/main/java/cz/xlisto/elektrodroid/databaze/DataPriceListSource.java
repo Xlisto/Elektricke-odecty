@@ -47,6 +47,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
@@ -117,7 +119,9 @@ public class DataPriceListSource {
      * @return long insertID id vloženého ceníku
      */
     public long insertPriceList(PriceListModel priceListModel) {
-        return database.insert(TABLE_NAME_PRICE, null, createContentValue(priceListModel));
+        long id = database.insert(TABLE_NAME_PRICE, null, createContentValue(priceListModel));
+        WidgetUpdateManager.notifyPriceListChanged(context);
+        return id;
     }
 
 
@@ -129,8 +133,10 @@ public class DataPriceListSource {
      * @return long updateID id upraveného ceníku
      */
     public long updatePriceList(PriceListModel priceListModel, long itemId) {
-        return database.update(TABLE_NAME_PRICE, createContentValue(priceListModel),
+        long count = database.update(TABLE_NAME_PRICE, createContentValue(priceListModel),
                 "_id=?", new String[]{String.valueOf(itemId)});
+        WidgetUpdateManager.notifyPriceListChanged(context);
+        return count;
     }
 
 
@@ -142,6 +148,7 @@ public class DataPriceListSource {
     public void deletePriceList(long itemId) {
         database.delete(TABLE_NAME_PRICE, "_id=?",
                 new String[]{String.valueOf(itemId)});
+        WidgetUpdateManager.notifyPriceListChanged(context);
     }
 
 
@@ -186,6 +193,7 @@ public class DataPriceListSource {
         database.delete(TABLE_NAME_PRICE, "_id NOT IN (" + questionMarks + ")", ids);
         cursor.close();
         dataSubscriptionPointSource.close();
+        WidgetUpdateManager.notifyPriceListChanged(context);
     }
 
 

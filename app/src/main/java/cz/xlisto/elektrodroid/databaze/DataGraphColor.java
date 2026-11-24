@@ -8,6 +8,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
+
 
 /**
  * Třída pro přístup k barvám grafu z databáze SQLite - tabulka nastaveni
@@ -58,6 +60,7 @@ public class DataGraphColor extends DataSource {
             values.put(DbHelper.HODNOTA, colors[i]);
             database.update(DbHelper.TABLE_NAME_SETTINGS, values, DbHelper.JMENO + " = ?", new String[]{columns[i]});
         }
+        WidgetUpdateManager.notifyVtNtColorsChanged(context);
     }
 
 

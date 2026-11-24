@@ -8,6 +8,7 @@ import android.content.Intent;
 import cz.xlisto.elektrodroid.modules.backup.PendingBackupUploadScheduler;
 import cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper;
 import cz.xlisto.elektrodroid.modules.hdo.PreCodesUpdateScheduler;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderScheduler;
 
@@ -32,6 +33,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                 || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
             HdoAlarmScheduler.rescheduleAll(context);
             MonthlyReadingReminderScheduler.rescheduleCurrentAsync(context);
+            WidgetUpdateManager.updateAllWidgetsAsync(context, null);
         }
 
         // --- Kontrola platnosti HDO kódů ---

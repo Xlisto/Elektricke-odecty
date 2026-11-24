@@ -51,6 +51,7 @@ import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 import cz.xlisto.elektrodroid.dialogs.TimeShiftDialogFragment;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.format.SimpleDateFormatHelper;
@@ -486,6 +487,7 @@ public class HdoFragment extends Fragment implements OnPaddingChangeListener {
                         rbSelectMainRelay.setChecked(rele.equals(selectedMainRelay));
                         View.OnClickListener onSelectRelayListener = v -> {
                             shPHdo.set(ShPHdo.ARG_MAIN_HDO_RELAY, rele);
+                            WidgetUpdateManager.notifyHdoSettingsChanged(requireContext(), -1L);
                             setTime();
                         };
                         rbSelectMainRelay.setOnClickListener(onSelectRelayListener);

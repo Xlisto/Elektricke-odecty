@@ -27,6 +27,7 @@ import java.util.zip.ZipInputStream;
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.databaze.DataSubscriptionPointSource;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPSubscriptionPoint;
 
@@ -202,6 +203,7 @@ public class RecoverDataFromBackupFile extends RecoverData {
 
             ShPSubscriptionPoint shPSubscriptionPoint = new ShPSubscriptionPoint(context);
             shPSubscriptionPoint.set(ShPSubscriptionPoint.ID_SUBSCRIPTION_POINT_LONG, -1L);
+            WidgetUpdateManager.onDatabaseRestored(context);
             return true;
         } catch (Exception e) {
             Log.e(TAG, "recoverDatabaseFromFile: " + e.getMessage());

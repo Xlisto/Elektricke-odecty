@@ -53,8 +53,11 @@ import cz.xlisto.elektrodroid.modules.hdo.HdoFragment;
 import cz.xlisto.elektrodroid.modules.hdo.HdoUpdateHelper;
 import cz.xlisto.elektrodroid.modules.hdo.PreCodesUpdateScheduler;
 import cz.xlisto.elektrodroid.modules.invoice.InvoiceListFragment;
+import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingAddFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingDetailFragment;
 import cz.xlisto.elektrodroid.modules.monthlyreading.MonthlyReadingFragment;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetNavigationHelper;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetPointResolver;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListCompareBoxFragment;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
@@ -461,18 +464,21 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (handleMonthlyReadingReminderIntent(getIntent(), navigationView)) {
             return;
         }
-        if (savedInstanceState != null) {
-            actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
-            selectedItemIndex = savedInstanceState.getInt(ACTUAL_SELECTED_ITEM_INDEX);
-            if (selectedItemIndex >= 0 && selectedItemIndex < myNavigationView.getMenu().size())
-                myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true));
-        } else {
-            actualFragment = MonthlyReadingFragment.newInstance();
-            //myBottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
-            myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
-            myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(2).setChecked(true));
-            shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
-            FragmentChange.replace(this, actualFragment, ALPHA);
+        boolean handledWidgetIntent = handleWidgetNavigationIntent(getIntent(), navigationView);
+        if (!handledWidgetIntent) {
+            if (savedInstanceState != null) {
+                actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
+                selectedItemIndex = savedInstanceState.getInt(ACTUAL_SELECTED_ITEM_INDEX);
+                if (selectedItemIndex >= 0 && selectedItemIndex < myNavigationView.getMenu().size())
+                    myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(selectedItemIndex).setChecked(true));
+            } else {
+                actualFragment = MonthlyReadingFragment.newInstance();
+                //myBottomNavigationView.setSelectedItemId(shPMainActivity.get(ACTUAL_FRAGMENT, R.id.meni_monthly_readings));
+                myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+                myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(2).setChecked(true));
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
+                FragmentChange.replace(this, actualFragment, ALPHA);
+            }
         }
         startHdoService();
 
@@ -504,8 +510,10 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 invalidateOptionsMenu();
             }
         });
-        setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
-        setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
+        if (!handledWidgetIntent) {
+            setToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
+            setToolbarSubtitle(shPMainActivity.get(ShPMainActivity.SECONDARY_TITLE, ""));
+        }
 
         //při rotaci se skryje detail měsíčního odečtu a zobrazí se seznam
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("MonthlyReadingDetailFragment");
@@ -522,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
     /**
      * Zpracuje nový příchozí {@link Intent} u již běžící instance aktivity
-     * (např. po kliknutí na notifikaci HDO nebo připomenutí měsíčního odečtu).
+     * (např. po kliknutí na notifikaci HDO, připomenutí měsíčního odečtu nebo domovský widget).
      *
      * @param intent Nový příchozí intent
      */
@@ -531,9 +539,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onNewIntent(intent);
         setIntent(intent);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        if (!handleHdoNotificationIntent(intent, navigationView)) {
-            handleMonthlyReadingReminderIntent(intent, navigationView);
+        if (handleHdoNotificationIntent(intent, navigationView)) {
+            return;
         }
+        if (handleMonthlyReadingReminderIntent(intent, navigationView)) {
+            return;
+        }
+        handleWidgetNavigationIntent(intent, navigationView);
     }
 
 
@@ -1392,6 +1404,121 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         setToolbarTitle(getResources().getString(R.string.month_reads));
         SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(getApplicationContext());
         setToolbarSubtitle(subscriptionPoint != null ? subscriptionPoint.getName() : "");
+        return true;
+    }
+
+
+    /**
+     * Zpracuje kliknutí z domovského widgetu: ověří existenci odběrného místa widgetu,
+     * nastaví jej pro cílovou obrazovku a otevře odpovídající fragment (včetně formuláře
+     * nového odečtu přímo pro odběrné místo widgetu).
+     *
+     * @param intent         Příchozí intent aktivity
+     * @param navigationView Postranní navigační menu (drawer) pro označení aktivní položky
+     * @return {@code true}, pokud intent obsahoval platnou navigaci z domovského widgetu
+     */
+    private boolean handleWidgetNavigationIntent(@Nullable Intent intent, @Nullable NavigationView navigationView) {
+        if (intent == null) {
+            return false;
+        }
+        if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
+            return false;
+        }
+        if (!WidgetNavigationHelper.ACTION_OPEN_FROM_WIDGET.equals(intent.getAction())) {
+            return false;
+        }
+
+        String destination = intent.getStringExtra(WidgetNavigationHelper.EXTRA_WIDGET_DESTINATION);
+        long pointId = intent.getLongExtra(WidgetNavigationHelper.EXTRA_SUBSCRIPTION_POINT_ID, -1L);
+        long pointMilins = intent.getLongExtra(WidgetNavigationHelper.EXTRA_SUBSCRIPTION_POINT_MILINS, -1L);
+
+        intent.removeExtra(WidgetNavigationHelper.EXTRA_WIDGET_DESTINATION);
+        intent.removeExtra(WidgetNavigationHelper.EXTRA_SUBSCRIPTION_POINT_ID);
+        intent.removeExtra(WidgetNavigationHelper.EXTRA_SUBSCRIPTION_POINT_MILINS);
+        intent.removeExtra(WidgetNavigationHelper.EXTRA_APP_WIDGET_ID);
+        intent.setAction(null);
+
+        if (destination == null || destination.isEmpty()) {
+            return false;
+        }
+
+        SubscriptionPointModel verifiedPoint = WidgetPointResolver.findVerifiedPoint(
+                getApplicationContext(), pointId, pointMilins);
+        if (verifiedPoint == null) {
+            Toast.makeText(getApplicationContext(), R.string.widget_point_missing_toast, Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        SubscriptionPoint.setCurrentSelection(getApplicationContext(), verifiedPoint.getId());
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        switch (destination) {
+            case WidgetNavigationHelper.DEST_DASHBOARD -> {
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(R.id.menu_dashboard);
+                }
+                myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(0).setChecked(true));
+                myBottomNavigationView.setSelectedItemId(R.id.meni_dashboard);
+                selectedItemIndex = 0;
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_dashboard);
+                actualFragment = createDashboardFragment();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.dashboard));
+            }
+            case WidgetNavigationHelper.DEST_HDO -> {
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(R.id.menu_hdo);
+                }
+                uncheckedBottomNavigation();
+                selectedItemIndex = 6;
+                actualFragment = HdoFragment.newInstance();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.hdo_times));
+            }
+            case WidgetNavigationHelper.DEST_BILLING -> {
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(R.id.menu_invoices);
+                }
+                myBottomNavigationView.setSelectedItemId(R.id.meni_invoice);
+                selectedItemIndex = 5;
+                shPMainActivity.set(ACTUAL_FRAGMENT, -1);
+                actualFragment = InvoiceListFragment.newInstance();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.invoices));
+            }
+            case WidgetNavigationHelper.DEST_NEW_READING -> {
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(R.id.menu_monthly_reads);
+                }
+                myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(2).setChecked(true));
+                myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+                selectedItemIndex = 2;
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
+                actualFragment = MonthlyReadingFragment.newInstance();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.month_reads));
+                MonthlyReadingAddFragment addFragment = MonthlyReadingAddFragment.newInstance(
+                        verifiedPoint.getTableO(),
+                        verifiedPoint.getTablePLATBY()
+                );
+                FragmentChange.replace(this, addFragment, MOVE, true);
+            }
+            default -> {
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(R.id.menu_monthly_reads);
+                }
+                myNavigationView.setCheckedItem(myNavigationView.getMenu().getItem(2).setChecked(true));
+                myBottomNavigationView.setSelectedItemId(R.id.meni_monthly_readings);
+                selectedItemIndex = 2;
+                shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_monthly_readings);
+                actualFragment = MonthlyReadingFragment.newInstance();
+                FragmentChange.replace(this, actualFragment, ALPHA);
+                setToolbarTitle(getResources().getString(R.string.month_reads));
+            }
+        }
+
+        setToolbarSubtitle(verifiedPoint.getName());
+        updateAppBarNavigationIcon();
         return true;
     }
 

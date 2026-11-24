@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_widget_price_card">
+
+    <ImageView
+        android:id="@+id/iv_widget_pylon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.24"
+        android:importantForAccessibility="no"
+        android:scaleType="fitEnd"
+        android:src="@drawable/bg_dashboard_price_landscape"
+        android:tint="@color/md_theme_primary"
+        android:tintMode="src_atop"
+        tools:ignore="UseAppTint" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_widget_point_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/md_theme_onSurface"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="Domov" />
+
+            <TextView
+                android:id="@+id/tv_widget_price_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:paddingStart="6dp"
+                android:paddingEnd="4dp"
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textSize="11sp"
+                tools:text="Celková • s DPH" />
+
+            <ImageView
+                android:id="@+id/btn_widget_config"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/widget_config_button_description"
+                android:padding="2dp"
+                android:src="@drawable/ic_widget_settings_24" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/widget_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- Kompaktní uspořádání pro výchozí velikost 4×1 -->
+            <LinearLayout
+                android:id="@+id/layout_price_compact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_weight="1"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/box_widget_vt_compact"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_widget_vt_bg_compact"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingStart="5dp"
+                            android:paddingTop="1dp"
+                            android:paddingEnd="5dp"
+                            android:paddingBottom="1dp">
+
+                            <ImageView
+                                android:id="@+id/iv_widget_vt_dot_compact"
+                                android:layout_width="7dp"
+                                android:layout_height="7dp"
+                                android:layout_marginEnd="4dp"
+                                android:importantForAccessibility="no" />
+
+                            <ImageView
+                                android:id="@+id/iv_widget_vt_active_compact"
+                                android:layout_width="11dp"
+                                android:layout_height="11dp"
+                                android:layout_marginEnd="3dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_check_circle_24"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_vt_label_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:includeFontPadding="false"
+                                android:text="@string/kwh_vt"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_vt_price_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="6,42" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_vt_unit_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@string/dashboard_price_kwh_unit"
+                                android:textColor="@color/md_theme_onSurfaceVariant"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/box_widget_nt_compact"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="3dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_widget_nt_bg_compact"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingStart="5dp"
+                            android:paddingTop="1dp"
+                            android:paddingEnd="5dp"
+                            android:paddingBottom="1dp">
+
+                            <ImageView
+                                android:id="@+id/iv_widget_nt_dot_compact"
+                                android:layout_width="7dp"
+                                android:layout_height="7dp"
+                                android:layout_marginEnd="4dp"
+                                android:importantForAccessibility="no" />
+
+                            <ImageView
+                                android:id="@+id/iv_widget_nt_active_compact"
+                                android:layout_width="11dp"
+                                android:layout_height="11dp"
+                                android:layout_marginEnd="3dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_check_circle_24"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_nt_label_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:includeFontPadding="false"
+                                android:text="@string/kwh_nt"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_nt_price_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="4,18" />
+
+                            <TextView
+                                android:id="@+id/tv_widget_nt_unit_compact"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@string/dashboard_price_kwh_unit"
+                                android:textColor="@color/md_theme_onSurfaceVariant"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_widget_footer_compact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/iv_widget_price_warning_compact"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginEnd="4dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_widget_warning_24"
+                        android:tint="@color/pricelist_badge_custom_regul_text"
+                        android:visibility="gone"
+                        tools:ignore="UseAppTint" />
+
+                    <TextView
+                        android:id="@+id/tv_widget_footer_compact"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
+                        android:textSize="11sp"
+                        tools:text="HDO: 22:00 (za 2h 15m)" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Rozšířené uspořádání při zvětšení widgetu na výšku (4×2+) -->
+            <LinearLayout
+                android:id="@+id/layout_price_tall"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="1"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/box_widget_vt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_widget_vt_bg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="4dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="4dp"
+                            android:paddingBottom="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_widget_vt_dot"
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:id="@+id/tv_widget_vt_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:text="@string/kwh_vt"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/iv_widget_vt_active"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:layout_marginStart="4dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_check_circle_24"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:gravity="bottom"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_widget_vt_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    tools:text="6,42" />
+
+                                <TextView
+                                    android:id="@+id/tv_widget_vt_unit"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="3dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/dashboard_price_kwh_unit"
+                                    android:textColor="@color/md_theme_onSurfaceVariant"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/box_widget_nt"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/iv_widget_nt_bg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="4dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="4dp"
+                            android:paddingBottom="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_widget_nt_dot"
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:id="@+id/tv_widget_nt_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:text="@string/kwh_nt"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/iv_widget_nt_active"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:layout_marginStart="4dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_check_circle_24"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:gravity="bottom"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_widget_nt_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    tools:text="4,18" />
+
+                                <TextView
+                                    android:id="@+id/tv_widget_nt_unit"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="3dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/dashboard_price_kwh_unit"
+                                    android:textColor="@color/md_theme_onSurfaceVariant"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_widget_price_warning_tall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:layout_marginEnd="4dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_widget_warning_24"
+                        android:tint="@color/pricelist_badge_custom_regul_text"
+                        tools:ignore="UseAppTint" />
+
+                    <TextView
+                        android:id="@+id/tv_widget_price_warning_tall"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/pricelist_badge_custom_regul_text"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:text="Orientační • ceník do 31.12.2026" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_widget_hdo_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:textSize="11sp"
+                    tools:text="HDO: 22:00 (za 2h 15m)" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/widget_error_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_widget_error_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_widget_warning_24" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_widget_error_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_onSurface"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_widget_error_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_onSurfaceVariant"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

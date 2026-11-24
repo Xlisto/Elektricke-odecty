@@ -28,6 +28,7 @@ import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.PaymentModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 
 
 /**
@@ -66,6 +67,7 @@ public class DataSubscriptionPointSource extends DataSource {
      */
     public void insertPayment(String table, PaymentModel payment) {
         database.insert(table, null, createContentValue(payment));
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -78,6 +80,7 @@ public class DataSubscriptionPointSource extends DataSource {
     public void updateSubscriptionPoint(SubscriptionPointModel subscriptionPointModel, long itemId) {
         database.update(TABLE_NAME_SUBSCRIPTION_POINT, createContentValue(subscriptionPointModel),
                 COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
+        WidgetUpdateManager.notifySubscriptionPointChanged(context, itemId);
     }
 
 
@@ -91,6 +94,7 @@ public class DataSubscriptionPointSource extends DataSource {
     public void updatePayment(long id, String table, PaymentModel payment) {
         database.update(table, createContentValue(payment),
                 COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -113,6 +117,7 @@ public class DataSubscriptionPointSource extends DataSource {
         settingsSource.open();
         settingsSource.deleteOrphanedSubscriptionPointSettings();
         settingsSource.close();
+        WidgetUpdateManager.notifySubscriptionPointChanged(context, itemId);
     }
 
 
@@ -125,6 +130,7 @@ public class DataSubscriptionPointSource extends DataSource {
     public void deletePayment(long paymentId, String table) {
         database.delete(table, COLUMN_ID + "=?",
                 new String[]{String.valueOf(paymentId)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -137,6 +143,7 @@ public class DataSubscriptionPointSource extends DataSource {
     public void deletePayments(long idFak, String table) {
         database.delete(table, ID_FAK + "=?",
                 new String[]{String.valueOf(idFak)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -173,6 +180,7 @@ public class DataSubscriptionPointSource extends DataSource {
         long timeTo = invoice.getDateTo();
         String sql = "UPDATE " + table + " SET id_fak = ? WHERE id_fak = '-1' AND datum BETWEEN ? AND ?";
         database.execSQL(sql, new Object[]{newIdFak, timeFrom, timeTo});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -186,6 +194,7 @@ public class DataSubscriptionPointSource extends DataSource {
     public void changeInvoicePayment(long newIdFak, String table, long idPayment) {
         String sql = "UPDATE " + table + " SET id_fak = ? WHERE _id = ?";
         database.execSQL(sql, new Object[]{newIdFak, idPayment});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 

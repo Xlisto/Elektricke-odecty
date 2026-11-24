@@ -48,6 +48,80 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:name=".modules.widgets.WidgetConfigActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Odecty.NoActionBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".modules.widgets.WidgetHdoRefreshReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".modules.widgets.CurrentPriceWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_current_price_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_current_price" />
+        </receiver>
+
+        <receiver
+            android:name=".modules.widgets.HdoClockWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_hdo_clock_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_hdo_clock" />
+        </receiver>
+
+        <receiver
+            android:name=".modules.widgets.ConsumptionWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_consumption_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_consumption" />
+        </receiver>
+
+        <receiver
+            android:name=".modules.widgets.FinancialBalanceWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_financial_balance_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_financial_balance" />
+        </receiver>
+
+        <receiver
+            android:name=".modules.widgets.NewReadingWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_new_reading_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_new_reading" />
+        </receiver>
     </application>
 
 </manifest>

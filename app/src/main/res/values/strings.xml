@@ -211,6 +211,7 @@
     <string name="result_date">Platba bude evidována k datu:&#160;</string>
 
     <string name="vyberteCenik">Vyberte ceník</string>
+    <string name="vyberteDatum">Vyberte datum odečtu</string>
     <string name="vyberteCenikLevy">Vyberte levý ceník</string>
     <string name="vyberteCenikPravy">Vyberte pravý ceník</string>
     <string name="smazat_mesicni_odecet">Smazat měsíční odečet?</string>
@@ -660,6 +661,8 @@
     <string name="settings_group_navigation">Zobrazení navigace</string>
     <string name="settings_group_connection">Připojení</string>
     <string name="settings_group_appearance">Vzhled</string>
+    <string name="auto_set_current_date_new_reading">Předvyplnit aktuální datum odečtu</string>
+    <string name="auto_set_current_date_new_reading_description">Při vytváření nového měsíčního odečtu automaticky nastaví dnešní datum.</string>
     <string name="use_dynamic_colors">Dynamické barvy (Material You)</string>
     <string name="use_dynamic_colors_description">Přizpůsobí barvy aplikace tapetě systému (Android 12 a novější).</string>
     <string name="notifications_enabled">Povolené notifikace</string>
@@ -932,4 +935,86 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="pricelist_origin_custom_regul_period_mismatch">Období platnosti zasahuje do více regulačních období v rámci roku</string>
     <string name="pricelist_origin_manual_short">Kompletně ručně zadaný ceník</string>
     <string name="pricelist_origin_manual_detail">Kompletně ručně vytvořený ceník (pro toto období nejsou v aplikaci uložené automatické regulované ceny)</string>
+
+    <!-- Widgety domovské obrazovky -->
+    <string name="widget_current_price_name">Aktuální cena elektřiny</string>
+    <string name="widget_current_price_description">Aktuální cena VT/NT pro zvolené odběrné místo, aktivní sazba a čas přepnutí HDO.</string>
+    <string name="widget_hdo_clock_name">Analogové hodiny HDO</string>
+    <string name="widget_hdo_clock_description">24hodinový ciferník s dnešními intervaly HDO a časem dalšího přepnutí.</string>
+    <string name="widget_consumption_name">Spotřeba elektřiny</string>
+    <string name="widget_consumption_description">Spotřeba VT, NT a celkem s poměrovým pruhem za sledované období.</string>
+    <string name="widget_financial_balance_name">Finanční bilance</string>
+    <string name="widget_financial_balance_description">Zálohy, vypočtené náklady a odhad přeplatku či nedoplatku za období.</string>
+    <string name="widget_new_reading_name">Nový odečet</string>
+    <string name="widget_new_reading_description">Rychlé přidání nového odečtu přímo pro vybrané odběrné místo.</string>
+
+    <string name="widget_config_title_current_price">Nastavení widgetu – Aktuální cena</string>
+    <string name="widget_config_title_hdo_clock">Nastavení widgetu – Hodiny HDO</string>
+    <string name="widget_config_title_consumption">Nastavení widgetu – Spotřeba</string>
+    <string name="widget_config_title_financial_balance">Nastavení widgetu – Finanční bilance</string>
+    <string name="widget_config_title_new_reading">Nastavení widgetu – Nový odečet</string>
+    <string name="widget_config_section_point">Odběrné místo</string>
+    <string name="widget_config_section_price_mode">Zobrazení ceny</string>
+    <string name="widget_config_section_vat">DPH</string>
+    <string name="widget_config_vat_include">Zahrnout</string>
+    <string name="widget_config_vat_exclude">Nezahrnout</string>
+    <string name="widget_config_save">Uložit</string>
+    <string name="widget_config_empty_points_title">Žádné odběrné místo</string>
+    <string name="widget_config_empty_points_message">Nejprve prosím vytvořte alespoň jedno odběrné místo v aplikaci ElektroDroid.</string>
+    <string name="widget_config_open_app">Otevřít ElektroDroid</string>
+    <string name="widget_config_point_meter_format">Elektroměr: %1$s</string>
+    <string name="widget_config_select_point_hint">Vyberte odběrné místo</string>
+    <string name="widget_config_button_description">Nastavení widgetu</string>
+
+    <string name="widget_point_missing">Odběrné místo již neexistuje.</string>
+    <string name="widget_point_missing_hint">Klepnutím vyberte jiné odběrné místo</string>
+    <string name="widget_point_unconfigured">Widget není nastaven.</string>
+    <string name="widget_point_missing_toast">Vybrané odběrné místo již neexistuje. Upravte nastavení widgetu.</string>
+
+    <string name="widget_price_mode_total_with_vat">Celková cena • s DPH</string>
+    <string name="widget_price_mode_total_without_vat">Celková cena • bez DPH</string>
+    <string name="widget_price_mode_commercial_with_vat">Obchodní cena • s DPH</string>
+    <string name="widget_price_mode_commercial_without_vat">Obchodní cena • bez DPH</string>
+    <string name="widget_price_mode_compact_total_with_vat">Celková • s DPH</string>
+    <string name="widget_price_mode_compact_total_without_vat">Celková • bez DPH</string>
+    <string name="widget_price_mode_compact_commercial_with_vat">Obchodní • s DPH</string>
+    <string name="widget_price_mode_compact_commercial_without_vat">Obchodní • bez DPH</string>
+    <string name="widget_price_missing">Chybí platný ceník</string>
+    <string name="widget_price_expired">Platnost ceníku vypršela</string>
+    <string name="widget_price_not_yet_valid">Ceník zatím není platný</string>
+    <string name="widget_price_not_yet_valid_from_format">Ceník platí od %1$s</string>
+    <string name="widget_price_expired_indicative_format">Orientační • ceník do %1$s</string>
+    <string name="widget_price_expired_indicative_no_date">Orientační • platnost ceníku vypršela</string>
+    <string name="widget_price_expired_compact_with_hdo_format">Ceník do %1$s • HDO %2$s</string>
+    <string name="widget_price_expired_compact_no_date_with_hdo_format">Ceník po platnosti • HDO %1$s</string>
+    <string name="widget_price_invalid_hint">Přiřaďte aktuální ceník v aplikaci</string>
+
+    <string name="widget_hdo_next_today">HDO: přepnutí v %1$s</string>
+    <string name="widget_hdo_next_day">HDO: přepnutí %1$s</string>
+    <string name="widget_hdo_next_with_remaining">HDO: %1$s (za %2$s)</string>
+    <string name="widget_hdo_clock_active_nt">Nízký tarif (NT)</string>
+    <string name="widget_hdo_clock_active_vt">Vysoký tarif (VT)</string>
+    <string name="widget_hdo_clock_strip_nt_next">NT • %1$s</string>
+    <string name="widget_hdo_clock_strip_vt_next">VT • %1$s</string>
+    <string name="widget_hdo_clock_strip_nt">Tarif NT</string>
+    <string name="widget_hdo_clock_strip_vt">Tarif VT</string>
+    <string name="widget_hdo_clock_next_compact">Další: %1$s</string>
+    <string name="widget_hdo_clock_remaining_compact">Zbývá %1$s</string>
+
+    <string name="widget_consumption_total_label">Celkem</string>
+    <string name="widget_consumption_no_data">Zatím bez spotřeby v období</string>
+    <string name="widget_consumption_tariff_value_format">%1$s (%2$d %%)</string>
+    <string name="widget_consumption_vt_compact_format">VT %1$s (%2$d %%)</string>
+    <string name="widget_consumption_nt_compact_format">NT %1$s (%2$d %%)</string>
+    <string name="widget_consumption_vt_short_format">VT %1$s</string>
+    <string name="widget_consumption_nt_short_format">NT %1$s</string>
+
+    <string name="widget_balance_overpayment_format">Přeplatek %1$s</string>
+    <string name="widget_balance_underpayment_format">Nedoplatek %1$s</string>
+    <string name="widget_balance_balanced_format">Vyrovnáno %1$s</string>
+    <string name="widget_balance_no_data">Zatím bez vyúčtování</string>
+    <string name="widget_balance_advances_compact_format">Zálohy: %1$s</string>
+    <string name="widget_balance_costs_compact_format">Náklady: %1$s</string>
+
+    <string name="widget_new_reading_action_label">Nový odečet</string>
 </resources>

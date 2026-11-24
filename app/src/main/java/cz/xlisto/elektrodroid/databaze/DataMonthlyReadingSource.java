@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.models.MonthlyReadingModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 
 
@@ -229,7 +230,9 @@ public class DataMonthlyReadingSource extends DataSource {
      * @return id záznamu
      */
     public long insertMonthlyReading(String tableName, MonthlyReadingModel monthlyReading) {
-        return database.insert(tableName, null, createContentValue(monthlyReading));
+        long id = database.insert(tableName, null, createContentValue(monthlyReading));
+        WidgetUpdateManager.notifyTableChanged(context, tableName);
+        return id;
     }
 
 
@@ -242,6 +245,7 @@ public class DataMonthlyReadingSource extends DataSource {
     public void deleteMonthlyReading(long itemId, String table) {
         database.delete(table, COLUMN_ID + "=?",
                 new String[]{String.valueOf(itemId)});
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -255,7 +259,7 @@ public class DataMonthlyReadingSource extends DataSource {
     public void updateMonthlyReading(MonthlyReadingModel monthlyReading, long itemId, String tableName) {
         database.update(tableName, createContentValue(monthlyReading),
                 COLUMN_ID + "=?", new String[]{String.valueOf(itemId)});
-
+        WidgetUpdateManager.notifyTableChanged(context, tableName);
     }
 
 

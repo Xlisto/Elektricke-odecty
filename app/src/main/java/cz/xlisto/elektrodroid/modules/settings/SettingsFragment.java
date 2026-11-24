@@ -130,6 +130,13 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
         switchAllowMobileData.setChecked(shPSettings.get(ShPSettings.ALLOW_MOBILE_DATA, true));
         chUseSetAlarm.setChecked(shPSettings.get(ShPSettings.USE_HDO_SET_ALARM, false));
 
+        MaterialSwitch switchAutoSetCurrentDateNewReading = view.findViewById(R.id.switchAutoSetCurrentDateNewReading);
+        if (switchAutoSetCurrentDateNewReading != null) {
+            switchAutoSetCurrentDateNewReading.setChecked(shPSettings.isAutoSetCurrentDateNewReading());
+            switchAutoSetCurrentDateNewReading.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    shPSettings.setAutoSetCurrentDateNewReading(isChecked));
+        }
+
         CheckBox chHdoOldReminderEnabled = view.findViewById(R.id.chHdoOldReminderEnabled);
         if (chHdoOldReminderEnabled != null) {
             final ShPHdo shPHdo = new ShPHdo(requireContext());

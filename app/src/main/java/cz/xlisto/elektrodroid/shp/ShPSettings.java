@@ -19,6 +19,7 @@ public class ShPSettings extends ShP {
     public static final String ALLOW_MOBILE_DATA = "allowMobileData";
     public static final String USE_HDO_SET_ALARM = "useHdoSetAlarm";
     public static final String USE_DYNAMIC_COLORS = "useDynamicColors";
+    public static final String AUTO_SET_CURRENT_DATE_NEW_READING = "autoSetCurrentDateNewReading";
 
 
     public ShPSettings(Context context) {
@@ -56,6 +57,22 @@ public class ShPSettings extends ShP {
      */
     public void setUseDynamicColors(boolean enabled) {
         set(USE_DYNAMIC_COLORS, enabled);
+    }
+
+
+    /**
+     * Vrací, zda se při vytváření nového měsíčního odečtu má automaticky předvyplnit aktuální datum.
+     */
+    public boolean isAutoSetCurrentDateNewReading() {
+        return get(AUTO_SET_CURRENT_DATE_NEW_READING, true);
+    }
+
+
+    /**
+     * Uloží předvolbu pro automatické předvyplnění aktuálního data u nového měsíčního odečtu.
+     */
+    public void setAutoSetCurrentDateNewReading(boolean enabled) {
+        set(AUTO_SET_CURRENT_DATE_NEW_READING, enabled);
     }
 
 }

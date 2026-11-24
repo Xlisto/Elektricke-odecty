@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 
 
 /**
@@ -333,6 +334,7 @@ public class DataSettingsSource extends DataSource {
         values.put(PREFIX_VALUE, timeShift);
         database.update(TABLE_NAME_SETTINGS, values, PREFIX_NAME + "=?", arguments);
         close();
+        WidgetUpdateManager.notifyHdoSettingsChanged(context, idSubscriptionPoint);
     }
 
 

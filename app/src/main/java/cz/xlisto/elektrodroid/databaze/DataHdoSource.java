@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 
 import cz.xlisto.elektrodroid.models.HdoModel;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 
 
@@ -239,6 +240,7 @@ public class DataHdoSource extends DataSource {
         close();
         HdoAlarmScheduler.cancelForIds(context, table, oldIds);
         HdoAlarmScheduler.rescheduleForTable(context, table);
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -257,6 +259,7 @@ public class DataHdoSource extends DataSource {
             hdoModel.setId(newId);
         }
         HdoAlarmScheduler.rescheduleForModel(context, table, hdoModel);
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -272,6 +275,7 @@ public class DataHdoSource extends DataSource {
         database.update(table, createContentValues(hdoModel), DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(hdoModel.getId())});
         close();
         HdoAlarmScheduler.rescheduleForModel(context, table, hdoModel);
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
@@ -287,6 +291,7 @@ public class DataHdoSource extends DataSource {
         database.delete(table, DbHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
         close();
         HdoAlarmScheduler.cancelForModel(context, table, id);
+        WidgetUpdateManager.notifyTableChanged(context, table);
     }
 
 
