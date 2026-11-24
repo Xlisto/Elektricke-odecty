@@ -48,10 +48,10 @@
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/add"
         android:src="@drawable/ic_add_24"
-        app:backgroundTint="@color/floatingButtonTint"
+        app:backgroundTint="?attr/colorPrimaryContainer"
         app:layout_constraintBottom_toTopOf="@id/lnInvoiceBottomPanel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/floatingButtonBackground" />
+        app:tint="?attr/colorOnPrimaryContainer" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewInvoice"
@@ -109,7 +109,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:textAlignment="center"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             android:visibility="gone" />
     </LinearLayout>

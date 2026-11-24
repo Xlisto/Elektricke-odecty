@@ -7,12 +7,12 @@ import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +26,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.text.DecimalFormat;
@@ -752,8 +754,15 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      */
     private void applyUserVtNtColors(@Nullable int[] colors) {
         if (!isAdded()) return;
-        int colorVt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_vt);
-        int colorNt = ContextCompat.getColor(requireContext(), R.color.dashboard_teal_nt);
+        int colorVt = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_teal_vt)
+        );
+        int colorNt = MaterialColors.getColor(
+                requireContext(),
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(requireContext(), R.color.dashboard_teal_nt)
+        );
 
         if (colors != null && colors.length >= 2) {
             colorVt = colors[0];
@@ -1264,11 +1273,28 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         float clampedNtRatio = Math.max(0f, Math.min(1f, ntActiveRatio));
         float vtActiveRatio = 1f - clampedNtRatio;
 
-        int colorActiveBg = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_active_bg);
-        int colorInactiveBg = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_bg);
-        int colorInactiveStroke = ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_stroke);
+        int colorActiveBg = MaterialColors.getColor(
+                requireContext(),
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_active_bg)
+        );
+        int colorSurfaceLow = MaterialColors.getColor(
+                requireContext(),
+                com.google.android.material.R.attr.colorSurfaceContainerLow,
+                ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_bg)
+        );
+        int colorInactiveBg = ColorUtils.setAlphaComponent(colorSurfaceLow, 217);
+        int colorInactiveStroke = MaterialColors.getColor(
+                requireContext(),
+                com.google.android.material.R.attr.colorOutlineVariant,
+                ContextCompat.getColor(requireContext(), R.color.dashboard_price_box_inactive_stroke)
+        );
         int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface);
-        int colorWhite = ContextCompat.getColor(requireContext(), android.R.color.white);
+        int colorOnActive = MaterialColors.getColor(
+                requireContext(),
+                com.google.android.material.R.attr.colorOnPrimary,
+                ContextCompat.getColor(requireContext(), android.R.color.white)
+        );
         float cornerRadiusPx = dpToPx(requireContext(), 14f);
         int strokeWidthPx = Math.max(1, dpToPx(requireContext(), 1f));
 
@@ -1287,13 +1313,13 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 boxPriceVt, boxPriceVtBgDrawable,
                 tvLabelVt, tvPriceVtValue, tvPriceVtUnit, ivCheckVt,
                 vtActiveRatio, colorInactiveBg, colorActiveBg, colorInactiveStroke,
-                colorOnSurface, colorWhite, strokeWidthPx
+                colorOnSurface, colorOnActive, strokeWidthPx
         );
         bindSingleTariffBox(
                 boxPriceNt, boxPriceNtBgDrawable,
                 tvLabelNt, tvPriceNtValue, tvPriceNtUnit, ivCheckNt,
                 clampedNtRatio, colorInactiveBg, colorActiveBg, colorInactiveStroke,
-                colorOnSurface, colorWhite, strokeWidthPx
+                colorOnSurface, colorOnActive, strokeWidthPx
         );
     }
 
@@ -1313,7 +1339,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      * @param colorActiveBg       barva pozadí aktivního boxu
      * @param colorInactiveStroke barva ohraničení neaktivního boxu
      * @param colorOnSurface      barva textu v neaktivním stavu
-     * @param colorWhite          barva textu v aktivním stavu
+     * @param colorOnActive       barva textu a ikony v aktivním stavu
      * @param strokeWidthPx       šířka ohraničení v pixelech
      */
     private void bindSingleTariffBox(@NonNull View box,
@@ -1327,11 +1353,11 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                                      int colorActiveBg,
                                      int colorInactiveStroke,
                                      int colorOnSurface,
-                                     int colorWhite,
+                                     int colorOnActive,
                                      int strokeWidthPx) {
         int bgColor = (int) argbEvaluator.evaluate(activeRatio, colorInactiveBg, colorActiveBg);
         int strokeColor = (int) argbEvaluator.evaluate(activeRatio, colorInactiveStroke, colorActiveBg);
-        int textColor = (int) argbEvaluator.evaluate(activeRatio, colorOnSurface, colorWhite);
+        int textColor = (int) argbEvaluator.evaluate(activeRatio, colorOnSurface, colorOnActive);
 
         bgDrawable.setColor(bgColor);
         bgDrawable.setStroke(strokeWidthPx, strokeColor);
@@ -1342,6 +1368,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         tvLabel.setTextColor(textColor);
         tvValue.setTextColor(textColor);
         tvUnit.setTextColor(textColor);
+        ivCheck.setImageTintList(ColorStateList.valueOf(textColor));
 
         if (activeRatio <= 0.01f) {
             ivCheck.setVisibility(View.GONE);
@@ -1567,10 +1594,22 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         long rounded = Math.round(balanceKc);
         float clampedColorRatio = Math.max(0f, Math.min(1f, colorRatio));
 
-        int colorOverBg = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_bg);
-        int colorUnderBg = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_bg);
-        int colorOverText = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text);
-        int colorUnderText = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text);
+        int colorOverBg = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_bg)
+        );
+        int colorUnderBg = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_bg)
+        );
+        int colorOverText = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text)
+        );
+        int colorUnderText = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text)
+        );
 
         int bgColor = (int) argbEvaluator.evaluate(clampedColorRatio, colorOverBg, colorUnderBg);
         int textColor = (int) argbEvaluator.evaluate(clampedColorRatio, colorOverText, colorUnderText);
@@ -1665,8 +1704,14 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         int balancePct = DashboardBillingBalanceBarView.calculateBalancePercent(cleanAdvances, cleanCosts);
 
         int colorMuted = resolveAttrColor(com.google.android.material.R.attr.colorOnSurfaceVariant);
-        int colorOver = ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text);
-        int colorUnder = ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text);
+        int colorOver = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_overpayment_text)
+        );
+        int colorUnder = MaterialColors.harmonizeWithPrimary(
+                requireContext(),
+                ContextCompat.getColor(requireContext(), R.color.dashboard_underpayment_text)
+        );
 
         // Středový popisek (poměr nákladů vůči zálohám)
         boolean isBalancedHighlight = false;
@@ -2358,11 +2403,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
      * @return vyhodnocená barva ve formátu ARGB
      */
     private int resolveAttrColor(int attrRes) {
-        TypedValue tv = new TypedValue();
-        if (requireContext().getTheme().resolveAttribute(attrRes, tv, true)) {
-            return tv.data;
-        }
-        return 0xFF1C1B1F;
+        return MaterialColors.getColor(requireContext(), attrRes, 0xFF1C1B1F);
     }
 
 

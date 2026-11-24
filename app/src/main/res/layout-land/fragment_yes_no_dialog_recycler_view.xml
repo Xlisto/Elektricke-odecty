@@ -24,7 +24,7 @@
         android:layout_margin="2dp"
         android:text="@string/ano"
         style="?android:attr/buttonBarButtonStyle"
-        android:textColor="@color/colorDialogButtonText" />
+        android:textColor="@color/primary_text_button_color" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -36,6 +36,6 @@
         android:layout_toStartOf="@id/btnOk"
         android:text="@string/ne"
         style="?android:attr/buttonBarButtonStyle"
-        android:textColor="@color/colorDialogButtonText" />
+        android:textColor="@color/primary_text_button_color" />
 
 </RelativeLayout>

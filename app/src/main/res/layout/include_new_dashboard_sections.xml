@@ -12,7 +12,7 @@
         app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/dashboard_price_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <FrameLayout
@@ -30,7 +30,7 @@
                 android:importantForAccessibility="no"
                 android:scaleType="fitEnd"
                 android:src="@drawable/bg_dashboard_price_landscape"
-                app:tint="@color/dashboard_teal_primary"
+                app:tint="?attr/colorPrimary"
                 app:tintMode="src_atop" />
 
         <LinearLayout
@@ -103,7 +103,7 @@
                         app:autoSizeTextType="uniform"
                         app:backgroundTint="@color/selector_dashboard_price_toggle_bg"
                         app:cornerRadius="10dp"
-                        app:strokeColor="@color/dashboard_price_box_inactive_stroke"
+                        app:strokeColor="?attr/colorOutlineVariant"
                         app:strokeWidth="1dp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -128,7 +128,7 @@
                         app:autoSizeTextType="uniform"
                         app:backgroundTint="@color/selector_dashboard_price_toggle_bg"
                         app:cornerRadius="10dp"
-                        app:strokeColor="@color/dashboard_price_box_inactive_stroke"
+                        app:strokeColor="?attr/colorOutlineVariant"
                         app:strokeWidth="1dp" />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -188,6 +188,7 @@
                             android:importantForAccessibility="no"
                             android:src="@drawable/ic_check_circle_24"
                             android:visibility="gone"
+                            app:tint="?attr/colorOnPrimary"
                             tools:visibility="visible" />
                     </LinearLayout>
 
@@ -244,7 +245,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/kwh_nt"
-                            android:textColor="@android:color/white"
+                            android:textColor="?attr/colorOnPrimary"
                             android:textSize="13sp"
                             android:textStyle="bold" />
 
@@ -254,7 +255,8 @@
                             android:layout_height="18dp"
                             android:importantForAccessibility="no"
                             android:src="@drawable/ic_check_circle_24"
-                            android:visibility="visible" />
+                            android:visibility="visible"
+                            app:tint="?attr/colorOnPrimary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -269,7 +271,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxLines="1"
-                            android:textColor="@android:color/white"
+                            android:textColor="?attr/colorOnPrimary"
                             android:textSize="22sp"
                             android:textStyle="bold"
                             tools:text="4,10" />
@@ -281,7 +283,7 @@
                             android:layout_marginStart="4dp"
                             android:maxLines="1"
                             android:text="@string/dashboard_price_kwh_unit"
-                            android:textColor="@android:color/white"
+                            android:textColor="?attr/colorOnPrimary"
                             android:textSize="12.5sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -321,7 +323,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:textColor="@color/dashboard_teal_primary"
+                        android:textColor="?attr/colorPrimary"
                         android:textSize="14.5sp"
                         android:textStyle="bold"
                         tools:text="Čt 01:30" />
@@ -362,10 +364,10 @@
             android:clickable="true"
             android:focusable="true"
             android:minHeight="102dp"
-            app:cardBackgroundColor="@color/dashboard_card_bg"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/dashboard_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -389,7 +391,7 @@
                         android:layout_height="15dp"
                         android:importantForAccessibility="no"
                         android:src="@drawable/ic_bar_chart_24"
-                        app:tint="@color/dashboard_teal_primary" />
+                        app:tint="?attr/colorPrimary" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -476,10 +478,10 @@
             android:clickable="true"
             android:focusable="true"
             android:minHeight="102dp"
-            app:cardBackgroundColor="@color/dashboard_card_bg"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/dashboard_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <FrameLayout
@@ -505,10 +507,10 @@
             android:clickable="true"
             android:focusable="true"
             android:minHeight="102dp"
-            app:cardBackgroundColor="@color/dashboard_card_bg"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/dashboard_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -546,10 +548,10 @@
         android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@color/dashboard_card_bg"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/dashboard_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -571,7 +573,7 @@
                     android:layout_height="22dp"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_calendar_24"
-                    app:tint="@color/dashboard_teal_primary" />
+                    app:tint="?attr/colorPrimary" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -660,7 +662,7 @@
                             android:id="@+id/viewPeriodNtColor"
                             android:layout_width="14dp"
                             android:layout_height="10dp"
-                            android:background="@color/dashboard_teal_nt" />
+                            android:background="?attr/colorPrimary" />
 
                         <TextView
                             android:layout_width="36dp"
@@ -714,10 +716,10 @@
         android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardBackgroundColor="@color/dashboard_card_bg"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/dashboard_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -738,7 +740,7 @@
                     android:layout_height="22dp"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_bar_chart_24"
-                    app:tint="@color/dashboard_teal_primary" />
+                    app:tint="?attr/colorPrimary" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -799,10 +801,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@color/dashboard_card_bg"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
         app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
-        app:strokeColor="@color/dashboard_card_stroke"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -893,7 +895,7 @@
                     <View
                         android:layout_width="1dp"
                         android:layout_height="34dp"
-                        android:background="@color/dashboard_divider" />
+                        android:background="?attr/colorOutlineVariant" />
 
                     <!-- Náklady -->
                     <LinearLayout
@@ -1025,7 +1027,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginBottom="10dp"
-                    android:background="@color/dashboard_divider" />
+                    android:background="?attr/colorOutlineVariant" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1054,7 +1056,7 @@
                     android:id="@+id/llInvoicesContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:divider="@color/dashboard_divider"
+                    android:divider="@drawable/divider_dashboard"
                     android:orientation="vertical"
                     android:showDividers="middle" />
 

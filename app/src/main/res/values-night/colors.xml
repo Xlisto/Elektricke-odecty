@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material 3 Dark Palette Tokens -->
+    <!-- ===================================================================== -->
+    <!-- 1. Výchozí paleta motivu Material 3 (Dark)                            -->
+    <!-- ===================================================================== -->
     <color name="md_theme_primary">#ADC6FF</color>
     <color name="md_theme_onPrimary">#002E69</color>
     <color name="md_theme_primaryContainer">#004491</color>
@@ -23,90 +25,42 @@
     <color name="md_theme_onSurface">#E2E2E9</color>
     <color name="md_theme_surfaceVariant">#44474F</color>
     <color name="md_theme_onSurfaceVariant">#C5C6D0</color>
+    <color name="md_theme_surfaceContainerLowest">#0C0E13</color>
+    <color name="md_theme_surfaceContainerLow">#191C22</color>
     <color name="md_theme_surfaceContainer">#111318</color>
     <color name="md_theme_surfaceContainerHigh">#1E2025</color>
     <color name="md_theme_surfaceContainerHighest">#282A2F</color>
     <color name="md_theme_outline">#8E909A</color>
     <color name="md_theme_outlineVariant">#44474F</color>
 
-    <!-- Vlastní semantické průsvitné barvy (Dark) -->
+    <!-- Vlastní průsvitné barvy pro XML fallback (Dark) -->
     <color name="surface_container_translucent">#F2111318</color>
     <color name="outline_translucent">#26FFFFFF</color>
     <color name="surface_container_scrim">#A0111318</color>
 
-    <!-- Legacy / Compatibility Colors Mapped to M3 Dark -->
-    <color name="purple_200">#ADC6FF</color>
+    <!-- ===================================================================== -->
+    <!-- 2. Sémantické barvy nezávislé na barevném motivu (Dark)               -->
+    <!-- ===================================================================== -->
+    <!-- Stavy a upozornění -->
+    <color name="color_no">#FFB4AB</color>
     <color name="color_red_alert">#FF897D</color>
-    <color name="color_axis">#C5C6D0</color>
-    <color name="color_graph_background">#111318</color>
+    <color name="color_yes">#81C784</color>
+    <color name="alert_bg_light">#3B0909</color>
+    <color name="alert_border_light">#93000A</color>
+
+    <!-- HDO pásma (TUV, TAR, PV) -->
     <color name="color_hdo_time_TUV">#A14318</color>
     <color name="color_hdo_time_TAR">#366523</color>
     <color name="color_hdo_time_PV">#345377</color>
 
-    <color name="menuBackgroundColor">#111318</color>
-
-    <color name="labelEditBackgroundEditText">#33FFB4AB</color>
-
-    <color name="floatingButtonTint">#D8E2FF</color>
-    <color name="floatingButtonBackground">#004491</color>
-
-    <color name="color_no">#FFB4AB</color>
-    <color name="color_yes">#81C784</color>
-
-    <color name="colorHint">#8E909A</color>
-    <color name="colorLabelEditText">#E2E2E9</color>
-    <color name="colorOnDisabled">#8E909A</color>
-    <color name="colorDialogButtonText">#ADC6FF</color>
-
-    <!-- NavigationView -->
-    <color name="nav_menu_background">#111318</color>
-    <color name="nav_menu_item_color">#C4C6D0</color>
-    <color name="nav_menu_item_color_checked">#254375</color>
-    <color name="nav_menu_item_text_checked">#D8E2FF</color>
-    <color name="nav_menu_item_color_pressed">#3E4759</color>
-
-    <color name="text_link">#ADC6FF</color>
-
-    <!-- Alert card (dark) -->
-    <color name="alert_bg_light">#3B0909</color>
-    <color name="alert_border_light">#93000A</color>
-    <color name="text_primary">#E2E2E9</color>
-    <color name="text_secondary">#C5C6D0</color>
-
-    <!-- Dialogs (dark) -->
-    <color name="dialog_bg">#1E2025</color>
-    <color name="dialog_text_primary">#E2E2E9</color>
-    <color name="dialog_button_text">#ADC6FF</color>
-    <color name="dialog_button_text_disabled">#8E909A</color>
-
-    <color name="progress_overlay_bg">#D9111318</color>
-
-    <!-- New Dashboard (Dark) -->
-    <color name="dashboard_bg">#111318</color>
-    <color name="dashboard_card_bg">#1E2025</color>
-    <color name="dashboard_card_stroke">#333640</color>
-    <color name="dashboard_price_card_start">#142138</color>
-    <color name="dashboard_price_card_end">#1B3154</color>
-    <color name="dashboard_price_card_stroke">#2C4C80</color>
-    <color name="dashboard_price_box_inactive_bg">#801E283A</color>
-    <color name="dashboard_price_box_inactive_stroke">#364968</color>
-    <color name="dashboard_price_box_active_bg">#004491</color>
-    <color name="dashboard_teal_primary">#ADC6FF</color>
-    <color name="dashboard_teal_vt">#FFB4AB</color>
-    <color name="dashboard_teal_nt">#ADC6FF</color>
+    <!-- Přeplatek / nedoplatek a trend spotřeby na přehledu (Dark) -->
     <color name="dashboard_overpayment_bg">#173B21</color>
     <color name="dashboard_overpayment_text">#81C784</color>
     <color name="dashboard_underpayment_bg">#4A1818</color>
     <color name="dashboard_underpayment_text">#FFB4AB</color>
-    <color name="dashboard_pylon_color">#40ADC6FF</color>
-    <color name="dashboard_switcher_btn_bg">#282A2F</color>
-    <color name="dashboard_switcher_btn_stroke">#3E424B</color>
-    <color name="dashboard_divider">#2E313A</color>
     <color name="dashboard_chart_percent_decrease">#81C784</color>
     <color name="dashboard_chart_percent_increase">#FF8A80</color>
     <color name="dashboard_chart_percent_neutral">#B0B3BD</color>
-    <color name="dashboard_chart_forecast_stroke">#9AA0A6</color>
-    <color name="dashboard_chart_forecast_fill">#24ADC6FF</color>
 
     <!-- Odznaky původu a stavu ceníku (Dark) -->
     <color name="pricelist_badge_pdf_bg">#14294A</color>
@@ -124,4 +78,65 @@
     <color name="pricelist_badge_manual_bg">#282A2F</color>
     <color name="pricelist_badge_manual_stroke">#44474F</color>
     <color name="pricelist_badge_manual_text">#C5C6D0</color>
+
+    <!-- ===================================================================== -->
+    <!-- 3. Záložní a kompatibilní barvy (Dark)                                -->
+    <!-- ===================================================================== -->
+    <color name="purple_200">#ADC6FF</color>
+    <color name="l_gray">#1E2025</color>
+    <color name="l_gray1">#282A2F</color>
+    <color name="l_gray2">#8E909A</color>
+
+    <color name="color_primary">#ADC6FF</color>
+    <color name="color_bar">#111318</color>
+    <color name="color_axis">#C5C6D0</color>
+    <color name="color_graph_background">#111318</color>
+
+    <color name="menuBackgroundColor">#111318</color>
+    <color name="labelEditBackgroundEditText">#33FFB4AB</color>
+
+    <color name="floatingButtonTint">#D8E2FF</color>
+    <color name="floatingButtonBackground">#004491</color>
+
+    <color name="colorHint">#8E909A</color>
+    <color name="colorLabelEditText">#E2E2E9</color>
+    <color name="colorOnDisabled">#8E909A</color>
+    <color name="colorDialogButtonText">#ADC6FF</color>
+
+    <color name="nav_menu_background">#111318</color>
+    <color name="nav_menu_item_color">#C4C6D0</color>
+    <color name="nav_menu_item_color_checked">#254375</color>
+    <color name="nav_menu_item_text_checked">#D8E2FF</color>
+    <color name="nav_menu_item_color_pressed">#3E4759</color>
+
+    <color name="text_link">#ADC6FF</color>
+    <color name="text_primary">#E2E2E9</color>
+    <color name="text_secondary">#C5C6D0</color>
+
+    <color name="dialog_bg">#1E2025</color>
+    <color name="dialog_text_primary">#E2E2E9</color>
+    <color name="dialog_button_text">#ADC6FF</color>
+    <color name="dialog_button_text_disabled">#8E909A</color>
+
+    <color name="progress_overlay_bg">#D9111318</color>
+
+    <!-- Výchozí záložní barvy přehledu (Dark) -->
+    <color name="dashboard_bg">#111318</color>
+    <color name="dashboard_card_bg">#1E2025</color>
+    <color name="dashboard_card_stroke">#333640</color>
+    <color name="dashboard_price_card_start">#142138</color>
+    <color name="dashboard_price_card_end">#1B3154</color>
+    <color name="dashboard_price_card_stroke">#2C4C80</color>
+    <color name="dashboard_price_box_inactive_bg">#801E283A</color>
+    <color name="dashboard_price_box_inactive_stroke">#364968</color>
+    <color name="dashboard_price_box_active_bg">#004491</color>
+    <color name="dashboard_teal_primary">#ADC6FF</color>
+    <color name="dashboard_teal_vt">#FFB4AB</color>
+    <color name="dashboard_teal_nt">#ADC6FF</color>
+    <color name="dashboard_pylon_color">#40ADC6FF</color>
+    <color name="dashboard_switcher_btn_bg">#282A2F</color>
+    <color name="dashboard_switcher_btn_stroke">#3E424B</color>
+    <color name="dashboard_divider">#2E313A</color>
+    <color name="dashboard_chart_forecast_stroke">#9AA0A6</color>
+    <color name="dashboard_chart_forecast_fill">#24ADC6FF</color>
 </resources>

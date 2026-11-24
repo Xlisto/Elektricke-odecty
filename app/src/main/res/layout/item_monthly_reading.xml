@@ -190,7 +190,7 @@
                 android:layout_alignParentEnd="true"
                 android:gravity="end"
                 android:text="@string/pomlcky"
-                android:textColor="@color/color_primary"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 tools:ignore="RtlSymmetry" />
 
@@ -209,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tvDescription"
                 android:text="@string/zalohy"
-                android:textColor="@color/color_primary" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvTotalSum"

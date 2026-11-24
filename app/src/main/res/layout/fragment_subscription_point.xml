@@ -343,8 +343,8 @@
         android:contentDescription="@string/add_subscriptionpoint"
         android:focusable="true"
         android:src="@drawable/ic_add_24"
-        app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:tint="?attr/colorOnPrimaryContainer"
         tools:ignore="RelativeLayout" />
 
 </RelativeLayout>

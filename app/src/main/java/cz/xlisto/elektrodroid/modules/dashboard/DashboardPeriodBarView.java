@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.color.MaterialColors;
+
 import cz.xlisto.elektrodroid.R;
 
 
@@ -62,15 +64,26 @@ public class DashboardPeriodBarView extends View {
     private void init() {
         paintVt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintVt.setStyle(Paint.Style.FILL);
-        paintVt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt));
+        paintVt.setColor(MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt)
+        ));
 
         paintNt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintNt.setStyle(Paint.Style.FILL);
-        paintNt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt));
+        paintNt.setColor(MaterialColors.getColor(
+                this,
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt)
+        ));
 
         paintEmpty = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintEmpty.setStyle(Paint.Style.FILL);
-        paintEmpty.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_divider));
+        paintEmpty.setColor(MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOutlineVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_divider)
+        ));
     }
 
 

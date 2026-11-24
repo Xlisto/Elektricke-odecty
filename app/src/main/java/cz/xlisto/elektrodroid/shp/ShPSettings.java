@@ -18,6 +18,7 @@ public class ShPSettings extends ShP {
     public static final String SHOW_LEFT_NAVIGATION = "showLeftNavigation";
     public static final String ALLOW_MOBILE_DATA = "allowMobileData";
     public static final String USE_HDO_SET_ALARM = "useHdoSetAlarm";
+    public static final String USE_DYNAMIC_COLORS = "useDynamicColors";
 
 
     public ShPSettings(Context context) {
@@ -39,6 +40,22 @@ public class ShPSettings extends ShP {
      */
     public void setAddButtonType(int type) {
         set(ADD_BUTTON_TYPE, type);
+    }
+
+
+    /**
+     * Vrací, zda má aplikace používat dynamické barvy systému (Material You).
+     */
+    public boolean isUseDynamicColors() {
+        return get(USE_DYNAMIC_COLORS, true);
+    }
+
+
+    /**
+     * Uloží předvolbu pro používání dynamických barev systému (Material You).
+     */
+    public void setUseDynamicColors(boolean enabled) {
+        set(USE_DYNAMIC_COLORS, enabled);
     }
 
 }

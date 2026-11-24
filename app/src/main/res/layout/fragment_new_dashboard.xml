@@ -5,7 +5,7 @@
     android:id="@+id/nsvNewDashboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dashboard_bg"
+    android:background="?attr/colorSurface"
     android:clipToPadding="false"
     android:fillViewport="true">
 
@@ -23,10 +23,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            app:cardBackgroundColor="@color/dashboard_card_bg"
+            app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
             app:cardCornerRadius="14dp"
             app:cardElevation="0dp"
-            app:strokeColor="@color/dashboard_card_stroke"
+            app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
             <LinearLayout

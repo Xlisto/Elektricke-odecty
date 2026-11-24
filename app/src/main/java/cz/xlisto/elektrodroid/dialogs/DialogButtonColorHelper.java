@@ -7,10 +7,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.color.MaterialColors;
+
 import cz.xlisto.elektrodroid.R;
 
 /**
- * Sdílená utilita pro sjednocení barvy textu tlačítek v dialogových oknech.
+ * Sdílená utilita pro sjednocení barvy textu tlačítek v dialogových oknech
+ * podle aktuálního barevného motivu aplikace.
  */
 public final class DialogButtonColorHelper {
 
@@ -38,11 +41,19 @@ public final class DialogButtonColorHelper {
      * Aplikuje barvy tlačítek pro konkrétní {@link AlertDialog}.
      *
      * @param alertDialog dialog, jehož tlačítka se mají obarvit
-     * @param context     kontext pro načtení barev z resources
+     * @param context     kontext pro načtení barev z aktuálního motivu
      */
     public static void apply(AlertDialog alertDialog, Context context) {
-        int enabledColor = ContextCompat.getColor(context, R.color.dialog_button_text);
-        int disabledColor = ContextCompat.getColor(context, R.color.dialog_button_text_disabled);
+        int enabledColor = MaterialColors.getColor(
+                context,
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(context, R.color.dialog_button_text)
+        );
+        int disabledColor = MaterialColors.getColor(
+                context,
+                com.google.android.material.R.attr.colorOutline,
+                ContextCompat.getColor(context, R.color.dialog_button_text_disabled)
+        );
 
         applyToButton(alertDialog.getButton(AlertDialog.BUTTON_POSITIVE), enabledColor, disabledColor);
         applyToButton(alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE), enabledColor, disabledColor);
@@ -62,4 +73,3 @@ public final class DialogButtonColorHelper {
         button.setTextColor(button.isEnabled() ? enabledColor : disabledColor);
     }
 }
-

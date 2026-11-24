@@ -36,7 +36,7 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:text="@string/update_check_button"
-            android:textColor="@color/text_link"
+            android:textColor="?attr/colorPrimary"
             android:textSize="15sp" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:text="@string/link_private_policy"
-            android:textColor="@color/text_link"
+            android:textColor="?attr/colorPrimary"
             android:textSize="15sp" />
     </LinearLayout>
 

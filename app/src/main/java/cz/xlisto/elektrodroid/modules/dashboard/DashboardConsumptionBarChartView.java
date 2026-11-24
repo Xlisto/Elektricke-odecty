@@ -12,13 +12,15 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +106,7 @@ public class DashboardConsumptionBarChartView extends View {
     private int colorPercentDecrease;
     private int colorPercentIncrease;
     private int colorPercentNeutral;
+    private int colorForecastFillBase;
 
     private final RectF rectBuffer = new RectF();
     private final Path barClipPath = new Path();
@@ -145,29 +148,62 @@ public class DashboardConsumptionBarChartView extends View {
 
 
     private void init() {
-        int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface, 0xFF1C1B1F);
+        int colorOnSurface = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurface,
+                0xFF1C1B1F
+        );
+        int colorPrimary = MaterialColors.getColor(
+                this,
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt)
+        );
+        int colorOutline = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOutline,
+                ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_stroke)
+        );
+        int colorOutlineVariant = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOutlineVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_divider)
+        );
 
-        colorPercentDecrease = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_decrease);
-        colorPercentIncrease = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_increase);
-        colorPercentNeutral = ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_neutral);
+        colorPercentDecrease = MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_decrease)
+        );
+        colorPercentIncrease = MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_increase)
+        );
+        colorPercentNeutral = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_neutral)
+        );
+        colorForecastFillBase = ColorUtils.setAlphaComponent(colorPrimary, 36);
 
         paintVt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintVt.setStyle(Paint.Style.FILL);
-        paintVt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt));
+        paintVt.setColor(MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt)
+        ));
 
         paintNt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintNt.setStyle(Paint.Style.FILL);
-        paintNt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt));
+        paintNt.setColor(colorPrimary);
 
         paintForecastFill = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintForecastFill.setStyle(Paint.Style.FILL);
-        paintForecastFill.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill));
+        paintForecastFill.setColor(colorForecastFillBase);
 
         paintForecastStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintForecastStroke.setStyle(Paint.Style.STROKE);
         paintForecastStroke.setStrokeWidth(dpToPx(getContext(), 1.5f));
         paintForecastStroke.setStrokeCap(Paint.Cap.ROUND);
-        paintForecastStroke.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_stroke));
+        paintForecastStroke.setColor(colorOutline);
         paintForecastStroke.setPathEffect(new DashPathEffect(
                 new float[]{dpToPx(getContext(), 4f), dpToPx(getContext(), 3f)},
                 0f
@@ -176,7 +212,7 @@ public class DashboardConsumptionBarChartView extends View {
         paintGrid = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintGrid.setStyle(Paint.Style.STROKE);
         paintGrid.setStrokeWidth(dpToPx(getContext(), 1f));
-        paintGrid.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_divider));
+        paintGrid.setColor(colorOutlineVariant);
 
         paintAxisText = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintAxisText.setStyle(Paint.Style.FILL);
@@ -202,15 +238,6 @@ public class DashboardConsumptionBarChartView extends View {
         paintPercentText.setTextAlign(Paint.Align.CENTER);
         paintPercentText.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         paintPercentText.setTextSize(dpToPx(getContext(), 9.5f));
-    }
-
-
-    private int resolveAttrColor(int attrRes, int fallback) {
-        TypedValue tv = new TypedValue();
-        if (getContext().getTheme().resolveAttribute(attrRes, tv, true)) {
-            return tv.data;
-        }
-        return fallback;
     }
 
 
@@ -608,7 +635,7 @@ public class DashboardConsumptionBarChartView extends View {
         barClipPath.reset();
         barClipPath.addRoundRect(rectBuffer, barCornerRadii, Path.Direction.CW);
 
-        int baseFillColor = ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill);
+        int baseFillColor = colorForecastFillBase;
         int baseFillAlpha = (baseFillColor >>> 24) & 0xFF;
         paintForecastFill.setColor(baseFillColor);
         paintForecastFill.setAlpha(Math.round(baseFillAlpha * visibility));
@@ -832,8 +859,7 @@ public class DashboardConsumptionBarChartView extends View {
         // Legenda čárkovaného odhadu (jen pokud je odhad v grafu zobrazen)
         if (showForecastLegend) {
             float forecastLegendY = ntLegendY + rowSpacing;
-            int baseFillColor = ContextCompat.getColor(getContext(), R.color.dashboard_chart_forecast_fill);
-            paintForecastFill.setColor(baseFillColor);
+            paintForecastFill.setColor(colorForecastFillBase);
             rectBuffer.set(legendX, forecastLegendY, legendX + boxSize, forecastLegendY + boxSize);
             canvas.drawRoundRect(rectBuffer, boxCorner, boxCorner, paintForecastFill);
 

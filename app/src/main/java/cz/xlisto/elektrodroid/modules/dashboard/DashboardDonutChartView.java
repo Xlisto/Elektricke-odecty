@@ -9,13 +9,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -80,24 +81,41 @@ public class DashboardDonutChartView extends View {
 
     private void init() {
         float strokeWidth = dpToPx(getContext(), 11f);
-        int colorOnSurface = resolveAttrColor(com.google.android.material.R.attr.colorOnSurface, 0xFF1C1B1F);
+        int colorOnSurface = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurface,
+                0xFF1C1B1F
+        );
+        int colorPrimary = MaterialColors.getColor(
+                this,
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt)
+        );
+        int colorOutlineVariant = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOutlineVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_divider)
+        );
 
         paintVt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintVt.setStyle(Paint.Style.STROKE);
         paintVt.setStrokeWidth(strokeWidth);
         paintVt.setStrokeCap(Paint.Cap.BUTT);
-        paintVt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt));
+        paintVt.setColor(MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_vt)
+        ));
 
         paintNt = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintNt.setStyle(Paint.Style.STROKE);
         paintNt.setStrokeWidth(strokeWidth);
         paintNt.setStrokeCap(Paint.Cap.BUTT);
-        paintNt.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_teal_nt));
+        paintNt.setColor(colorPrimary);
 
         paintEmpty = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintEmpty.setStyle(Paint.Style.STROKE);
         paintEmpty.setStrokeWidth(strokeWidth);
-        paintEmpty.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_divider));
+        paintEmpty.setColor(colorOutlineVariant);
 
         paintValueText = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintValueText.setStyle(Paint.Style.FILL);
@@ -112,15 +130,6 @@ public class DashboardDonutChartView extends View {
         paintUnitText.setAlpha(180);
         paintUnitText.setTextAlign(Paint.Align.CENTER);
         paintUnitText.setTextSize(dpToPx(getContext(), 11f));
-    }
-
-
-    private int resolveAttrColor(int attrRes, int fallback) {
-        TypedValue tv = new TypedValue();
-        if (getContext().getTheme().resolveAttribute(attrRes, tv, true)) {
-            return tv.data;
-        }
-        return fallback;
     }
 
 

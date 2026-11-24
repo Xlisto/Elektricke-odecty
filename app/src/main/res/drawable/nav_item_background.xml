@@ -4,7 +4,7 @@
         <inset android:insetLeft="12dp" android:insetTop="2dp" android:insetRight="12dp" android:insetBottom="2dp">
             <shape android:shape="rectangle">
                 <corners android:radius="28dp" />
-                <solid android:color="@color/nav_menu_item_color_pressed" />
+                <solid android:color="?attr/colorSecondaryContainer" />
             </shape>
         </inset>
     </item>
@@ -13,7 +13,7 @@
         <inset android:insetLeft="12dp" android:insetTop="2dp" android:insetRight="12dp" android:insetBottom="2dp">
             <shape android:shape="rectangle">
                 <corners android:radius="28dp" />
-                <solid android:color="@color/nav_menu_item_color_checked" />
+                <solid android:color="?attr/colorPrimaryContainer" />
             </shape>
         </inset>
     </item>
@@ -22,10 +22,14 @@
         <inset android:insetLeft="12dp" android:insetTop="2dp" android:insetRight="12dp" android:insetBottom="2dp">
             <shape android:shape="rectangle">
                 <corners android:radius="28dp" />
-                <solid android:color="@color/nav_menu_item_color_checked" />
+                <solid android:color="?attr/colorPrimaryContainer" />
             </shape>
         </inset>
     </item>
 
-    <item android:drawable="@color/nav_menu_background" />
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
 </selector>

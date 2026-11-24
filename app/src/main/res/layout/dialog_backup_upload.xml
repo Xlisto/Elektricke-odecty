@@ -22,7 +22,7 @@
         android:layout_marginTop="12dp"
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceTitleMedium"
-        android:textColor="@color/text_primary"
+        android:textColor="?attr/colorOnSurface"
         android:text="@string/please_wait" />
 
 </LinearLayout>

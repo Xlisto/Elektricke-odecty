@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.color.MaterialColors;
+
 import cz.xlisto.elektrodroid.R;
 
 
@@ -74,19 +76,33 @@ public class DashboardBillingBalanceBarView extends View {
     private void init() {
         paintTrack = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintTrack.setStyle(Paint.Style.FILL);
-        paintTrack.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_divider));
+        paintTrack.setColor(MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOutlineVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_divider)
+        ));
 
         paintOverpayment = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintOverpayment.setStyle(Paint.Style.FILL);
-        paintOverpayment.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_overpayment_text));
+        paintOverpayment.setColor(MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_overpayment_text)
+        ));
 
         paintUnderpayment = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintUnderpayment.setStyle(Paint.Style.FILL);
-        paintUnderpayment.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_underpayment_text));
+        paintUnderpayment.setColor(MaterialColors.harmonizeWithPrimary(
+                getContext(),
+                ContextCompat.getColor(getContext(), R.color.dashboard_underpayment_text)
+        ));
 
         paintCenterTick = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintCenterTick.setStyle(Paint.Style.FILL);
-        paintCenterTick.setColor(ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_neutral));
+        paintCenterTick.setColor(MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurfaceVariant,
+                ContextCompat.getColor(getContext(), R.color.dashboard_chart_percent_neutral)
+        ));
     }
 
 

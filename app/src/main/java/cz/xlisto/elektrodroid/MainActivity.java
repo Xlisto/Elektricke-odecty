@@ -30,6 +30,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Arrays;
@@ -762,11 +763,16 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         boolean showLeftNavigation = shPSettings.get(ShPSettings.SHOW_LEFT_NAVIGATION, true);
 
         boolean isPortrait = orientation == Configuration.ORIENTATION_PORTRAIT;
+        int bottomVisibility = isPortrait && showBottomNavigation ? View.VISIBLE : View.GONE;
         if (floatingNavCard != null) {
-            floatingNavCard.setVisibility(isPortrait && showBottomNavigation ? View.VISIBLE : View.GONE);
+            floatingNavCard.setVisibility(bottomVisibility);
         }
         if (myBottomNavigationView != null) {
-            myBottomNavigationView.setVisibility(isPortrait && showBottomNavigation ? View.VISIBLE : View.GONE);
+            myBottomNavigationView.setVisibility(bottomVisibility);
+        }
+        View bottomScrim = findViewById(R.id.bottomScrim);
+        if (bottomScrim != null) {
+            bottomScrim.setVisibility(bottomVisibility);
         }
 
         boolean showLeftReplacement = orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -777,6 +783,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (myNavigationView != null) {
             myNavigationView.setVisibility(showLeftReplacement ? View.VISIBLE : View.GONE);
         }
+        notifyPaddingChanged();
     }
 
 
@@ -981,6 +988,54 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         setSystemBarColors(surfaceColor, null);
 
         setupBlurView();
+        updateFloatingNavigationSurfaceColors(isDarkTheme);
+    }
+
+
+    /**
+     * Odvodí poloprůhledné barvy plovoucích navigačních panelů a spodního přechodu
+     * přímo z aktuálního motivu (včetně dynamických barev Material You).
+     *
+     * @param isDarkTheme {@code true}, pokud je aktivní tmavý motiv
+     */
+    private void updateFloatingNavigationSurfaceColors(boolean isDarkTheme) {
+        int surfaceColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorSurface,
+                android.graphics.Color.WHITE
+        );
+        int surfaceContainerColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorSurfaceContainer,
+                surfaceColor
+        );
+        int onSurfaceColor = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurface,
+                isDarkTheme ? android.graphics.Color.WHITE : android.graphics.Color.BLACK
+        );
+
+        int cardBackgroundColor = ColorUtils.setAlphaComponent(surfaceContainerColor, 0xF2);
+        int cardStrokeColor = ColorUtils.setAlphaComponent(onSurfaceColor, isDarkTheme ? 0x26 : 0x1F);
+
+        if (floatingNavCard instanceof MaterialCardView card) {
+            card.setCardBackgroundColor(cardBackgroundColor);
+            card.setStrokeColor(cardStrokeColor);
+        }
+        if (floatingLeftNavCard instanceof MaterialCardView card) {
+            card.setCardBackgroundColor(cardBackgroundColor);
+            card.setStrokeColor(cardStrokeColor);
+        }
+
+        View bottomScrim = findViewById(R.id.bottomScrim);
+        if (bottomScrim != null) {
+            int scrimEndColor = ColorUtils.setAlphaComponent(surfaceColor, isDarkTheme ? 0xA0 : 0x80);
+            GradientDrawable scrimDrawable = new GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    new int[]{android.graphics.Color.TRANSPARENT, scrimEndColor}
+            );
+            bottomScrim.setBackground(scrimDrawable);
+        }
     }
 
 

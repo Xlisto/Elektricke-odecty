@@ -659,6 +659,9 @@
     <string name="settings_group_add_button">Přidávání záznamů</string>
     <string name="settings_group_navigation">Zobrazení navigace</string>
     <string name="settings_group_connection">Připojení</string>
+    <string name="settings_group_appearance">Vzhled</string>
+    <string name="use_dynamic_colors">Dynamické barvy (Material You)</string>
+    <string name="use_dynamic_colors_description">Přizpůsobí barvy aplikace tapetě systému (Android 12 a novější).</string>
     <string name="notifications_enabled">Povolené notifikace</string>
     <string name="exact_alarms_enabled">Povolené přesné alarmy</string>
     <string name="hdo_use_set_alarm">Vynutit přesné notifikace HDO</string>

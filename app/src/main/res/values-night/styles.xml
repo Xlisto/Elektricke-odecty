@@ -4,17 +4,17 @@
     <style name="DialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="android:windowBackground">@drawable/dialog_rounded_background</item>
         <item name="android:background">@drawable/dialog_rounded_background</item>
-        <item name="android:textColor">@color/dialog_text_primary</item>
-        <item name="android:textColorPrimary">@color/dialog_text_primary</item>
-        <item name="android:textColorSecondary">@color/dialog_text_primary</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+        <item name="android:textColorSecondary">?attr/colorOnSurfaceVariant</item>
         <item name="android:buttonBarButtonStyle">@style/DialogButtonStyle</item>
-        <item name="colorAccent">@color/dialog_button_text</item>
-        <item name="android:colorAccent">@color/dialog_button_text</item>
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="android:colorAccent">?attr/colorPrimary</item>
         <item name="android:backgroundDimAmount">0.5</item>
         <item name="android:dividerHeight">0dp</item>
     </style>
 
     <style name="DialogButtonStyle" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textColor">@color/dialog_button_text</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 </resources>

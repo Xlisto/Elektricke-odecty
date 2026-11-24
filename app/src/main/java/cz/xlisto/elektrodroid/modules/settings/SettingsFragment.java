@@ -18,9 +18,11 @@ import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.MainActivity;
@@ -42,6 +44,8 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
 
     private CheckBox chNotificationPermission;
     private CheckBox chExactAlarmPermission;
+    private NestedScrollView scrollViewSettings;
+    private View llSettingsContent;
     private Boolean wasExactAlarmEnabled;
 
     public static final String FLAG_UPDATE_SETTINGS_FOR_FRAGMENT = "SettingsViewDialogFragment1";
@@ -64,6 +68,8 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings_view, container, false);
+        scrollViewSettings = view.findViewById(R.id.scrollViewSettings);
+        llSettingsContent = view.findViewById(R.id.llSettingsContent);
         chNotificationPermission = view.findViewById(R.id.chNotificationPermission);
         chExactAlarmPermission = view.findViewById(R.id.chExactAlarmPermission);
         CheckBox chUseSetAlarm = view.findViewById(R.id.chUseSetAlarm);
@@ -151,8 +157,48 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
             notifySettingsChanged();
         });
 
+        View layoutAppearanceSettings = view.findViewById(R.id.layoutAppearanceSettings);
+        MaterialSwitch switchUseDynamicColors = view.findViewById(R.id.switchUseDynamicColors);
+        if (layoutAppearanceSettings != null && switchUseDynamicColors != null) {
+            if (DynamicColors.isDynamicColorAvailable()) {
+                layoutAppearanceSettings.setVisibility(View.VISIBLE);
+                switchUseDynamicColors.setChecked(shPSettings.isUseDynamicColors());
+                switchUseDynamicColors.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (shPSettings.isUseDynamicColors() != isChecked) {
+                        shPSettings.setUseDynamicColors(isChecked);
+                        requireActivity().recreate();
+                    }
+                });
+            } else {
+                layoutAppearanceSettings.setVisibility(View.GONE);
+            }
+        }
+
+        setupScrollListener();
+        view.post(this::updateViewPadding);
 
         return view;
+    }
+
+
+    /**
+     * Nastaví posluchač posunu nad {@link NestedScrollView}, který při posunu dolů přepíná
+     * spodní navigaci do kompaktního režimu a při návratu nahoru ji opět rozbalí.
+     */
+    private void setupScrollListener() {
+        if (scrollViewSettings == null) return;
+        final int thresholdPx = (int) (12 * getResources().getDisplayMetrics().density);
+        scrollViewSettings.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (!(getActivity() instanceof MainActivity mainAct)) return;
+            if (scrollY == 0) {
+                mainAct.setBottomNavCompact(false);
+                return;
+            }
+            int dy = scrollY - oldScrollY;
+            if (Math.abs(dy) >= thresholdPx) {
+                mainAct.setBottomNavCompact(dy > 0);
+            }
+        });
     }
 
 
@@ -170,18 +216,29 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
 
     public void updateViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
+            int basePaddingPx = (int) (16 * density);
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()
-                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)
-                    : mainAct.getEffectiveNavBarInsetBottom() + (int) (112 * density);
+                    ? mainAct.getEffectiveNavBarInsetBottom() + (int) (24 * density)
+                    : Math.max(
+                    mainAct.getBottomPanelMarginPx() + (int) (24 * density),
+                    mainAct.getEffectiveNavBarInsetBottom() + (int) (120 * density)
+            );
             int leftPaddingPx = mainAct.getLeftNavTotalWidth();
             int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
 
-            if (getView() instanceof ViewGroup) {
-                ViewGroup vg = (ViewGroup) getView();
+            if (scrollViewSettings != null && llSettingsContent != null) {
+                scrollViewSettings.setClipToPadding(false);
+                scrollViewSettings.setPadding(0, 0, 0, 0);
+                llSettingsContent.setPadding(
+                        basePaddingPx + leftPaddingPx,
+                        basePaddingPx + topPaddingPx,
+                        basePaddingPx + rightPaddingPx,
+                        bottomPaddingPx
+                );
+            } else if (getView() instanceof ViewGroup vg) {
                 vg.setClipToPadding(false);
                 vg.setPadding(leftPaddingPx, topPaddingPx, rightPaddingPx, bottomPaddingPx);
             }

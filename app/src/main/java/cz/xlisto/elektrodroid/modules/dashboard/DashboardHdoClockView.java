@@ -12,13 +12,14 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -166,9 +167,21 @@ public class DashboardHdoClockView extends View {
      * Inicializuje štětce ({@link Paint}) a barvy ciferníku i relé HDO podle aktuálního motivu.
      */
     private void init() {
-        int colorPrimary = ContextCompat.getColor(getContext(), R.color.dashboard_teal_primary);
-        int colorOnSurface = resolveColorOnSurface();
-        int colorSurfaceBg = ContextCompat.getColor(getContext(), R.color.dashboard_price_card_start);
+        int colorPrimary = MaterialColors.getColor(
+                this,
+                androidx.appcompat.R.attr.colorPrimary,
+                ContextCompat.getColor(getContext(), R.color.dashboard_teal_primary)
+        );
+        int colorOnSurface = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorOnSurface,
+                0xFF1C1B1F
+        );
+        int colorSurfaceBg = MaterialColors.getColor(
+                this,
+                com.google.android.material.R.attr.colorSurfaceContainerHigh,
+                ContextCompat.getColor(getContext(), R.color.dashboard_price_card_start)
+        );
 
         colorHdoTuv = ContextCompat.getColor(getContext(), R.color.color_hdo_time_TUV);
         colorHdoTar = ContextCompat.getColor(getContext(), R.color.color_hdo_time_TAR);
@@ -199,29 +212,16 @@ public class DashboardHdoClockView extends View {
         paintNumbers.setTextSize(dpToPx(getContext(), 7.5f));
         paintNumbers.setFakeBoldText(true);
 
+        int handColor = MaterialColors.harmonizeWithPrimary(getContext(), 0xFFD32F2F);
         paintHand = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintHand.setStyle(Paint.Style.STROKE);
         paintHand.setStrokeWidth(dpToPx(getContext(), 1.8f));
         paintHand.setStrokeCap(Paint.Cap.ROUND);
-        paintHand.setColor(0xFFD32F2F);
+        paintHand.setColor(handColor);
 
         paintCenterDot = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintCenterDot.setStyle(Paint.Style.FILL);
-        paintCenterDot.setColor(0xFFD32F2F);
-    }
-
-
-    /**
-     * Načte barvu atributu {@code colorOnSurface} z aktuálního motivu s výchozí tmavou rezervou.
-     *
-     * @return výsledná ARGB barva popředí
-     */
-    private int resolveColorOnSurface() {
-        TypedValue tv = new TypedValue();
-        if (getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true)) {
-            return tv.data;
-        }
-        return 0xFF1C1B1F;
+        paintCenterDot.setColor(handColor);
     }
 
 

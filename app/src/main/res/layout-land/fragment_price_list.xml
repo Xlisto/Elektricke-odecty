@@ -158,8 +158,8 @@
             android:focusable="true"
             android:contentDescription="@string/add_monthly_price_list"
             android:src="@drawable/ic_add_24"
-            app:backgroundTint="@color/floatingButtonTint"
-            app:tint="@color/floatingButtonBackground" />
+            app:backgroundTint="?attr/colorPrimaryContainer"
+            app:tint="?attr/colorOnPrimaryContainer" />
 
         <!-- Semitransparentní rozostřovací pozadí pod dialogem s průběhem (Day/Night adaptivní) -->
         <FrameLayout

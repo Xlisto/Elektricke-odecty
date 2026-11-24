@@ -60,10 +60,10 @@
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        app:cardBackgroundColor="@color/surface_container_translucent"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerTranslucent"
         app:cardCornerRadius="28dp"
         app:cardElevation="8dp"
-        app:strokeColor="@color/outline_translucent"
+        app:strokeColor="?attr/colorOutlineTranslucent"
         app:strokeWidth="1dp">
 
         <cz.xlisto.elektrodroid.ownview.MyBottomNavigationView
@@ -94,10 +94,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:visibility="gone"
-        app:cardBackgroundColor="@color/surface_container_translucent"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerTranslucent"
         app:cardCornerRadius="24dp"
         app:cardElevation="8dp"
-        app:strokeColor="@color/outline_translucent"
+        app:strokeColor="?attr/colorOutlineTranslucent"
         app:strokeWidth="1dp">
 
         <com.google.android.material.navigation.NavigationView

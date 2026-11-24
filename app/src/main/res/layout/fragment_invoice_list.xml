@@ -63,8 +63,8 @@
         android:layout_marginBottom="32dp"
         android:contentDescription="@string/add"
         android:src="@drawable/ic_add_24"
-        app:backgroundTint="@color/floatingButtonTint"
-        app:tint="@color/floatingButtonBackground" />
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:tint="?attr/colorOnPrimaryContainer" />
 
     <TextView
         android:id="@+id/tvAlertInvoiceList"

@@ -8,24 +8,28 @@
     <path
         android:fillColor="#00000000"
         android:pathData="M36,6 L28,28 L20,114 M36,6 L44,28 L52,114 M12,114 L60,114"
-        android:strokeWidth="1.6"
-        android:strokeColor="@color/dashboard_pylon_color" />
+        android:strokeAlpha="0.25"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeWidth="1.6" />
     <!-- Cross arms -->
     <path
         android:fillColor="#00000000"
         android:pathData="M14,28 L58,28 L36,20 Z M8,48 L64,48 L36,38 Z M14,68 L58,68 L36,58 Z"
-        android:strokeWidth="1.3"
-        android:strokeColor="@color/dashboard_pylon_color" />
+        android:strokeAlpha="0.25"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeWidth="1.3" />
     <!-- Insulators -->
     <path
         android:fillColor="#00000000"
         android:pathData="M14,28 L14,33 M58,28 L58,33 M8,48 L8,54 M64,48 L64,54 M14,68 L14,74 M58,68 L58,74"
-        android:strokeWidth="1.4"
-        android:strokeColor="@color/dashboard_pylon_color" />
+        android:strokeAlpha="0.25"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeWidth="1.4" />
     <!-- Lattice diagonal bracing -->
     <path
         android:fillColor="#00000000"
         android:pathData="M28,28 L45,48 M44,28 L27,48 M26,48 L47,68 M46,48 L25,68 M24,68 L49,90 M48,68 L23,90 M22,90 L52,114 M50,90 L20,114 M22,90 L50,90"
-        android:strokeWidth="1.1"
-        android:strokeColor="@color/dashboard_pylon_color" />
+        android:strokeAlpha="0.25"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeWidth="1.1" />
 </vector>
