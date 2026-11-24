@@ -1006,4 +1006,9 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="price_list_compare_break_even_title">Analýza bodu zvratu (Break-even point)</string>
     <string name="price_list_compare_annual_cost_curve_title">Křivka celkových ročních nákladů</string>
     <string name="price_list_compare_technical_conditions_title">Technické podmínky přiznání sazby</string>
+    <string name="price_list_compare_source_title">Zdroj spotřeby</string>
+    <string name="price_list_compare_source_manual">Ruční zadání VT a NT</string>
+    <string name="price_list_compare_source_history_year">Načíst z odečtů za konkrétní rok</string>
+    <string name="price_list_compare_source_history_avg">Průměrná roční spotřeba z historie</string>
+    <string name="price_list_compare_year_label">Rok:</string>
 </resources>

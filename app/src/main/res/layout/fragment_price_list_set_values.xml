@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Zdroj spotřeby"
+            android:text="@string/price_list_compare_source_title"
             android:textAppearance="?attr/textAppearanceTitleSmall"
             android:textColor="?attr/colorOnSurface" />
 
@@ -29,19 +29,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Ruční zadání VT a NT" />
+                android:text="@string/price_list_compare_source_manual" />
 
             <RadioButton
                 android:id="@+id/rbSourceHistoryYear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Načíst z odečtů za konkrétní rok" />
+                android:text="@string/price_list_compare_source_history_year" />
 
             <RadioButton
                 android:id="@+id/rbSourceHistoryAvg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Průměrná roční spotřeba z historie" />
+                android:text="@string/price_list_compare_source_history_avg" />
         </RadioGroup>
 
         <LinearLayout
@@ -56,7 +56,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Rok: "
+                android:layout_marginEnd="4dp"
+                android:text="@string/price_list_compare_year_label"
                 android:textAppearance="?attr/textAppearanceBodyMedium" />
 
             <Spinner
