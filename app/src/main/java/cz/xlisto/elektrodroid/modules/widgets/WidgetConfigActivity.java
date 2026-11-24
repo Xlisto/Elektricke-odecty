@@ -331,13 +331,13 @@ public class WidgetConfigActivity extends AppCompatActivity {
 
 
     @NonNull
-    private WidgetConfig getNewConfig(SubscriptionPointModel selectedPoint) {
+    private WidgetConfig getNewConfig(@NonNull SubscriptionPointModel selectedPoint) {
         boolean showTotalPrice = !widgetType.supportsPriceOptions()
                 || rgPriceMode.getCheckedRadioButtonId() == R.id.rb_price_total;
         boolean includeVat = !widgetType.supportsPriceOptions()
                 || rgVatMode.getCheckedRadioButtonId() == R.id.rb_vat_include;
 
-        WidgetConfig newConfig = new WidgetConfig(
+        return new WidgetConfig(
                 appWidgetId,
                 widgetType,
                 selectedPoint.getId(),
@@ -346,7 +346,6 @@ public class WidgetConfigActivity extends AppCompatActivity {
                 showTotalPrice,
                 includeVat
         );
-        return newConfig;
     }
 
 
