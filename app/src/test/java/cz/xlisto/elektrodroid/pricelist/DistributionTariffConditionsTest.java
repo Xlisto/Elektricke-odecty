@@ -18,16 +18,16 @@ public class DistributionTariffConditionsTest {
     public void testStandardTariffs() {
         DistributionTariffConditions d25 = DistributionTariffConditionsRepository.getConditionsForTariff("D25d");
         assertNotNull(d25);
-        assertEquals("D25d", d25.getTariffCode());
-        assertEquals("Akumulační ohřev vody", d25.getTitle());
-        assertEquals("8 h NT denně", d25.getLowTariffBadge());
+        assertEquals("D25d", d25.tariffCode());
+        assertEquals("Akumulační ohřev vody", d25.title());
+        assertEquals("8 h NT denně", d25.lowTariffBadge());
         assertFalse(d25.isHistorical());
 
         DistributionTariffConditions d26 = DistributionTariffConditionsRepository.getConditionsForTariff("D26d");
         assertNotNull(d26);
-        assertEquals("D26d", d26.getTariffCode());
-        assertEquals("Akumulační vytápění", d26.getTitle());
-        assertEquals("8 h NT denně", d26.getLowTariffBadge());
+        assertEquals("D26d", d26.tariffCode());
+        assertEquals("Akumulační vytápění", d26.title());
+        assertEquals("8 h NT denně", d26.lowTariffBadge());
         assertFalse(d26.isHistorical());
     }
 
@@ -37,7 +37,7 @@ public class DistributionTariffConditionsTest {
         DistributionTariffConditions d35 = DistributionTariffConditionsRepository.getConditionsForTariff("D35d");
         assertNotNull(d35);
         assertTrue(d35.isHistorical());
-        assertTrue(d35.getHistoricalNotice().contains("Tuto sazbu již nelze nově přiznat"));
+        assertTrue(d35.historicalNotice().contains("Tuto sazbu již nelze nově přiznat"));
 
         DistributionTariffConditions d45 = DistributionTariffConditionsRepository.getConditionsForTariff("D45d");
         assertNotNull(d45);
@@ -53,12 +53,12 @@ public class DistributionTariffConditionsTest {
     public void testCaseInsensitiveMatching() {
         DistributionTariffConditions d57Lower = DistributionTariffConditionsRepository.getConditionsForTariff("d57d");
         assertNotNull(d57Lower);
-        assertEquals("D57d", d57Lower.getTariffCode());
-        assertEquals("20 h NT denně", d57Lower.getLowTariffBadge());
+        assertEquals("D57d", d57Lower.tariffCode());
+        assertEquals("20 h NT denně", d57Lower.lowTariffBadge());
 
         DistributionTariffConditions d02WithSpaces = DistributionTariffConditionsRepository.getConditionsForTariff(" D02d ");
         assertNotNull(d02WithSpaces);
-        assertEquals("D02d", d02WithSpaces.getTariffCode());
+        assertEquals("D02d", d02WithSpaces.tariffCode());
     }
 
 }

@@ -167,8 +167,9 @@ public class PriceListFilterDialogFragment extends DialogFragment {
 
     private void disableKeyboard(TextInputEditText editText) {
         if (editText != null) {
-            editText.setFocusable(false);
+            editText.setFocusable(true);
             editText.setFocusableInTouchMode(false);
+            editText.setShowSoftInputOnFocus(false);
             editText.setLongClickable(false);
             editText.setInputType(android.text.InputType.TYPE_NULL);
         }

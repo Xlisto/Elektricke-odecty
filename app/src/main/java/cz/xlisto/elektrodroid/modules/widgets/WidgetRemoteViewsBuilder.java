@@ -971,8 +971,8 @@ public final class WidgetRemoteViewsBuilder {
         views.setTextViewText(R.id.tv_widget_error_title, errorTitle);
 
         if (hasSubtitleAndHeader) {
-            String headerName = (config != null && !config.getSubscriptionPointNameSnapshot().isEmpty())
-                    ? config.getSubscriptionPointNameSnapshot()
+            String headerName = (config != null && !config.subscriptionPointNameSnapshot().isEmpty())
+                    ? config.subscriptionPointNameSnapshot()
                     : context.getString(widgetType.getLabelResId());
             views.setTextViewText(R.id.tv_widget_point_name, headerName);
             views.setTextViewText(R.id.tv_widget_error_subtitle, context.getString(R.string.widget_point_missing_hint));
@@ -990,21 +990,21 @@ public final class WidgetRemoteViewsBuilder {
                                                 @NonNull WidgetConfig config,
                                                 boolean compactMode) {
         if (compactMode) {
-            if (config.isShowTotalPrice()) {
-                return context.getString(config.isIncludeVat()
+            if (config.showTotalPrice()) {
+                return context.getString(config.includeVat()
                         ? R.string.widget_price_mode_compact_total_with_vat
                         : R.string.widget_price_mode_compact_total_without_vat);
             }
-            return context.getString(config.isIncludeVat()
+            return context.getString(config.includeVat()
                     ? R.string.widget_price_mode_compact_commercial_with_vat
                     : R.string.widget_price_mode_compact_commercial_without_vat);
         }
-        if (config.isShowTotalPrice()) {
-            return context.getString(config.isIncludeVat()
+        if (config.showTotalPrice()) {
+            return context.getString(config.includeVat()
                     ? R.string.widget_price_mode_total_with_vat
                     : R.string.widget_price_mode_total_without_vat);
         }
-        return context.getString(config.isIncludeVat()
+        return context.getString(config.includeVat()
                 ? R.string.widget_price_mode_commercial_with_vat
                 : R.string.widget_price_mode_commercial_without_vat);
     }

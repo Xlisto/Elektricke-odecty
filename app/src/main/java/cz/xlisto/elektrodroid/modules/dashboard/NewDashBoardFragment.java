@@ -2385,7 +2385,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
         if (tvConsumptionChangeNote != null) {
             boolean hasAnyPercent = false;
             for (DashboardConsumptionBarChartView.BarEntry entry : activeEntries) {
-                if (entry.changePercent != null) {
+                if (entry.changePercent() != null) {
                     hasAnyPercent = true;
                     break;
                 }

@@ -65,7 +65,7 @@ public class DownloadPriceListFragment extends Fragment implements OnPaddingChan
 
         SupplierDownloadAdapter adapter = new SupplierDownloadAdapter(suppliers, supplier -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(supplier.getUrl()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(supplier.url()));
                 startActivity(intent);
             } catch (Exception e) {
                 Toast.makeText(requireContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

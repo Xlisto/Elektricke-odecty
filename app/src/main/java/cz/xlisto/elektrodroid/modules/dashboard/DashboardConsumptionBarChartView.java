@@ -38,18 +38,12 @@ public class DashboardConsumptionBarChartView extends View {
 
     private static final long ANIMATION_DURATION_MS = 550L;
 
+
     /**
      * Datová položka jednoho sloupce grafu.
      */
-    public static class BarEntry {
-
-        public final String label;
-        public final double vt;
-        public final double nt;
-        public final double projectedTotal;
-        @Nullable
-        public final Double changePercent;
-
+    public record BarEntry(String label, double vt, double nt, double projectedTotal,
+                           @Nullable Double changePercent) {
 
         public BarEntry(@NonNull String label, double vt, double nt) {
             this(label, vt, nt, 0.0, null);

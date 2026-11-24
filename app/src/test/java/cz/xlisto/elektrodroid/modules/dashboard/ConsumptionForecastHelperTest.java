@@ -34,16 +34,16 @@ public class ConsumptionForecastHelperTest {
 
         assertEquals(3, entries.size());
         // Na prvním sloupci procentní hodnota nikdy není
-        assertNull(entries.get(0).changePercent);
+        assertNull(entries.get(0).changePercent());
         assertFalse(entries.get(0).hasForecast());
 
         // Duben: 400 / 30 = 13.333 kWh/den -> Květen: 300 / 31 = 9.677 kWh/den => -27.42 %
-        Double pct1 = entries.get(1).changePercent;
+        Double pct1 = entries.get(1).changePercent();
         assertNotNull(pct1);
         assertEquals(((300.0 / 31.0) - (400.0 / 30.0)) / (400.0 / 30.0) * 100.0, pct1, 0.01);
 
         // Květen: 300 / 31 = 9.677 kWh/den -> Červen: 360 / 30 = 12.0 kWh/den => +24.0 %
-        Double pct2 = entries.get(2).changePercent;
+        Double pct2 = entries.get(2).changePercent();
         assertNotNull(pct2);
         assertEquals(((360.0 / 30.0) - (300.0 / 31.0)) / (300.0 / 31.0) * 100.0, pct2, 0.01);
         assertFalse(entries.get(2).hasForecast());
@@ -65,11 +65,11 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
 
         assertEquals(3, entries.size());
-        assertNull(entries.get(0).changePercent);
-        Double pct1 = entries.get(1).changePercent;
+        assertNull(entries.get(0).changePercent());
+        Double pct1 = entries.get(1).changePercent();
         assertNotNull(pct1);
         assertEquals(0.0, pct1, 0.01);
-        Double pct2 = entries.get(2).changePercent;
+        Double pct2 = entries.get(2).changePercent();
         assertNotNull(pct2);
         assertEquals(0.0, pct2, 0.01);
     }
@@ -86,8 +86,8 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
 
         assertEquals(2, entries.size());
-        assertNull(entries.get(0).changePercent);
-        assertNull(entries.get(1).changePercent);
+        assertNull(entries.get(0).changePercent());
+        assertNull(entries.get(1).changePercent());
     }
 
 
@@ -101,7 +101,7 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 8, "D02d");
 
         assertEquals(1, entries.size());
-        assertNull(entries.get(0).changePercent);
+        assertNull(entries.get(0).changePercent());
     }
 
 
@@ -123,10 +123,10 @@ public class ConsumptionForecastHelperTest {
         assertTrue(currentNov.hasForecast());
         assertEquals(300.0, currentNov.getTotal(), 0.01);
         // 10 dní = 300 kWh a historie listopadu = 900 kWh -> odhad celého listopadu je 900 kWh
-        assertEquals(900.0, currentNov.projectedTotal, 1.0);
+        assertEquals(900.0, currentNov.projectedTotal(), 1.0);
         // Denní průměr: říjen 600/31 = 19.355 kWh/den -> listopad (odhad) 900/30 = 30.0 kWh/den => +55.0 %
-        assertNotNull(currentNov.changePercent);
-        assertEquals(((900.0 / 30.0) - (600.0 / 31.0)) / (600.0 / 31.0) * 100.0, currentNov.changePercent, 0.5);
+        assertNotNull(currentNov.changePercent());
+        assertEquals(((900.0 / 30.0) - (600.0 / 31.0)) / (600.0 / 31.0) * 100.0, currentNov.changePercent(), 0.5);
     }
 
 
@@ -143,8 +143,8 @@ public class ConsumptionForecastHelperTest {
         List<DashboardConsumptionBarChartView.BarEntry> standardEntries =
                 ConsumptionForecastHelper.buildMonthlyEntries(records, 5, 2026, 11, "D02d");
 
-        double heatingProjected = heatingEntries.get(1).projectedTotal;
-        double standardProjected = standardEntries.get(1).projectedTotal;
+        double heatingProjected = heatingEntries.get(1).projectedTotal();
+        double standardProjected = standardEntries.get(1).projectedTotal();
 
         assertTrue(heatingEntries.get(1).hasForecast());
         assertTrue(standardEntries.get(1).hasForecast());
@@ -182,16 +182,16 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildYearlyEntries(yearly, monthly, 5, 2026, 9, "D57d");
 
         assertEquals(2, entries.size());
-        assertNull(entries.get(0).changePercent);
+        assertNull(entries.get(0).changePercent());
         assertFalse(entries.get(0).hasForecast());
 
         DashboardConsumptionBarChartView.BarEntry entry2026 = entries.get(1);
         assertTrue(entry2026.hasForecast());
         assertEquals(sum2026SoFar, entry2026.getTotal(), 0.01);
         // S identickým trendem (1.0) musí predikce roku 2026 přesně odpovídat roku 2025 (7200 kWh)
-        assertEquals(sum2025, entry2026.projectedTotal, 1.0);
-        assertNotNull(entry2026.changePercent);
-        assertEquals(0.0, entry2026.changePercent, 0.1);
+        assertEquals(sum2025, entry2026.projectedTotal(), 1.0);
+        assertNotNull(entry2026.changePercent());
+        assertEquals(0.0, entry2026.changePercent(), 0.1);
     }
 
 
@@ -216,8 +216,8 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildYearlyEntries(yearly, monthly, 5, 2026, 4, "D02d");
 
         assertEquals(2, entries.size());
-        assertNull(entries.get(0).changePercent);
-        Double pct = entries.get(1).changePercent;
+        assertNull(entries.get(0).changePercent());
+        Double pct = entries.get(1).changePercent();
         assertNotNull(pct);
         // Oba roky mají průměrnou denní spotřebu přesně 10 kWh/den => změna 0 %
         assertEquals(0.0, pct, 0.01);
@@ -242,8 +242,8 @@ public class ConsumptionForecastHelperTest {
         List<DashboardConsumptionBarChartView.BarEntry> standardEntries =
                 ConsumptionForecastHelper.buildYearlyEntries(yearly, monthly, 5, 2026, 9, "D02d");
 
-        double heatingTotal = heatingEntries.get(0).projectedTotal;
-        double standardTotal = standardEntries.get(0).projectedTotal;
+        double heatingTotal = heatingEntries.get(0).projectedTotal();
+        double standardTotal = standardEntries.get(0).projectedTotal();
 
         // Topná domácnost spotřebuje v září–prosinci znatelně více než netopná
         assertTrue(heatingTotal > standardTotal + 400.0);
@@ -263,7 +263,7 @@ public class ConsumptionForecastHelperTest {
                 ConsumptionForecastHelper.buildYearlyEntries(yearly, monthly, 5, 2026, 12, "D02d");
 
         assertFalse(entries.get(0).hasForecast());
-        assertEquals(600.0, entries.get(0).projectedTotal, 0.01);
+        assertEquals(600.0, entries.get(0).projectedTotal(), 0.01);
     }
 
 }

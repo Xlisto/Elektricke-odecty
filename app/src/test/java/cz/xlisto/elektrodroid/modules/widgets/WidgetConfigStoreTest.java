@@ -82,9 +82,9 @@ public class WidgetConfigStoreTest {
         assertEquals(domov, store.loadConfig(101));
         assertEquals(chataUpdated, store.loadConfig(102));
         assertEquals(garaz, store.loadConfig(103));
-        assertTrue(store.loadConfig(101).isIncludeVat());
-        assertFalse(store.loadConfig(102).isIncludeVat());
-        assertFalse(store.loadConfig(103).isIncludeVat());
+        assertTrue(store.loadConfig(101).includeVat());
+        assertFalse(store.loadConfig(102).includeVat());
+        assertFalse(store.loadConfig(103).includeVat());
     }
 
 
@@ -126,13 +126,13 @@ public class WidgetConfigStoreTest {
         assertNotNull(new20);
         assertNotNull(new30);
 
-        assertEquals(1L, new20.getSubscriptionPointId());
-        assertEquals("Domov", new20.getSubscriptionPointNameSnapshot());
-        assertTrue(new20.isShowTotalPrice());
+        assertEquals(1L, new20.subscriptionPointId());
+        assertEquals("Domov", new20.subscriptionPointNameSnapshot());
+        assertTrue(new20.showTotalPrice());
 
-        assertEquals(2L, new30.getSubscriptionPointId());
-        assertEquals("Chata", new30.getSubscriptionPointNameSnapshot());
-        assertFalse(new30.isShowTotalPrice());
+        assertEquals(2L, new30.subscriptionPointId());
+        assertEquals("Chata", new30.subscriptionPointNameSnapshot());
+        assertFalse(new30.showTotalPrice());
     }
 
 
@@ -165,7 +165,7 @@ public class WidgetConfigStoreTest {
 
         List<WidgetConfig> byMilins = store.loadConfigsForSubscriptionPoint(-1L, 555002L);
         assertEquals(1, byMilins.size());
-        assertEquals(2, byMilins.get(0).getAppWidgetId());
+        assertEquals(2, byMilins.get(0).appWidgetId());
     }
 
 }

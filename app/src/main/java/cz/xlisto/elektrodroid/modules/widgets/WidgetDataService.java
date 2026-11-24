@@ -355,7 +355,7 @@ public final class WidgetDataService {
         boolean isSingleTariff = (priceList != null) && isSingleTariffRate(priceList.getRate());
 
         if (priceList != null && (status == PriceListValidityStatus.VALID || status == PriceListValidityStatus.EXPIRED)) {
-            double[] prices = computeUnitPrices(priceList, point, config.isShowTotalPrice(), config.isIncludeVat());
+            double[] prices = computeUnitPrices(priceList, point, config.showTotalPrice(), config.includeVat());
             vtPrice = prices[0];
             ntPrice = prices[1];
         }
@@ -367,8 +367,8 @@ public final class WidgetDataService {
                 vtPrice,
                 ntPrice,
                 isSingleTariff,
-                config.isShowTotalPrice(),
-                config.isIncludeVat(),
+                config.showTotalPrice(),
+                config.includeVat(),
                 hdoSnapshot,
                 colorVt,
                 colorNt

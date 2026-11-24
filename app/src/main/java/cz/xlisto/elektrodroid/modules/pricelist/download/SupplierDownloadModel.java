@@ -7,11 +7,7 @@ import java.io.Serializable;
 /**
  * Model položky dodavatele pro stažení PDF ceníků.
  */
-public class SupplierDownloadModel implements Serializable {
-
-    private final String name;
-    private final String url;
-
+public record SupplierDownloadModel(String name, String url) implements Serializable {
 
     /**
      * Vytvoří novou instanci položky dodavatele.
@@ -19,9 +15,7 @@ public class SupplierDownloadModel implements Serializable {
      * @param name Název dodavatele
      * @param url  Webová adresa stránky s ceníky ke stažení
      */
-    public SupplierDownloadModel(String name, String url) {
-        this.name = name;
-        this.url = url;
+    public SupplierDownloadModel {
     }
 
 
@@ -30,7 +24,8 @@ public class SupplierDownloadModel implements Serializable {
      *
      * @return Název dodavatele
      */
-    public String getName() {
+    @Override
+    public String name() {
         return name;
     }
 
@@ -40,7 +35,8 @@ public class SupplierDownloadModel implements Serializable {
      *
      * @return URL adresa
      */
-    public String getUrl() {
+    @Override
+    public String url() {
         return url;
     }
 

@@ -118,7 +118,7 @@ public class WidgetConfigActivity extends AppCompatActivity {
             }
         }
         if (existingConfig != null) {
-            return existingConfig.getWidgetType();
+            return existingConfig.widgetType();
         }
         return WidgetType.CURRENT_PRICE;
     }
@@ -177,8 +177,8 @@ public class WidgetConfigActivity extends AppCompatActivity {
 
         if (widgetType.supportsPriceOptions()) {
             layoutPriceOptions.setVisibility(View.VISIBLE);
-            boolean showTotal = existingConfig == null || existingConfig.isShowTotalPrice();
-            boolean includeVat = existingConfig == null || existingConfig.isIncludeVat();
+            boolean showTotal = existingConfig == null || existingConfig.showTotalPrice();
+            boolean includeVat = existingConfig == null || existingConfig.includeVat();
             rgPriceMode.check(showTotal ? R.id.rb_price_total : R.id.rb_price_commercial);
             rgVatMode.check(includeVat ? R.id.rb_vat_include : R.id.rb_vat_exclude);
         } else {

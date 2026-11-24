@@ -483,17 +483,17 @@ public final class WidgetUpdateManager {
                 if (!pointIds.isEmpty() || !pointMilins.isEmpty()) {
                     List<WidgetConfig> allConfigs = store.loadAllConfigs();
                     for (WidgetConfig config : allConfigs) {
-                        int id = config.getAppWidgetId();
+                        int id = config.appWidgetId();
                         if (!activeIdsAll.contains(id) || updatedIds.contains(id)) {
                             continue;
                         }
-                        boolean match = pointIds.contains(config.getSubscriptionPointId())
-                                || pointMilins.contains(config.getSubscriptionPointMilins());
+                        boolean match = pointIds.contains(config.subscriptionPointId())
+                                || pointMilins.contains(config.subscriptionPointMilins());
                         if (match) {
-                            updateInstanceInternal(appContext, manager, store, config.getWidgetType(), id);
+                            updateInstanceInternal(appContext, manager, store, config.widgetType(), id);
                             updatedIds.add(id);
-                            if (config.getWidgetType() == WidgetType.CURRENT_PRICE
-                                    || config.getWidgetType() == WidgetType.HDO_CLOCK) {
+                            if (config.widgetType() == WidgetType.CURRENT_PRICE
+                                    || config.widgetType() == WidgetType.HDO_CLOCK) {
                                 touchedHdoOrPrice = true;
                             }
                         }

@@ -88,12 +88,12 @@ public final class WidgetPointResolver {
     @NonNull
     public static ResolutionResult resolve(@Nullable WidgetConfig config,
                                            @NonNull List<SubscriptionPointModel> allPoints) {
-        if (config == null || config.getSubscriptionPointId() <= 0L) {
+        if (config == null || config.subscriptionPointId() <= 0L) {
             return ResolutionResult.unconfigured();
         }
 
-        long savedId = config.getSubscriptionPointId();
-        long savedMilins = config.getSubscriptionPointMilins();
+        long savedId = config.subscriptionPointId();
+        long savedMilins = config.subscriptionPointMilins();
 
         // 1. Primární kontrola podle databázového _id se současným ověřením milins
         for (SubscriptionPointModel candidate : allPoints) {
@@ -147,8 +147,8 @@ public final class WidgetPointResolver {
         if (result.status() == ResolutionStatus.RESOLVED && result.point() != null) {
             SubscriptionPointModel point = result.point();
             boolean needsUpdate = result.rebound()
-                    || config.getSubscriptionPointMilins() <= 0L
-                    || !config.getSubscriptionPointNameSnapshot().equals(point.getName());
+                    || config.subscriptionPointMilins() <= 0L
+                    || !config.subscriptionPointNameSnapshot().equals(point.getName());
             if (needsUpdate) {
                 store.saveConfig(config.withResolvedSubscriptionPoint(
                         point.getId(),

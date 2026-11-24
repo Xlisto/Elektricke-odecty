@@ -431,19 +431,19 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
             TextView tvDetailed = itemView.findViewById(R.id.tvDetailedConditions);
             TextView tvOfficialUrl = itemView.findViewById(R.id.tvOfficialUrlLink);
 
-            tvCode.setText(cond.getTariffCode());
-            tvBadge.setText(cond.getLowTariffBadge());
-            tvShortDesc.setText(cond.getShortDescription());
-            tvDetailed.setText(cond.getDetailedConditions());
+            tvCode.setText(cond.tariffCode());
+            tvBadge.setText(cond.lowTariffBadge());
+            tvShortDesc.setText(cond.shortDescription());
+            tvDetailed.setText(cond.detailedConditions());
 
-            if (cond.isHistorical() && cond.getHistoricalNotice() != null && !cond.getHistoricalNotice().isEmpty()) {
+            if (cond.isHistorical() && cond.historicalNotice() != null && !cond.historicalNotice().isEmpty()) {
                 tvHistNotice.setVisibility(View.VISIBLE);
-                tvHistNotice.setText(cond.getHistoricalNotice());
+                tvHistNotice.setText(cond.historicalNotice());
             } else {
                 tvHistNotice.setVisibility(View.GONE);
             }
 
-            String currentCodeKey = cond.getTariffCode();
+            String currentCodeKey = cond.tariffCode();
             boolean isExpanded = expandedTariffs.contains(currentCodeKey);
             llExpanded.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             ivChevron.setImageResource(isExpanded ? R.drawable.ic_expand_less_24 : R.drawable.ic_expand_more_24);
@@ -460,7 +460,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
                 }
             });
 
-            String url = cond.getOfficialUrl();
+            String url = cond.officialUrl();
             tvOfficialUrl.setOnClickListener(v -> {
                 try {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

@@ -75,7 +75,7 @@ public class WidgetConfigStore {
      * @param config konfigurace instance widgetu
      */
     public void saveConfig(@NonNull WidgetConfig config) {
-        storage.putString(buildKey(config.getAppWidgetId()), config.toJson());
+        storage.putString(buildKey(config.appWidgetId()), config.toJson());
     }
 
 
@@ -158,7 +158,7 @@ public class WidgetConfigStore {
     public List<WidgetConfig> loadConfigsByType(@NonNull WidgetType type) {
         List<WidgetConfig> result = new ArrayList<>();
         for (WidgetConfig config : loadAllConfigs()) {
-            if (config.getWidgetType() == type) {
+            if (config.widgetType() == type) {
                 result.add(config);
             }
         }
@@ -177,8 +177,8 @@ public class WidgetConfigStore {
     public List<WidgetConfig> loadConfigsForSubscriptionPoint(long subscriptionPointId, long milins) {
         List<WidgetConfig> result = new ArrayList<>();
         for (WidgetConfig config : loadAllConfigs()) {
-            boolean matchesId = subscriptionPointId > 0L && config.getSubscriptionPointId() == subscriptionPointId;
-            boolean matchesMilins = milins > 0L && config.getSubscriptionPointMilins() == milins;
+            boolean matchesId = subscriptionPointId > 0L && config.subscriptionPointId() == subscriptionPointId;
+            boolean matchesMilins = milins > 0L && config.subscriptionPointMilins() == milins;
             if (matchesId || matchesMilins) {
                 result.add(config);
             }
@@ -226,8 +226,8 @@ public class WidgetConfigStore {
      */
     public void pruneOrphanedConfigs(@NonNull Set<Integer> activeWidgetIds) {
         for (WidgetConfig config : loadAllConfigs()) {
-            if (!activeWidgetIds.contains(config.getAppWidgetId())) {
-                deleteConfig(config.getAppWidgetId());
+            if (!activeWidgetIds.contains(config.appWidgetId())) {
+                deleteConfig(config.appWidgetId());
             }
         }
     }
@@ -249,13 +249,10 @@ public class WidgetConfigStore {
     }
 
 
-    private static final class SharedPrefsStorage implements KeyValueStorage {
-
-        private final SharedPreferences prefs;
-
+    private record SharedPrefsStorage(SharedPreferences prefs) implements KeyValueStorage {
 
         private SharedPrefsStorage(@NonNull Context appContext) {
-            this.prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            this(appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE));
         }
 
 

@@ -63,8 +63,8 @@ public class SupplierDownloadAdapter extends RecyclerView.Adapter<SupplierDownlo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SupplierDownloadModel item = items.get(position);
-        holder.tvSupplierName.setText(item.getName());
-        holder.tvSupplierUrl.setText(item.getUrl());
+        holder.tvSupplierName.setText(item.name());
+        holder.tvSupplierUrl.setText(item.url());
 
         View.OnClickListener clickListener = v -> {
             if (listener != null) {

@@ -1,6 +1,8 @@
 package cz.xlisto.elektrodroid.modules.widgets;
 
 
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,16 +11,21 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
+
 
 /**
  * Neměnná konfigurace jedné konkrétní instance widgetu na domovské obrazovce,
  * jednoznačně identifikované pomocí {@code appWidgetId}.
  * <p>
  * Kromě databázového ID odběrného místa ukládá také stabilní časovou značku {@code milins}
- * z {@link cz.xlisto.elektrodroid.models.SubscriptionPointModel}, díky níž lze po obnově databáze
+ * z {@link SubscriptionPointModel}, díky níž lze po obnově databáze
  * ze zálohy bezpečně ověřit totožnost odběrného místa a zabránit tichému přiřazení k jinému místu.
  */
-public final class WidgetConfig {
+public record WidgetConfig(int appWidgetId, @NonNull WidgetType widgetType,
+                           long subscriptionPointId, long subscriptionPointMilins,
+                           @NonNull String subscriptionPointNameSnapshot, boolean showTotalPrice,
+                           boolean includeVat) {
 
     private static final String JSON_WIDGET_TYPE = "widgetType";
     private static final String JSON_SUBSCRIPTION_POINT_ID = "subscriptionPointId";
@@ -26,16 +33,6 @@ public final class WidgetConfig {
     private static final String JSON_POINT_NAME_SNAPSHOT = "pointNameSnapshot";
     private static final String JSON_SHOW_TOTAL_PRICE = "showTotalPrice";
     private static final String JSON_INCLUDE_VAT = "includeVat";
-
-    private final int appWidgetId;
-    @NonNull
-    private final WidgetType widgetType;
-    private final long subscriptionPointId;
-    private final long subscriptionPointMilins;
-    @NonNull
-    private final String subscriptionPointNameSnapshot;
-    private final boolean showTotalPrice;
-    private final boolean includeVat;
 
 
     /**
@@ -63,43 +60,6 @@ public final class WidgetConfig {
         this.subscriptionPointNameSnapshot = subscriptionPointNameSnapshot != null ? subscriptionPointNameSnapshot : "";
         this.showTotalPrice = showTotalPrice;
         this.includeVat = includeVat;
-    }
-
-
-    public int getAppWidgetId() {
-        return appWidgetId;
-    }
-
-
-    @NonNull
-    public WidgetType getWidgetType() {
-        return widgetType;
-    }
-
-
-    public long getSubscriptionPointId() {
-        return subscriptionPointId;
-    }
-
-
-    public long getSubscriptionPointMilins() {
-        return subscriptionPointMilins;
-    }
-
-
-    @NonNull
-    public String getSubscriptionPointNameSnapshot() {
-        return subscriptionPointNameSnapshot;
-    }
-
-
-    public boolean isShowTotalPrice() {
-        return showTotalPrice;
-    }
-
-
-    public boolean isIncludeVat() {
-        return includeVat;
     }
 
 
@@ -147,7 +107,7 @@ public final class WidgetConfig {
 
 
     /**
-     * Serializuje konfiguraci widgetu do JSON řetězce pro bezpečné uložení v {@link android.content.SharedPreferences}.
+     * Serializuje konfiguraci widgetu do JSON řetězce pro bezpečné uložení v {@link SharedPreferences}.
      *
      * @return JSON reprezentace konfigurace
      */
@@ -209,20 +169,6 @@ public final class WidgetConfig {
                 && includeVat == that.includeVat
                 && widgetType == that.widgetType
                 && subscriptionPointNameSnapshot.equals(that.subscriptionPointNameSnapshot);
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(
-                appWidgetId,
-                widgetType,
-                subscriptionPointId,
-                subscriptionPointMilins,
-                subscriptionPointNameSnapshot,
-                showTotalPrice,
-                includeVat
-        );
     }
 
 }
