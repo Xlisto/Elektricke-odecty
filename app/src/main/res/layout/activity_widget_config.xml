@@ -8,17 +8,31 @@
     android:background="?attr/colorSurface"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_widget_config"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_widget_config"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?attr/colorSurface"
-        app:navigationContentDescription="@string/zrusit"
-        app:navigationIcon="@drawable/ic_close_24"
-        app:titleTextColor="?attr/colorOnSurface"
-        tools:title="Nastavení widgetu – Aktuální cena" />
+        app:elevation="0dp"
+        app:liftOnScroll="false">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_widget_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:minHeight="?attr/actionBarSize"
+            app:navigationContentDescription="@string/zrusit"
+            app:navigationIcon="@drawable/ic_close_24"
+            app:navigationIconTint="?attr/colorOnSurface"
+            app:subtitleTextColor="?attr/colorOnSurfaceVariant"
+            app:titleTextColor="?attr/colorOnSurface"
+            tools:subtitle="Aktuální cena elektřiny"
+            tools:title="Nastavení widgetu" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_widget_config"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -64,6 +78,30 @@
                     android:nestedScrollingEnabled="false"
                     tools:itemCount="3"
                     tools:listitem="@layout/item_widget_subscription_point" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_widget_subscription_point_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="?attr/colorOutlineVariant"
+                    app:strokeWidth="1dp">
+
+                    <Spinner
+                        android:id="@+id/sp_widget_subscription_points"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/widget_config_section_point"
+                        android:minHeight="56dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="4dp"
+                        android:popupBackground="?attr/colorSurfaceContainerHigh" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <LinearLayout
                     android:id="@+id/layout_price_options"

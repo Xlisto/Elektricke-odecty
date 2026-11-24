@@ -924,11 +924,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="widget_new_reading_name">Nový odečet</string>
     <string name="widget_new_reading_description">Rychlé přidání nového odečtu přímo pro vybrané odběrné místo.</string>
 
-    <string name="widget_config_title_current_price">Nastavení widgetu – Aktuální cena</string>
-    <string name="widget_config_title_hdo_clock">Nastavení widgetu – Hodiny HDO</string>
-    <string name="widget_config_title_consumption">Nastavení widgetu – Spotřeba</string>
-    <string name="widget_config_title_financial_balance">Nastavení widgetu – Finanční bilance</string>
-    <string name="widget_config_title_new_reading">Nastavení widgetu – Nový odečet</string>
+    <string name="widget_config_title">Nastavení widgetu</string>
     <string name="widget_config_section_point">Odběrné místo</string>
     <string name="widget_config_section_price_mode">Zobrazení ceny</string>
     <string name="widget_config_section_vat">DPH</string>

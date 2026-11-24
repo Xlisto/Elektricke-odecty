@@ -130,11 +130,9 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
                     warningText.append(getString(R.string.pdf_import_missing_commercial_warning));
                 }
                 if (PdfParserUtils.is2025BeforeSeptember(first.getValidFrom())) {
-                    if (warningText.length() > 0) warningText.append("\n\n");
-                    warningText.append(getString(R.string.pdf_import_validity_warning_august, year));
+                    appendWarningParagraph(warningText, getString(R.string.pdf_import_validity_warning_august, year));
                 } else {
-                    if (warningText.length() > 0) warningText.append("\n\n");
-                    warningText.append(getString(R.string.pdf_import_validity_warning, year));
+                    appendWarningParagraph(warningText, getString(R.string.pdf_import_validity_warning, year));
                 }
             }
 
@@ -339,10 +337,22 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
     }
 
 
+    /**
+     * Připojí nový odstavec do upozornění a případně jej oddělí prázdným řádkem.
+     * Používá {@code length() > 0}, protože {@code CharSequence.isEmpty()} vyžaduje API 35+ (minSdk je 24).
+     */
+    @SuppressWarnings("SizeReplaceableByIsEmpty")
+    private static void appendWarningParagraph(StringBuilder warningText, String text) {
+        if (warningText.length() > 0) {
+            warningText.append("\n\n");
+        }
+        warningText.append(text);
+    }
+
+
     public void updateViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.getBottomPanelMarginPx();

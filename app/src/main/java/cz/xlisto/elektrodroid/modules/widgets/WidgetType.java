@@ -27,7 +27,6 @@ public enum WidgetType {
             "current_price",
             CurrentPriceWidgetProvider.class,
             R.string.widget_current_price_name,
-            R.string.widget_config_title_current_price,
             R.string.widget_current_price_description,
             true
     ),
@@ -39,7 +38,6 @@ public enum WidgetType {
             "hdo_clock",
             HdoClockWidgetProvider.class,
             R.string.widget_hdo_clock_name,
-            R.string.widget_config_title_hdo_clock,
             R.string.widget_hdo_clock_description,
             false
     ),
@@ -51,7 +49,6 @@ public enum WidgetType {
             "consumption",
             ConsumptionWidgetProvider.class,
             R.string.widget_consumption_name,
-            R.string.widget_config_title_consumption,
             R.string.widget_consumption_description,
             false
     ),
@@ -63,7 +60,6 @@ public enum WidgetType {
             "financial_balance",
             FinancialBalanceWidgetProvider.class,
             R.string.widget_financial_balance_name,
-            R.string.widget_config_title_financial_balance,
             R.string.widget_financial_balance_description,
             false
     ),
@@ -75,7 +71,6 @@ public enum WidgetType {
             "new_reading",
             NewReadingWidgetProvider.class,
             R.string.widget_new_reading_name,
-            R.string.widget_config_title_new_reading,
             R.string.widget_new_reading_description,
             false
     );
@@ -87,8 +82,6 @@ public enum WidgetType {
     @StringRes
     private final int labelResId;
     @StringRes
-    private final int configTitleResId;
-    @StringRes
     private final int descriptionResId;
     private final boolean supportsPriceOptions;
 
@@ -96,13 +89,11 @@ public enum WidgetType {
     WidgetType(@NonNull String key,
                @NonNull Class<? extends AppWidgetProvider> providerClass,
                @StringRes int labelResId,
-               @StringRes int configTitleResId,
                @StringRes int descriptionResId,
                boolean supportsPriceOptions) {
         this.key = key;
         this.providerClass = providerClass;
         this.labelResId = labelResId;
-        this.configTitleResId = configTitleResId;
         this.descriptionResId = descriptionResId;
         this.supportsPriceOptions = supportsPriceOptions;
     }
@@ -138,17 +129,6 @@ public enum WidgetType {
     @StringRes
     public int getLabelResId() {
         return labelResId;
-    }
-
-
-    /**
-     * Vrátí ID textového zdroje s titulkem konfigurační obrazovky.
-     *
-     * @return ID stringového zdroje
-     */
-    @StringRes
-    public int getConfigTitleResId() {
-        return configTitleResId;
     }
 
 
