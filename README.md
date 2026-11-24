@@ -134,11 +134,11 @@ zejména oprávnění pro notifikace a přesné alarmy.
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_5.jpg" alt="Odběrné místo 5" style="height: 500px;" />
+  <img src="screenshots/odb_5.jpg" alt="Odběrné místo 5" style="height: 300px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_6.jpg" alt="Odběrné místo 6" style="height: 600px;" />
+  <img src="screenshots/odb_6.jpg" alt="Odběrné místo 6" style="width: 300px;" />
 </p>
 
 ## Ceník

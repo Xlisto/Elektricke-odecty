@@ -88,9 +88,9 @@ public class SupplierDownloadAdapter extends RecyclerView.Adapter<SupplierDownlo
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvSupplierName;
-        TextView tvSupplierUrl;
-        Button btnOpenSupplierUrl;
+        final TextView tvSupplierName;
+        final TextView tvSupplierUrl;
+        final Button btnOpenSupplierUrl;
 
 
         public ViewHolder(@NonNull View itemView) {

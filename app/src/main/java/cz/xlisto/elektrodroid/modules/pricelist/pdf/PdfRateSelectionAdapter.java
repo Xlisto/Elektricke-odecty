@@ -192,11 +192,11 @@ public class PdfRateSelectionAdapter extends RecyclerView.Adapter<PdfRateSelecti
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         /** Zaškrtávací pole pro výběr ceníkové sazby k importu. */
-        CheckBox cbSelectRate;
+        final CheckBox cbSelectRate;
         /** Textové pole s názvem sazby, produktovou řadou a dobou platnosti. */
-        TextView tvRateName;
+        final TextView tvRateName;
         /** Textové pole se souhrnem cen za VT, NT a stálý měsíční plat. */
-        TextView tvPricesInfo;
+        final TextView tvPricesInfo;
 
 
         /**
