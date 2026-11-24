@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardTariffItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -33,19 +34,19 @@
                     android:id="@+id/tvTariffCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="D26d"
                     android:textAppearance="?attr/textAppearanceTitleSmall"
                     android:textColor="?attr/colorOnSurface"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="D26d" />
 
                 <TextView
                     android:id="@+id/tvLowTariffBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="8 h NT denně"
                     android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    tools:text="8 h NT denně" />
             </LinearLayout>
 
             <ImageView
@@ -54,7 +55,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:contentDescription="Rozbalit"
+                android:contentDescription="@string/tariff_condition_expand"
                 android:src="@drawable/ic_expand_more_24"
                 app:tint="?attr/colorOnSurfaceVariant" />
         </RelativeLayout>
@@ -64,9 +65,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Akumulační vytápění"
             android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorOnSurface" />
+            android:textColor="?attr/colorOnSurface"
+            tools:text="Akumulační vytápění" />
 
         <LinearLayout
             android:id="@+id/llExpandedContent"
@@ -87,25 +88,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
-                android:text="Tuto sazbu již nelze nově přiznat."
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="#E65100"
                 android:textStyle="italic"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:text="Tuto sazbu již nelze nově přiznat." />
 
             <TextView
                 android:id="@+id/tvDetailedConditions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Podrobné podmínky..."
                 android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?attr/colorOnSurfaceVariant" />
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Podrobné podmínky..." />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Konečné přiznání sazby posuzuje distributor."
+                android:text="@string/tariff_condition_distributor_disclaimer"
                 android:textAppearance="?attr/textAppearanceLabelSmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
@@ -117,7 +118,7 @@
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="Oficiální podmínky distributora"
+                android:text="@string/tariff_condition_official_link"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="?attr/colorPrimary" />
         </LinearLayout>

@@ -1011,4 +1011,7 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="price_list_compare_source_history_year">Načíst z odečtů za konkrétní rok</string>
     <string name="price_list_compare_source_history_avg">Průměrná roční spotřeba z historie</string>
     <string name="price_list_compare_year_label">Rok:</string>
+    <string name="tariff_condition_expand">Rozbalit</string>
+    <string name="tariff_condition_distributor_disclaimer">Konečné přiznání sazby posuzuje distributor.</string>
+    <string name="tariff_condition_official_link">Oficiální podmínky distributora</string>
 </resources>
