@@ -6,7 +6,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -447,20 +446,5 @@ public class PriceListProfitabilityChartView extends View {
             }
         }
         return series.points.get(0).y();
-    }
-
-    @Override
-    public boolean performClick() {
-        return super.performClick();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            performClick();
-            invalidate();
-            return true;
-        }
-        return super.onTouchEvent(event);
     }
 }

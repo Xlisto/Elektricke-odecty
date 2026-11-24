@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -456,20 +455,5 @@ public class PriceListCompareChartView extends View {
                     DecimalFormatHelper.df0.format(val) + " Kč/měs";
             default -> DecimalFormatHelper.df0.format(val) + " Kč";
         };
-    }
-
-    @Override
-    public boolean performClick() {
-        return super.performClick();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            performClick();
-            invalidate();
-            return true;
-        }
-        return super.onTouchEvent(event);
     }
 }
