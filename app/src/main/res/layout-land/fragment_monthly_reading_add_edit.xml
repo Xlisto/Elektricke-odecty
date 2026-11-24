@@ -58,7 +58,6 @@
 
                 <!-- Card 1: Main Reading Info -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/rlState"
                     style="?attr/materialCardViewOutlinedStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,7 +70,6 @@
                         android:padding="12dp">
 
                         <TextView
-                            android:id="@+id/tvDatumOdectuPocatek"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@id/btnDate"
@@ -146,7 +144,6 @@
 
                 <!-- Card 2: Description & Other Services -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/rlDescription"
                     style="?attr/materialCardViewOutlinedStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -53,7 +53,7 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
      * @param position pozice položky v adaptéru
      */
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.versionModel = items.get(position);
         holder.tvDate.setText(holder.versionModel.date());
         holder.tvVersion.setText(holder.itemView.getContext().getString(R.string.version, holder.versionModel.version()));
@@ -95,7 +95,7 @@ public class MyItemAboutMeRecyclerViewAdapter extends RecyclerView.Adapter<MyIte
          *
          * @param binding objekt zobrazení položky historie verzí
          */
-        public ViewHolder(ItemAboutMeBinding binding) {
+        public ViewHolder(@NonNull ItemAboutMeBinding binding) {
             super(binding.getRoot());
             tvDate = binding.itemDate;
             tvVersion = binding.itemVersion;

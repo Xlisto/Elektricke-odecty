@@ -16,7 +16,6 @@
 
         <!-- HDO Clock & Status Card Block -->
         <LinearLayout
-            android:id="@+id/cardHdoClock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

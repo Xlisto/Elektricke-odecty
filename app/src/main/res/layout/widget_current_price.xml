@@ -90,7 +90,6 @@
                     android:orientation="horizontal">
 
                     <FrameLayout
-                        android:id="@+id/box_widget_vt_compact"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="3dp"
@@ -295,7 +294,6 @@
                     android:orientation="horizontal">
 
                     <FrameLayout
-                        android:id="@+id/box_widget_vt"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="4dp"
@@ -536,7 +534,6 @@
             android:visibility="gone">
 
             <ImageView
-                android:id="@+id/iv_widget_error_icon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="8dp"

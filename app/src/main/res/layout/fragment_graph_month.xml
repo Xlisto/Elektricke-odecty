@@ -54,7 +54,6 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tvLabelType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -94,7 +93,6 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tvLabelPeriod"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -134,7 +132,6 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tvLabelVT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -174,7 +171,6 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/tvLabelNT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"

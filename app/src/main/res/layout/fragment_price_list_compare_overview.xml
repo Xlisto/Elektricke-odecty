@@ -27,7 +27,6 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/tvOverviewParamsTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Vstupní parametry porovnání"
@@ -47,7 +46,6 @@
 
         <!-- Karta Klíčové ceny (Obchodní / Neregulovaná složka) -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardKeyPricesUnregulated"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -126,7 +124,6 @@
 
         <!-- Karta Celkové součtové ceny (s DPH) – Zobrazuje se pod obchodními i regulovanými cenami -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardKeyPricesTotal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"

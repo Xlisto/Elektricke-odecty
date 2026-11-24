@@ -131,7 +131,6 @@
 
             <!-- Sloupec 1: VT -->
             <LinearLayout
-                android:id="@+id/containerVT"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -225,7 +224,6 @@
 
             <!-- Sloupec 3: Měsíc (mírně větší váha pro delší text "s DPH") -->
             <LinearLayout
-                android:id="@+id/containerMonth"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.3"

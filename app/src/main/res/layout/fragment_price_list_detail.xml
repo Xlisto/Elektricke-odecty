@@ -365,7 +365,6 @@
 
                 <!-- Skrytý fond prvků jističů pro inicializaci v kódu -->
                 <LinearLayout
-                    android:id="@+id/poolJistice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">

@@ -52,13 +52,11 @@
                 app:cardCornerRadius="12dp">
 
                 <RelativeLayout
-                    android:id="@+id/lnButtonsInvoiceDateAddEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="12dp">
 
                     <TextView
-                        android:id="@+id/tvInvoiceDateRangeLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignTop="@id/btnInvoiceDateRange"
@@ -99,7 +97,6 @@
 
             <!-- Card 2: High Tariff (VT) -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/lnInvoiceStart"
                 style="?attr/materialCardViewOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,7 +145,6 @@
 
             <!-- Card 3: Low Tariff (NT) -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/lnInvoiceEnd"
                 style="?attr/materialCardViewOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

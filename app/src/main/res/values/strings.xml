@@ -96,18 +96,15 @@
 
     <string name="label_for">Label for:</string>
     <string name="label_price_detail">Detail</string>
-    <string name="label_item">Item</string>
     <string name="price_list_item_label">%1$s, %2$s</string>
 
     <string name="validity_price_list_date">Platnost ceníku: %s - %s</string>
 
     <string name="sp_produktova_rada">Produktová řada</string>
     <string name="sp_datum_platnosti">Datum platnosti</string>
-    <string name="sp_distribucni_uzemí">Distribuční území</string>
     <string name="sp_dodavatele">Dodavatele</string>
     <string name="sp_produkt">Produkt</string>
 
-    <string name="filtr_ceniku">Filtr ceníků</string>
     <string name="filtr_ceniku_obecny">Filtr ceníků – Obecný</string>
     <string name="filtr_ceniku_mesicni_odecty">Filtr ceníků – Měsíční odečty</string>
     <string name="filtr_ceniku_faktury">Filtr ceníků – Faktury</string>
@@ -125,9 +122,7 @@
     <string name="kc_MWh">Kč/MWh</string>
     <string name="kc_1A">Kč za 1A/měsíc</string>
     <string name="kc_om">Kč za OM/měsíc</string>
-    <string name="procent">%</string>
 
-    <string name="jednotkova_cena">Jednotková cena</string>
     <string name="jed_cena">Jed. cena</string>
 
     <string name="delete_unused_pricelist">Smazat nepoužité ceníky?</string>
@@ -135,12 +130,10 @@
     <string name="ano">ANO</string>
     <string name="ne">NE</string>
 
-    <string name="pocet_ceniku">Počet uložených/zobrazených ceníků: %d/%d</string>
     <string name="zobrazeno_z_ceniku">Zobrazeno %1$d z %2$d ceníků</string>
     <string name="vybrano_ceniku_count">Vybráno: %1$d ceníků</string>
     <string name="vybrano_ceniku_count_skryte">Vybráno: %1$d ceníků (%2$d skrytých)</string>
     <string name="zrusit_vyber">Zrušit výběr</string>
-    <string name="porovnat">Porovnat</string>
     <string name="zobrazit_vybrane">Zobrazit vybrané</string>
     <string name="zobrazit_vse">Zobrazit všechny</string>
     <string name="zobrazeno_vybranych_ceniku">Zobrazeno %1$d vybraných ceníků</string>
@@ -160,7 +153,6 @@
     <string name="select_at_least_two_pricelists">Pro porovnání výhodnosti sazeb vyberte alespoň 2 ceníky</string>
     <string name="select_pricelists_to_show_conditions">Vyberte ceníky pro zobrazení podmínek distribučních sazeb.</string>
     <string name="rezim_vyberu">Režim výběru</string>
-    <string name="plus_value">+ %s</string>
 
 
     <string name="poznamka_2022">Od října do konce roku je zrušen POZE</string>
@@ -213,8 +205,6 @@
 
     <string name="vyberteCenik">Vyberte ceník</string>
     <string name="vyberteDatum">Vyberte datum odečtu</string>
-    <string name="vyberteCenikLevy">Vyberte levý ceník</string>
-    <string name="vyberteCenikPravy">Vyberte pravý ceník</string>
     <string name="smazat_mesicni_odecet">Smazat měsíční odečet?</string>
     <string name="dalsi_sluzby2">Další doplňkové služby nebo slevy</string>
     <string name="podpora_obnovitelnych_zdroju">Podpora obnovitelných zdrojů</string>
@@ -265,7 +255,6 @@
     <string name="minus_minute">- min</string>
     <string name="equals">=</string>
     <string name="plus">+</string>
-    <string name="add_payment">Přidat platbu</string>
     <string name="add_invoice">Přidat fakturu</string>
     <string name="create_new_invoice">Vytvořit novou fakturu</string>
     <string name="select_invoice">Vybrat záznamy do nové faktury</string>
@@ -306,7 +295,6 @@
     <string name="display_mode_minimal">Krátké zobrazení</string>
     <string name="section_period">Období</string>
     <string name="all_periods">Všechna období</string>
-    <string name="section_subscription_point">Odběrné místo</string>
     <string name="other_options">Další možnosti</string>
     <string name="consider_cap_2023">Zohlednit zastropování cen v roce 2023</string>
     <string name="btn_apply">POUŽÍT</string>
@@ -410,7 +398,6 @@
     <string name="graph_color_history_title">Historie použitých barev</string>
     <string name="graph_color_saved">Barvy grafu byly uloženy</string>
 
-    <string name="dist_uzemi">%s\nDist. území: %s</string>
     <string name="empty">&#160;</string>
 
 
@@ -607,7 +594,6 @@
     <string name="no_invoice">Není zapsána žádná faktura. Nelze počítat současnou spotřebu od posledního vyúčtování.\n\nNastavte počáteční hodnoty měřičů a datum.</string>
     <string name="no_invoice_alert">Není zadána poslední faktura. \nZobrazit dialog pro nastavení výchozích hodnot můžete stisknutím tlačítka nebo zadejte poslední fakturu.</string>
 
-    <string name="show_fab_button">Zobrazit plovoucí tlačítko pro přidání</string>
     <string name="add_button_type_label">Tlačítko pro přidání záznamu</string>
     <string-array name="add_button_type_options">
         <item>Floating Action Button (FAB)</item>
@@ -621,7 +607,6 @@
     <string name="add_pdf_price_list">Přidat ceník z PDF</string>
     <string name="pdf_import_validity_warning">Maximální platnost ceníku byla nastavena do 31. 12. %1$d, protože od nového roku platí jiné regulované ceny.</string>
     <string name="pdf_import_validity_warning_august">Maximální platnost 1. období ceníku byla nastavena do 31. 8. %1$d, protože od 1. 9. platí jiné regulované ceny za provoz nesíťové infrastruktury.</string>
-    <string name="pdf_import_missing_regulated_warning">Upozornění: Pro rok %1$d a distribuční území %2$s nebyly v databázi aplikace (jistice.json, distribuce.json, ostatni.json) nalezeny odpovídající regulované ceny.</string>
     <string name="pdf_import_inconsistent_data_warning">Upozornění: Ceník obsahuje obchodní ceny pro rok %1$d, ale pro tento rok ještě nebyly vydány oficiální regulované ceny ERÚ (ani načteny v podkladech aplikace).\n\nZ důvodu nesourodosti dat není vhodné tento ceník ukládat do aplikace. Ukládání ceníku bylo ukončeno.</string>
     <string name="pdf_import_inconsistent_data_blocked_title">Nekonzistentní ceník</string>
     <string name="pdf_import_inconsistent_data_blocked_message">Ceník obsahuje obchodní ceny pro rok %1$d, pro který ještě nebyly vydány oficiální regulované ceny ERÚ.\n\nUložení ceníku je z důvodu nesourodosti dat zablokováno.</string>
@@ -629,10 +614,7 @@
     <string name="pdf_import_select_rates_title">Výběr sazeb k uložení</string>
     <string name="pdf_import_no_rates_selected">Vyberte alespoň jednu sazbu k uložení.</string>
     <string name="pdf_import_duplicate_title">Ceník již existuje</string>
-    <string name="pdf_import_duplicate_message">Ceník pro sazbu %1$s již v databázi existuje. Chcete jej aktualizovat novými hodnotami z PDF?</string>
     <string name="pdf_import_duplicate_diff_header">Porovnání rozdílů (Původní ➔ Nový):</string>
-    <string name="pdf_import_error">Chyba při čtení PDF ceníku: %1$s</string>
-    <string name="pdf_import_unsupported_supplier">Zvolený PDF ceník se nepodařilo automaticky rozparsovat. Nepodporovaný formát dodavatele.</string>
     <string name="pdf_import_cannot_read_title">Nemožnost přečíst ceník</string>
     <string name="pdf_import_cannot_read_message">Z vybraného PDF dokumentu se nepodařilo načíst cenové údaje silové elektřiny. Ceník nelze uložit.\n\nDoplňte prosím ceník ručním způsobem.</string>
     <string name="pdf_import_unknown_supplier_message">Zvolený PDF ceník pochází od neznámého nebo netestovaného dodavatele. Ceník tohoto dodavatele nelze přečíst.\n\nDoplňte prosím ceník ručním způsobem.</string>
@@ -732,13 +714,6 @@
     <string name="description_monthly_reading">Seznam záznamů měsíčních odečtů</string>
     <string name="description_subscription_point_name">pojmenujte si odběrné místo</string>
     <string name="description_subscription_point_description">Zapište si poznámky k odběrnému místu</string>
-    <string name="description_list_price_list">Seznam ceníků</string>
-    <string name="description_list_price_product">Seznam názvů sazeb</string>
-    <string name="description_list_price_sazba">Seznam sazeb</string>
-    <string name="description_list_price_company">Seznam dodavatelů</string>
-    <string name="description_list_price_area">Seznam distribučního území</string>
-    <string name="description_list_price_from">Začátek platnosti ceníku</string>
-    <string name="description_list_price_to">Konec platnosti ceníku</string>
     <string name="description_subscription_point">Informace o odběrném místě</string>
     <string name="description_rele">Seznam spínaných relé</string>
     <string name="description_dashboard_sort">Třídění seznamu</string>
@@ -981,7 +956,6 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="widget_price_mode_compact_commercial_with_vat">Obchodní • s DPH</string>
     <string name="widget_price_mode_compact_commercial_without_vat">Obchodní • bez DPH</string>
     <string name="widget_price_missing">Chybí platný ceník</string>
-    <string name="widget_price_expired">Platnost ceníku vypršela</string>
     <string name="widget_price_not_yet_valid">Ceník zatím není platný</string>
     <string name="widget_price_not_yet_valid_from_format">Ceník platí od %1$s</string>
     <string name="widget_price_expired_indicative_format">Orientační • ceník do %1$s</string>

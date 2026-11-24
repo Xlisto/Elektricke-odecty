@@ -40,7 +40,6 @@
         android:paddingBottom="22dp">
 
         <ImageView
-            android:id="@+id/logo"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:contentDescription="@string/logo"
@@ -54,7 +53,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/nav_header_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -67,7 +65,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/nav_header_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"

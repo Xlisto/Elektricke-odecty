@@ -114,7 +114,6 @@
             app:label="@string/pocet_mesicu" />
 
         <TextView
-            android:id="@+id/tvFazePrikon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -138,7 +137,6 @@
                 android:minHeight="48dp" />
 
             <TextView
-                android:id="@+id/tvX"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -157,14 +155,12 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tvServices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/dalsi_sluzby_neuvedene" />
 
         <LinearLayout
-            android:id="@+id/lnServices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"

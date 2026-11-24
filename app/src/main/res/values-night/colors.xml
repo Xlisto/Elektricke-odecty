@@ -87,43 +87,20 @@
     <color name="l_gray1">#282A2F</color>
     <color name="l_gray2">#8E909A</color>
 
-    <color name="color_primary">#ADC6FF</color>
-    <color name="color_bar">#111318</color>
     <color name="color_axis">#C5C6D0</color>
     <color name="color_graph_background">#111318</color>
 
-    <color name="menuBackgroundColor">#111318</color>
     <color name="labelEditBackgroundEditText">#33FFB4AB</color>
-
-    <color name="floatingButtonTint">#D8E2FF</color>
-    <color name="floatingButtonBackground">#004491</color>
 
     <color name="colorHint">#8E909A</color>
     <color name="colorLabelEditText">#E2E2E9</color>
-    <color name="colorOnDisabled">#8E909A</color>
-    <color name="colorDialogButtonText">#ADC6FF</color>
 
-    <color name="nav_menu_background">#111318</color>
-    <color name="nav_menu_item_color">#C4C6D0</color>
-    <color name="nav_menu_item_color_checked">#254375</color>
-    <color name="nav_menu_item_text_checked">#D8E2FF</color>
-    <color name="nav_menu_item_color_pressed">#3E4759</color>
-
-    <color name="text_link">#ADC6FF</color>
-    <color name="text_primary">#E2E2E9</color>
-    <color name="text_secondary">#C5C6D0</color>
-
-    <color name="dialog_bg">#1E2025</color>
-    <color name="dialog_text_primary">#E2E2E9</color>
     <color name="dialog_button_text">#ADC6FF</color>
     <color name="dialog_button_text_disabled">#8E909A</color>
 
     <color name="progress_overlay_bg">#D9111318</color>
 
     <!-- Výchozí záložní barvy přehledu (Dark) -->
-    <color name="dashboard_bg">#111318</color>
-    <color name="dashboard_card_bg">#1E2025</color>
-    <color name="dashboard_card_stroke">#333640</color>
     <color name="dashboard_price_card_start">#142138</color>
     <color name="dashboard_price_card_end">#1B3154</color>
     <color name="dashboard_price_card_stroke">#2C4C80</color>
@@ -133,10 +110,6 @@
     <color name="dashboard_teal_primary">#ADC6FF</color>
     <color name="dashboard_teal_vt">#FFB4AB</color>
     <color name="dashboard_teal_nt">#ADC6FF</color>
-    <color name="dashboard_pylon_color">#40ADC6FF</color>
-    <color name="dashboard_switcher_btn_bg">#282A2F</color>
-    <color name="dashboard_switcher_btn_stroke">#3E424B</color>
     <color name="dashboard_divider">#2E313A</color>
     <color name="dashboard_chart_forecast_stroke">#9AA0A6</color>
-    <color name="dashboard_chart_forecast_fill">#24ADC6FF</color>
 </resources>
