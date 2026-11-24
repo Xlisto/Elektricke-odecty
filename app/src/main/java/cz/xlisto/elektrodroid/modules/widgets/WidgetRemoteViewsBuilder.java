@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import java.util.List;
+
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.dashboard.DashboardHdoFormatHelper;
@@ -32,7 +34,9 @@ public final class WidgetRemoteViewsBuilder {
     private static final int HDO_CLOCK_MINI_MAX_WIDTH_DP = 105;
     private static final int HDO_CLOCK_LARGE_MIN_HEIGHT_DP = 125;
     private static final int HDO_CLOCK_WIDE_THRESHOLD_DP = 200;
+    private static final int HDO_CLOCK_WIDE_INLINE_TIME_MIN_WIDTH_DP = 235;
     private static final int HDO_CLOCK_STRIP_WIDE_THRESHOLD_DP = 190;
+    private static final int HDO_CLOCK_STRIP_RELAY_TIME_MIN_WIDTH_DP = 160;
     private static final int NEW_READING_WIDE_THRESHOLD_DP = 105;
     private static final int PERIOD_WIDGET_TALL_THRESHOLD_DP = 112;
     private static final int CONSUMPTION_COMPACT_PERCENT_MIN_WIDTH_DP = 250;
@@ -40,6 +44,74 @@ public final class WidgetRemoteViewsBuilder {
     private static final int CURRENT_PRICE_TALL_EXPIRED_THRESHOLD_DP = 116;
     private static final int CURRENT_PRICE_COMPACT_FULL_UNIT_WIDTH_DP = 270;
     private static final int CURRENT_PRICE_COMPACT_HEADER_WIDTH_DP = 260;
+
+    private static final int[] RELAY_STRIP_ROW_IDS = {
+            R.id.layout_relay_strip_1,
+            R.id.layout_relay_strip_2,
+            R.id.layout_relay_strip_3
+    };
+    private static final int[] RELAY_STRIP_DOT_IDS = {
+            R.id.iv_relay_strip_dot_1,
+            R.id.iv_relay_strip_dot_2,
+            R.id.iv_relay_strip_dot_3
+    };
+    private static final int[] RELAY_STRIP_NAME_IDS = {
+            R.id.tv_relay_strip_name_1,
+            R.id.tv_relay_strip_name_2,
+            R.id.tv_relay_strip_name_3
+    };
+    private static final int[] RELAY_STRIP_STATUS_IDS = {
+            R.id.tv_relay_strip_status_1,
+            R.id.tv_relay_strip_status_2,
+            R.id.tv_relay_strip_status_3
+    };
+
+    private static final int[] RELAY_COMPACT_ROW_IDS = {
+            R.id.layout_relay_compact_1,
+            R.id.layout_relay_compact_2,
+            R.id.layout_relay_compact_3
+    };
+    private static final int[] RELAY_COMPACT_DOT_IDS = {
+            R.id.iv_relay_compact_dot_1,
+            R.id.iv_relay_compact_dot_2,
+            R.id.iv_relay_compact_dot_3
+    };
+    private static final int[] RELAY_COMPACT_NAME_IDS = {
+            R.id.tv_relay_compact_name_1,
+            R.id.tv_relay_compact_name_2,
+            R.id.tv_relay_compact_name_3
+    };
+    private static final int[] RELAY_COMPACT_STATUS_IDS = {
+            R.id.tv_relay_compact_status_1,
+            R.id.tv_relay_compact_status_2,
+            R.id.tv_relay_compact_status_3
+    };
+
+    private static final int[] RELAY_WIDE_ROW_IDS = {
+            R.id.layout_relay_wide_1,
+            R.id.layout_relay_wide_2,
+            R.id.layout_relay_wide_3
+    };
+    private static final int[] RELAY_WIDE_DOT_IDS = {
+            R.id.iv_relay_wide_dot_1,
+            R.id.iv_relay_wide_dot_2,
+            R.id.iv_relay_wide_dot_3
+    };
+    private static final int[] RELAY_WIDE_NAME_IDS = {
+            R.id.tv_relay_wide_name_1,
+            R.id.tv_relay_wide_name_2,
+            R.id.tv_relay_wide_name_3
+    };
+    private static final int[] RELAY_WIDE_STATUS_IDS = {
+            R.id.tv_relay_wide_status_1,
+            R.id.tv_relay_wide_status_2,
+            R.id.tv_relay_wide_status_3
+    };
+    private static final int[] RELAY_WIDE_REMAINING_IDS = {
+            R.id.tv_relay_wide_remaining_1,
+            R.id.tv_relay_wide_remaining_2,
+            R.id.tv_relay_wide_remaining_3
+    };
 
 
     private WidgetRemoteViewsBuilder() {
@@ -374,6 +446,7 @@ public final class WidgetRemoteViewsBuilder {
 
         boolean stripMode = !miniMode && heightDp < HDO_CLOCK_LARGE_MIN_HEIGHT_DP;
         boolean wideLargeMode = !miniMode && !stripMode && widthDp >= HDO_CLOCK_WIDE_THRESHOLD_DP;
+        boolean multiRelay = hdo.hasMultipleRelays();
 
         int clockTargetDp;
         if (miniMode) {
@@ -381,9 +454,10 @@ public final class WidgetRemoteViewsBuilder {
         } else if (stripMode) {
             clockTargetDp = Math.max(48, Math.min(Math.round(widthDp * 0.42f), heightDp - 12));
         } else if (wideLargeMode) {
-            clockTargetDp = Math.min(widthDp / 2, Math.max(96, heightDp - 36));
+            clockTargetDp = Math.min(Math.round(widthDp * 0.46f), Math.max(96, heightDp - 36));
         } else {
-            clockTargetDp = Math.min(Math.max(88, widthDp - 24), Math.max(88, heightDp - 52));
+            int compactReservedHeightDp = multiRelay ? (36 + hdo.relays().size() * 14) : 52;
+            clockTargetDp = Math.min(Math.max(72, widthDp - 24), Math.max(72, heightDp - compactReservedHeightDp));
         }
         int clockSizePx = Math.round(clockTargetDp * density);
 
@@ -416,6 +490,27 @@ public final class WidgetRemoteViewsBuilder {
 
             views.setImageViewBitmap(R.id.iv_widget_clock_strip, clockBitmap);
             views.setTextViewText(R.id.tv_widget_point_name_strip, point.getName());
+
+            if (multiRelay) {
+                views.setViewVisibility(R.id.layout_hdo_single_strip, View.GONE);
+                views.setViewVisibility(R.id.layout_hdo_relays_strip, View.VISIBLE);
+                boolean includeTime = widthDp >= HDO_CLOCK_STRIP_RELAY_TIME_MIN_WIDTH_DP;
+                bindCompactRelayRows(
+                        context,
+                        palette,
+                        views,
+                        hdo.relays(),
+                        RELAY_STRIP_ROW_IDS,
+                        RELAY_STRIP_DOT_IDS,
+                        RELAY_STRIP_NAME_IDS,
+                        RELAY_STRIP_STATUS_IDS,
+                        includeTime
+                );
+                return views;
+            }
+
+            views.setViewVisibility(R.id.layout_hdo_single_strip, View.VISIBLE);
+            views.setViewVisibility(R.id.layout_hdo_relays_strip, View.GONE);
 
             boolean wideStrip = widthDp >= HDO_CLOCK_STRIP_WIDE_THRESHOLD_DP;
             if (!hdo.hasHdo()) {
@@ -475,35 +570,179 @@ public final class WidgetRemoteViewsBuilder {
             views.setViewVisibility(R.id.layout_clock_wide, View.VISIBLE);
             views.setImageViewBitmap(R.id.iv_widget_clock_wide, clockBitmap);
 
-            if (!hdo.hasHdo()) {
-                views.setTextViewText(R.id.tv_widget_hdo_tariff_wide, context.getString(R.string.dashboard_hdo_not_set));
-                views.setTextViewText(R.id.tv_widget_hdo_next_wide, "");
-                views.setTextViewText(R.id.tv_widget_hdo_remaining_wide, "");
+            if (multiRelay) {
+                views.setViewVisibility(R.id.layout_hdo_single_wide, View.GONE);
+                views.setViewVisibility(R.id.layout_hdo_relays_wide, View.VISIBLE);
+                boolean inlineTime = widthDp >= HDO_CLOCK_WIDE_INLINE_TIME_MIN_WIDTH_DP;
+                bindWideRelayRows(context, palette, views, hdo.relays(), inlineTime);
             } else {
-                views.setTextViewText(
-                        R.id.tv_widget_hdo_tariff_wide,
-                        context.getString(hdo.isNtActive()
-                                ? R.string.widget_hdo_clock_active_nt
-                                : R.string.widget_hdo_clock_active_vt)
-                );
-                views.setTextViewText(R.id.tv_widget_hdo_next_wide, nextSwitchCompact);
-                if (formatted.valid() && formatted.remainingText() != null && !formatted.remainingText().isEmpty()) {
-                    views.setTextViewText(
-                            R.id.tv_widget_hdo_remaining_wide,
-                            context.getString(R.string.widget_hdo_clock_remaining_compact, formatted.remainingText())
-                    );
-                } else {
+                views.setViewVisibility(R.id.layout_hdo_single_wide, View.VISIBLE);
+                views.setViewVisibility(R.id.layout_hdo_relays_wide, View.GONE);
+
+                if (!hdo.hasHdo()) {
+                    views.setTextViewText(R.id.tv_widget_hdo_tariff_wide, context.getString(R.string.dashboard_hdo_not_set));
+                    views.setTextViewText(R.id.tv_widget_hdo_next_wide, "");
                     views.setTextViewText(R.id.tv_widget_hdo_remaining_wide, "");
+                } else {
+                    views.setTextViewText(
+                            R.id.tv_widget_hdo_tariff_wide,
+                            context.getString(hdo.isNtActive()
+                                    ? R.string.widget_hdo_clock_active_nt
+                                    : R.string.widget_hdo_clock_active_vt)
+                    );
+                    views.setTextViewText(R.id.tv_widget_hdo_next_wide, nextSwitchCompact);
+                    if (formatted.valid() && formatted.remainingText() != null && !formatted.remainingText().isEmpty()) {
+                        views.setTextViewText(
+                                R.id.tv_widget_hdo_remaining_wide,
+                                context.getString(R.string.widget_hdo_clock_remaining_compact, formatted.remainingText())
+                        );
+                    } else {
+                        views.setTextViewText(R.id.tv_widget_hdo_remaining_wide, "");
+                    }
                 }
             }
         } else {
             views.setViewVisibility(R.id.layout_clock_compact, View.VISIBLE);
             views.setViewVisibility(R.id.layout_clock_wide, View.GONE);
             views.setImageViewBitmap(R.id.iv_widget_clock_compact, clockBitmap);
-            views.setTextViewText(R.id.tv_widget_hdo_next_compact, nextSwitchCompact);
+
+            if (multiRelay) {
+                views.setViewVisibility(R.id.tv_widget_hdo_next_compact, View.GONE);
+                views.setViewVisibility(R.id.layout_hdo_relays_compact, View.VISIBLE);
+                bindCompactRelayRows(
+                        context,
+                        palette,
+                        views,
+                        hdo.relays(),
+                        RELAY_COMPACT_ROW_IDS,
+                        RELAY_COMPACT_DOT_IDS,
+                        RELAY_COMPACT_NAME_IDS,
+                        RELAY_COMPACT_STATUS_IDS,
+                        true
+                );
+            } else {
+                views.setViewVisibility(R.id.tv_widget_hdo_next_compact, View.VISIBLE);
+                views.setViewVisibility(R.id.layout_hdo_relays_compact, View.GONE);
+                views.setTextViewText(R.id.tv_widget_hdo_next_compact, nextSwitchCompact);
+            }
         }
 
         return views;
+    }
+
+
+    private static void bindCompactRelayRows(@NonNull Context context,
+                                             @NonNull WidgetThemePalette palette,
+                                             @NonNull RemoteViews views,
+                                             @NonNull List<WidgetDataService.HdoRelaySnapshot> relays,
+                                             @NonNull int[] rowIds,
+                                             @NonNull int[] dotIds,
+                                             @NonNull int[] nameIds,
+                                             @NonNull int[] statusIds,
+                                             boolean includeTime) {
+        int count = Math.min(relays.size(), rowIds.length);
+        for (int i = 0; i < rowIds.length; i++) {
+            if (i >= count) {
+                views.setViewVisibility(rowIds[i], View.GONE);
+                continue;
+            }
+            WidgetDataService.HdoRelaySnapshot relay = relays.get(i);
+            views.setViewVisibility(rowIds[i], View.VISIBLE);
+
+            int dotColor = WidgetBitmapRenderer.resolveRelayColor(context, relay.relayType());
+            views.setImageViewBitmap(dotIds[i], WidgetBitmapRenderer.renderColorDotBitmap(dotColor, 16));
+            views.setTextViewText(nameIds[i], relay.displayLabel());
+
+            String stateText = resolveRelayStateLabel(context, relay);
+            DashboardHdoFormatHelper.FormattedHdoSwitch sw = relay.formattedSwitch();
+            String statusText = (includeTime && sw.valid())
+                    ? context.getString(R.string.widget_hdo_relay_next_with_remaining, stateText, sw.timeText())
+                    : stateText;
+            views.setTextViewText(statusIds[i], statusText);
+            applyRelayStateColor(views, palette, statusIds[i], relay.isActive());
+        }
+    }
+
+
+    private static void bindWideRelayRows(@NonNull Context context,
+                                          @NonNull WidgetThemePalette palette,
+                                          @NonNull RemoteViews views,
+                                          @NonNull List<WidgetDataService.HdoRelaySnapshot> relays,
+                                          boolean inlineTime) {
+        int count = Math.min(relays.size(), RELAY_WIDE_ROW_IDS.length);
+        for (int i = 0; i < RELAY_WIDE_ROW_IDS.length; i++) {
+            if (i >= count) {
+                views.setViewVisibility(RELAY_WIDE_ROW_IDS[i], View.GONE);
+                continue;
+            }
+            WidgetDataService.HdoRelaySnapshot relay = relays.get(i);
+            views.setViewVisibility(RELAY_WIDE_ROW_IDS[i], View.VISIBLE);
+
+            int dotColor = WidgetBitmapRenderer.resolveRelayColor(context, relay.relayType());
+            views.setImageViewBitmap(RELAY_WIDE_DOT_IDS[i], WidgetBitmapRenderer.renderColorDotBitmap(dotColor, 20));
+            views.setTextViewText(RELAY_WIDE_NAME_IDS[i], relay.displayLabel());
+
+            String stateText = resolveRelayStateLabel(context, relay);
+            DashboardHdoFormatHelper.FormattedHdoSwitch sw = relay.formattedSwitch();
+            boolean hasRemaining = sw.valid()
+                    && sw.remainingText() != null
+                    && !sw.remainingText().isEmpty();
+
+            if (inlineTime && sw.valid()) {
+                views.setTextViewText(
+                        RELAY_WIDE_STATUS_IDS[i],
+                        context.getString(R.string.widget_hdo_relay_next_with_remaining, stateText, sw.timeText())
+                );
+                if (hasRemaining) {
+                    views.setViewVisibility(RELAY_WIDE_REMAINING_IDS[i], View.VISIBLE);
+                    views.setTextViewText(
+                            RELAY_WIDE_REMAINING_IDS[i],
+                            context.getString(R.string.widget_hdo_clock_remaining_compact, sw.remainingText())
+                    );
+                } else {
+                    views.setViewVisibility(RELAY_WIDE_REMAINING_IDS[i], View.GONE);
+                }
+            } else {
+                views.setTextViewText(RELAY_WIDE_STATUS_IDS[i], stateText);
+                if (sw.valid()) {
+                    views.setViewVisibility(RELAY_WIDE_REMAINING_IDS[i], View.VISIBLE);
+                    String detailText = hasRemaining
+                            ? context.getString(R.string.widget_hdo_relay_next_with_remaining, sw.timeText(), sw.remainingText())
+                            : context.getString(R.string.widget_hdo_clock_next_compact, sw.timeText());
+                    views.setTextViewText(RELAY_WIDE_REMAINING_IDS[i], detailText);
+                } else {
+                    views.setViewVisibility(RELAY_WIDE_REMAINING_IDS[i], View.GONE);
+                }
+            }
+
+            applyRelayStateColor(views, palette, RELAY_WIDE_STATUS_IDS[i], relay.isActive());
+        }
+    }
+
+
+    private static void applyRelayStateColor(@NonNull RemoteViews views,
+                                             @NonNull WidgetThemePalette palette,
+                                             int viewId,
+                                             boolean isActive) {
+        if (isActive) {
+            palette.applyTextColor(views, viewId, palette.primaryRes(), palette.primary());
+        } else {
+            palette.applyTextColor(views, viewId, palette.onSurfaceVariantRes(), palette.onSurfaceVariant());
+        }
+    }
+
+
+    @NonNull
+    private static String resolveRelayStateLabel(@NonNull Context context,
+                                                 @NonNull WidgetDataService.HdoRelaySnapshot relay) {
+        if (relay.relayType() == WidgetDataService.HdoRelayType.TAR) {
+            return context.getString(relay.isActive()
+                    ? R.string.widget_hdo_relay_state_nt
+                    : R.string.widget_hdo_relay_state_vt);
+        }
+        return context.getString(relay.isActive()
+                ? R.string.widget_hdo_relay_state_on
+                : R.string.widget_hdo_relay_state_off);
     }
 
 
@@ -868,11 +1107,23 @@ public final class WidgetRemoteViewsBuilder {
                 R.id.tv_widget_point_name_strip,
                 R.id.tv_widget_point_name,
                 R.id.tv_widget_hdo_next_wide,
+                R.id.tv_relay_strip_name_1,
+                R.id.tv_relay_strip_name_2,
+                R.id.tv_relay_strip_name_3,
+                R.id.tv_relay_compact_name_1,
+                R.id.tv_relay_compact_name_2,
+                R.id.tv_relay_compact_name_3,
+                R.id.tv_relay_wide_name_1,
+                R.id.tv_relay_wide_name_2,
+                R.id.tv_relay_wide_name_3,
                 R.id.tv_widget_error_title);
         applyTextColorToViews(views, palette, palette.onSurfaceVariantRes(), palette.onSurfaceVariant(),
                 R.id.tv_widget_hdo_detail_strip,
                 R.id.tv_widget_hdo_next_compact,
                 R.id.tv_widget_hdo_remaining_wide,
+                R.id.tv_relay_wide_remaining_1,
+                R.id.tv_relay_wide_remaining_2,
+                R.id.tv_relay_wide_remaining_3,
                 R.id.tv_widget_error_subtitle);
         applyTextColorToViews(views, palette, palette.primaryRes(), palette.primary(),
                 R.id.tv_widget_hdo_status_strip,

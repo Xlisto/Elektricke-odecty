@@ -544,10 +544,10 @@ public final class WidgetUpdateManager {
         List<SubscriptionPointModel> allPoints = WidgetPointResolver.loadAllSubscriptionPoints(appContext);
 
         for (int id : priceIds) {
-            earliestTrigger = Math.min(earliestTrigger, computeNextTriggerForWidget(appContext, store, id, allPoints, nowMillis));
+            earliestTrigger = Math.min(earliestTrigger, computeNextTriggerForWidget(appContext, store, WidgetType.CURRENT_PRICE, id, allPoints, nowMillis));
         }
         for (int id : clockIds) {
-            earliestTrigger = Math.min(earliestTrigger, computeNextTriggerForWidget(appContext, store, id, allPoints, nowMillis));
+            earliestTrigger = Math.min(earliestTrigger, computeNextTriggerForWidget(appContext, store, WidgetType.HDO_CLOCK, id, allPoints, nowMillis));
         }
 
         // Pro analogové hodiny HDO omezíme interval obnovy ručičky na max. 15 minut
@@ -571,6 +571,7 @@ public final class WidgetUpdateManager {
 
     private static long computeNextTriggerForWidget(@NonNull Context appContext,
                                                     @NonNull WidgetConfigStore store,
+                                                    @NonNull WidgetType widgetType,
                                                     int appWidgetId,
                                                     @NonNull List<SubscriptionPointModel> allPoints,
                                                     long nowMillis) {
@@ -580,8 +581,14 @@ public final class WidgetUpdateManager {
             return Long.MAX_VALUE;
         }
         WidgetDataService.HdoSnapshot hdo = WidgetDataService.loadHdoSnapshot(appContext, resolution.point(), nowMillis);
-        if (hdo.hasHdo() && hdo.nextTriggerMillis() > nowMillis) {
-            return hdo.nextTriggerMillis();
+        if (!hdo.hasHdo()) {
+            return Long.MAX_VALUE;
+        }
+        long nextTrigger = (widgetType == WidgetType.HDO_CLOCK)
+                ? hdo.earliestNextTriggerMillis(nowMillis)
+                : hdo.nextTriggerMillis();
+        if (nextTrigger > nowMillis) {
+            return nextTrigger;
         }
         return Long.MAX_VALUE;
     }

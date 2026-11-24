@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import cz.xlisto.elektrodroid.R;
@@ -50,14 +50,25 @@ public final class WidgetBitmapRenderer {
     private static final int MAX_BAR_HEIGHT_PX = 36;
 
 
-    private enum RelayType {
-        TUV,
-        TAR,
-        PV
+    private WidgetBitmapRenderer() {
     }
 
 
-    private WidgetBitmapRenderer() {
+    /**
+     * Vrátí barvu prstence ciferníku a bodu legendy odpovídající zadanému typu relé HDO.
+     *
+     * @param context   kontext aplikace
+     * @param relayType kategorie relé ({@link WidgetDataService.HdoRelayType})
+     * @return ARGB barva relé
+     */
+    @ColorInt
+    public static int resolveRelayColor(@NonNull Context context,
+                                        @NonNull WidgetDataService.HdoRelayType relayType) {
+        return switch (relayType) {
+            case TUV -> ContextCompat.getColor(context, R.color.color_hdo_time_TUV);
+            case TAR -> ContextCompat.getColor(context, R.color.color_hdo_time_TAR);
+            case PV -> ContextCompat.getColor(context, R.color.color_hdo_time_PV);
+        };
     }
 
 
@@ -424,13 +435,13 @@ public final class WidgetBitmapRenderer {
             return;
         }
 
-        Map<RelayType, List<HdoModel>> byType = new EnumMap<>(RelayType.class);
-        for (RelayType type : RelayType.values()) {
+        Map<WidgetDataService.HdoRelayType, List<HdoModel>> byType = new EnumMap<>(WidgetDataService.HdoRelayType.class);
+        for (WidgetDataService.HdoRelayType type : WidgetDataService.HdoRelayType.values()) {
             byType.put(type, new ArrayList<>());
         }
         for (HdoModel model : weekModels) {
             if (isSameDay(model.getCalendarStart(), dayCal)) {
-                RelayType type = classifyRelayType(model.getRele());
+                WidgetDataService.HdoRelayType type = WidgetDataService.classifyRelayType(model.getRele());
                 List<HdoModel> list = byType.get(type);
                 if (list != null) {
                     list.add(model);
@@ -443,7 +454,7 @@ public final class WidgetBitmapRenderer {
         RectF arcRect = new RectF();
         int activeTypesCount = 0;
 
-        for (RelayType type : RelayType.values()) {
+        for (WidgetDataService.HdoRelayType type : WidgetDataService.HdoRelayType.values()) {
             List<HdoModel> modelsForType = byType.get(type);
             if (modelsForType == null || modelsForType.isEmpty()) {
                 continue;
@@ -469,24 +480,6 @@ public final class WidgetBitmapRenderer {
                 }
             }
         }
-    }
-
-
-    @NonNull
-    private static RelayType classifyRelayType(@Nullable String rele) {
-        if (rele == null || rele.trim().isEmpty()) {
-            return RelayType.TAR;
-        }
-        String upper = rele.toUpperCase(Locale.ROOT);
-        boolean isTuv = upper.contains("TUV") || upper.contains("AKU") || upper.contains("BOJLER");
-        boolean isPv = !isTuv && (upper.contains("PV") || upper.contains("FVE") || upper.contains("FOTOVOLT"));
-        if (isPv) {
-            return RelayType.PV;
-        }
-        if (isTuv) {
-            return RelayType.TUV;
-        }
-        return RelayType.TAR;
     }
 
 

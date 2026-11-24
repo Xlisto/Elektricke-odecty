@@ -7,10 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 import java.util.TimeZone;
 
+import cz.xlisto.elektrodroid.models.HdoModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.dashboard.DashboardHdoFormatHelper;
@@ -187,6 +190,131 @@ public class WidgetDataServiceTest {
         assertFalse(WidgetDataService.isSingleTariffRate("D 57d"));
         assertFalse(WidgetDataService.isSingleTariffRate(""));
         assertFalse(WidgetDataService.isSingleTariffRate(null));
+    }
+
+
+    @Test
+    public void buildHdoSnapshotOrdersAndFormatsUpToThreeRelays() {
+        // Test v defaultním časovém pásmu (shodně s HdoAlarmScheduler), dnešní datum v 10:00
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance(tz);
+        cal.set(2026, Calendar.NOVEMBER, 24, 10, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long nowMillis = cal.getTimeInMillis();
+
+        // Přidáme relé záměrně v přeházeném pořadí: PV, TAR, TUV s dlouhými názvy z ČEZ
+        HdoModel pvModel = new HdoModel(
+                1L, "C45d,C46d-relé3-PV", "01.01.2026", "31.12.2026",
+                "09:00", "11:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0
+        );
+        HdoModel tarModel = new HdoModel(
+                2L, "C45d,C46d-relé1-TAR", "01.01.2026", "31.12.2026",
+                "08:00", "14:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0
+        );
+        HdoModel tuvModel = new HdoModel(
+                3L, "C45d,C46d-relé2-TUV", "01.01.2026", "31.12.2026",
+                "12:00", "16:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0
+        );
+
+        WidgetDataService.HdoSnapshot snapshot = WidgetDataService.buildHdoSnapshot(
+                Arrays.asList(pvModel, tarModel, tuvModel),
+                "C45d,C46d-relé1-TAR",
+                nowMillis,
+                0L,
+                tz
+        );
+
+        assertTrue(snapshot.hasHdo());
+        assertTrue(snapshot.hasMultipleRelays());
+        assertTrue(snapshot.isNtActive()); // hlavní relé TAR běží 08:00–14:00
+        assertEquals(3, snapshot.relays().size());
+
+        // Pořadí musí odpovídat prstencům ciferníku: TUV -> TAR -> PV
+        WidgetDataService.HdoRelaySnapshot r0 = snapshot.relays().get(0);
+        WidgetDataService.HdoRelaySnapshot r1 = snapshot.relays().get(1);
+        WidgetDataService.HdoRelaySnapshot r2 = snapshot.relays().get(2);
+
+        assertEquals(WidgetDataService.HdoRelayType.TUV, r0.relayType());
+        assertEquals("TUV", r0.displayLabel());
+        assertFalse(r0.isActive());
+        assertFalse(r0.isMainRelay());
+        assertTrue(r0.formattedSwitch().valid());
+        assertEquals("12:00", r0.formattedSwitch().timeText());
+
+        assertEquals(WidgetDataService.HdoRelayType.TAR, r1.relayType());
+        assertEquals("TAR", r1.displayLabel());
+        assertTrue(r1.isActive());
+        assertTrue(r1.isMainRelay());
+        assertTrue(r1.formattedSwitch().valid());
+        assertEquals("14:00", r1.formattedSwitch().timeText());
+
+        assertEquals(WidgetDataService.HdoRelayType.PV, r2.relayType());
+        assertEquals("PV", r2.displayLabel());
+        assertTrue(r2.isActive());
+        assertFalse(r2.isMainRelay());
+        assertTrue(r2.formattedSwitch().valid());
+        assertEquals("11:00", r2.formattedSwitch().timeText());
+
+        // Nejbližší přepnutí ze všech 3 relé je PV v 11:00 (dříve než hlavní TAR ve 14:00)
+        assertEquals(r2.nextTriggerMillis(), snapshot.earliestNextTriggerMillis(nowMillis));
+    }
+
+
+    @Test
+    public void buildHdoSnapshotSingleRelayAndSameTypeLabels() {
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance(tz);
+        cal.set(2026, Calendar.NOVEMBER, 24, 10, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long nowMillis = cal.getTimeInMillis();
+
+        HdoModel single = new HdoModel(
+                1L, "TAR", "01.01.2026", "31.12.2026",
+                "08:00", "14:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0
+        );
+        WidgetDataService.HdoSnapshot singleSnapshot = WidgetDataService.buildHdoSnapshot(
+                Collections.singletonList(single), "TAR", nowMillis, 0L, tz
+        );
+        assertTrue(singleSnapshot.hasHdo());
+        assertFalse(singleSnapshot.hasMultipleRelays());
+        assertEquals(1, singleSnapshot.relays().size());
+
+        // Více relé stejného typu si ponechá vlastní rozlišitelné názvy
+        List<HdoModel> sameType = Arrays.asList(
+                new HdoModel(1L, "Okruh vytápění 1", "01.01.2026", "31.12.2026",
+                        "08:00", "14:00", 1, 1, 1, 1, 1, 1, 1, "PRE", 0, 0),
+                new HdoModel(2L, "Okruh vytápění 2", "01.01.2026", "31.12.2026",
+                        "12:00", "16:00", 1, 1, 1, 1, 1, 1, 1, "PRE", 0, 0)
+        );
+        WidgetDataService.HdoSnapshot sameTypeSnapshot = WidgetDataService.buildHdoSnapshot(
+                sameType, "Okruh vytápění 1", nowMillis, 0L, tz
+        );
+        assertTrue(sameTypeSnapshot.hasMultipleRelays());
+        assertEquals("Okruh vytápění 1", sameTypeSnapshot.relays().get(0).displayLabel());
+        assertEquals("Okruh vytápění 2", sameTypeSnapshot.relays().get(1).displayLabel());
+    }
+
+
+    @Test
+    public void buildHdoSnapshotCapsAtThreeRelaysPreservingMainRelay() {
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = Calendar.getInstance(tz);
+        cal.set(2026, Calendar.NOVEMBER, 24, 10, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long nowMillis = cal.getTimeInMillis();
+
+        List<HdoModel> fourRelays = Arrays.asList(
+                new HdoModel(1L, "TUV", "01.01.2026", "31.12.2026", "08:00", "12:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0),
+                new HdoModel(2L, "TAR", "01.01.2026", "31.12.2026", "08:00", "12:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0),
+                new HdoModel(3L, "PV 1", "01.01.2026", "31.12.2026", "08:00", "12:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0),
+                new HdoModel(4L, "PV 2", "01.01.2026", "31.12.2026", "08:00", "12:00", 1, 1, 1, 1, 1, 1, 1, "ČEZ", 0, 0)
+        );
+
+        WidgetDataService.HdoSnapshot snapshot = WidgetDataService.buildHdoSnapshot(
+                fourRelays, "PV 2", nowMillis, 0L, tz
+        );
+        assertEquals(WidgetDataService.MAX_WIDGET_HDO_RELAYS, snapshot.relays().size());
+        assertTrue(snapshot.relays().stream().anyMatch(r -> "PV 2".equals(r.relayName()) && r.isMainRelay()));
     }
 
 }

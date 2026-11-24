@@ -84,30 +84,173 @@
                         android:src="@drawable/ic_widget_settings_24" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_widget_hdo_status_strip"
+                <LinearLayout
+                    android:id="@+id/layout_hdo_single_strip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:ellipsize="end"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:textColor="@color/md_theme_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    tools:text="NT • 22:00" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_widget_hdo_detail_strip"
+                    <TextView
+                        android:id="@+id/tv_widget_hdo_status_strip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:text="NT • 22:00" />
+
+                    <TextView
+                        android:id="@+id/tv_widget_hdo_detail_strip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="@color/md_theme_onSurfaceVariant"
+                        android:textSize="11sp"
+                        tools:text="Zbývá 1h 45m" />
+                </LinearLayout>
+
+                <!-- Kompaktní popisky až 3 relé v pruhovém režimu 2×1 / 3×1 -->
+                <LinearLayout
+                    android:id="@+id/layout_hdo_relays_strip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:textColor="@color/md_theme_onSurfaceVariant"
-                    android:textSize="11sp"
-                    tools:text="Zbývá 1h 45m" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_strip_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_strip_dot_1"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_name_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="TUV" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_status_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="Vyp • 21:00" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_strip_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_strip_dot_2"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_name_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="TAR" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_status_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="NT • 07:15" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_strip_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_strip_dot_3"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_name_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="PV" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_strip_status_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="Zap • 22:00" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
@@ -178,6 +321,142 @@
                     android:textSize="11sp"
                     android:textStyle="bold"
                     tools:text="Další: 22:00" />
+
+                <!-- Kompaktní legenda a stavy až 3 relé pro 2×2 -->
+                <LinearLayout
+                    android:id="@+id/layout_hdo_relays_compact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_compact_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_compact_dot_1"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_name_1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="TUV" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_status_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="Vyp • 21:00" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_compact_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_compact_dot_2"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_name_2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="TAR" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_status_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="NT • St 07:15" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layout_relay_compact_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/iv_relay_compact_dot_3"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_marginEnd="4dp"
+                            android:importantForAccessibility="no" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_name_3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="PV" />
+
+                        <TextView
+                            android:id="@+id/tv_relay_compact_status_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="Zap • 22:00" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -193,7 +472,7 @@
                     android:id="@+id/iv_widget_clock_wide"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0.92"
                     android:contentDescription="@string/widget_hdo_clock_name"
                     android:padding="2dp"
                     android:scaleType="fitCenter" />
@@ -201,48 +480,251 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="1.08"
                     android:gravity="center_vertical"
                     android:orientation="vertical"
                     android:paddingStart="8dp"
                     android:paddingEnd="2dp">
 
-                    <TextView
-                        android:id="@+id/tv_widget_hdo_tariff_wide"
+                    <!-- Jedno relé: původní detailní zobrazení -->
+                    <LinearLayout
+                        android:id="@+id/layout_hdo_single_wide"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:textColor="@color/md_theme_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="Nízký tarif (NT)" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_widget_hdo_next_wide"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:ellipsize="end"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:textColor="@color/md_theme_onSurface"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="Další: 22:00" />
+                        <TextView
+                            android:id="@+id/tv_widget_hdo_tariff_wide"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="Nízký tarif (NT)" />
 
-                    <TextView
-                        android:id="@+id/tv_widget_hdo_remaining_wide"
+                        <TextView
+                            android:id="@+id/tv_widget_hdo_next_wide"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:textColor="@color/md_theme_onSurface"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="Další: 22:00" />
+
+                        <TextView
+                            android:id="@+id/tv_widget_hdo_remaining_wide"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/md_theme_onSurfaceVariant"
+                            android:textSize="11sp"
+                            tools:text="Zbývá 1h 45m" />
+                    </LinearLayout>
+
+                    <!-- Více relé (2 až 3 relé): barevná tečka, název, stav, čas přepnutí a odpočet -->
+                    <LinearLayout
+                        android:id="@+id/layout_hdo_relays_wide"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:ellipsize="end"
-                        android:includeFontPadding="false"
-                        android:maxLines="1"
-                        android:textColor="@color/md_theme_onSurfaceVariant"
-                        android:textSize="11sp"
-                        tools:text="Zbývá 1h 45m" />
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/layout_relay_wide_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_relay_wide_dot_1"
+                                    android:layout_width="9dp"
+                                    android:layout_height="9dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_name_1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="11.5sp"
+                                    android:textStyle="bold"
+                                    tools:text="TUV" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_status_1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    tools:text="Vyp • 21:00" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_relay_wide_remaining_1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="0dp"
+                                android:textColor="@color/md_theme_onSurfaceVariant"
+                                android:textSize="11sp"
+                                tools:text="Zbývá 53 min" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_relay_wide_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_relay_wide_dot_2"
+                                    android:layout_width="9dp"
+                                    android:layout_height="9dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_name_2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="11.5sp"
+                                    android:textStyle="bold"
+                                    tools:text="TAR" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_status_2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    tools:text="NT • St 07:15" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_relay_wide_remaining_2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="0dp"
+                                android:textColor="@color/md_theme_onSurfaceVariant"
+                                android:textSize="11sp"
+                                tools:text="Zbývá 11 h 11 min" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_relay_wide_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:id="@+id/iv_relay_wide_dot_3"
+                                    android:layout_width="9dp"
+                                    android:layout_height="9dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_name_3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_onSurface"
+                                    android:textSize="11.5sp"
+                                    android:textStyle="bold"
+                                    tools:text="PV" />
+
+                                <TextView
+                                    android:id="@+id/tv_relay_wide_status_3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:ellipsize="end"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/md_theme_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    tools:text="Zap • 22:00" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_relay_wide_remaining_3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:ellipsize="end"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="0dp"
+                                android:textColor="@color/md_theme_onSurfaceVariant"
+                                android:textSize="11sp"
+                                tools:text="Zbývá 1 h 53 min" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

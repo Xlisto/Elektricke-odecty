@@ -1022,6 +1022,11 @@
     <string name="widget_hdo_clock_strip_vt">Tarif VT</string>
     <string name="widget_hdo_clock_next_compact">Další: %1$s</string>
     <string name="widget_hdo_clock_remaining_compact">Zbývá %1$s</string>
+    <string name="widget_hdo_relay_state_nt">NT</string>
+    <string name="widget_hdo_relay_state_vt">VT</string>
+    <string name="widget_hdo_relay_state_on">Zap</string>
+    <string name="widget_hdo_relay_state_off">Vyp</string>
+    <string name="widget_hdo_relay_next_with_remaining">%1$s • %2$s</string>
 
     <string name="widget_consumption_total_label">Celkem</string>
     <string name="widget_consumption_no_data">Zatím bez spotřeby v období</string>
