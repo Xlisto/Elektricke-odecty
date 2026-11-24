@@ -95,17 +95,17 @@ nebo se zobrazují se zpožděním, je vhodné zkontrolovat nastavení aplikace 
 zejména oprávnění pro notifikace a přesné alarmy.
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_1.png" alt="Odběrné místo 1" style="width: 300px;" />
-  <img src="screenshots/odb_2.png" alt="Odběrné místo 2" style="width: 300px;" />
+  <img src="screenshots/odb_1.jpg" alt="Odběrné místo 1" style="width: 300px;" />
+  <img src="screenshots/odb_2.jpg" alt="Odběrné místo 2" style="width: 300px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_3.png" alt="Odběrné místo 3" style="width: 300px;" />
-  <img src="screenshots/odb_4.png" alt="Odběrné místo 4" style="width: 300px;" />
+  <img src="screenshots/odb_3.jpg" alt="Odběrné místo 3" style="width: 300px;" />
+  <img src="screenshots/odb_4.jpg" alt="Odběrné místo 4" style="width: 300px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_5.png" alt="Odběrné místo 5" style="height: 300px;" />
+  <img src="screenshots/odb_5.jpg" alt="Odběrné místo 5" style="height: 300px;" />
 </p>
 
 ## Ceník
