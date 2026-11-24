@@ -84,7 +84,7 @@
                 android:layout_height="24dp"
                 android:src="@android:drawable/ic_dialog_alert"
                 app:tint="#F57F17"
-                android:contentDescription="Upozornění" />
+                android:contentDescription="@string/alert_title" />
 
             <TextView
                 android:id="@+id/tvPdfValidityWarning"
@@ -144,7 +144,7 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vybrat vše"
+            android:text="@string/pdf_import_select_all"
             android:textSize="12sp" />
 
         <Button
@@ -152,7 +152,7 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zrušit výběr"
+            android:text="@string/zrusit_vyber"
             android:textSize="12sp" />
 
     </LinearLayout>
@@ -180,7 +180,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Zrušit"
+            android:text="@string/zrusit"
             android:layout_marginEnd="8dp" />
 
         <Button
@@ -189,7 +189,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Uložit vybrané" />
+            android:text="@string/pdf_import_save_selected" />
 
     </LinearLayout>
 

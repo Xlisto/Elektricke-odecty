@@ -612,6 +612,8 @@
     <string name="pdf_import_inconsistent_data_blocked_message">Ceník obsahuje obchodní ceny pro rok %1$d, pro který ještě nebyly vydány oficiální regulované ceny ERÚ.\n\nUložení ceníku je z důvodu nesourodosti dat zablokováno.</string>
     <string name="pdf_import_missing_commercial_warning">Upozornění: U některých sazeb se nepodařilo z PDF automaticky načíst obchodní ceny silové elektřiny. Po uložení zkontrolujte a doplňte ceny v ceníku ručně.</string>
     <string name="pdf_import_select_rates_title">Výběr sazeb k uložení</string>
+    <string name="pdf_import_select_all">Vybrat vše</string>
+    <string name="pdf_import_save_selected">Uložit vybrané</string>
     <string name="pdf_import_no_rates_selected">Vyberte alespoň jednu sazbu k uložení.</string>
     <string name="pdf_import_duplicate_title">Ceník již existuje</string>
     <string name="pdf_import_duplicate_diff_header">Porovnání rozdílů (Původní ➔ Nový):</string>
