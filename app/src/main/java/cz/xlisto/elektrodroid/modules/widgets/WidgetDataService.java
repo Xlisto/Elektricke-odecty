@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.color.MaterialColors;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -603,15 +605,22 @@ public final class WidgetDataService {
 
 
     /**
-     * Načte uživatelské barvy VT a NT z databáze nastavení (se záložními barvami motivu).
+     * Načte uživatelské barvy VT a NT z databáze nastavení (se záložními barvami motivu
+     * respektujícími přepínač dynamických barev).
      *
      * @param context aplikační kontext
      * @return dvouprvkové pole {@code [colorVt, colorNt]}
      */
     @NonNull
     public static int[] loadUserVtNtColors(@NonNull Context context) {
-        int fallbackVt = ContextCompat.getColor(context, R.color.dashboard_teal_vt);
-        int fallbackNt = ContextCompat.getColor(context, R.color.dashboard_teal_nt);
+        WidgetThemePalette palette = WidgetThemePalette.resolve(context);
+        int baseFallbackVt = ContextCompat.getColor(context, R.color.dashboard_teal_vt);
+        int fallbackVt = palette.isDynamicColorsActive()
+                ? MaterialColors.harmonize(baseFallbackVt, palette.primary())
+                : baseFallbackVt;
+        int fallbackNt = palette.isDynamicColorsActive()
+                ? palette.primary()
+                : ContextCompat.getColor(context, R.color.dashboard_teal_nt);
         DataSettingsSource settingsSource = new DataSettingsSource(context.getApplicationContext());
         try {
             settingsSource.open();

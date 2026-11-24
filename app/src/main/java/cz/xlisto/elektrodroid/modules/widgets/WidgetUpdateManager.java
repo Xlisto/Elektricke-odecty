@@ -304,6 +304,20 @@ public final class WidgetUpdateManager {
 
 
     /**
+     * Oznámí změnu motivu aplikace (přepnutí dynamických barev Material You, změna tapety
+     * nebo světlého/tmavého režimu) a obnoví všechny umístěné widgety.
+     *
+     * @param context kontext aplikace
+     */
+    public static void notifyThemeChanged(@Nullable Context context) {
+        if (context == null) {
+            return;
+        }
+        scheduleDebouncedUpdate(context, EnumSet.allOf(WidgetType.class), -1L, -1L, false);
+    }
+
+
+    /**
      * Oznámí změnu nastavení HDO (např. hlavní relé nebo časový posun elektroměru).
      *
      * @param context             kontext aplikace

@@ -33,6 +33,19 @@
     <color name="md_theme_outline">#74777F</color>
     <color name="md_theme_outlineVariant">#C4C6D0</color>
 
+    <!-- Záložní aliasy dynamických barev widgetů (API < 31 a fallback při vypnutém Material You) -->
+    <color name="widget_dyn_primary">@color/md_theme_primary</color>
+    <color name="widget_dyn_on_primary">@color/md_theme_onPrimary</color>
+    <color name="widget_dyn_primary_container">@color/md_theme_primaryContainer</color>
+    <color name="widget_dyn_on_primary_container">@color/md_theme_onPrimaryContainer</color>
+    <color name="widget_dyn_surface_container_low">@color/md_theme_surfaceContainerLow</color>
+    <color name="widget_dyn_surface_container_high">@color/md_theme_surfaceContainerHigh</color>
+    <color name="widget_dyn_surface_container_highest">@color/md_theme_surfaceContainerHighest
+    </color>
+    <color name="widget_dyn_on_surface">@color/md_theme_onSurface</color>
+    <color name="widget_dyn_on_surface_variant">@color/md_theme_onSurfaceVariant</color>
+    <color name="widget_dyn_outline_variant">@color/md_theme_outlineVariant</color>
+
     <!-- Vlastní průsvitné barvy pro XML fallback (Light) -->
     <color name="surface_container_translucent">#F2F9F9FF</color>
     <color name="outline_translucent">#1F000000</color>

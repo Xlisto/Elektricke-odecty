@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import cz.xlisto.elektrodroid.MainActivity;
 import cz.xlisto.elektrodroid.R;
+import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
 import cz.xlisto.elektrodroid.services.HdoAlarmScheduler;
 import cz.xlisto.elektrodroid.shp.ShPHdo;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
@@ -173,6 +174,7 @@ public class SettingsFragment extends Fragment implements OnPaddingChangeListene
                 switchUseDynamicColors.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (shPSettings.isUseDynamicColors() != isChecked) {
                         shPSettings.setUseDynamicColors(isChecked);
+                        WidgetUpdateManager.updateAllWidgetsAsync(requireContext(), null);
                         requireActivity().recreate();
                     }
                 });

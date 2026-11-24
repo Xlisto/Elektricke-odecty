@@ -554,12 +554,29 @@
         app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="12dp">
+            android:layout_height="wrap_content">
+
+            <!-- Dekorativní krajina s domem a solárními panely na pozadí -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:adjustViewBounds="true"
+                android:alpha="0.28"
+                android:importantForAccessibility="no"
+                android:scaleType="fitEnd"
+                android:src="@drawable/bg_dashboard_period_landscape"
+                app:tint="?attr/colorPrimary"
+                app:tintMode="src_atop" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp">
 
             <!-- Hlavička: Ikona + Spotřeba období + datum od-do -->
             <LinearLayout
@@ -705,7 +722,8 @@
                     android:layout_width="86dp"
                     android:layout_height="86dp" />
             </LinearLayout>
-        </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- 4. KARTA: PŘEHLED SPOTŘEBY (Měsíční / Roční) -->
@@ -722,12 +740,29 @@
         app:strokeColor="?attr/colorOutlineVariant"
         app:strokeWidth="1dp">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="12dp">
+            android:layout_height="wrap_content">
+
+            <!-- Dekorativní ilustrace grafu spotřeby a blesku na pozadí -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:adjustViewBounds="true"
+                android:alpha="0.24"
+                android:importantForAccessibility="no"
+                android:scaleType="fitEnd"
+                android:src="@drawable/bg_dashboard_consumption_overview"
+                app:tint="?attr/colorPrimary"
+                app:tintMode="src_atop" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -792,7 +827,8 @@
                 android:textSize="11sp"
                 android:visibility="gone"
                 tools:visibility="visible" />
-        </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- 5. KARTA: VYÚČTOVÁNÍ & POSLEDNÍ FAKTURY -->

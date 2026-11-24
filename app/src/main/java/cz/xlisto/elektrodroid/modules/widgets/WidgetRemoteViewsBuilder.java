@@ -64,28 +64,31 @@ public final class WidgetRemoteViewsBuilder {
                                     @Nullable WidgetConfig config,
                                     @NonNull WidgetPointResolver.ResolutionResult resolution,
                                     @Nullable Bundle widgetOptions) {
+        WidgetThemePalette palette = WidgetThemePalette.resolve(context);
         return switch (widgetType) {
             case CURRENT_PRICE ->
-                    buildCurrentPriceWidget(context, appWidgetId, config, resolution, widgetOptions);
+                    buildCurrentPriceWidget(context, palette, appWidgetId, config, resolution, widgetOptions);
             case HDO_CLOCK ->
-                    buildHdoClockWidget(context, appWidgetId, config, resolution, widgetOptions);
+                    buildHdoClockWidget(context, palette, appWidgetId, config, resolution, widgetOptions);
             case CONSUMPTION ->
-                    buildConsumptionWidget(context, appWidgetId, config, resolution, widgetOptions);
+                    buildConsumptionWidget(context, palette, appWidgetId, config, resolution, widgetOptions);
             case FINANCIAL_BALANCE ->
-                    buildFinancialBalanceWidget(context, appWidgetId, config, resolution, widgetOptions);
+                    buildFinancialBalanceWidget(context, palette, appWidgetId, config, resolution, widgetOptions);
             case NEW_READING ->
-                    buildNewReadingWidget(context, appWidgetId, config, resolution, widgetOptions);
+                    buildNewReadingWidget(context, palette, appWidgetId, config, resolution, widgetOptions);
         };
     }
 
 
     @NonNull
     private static RemoteViews buildCurrentPriceWidget(@NonNull Context context,
+                                                       @NonNull WidgetThemePalette palette,
                                                        int appWidgetId,
                                                        @Nullable WidgetConfig config,
                                                        @NonNull WidgetPointResolver.ResolutionResult resolution,
                                                        @Nullable Bundle widgetOptions) {
         RemoteViews views = createBaseRemoteViews(context, R.layout.widget_current_price, appWidgetId, true);
+        applyCurrentPriceTheme(views, palette);
 
         if (resolution.status() != WidgetPointResolver.ResolutionStatus.RESOLVED
                 || resolution.point() == null
@@ -154,7 +157,7 @@ public final class WidgetRemoteViewsBuilder {
             );
 
             bindTariffPriceBox(
-                    context,
+                    palette,
                     views,
                     R.id.iv_widget_vt_bg_compact,
                     R.id.iv_widget_vt_dot_compact,
@@ -171,7 +174,7 @@ public final class WidgetRemoteViewsBuilder {
 
             if (!isSingleTariff) {
                 bindTariffPriceBox(
-                        context,
+                        palette,
                         views,
                         R.id.iv_widget_nt_bg_compact,
                         R.id.iv_widget_nt_dot_compact,
@@ -203,9 +206,11 @@ public final class WidgetRemoteViewsBuilder {
             } else {
                 views.setViewVisibility(R.id.ll_widget_footer_compact, View.VISIBLE);
                 views.setViewVisibility(R.id.iv_widget_price_warning_compact, View.GONE);
-                views.setTextColor(
+                palette.applyTextColor(
+                        views,
                         R.id.tv_widget_footer_compact,
-                        ContextCompat.getColor(context, R.color.md_theme_onSurfaceVariant)
+                        palette.onSurfaceVariantRes(),
+                        palette.onSurfaceVariant()
                 );
                 views.setTextViewText(R.id.tv_widget_footer_compact, formatPriceWidgetHdoFooter(context, hdo));
             }
@@ -216,7 +221,7 @@ public final class WidgetRemoteViewsBuilder {
 
             String unitText = context.getString(R.string.dashboard_price_kwh_unit);
             bindTariffPriceBox(
-                    context,
+                    palette,
                     views,
                     R.id.iv_widget_vt_bg,
                     R.id.iv_widget_vt_dot,
@@ -233,7 +238,7 @@ public final class WidgetRemoteViewsBuilder {
 
             if (!isSingleTariff) {
                 bindTariffPriceBox(
-                        context,
+                        palette,
                         views,
                         R.id.iv_widget_nt_bg,
                         R.id.iv_widget_nt_dot,
@@ -271,7 +276,7 @@ public final class WidgetRemoteViewsBuilder {
     }
 
 
-    private static void bindTariffPriceBox(@NonNull Context context,
+    private static void bindTariffPriceBox(@NonNull WidgetThemePalette palette,
                                            @NonNull RemoteViews views,
                                            int bgViewId,
                                            int dotViewId,
@@ -303,17 +308,18 @@ public final class WidgetRemoteViewsBuilder {
             views.setViewVisibility(activeIconViewId, View.VISIBLE);
             views.setInt(activeIconViewId, "setColorFilter", textColor);
         } else {
-            int inactiveBgColor = ContextCompat.getColor(context, R.color.dashboard_price_box_inactive_bg);
-            int inactiveStrokeColor = ContextCompat.getColor(context, R.color.dashboard_price_box_inactive_stroke);
             Bitmap inactiveBg = WidgetBitmapRenderer.renderRoundedBoxBitmap(
-                    inactiveBgColor, inactiveStrokeColor, 260, bgHeight, cornerRadius);
+                    palette.priceBoxInactiveBg(),
+                    palette.priceBoxInactiveStroke(),
+                    260,
+                    bgHeight,
+                    cornerRadius
+            );
             views.setImageViewBitmap(bgViewId, inactiveBg);
 
-            int primaryText = ContextCompat.getColor(context, R.color.md_theme_onSurface);
-            int secondaryText = ContextCompat.getColor(context, R.color.md_theme_onSurfaceVariant);
-            views.setTextColor(labelViewId, primaryText);
-            views.setTextColor(priceViewId, primaryText);
-            views.setTextColor(unitViewId, secondaryText);
+            palette.applyTextColor(views, labelViewId, palette.onSurfaceRes(), palette.onSurface());
+            palette.applyTextColor(views, priceViewId, palette.onSurfaceRes(), palette.onSurface());
+            palette.applyTextColor(views, unitViewId, palette.onSurfaceVariantRes(), palette.onSurfaceVariant());
 
             views.setViewVisibility(dotViewId, View.VISIBLE);
             views.setImageViewBitmap(dotViewId, WidgetBitmapRenderer.renderColorDotBitmap(tariffColor, 18));
@@ -324,11 +330,13 @@ public final class WidgetRemoteViewsBuilder {
 
     @NonNull
     private static RemoteViews buildHdoClockWidget(@NonNull Context context,
+                                                   @NonNull WidgetThemePalette palette,
                                                    int appWidgetId,
                                                    @Nullable WidgetConfig config,
                                                    @NonNull WidgetPointResolver.ResolutionResult resolution,
                                                    @Nullable Bundle widgetOptions) {
         RemoteViews views = createBaseRemoteViews(context, R.layout.widget_hdo_clock, appWidgetId, true);
+        applyHdoClockTheme(views, palette);
         views.setOnClickPendingIntent(
                 R.id.btn_widget_config_strip,
                 WidgetNavigationHelper.createConfigurePendingIntent(context, appWidgetId)
@@ -381,6 +389,7 @@ public final class WidgetRemoteViewsBuilder {
 
         Bitmap clockBitmap = WidgetBitmapRenderer.renderHdoClockBitmap(
                 context,
+                palette,
                 hdo.allHdoModels(),
                 hdo.timeShiftMillis(),
                 nowMillis,
@@ -500,11 +509,13 @@ public final class WidgetRemoteViewsBuilder {
 
     @NonNull
     private static RemoteViews buildConsumptionWidget(@NonNull Context context,
+                                                      @NonNull WidgetThemePalette palette,
                                                       int appWidgetId,
                                                       @Nullable WidgetConfig config,
                                                       @NonNull WidgetPointResolver.ResolutionResult resolution,
                                                       @Nullable Bundle widgetOptions) {
         RemoteViews views = createBaseRemoteViews(context, R.layout.widget_consumption, appWidgetId, true);
+        applyConsumptionTheme(views, palette);
 
         if (resolution.status() != WidgetPointResolver.ResolutionStatus.RESOLVED
                 || resolution.point() == null
@@ -555,7 +566,7 @@ public final class WidgetRemoteViewsBuilder {
             int barWidthPx = Math.round(Math.max(80, widthDp - 120) * density);
             int barHeightPx = Math.round(9 * density);
             Bitmap splitBar = WidgetBitmapRenderer.renderConsumptionSplitBarBitmap(
-                    context,
+                    palette,
                     snapshot.vtKwh(),
                     snapshot.ntKwh(),
                     snapshot.isSingleTariff(),
@@ -606,7 +617,7 @@ public final class WidgetRemoteViewsBuilder {
             int barWidthPx = Math.round(Math.max(120, widthDp - 24) * density);
             int barHeightPx = Math.round(12 * density);
             Bitmap splitBar = WidgetBitmapRenderer.renderConsumptionSplitBarBitmap(
-                    context,
+                    palette,
                     snapshot.vtKwh(),
                     snapshot.ntKwh(),
                     snapshot.isSingleTariff(),
@@ -642,11 +653,13 @@ public final class WidgetRemoteViewsBuilder {
 
     @NonNull
     private static RemoteViews buildFinancialBalanceWidget(@NonNull Context context,
+                                                           @NonNull WidgetThemePalette palette,
                                                            int appWidgetId,
                                                            @Nullable WidgetConfig config,
                                                            @NonNull WidgetPointResolver.ResolutionResult resolution,
                                                            @Nullable Bundle widgetOptions) {
         RemoteViews views = createBaseRemoteViews(context, R.layout.widget_financial_balance, appWidgetId, true);
+        applyFinancialBalanceTheme(views, palette);
 
         if (resolution.status() != WidgetPointResolver.ResolutionStatus.RESOLVED
                 || resolution.point() == null
@@ -692,19 +705,23 @@ public final class WidgetRemoteViewsBuilder {
 
         String badgeText;
         int badgeBgRes;
-        int badgeTextColor;
+        int badgeTextColorRes;
+        int badgeTextColorInt;
         if (balanceState == InvoiceBalanceHelper.BalanceState.OVERPAYMENT) {
             badgeText = context.getString(R.string.widget_balance_overpayment_format, absBalanceText);
             badgeBgRes = R.drawable.bg_widget_badge_overpayment;
-            badgeTextColor = ContextCompat.getColor(context, R.color.dashboard_overpayment_text);
+            badgeTextColorRes = R.color.dashboard_overpayment_text;
+            badgeTextColorInt = ContextCompat.getColor(context, R.color.dashboard_overpayment_text);
         } else if (balanceState == InvoiceBalanceHelper.BalanceState.UNDERPAYMENT) {
             badgeText = context.getString(R.string.widget_balance_underpayment_format, absBalanceText);
             badgeBgRes = R.drawable.bg_widget_badge_underpayment;
-            badgeTextColor = ContextCompat.getColor(context, R.color.dashboard_underpayment_text);
+            badgeTextColorRes = R.color.dashboard_underpayment_text;
+            badgeTextColorInt = ContextCompat.getColor(context, R.color.dashboard_underpayment_text);
         } else {
             badgeText = context.getString(R.string.widget_balance_balanced_format, WidgetFormatHelper.formatCzk(0.0));
-            badgeBgRes = R.drawable.bg_widget_pill_neutral;
-            badgeTextColor = ContextCompat.getColor(context, R.color.md_theme_onSurfaceVariant);
+            badgeBgRes = palette.neutralPillBackgroundRes();
+            badgeTextColorRes = palette.onSurfaceVariantRes();
+            badgeTextColorInt = palette.onSurfaceVariant();
         }
 
         if (compactMode) {
@@ -713,7 +730,7 @@ public final class WidgetRemoteViewsBuilder {
 
             views.setTextViewText(R.id.tv_widget_balance_badge_compact, badgeText);
             views.setInt(R.id.tv_widget_balance_badge_compact, "setBackgroundResource", badgeBgRes);
-            views.setTextColor(R.id.tv_widget_balance_badge_compact, badgeTextColor);
+            palette.applyTextColor(views, R.id.tv_widget_balance_badge_compact, badgeTextColorRes, badgeTextColorInt);
 
             views.setTextViewText(
                     R.id.tv_widget_advances_compact,
@@ -728,6 +745,7 @@ public final class WidgetRemoteViewsBuilder {
             int barHeightPx = Math.round(10 * density);
             Bitmap balanceBar = WidgetBitmapRenderer.renderBalanceBarBitmap(
                     context,
+                    palette,
                     snapshot.advancesKc(),
                     snapshot.costsWithTaxKc(),
                     barWidthPx,
@@ -740,7 +758,7 @@ public final class WidgetRemoteViewsBuilder {
 
             views.setTextViewText(R.id.tv_widget_balance_badge, badgeText);
             views.setInt(R.id.tv_widget_balance_badge, "setBackgroundResource", badgeBgRes);
-            views.setTextColor(R.id.tv_widget_balance_badge, badgeTextColor);
+            palette.applyTextColor(views, R.id.tv_widget_balance_badge, badgeTextColorRes, badgeTextColorInt);
 
             views.setTextViewText(R.id.tv_widget_advances_value, advancesFormatted);
             views.setTextViewText(R.id.tv_widget_costs_value, costsFormatted);
@@ -749,6 +767,7 @@ public final class WidgetRemoteViewsBuilder {
             int barHeightPx = Math.round(16 * density);
             Bitmap balanceBar = WidgetBitmapRenderer.renderBalanceBarBitmap(
                     context,
+                    palette,
                     snapshot.advancesKc(),
                     snapshot.costsWithTaxKc(),
                     barWidthPx,
@@ -763,11 +782,13 @@ public final class WidgetRemoteViewsBuilder {
 
     @NonNull
     private static RemoteViews buildNewReadingWidget(@NonNull Context context,
+                                                     @NonNull WidgetThemePalette palette,
                                                      int appWidgetId,
                                                      @Nullable WidgetConfig config,
                                                      @NonNull WidgetPointResolver.ResolutionResult resolution,
                                                      @Nullable Bundle widgetOptions) {
         RemoteViews views = createBaseRemoteViews(context, R.layout.widget_new_reading, appWidgetId, false);
+        applyNewReadingTheme(views, palette);
         int widthDp = resolveWidgetWidthDp(widgetOptions, 64);
         boolean compactMode = widthDp < NEW_READING_WIDE_THRESHOLD_DP;
 
@@ -814,6 +835,124 @@ public final class WidgetRemoteViewsBuilder {
             );
         }
         return views;
+    }
+
+
+    private static void applyCurrentPriceTheme(@NonNull RemoteViews views,
+                                               @NonNull WidgetThemePalette palette) {
+        if (!palette.isDynamicColorsActive()) {
+            return;
+        }
+        views.setInt(R.id.widget_root, "setBackgroundResource", palette.priceCardBackgroundRes());
+        palette.applyImageTint(views, R.id.iv_widget_pylon, palette.primaryRes(), palette.primary());
+        views.setImageViewResource(R.id.btn_widget_config, palette.settingsIconRes());
+        applyTextColorToViews(views, palette, palette.onSurfaceRes(), palette.onSurface(),
+                R.id.tv_widget_point_name,
+                R.id.tv_widget_error_title);
+        applyTextColorToViews(views, palette, palette.onSurfaceVariantRes(), palette.onSurfaceVariant(),
+                R.id.tv_widget_price_mode,
+                R.id.tv_widget_hdo_status,
+                R.id.tv_widget_error_subtitle);
+    }
+
+
+    private static void applyHdoClockTheme(@NonNull RemoteViews views,
+                                           @NonNull WidgetThemePalette palette) {
+        if (!palette.isDynamicColorsActive()) {
+            return;
+        }
+        views.setInt(R.id.widget_root, "setBackgroundResource", palette.cardBackgroundRes());
+        views.setImageViewResource(R.id.btn_widget_config, palette.settingsIconRes());
+        views.setImageViewResource(R.id.btn_widget_config_strip, palette.settingsIconRes());
+        applyTextColorToViews(views, palette, palette.onSurfaceRes(), palette.onSurface(),
+                R.id.tv_widget_point_name_strip,
+                R.id.tv_widget_point_name,
+                R.id.tv_widget_hdo_next_wide,
+                R.id.tv_widget_error_title);
+        applyTextColorToViews(views, palette, palette.onSurfaceVariantRes(), palette.onSurfaceVariant(),
+                R.id.tv_widget_hdo_detail_strip,
+                R.id.tv_widget_hdo_next_compact,
+                R.id.tv_widget_hdo_remaining_wide,
+                R.id.tv_widget_error_subtitle);
+        applyTextColorToViews(views, palette, palette.primaryRes(), palette.primary(),
+                R.id.tv_widget_hdo_status_strip,
+                R.id.tv_widget_hdo_tariff_wide);
+    }
+
+
+    private static void applyConsumptionTheme(@NonNull RemoteViews views,
+                                              @NonNull WidgetThemePalette palette) {
+        if (!palette.isDynamicColorsActive()) {
+            return;
+        }
+        views.setInt(R.id.widget_root, "setBackgroundResource", palette.cardBackgroundRes());
+        palette.applyImageTint(views, R.id.iv_widget_bg_art, palette.primaryRes(), palette.primary());
+        views.setImageViewResource(R.id.btn_widget_config, palette.settingsIconRes());
+        applyTextColorToViews(views, palette, palette.onSurfaceRes(), palette.onSurface(),
+                R.id.tv_widget_point_name,
+                R.id.tv_widget_total_kwh_compact,
+                R.id.tv_widget_vt_value_compact,
+                R.id.tv_widget_nt_value_compact,
+                R.id.tv_widget_total_kwh,
+                R.id.tv_widget_vt_value,
+                R.id.tv_widget_nt_value,
+                R.id.tv_widget_error_title);
+        applyTextColorToViews(views, palette, palette.onSurfaceVariantRes(), palette.onSurfaceVariant(),
+                R.id.tv_widget_period,
+                R.id.tv_widget_total_label,
+                R.id.tv_widget_vt_label_tall,
+                R.id.tv_widget_nt_label_tall,
+                R.id.tv_widget_error_subtitle);
+    }
+
+
+    private static void applyFinancialBalanceTheme(@NonNull RemoteViews views,
+                                                   @NonNull WidgetThemePalette palette) {
+        if (!palette.isDynamicColorsActive()) {
+            return;
+        }
+        views.setInt(R.id.widget_root, "setBackgroundResource", palette.cardBackgroundRes());
+        palette.applyImageTint(views, R.id.iv_widget_bg_art, palette.primaryRes(), palette.primary());
+        views.setImageViewResource(R.id.btn_widget_config, palette.settingsIconRes());
+        applyTextColorToViews(views, palette, palette.onSurfaceRes(), palette.onSurface(),
+                R.id.tv_widget_point_name,
+                R.id.tv_widget_advances_compact,
+                R.id.tv_widget_costs_compact,
+                R.id.tv_widget_advances_value,
+                R.id.tv_widget_costs_value,
+                R.id.tv_widget_error_title);
+        applyTextColorToViews(views, palette, palette.onSurfaceVariantRes(), palette.onSurfaceVariant(),
+                R.id.tv_widget_period,
+                R.id.tv_widget_advances_label,
+                R.id.tv_widget_costs_label,
+                R.id.tv_widget_error_subtitle);
+    }
+
+
+    private static void applyNewReadingTheme(@NonNull RemoteViews views,
+                                             @NonNull WidgetThemePalette palette) {
+        if (!palette.isDynamicColorsActive()) {
+            return;
+        }
+        views.setInt(R.id.widget_root, "setBackgroundResource", palette.actionCardBackgroundRes());
+        views.setImageViewResource(R.id.iv_widget_action_icon_compact, palette.addReadingIconRes());
+        views.setImageViewResource(R.id.iv_widget_action_icon, palette.addReadingIconRes());
+        applyTextColorToViews(views, palette, palette.onPrimaryContainerRes(), palette.onPrimaryContainer(),
+                R.id.tv_widget_point_name_compact,
+                R.id.tv_widget_action_title,
+                R.id.tv_widget_point_name);
+        palette.applyTextColor(views, R.id.tv_widget_error_title, palette.onSurfaceRes(), palette.onSurface());
+    }
+
+
+    private static void applyTextColorToViews(@NonNull RemoteViews views,
+                                              @NonNull WidgetThemePalette palette,
+                                              int colorRes,
+                                              int fallbackColorInt,
+                                              int... viewIds) {
+        for (int viewId : viewIds) {
+            palette.applyTextColor(views, viewId, colorRes, fallbackColorInt);
+        }
     }
 
 

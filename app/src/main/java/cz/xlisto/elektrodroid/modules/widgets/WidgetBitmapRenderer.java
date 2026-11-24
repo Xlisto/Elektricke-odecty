@@ -66,6 +66,7 @@ public final class WidgetBitmapRenderer {
      * do nové instance {@link Bitmap}.
      *
      * @param context         kontext aplikace (pro rozlišení světlého/tmavého motivu a barev HDO)
+     * @param palette         aktivní barevná paleta widgetu (respektující dynamické barvy)
      * @param allHdoModels    seznam HDO modelů odběrného místa
      * @param timeShiftMillis posun času elektroměru v ms
      * @param nowMillis       aktuální systémový čas v ms
@@ -74,6 +75,7 @@ public final class WidgetBitmapRenderer {
      */
     @NonNull
     public static Bitmap renderHdoClockBitmap(@NonNull Context context,
+                                              @NonNull WidgetThemePalette palette,
                                               @Nullable List<HdoModel> allHdoModels,
                                               long timeShiftMillis,
                                               long nowMillis,
@@ -93,9 +95,9 @@ public final class WidgetBitmapRenderer {
         float pad = strokeWidth + 2f;
         float radius = (size / 2f) - pad;
 
-        int colorDialBg = ContextCompat.getColor(context, R.color.md_theme_surfaceContainerHigh);
-        int colorDialStroke = ContextCompat.getColor(context, R.color.md_theme_primary);
-        int colorOnSurface = ContextCompat.getColor(context, R.color.md_theme_onSurface);
+        int colorDialBg = palette.surfaceContainerHigh();
+        int colorDialStroke = palette.primary();
+        int colorOnSurface = palette.onSurface();
         int colorHdoTuv = ContextCompat.getColor(context, R.color.color_hdo_time_TUV);
         int colorHdoTar = ContextCompat.getColor(context, R.color.color_hdo_time_TAR);
         int colorHdoPv = ContextCompat.getColor(context, R.color.color_hdo_time_PV);
@@ -192,7 +194,7 @@ public final class WidgetBitmapRenderer {
     /**
      * Vykreslí horizontální poměrový pruh spotřeby VT / NT respektující uživatelské barvy tarifů.
      *
-     * @param context        kontext aplikace
+     * @param palette        aktivní barevná paleta widgetu (respektující dynamické barvy)
      * @param vtKwh          spotřeba ve vysokém tarifu (kWh)
      * @param ntKwh          spotřeba v nízkém tarifu (kWh)
      * @param isSingleTariff {@code true}, pokud se jedná o jednosazbový tarif
@@ -203,7 +205,7 @@ public final class WidgetBitmapRenderer {
      * @return vykreslená {@link Bitmap}
      */
     @NonNull
-    public static Bitmap renderConsumptionSplitBarBitmap(@NonNull Context context,
+    public static Bitmap renderConsumptionSplitBarBitmap(@NonNull WidgetThemePalette palette,
                                                          double vtKwh,
                                                          double ntKwh,
                                                          boolean isSingleTariff,
@@ -221,7 +223,7 @@ public final class WidgetBitmapRenderer {
 
         Paint paintEmpty = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintEmpty.setStyle(Paint.Style.FILL);
-        paintEmpty.setColor(ContextCompat.getColor(context, R.color.md_theme_outlineVariant));
+        paintEmpty.setColor(palette.outlineVariant());
         canvas.drawRoundRect(fullRect, corner, corner, paintEmpty);
 
         double cleanVt = Math.max(0.0, vtKwh);
@@ -266,6 +268,7 @@ public final class WidgetBitmapRenderer {
      * výhradně v sémantických barvách (zelená pro přeplatek, červená pro nedoplatek).
      *
      * @param context    kontext aplikace
+     * @param palette    aktivní barevná paleta widgetu (respektující dynamické barvy)
      * @param advancesKc uhrazené zálohy v Kč
      * @param costsKc    celkové náklady v Kč
      * @param widthPx    požadovaná šířka v pixelech
@@ -274,6 +277,7 @@ public final class WidgetBitmapRenderer {
      */
     @NonNull
     public static Bitmap renderBalanceBarBitmap(@NonNull Context context,
+                                                @NonNull WidgetThemePalette palette,
                                                 double advancesKc,
                                                 double costsKc,
                                                 int widthPx,
@@ -293,7 +297,7 @@ public final class WidgetBitmapRenderer {
         RectF trackRect = new RectF(0f, trackTop, w, trackBottom);
         Paint paintTrack = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintTrack.setStyle(Paint.Style.FILL);
-        paintTrack.setColor(ContextCompat.getColor(context, R.color.md_theme_outlineVariant));
+        paintTrack.setColor(palette.outlineVariant());
         canvas.drawRoundRect(trackRect, trackCorner, trackCorner, paintTrack);
 
         float signedRatio = DashboardBillingBalanceBarView.calculateSignedRatio(advancesKc, costsKc);
@@ -320,7 +324,7 @@ public final class WidgetBitmapRenderer {
         // Středová nulová ryska
         Paint paintTick = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintTick.setStyle(Paint.Style.FILL);
-        paintTick.setColor(ContextCompat.getColor(context, R.color.md_theme_onSurfaceVariant));
+        paintTick.setColor(palette.onSurfaceVariant());
         float tickWidth = Math.max(3f, h * 0.14f);
         RectF tickRect = new RectF(centerX - tickWidth / 2f, 0f, centerX + tickWidth / 2f, h);
         canvas.drawRoundRect(tickRect, tickWidth / 2f, tickWidth / 2f, paintTick);
