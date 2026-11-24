@@ -154,6 +154,13 @@ public final class DashboardHdoFormatHelper {
         long totalMinutes = remainingMillis / MILLIS_PER_MINUTE;
         long days = totalMinutes / MINUTES_PER_DAY;
         long hours = (totalMinutes % MINUTES_PER_DAY) / MINUTES_PER_HOUR;
+        StringBuilder sb = getSb(totalMinutes, days, hours);
+        return sb.toString();
+    }
+
+
+    @NonNull
+    private static StringBuilder getSb(long totalMinutes, long days, long hours) {
         long minutes = totalMinutes % MINUTES_PER_HOUR;
 
         StringBuilder sb = new StringBuilder();
@@ -171,7 +178,7 @@ public final class DashboardHdoFormatHelper {
             if (hasPart) sb.append(' ');
             sb.append(minutes).append(" min");
         }
-        return sb.toString();
+        return sb;
     }
 
 }

@@ -313,6 +313,25 @@ public class WidgetConfigActivity extends AppCompatActivity {
             return;
         }
 
+        WidgetConfig newConfig = getNewConfig(selectedPoint);
+
+        btnSave.setEnabled(false);
+        configStore.saveConfig(newConfig);
+
+        saveExecutor.execute(() -> {
+            WidgetUpdateManager.updateSingleWidgetNow(getApplicationContext(), widgetType, appWidgetId);
+            runOnUiThread(() -> {
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                setResult(RESULT_OK, resultValue);
+                finish();
+            });
+        });
+    }
+
+
+    @NonNull
+    private WidgetConfig getNewConfig(SubscriptionPointModel selectedPoint) {
         boolean showTotalPrice = !widgetType.supportsPriceOptions()
                 || rgPriceMode.getCheckedRadioButtonId() == R.id.rb_price_total;
         boolean includeVat = !widgetType.supportsPriceOptions()
@@ -327,19 +346,7 @@ public class WidgetConfigActivity extends AppCompatActivity {
                 showTotalPrice,
                 includeVat
         );
-
-        btnSave.setEnabled(false);
-        configStore.saveConfig(newConfig);
-
-        saveExecutor.execute(() -> {
-            WidgetUpdateManager.updateSingleWidgetNow(getApplicationContext(), widgetType, appWidgetId);
-            runOnUiThread(() -> {
-                Intent resultValue = new Intent();
-                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-                setResult(RESULT_OK, resultValue);
-                finish();
-            });
-        });
+        return newConfig;
     }
 
 

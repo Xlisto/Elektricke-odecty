@@ -566,19 +566,7 @@ public final class WidgetDataService {
     public static long resolveCurrentPriceListId(@NonNull Context context,
                                                  @NonNull SubscriptionPointModel point) {
         Context appContext = context.getApplicationContext();
-        long priceListId = -1L;
-
-        DataMonthlyReadingSource readingSource = new DataMonthlyReadingSource(appContext);
-        try {
-            readingSource.open();
-            MonthlyReadingModel lastReading = readingSource.loadLastMonthlyReadingByDate(point.getTableO());
-            if (lastReading != null && lastReading.getPriceListId() > 0L) {
-                priceListId = lastReading.getPriceListId();
-            }
-        } catch (Exception ignored) {
-        } finally {
-            readingSource.close();
-        }
+        long priceListId = getPriceListId(point, appContext);
 
         if (priceListId > 0L) {
             return priceListId;
@@ -601,6 +589,24 @@ public final class WidgetDataService {
         }
 
         return -1L;
+    }
+
+
+    private static long getPriceListId(@NonNull SubscriptionPointModel point, Context appContext) {
+        long priceListId = -1L;
+
+        DataMonthlyReadingSource readingSource = new DataMonthlyReadingSource(appContext);
+        try {
+            readingSource.open();
+            MonthlyReadingModel lastReading = readingSource.loadLastMonthlyReadingByDate(point.getTableO());
+            if (lastReading != null && lastReading.getPriceListId() > 0L) {
+                priceListId = lastReading.getPriceListId();
+            }
+        } catch (Exception ignored) {
+        } finally {
+            readingSource.close();
+        }
+        return priceListId;
     }
 
 
