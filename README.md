@@ -138,7 +138,7 @@ zejména oprávnění pro notifikace a přesné alarmy.
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_6.jpg" alt="Odběrné místo 6" style="height: 300px;" />
+  <img src="screenshots/odb_6.jpg" alt="Odběrné místo 6" style="height: 600px;" />
 </p>
 
 ## Ceník

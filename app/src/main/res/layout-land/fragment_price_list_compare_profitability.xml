@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -39,7 +40,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Zdroj spotřeby pro analýzu"
+                        android:text="@string/price_list_compare_consumption_source_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -55,14 +56,14 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:text="Modelová spotřeba" />
+                            android:text="@string/price_list_compare_source_model" />
 
                         <RadioButton
                             android:id="@+id/rbSourceHistory"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Historické odečty" />
+                            android:text="@string/price_list_compare_source_history" />
                     </RadioGroup>
 
                     <!-- Posuvníky pro Modelovou spotřebu (VT + NT) -->
@@ -77,9 +78,9 @@
                             android:id="@+id/tvVtSliderLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Modelová spotřeba VT: 1,0 MWh (1000 kWh)"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            tools:text="Modelová spotřeba VT: 1,0 MWh (1000 kWh)" />
 
                         <com.google.android.material.slider.Slider
                             android:id="@+id/sliderVtMwh"
@@ -101,9 +102,9 @@
                                 android:id="@+id/tvNtSliderLabel"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Modelová spotřeba NT: 2,0 MWh (2000 kWh)"
                                 android:textAppearance="?attr/textAppearanceLabelMedium"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                tools:text="Modelová spotřeba NT: 2,0 MWh (2000 kWh)" />
 
                             <com.google.android.material.slider.Slider
                                 android:id="@+id/sliderNtMwh"
@@ -129,9 +130,9 @@
                             android:id="@+id/tvHistoryYearsLabel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Počet roků do historie pro průměr: 1 rok"
                             android:textAppearance="?attr/textAppearanceLabelMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            tools:text="Počet roků do historie pro průměr: 1 rok" />
 
                         <com.google.android.material.slider.Slider
                             android:id="@+id/sliderHistoryYears"
@@ -147,7 +148,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Kvalita dat: načítání..."
+                            android:text="@string/price_list_compare_history_quality_loading"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?attr/colorOnSurfaceVariant" />
                     </LinearLayout>
@@ -172,7 +173,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Analýza bodu zvratu (Break-even point)"
+                        android:text="@string/price_list_compare_break_even_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -181,9 +182,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Proporce výhodnosti jednotlivých sazeb dle roční spotřeby"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Proporce výhodnosti jednotlivých sazeb dle roční spotřeby" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -204,7 +205,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Technické podmínky přiznání sazby"
+                        android:text="@string/price_list_compare_technical_conditions_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 
@@ -243,7 +244,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Křivka celkových ročních nákladů"
+                        android:text="@string/price_list_compare_annual_cost_curve_title"
                         android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface" />
 

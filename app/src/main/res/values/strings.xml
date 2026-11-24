@@ -999,4 +999,11 @@ Přejete si tyto soubory přepsat, nebo je přeskočit?</string>
     <string name="price_list_compare_total_prices_title">Celkové součtové ceny (s DPH)</string>
     <string name="price_list_compare_annual_costs_chart_title">Graf celkových ročních nákladů</string>
     <string name="price_list_compare_ranking_title">Žebříček vyhodnocených ceníků</string>
+    <string name="price_list_compare_consumption_source_title">Zdroj spotřeby pro analýzu</string>
+    <string name="price_list_compare_source_model">Modelová spotřeba</string>
+    <string name="price_list_compare_source_history">Historické odečty</string>
+    <string name="price_list_compare_history_quality_loading">Kvalita dat: načítání…</string>
+    <string name="price_list_compare_break_even_title">Analýza bodu zvratu (Break-even point)</string>
+    <string name="price_list_compare_annual_cost_curve_title">Křivka celkových ročních nákladů</string>
+    <string name="price_list_compare_technical_conditions_title">Technické podmínky přiznání sazby</string>
 </resources>
