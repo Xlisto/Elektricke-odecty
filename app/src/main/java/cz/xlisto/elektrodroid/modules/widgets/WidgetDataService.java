@@ -189,20 +189,6 @@ public final class WidgetDataService {
 
 
     /**
-     * Ověří časovou platnost ceníku k zadanému okamžiku (porovnává po celých kalendářních dnech včetně koncového dne).
-     *
-     * @param priceList ceník k ověření (může být {@code null})
-     * @param nowMillis referenční čas v milisekundách
-     * @return stav platnosti {@link PriceListValidityStatus}
-     */
-    @NonNull
-    public static PriceListValidityStatus evaluatePriceListValidity(@Nullable PriceListModel priceList,
-                                                                    long nowMillis) {
-        return evaluatePriceListValidity(priceList, nowMillis, TimeZone.getDefault());
-    }
-
-
-    /**
      * Ověří časovou platnost ceníku v zadaném časovém pásmu.
      *
      * @param priceList ceník k ověření (může být {@code null})
