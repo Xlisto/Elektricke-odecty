@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="180dp"
+    android:height="60dp"
+    android:viewportWidth="360"
+    android:viewportHeight="120">
+
+    <!-- Velká diagonální vlna stoupající z dolní části k pravému hornímu rohu -->
+    <path android:pathData="M105,120 C170,96 225,44 295,12 C325,0 345,0 360,0 L360,120 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="360"
+                android:endY="24"
+                android:startX="115"
+                android:startY="120"
+                android:type="linear">
+                <item
+                    android:color="#00000000"
+                    android:offset="0" />
+                <item
+                    android:color="#1A000000"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Hlavní spodní S-vlna přes celou šířku hlavičky -->
+    <path android:pathData="M0,108 C44,92 88,88 148,104 C208,120 264,116 318,90 C336,81 350,74 360,70 L360,120 L0,120 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="360"
+                android:endY="90"
+                android:startX="0"
+                android:startY="105"
+                android:type="linear">
+                <item
+                    android:color="#24000000"
+                    android:offset="0" />
+                <item
+                    android:color="#14000000"
+                    android:offset="0.52" />
+                <item
+                    android:color="#29000000"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Jemná druhá spodní vrstva v pravém dolním rohu pro hloubku -->
+    <path
+        android:fillColor="#12000000"
+        android:pathData="M225,120 C275,112 318,98 360,92 L360,120 Z" />
+
+</vector>
