@@ -45,11 +45,6 @@ public class DashboardConsumptionBarChartView extends View {
     public record BarEntry(String label, double vt, double nt, double projectedTotal,
                            @Nullable Double changePercent) {
 
-        public BarEntry(@NonNull String label, double vt, double nt) {
-            this(label, vt, nt, 0.0, null);
-        }
-
-
         public BarEntry(@NonNull String label,
                         double vt,
                         double nt,
@@ -421,7 +416,7 @@ public class DashboardConsumptionBarChartView extends View {
         float pctTextHeight = pctFm.descent - pctFm.ascent;
         float pctGap = dpToPx(getContext(), 4f);
 
-        float topPad = pctTextHeight + pctGap + dpToPx(getContext(), 4f);
+        float chartTop = pctTextHeight + pctGap + dpToPx(getContext(), 4f);
         float bottomPad = dpToPx(getContext(), 22f);
         float legendWidth = dpToPx(getContext(), 58f);
         float minAxisPad = dpToPx(getContext(), 32f);
@@ -430,11 +425,9 @@ public class DashboardConsumptionBarChartView extends View {
         // Plynulá interpolace šířky levé osy Y, aby graf při změně řádu hodnot (např. 800 -> 6000) neposkočil
         float startLeftWidth = Math.max(minAxisPad, paintAxisText.measureText(String.valueOf(startStep * 4)) + textExtraPad);
         float targetLeftWidth = Math.max(minAxisPad, paintAxisText.measureText(String.valueOf(targetStep * 4)) + textExtraPad);
-        float leftAxisWidth = startLeftWidth + (targetLeftWidth - startLeftWidth) * animFraction;
 
-        float chartLeft = leftAxisWidth;
+        float chartLeft = startLeftWidth + (targetLeftWidth - startLeftWidth) * animFraction;
         float chartRight = w - legendWidth - dpToPx(getContext(), 8f);
-        float chartTop = topPad;
         float chartBottom = h - bottomPad;
         float chartHeight = Math.max(1f, chartBottom - chartTop);
         float chartWidth = Math.max(1f, chartRight - chartLeft);

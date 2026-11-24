@@ -390,7 +390,7 @@ public class TedomPdfParser implements PdfPriceListParser {
             return true; // Pro měsíc se celkové ceny počítají dynamicky
         }
 
-        // Hledáme řádek L (Cena ve VT)
+        // Hledáme řádek L (Cena ve VT) a řádek M (Cena v NT)
         List<Double> lPrices = new ArrayList<>();
         List<Double> mPrices = new ArrayList<>();
 
@@ -415,6 +415,16 @@ public class TedomPdfParser implements PdfPriceListParser {
             double pdfL = lPrices.get(i);
             if (Math.abs(calcL - pdfL) > 1.0) {
                 return false;
+            }
+            if (!mPrices.isEmpty() && i >= 2) {
+                int mIndex = mPrices.size() == 8 ? i - 2 : i;
+                if (mIndex < mPrices.size()) {
+                    double calcM = m.getPriceNT() + m.getDistNT() + m.getSystemServices() + m.getTax();
+                    double pdfM = mPrices.get(mIndex);
+                    if (Math.abs(calcM - pdfM) > 1.0) {
+                        return false;
+                    }
+                }
             }
         }
 

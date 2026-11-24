@@ -73,7 +73,7 @@ public class CentropolPdfParser implements PdfPriceListParser {
         boolean isMonthlyProduct = produkt.toLowerCase().contains("měsíčně") || produkt.toLowerCase().contains("mesicne");
 
         boolean is2025Split = PdfParserUtils.is2025BeforeSeptember(platnostOD);
-        long platnostDO = 0;
+        long platnostDO;
         if (isMonthlyProduct && platnostOD > 0) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(platnostOD);
