@@ -762,8 +762,12 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         val totalCountPriceList = dataPriceListSource.countPriceItems()
         dataPriceListSource.close()
 
-        tvCountPriceItem.text =
-            getString(R.string.zobrazeno_z_ceniku, priceListModels.size, totalCountPriceList)
+        tvCountPriceItem.text = resources.getQuantityString(
+            R.plurals.zobrazeno_z_ceniku,
+            totalCountPriceList,
+            priceListModels.size,
+            totalCountPriceList
+        )
         updateSelectionUiState()
     }
 
@@ -846,7 +850,11 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         dataPriceListSource.close()
 
         priceListModels = selectedModels
-        tvCountPriceItem.text = getString(R.string.zobrazeno_vybranych_ceniku, selectedModels.size)
+        tvCountPriceItem.text = resources.getQuantityString(
+            R.plurals.zobrazeno_vybranych_ceniku,
+            selectedModels.size,
+            selectedModels.size
+        )
         setAdapter()
     }
 
@@ -874,10 +882,18 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             }
 
             if (hiddenSelected > 0 && !isFilterOnlySelected) {
-                tvSelectionCount.text =
-                    getString(R.string.vybrano_ceniku_count_skryte, totalSelected, hiddenSelected)
+                tvSelectionCount.text = resources.getQuantityString(
+                    R.plurals.vybrano_ceniku_count_skryte,
+                    totalSelected,
+                    totalSelected,
+                    hiddenSelected
+                )
             } else {
-                tvSelectionCount.text = getString(R.string.vybrano_ceniku_count, totalSelected)
+                tvSelectionCount.text = resources.getQuantityString(
+                    R.plurals.vybrano_ceniku_count,
+                    totalSelected,
+                    totalSelected
+                )
             }
         } else {
             containerSelectionActions.visibility = View.GONE
@@ -1039,9 +1055,19 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         if (blockedCount > 0) {
             PriceListDeleteBlockedDialogFragment.newInstance(totalTed, totalFak, totalMon)
                 .show(requireActivity().supportFragmentManager, "priceListDeleteBlockedDialog")
+            val deletedPart = resources.getQuantityString(
+                R.plurals.deleted_pricelists_count,
+                deletedCount,
+                deletedCount
+            )
+            val blockedPart = resources.getQuantityString(
+                R.plurals.blocked_pricelists_count,
+                blockedCount,
+                blockedCount
+            )
             Toast.makeText(
                 requireContext(),
-                getString(R.string.deleted_some_blocked_some, deletedCount, blockedCount),
+                "$deletedPart $blockedPart",
                 Toast.LENGTH_LONG
             ).show()
         } else if (deletedCount > 0) {

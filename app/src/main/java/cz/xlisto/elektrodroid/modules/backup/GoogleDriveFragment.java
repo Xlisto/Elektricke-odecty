@@ -824,7 +824,7 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
         }
 
         int count = Math.max(pendingWifiUploadFilesCount, 1);
-        tvPendingUploadAlert.setText(getString(R.string.pending_upload_waiting_wifi_alert_count, count));
+        tvPendingUploadAlert.setText(getResources().getQuantityString(R.plurals.pending_upload_waiting_wifi_alert_count, count, count));
         tvPendingUploadAlert.setVisibility(View.VISIBLE);
     }
 

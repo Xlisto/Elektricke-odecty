@@ -71,8 +71,16 @@ public class ExportPriceListAdapter extends RecyclerView.Adapter<ExportPriceList
 
         holder.rl.setOnClickListener(v -> {
             selectedPriceListSumModel = priceListSumModel;
-            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(context.getResources().getString(R.string.export_price_list_title), FLAG_DIALOG_FRAGMENT_EXPORT
-                    , context.getResources().getString(R.string.export_price_list_title_message, priceListSumModel.rada(), priceListSumModel.count()));
+            YesNoDialogFragment yesNoDialogFragment = YesNoDialogFragment.newInstance(
+                    context.getResources().getString(R.string.export_price_list_title),
+                    FLAG_DIALOG_FRAGMENT_EXPORT,
+                    context.getResources().getQuantityString(
+                            R.plurals.export_price_list_title_message,
+                            priceListSumModel.count(),
+                            priceListSumModel.rada(),
+                            priceListSumModel.count()
+                    )
+            );
             yesNoDialogFragment.show(((FragmentActivity) context).getSupportFragmentManager(), YesNoDialogFragment.TAG);
         });
     }

@@ -812,7 +812,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         YesNoDialogFragment.newInstance(
                 getString(R.string.upload_existing_files_title),
                 FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT,
-                getString(R.string.upload_existing_files_message, duplicateCount),
+                getResources().getQuantityString(R.plurals.upload_existing_files_message, duplicateCount, duplicateCount),
                 getString(R.string.upload_existing_files_overwrite),
                 getString(R.string.upload_existing_files_skip)
         ).show(requireActivity().getSupportFragmentManager(), FLAG_DIALOG_FRAGMENT_UPLOAD_CONFLICT);

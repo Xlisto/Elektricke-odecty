@@ -691,7 +691,12 @@ public class HdoSiteFragment extends Fragment {
             HdoUpdateHelper.smartSaveHdo(requireActivity(), hdoList, tableHdo, (oldModel, newModel, diffMinutes) -> {
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
-                        String msg = getString(R.string.hdo_time_diff_dialog_message, oldModel.getRele(), diffMinutes);
+                        String msg = getResources().getQuantityString(
+                                R.plurals.hdo_time_diff_dialog_message,
+                                diffMinutes,
+                                oldModel.getRele(),
+                                diffMinutes
+                        );
                         OwnAlertDialog.showDialog(requireActivity(), getString(R.string.hdo_time_diff_dialog_title), msg);
                     });
                 }
