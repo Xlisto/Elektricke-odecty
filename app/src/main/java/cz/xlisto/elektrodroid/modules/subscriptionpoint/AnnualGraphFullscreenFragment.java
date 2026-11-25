@@ -39,8 +39,6 @@ public class AnnualGraphFullscreenFragment extends Fragment implements OnPadding
     private TextView tvTitle;
     private boolean portraitPromptShown = false;
 
-    public AnnualGraphFullscreenFragment() {
-    }
 
     public static AnnualGraphFullscreenFragment newInstance(long subscriptionPointId) {
         AnnualGraphFullscreenFragment fragment = new AnnualGraphFullscreenFragment();
