@@ -99,7 +99,8 @@
             android:id="@+id/llDashboardPortraitContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="InconsistentLayout">
 
             <include layout="@layout/include_new_dashboard_sections" />
         </LinearLayout>
