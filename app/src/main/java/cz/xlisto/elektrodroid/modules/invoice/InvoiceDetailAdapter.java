@@ -83,10 +83,10 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder viewHolder = (MyViewHolder) holder;
         SummaryInvoiceModel si = items.get(position);
-        viewHolder.tvDate.setText(context.getResources().getString(R.string.string_dash_string, ViewHelper.convertLongToDate(si.getDateOf()), ViewHelper.convertLongToDate(si.getDateTo())));
-        viewHolder.tvTitle.setText(si.getTitle().toString());
-        viewHolder.tvAmount.setText(context.getResources().getString(R.string.text_amount, si.getAmount(), si.getUnit()));
-        viewHolder.tvPriceUnit.setText(context.getResources().getString(R.string.text_price_unit, si.getUnitPrice(), si.getUnit()));
+        viewHolder.tvDate.setText(context.getResources().getString(R.string.string_dash_string, ViewHelper.convertLongToDate(si.dateOf()), ViewHelper.convertLongToDate(si.dateTo())));
+        viewHolder.tvTitle.setText(si.title().toString());
+        viewHolder.tvAmount.setText(context.getResources().getString(R.string.text_amount, si.amount(), si.unit()));
+        viewHolder.tvPriceUnit.setText(context.getResources().getString(R.string.text_price_unit, si.unitPrice(), si.unit()));
         viewHolder.tvTotalPrice.setText(context.getResources().getString(R.string.float_price, si.getTotalPrice()));
     }
 

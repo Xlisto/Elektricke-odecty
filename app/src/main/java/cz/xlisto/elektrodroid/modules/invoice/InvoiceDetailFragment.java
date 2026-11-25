@@ -377,7 +377,7 @@ public class InvoiceDetailFragment extends Fragment {
 
         double totalPrice = 0;
         for (SummaryInvoiceModel summaryInvoice : summaryInvoices) {
-            totalPrice += Round.round(summaryInvoice.getAmount() * summaryInvoice.getUnitPrice());
+            totalPrice += Round.round(summaryInvoice.amount() * summaryInvoice.unitPrice());
         }
 
         tvTotal.setText(requireContext().getResources().getString(R.string.total, DecimalFormatHelper.df2.format(totalPrice)));

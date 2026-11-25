@@ -452,7 +452,6 @@
     <string name="backup_pricelist">Záloha ceníků</string>
     <string name="backup_readings">Záloha odečtů</string>
     <string name="backup_zip">Komprimovaná záloha odečtů a ceníků</string>
-    <string name="icon_alert">Ikona varování</string>
     <string name="add_price_list">Přidat do aplikace</string>
     <string name="delete_price_list_file">Smazat</string>
 
@@ -911,7 +910,6 @@
     <string name="dashboard_hdo_remaining_format">Do přepnutí zbývá: %1$s</string>
     <string name="dashboard_hdo_not_set">HDO není nastaveno</string>
     <string name="dashboard_hdo_invalid_data">HDO: nejsou k dispozici platná data</string>
-    <string name="dashboard_quick_monthly_readings">Měsíční\nodečty</string>
     <string name="dashboard_quick_new_reading">Nový\nodečet</string>
     <string name="dashboard_last_reading_format">Poslední odečet: %1$s</string>
     <string name="dashboard_last_reading_none">Zatím žádný odečet</string>
