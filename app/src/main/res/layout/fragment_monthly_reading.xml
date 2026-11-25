@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:colorBackground"
-    tools:context=".modules.monthlyreading.MonthlyReadingFragment">
+    tools:context=".modules.monthlyreading.MonthlyReadingFragment"
+    tools:ignore="Overdraw">
 
     <!-- Původní horní label filtru; text filtru se nyní zobrazuje uvnitř widgetu bilance. -->
     <TextView
