@@ -43,13 +43,6 @@ public class AboutMeFragment extends Fragment implements OnPaddingChangeListener
     private RecyclerView recyclerView;
     private View bottomLinks;
 
-    /**
-     * Vytvoří novou instanci {@link AboutMeFragment}.
-     * Vyžadováno architekturou {@link Fragment} (např. při změně orientace obrazovky).
-     */
-    public AboutMeFragment() {
-    }
-
 
     /**
      * Tovární metoda pro vytvoření nové instance fragmentu O aplikaci.

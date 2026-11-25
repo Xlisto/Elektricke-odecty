@@ -32,11 +32,6 @@ public class DownloadPriceListFragment extends Fragment implements OnPaddingChan
     public static final String TAG = "DownloadPriceListFragment";
 
 
-    public DownloadPriceListFragment() {
-        // Vyžadovaný prázdný konstruktor
-    }
-
-
     /**
      * Vytvoří novou instanci fragmentu pro stažení ceníků.
      *

@@ -109,14 +109,6 @@ public class PriceListValidityDialogFragment extends DialogFragment {
 
 
     /**
-     * Výchozí prázdný veřejný konstruktor.
-     */
-    public PriceListValidityDialogFragment() {
-        // Vyžadovaný prázdný veřejný konstruktor
-    }
-
-
-    /**
      * Vrátí formátovač data v požadovaném českém formátu d. M. yyyy.
      *
      * @return {@link DateTimeFormatter}

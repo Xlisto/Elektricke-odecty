@@ -22,10 +22,6 @@ public class SubscriptionPointEditFragment extends SubscriptionPointAddEditAbstr
     private boolean isFirstLoad = true;
 
 
-    public SubscriptionPointEditFragment() {
-    }
-
-
     public static SubscriptionPointEditFragment newInstance(long param1) {
         SubscriptionPointEditFragment fragment = new SubscriptionPointEditFragment();
         Bundle args = new Bundle();

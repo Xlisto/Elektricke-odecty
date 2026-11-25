@@ -52,10 +52,6 @@ public class HelpFragment extends Fragment implements OnPaddingChangeListener {
     private int helpBottomPaddingPx;
 
 
-    public HelpFragment() {
-    }
-
-
     public static HelpFragment newInstance() {
         return new HelpFragment();
     }

@@ -107,14 +107,6 @@ public class MonthlyReadingFilterDialogFragment extends DialogFragment {
 
 
     /**
-     * Výchozí prázdný veřejný konstruktor vyžadovaný architekturou Android.
-     */
-    public MonthlyReadingFilterDialogFragment() {
-        // Vyžadovaný prázdný veřejný konstruktor
-    }
-
-
-    /**
      * Vrátí formátovač data v požadovaném českém formátu d. M. yyyy.
      *
      * @return instanci {@link DateTimeFormatter} nastavenou na formát d. M. yyyy

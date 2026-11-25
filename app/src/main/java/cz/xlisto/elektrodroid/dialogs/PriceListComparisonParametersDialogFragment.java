@@ -85,8 +85,6 @@ public class PriceListComparisonParametersDialogFragment extends DialogFragment 
         return frag;
     }
 
-    public PriceListComparisonParametersDialogFragment() {
-    }
 
     @NonNull
     @Override

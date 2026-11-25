@@ -54,11 +54,6 @@ public class PriceListEditFragment extends PriceListAddEditAbstract {
     private boolean allowSpinnerAutoReload = false;
 
 
-    public PriceListEditFragment() {
-        // Required empty public constructor
-    }
-
-
     /**
      * Vytvoří novou instanci fragmentu pro úpravu ceníku se zadaným identifikátorem.
      *

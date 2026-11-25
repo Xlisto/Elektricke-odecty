@@ -41,11 +41,6 @@ public class InvoiceTabFragment extends Fragment implements OnPaddingChangeListe
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
 
-    /** Požadovaný prázdný veřejný konstruktor. */
-    public InvoiceTabFragment() {
-        // Required empty public constructor
-    }
-
 
     /**
      * Vytvoří novou instanci fragmentu se záložkami faktury.

@@ -35,9 +35,6 @@ public class InvoiceListAddDialogFragment extends InvoiceListAddEditFragmentAbsc
         return invoiceAddDialogFragment;
     }
 
-    /** Požadovaný prázdný veřejný konstruktor. */
-    public InvoiceListAddDialogFragment() {
-    }
 
     /**
      * Vytvoří a vrátí dialog pro přidání nové faktury.

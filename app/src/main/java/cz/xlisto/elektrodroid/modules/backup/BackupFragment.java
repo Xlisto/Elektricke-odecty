@@ -154,7 +154,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         }
     };
 
-    //handler pro výsledek obnovení databáze
     /**
      * Handler pro zpracování výsledku obnovení databáze z lokální zálohy.
      *
@@ -469,6 +468,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         });
     }
 
+
     /**
      * Při návratu fragmentu znovu kontroluje platnost oprávnění k URI složce záloh.
      */
@@ -623,8 +623,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         if (isAdded())
             requireActivity().runOnUiThread(() -> updateSelectionActions(selectedFilesCount, deleteSelectedActionVisible));
     }
-
-
 
 
     /**
@@ -782,6 +780,7 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
                     showUploadConflictDialog(userName, selectedFiles, nonDuplicateFiles, duplicateFiles.size());
                 });
             }
+
 
             @Override
             public void onDriveServiceError(String errorMessage) {
@@ -950,9 +949,6 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
     }
 
 
-
-
-
     /**
      * Připraví dočasná data pro případné naplánování uploadu na WiFi.
      */
@@ -1057,4 +1053,5 @@ public class BackupFragment extends Fragment implements NetworkCallbackImpl.Netw
         }
         return fileNames;
     }
+
 }

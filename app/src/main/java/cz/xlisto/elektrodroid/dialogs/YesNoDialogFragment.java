@@ -37,13 +37,6 @@ public class YesNoDialogFragment extends DialogFragment {
 
 
     /**
-     * Výchozí konstruktor pro YesNoDialogFragment.
-     */
-    public YesNoDialogFragment() {
-    }
-
-
-    /**
      * Vytvoří novou instanci YesNoDialogFragment se zadaným názvem a příznakem.
      *
      * @param title                    Název dialogu.

@@ -40,11 +40,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
     private long itemId;
 
 
-    public MonthlyReadingEditFragment() {
-        // Required empty public constructor
-    }
-
-
     /**
      * Použijte tuto tovární metodu k vytvoření nové instance
      * tohoto fragmentu pomocí poskytnutých parametrů.

@@ -37,9 +37,6 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
         return invoiceEditDialogFragment;
     }
 
-    /** Požadovaný prázdný veřejný konstruktor. */
-    public InvoiceListEditDialogFragment() {
-    }
 
     /**
      * Vytvoří a vrátí dialog pro úpravu čísla faktury.
@@ -76,4 +73,5 @@ public class InvoiceListEditDialogFragment extends InvoiceListAddEditFragmentAbs
 
         return builder.create();
     }
+
 }

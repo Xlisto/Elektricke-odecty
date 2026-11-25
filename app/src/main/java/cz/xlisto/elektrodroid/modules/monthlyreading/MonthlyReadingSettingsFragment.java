@@ -80,14 +80,6 @@ public class MonthlyReadingSettingsFragment extends Fragment {
     private ShPMonthlyReading shPMonthlyReading;
 
 
-    /**
-     * Výchozí prázdný konstruktor fragmentu vyžadovaný architekturou Android.
-     */
-    public MonthlyReadingSettingsFragment() {
-        // Required empty public constructor
-    }
-
-
     private void updateSettingsPadding(@NonNull View view) {
         if (!isAdded() || !(requireActivity() instanceof MainActivity mainActivity)) return;
 

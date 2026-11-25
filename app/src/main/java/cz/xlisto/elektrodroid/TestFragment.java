@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import cz.xlisto.elektrodroid.modules.hdo.CodeWeb;
 import cz.xlisto.elektrodroid.modules.hdo.WebViewClientImpl;
 
+
 /**
  * Testovací {@link Fragment} pro zobrazování HTML obsahu v prvku {@link WebView}.
  * <p>
@@ -25,13 +26,6 @@ import cz.xlisto.elektrodroid.modules.hdo.WebViewClientImpl;
  * a {@link WebChromeClient}.
  */
 public class TestFragment extends Fragment {
-
-    /**
-     * Výchozí prázdný konstruktor požadovaný systémem pro instanciování fragmentu.
-     */
-    public TestFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Tovární metoda pro vytvoření nové instance {@link TestFragment}.
@@ -80,4 +74,5 @@ public class TestFragment extends Fragment {
         String s = webView.toString();
         Log.w("TestFragment", "onViewCreated: " + s);
     }
+
 }

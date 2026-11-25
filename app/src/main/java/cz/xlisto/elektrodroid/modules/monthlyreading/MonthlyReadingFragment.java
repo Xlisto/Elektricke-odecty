@@ -118,14 +118,6 @@ public class MonthlyReadingFragment extends Fragment implements OnPaddingChangeL
 
 
     /**
-     * Výchozí prázdný konstruktor fragmentu vyžadovaný architekturou Android.
-     */
-    public MonthlyReadingFragment() {
-        // Required empty public constructor
-    }
-
-
-    /**
      * Tovární metoda pro vytvoření nové instance {@link MonthlyReadingFragment}.
      *
      * @return nová instance {@link MonthlyReadingFragment}

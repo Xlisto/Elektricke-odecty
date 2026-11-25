@@ -38,14 +38,6 @@ public class PriceListAddFragment extends PriceListAddEditAbstract {
 
 
     /**
-     * Vytvoří novou instanci {@link PriceListAddFragment}.
-     */
-    public PriceListAddFragment() {
-        // Required empty public constructor
-    }
-
-
-    /**
      * Vytvoří novou instanci fragmentu {@link PriceListAddFragment}.
      *
      * @return nová instance fragmentu {@link PriceListAddFragment}

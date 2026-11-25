@@ -86,14 +86,6 @@ public class InvoiceDateRangeDialogFragment extends DialogFragment {
 
 
     /**
-     * Výchozí prázdný veřejný konstruktor.
-     */
-    public InvoiceDateRangeDialogFragment() {
-        // Vyžadovaný prázdný veřejný konstruktor
-    }
-
-
-    /**
      * Vrátí formátovač data v požadovaném českém formátu d. M. yyyy.
      *
      * @return {@link DateTimeFormatter}

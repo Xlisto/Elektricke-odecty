@@ -1,5 +1,6 @@
 package cz.xlisto.elektrodroid.dialogs;
 
+
 import static cz.xlisto.elektrodroid.databaze.DataPriceListSource.VSE;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.AREA;
 import static cz.xlisto.elektrodroid.shp.ShPFilter.COMPANY;
@@ -46,6 +47,7 @@ import cz.xlisto.elektrodroid.modules.pricelist.PriceListOriginHelper;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPFilter;
 
+
 /**
  * Dialog ve stylu Material Design 3 pro filtraci ceníků.
  * Umožňuje vícenásobný výběr položek (multi-select) pro řadu, produkt, sazbu, dodavatele, distribuční území
@@ -85,9 +87,6 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     private ShPFilter.FilterType filterType = ShPFilter.FilterType.GENERAL;
     private boolean isUserSelectingPreset = false;
 
-    public PriceListFilterDialogFragment() {
-        // Vyžadovaný prázdný veřejný konstruktor
-    }
 
     public static PriceListFilterDialogFragment newInstance() {
         return newInstance(ShPFilter.FilterType.GENERAL);
@@ -101,6 +100,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @NonNull
     @Override
@@ -158,6 +158,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         };
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -174,6 +175,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
             editText.setInputType(android.text.InputType.TYPE_NULL);
         }
     }
+
 
     private void initViews(View view) {
         tilRada = view.findViewById(R.id.tilRada);
@@ -214,6 +216,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         disableKeyboard(etDateFrom);
         disableKeyboard(etDateTo);
     }
+
 
     private void setupListeners(View view) {
         MaterialButton btnOpenRangePicker = view.findViewById(R.id.btnOpenRangePicker);
@@ -343,6 +346,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         }
     }
 
+
     private void setDataFromDatabase() {
         DataPriceListSource dataPriceListSource = new DataPriceListSource(requireContext());
         dataPriceListSource.open();
@@ -395,6 +399,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         }
     }
 
+
     private void savePreferences() {
         shpFilter.set(RADA, formatSetToPreference(selectedRada));
         shpFilter.set(PRODUKT, formatSetToPreference(selectedProdukt));
@@ -405,6 +410,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         shpFilter.set(DATE_START, dateStart);
         shpFilter.set(DATE_END, dateEnd);
     }
+
 
     private void loadPreferences() {
         parsePreferenceToSet(shpFilter.get(RADA, VSE), selectedRada);
@@ -448,11 +454,13 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         applyPresetAllDates();
     }
 
+
     private void applyPresetAllDates() {
         dateStart = "%";
         dateEnd = "%";
         updateDateUiState();
     }
+
 
     private void applyPresetThisYear() {
         int currentYear = LocalDate.now().getYear();
@@ -461,6 +469,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         updateDateUiState();
     }
 
+
     private void applyPresetLastYear() {
         int lastYear = LocalDate.now().getYear() - 1;
         dateStart = "01.01." + lastYear;
@@ -468,12 +477,14 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         updateDateUiState();
     }
 
+
     private void applyPresetNextYear() {
         int nextYear = LocalDate.now().getYear() + 1;
         dateStart = "01.01." + nextYear;
         dateEnd = "31.12." + nextYear;
         updateDateUiState();
     }
+
 
     private void openDatePickerFrom() {
         long initialUtcMillis = parseToUtcMillis(dateStart);
@@ -492,6 +503,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         datePicker.show(getParentFragmentManager(), "DATE_PICKER_FROM");
     }
 
+
     private void openDatePickerTo() {
         long initialUtcMillis = parseToUtcMillis(dateEnd);
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
@@ -508,6 +520,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         });
         datePicker.show(getParentFragmentManager(), "DATE_PICKER_TO");
     }
+
 
     private void openRangePicker() {
         long startMillis = parseToUtcMillis(dateStart);
@@ -532,6 +545,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         rangePicker.show(getParentFragmentManager(), "DATE_RANGE_PICKER");
     }
 
+
     private void updateDateUiState() {
         etDateFrom.setText(dateStart.equals("%") ? "" : dateStart);
         etDateTo.setText(dateEnd.equals("%") ? "" : dateEnd);
@@ -543,6 +557,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         updateChipStates();
         isUserSelectingPreset = false;
     }
+
 
     private void updateChipStates() {
         int currentYear = LocalDate.now().getYear();
@@ -558,6 +573,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         return dateStr != null && !dateStr.trim().isEmpty() && !dateStr.equals("%") && !dateStr.equalsIgnoreCase(VSE) && !dateStr.equalsIgnoreCase("[VŠE]");
     }
 
+
     private boolean isDateRangeValid() {
         if (isDateFilterValid(dateStart) && isDateFilterValid(dateEnd)) {
             Calendar calStart = ViewHelper.parseCalendarFromString(dateStart);
@@ -566,6 +582,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
         }
         return true;
     }
+
 
     private long parseToUtcMillis(String dateStr) {
         if (!isDateFilterValid(dateStr)) {
@@ -580,4 +597,5 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     String formatDate(LocalDate date) {
         return String.format(Locale.GERMANY, "%02d.%02d.%04d", date.getDayOfMonth(), date.getMonthValue(), date.getYear());
     }
+
 }

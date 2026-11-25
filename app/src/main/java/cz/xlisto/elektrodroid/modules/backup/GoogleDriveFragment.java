@@ -177,13 +177,6 @@ public class GoogleDriveFragment extends Fragment implements CredentialHelper.Cr
 
 
     /**
-     * Vyžadovaný prázdný veřejný konstruktor.
-     */
-    public GoogleDriveFragment() {
-    }
-
-
-    /**
      * Vytvoří novou instanci GoogleDriveFragment.
      *
      * @return Nová instance GoogleDriveFragment.

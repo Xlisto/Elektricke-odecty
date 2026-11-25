@@ -60,13 +60,6 @@ public class SupportedPriceListsFragment extends Fragment implements OnPaddingCh
 
 
     /**
-     * Vyžadovaný prázdný konstruktor fragmentu.
-     */
-    public SupportedPriceListsFragment() {
-    }
-
-
-    /**
      * Vytvoří novou instanci fragmentu bez předvybraného dodavatele.
      *
      * @return Nová instance {@link SupportedPriceListsFragment}

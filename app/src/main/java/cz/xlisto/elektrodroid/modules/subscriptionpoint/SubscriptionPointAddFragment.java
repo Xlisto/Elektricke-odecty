@@ -40,10 +40,6 @@ import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
  */
 public class SubscriptionPointAddFragment extends SubscriptionPointAddEditAbstract {
 
-    public SubscriptionPointAddFragment() {
-        // Required empty public constructor
-    }
-
 
     public static SubscriptionPointAddFragment newInstance() {
         return new SubscriptionPointAddFragment();

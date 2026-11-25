@@ -45,11 +45,6 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
     private PdfRateSelectionAdapter adapter;
 
 
-    public PdfImportSelectionFragment() {
-        // Vyžadovaný prázdný konstruktor
-    }
-
-
     public static PdfImportSelectionFragment newInstance(List<PriceListModel> priceLists) {
         PdfImportSelectionFragment fragment = new PdfImportSelectionFragment();
         Bundle args = new Bundle();

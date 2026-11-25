@@ -71,14 +71,6 @@ public class InvoiceDetailFragment extends Fragment {
 
 
     /**
-     * Požadovaný prázdný veřejný konstruktor.
-     */
-    public InvoiceDetailFragment() {
-        // Required empty public constructor
-    }
-
-
-    /**
      * Vytvoří instanci InvoiceDetailFragment.
      *
      * @param tableFak tabulka faktur

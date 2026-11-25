@@ -47,10 +47,6 @@ public class MonthlyReadingAddFragment extends MonthlyReadingAddEditFragmentAbst
     private long datePayment = 0L;
 
 
-    public MonthlyReadingAddFragment() {
-    }
-
-
     /**
      * Použijte tuto tovární metodu k vytvoření nové instance
      * tohoto fragmentu pomocí poskytnutých parametrů.
