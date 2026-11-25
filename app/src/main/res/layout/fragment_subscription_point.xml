@@ -210,7 +210,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:contentDescription="@string/jmeno_odberneho_mista_notification"
-                        android:minHeight="48dp" />
+                        android:minHeight="48dp"
+                        tools:ignore="InconsistentLayout" />
                 </LinearLayout>
 
                 <LinearLayout
