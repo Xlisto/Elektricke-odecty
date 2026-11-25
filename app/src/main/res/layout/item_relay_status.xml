@@ -14,6 +14,7 @@
         android:contentDescription="@string/description_rele"
         android:minWidth="0dp"
         android:minHeight="0dp"
+        android:paddingStart="4dp"
         android:paddingEnd="4dp" />
 
     <TextView

@@ -126,6 +126,7 @@
                             android:layout_height="wrap_content"
                             android:minHeight="48dp"
                             android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
                             android:text="@string/display_mode_detailed" />
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -134,6 +135,7 @@
                             android:layout_height="wrap_content"
                             android:minHeight="48dp"
                             android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
                             android:text="@string/display_mode_condensed" />
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -142,6 +144,7 @@
                             android:layout_height="wrap_content"
                             android:minHeight="48dp"
                             android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
                             android:text="@string/display_mode_minimal" />
                     </RadioGroup>
                 </LinearLayout>
