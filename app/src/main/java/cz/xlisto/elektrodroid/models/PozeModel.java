@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 public class PozeModel {
 
     double poze1, poze2;
-    TypePoze typePoze;
 
 
     public PozeModel(double poze1, double poze2) {
@@ -91,7 +90,6 @@ public class PozeModel {
         return "PozeModel{" +
                 "poze1=" + poze1 +
                 ", poze2=" + poze2 +
-                ", typePoze=" + typePoze +
                 '}';
     }
 

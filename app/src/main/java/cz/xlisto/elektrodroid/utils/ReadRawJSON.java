@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import cz.xlisto.elektrodroid.R;
@@ -68,6 +71,7 @@ public class ReadRawJSON {
     private static volatile String cachedDistribuceJson;
     private static volatile String cachedOstatniJson;
     private static volatile String cachedJisticeJson;
+    private static volatile Set<Integer> cachedAvailableYears;
 
 
     /**
@@ -111,6 +115,64 @@ public class ReadRawJSON {
         parseOther(ostatni);
         parse(jistice, Typ.JISTIC);
         return priceListModel;
+    }
+
+
+    /**
+     * Vrátí textový obsah souboru {@code res/raw/ostatni.json} s využitím mezipaměti.
+     *
+     * @return JSON řetězec s ostatními regulovanými poplatky, nebo prázdný řetězec při chybě
+     */
+    public String getOstatniJson() {
+        return getCachedRaw(R.raw.ostatni);
+    }
+
+
+    /**
+     * Vrátí množinu roků, pro které aplikace obsahuje regulované ceny v {@code res/raw/ostatni.json}.
+     * Výsledek je po úspěšném načtení uchován v paměťové mezipaměti.
+     *
+     * @return nemodifikovatelná množina dostupných roků (prázdná v případě chyby načtení)
+     */
+    public Set<Integer> getAvailableYears() {
+        Set<Integer> cached = cachedAvailableYears;
+        if (cached != null) {
+            return cached;
+        }
+        String ostatniJson = getOstatniJson();
+        if (ostatniJson.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<Integer> years = new HashSet<>();
+        try {
+            JSONArray jsonArray = new JSONArray(ostatniJson);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                if (obj.has(ROK)) {
+                    years.add(obj.getInt(ROK));
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "getAvailableYears: " + e.getMessage());
+            return Collections.emptySet();
+        }
+        if (!years.isEmpty()) {
+            Set<Integer> unmodifiable = Collections.unmodifiableSet(years);
+            cachedAvailableYears = unmodifiable;
+            return unmodifiable;
+        }
+        return Collections.emptySet();
+    }
+
+
+    /**
+     * Ověří, zda má aplikace v interních datech uložené regulované ceny pro zadaný rok.
+     *
+     * @param year rok k ověření
+     * @return {@code true}, pokud je rok dostupný v {@code res/raw/ostatni.json}, jinak {@code false}
+     */
+    public boolean isYearAvailable(int year) {
+        return getAvailableYears().contains(year);
     }
 
 

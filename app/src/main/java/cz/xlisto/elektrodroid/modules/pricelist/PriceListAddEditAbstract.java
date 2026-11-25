@@ -7,6 +7,7 @@ import static java.util.Calendar.*;
 import static cz.xlisto.elektrodroid.format.DecimalFormatHelper.df2;
 import static cz.xlisto.elektrodroid.format.SimpleDateFormatHelper.getDateFormat;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -94,15 +95,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     static final String DAN = "ivDan";
     static final String DPH = "ivDPH";
     static final String JISTIC = "swJistic";
-    static final String LAST_YEAR = "lastYear";
     static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY = "flagResultDialogProvozNesitoveInfrastruktury";
     static final String FLAG_RESULT_DIALOG_PROVOZ_NESITOVE_INFRASTRUKTURY_2025 = "flagResultDialogProvozNesitoveInfrastruktury2025";
-    private static final int DEF_MIN_YEAR = 2021;
-    private static final int DEF_MAX_YEAR = 2026;
 
     String[] arrayDistArea;
     String[] arrayRate;
-    int year, lastYear, selectionDistArea, selectionRate;
+    int year, selectionDistArea, selectionRate;
     boolean isFirstLoad = true;
     boolean closedDialog = false;
     Long itemId;
@@ -252,7 +250,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                         updateValidityRangeButtonText();
                         closedDialog = true;
                         hideItemView();
-                        lastYear = year;
                         year = getYearBtnStart();
                         setRegulPrice();
                         evaluateRegulatedPriceAvailability();
@@ -349,7 +346,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             ivTax.setDefaultText(savedInstanceState.getString(DAN));
             ivVat.setDefaultText(savedInstanceState.getString(DPH));
             switchBreaker.setChecked(savedInstanceState.getBoolean(JISTIC));
-            lastYear = savedInstanceState.getInt(LAST_YEAR);
             isFirstLoad = false;
 
         }
@@ -477,8 +473,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
         outState.putString(DAN, ivTax.getText());
         outState.putString(DPH, ivVat.getText());
         outState.putBoolean(JISTIC, switchBreaker.isChecked());
-
-        outState.putInt(LAST_YEAR, year);
     }
 
 
@@ -499,7 +493,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * - Metoda nijak nemění stav fragmentu mimo nastavení adaptéru a neprovádí I/O v pozadí.
      */
     void setSazbaAdapter() {
-        // zajistir, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
+        // zajistit, že runnable poběží na hlavním vlákně a zkontrolovat, jestli je fragment připojen
         Handler handler = new Handler(android.os.Looper.getMainLooper());
         final Runnable r = () -> {
             if (!isAdded())
@@ -758,9 +752,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * zpracování/parsing dat.
      */
     void setRegulPrice() {
-        if (year < DEF_MIN_YEAR) return;
-
-        ReadRawJSON readRawJSON = new ReadRawJSON(getActivity());
+        Context appContext = getContext() != null ? getContext().getApplicationContext() : null;
+        ReadRawJSON readRawJSON = new ReadRawJSON(appContext);
         java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newSingleThreadExecutor();
         android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
 
@@ -768,6 +761,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
             try {
                 Calendar startCal = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
                 Calendar endCal = ViewHelper.parseCalendarFromString(btnUntil.getText().toString());
+
+                if (!readRawJSON.isYearAvailable(startCal.get(YEAR))) return;
 
                 PriceListModel priceListModel = readRawJSON.read(startCal, endCal, spDistArea.getSelectedItem().toString(), spRate.getSelectedItem().toString());
 
@@ -811,8 +806,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Chování:
      * - Parsuje datumy z `btnFrom` a `btnUntil` pomocí `ViewHelper.parseCalendarFromString`.
-     * - Spouští vlákno na pozadí (nové `Thread`) které volá `getMinMaxYearFromRaw(selectedStart, selectedEnd)`
-     * pro načtení minimálního/ maximálního roku a seznamu platných intervalů z `res/raw/ostatni.json`.
+     * - Spouští vlákno na pozadí (nové `Thread`) které volá `getMinMaxYearFromRaw()`
+     * pro načtení minimálního/maximálního roku a seznamu platných intervalů z `res/raw/ostatni.json`.
      * - Po dokončení práce na pozadí přepne do UI vlákna pomocí `requireActivity().runOnUiThread(...)`
      * a provede následující kontroly a akce:
      * - aktivuje/deaktivuje `btnSave` podle výsledků validací,
@@ -824,8 +819,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * <p>
      * Robustnost:
      * - Metoda neprovádí IO na hlavním vlákně; všechny IO a parsing jsou v pozadí.
-     * - Závisí na tom, že `getMinMaxYearFromRaw` vrací fallback hodnoty `DEF_MIN_YEAR` a `DEF_MAX_YEAR`
-     * v případě chyby při načítání/parsing JSONu.
+     * - Pokud se nepodaří načíst JSON nebo neobsahuje žádné roky, `getMinMaxYearFromRaw` vrátí prázdný
+     * rozsah (`Integer.MAX_VALUE` / `Integer.MIN_VALUE`) a UI zobrazí informaci o nedostupnosti ceníku.
      * - Metoda nijak nevyhazuje výjimky volajícímu; příp. chyby zpracovává interně a upravuje UI.
      * <p>
      * Poznámky k vylepšení:
@@ -847,7 +842,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
         // kontola rozsahů platnosti
         new Thread(() -> {
-            ValidityDateContainer getMinMaxYearFromRaw = getMinMaxYearFromRaw(selectedStart, selectedEnd);
+            ValidityDateContainer getMinMaxYearFromRaw = getMinMaxYearFromRaw();
             int minYear = getMinMaxYearFromRaw.minYear();
             int maxYear = getMinMaxYearFromRaw.maxYear();
             ArrayList<Calendar> dates = getMinMaxYearFromRaw.dates();
@@ -927,43 +922,41 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     /**
-     * Načte a zpracuje soubor `res/raw/ostatni.json` a vrátí minimální a maximální rok
-     * spolu se seznamem platných intervalů (počátek/konec) pro regulované ceny.
+     * Načte a zpracuje soubor `res/raw/ostatni.json` prostřednictvím {@link ReadRawJSON} a vrátí
+     * dynamicky zjištěný minimální a maximální rok spolu se seznamem platných intervalů (počátek/konec)
+     * pro regulované ceny.
      * <p>
      * Chování:
      * - Parsuje JSON a z každého záznamu přečte hodnotu `rok` pro výpočet `minYear` a `maxYear`.
      * - Pole `ostatni` v záznamu může být objekt nebo pole:
-     * - Pokud je objekt, metoda vytvoří interval 1.1.<rok> - 31.12.<rok>.
-     * - Pokud je pole, pro každý prvek přečte `od` a `do` (očekávaný formát den.měsíc nebo podobný)
-     * a vytvoří odpovídající intervaly pro rok zvolených dat (`selectedStart`/`selectedEnd`).
+     * - Pokud je objekt, metoda vytvoří interval 1.1.&lt;rok&gt; - 31.12.&lt;rok&gt;.
+     * - Pokud je pole, pro každý prvek přečte `od` a `do` (očekávaný formát den.měsíc)
+     * a vytvoří odpovídající intervaly pro daný rok.
      * - Vytvářené `Calendar` objekty mají explicitně nastavené časové složky (začátek dne / konec dne).
      * <p>
      * Robustnost:
-     * - Metoda zachytává výjimky interně; v případě chyby (např. nepřístupný nebo nevalidní JSON)
-     * vrací fallback hodnoty `DEF_MIN_YEAR` a `DEF_MAX_YEAR` a prázdný nebo částečně naplněný seznam datumů.
+     * - Metoda zachytává výjimky interně; v případě chyby nebo prázdných dat vrací neplatný rozsah
+     * (`Integer.MAX_VALUE` / `Integer.MIN_VALUE`) a prázdný seznam intervalů.
      * - Nevyhazuje výjimky volajícímu; volající získá vždy instanci `ValidityDateContainer`.
      *
-     * @param selectedStart Počáteční vybrané datum (použito pro sestavení konkrétních intervalů).
-     * @param selectedEnd   Konečné vybrané datum (použito pro sestavení konkrétních intervalů).
      * @return ValidityDateContainer obsahující:
-     * - minYear: nejmenší nalezený rok (nebo fallback),
-     * - maxYear: největší nalezený rok (nebo fallback),
+     * - minYear: nejmenší nalezený rok (nebo `Integer.MAX_VALUE`, pokud data nejsou dostupná),
+     * - maxYear: největší nalezený rok (nebo `Integer.MIN_VALUE`, pokud data nejsou dostupná),
      * - dates: seznam `Calendar` párů (každá dvojice = začátek a konec platného intervalu).
      */
-    private ValidityDateContainer getMinMaxYearFromRaw(Calendar selectedStart, Calendar selectedEnd) {
+    private ValidityDateContainer getMinMaxYearFromRaw() {
         int minYear = Integer.MAX_VALUE;
         int maxYear = Integer.MIN_VALUE;
-        Calendar validStart = getInstance();
-        Calendar validEnd = getInstance();
         ArrayList<Calendar> dates = new ArrayList<>();
 
-        try (java.io.InputStream is = getResources().openRawResource(R.raw.ostatni); java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is))) {
+        try {
+            Context appContext = getContext() != null ? getContext().getApplicationContext() : null;
+            String ostatniJson = new ReadRawJSON(appContext).getOstatniJson();
+            if (ostatniJson.isEmpty()) {
+                return new ValidityDateContainer(minYear, maxYear, dates);
+            }
 
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) sb.append(line);
-
-            org.json.JSONArray arr = new org.json.JSONArray(sb.toString());
+            org.json.JSONArray arr = new org.json.JSONArray(ostatniJson);
             for (int i = 0; i < arr.length(); i++) {
                 org.json.JSONObject obj = arr.getJSONObject(i);
                 if (obj.has("rok")) {
@@ -975,11 +968,6 @@ public abstract class PriceListAddEditAbstract extends Fragment {
                 int year = obj.getInt("rok");
                 // pokud je nastaven jen celý rok
                 if (ostatni instanceof JSONObject) {
-                    // nastavení na 1.1. vybraného roku, čas = 00:00:00.000
-                    validStart.set(selectedStart.get(YEAR), JANUARY, 1, 0, 0, 0);
-                    validStart.set(MILLISECOND, 0);
-                    validEnd.set(selectedEnd.get(YEAR), DECEMBER, 31, 0, 0, 0);
-                    validEnd.set(MILLISECOND, 0);
                     Calendar parsedStart = getInstance();
                     parsedStart.set(year, JANUARY, 1, 0, 0, 0);
                     parsedStart.set(MILLISECOND, 0);
@@ -1036,15 +1024,12 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
             }
         } catch (Exception e) {
-            // fallback pokud se nepodaří načíst JSON
-            minYear = DEF_MIN_YEAR;
-            maxYear = DEF_MAX_YEAR;
+            Log.e(TAG, "Chyba při načítání rozsahů platnosti regulovaných cen: " + e.getMessage(), e);
+            minYear = Integer.MAX_VALUE;
+            maxYear = Integer.MIN_VALUE;
+            dates.clear();
         }
 
-        if (minYear == Integer.MAX_VALUE || maxYear == Integer.MIN_VALUE) {
-            minYear = DEF_MIN_YEAR;
-            maxYear = DEF_MAX_YEAR;
-        }
         return new ValidityDateContainer(minYear, maxYear, dates);
     }
 

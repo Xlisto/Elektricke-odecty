@@ -29,18 +29,6 @@ public class OwnAlertDialog extends DialogFragment {
 
 
     /**
-     * Vytvoří novou instanci OwnAlertDialog s daným názvem a zprávou.
-     *
-     * @param title   Název dialogu
-     * @param message Zpráva dialogu
-     * @return Nová instance OwnAlertDialog
-     */
-    public static OwnAlertDialog newInstance(String title, String message) {
-        return newInstance(title, message, null);
-    }
-
-
-    /**
      * Vytvoří novou instanci OwnAlertDialog s daným názvem, zprávou a volitelným
      * textem potvrzovacího tlačítka.
      *
