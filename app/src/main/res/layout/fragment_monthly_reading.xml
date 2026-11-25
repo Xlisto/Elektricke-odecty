@@ -48,6 +48,13 @@
         android:contentDescription="@string/description_monthly_reading"
         android:padding="5dp" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerViewDetail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        tools:layout="@layout/fragment_monthly_reading_detail" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
