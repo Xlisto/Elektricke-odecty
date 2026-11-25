@@ -655,7 +655,6 @@
     <string name="pdf_import_duplicate_diff_header">Porovnání rozdílů (Původní ➔ Nový):</string>
     <string name="pdf_import_cannot_read_title">Nemožnost přečíst ceník</string>
     <string name="pdf_import_cannot_read_message">Z vybraného PDF dokumentu se nepodařilo načíst cenové údaje silové elektřiny. Ceník nelze uložit.\n\nDoplňte prosím ceník ručním způsobem.</string>
-    <string name="pdf_import_unknown_supplier_message">Zvolený PDF ceník pochází od neznámého nebo netestovaného dodavatele. Ceník tohoto dodavatele nelze přečíst.\n\nDoplňte prosím ceník ručním způsobem.</string>
     <string name="pdf_import_supplier_label">Dodavatel: %1$s</string>
     <string name="pdf_import_area_label">Distribuční území: %1$s</string>
     <string name="pdf_import_validity_label">Platnost ceníku: %1$s – %2$s</string>
