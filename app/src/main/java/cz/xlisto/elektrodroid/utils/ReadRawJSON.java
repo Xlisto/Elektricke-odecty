@@ -99,7 +99,7 @@ public class ReadRawJSON {
      * @return naplněný objekt {@link PriceListModel} s regulovanými cenami
      */
     public PriceListModel read(Calendar startCal, Calendar endCal, String distUzemi, String sazba) {
-        this.year = new DateUtil(startCal).getYear();
+        this.year = startCal.get(Calendar.YEAR);
         this.startCalBtn = startCal;
         this.endCalBtn = (endCal != null) ? endCal : startCal;
         this.distUzemi = distUzemi;

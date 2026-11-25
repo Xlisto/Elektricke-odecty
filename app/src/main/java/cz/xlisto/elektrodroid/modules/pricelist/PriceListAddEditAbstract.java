@@ -44,7 +44,6 @@ import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
-import cz.xlisto.elektrodroid.utils.DateUtil;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 import cz.xlisto.elektrodroid.utils.ReadRawJSON;
 
@@ -596,7 +595,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      * Metoda:
      * - přečte text z tlačítka `btnFrom`,
      * - pomocí `ViewHelper.parseCalendarFromString` vytvoří objekt `Calendar`,
-     * - vrátí rok získaný z pomocné třídy `DateUtil`.
+     * - vrátí rok z tohoto kalendáře.
      * <p>
      * Metoda pouze čte hodnotu z UI a neprovádí žádné vedlejší efekty (neukládá rok do polí třídy).
      *
@@ -604,7 +603,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
      */
     int getYearBtnStart() {
         Calendar calendar = ViewHelper.parseCalendarFromString(btnFrom.getText().toString());
-        return new DateUtil(calendar).getYear();
+        return calendar.get(Calendar.YEAR);
     }
 
 
