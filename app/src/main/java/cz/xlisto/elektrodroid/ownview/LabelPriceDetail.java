@@ -116,16 +116,6 @@ public class LabelPriceDetail extends RelativeLayout {
     /**
      * Vrátí obsah TextView
      *
-     * @return obsah popisku
-     */
-    public String getLabel() {
-        return tvLabel.getText().toString();
-    }
-
-
-    /**
-     * Vrátí obsah TextView
-     *
      * @return cena
      */
     public String getPrice() {

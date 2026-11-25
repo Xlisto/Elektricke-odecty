@@ -187,7 +187,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
      */
     @Override
     public void onNetworkAvailable() {
-        internetAvailable = true;
         setShowCbSendBackup();
     }
 
@@ -197,7 +196,6 @@ public class MonthlyReadingEditFragment extends MonthlyReadingAddEditFragmentAbs
      */
     @Override
     public void onNetworkLost() {
-        internetAvailable = false;
         setShowCbSendBackup();
     }
 

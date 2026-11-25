@@ -58,7 +58,6 @@ import cz.xlisto.elektrodroid.shp.ShPInvoice;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 import cz.xlisto.elektrodroid.utils.NetworkCallbackImpl;
-import cz.xlisto.elektrodroid.utils.NetworkUtil;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 import cz.xlisto.elektrodroid.MainActivity;
@@ -82,7 +81,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     ShPAddEditMonthlyReading shPAddEditMonthlyReading;
     boolean isFirstLoad = true;
     boolean isChangeMeter = false;
-    boolean internetAvailable;
     private static boolean restoredSharedPreferences = false;
     DocumentFile backupFile;
     protected MonthlyReadingViewModel viewModel;
@@ -188,7 +186,6 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
         super.onViewCreated(view, savedInstanceState);
         requireActivity().invalidateOptionsMenu();
         shPAddEditMonthlyReading = new ShPAddEditMonthlyReading(requireActivity());
-        internetAvailable = NetworkUtil.isInternetAvailable(requireContext());
 
         subscriptionPoint = SubscriptionPoint.load(getActivity());
         btnSave = view.findViewById(R.id.btnSaveMonthlyReading);
