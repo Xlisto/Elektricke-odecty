@@ -14,9 +14,9 @@
     <item
         android:id="@+id/menu_hdo_load"
         android:title="@string/load_hdo"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_hdo_time_shift"
         android:title="@string/different_time"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>
