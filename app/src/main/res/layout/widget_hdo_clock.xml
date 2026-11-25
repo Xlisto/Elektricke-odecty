@@ -4,7 +4,8 @@
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_widget_card">
+    android:background="@drawable/bg_widget_card"
+    tools:ignore="NestedWeights">
 
     <FrameLayout
         android:id="@+id/widget_content_container"
