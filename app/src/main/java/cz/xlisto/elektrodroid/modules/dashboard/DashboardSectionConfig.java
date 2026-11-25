@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 public class DashboardSectionConfig implements Comparable<DashboardSectionConfig> {
 
     private final DashboardSectionType type;
-    private boolean visible;
-    private int order;
-    private int landscapeColumn;
+    private final boolean visible;
+    private final int order;
+    private final int landscapeColumn;
 
 
     public DashboardSectionConfig(@NonNull DashboardSectionType type, boolean visible, int order, int landscapeColumn) {
@@ -35,28 +35,8 @@ public class DashboardSectionConfig implements Comparable<DashboardSectionConfig
     }
 
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-
-    public int getOrder() {
-        return order;
-    }
-
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-
     public int getLandscapeColumn() {
         return landscapeColumn;
-    }
-
-
-    public void setLandscapeColumn(int landscapeColumn) {
-        this.landscapeColumn = landscapeColumn;
     }
 
 

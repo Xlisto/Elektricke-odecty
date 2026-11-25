@@ -74,36 +74,6 @@ public class DashboardLayoutManager {
 
 
     /**
-     * Uloží konfiguraci sekcí do SharedPreferences.
-     */
-    public void saveConfig(@NonNull List<DashboardSectionConfig> configs) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < configs.size(); i++) {
-            DashboardSectionConfig cfg = configs.get(i);
-            if (i > 0) {
-                sb.append(';');
-            }
-            sb.append(cfg.getType().getId())
-                    .append(':')
-                    .append(cfg.isVisible() ? '1' : '0')
-                    .append(':')
-                    .append(cfg.getOrder())
-                    .append(':')
-                    .append(cfg.getLandscapeColumn());
-        }
-        shPDashBoard.set(ShPDashBoard.DASHBOARD_LAYOUT_CONFIG, sb.toString());
-    }
-
-
-    /**
-     * Obnoví výchozí rozložení sekcí.
-     */
-    public void resetToDefault() {
-        shPDashBoard.set(ShPDashBoard.DASHBOARD_LAYOUT_CONFIG, "");
-    }
-
-
-    /**
      * Aplikuje pořadí a viditelnost sekcí do kontejneru (jednoho sloupce v portrait nebo dvou sloupců v landscape).
      */
     public void applyLayout(@NonNull Map<DashboardSectionType, View> sectionViews,
