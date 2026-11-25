@@ -272,7 +272,8 @@ public class ZoomableImageView extends AppCompatImageView {
 
     @Override
     public boolean performClick() {
-        return super.performClick();
+        super.performClick();
+        return true;
     }
 
 
