@@ -31,11 +31,6 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 public class SupportedPriceListsFragment extends Fragment implements OnPaddingChangeListener {
 
     /**
-     * Tag fragmentu pro identifikaci ve {@code FragmentManager}.
-     */
-    public static final String TAG = "SupportedPriceListsFragment";
-
-    /**
      * Klíč výsledku pro vyvolání výběru PDF ceníku v {@code PriceListFragment}.
      */
     public static final String REQUEST_KEY_SELECT_PDF = "SupportedPriceListsFragment_SELECT_PDF";

@@ -17,7 +17,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
 public class PriceListModel implements Serializable {
 
     public final static int NEW_POZE_YEAR = 2016;
-    public final static String PRE = "PRE";
     public final static String EON = "E.ON";
     public final static String EGD = "EG.D";
     private final static String NO_PRICE_LIST = "Ceník nenalezen!!!";

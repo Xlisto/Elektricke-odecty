@@ -29,8 +29,6 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
  */
 public class DownloadPriceListFragment extends Fragment implements OnPaddingChangeListener {
 
-    public static final String TAG = "DownloadPriceListFragment";
-
 
     /**
      * Vytvoří novou instanci fragmentu pro stažení ceníků.

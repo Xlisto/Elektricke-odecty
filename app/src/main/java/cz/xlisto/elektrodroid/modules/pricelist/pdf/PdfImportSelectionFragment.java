@@ -38,7 +38,6 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
  */
 public class PdfImportSelectionFragment extends Fragment implements OnPaddingChangeListener {
 
-    public static final String TAG = "PdfImportSelectionFragment";
     private static final String ARG_PARSED_PRICELISTS = "ARG_PARSED_PRICELISTS";
 
     private List<PriceListModel> parsedPriceLists;

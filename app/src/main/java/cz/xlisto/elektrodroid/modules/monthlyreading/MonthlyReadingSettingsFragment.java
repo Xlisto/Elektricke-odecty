@@ -36,10 +36,6 @@ import cz.xlisto.elektrodroid.shp.ShPMonthlyReading;
 public class MonthlyReadingSettingsFragment extends Fragment {
 
     /**
-     * Tag pro logování zpráv z {@link MonthlyReadingSettingsFragment}.
-     */
-    public static final String TAG = "MonthlyReadingSettingsFragment";
-    /**
      * Klíč příznaku pro výsledek předaný při uložení změn nastavení zobrazení.
      */
     public static final String FLAG_MONTHLY_READING_SETTINGS_CHANGED = "flagMonthlyReadingSettingsChanged";
