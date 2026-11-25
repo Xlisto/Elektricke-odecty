@@ -48,8 +48,8 @@ public class BreakEvenCalculatorTest {
         BreakEvenResult result = BreakEvenCalculator.calculateBreakEvenConsumption(d01, d02, 0.0, 12, 3, 25);
 
         assertNotNull(result);
-        assertEquals(ResultStatus.EXACT_INTERSECTION, result.status);
-        assertTrue(result.breakEvenMwh > 0);
+        assertEquals(ResultStatus.EXACT_INTERSECTION, result.status());
+        assertTrue(result.breakEvenMwh() > 0);
 
         // Ověříme generování křivky
         List<Point2D> curveD01 = BreakEvenCalculator.generateCostVsConsumptionCurve(d01, 0.0, 12, 3, 25, 10.0, 10);
@@ -66,7 +66,7 @@ public class BreakEvenCalculatorTest {
         BreakEvenResult result = BreakEvenCalculator.calculateBreakEvenConsumption(expensive, cheap, 0.0, 12, 3, 25);
 
         assertNotNull(result);
-        assertEquals(ResultStatus.NO_INTERSECTION_B_CHEAPER, result.status);
+        assertEquals(ResultStatus.NO_INTERSECTION_B_CHEAPER, result.status());
     }
 
 
@@ -87,9 +87,9 @@ public class BreakEvenCalculatorTest {
         BreakEvenResult result = BreakEvenCalculator.calculateMultiPriceListBreakEven(list, 0.5, 12, 3, 25, 0.6);
 
         assertNotNull(result);
-        assertNotNull(result.textSummary);
-        assertTrue(result.textSummary.contains("nejvýhodnější"));
-        assertTrue(result.textSummary.contains("Nejméně výhodnou (nejdražší) variantou"));
-        assertTrue(result.textSummary.contains("Aku C"));
+        assertNotNull(result.textSummary());
+        assertTrue(result.textSummary().contains("nejvýhodnější"));
+        assertTrue(result.textSummary().contains("Nejméně výhodnou (nejdražší) variantou"));
+        assertTrue(result.textSummary().contains("Aku C"));
     }
 }

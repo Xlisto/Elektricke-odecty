@@ -26,17 +26,11 @@ public class BreakEvenCalculator {
 
     }
 
-    public static class BreakEvenResult {
 
-        public final ResultStatus status;
-        public final double breakEvenMwh;
-        public final double breakEvenKwh;
-        public final double breakEvenNtPercent;
-        public final List<Double> allBreakEvenMwhPoints;
-        public final String textSummary;
-        public final String technicalConditionNoticeA;
-        public final String technicalConditionNoticeB;
-
+    public record BreakEvenResult(ResultStatus status, double breakEvenMwh,
+                                  double breakEvenNtPercent, List<Double> allBreakEvenMwhPoints,
+                                  String textSummary, String technicalConditionNoticeA,
+                                  String technicalConditionNoticeB) {
 
         public BreakEvenResult(
                 ResultStatus status,
@@ -49,6 +43,7 @@ public class BreakEvenCalculator {
             this(status, breakEvenMwh, breakEvenNtPercent, null, textSummary, technicalConditionNoticeA, technicalConditionNoticeB);
         }
 
+
         public BreakEvenResult(
                 ResultStatus status,
                 double breakEvenMwh,
@@ -60,13 +55,13 @@ public class BreakEvenCalculator {
         ) {
             this.status = status;
             this.breakEvenMwh = breakEvenMwh;
-            this.breakEvenKwh = breakEvenMwh > 0 ? breakEvenMwh * 1000.0 : -1;
             this.breakEvenNtPercent = breakEvenNtPercent;
             this.allBreakEvenMwhPoints = allBreakEvenMwhPoints != null ? allBreakEvenMwhPoints : new ArrayList<>();
             this.textSummary = textSummary;
             this.technicalConditionNoticeA = technicalConditionNoticeA;
             this.technicalConditionNoticeB = technicalConditionNoticeB;
         }
+
     }
 
     /**

@@ -351,7 +351,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
                 selectedPriceLists, ntRatio, scenario.getMonths(), (int) scenario.getCountPhaze(), (int) scenario.getPowerBreaker(), currentTotalMwh
         );
 
-        tvBreakEvenSummaryText.setText(breakEvenResult.textSummary);
+        tvBreakEvenSummaryText.setText(breakEvenResult.textSummary());
 
         // Generujeme křivky nákladů v závislosti na spotřebě 0..20 MWh
         double maxMwh = Math.max(10.0, currentTotalMwh * 1.5);

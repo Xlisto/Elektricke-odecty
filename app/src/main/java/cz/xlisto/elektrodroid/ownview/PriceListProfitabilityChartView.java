@@ -331,10 +331,10 @@ public class PriceListProfitabilityChartView extends View {
         }
 
         // Vykreslení bodů zvratu (pokud existují)
-        if (breakEvenResult != null && breakEvenResult.status == ResultStatus.EXACT_INTERSECTION) {
-            List<Double> bePoints = (breakEvenResult.allBreakEvenMwhPoints != null && !breakEvenResult.allBreakEvenMwhPoints.isEmpty())
-                    ? breakEvenResult.allBreakEvenMwhPoints
-                    : (breakEvenResult.breakEvenMwh > 0 ? java.util.Collections.singletonList(breakEvenResult.breakEvenMwh) : java.util.Collections.emptyList());
+        if (breakEvenResult != null && breakEvenResult.status() == ResultStatus.EXACT_INTERSECTION) {
+            List<Double> bePoints = (breakEvenResult.allBreakEvenMwhPoints() != null && !breakEvenResult.allBreakEvenMwhPoints().isEmpty())
+                    ? breakEvenResult.allBreakEvenMwhPoints()
+                    : (breakEvenResult.breakEvenMwh() > 0 ? java.util.Collections.singletonList(breakEvenResult.breakEvenMwh()) : java.util.Collections.emptyList());
 
             for (double breakEvenX : bePoints) {
                 if (breakEvenX >= 0 && breakEvenX <= maxX) {
