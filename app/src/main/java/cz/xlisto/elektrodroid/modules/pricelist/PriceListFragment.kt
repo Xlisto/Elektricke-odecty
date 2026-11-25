@@ -38,8 +38,8 @@ import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
 import cz.xlisto.elektrodroid.models.PriceListModel
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel
-import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_DETAIL_FRAGMENT
-import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.Companion.PRICE_LIST_ID
+import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.PRICE_LIST_DETAIL_FRAGMENT
+import cz.xlisto.elektrodroid.modules.pricelist.PriceListDetailFragment.PRICE_LIST_ID
 import cz.xlisto.elektrodroid.modules.pricelist.download.DownloadPriceListFragment
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfImportSelectionFragment
 import cz.xlisto.elektrodroid.modules.pricelist.pdf.PdfParserFactory
