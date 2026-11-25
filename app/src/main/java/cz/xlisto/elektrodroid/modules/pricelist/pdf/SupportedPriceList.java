@@ -15,24 +15,10 @@ import java.util.Objects;
  * Jednomu dodavateli (identifikovanému pomocí {@link #supplierId}) lze v budoucnu přiřadit
  * více variant formátů ceníku s vlastním {@link #id}, náhledem a popisem.
  */
-public final class SupportedPriceList {
-
-    @NonNull
-    private final String id;
-    @NonNull
-    private final String supplierId;
-    @StringRes
-    private final int supplierNameResId;
-    @NonNull
-    private final String previewAssetPath;
-    private final int samplePageCount;
-    @StringRes
-    private final int descriptionResId;
-    @StringRes
-    private final int warningResId;
-    @Nullable
-    private final String parserId;
-
+public record SupportedPriceList(@NonNull String id, @NonNull String supplierId,
+                                 @StringRes int supplierNameResId, @NonNull String previewAssetPath,
+                                 int samplePageCount, @StringRes int descriptionResId,
+                                 @StringRes int warningResId, @Nullable String parserId) {
 
     /**
      * Vytvoří novou definici podporovaného PDF ceníku.
@@ -72,8 +58,9 @@ public final class SupportedPriceList {
      *
      * @return identifikátor formátu
      */
+    @Override
     @NonNull
-    public String getId() {
+    public String id() {
         return id;
     }
 
@@ -83,8 +70,9 @@ public final class SupportedPriceList {
      *
      * @return identifikátor dodavatele
      */
+    @Override
     @NonNull
-    public String getSupplierId() {
+    public String supplierId() {
         return supplierId;
     }
 
@@ -94,8 +82,9 @@ public final class SupportedPriceList {
      *
      * @return string resource ID názvu dodavatele
      */
+    @Override
     @StringRes
-    public int getSupplierNameResId() {
+    public int supplierNameResId() {
         return supplierNameResId;
     }
 
@@ -105,8 +94,9 @@ public final class SupportedPriceList {
      *
      * @return relativní cesta v {@code assets}
      */
+    @Override
     @NonNull
-    public String getPreviewAssetPath() {
+    public String previewAssetPath() {
         return previewAssetPath;
     }
 
@@ -116,7 +106,8 @@ public final class SupportedPriceList {
      *
      * @return počet stran ukázky
      */
-    public int getSamplePageCount() {
+    @Override
+    public int samplePageCount() {
         return samplePageCount;
     }
 
@@ -126,8 +117,9 @@ public final class SupportedPriceList {
      *
      * @return string resource ID popisu
      */
+    @Override
     @StringRes
-    public int getDescriptionResId() {
+    public int descriptionResId() {
         return descriptionResId;
     }
 
@@ -137,8 +129,9 @@ public final class SupportedPriceList {
      *
      * @return string resource ID upozornění nebo {@code 0}
      */
+    @Override
     @StringRes
-    public int getWarningResId() {
+    public int warningResId() {
         return warningResId;
     }
 
@@ -158,8 +151,9 @@ public final class SupportedPriceList {
      *
      * @return identifikátor parseru nebo {@code null}
      */
+    @Override
     @Nullable
-    public String getParserId() {
+    public String parserId() {
         return parserId;
     }
 

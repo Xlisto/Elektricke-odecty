@@ -220,13 +220,13 @@ public class PdfParserFactory {
         Collator collator = Collator.getInstance(Locale.forLanguageTag("cs-CZ"));
         collator.setStrength(Collator.SECONDARY);
         items.sort((first, second) -> {
-            String firstName = context.getString(first.getSupplierNameResId());
-            String secondName = context.getString(second.getSupplierNameResId());
+            String firstName = context.getString(first.supplierNameResId());
+            String secondName = context.getString(second.supplierNameResId());
             int nameCompare = collator.compare(firstName, secondName);
             if (nameCompare != 0) {
                 return nameCompare;
             }
-            return first.getId().compareTo(second.getId());
+            return first.id().compareTo(second.id());
         });
         return Collections.unmodifiableList(items);
     }

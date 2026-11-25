@@ -30,19 +30,19 @@ public class SupportedPriceListCatalogTest {
         Set<String> ids = new HashSet<>();
         Set<String> supplierIds = new HashSet<>();
         for (SupportedPriceList item : items) {
-            assertNotNull(item.getId());
-            assertFalse(item.getId().isEmpty());
-            assertTrue("Duplicitní ID položky: " + item.getId(), ids.add(item.getId()));
+            assertNotNull(item.id());
+            assertFalse(item.id().isEmpty());
+            assertTrue("Duplicitní ID položky: " + item.id(), ids.add(item.id()));
 
-            assertNotNull(item.getSupplierId());
-            assertFalse(item.getSupplierId().isEmpty());
-            supplierIds.add(item.getSupplierId());
+            assertNotNull(item.supplierId());
+            assertFalse(item.supplierId().isEmpty());
+            supplierIds.add(item.supplierId());
 
-            assertNotEquals("Chybí string resource názvu dodavatele", 0, item.getSupplierNameResId());
-            assertNotEquals("Chybí string resource popisu", 0, item.getDescriptionResId());
-            assertNotNull(item.getParserId());
-            assertFalse(item.getParserId().isEmpty());
-            assertTrue("Cesta k náhledu musí končit .webp", item.getPreviewAssetPath().endsWith(".webp"));
+            assertNotEquals("Chybí string resource názvu dodavatele", 0, item.supplierNameResId());
+            assertNotEquals("Chybí string resource popisu", 0, item.descriptionResId());
+            assertNotNull(item.parserId());
+            assertFalse(item.parserId().isEmpty());
+            assertTrue("Cesta k náhledu musí končit .webp", item.previewAssetPath().endsWith(".webp"));
         }
 
         assertTrue(supplierIds.contains(PdfParserFactory.SUPPLIER_ID_CENTROPOL));
@@ -61,9 +61,9 @@ public class SupportedPriceListCatalogTest {
                 PdfParserFactory.SUPPLIER_ID_CENTROPOL
         );
         assertNotNull(centropol);
-        assertEquals(1, centropol.getSamplePageCount());
+        assertEquals(1, centropol.samplePageCount());
         assertFalse(centropol.hasWarning());
-        assertEquals(0, centropol.getWarningResId());
+        assertEquals(0, centropol.warningResId());
 
         String[] twoPageSuppliers = {
                 PdfParserFactory.SUPPLIER_ID_CEZ,
@@ -77,14 +77,14 @@ public class SupportedPriceListCatalogTest {
         for (String supplierId : twoPageSuppliers) {
             SupportedPriceList item = PdfParserFactory.findSupportedPriceListBySupplierId(supplierId);
             assertNotNull("Dodavatel nebyl nalezen: " + supplierId, item);
-            assertEquals("Očekáván dvoustránkový ukázkový ceník pro " + supplierId, 2, item.getSamplePageCount());
+            assertEquals("Očekáván dvoustránkový ukázkový ceník pro " + supplierId, 2, item.samplePageCount());
 
             if (PdfParserFactory.SUPPLIER_ID_EON.equals(supplierId)) {
                 assertTrue("E.ON musí obsahovat upozornění na zkrácený ceník", item.hasWarning());
-                assertNotEquals(0, item.getWarningResId());
+                assertNotEquals(0, item.warningResId());
             } else {
                 assertFalse("Dodavatel " + supplierId + " nemá mít specifické upozornění", item.hasWarning());
-                assertEquals(0, item.getWarningResId());
+                assertEquals(0, item.warningResId());
             }
         }
     }
@@ -99,7 +99,7 @@ public class SupportedPriceListCatalogTest {
         assertTrue("Adresář assets nebyl nalezen: " + assetsDir.getAbsolutePath(), assetsDir.isDirectory());
 
         for (SupportedPriceList item : PdfParserFactory.getSupportedPriceLists()) {
-            File previewFile = new File(assetsDir, item.getPreviewAssetPath());
+            File previewFile = new File(assetsDir, item.previewAssetPath());
             assertTrue("Chybí náhledový obrázek: " + previewFile.getPath(), previewFile.isFile());
             assertTrue("Náhledový obrázek nesmí být prázdný: " + previewFile.getPath(), previewFile.length() > 0);
         }

@@ -281,11 +281,11 @@ public class SupportedPriceListsFragment extends Fragment implements OnPaddingCh
         if (getChildFragmentManager().findFragmentByTag(PriceListPreviewDialogFragment.TAG) != null) {
             return;
         }
-        String supplierName = getString(item.getSupplierNameResId());
+        String supplierName = getString(item.supplierNameResId());
         PriceListPreviewDialogFragment dialog = PriceListPreviewDialogFragment.newInstance(
                 supplierName,
-                item.getPreviewAssetPath(),
-                item.getSamplePageCount()
+                item.previewAssetPath(),
+                item.samplePageCount()
         );
         dialog.show(getChildFragmentManager(), PriceListPreviewDialogFragment.TAG);
     }

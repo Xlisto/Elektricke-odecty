@@ -180,7 +180,7 @@ public class PdfImportErrorDialogFragment extends DialogFragment {
             case KNOWN_SUPPLIER_PARSE_FAILED -> {
                 SupportedPriceList supported = PdfParserFactory.findSupportedPriceListBySupplierId(detectedSupplierId);
                 if (supported != null) {
-                    String supplierName = getString(supported.getSupplierNameResId());
+                    String supplierName = getString(supported.supplierNameResId());
                     yield getString(R.string.pdf_import_error_detail_known_supplier, supplierName);
                 }
                 yield null;

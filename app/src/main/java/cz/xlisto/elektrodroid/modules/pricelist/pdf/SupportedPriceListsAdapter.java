@@ -113,7 +113,7 @@ public class SupportedPriceListsAdapter extends RecyclerView.Adapter<RecyclerVie
             return RecyclerView.NO_POSITION;
         }
         for (int i = 0; i < items.size(); i++) {
-            if (supplierId.equals(items.get(i).getSupplierId())) {
+            if (supplierId.equals(items.get(i).supplierId())) {
                 return HEADER_COUNT + i;
             }
         }
@@ -166,7 +166,7 @@ public class SupportedPriceListsAdapter extends RecyclerView.Adapter<RecyclerVie
         } else if (holder instanceof SupplierViewHolder supplierHolder) {
             SupportedPriceList item = items.get(position - HEADER_COUNT);
             boolean highlighted = highlightedSupplierId != null
-                    && highlightedSupplierId.equals(item.getSupplierId());
+                    && highlightedSupplierId.equals(item.supplierId());
             supplierHolder.bind(item, highlighted, spanCount, onPreviewClickListener);
         }
     }
@@ -272,20 +272,20 @@ public class SupportedPriceListsAdapter extends RecyclerView.Adapter<RecyclerVie
             Resources res = context.getResources();
             float density = res.getDisplayMetrics().density;
 
-            String supplierName = context.getString(item.getSupplierNameResId());
+            String supplierName = context.getString(item.supplierNameResId());
             String pagesText = res.getQuantityString(
                     R.plurals.supported_price_list_sample_pages,
-                    item.getSamplePageCount(),
-                    item.getSamplePageCount()
+                    item.samplePageCount(),
+                    item.samplePageCount()
             );
 
             tvSupplierName.setText(supplierName);
             tvSamplePages.setText(pagesText);
-            tvDescription.setText(item.getDescriptionResId());
+            tvDescription.setText(item.descriptionResId());
 
             if (item.hasWarning()) {
                 tvSupplierWarning.setVisibility(View.VISIBLE);
-                tvSupplierWarning.setText(item.getWarningResId());
+                tvSupplierWarning.setText(item.warningResId());
             } else {
                 tvSupplierWarning.setVisibility(View.GONE);
             }
@@ -320,7 +320,7 @@ public class SupportedPriceListsAdapter extends RecyclerView.Adapter<RecyclerVie
 
             AssetPreviewImageLoader.getInstance().loadThumbnail(
                     context,
-                    item.getPreviewAssetPath(),
+                    item.previewAssetPath(),
                     ivPreview,
                     targetWidthPx,
                     targetHeightPx,
