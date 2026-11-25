@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="UseCompoundDrawables">
+    tools:ignore="UseCompoundDrawables,TooManyViews">
 
     <!-- 1. KARTA: AKTUÁLNÍ CENA ELEKTŘINY -->
     <com.google.android.material.card.MaterialCardView
