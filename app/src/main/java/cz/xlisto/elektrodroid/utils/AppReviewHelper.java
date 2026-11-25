@@ -143,7 +143,7 @@ public class AppReviewHelper {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             } catch (Exception ex) {
-                MyToast.makeText(context, context.getString(R.string.error_opening_play_store), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.error_opening_play_store), Toast.LENGTH_SHORT).show();
             }
         }
     }

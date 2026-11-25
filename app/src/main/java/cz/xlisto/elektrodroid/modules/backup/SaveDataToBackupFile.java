@@ -28,7 +28,6 @@ import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DataMonthlyReadingSource;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPBackup;
-import cz.xlisto.elektrodroid.utils.MyToast;
 
 
 /**
@@ -55,7 +54,7 @@ public class SaveDataToBackupFile extends RecoverData {
         DocumentFile pickedDir = DocumentFile.fromTreeUri(context, treeUri);
 
         if (pickedDir == null || !pickedDir.canWrite()) {
-            MyToast.makeText(context, context.getResources().getString(R.string.no_folder), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getResources().getString(R.string.no_folder), Toast.LENGTH_SHORT).show();
             return;
         }
 
