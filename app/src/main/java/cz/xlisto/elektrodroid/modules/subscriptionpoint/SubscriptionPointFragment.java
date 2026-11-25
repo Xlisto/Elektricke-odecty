@@ -617,7 +617,7 @@ public class SubscriptionPointFragment extends Fragment implements OnPaddingChan
             }
             return;
         }
-        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), sc, false);
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), false);
     }
 
     private boolean isTabbedMode() {

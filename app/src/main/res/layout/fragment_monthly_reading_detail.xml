@@ -68,15 +68,11 @@
             app:strokeColor="?attr/colorOutlineVariant"
             app:strokeWidth="1dp">
 
-            <RelativeLayout
+            <TableLayout
                 android:id="@+id/rlConsuptionMonthDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp">
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                     <TableRow
                         android:layout_width="match_parent"
@@ -222,9 +218,7 @@
                             android:textColor="?attr/colorOnSurface" />
                     </TableRow>
 
-                </TableLayout>
-
-            </RelativeLayout>
+            </TableLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

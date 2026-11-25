@@ -24,17 +24,14 @@ public class UIHelper {
 
     /**
      * Zobrazí/skryje tlačítko pro přidání nové položky (FAB nebo položku menu v AppBaru).
+     *
+     * @param btn               klasické tlačítko (vždy se skryje)
+     * @param fab               FloatingActionButton
+     * @param context           kontext aplikace
+     * @param checkSubscription zda kontrolovat vybrané odběrné místo
      */
     public static void showButtons(Button btn, FloatingActionButton fab, Context context, boolean checkSubscription) {
-        showButtons(btn, fab, null, context, null, checkSubscription);
-    }
-
-
-    /**
-     * Zobrazí/skryje tlačítko pro přidání nové položky (FAB nebo položku menu v AppBaru).
-     */
-    public static void showButtons(Button btn, FloatingActionButton fab, MenuItem addMenuItem, Context context, boolean checkSubscription) {
-        showButtons(btn, fab, addMenuItem, context, null, checkSubscription);
+        showButtons(btn, fab, null, context, checkSubscription);
     }
 
 
@@ -45,10 +42,9 @@ public class UIHelper {
      * @param fab               FloatingActionButton
      * @param addMenuItem       položka menu v AppBaru
      * @param context           kontext aplikace
-     * @param viewGroup         ViewGroup pro případné přizpůsobení layoutu
      * @param checkSubscription zda kontrolovat vybrané odběrné místo
      */
-    public static void showButtons(Button btn, FloatingActionButton fab, MenuItem addMenuItem, Context context, ViewGroup viewGroup, boolean checkSubscription) {
+    public static void showButtons(Button btn, FloatingActionButton fab, MenuItem addMenuItem, Context context, boolean checkSubscription) {
         if (btn != null) {
             btn.setVisibility(View.GONE);
         }
@@ -102,14 +98,6 @@ public class UIHelper {
                 }
             }
         }
-    }
-
-
-    /**
-     * Zobrazí/skryje tlačítko pro přidání nové položky.
-     */
-    public static void showButtons(Button btn, FloatingActionButton fab, Context context, ViewGroup viewGroup, boolean checkSubscription) {
-        showButtons(btn, fab, null, context, viewGroup, checkSubscription);
     }
 
 }

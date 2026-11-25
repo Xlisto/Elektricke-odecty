@@ -343,7 +343,6 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                     fab,
                     addMenuItem,
                     requireActivity(),
-                    rv,
                     false
                 )
                 if (addMenuItem != null && addPdfMenuItem != null) {
@@ -548,7 +547,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         requireActivity().supportFragmentManager.setFragmentResultListener(
             SettingsFragment.FLAG_UPDATE_SETTINGS_FOR_FRAGMENT, this
         ) { _, _ ->
-            UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
+            UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), false)
             requireActivity().invalidateOptionsMenu()
             btnShowBack()
         }
@@ -605,7 +604,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
      */
     override fun onResume() {
         super.onResume()
-        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), rv, false)
+        UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), false)
         btnShowBack()
         updateRecyclerViewPadding()
     }

@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -92,7 +91,7 @@ public class MonthlyReadingDetailFragment extends Fragment implements OnPaddingC
     private TextView tvVTConsuption;
     private TextView tvNTConsuption;
     private TableLayout tlVt;
-    private RelativeLayout rlConsuption, rlPrice;
+    private ViewGroup rlConsuption, rlPrice;
     private int screenWidth = 0;
     private final TextView[][] tvsConsuption = new TextView[2][5];
     private TextView[][] tvsVt = new TextView[15][3];
@@ -481,10 +480,10 @@ public class MonthlyReadingDetailFragment extends Fragment implements OnPaddingC
 
     /**
      * Měří šířky textů v matici TextView a iterativně zvětšuje velikost písma,
-     * dokud součet šířek sloupců nepřesáhne dostupnou šířku v rámci daného RelativeLayoutu.
+     * dokud součet šířek sloupců nepřesáhne dostupnou šířku v rámci daného kontejneru.
      * <p>
      * Postup:
-     * - zjistí marginy rodičovského RelativeLayoutu `rl`,
+     * - zjistí marginy rodičovského kontejneru `rl`,
      * - opakovaně zvýší `textSize` a aplikuje jej na všechny nenulové TextView v `textViews`,
      * - pro každý sloupec spočítá maximální šířku mezi řádky pomocí `Paint.measureText`,
      * zohlední marginy jednotlivých TextView a tučný styl pro vybrané řádky,
@@ -502,9 +501,9 @@ public class MonthlyReadingDetailFragment extends Fragment implements OnPaddingC
      *
      * @param textViews matice TextView kde první rozměr představuje řádky a druhý sloupce;
      *                  mohou se v ní vyskytovat `null` hodnoty, které jsou přeskočeny
-     * @param rl        rodičovský RelativeLayout použitý pro získání marginů a určení dostupné šířky
+     * @param rl        rodičovský kontejner použitý pro získání marginů a určení dostupné šířky
      */
-    private void onMeasureTextViews(TextView[][] textViews, RelativeLayout rl) {
+    private void onMeasureTextViews(TextView[][] textViews, ViewGroup rl) {
         float totalWidth = 0;
         int textSize = 20;
         ViewGroup.MarginLayoutParams layoutParamsRl = (ViewGroup.MarginLayoutParams) rl.getLayoutParams();
