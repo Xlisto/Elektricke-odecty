@@ -191,8 +191,7 @@ public class ExportPriceListFragment extends Fragment implements OnPaddingChange
 
     public void updateRecyclerViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()

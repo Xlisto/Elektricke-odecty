@@ -89,9 +89,8 @@ public class MonthlyReadingSettingsFragment extends Fragment {
 
 
     private void updateSettingsPadding(@NonNull View view) {
-        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+        if (!isAdded() || !(requireActivity() instanceof MainActivity mainActivity)) return;
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (12 * density);
         int topPadding = mainActivity.getTopBarTotalHeight();

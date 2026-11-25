@@ -469,8 +469,7 @@ public class GraphMonthFragment extends Fragment implements OnPaddingChangeListe
 
     public void updateViewPadding() {
         if (getView() == null || !isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()

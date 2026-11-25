@@ -91,8 +91,7 @@ public class UIHelper {
      */
     public static void updateFabPosition(FloatingActionButton fab, Context context) {
         if (fab == null || context == null) return;
-        if (context instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) context;
+        if (context instanceof MainActivity mainAct) {
             float density = context.getResources().getDisplayMetrics().density;
             ViewGroup.MarginLayoutParams fabLp = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
             if (fabLp != null) {

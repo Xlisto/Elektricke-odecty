@@ -404,8 +404,7 @@ public class InvoiceFragment extends Fragment implements OnPaddingChangeListener
 
     public void updateRecyclerViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int bottomPaddingPx = mainAct.isNavRail()
                     ? mainAct.getEffectiveNavBarInsetBottom() + (int) (16 * density)

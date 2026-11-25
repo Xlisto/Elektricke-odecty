@@ -240,9 +240,8 @@ public class HdoSiteFragment extends Fragment {
 
 
     private void updateEditorPadding(@NonNull View view) {
-        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+        if (!isAdded() || !(requireActivity() instanceof MainActivity mainActivity)) return;
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (10 * density);
 

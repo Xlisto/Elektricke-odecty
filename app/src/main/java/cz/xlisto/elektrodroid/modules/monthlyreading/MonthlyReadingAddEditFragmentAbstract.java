@@ -265,8 +265,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
 
     public void updateViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int basePadding = (int) (10 * density);
             int topPaddingPx = mainAct.getTopBarTotalHeight() + basePadding;
@@ -288,8 +287,7 @@ public abstract class MonthlyReadingAddEditFragmentAbstract extends Fragment imp
     private void findAndPadScrollViews(ViewGroup vg, int topPadding) {
         for (int i = 0; i < vg.getChildCount(); i++) {
             View child = vg.getChildAt(i);
-            if (child instanceof ScrollView) {
-                ScrollView sv = (ScrollView) child;
+            if (child instanceof ScrollView sv) {
                 sv.setClipToPadding(false);
                 sv.setPadding(0, topPadding, 0, 0);
             } else if (child instanceof ViewGroup) {

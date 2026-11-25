@@ -230,8 +230,7 @@ public class PriceListCompareBoxFragment extends Fragment implements OnPaddingCh
 
 
     public void updateViewPadding() {
-        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
-        MainActivity mainActivity = (MainActivity) requireActivity();
+        if (!isAdded() || !(requireActivity() instanceof MainActivity mainActivity)) return;
         int topPadding = mainActivity.getTopBarTotalHeight();
         int bottomPadding = mainActivity.getBottomPanelMarginPx();
         if (getView() != null) {

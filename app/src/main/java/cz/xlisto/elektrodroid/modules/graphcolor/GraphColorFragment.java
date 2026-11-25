@@ -507,8 +507,7 @@ public class GraphColorFragment extends Fragment implements OnPaddingChangeListe
 
     public void updateViewPadding() {
         if (getView() == null || !isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()
@@ -517,10 +516,8 @@ public class GraphColorFragment extends Fragment implements OnPaddingChangeListe
             int leftPaddingPx = mainAct.getLeftNavTotalWidth();
             int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
 
-            if (getView() instanceof androidx.core.widget.NestedScrollView) {
+            if (getView() instanceof androidx.core.widget.NestedScrollView scrollView) {
                 getView().setPadding(leftPaddingPx, 0, rightPaddingPx, bottomPaddingPx);
-                androidx.core.widget.NestedScrollView scrollView =
-                        (androidx.core.widget.NestedScrollView) getView();
                 if (scrollView.getChildCount() > 0) {
                     View content = scrollView.getChildAt(0);
                     content.setPadding(

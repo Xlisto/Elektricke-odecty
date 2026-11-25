@@ -135,9 +135,8 @@ public abstract class PriceListAddEditAbstract extends Fragment {
 
 
     private void updateEditorPadding(View view) {
-        if (!isAdded() || !(requireActivity() instanceof MainActivity)) return;
+        if (!isAdded() || !(requireActivity() instanceof MainActivity mainActivity)) return;
 
-        MainActivity mainActivity = (MainActivity) requireActivity();
         float density = getResources().getDisplayMetrics().density;
         int basePadding = (int) (10 * density);
         int topPadding = mainActivity.getTopBarTotalHeight() + basePadding;
@@ -159,8 +158,7 @@ public abstract class PriceListAddEditAbstract extends Fragment {
     private void findAndPadScrollViews(ViewGroup vg, int topPadding) {
         for (int i = 0; i < vg.getChildCount(); i++) {
             View child = vg.getChildAt(i);
-            if (child instanceof ScrollView) {
-                ScrollView sv = (ScrollView) child;
+            if (child instanceof ScrollView sv) {
                 sv.setClipToPadding(false);
                 sv.setPadding(0, topPadding, 0, 0);
             } else if (child instanceof ViewGroup) {

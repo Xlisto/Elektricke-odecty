@@ -880,8 +880,7 @@ public class SubscriptionPointFragment extends Fragment implements OnPaddingChan
 
     public void updateViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             float density = getResources().getDisplayMetrics().density;
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int bottomPaddingPx = mainAct.isNavRail()

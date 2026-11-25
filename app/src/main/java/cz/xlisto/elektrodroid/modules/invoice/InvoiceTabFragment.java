@@ -164,8 +164,7 @@ public class InvoiceTabFragment extends Fragment implements OnPaddingChangeListe
 
     public void updateViewPadding() {
         if (!isAdded()) return;
-        if (getActivity() instanceof MainActivity) {
-            MainActivity mainAct = (MainActivity) getActivity();
+        if (getActivity() instanceof MainActivity mainAct) {
             int topPaddingPx = mainAct.getTopBarTotalHeight();
             int leftPaddingPx = mainAct.getLeftNavTotalWidth();
             int rightPaddingPx = mainAct.getEffectiveNavBarInsetRight();
