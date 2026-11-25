@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/colorSurface"
-    tools:ignore="Overdraw">
+    tools:ignore="Overdraw,UseCompoundDrawables">
 
     <!-- Header Card -->
     <com.google.android.material.card.MaterialCardView
