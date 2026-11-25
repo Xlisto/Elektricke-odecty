@@ -23,32 +23,18 @@ public class HistoricalReadingConsumptionHelper {
         public final double vtKwh;
         public final double ntKwh;
         public final double totalKwh;
-        public final double ntPercent;
-        public final int year;
-        public final boolean isExact;
-        public final boolean isEstimated;
         public final String qualityNote;
-        public final List<Integer> availableYears;
 
 
         public HistoricalConsumptionResult(
                 double vtKwh,
                 double ntKwh,
-                int year,
-                boolean isExact,
-                boolean isEstimated,
-                String qualityNote,
-                List<Integer> availableYears
+                String qualityNote
         ) {
             this.vtKwh = Math.max(0, vtKwh);
             this.ntKwh = Math.max(0, ntKwh);
             this.totalKwh = this.vtKwh + this.ntKwh;
-            this.ntPercent = this.totalKwh > 0 ? (this.ntKwh / this.totalKwh) * 100.0 : 0.0;
-            this.year = year;
-            this.isExact = isExact;
-            this.isEstimated = isEstimated;
             this.qualityNote = qualityNote;
-            this.availableYears = availableYears != null ? availableYears : new ArrayList<>();
         }
 
     }
@@ -95,15 +81,14 @@ public class HistoricalReadingConsumptionHelper {
             int targetYear
     ) {
         if (subscriptionPoint == null || context == null) {
-            return new HistoricalConsumptionResult(0, 0, targetYear, false, true, "Není vybráno odběrné místo", new ArrayList<>());
+            return new HistoricalConsumptionResult(0, 0, "Není vybráno odběrné místo");
         }
 
         AnnualOverviewDataBuilder builder = new AnnualOverviewDataBuilder(context);
         ArrayList<AnnualYearData> allData = builder.buildAllAnnualData(subscriptionPoint);
-        List<Integer> availableYears = getAvailableYears(context, subscriptionPoint);
 
         if (allData.isEmpty()) {
-            return new HistoricalConsumptionResult(0, 0, targetYear, false, true, "Žádné odečty v databázi", availableYears);
+            return new HistoricalConsumptionResult(0, 0, "Žádné odečty v databázi");
         }
 
         AnnualYearData matchedData = null;
@@ -128,23 +113,17 @@ public class HistoricalReadingConsumptionHelper {
         }
 
         if (matchedData == null || (matchedData.consumptionVT() <= 0 && matchedData.consumptionNT() <= 0)) {
-            return new HistoricalConsumptionResult(0, 0, targetYear, false, true, "Nedostatek dat pro rok " + targetYear, availableYears);
+            return new HistoricalConsumptionResult(0, 0, "Nedostatek dat pro rok " + targetYear);
         }
 
-        int year = matchedData.year();
         double vt = matchedData.consumptionVT();
         double nt = matchedData.consumptionNT();
-        boolean isEstimated = matchedData.isEstimated();
-        boolean isExact = !isEstimated;
 
-        String qualityNote;
-        if (isExact) {
-            qualityNote = "Přesná spotřeba podle hraničních odečtů roku " + year;
-        } else {
-            qualityNote = "Odhadovaná spotřeba podle interpolace odečtů pro rok " + year;
-        }
+        String qualityNote = !matchedData.isEstimated()
+                ? "Přesná spotřeba podle hraničních odečtů roku " + matchedData.year()
+                : "Odhadovaná spotřeba podle interpolace odečtů pro rok " + matchedData.year();
 
-        return new HistoricalConsumptionResult(vt, nt, year, isExact, isEstimated, qualityNote, availableYears);
+        return new HistoricalConsumptionResult(vt, nt, qualityNote);
     }
 
 
@@ -160,12 +139,11 @@ public class HistoricalReadingConsumptionHelper {
             SubscriptionPointModel subscriptionPoint
     ) {
         if (subscriptionPoint == null || context == null) {
-            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Není vybráno odběrné místo", new ArrayList<>());
+            return new HistoricalConsumptionResult(0, 0, "Není vybráno odběrné místo");
         }
 
         AnnualOverviewDataBuilder builder = new AnnualOverviewDataBuilder(context);
         ArrayList<AnnualYearData> allData = builder.buildAllAnnualData(subscriptionPoint);
-        List<Integer> availableYears = getAvailableYears(context, subscriptionPoint);
 
         double totalVt = 0;
         double totalNt = 0;
@@ -195,14 +173,14 @@ public class HistoricalReadingConsumptionHelper {
         }
 
         if (count == 0) {
-            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Žádné dokončené roky s odečty pro průměr", availableYears);
+            return new HistoricalConsumptionResult(0, 0, "Žádné dokončené roky s odečty pro průměr");
         }
 
         double avgVt = totalVt / count;
         double avgNt = totalNt / count;
         String qualityNote = String.format(java.util.Locale.getDefault(), "Průměrná roční spotřeba vypočtená z %d dostupných let", count);
 
-        return new HistoricalConsumptionResult(avgVt, avgNt, -1, false, true, qualityNote, availableYears);
+        return new HistoricalConsumptionResult(avgVt, avgNt, qualityNote);
     }
 
 
@@ -220,7 +198,7 @@ public class HistoricalReadingConsumptionHelper {
             int recentYearsCount
     ) {
         if (subscriptionPoint == null || context == null || recentYearsCount <= 0) {
-            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Není vybráno odběrné místo", new ArrayList<>());
+            return new HistoricalConsumptionResult(0, 0, "Není vybráno odběrné místo");
         }
 
         AnnualOverviewDataBuilder builder = new AnnualOverviewDataBuilder(context);
@@ -228,7 +206,7 @@ public class HistoricalReadingConsumptionHelper {
         List<Integer> availableYears = getAvailableYears(context, subscriptionPoint);
 
         if (allData.isEmpty() || availableYears.isEmpty()) {
-            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Žádné odečty v databázi", availableYears);
+            return new HistoricalConsumptionResult(0, 0, "Žádné odečty v databázi");
         }
 
         double totalVt = 0;
@@ -247,7 +225,7 @@ public class HistoricalReadingConsumptionHelper {
         }
 
         if (count == 0) {
-            return new HistoricalConsumptionResult(0, 0, -1, false, true, "Nedostatek dat pro zadané období", availableYears);
+            return new HistoricalConsumptionResult(0, 0, "Nedostatek dat pro zadané období");
         }
 
         double avgVt = totalVt / count;
@@ -256,6 +234,6 @@ public class HistoricalReadingConsumptionHelper {
                 ? String.format(java.util.Locale.getDefault(), "Spotřeba z nejnovějšího roku odečtů (%d)", targetYears.get(0))
                 : String.format(java.util.Locale.getDefault(), "Průměrná roční spotřeba za poslední %d roky odečtů", count);
 
-        return new HistoricalConsumptionResult(avgVt, avgNt, -1, false, true, qualityNote, availableYears);
+        return new HistoricalConsumptionResult(avgVt, avgNt, qualityNote);
     }
 }

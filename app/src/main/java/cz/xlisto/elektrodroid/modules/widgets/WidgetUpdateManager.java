@@ -62,20 +62,6 @@ public final class WidgetUpdateManager {
 
 
     /**
-     * Okamžitě aktualizuje jednu konkrétní instanci widgetu na pracovním vlákně (např. po uložení konfigurace).
-     *
-     * @param context     kontext aplikace
-     * @param widgetType  typ widgetu
-     * @param appWidgetId systémové ID instance
-     */
-    public static void updateSingleWidgetAsync(@NonNull Context context,
-                                               @NonNull WidgetType widgetType,
-                                               int appWidgetId) {
-        updateWidgetsAsync(context, widgetType, new int[]{appWidgetId}, null);
-    }
-
-
-    /**
      * Synchronně aktualizuje jednu instanci widgetu (určeno pro volání z vlákna na pozadí, např. při dokončení konfigurace).
      *
      * @param context     kontext aplikace

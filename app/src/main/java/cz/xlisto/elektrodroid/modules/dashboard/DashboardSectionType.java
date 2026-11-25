@@ -24,11 +24,6 @@ public enum DashboardSectionType {
     }
 
 
-    public String getId() {
-        return id;
-    }
-
-
     public int getDefaultOrder() {
         return defaultOrder;
     }

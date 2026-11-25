@@ -113,9 +113,6 @@ public class InvoiceEditFragment extends InvoiceAddEditAbstractFragment {
         }
 
         btnSave.setOnClickListener(v -> saveData(TypeSave.EDIT));
-
-        oldDateStart = btnDateStart.getText().toString();
-        oldDateEnd = btnDateEnd.getText().toString();
     }
 
 }

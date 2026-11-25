@@ -66,7 +66,7 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvRele, tvDate, tvTime, tvDayMon, tvDayTue, tvDayWed, tvDayThu, tvDayFri, tvDaySat, tvDaySun;
-        LinearLayout lnHdoOut, lnHdoContent, lnNotifyArea, lnHdoButtons, lnHdoDays;
+        LinearLayout lnHdoContent, lnNotifyArea, lnHdoButtons, lnHdoDays;
         CheckBox cbNotifyStart, cbNotifyEnd;
         Button btnEdit, btnDelete;
         ValueAnimator buttonsAnimator;
@@ -248,7 +248,6 @@ public class HdoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hdo, parent, false);
             MyViewHolder vh = new MyViewHolder(v);
 
-            vh.lnHdoOut = v.findViewById(R.id.lnHdoOut);
             vh.lnHdoContent = v.findViewById(R.id.lnHdoContent);
             vh.lnNotifyArea = v.findViewById(R.id.lnNotifyArea);
             vh.lnHdoButtons = v.findViewById(R.id.lnButtonsHdo);

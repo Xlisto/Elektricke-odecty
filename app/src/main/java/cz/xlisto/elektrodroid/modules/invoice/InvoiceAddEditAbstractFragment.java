@@ -17,8 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.core.os.BundleCompat;
 import androidx.fragment.app.Fragment;
 
-import java.util.Calendar;
-
 import com.google.android.material.button.MaterialButton;
 
 import cz.xlisto.elektrodroid.R;
@@ -26,7 +24,6 @@ import cz.xlisto.elektrodroid.databaze.DataInvoiceSource;
 import cz.xlisto.elektrodroid.dialogs.InvoiceDateRangeDialogFragment;
 import cz.xlisto.elektrodroid.models.InvoiceModel;
 import cz.xlisto.elektrodroid.models.PriceListModel;
-import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 
 import android.widget.ScrollView;
 
@@ -36,7 +33,6 @@ import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.LabelEditText;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPAddEditInvoice;
-import cz.xlisto.elektrodroid.shp.ShPInvoice;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
 import cz.xlisto.elektrodroid.utils.Keyboard;
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
@@ -70,12 +66,8 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment implements
     Button btnDateStart, btnDateEnd, btnSelectPriceList, btnBack, btnSave;
     MaterialButton btnInvoiceDateRange;
     LabelEditText letVTStart, letVTEnd, letNTStart, letNTEnd, letOtherServices;
-    String numberInvoice, table;
+    String table;
     CheckBox chIsChangedElectricMeter;
-    String oldDateStart = "1.1.2025";
-    String oldDateEnd = "31.12.2025";
-    String tableO, tableFAK, tableTED;
-    boolean autogenerate;
     boolean isShowFragment;
 
 
@@ -91,17 +83,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment implements
             table = getArguments().getString(TABLE);
             selectedIdInvoice = getArguments().getLong(ID_FAK);
             id = getArguments().getLong(ID);
-        }
-        Calendar calendar = Calendar.getInstance();
-        oldDateStart = "1.1." + calendar.get(Calendar.YEAR);
-        oldDateEnd = "31.12." + calendar.get(Calendar.YEAR);
-
-        //new SubscriptionPoint();
-        SubscriptionPointModel subscriptionPoint = SubscriptionPoint.load(requireContext());
-        if (subscriptionPoint != null) {
-            tableFAK = subscriptionPoint.getTableFAK();
-            tableO = subscriptionPoint.getTableO();
-            tableTED = subscriptionPoint.getTableTED();
         }
     }
 
@@ -207,7 +188,6 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment implements
             btnSelectPriceList.setText(savedInstanceState.getString(SELECTED_TEXT_PRICE_LIST));
         }
 
-        autogenerate = new ShPInvoice(requireActivity()).get(ShPInvoice.AUTO_GENERATE_INVOICE, true);
         updateValidityRangeButtonText();
     }
 
@@ -332,7 +312,7 @@ public abstract class InvoiceAddEditAbstractFragment extends Fragment implements
                 letVTStart.getDouble(), letVTEnd.getDouble(),
                 letNTStart.getDouble(), letNTEnd.getDouble(),
                 selectedIdInvoice, selectedIdPrice,
-                letOtherServices.getDouble(), numberInvoice,
+                letOtherServices.getDouble(), null,
                 chIsChangedElectricMeter.isChecked()
         );
     }

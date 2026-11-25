@@ -363,18 +363,6 @@ public class LabelEditText extends RelativeLayout {
 
 
     /**
-     * Nastaví barvu pozadí EditTextu
-     *
-     * @param color barva pozadí
-     */
-    public void setTextColor(int color) {
-        editText.setTextColor(color);
-        originalEditTextTextColor = color;
-        updateClearButtonState(editText.getText());
-    }
-
-
-    /**
      * Kontroluje desetinný oddělovač. Pokud je oddělovač desetinná čárka, napsaný oddělovač jako tečka jej zamění za čárku.
      * Zároveň kontroluje počet desetinných oddělovačů.
      */

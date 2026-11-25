@@ -32,16 +32,6 @@ public class SimpleDateFormatHelper {
 
 
     /**
-     * Vrátí novou instanci {@link SimpleDateFormat} pro formátování roku ("yyyy").
-     *
-     * @return objekt {@link SimpleDateFormat}
-     */
-    public static SimpleDateFormat getYear() {
-        return new SimpleDateFormat("yyyy", Locale.getDefault());
-    }
-
-
-    /**
      * Vrátí novou instanci {@link SimpleDateFormat} pro formátování data ("dd.MM.yyyy").
      *
      * @return objekt {@link SimpleDateFormat}

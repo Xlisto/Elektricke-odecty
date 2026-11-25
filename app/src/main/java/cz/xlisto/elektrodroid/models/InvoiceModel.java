@@ -106,11 +106,6 @@ public class InvoiceModel {
     }
 
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-
     public void setIdPriceList(long idPriceList) {
         this.idPriceList = idPriceList;
     }

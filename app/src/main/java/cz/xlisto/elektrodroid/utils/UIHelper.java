@@ -23,19 +23,6 @@ import cz.xlisto.elektrodroid.shp.ShPSettings;
 public class UIHelper {
 
     /**
-     * Zobrazí/skryje tlačítko pro přidání nové položky (FAB nebo položku menu v AppBaru).
-     *
-     * @param btn               klasické tlačítko (vždy se skryje)
-     * @param fab               FloatingActionButton
-     * @param context           kontext aplikace
-     * @param checkSubscription zda kontrolovat vybrané odběrné místo
-     */
-    public static void showButtons(Button btn, FloatingActionButton fab, Context context, boolean checkSubscription) {
-        showButtons(btn, fab, null, context, checkSubscription);
-    }
-
-
-    /**
      * Zobrazí/skryje tlačítko pro přidání nové položky.
      *
      * @param btn               klasické tlačítko (vždy se skryje)

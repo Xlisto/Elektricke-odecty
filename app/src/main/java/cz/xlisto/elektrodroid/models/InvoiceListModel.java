@@ -1,86 +1,130 @@
 package cz.xlisto.elektrodroid.models;
 
+
 /**
- * Xlisto 01.02.2023 19:35
+ * Datový model představující souhrnné informace o faktuře nebo fakturačním období.
+ *
+ * @param idFak         identifikátor faktury v databázi (-1 pro období bez faktury)
+ * @param numberInvoice číslo faktury nebo název období
+ * @param minDate       počáteční datum fakturovaného období v milisekundách
+ * @param maxDate       koncové datum fakturovaného období v milisekundách
+ * @param payments      počet plateb přiřazených k dané faktuře
+ * @param reads         počet záznamů odečtů v daném fakturačním období
+ * @param minVT         počáteční stav vysokého tarifu (VT)
+ * @param maxVT         koncový stav vysokého tarifu (VT)
+ * @param minNT         počáteční stav nízkého tarifu (NT)
+ * @param maxNT         koncový stav nízkého tarifu (NT)
  */
-public class InvoiceListModel {
+public record InvoiceListModel(
+        long idFak,
+        String numberInvoice,
+        long minDate,
+        long maxDate,
+        long payments,
+        long reads,
+        double minVT,
+        double maxVT,
+        double minNT,
+        double maxNT
+) {
 
-    private long idFak;
-    private final String numberInvoice;
-    private long minDate, maxDate, payments, reads;
-    private double minVT, maxVT, minNT, maxNT;
-
-
-    public InvoiceListModel(long idFak, String numberInvoice, long minDate, long maxDate, long payments, long reads, double minVT, double maxVT, double minNT, double maxNT) {
-        this(numberInvoice);
-        this.idFak = idFak;
-        this.minDate = minDate;
-        this.maxDate = maxDate;
-        this.payments = payments;
-        this.reads = reads;
-        this.minVT = minVT;
-        this.maxVT = maxVT;
-        this.minNT = minNT;
-        this.maxNT = maxNT;
-    }
-
-    public InvoiceListModel(String numberInvoice) {
-        this.numberInvoice = numberInvoice;
-    }
-
+    /**
+     * Vrátí číslo faktury nebo název období.
+     *
+     * @return číslo faktury
+     */
     public String getNumberInvoice() {
         return numberInvoice;
     }
 
+
+    /**
+     * Vrátí identifikátor faktury.
+     *
+     * @return ID faktury
+     */
     public long getIdFak() {
         return idFak;
     }
 
+
+    /**
+     * Vrátí počáteční datum fakturovaného období.
+     *
+     * @return počáteční datum v milisekundách
+     */
     public long getMinDate() {
         return minDate;
     }
 
+
+    /**
+     * Vrátí koncové datum fakturovaného období.
+     *
+     * @return koncové datum v milisekundách
+     */
     public long getMaxDate() {
         return maxDate;
     }
 
+
+    /**
+     * Vrátí počet plateb přiřazených k dané faktuře.
+     *
+     * @return počet plateb
+     */
     public long getPayments() {
         return payments;
     }
 
+
+    /**
+     * Vrátí počet záznamů odečtů v období.
+     *
+     * @return počet odečtů
+     */
     public long getReads() {
         return reads;
     }
 
+
+    /**
+     * Vrátí počáteční stav vysokého tarifu.
+     *
+     * @return počáteční stav VT
+     */
     public double getMinVT() {
         return minVT;
     }
 
-    public void setMinVT(double minVT) {
-        this.minVT = minVT;
-    }
 
+    /**
+     * Vrátí koncový stav vysokého tarifu.
+     *
+     * @return koncový stav VT
+     */
     public double getMaxVT() {
         return maxVT;
     }
 
-    public void setMaxVT(double maxVT) {
-        this.maxVT = maxVT;
-    }
 
+    /**
+     * Vrátí počáteční stav nízkého tarifu.
+     *
+     * @return počáteční stav NT
+     */
     public double getMinNT() {
         return minNT;
     }
 
-    public void setMinNT(double minNT) {
-        this.minNT = minNT;
-    }
 
+    /**
+     * Vrátí koncový stav nízkého tarifu.
+     *
+     * @return koncový stav NT
+     */
     public double getMaxNT() {
         return maxNT;
     }
 
-    public void setMaxNT(double maxNT) {
-        this.maxNT = maxNT;
-    }
 }

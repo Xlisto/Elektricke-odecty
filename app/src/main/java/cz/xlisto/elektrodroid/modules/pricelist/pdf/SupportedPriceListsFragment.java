@@ -55,17 +55,6 @@ public class SupportedPriceListsFragment extends Fragment implements OnPaddingCh
 
 
     /**
-     * Vytvoří novou instanci fragmentu bez předvybraného dodavatele.
-     *
-     * @return Nová instance {@link SupportedPriceListsFragment}
-     */
-    @NonNull
-    public static SupportedPriceListsFragment newInstance() {
-        return newInstance(null);
-    }
-
-
-    /**
      * Vytvoří novou instanci fragmentu s volitelným automatickým posunutím a zvýrazněním dodavatele.
      *
      * @param highlightSupplierId Identifikátor dodavatele (např. {@link PdfParserFactory#SUPPLIER_ID_EON}),

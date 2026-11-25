@@ -62,11 +62,6 @@ public class SummaryInvoiceModel {
     }
 
 
-    public void addAmount(double amount) {
-        this.amount = this.amount+amount;
-    }
-
-
     public enum Unit {
         MWH("MWh"),
         MONTH("měsíc");

@@ -7,42 +7,13 @@ import java.util.Arrays;
 
 
 /**
- * Třída představující model popisu změn verze.
+ * Třída představující model popisu změn verze aplikace.
+ *
+ * @param version číslo verze aplikace
+ * @param date    datum vydání verze
+ * @param changes seznam provedených změn
  */
 public record VersionModel(int version, String date, String[] changes) {
-
-    /**
-     * Vrací verzi.
-     *
-     * @return verze
-     */
-    @Override
-    public int version() {
-        return version;
-    }
-
-
-    /**
-     * Vrací datum.
-     *
-     * @return datum
-     */
-    @Override
-    public String date() {
-        return date;
-    }
-
-
-    /**
-     * Vrací změny.
-     *
-     * @return změny
-     */
-    @Override
-    public String[] changes() {
-        return changes;
-    }
-
 
     /**
      * Vrací řetězcovou reprezentaci objektu VersionModel.

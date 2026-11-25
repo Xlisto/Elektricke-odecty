@@ -11,7 +11,7 @@ public class YearConsuptionModel implements ConsuptionModel {
 
     private Double consuptionVT;
     private Double consuptionNT;
-    private int year;
+    private final int year;
     private int anim;
     private int max;
 
@@ -112,16 +112,6 @@ public class YearConsuptionModel implements ConsuptionModel {
      */
     public void addConsuptionNT(Double spotrebaNT) {
         this.consuptionNT = this.consuptionNT + spotrebaNT;
-    }
-
-
-    /**
-     * Nastaví rok
-     *
-     * @param year rok
-     */
-    public void setYear(int year) {
-        this.year = year;
     }
 
 
