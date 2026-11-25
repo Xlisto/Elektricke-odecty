@@ -164,7 +164,7 @@ Nový ceník se přidává tlačítkem **+**. Při vytváření ceníku se zadá
 Cena za 1 kWh se zobrazuje jako celková cena včetně DPH, tedy jako součet obchodní části, regulovaných položek a daně. Stálá měsíční platba se zobrazuje jako celková částka včetně DPH. Zahrnuje stálý plat dodavatele, cenu za jistič a cenu za provoz nesíťové infrastruktury. Pro ceníky platné pro rok 2023 se zobrazuje dvojí cena. Vyšší cena zobrazuje platné ceny od dodavatele a nižší cena zobrazuje zastropované ceny státem.
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_2.png" alt="Ceník 2" style="width: 300px;" />
+  <img src="screenshots/cena_1.jpg" alt="Ceník 1" style="width: 300px;" />
 </p>
 
 U jednotarifních sazeb, například D01d nebo D02d, se nízký tarif nepoužívá. Položku nízkého tarifu tedy není nutné vyplňovat podle samostatné ceny NT.
@@ -178,13 +178,13 @@ Datum platnosti je důležité pro správné přiřazení ceníku k měsíčním
 Tlačítkem **Uložit** se ceník uloží. Tlačítkem **Zpět** se provedené změny zahodí a zobrazí se seznam ceníků.
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_4.png" alt="Ceník 4" style="width: 300px;" />
-  <img src="screenshots/cena_5.png" alt="Ceník 5" style="width: 300px;" />
+  <img src="screenshots/cena_2.jpg" alt="Ceník 2" style="width: 300px;" />
+  <img src="screenshots/cena_3.jpg" alt="Ceník 3" style="width: 300px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_1.png" alt="Ceník 1" style="width: 300px;" />
-  <img src="screenshots/cena_3.png" alt="Ceník 3" style="width: 300px;" />
+  <img src="screenshots/cena_4.jpg" alt="Ceník 4" style="width: 300px;" />
+  <img src="screenshots/cena_5.jpg" alt="Ceník 5" style="width: 300px;" />
 </p>
 
 ### Úprava ceníků
