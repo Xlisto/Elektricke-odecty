@@ -1068,4 +1068,66 @@
     <string name="tariff_condition_expand">Rozbalit</string>
     <string name="tariff_condition_distributor_disclaimer">Konečné přiznání sazby posuzuje distributor.</string>
     <string name="tariff_condition_official_link">Oficiální podmínky distributora</string>
+
+    <!-- Podporované ceníky (nápověda PDF importu) -->
+    <string name="supported_price_lists">Podporované ceníky</string>
+    <string name="supported_price_lists_intro">Pro automatické načtení ceníku použijte originální PDF dokument od svého dodavatele elektřiny. Porovnejte jeho strukturu s níže uvedenými ukázkami. Název produktu, datum platnosti a uvedené ceny se mohou lišit.</string>
+    <string name="supported_price_lists_warning_title">Pozor na zkrácené ceníky</string>
+    <string name="supported_price_lists_warning_message">Někteří dodavatelé poskytují také zkrácené ceníky obsahující pouze obchodní ceny elektřiny. Pro automatický import je nutné použít kompletní ceník včetně distribučních cen a ostatních regulovaných poplatků.</string>
+    <string name="supported_price_lists_warning_toggle">Kompletní ceník by měl obsahovat</string>
+    <string name="supported_price_lists_warning_toggle_expand_cd">Rozbalit seznam povinných položek kompletního ceníku</string>
+    <string name="supported_price_lists_warning_toggle_collapse_cd">Sbalit seznam povinných položek kompletního ceníku</string>
+    <string name="supported_price_lists_requirement_supply">• Ceny za dodávku elektřiny.</string>
+    <string name="supported_price_lists_requirement_fixed">• Stálé měsíční platby dodavatele.</string>
+    <string name="supported_price_lists_requirement_distribution">• Ceny za distribuci elektřiny.</string>
+    <string name="supported_price_lists_requirement_breaker">• Platby podle velikosti hlavního jističe.</string>
+    <string name="supported_price_lists_requirement_other">• Ostatní regulované poplatky a daň z elektřiny.</string>
+    <string name="supported_price_lists_select_pdf">Vybrat PDF ceník</string>
+    <string name="supported_price_lists_zoom_label">Zvětšit</string>
+    <string name="supported_price_lists_preview_cd">Náhled kompletního PDF ceníku %1$s (%2$s). Klepnutím otevřete zvětšený náhled.</string>
+    <string name="supported_price_lists_preview_load_error">Náhledový obrázek se nepodařilo načíst.</string>
+    <string name="supported_price_lists_preview_hint">Přiblížení dvěma prsty nebo dvojitým klepnutím</string>
+    <string name="supported_price_lists_preview_reset_zoom">Obnovit zobrazení</string>
+    <string name="supported_price_lists_preview_close_cd">Zpět na seznam podporovaných ceníků</string>
+    <string name="supported_price_lists_preview_image_cd">Zvětšitelný náhled PDF ceníku %1$s</string>
+
+    <plurals name="supported_price_list_sample_pages">
+        <item quantity="one">Ukázka: %1$d strana</item>
+        <item quantity="few">Ukázka: %1$d strany</item>
+        <item quantity="many">Ukázka: %1$d strany</item>
+        <item quantity="other">Ukázka: %1$d stran</item>
+    </plurals>
+
+    <!-- Názvy a popisy podporovaných dodavatelů PDF ceníků -->
+    <string name="supported_supplier_centropol_name">Centropol</string>
+    <string name="supported_supplier_centropol_desc">Ukázkový jednostránkový ceník obsahující obchodní ceny, distribuční ceny a ostatní poplatky v jedné souhrnné tabulce.</string>
+
+    <string name="supported_supplier_cez_name">ČEZ</string>
+    <string name="supported_supplier_cez_desc">Ukázkový dvoustránkový ceník. První strana obsahuje informace o produktu, distribučním území a platnosti ceníku. Druhá strana obsahuje kompletní cenovou tabulku.</string>
+
+    <string name="supported_supplier_eon_name">E.ON</string>
+    <string name="supported_supplier_eon_desc">Ukázkový dvoustránkový ceník. První strana obsahuje obchodní ceny a informace o produktu. Druhá strana obsahuje kompletní cenovou tabulku včetně regulovaných cen.</string>
+    <string name="supported_supplier_eon_warning">Pozor: Samotná první strana neobsahuje všechny potřebné údaje. Pro import je nutný kompletní ceník včetně druhé strany.</string>
+
+    <string name="supported_supplier_innogy_name">innogy</string>
+    <string name="supported_supplier_innogy_desc">Ukázkový dvoustránkový ceník orientovaný na šířku. Obsahuje tabulky obchodních a distribučních cen, ostatních služeb a případně cen pro jednotlivé kalendářní roky.</string>
+
+    <string name="supported_supplier_mnd_name">MND</string>
+    <string name="supported_supplier_mnd_desc">Ukázkový dvoustránkový ceník. První strana obsahuje informace o produktu a obchodní ceny. Druhá strana obsahuje přílohu ceníku se stanovením celkové ceny včetně regulovaných poplatků.</string>
+
+    <string name="supported_supplier_pre_name">PRE</string>
+    <string name="supported_supplier_pre_desc">Ukázkový dvoustránkový ceník. První strana obsahuje informace o produktu a obchodní ceny. Druhá strana obsahuje podrobnou tabulku obchodních a regulovaných cen.</string>
+
+    <string name="supported_supplier_tedom_name">TEDOM</string>
+    <string name="supported_supplier_tedom_desc">Ukázkový dvoustránkový ceník. První strana obsahuje produktové informace a obchodní ceny. Druhá strana je označena jako kompletní produktový ceník a obsahuje také regulované ceny.</string>
+
+    <!-- Dialog neúspěšného importu PDF ceníku -->
+    <string name="pdf_import_error_title">Ceník se nepodařilo načíst</string>
+    <string name="pdf_import_error_message">Vybraný PDF dokument se nepodařilo automaticky zpracovat. Dokument může obsahovat nepodporovanou strukturu, neúplné údaje nebo se může jednat o zkrácený ceník. Prohlédněte si ukázky podporovaných ceníků a porovnejte je se svým dokumentem.</string>
+    <string name="pdf_import_error_detail_unknown_supplier">Dodavatel ve vybraném dokumentu nebyl rozpoznán mezi podporovanými dodavateli.</string>
+    <string name="pdf_import_error_detail_known_supplier">Rozpoznaný dodavatel: %1$s. Z dokumentu se nepodařilo načíst potřebné cenové údaje.</string>
+    <string name="pdf_import_error_detail_read_failed">PDF soubor se nepodařilo otevřít nebo z něj nebylo možné přečíst text.</string>
+    <string name="pdf_import_error_action_show_supported">Zobrazit podporované ceníky</string>
+    <string name="pdf_import_error_action_choose_another">Vybrat jiný soubor</string>
+    <string name="pdf_import_error_action_close">Zavřít</string>
 </resources>

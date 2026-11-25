@@ -127,4 +127,15 @@
     <color name="dashboard_teal_nt">#005CBB</color>
     <color name="dashboard_divider">#E5E8F0</color>
     <color name="dashboard_chart_forecast_stroke">#74777F</color>
+
+    <!-- Nápověda podporovaných PDF ceníků (Light) -->
+    <color name="supported_pricelist_warning_bg">#FFF8E1</color>
+    <color name="supported_pricelist_warning_stroke">#F6C26B</color>
+    <color name="supported_pricelist_warning_text">#5D3A00</color>
+    <color name="supported_pricelist_warning_icon">#B26A00</color>
+    <color name="supported_pricelist_document_bg">#FFFFFF</color>
+    <color name="supported_pricelist_zoom_badge_bg">#BF191C20</color>
+    <color name="supported_pricelist_zoom_badge_fg">#FFFFFF</color>
+    <color name="supported_pricelist_viewer_bg">#121418</color>
+    <color name="supported_pricelist_viewer_bar_bg">#CC121418</color>
 </resources>

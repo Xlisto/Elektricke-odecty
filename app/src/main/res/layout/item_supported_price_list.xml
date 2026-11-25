@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardSupplier"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="6dp"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Záhlaví karty dodavatele -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSupplierName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                tools:text="E.ON" />
+
+            <TextView
+                android:id="@+id/tvSamplePages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/dialog_rounded_background"
+                android:backgroundTint="?attr/colorSecondaryContainer"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:textStyle="bold"
+                tools:text="Ukázka: 2 strany" />
+
+        </LinearLayout>
+
+        <!-- Náhled celého PDF dokumentu s bílým pozadím i v tmavém motivu -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPreviewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/supported_pricelist_document_bg"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:strokeWidth="1dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="140dp">
+
+                <ImageView
+                    android:id="@+id/ivPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:importantForAccessibility="no"
+                    android:maxHeight="260dp"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressPreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    app:indicatorSize="32dp"
+                    app:trackThickness="3dp" />
+
+                <TextView
+                    android:id="@+id/tvPreviewError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="6dp"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="@string/supported_price_lists_preview_load_error"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/gray"
+                    android:visibility="gone"
+                    app:drawableTint="?attr/colorOnSurfaceVariant"
+                    app:drawableTopCompat="@drawable/ic_warning_24" />
+
+                <TextView
+                    android:id="@+id/tvZoomBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_zoom_hint_badge"
+                    android:drawablePadding="4dp"
+                    android:gravity="center_vertical"
+                    android:importantForAccessibility="no"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="@string/supported_price_lists_zoom_label"
+                    android:textColor="@color/supported_pricelist_zoom_badge_fg"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="@drawable/ic_zoom_in_24"
+                    app:drawableTint="@color/supported_pricelist_zoom_badge_fg" />
+
+            </FrameLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Popis struktury ceníku -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurface"
+            tools:text="Ukázkový dvoustránkový ceník. První strana obsahuje obchodní ceny a informace o produktu." />
+
+        <!-- Volitelné specifické upozornění pro dodavatele (např. E.ON) -->
+        <TextView
+            android:id="@+id/tvSupplierWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_supported_pricelist_inline_warning"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="@color/supported_pricelist_warning_text"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_warning_24"
+            app:drawableTint="@color/supported_pricelist_warning_icon"
+            tools:text="Pozor: Samotná první strana neobsahuje všechny potřebné údaje."
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

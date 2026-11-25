@@ -39,4 +39,12 @@
         <item name="android:text">@string/create_place</item>
         <item name="android:textAppearance">@style/TextAppearance.Material3.BodyLarge</item>
     </style>
+
+    <style name="FullscreenPreviewDialogTheme" parent="Theme.Odecty.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/supported_pricelist_viewer_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+    </style>
 </resources>

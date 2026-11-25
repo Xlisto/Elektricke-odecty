@@ -199,6 +199,21 @@ Tlačítkem **Uložit** se změny uloží. Tlačítkem **Zpět** se provedené z
 
 Tlačítkem **Detail** lze zobrazit podrobnosti vybraného ceníku bez úprav. Tlačítkem **Smaž** lze ceník odstranit. Mazání je vhodné používat opatrně, zejména pokud je ceník již použitý u měsíčních odečtů nebo faktur.
 
+### Automatický import ceníku z PDF
+
+Nový ceník lze kromě ručního zadání vytvořit také automatickým načtením z originálního PDF ceníku
+dodavatele (přes tlačítko **+** → **Importovat z PDF** nebo v nabídce obrazovky **Ceník**).
+
+Pro úspěšný automatický import je nutné použít **kompletní PDF ceník** obsahující jak obchodní ceny
+dodavatele (silovou elektřinu a stálý měsíční plat), tak i distribuční ceny, platby za hlavní
+jistič, ostatní regulované poplatky a daň z elektřiny. Zkrácené ceníky, které uvádějí pouze obchodní
+ceny, nelze automaticky načíst.
+
+Před importem (v nabídce obrazovky **Ceník** nebo pod tlačítkem **+**) i po případné chybě načtení
+můžete otevřít obrazovku **Podporované ceníky**. Zobrazuje vizuální ukázky podporovaných formátů PDF
+pro jednotlivé dodavatele (Centropol, ČEZ, E.ON, innogy, MND, PRE a TEDOM) s možností zvětšení
+náhledu na celou obrazovku a porovnání struktury dokumentu.
+
 ## Měsíční záznamy
 
 Měsíční záznamy slouží k pravidelnému zapisování stavů elektroměru a k průběžnému výpočtu ceny spotřebované elektrické energie. Každý záznam se vztahuje k aktuálně vybranému odběrnému místu.

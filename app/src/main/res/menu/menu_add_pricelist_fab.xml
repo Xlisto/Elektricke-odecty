@@ -9,4 +9,9 @@
         android:id="@+id/menu_action_add_pdf_pricelist"
         android:icon="@drawable/ic_add_pdf_24"
         android:title="@string/add_pdf_price_list" />
+
+    <item
+        android:id="@+id/menu_action_supported_pricelists"
+        android:icon="@drawable/ic_help_outline_24"
+        android:title="@string/supported_price_lists" />
 </menu>

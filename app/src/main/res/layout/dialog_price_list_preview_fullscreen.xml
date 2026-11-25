@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootPreviewDialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/supported_pricelist_viewer_bg">
+
+    <cz.xlisto.elektrodroid.ownview.ZoomableImageView
+        android:id="@+id/zoomableImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="matrix" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressFullPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/tvFullPreviewError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="@string/supported_price_lists_preview_load_error"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/supported_pricelist_zoom_badge_fg"
+        android:visibility="gone"
+        app:drawableTint="@color/supported_pricelist_zoom_badge_fg"
+        app:drawableTopCompat="@drawable/ic_warning_24" />
+
+    <!-- Horní překryvná lišta s názvem dodavatele a návratem -->
+    <LinearLayout
+        android:id="@+id/topBarFullPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/supported_pricelist_viewer_bar_bg"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="4dp">
+
+        <ImageButton
+            android:id="@+id/btnClosePreview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/supported_price_lists_preview_close_cd"
+            android:src="@drawable/ic_arrow_back_24"
+            app:tint="@color/supported_pricelist_zoom_badge_fg" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp">
+
+            <TextView
+                android:id="@+id/tvFullPreviewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/supported_pricelist_zoom_badge_fg"
+                android:textStyle="bold"
+                tools:text="ČEZ" />
+
+            <TextView
+                android:id="@+id/tvFullPreviewSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/supported_pricelist_zoom_badge_fg"
+                tools:text="Ukázka: 2 strany" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResetZoom"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/supported_price_lists_preview_reset_zoom"
+            android:textColor="@color/supported_pricelist_zoom_badge_fg"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- Spodní nápověda k ovládání gesty -->
+    <TextView
+        android:id="@+id/bottomHintFullPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:alpha="0.9"
+        android:background="@color/supported_pricelist_viewer_bar_bg"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:text="@string/supported_price_lists_preview_hint"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="@color/supported_pricelist_zoom_badge_fg" />
+
+</FrameLayout>

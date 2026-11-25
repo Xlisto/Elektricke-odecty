@@ -1184,6 +1184,17 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
+     * Vrátí aktuální text titulku toolbaru.
+     *
+     * @return Aktuální titulek toolbaru nebo {@code null}, pokud není inicializován
+     */
+    @Nullable
+    public CharSequence getToolbarTitle() {
+        return toolbarTitle != null ? toolbarTitle.getText() : null;
+    }
+
+
+    /**
      * Aktualizuje toolbar pro režim výběru více položek.
      *
      * @param selectedCount         Počet vybraných položek
