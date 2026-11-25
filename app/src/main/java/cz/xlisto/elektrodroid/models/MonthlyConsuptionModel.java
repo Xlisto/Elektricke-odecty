@@ -13,8 +13,6 @@ import cz.xlisto.elektrodroid.ownview.ViewHelper;
  */
 public class MonthlyConsuptionModel implements ConsuptionModel {
 
-    private final ArrayList<Double> VT = new ArrayList<>();
-    private final ArrayList<Double> NT = new ArrayList<>();
     private final ArrayList<Long> dates = new ArrayList<>();
     private long startDate = -1L;
     private Double consuptionVT;
@@ -24,8 +22,6 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
 
     public MonthlyConsuptionModel(Double actualVT, Double actualNT, Double previousVT, Double previousNT, Long actualDate) {
-        this.VT.add(actualVT);
-        this.NT.add(actualNT);
         this.consuptionVT = actualVT - previousVT;
         this.consuptionNT = actualNT - previousNT;
         this.dates.add(actualDate);
@@ -134,7 +130,6 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      * @return spotřeba VT
      */
     public Integer getConsuptionVTAnimace() {
-        //Log.w("E","E1 "+anim);
         return (int) (getConsuptionVT() / max * anim);
     }
 
@@ -162,60 +157,12 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
 
 
     /**
-     * Přidá další odečet VT do aktuálního měsíce
-     *
-     * @param VT odečet VT
-     */
-    public void setVT(Double VT) {
-        this.VT.add(VT);
-    }
-
-
-    /**
-     * Přidá další odečet NT do aktuálního měsíce
-     *
-     * @param NT odečet NT
-     */
-    public void setNT(Double NT) {
-        this.NT.add(NT);
-    }
-
-
-    /**
      * Přidá další datum odečtu do aktuálního měsíce
      *
      * @param dates datum odečtu
      */
     public void setDates(Long dates) {
         this.dates.add(dates);
-    }
-
-
-    /**
-     * Vrátí spotřebu VT
-     *
-     * @return spotřeba VT
-     */
-    public Double getVT() {
-        Double meter = 0.0;
-        for (int i = 0; i < VT.size(); i++) {
-            if (meter < getVT(i)) meter = getVT(i);
-        }
-        return meter;
-    }
-
-
-    /**
-     * Vrátí spotřebu NT
-     *
-     * @return spotřeba NT
-     */
-    public Double getNT() {
-        Double meter = 0.0;
-        for (int i = 0; i < NT.size(); i++) {
-            if (meter < getNT(i)) meter = getNT(i);
-        }
-        return meter;
     }
 
 
@@ -257,28 +204,6 @@ public class MonthlyConsuptionModel implements ConsuptionModel {
      */
     public long getLastDate() {
         return dates.isEmpty() ? -1L : dates.get(dates.size() - 1);
-    }
-
-
-    /**
-     * Vrátí spotřebu VT
-     *
-     * @param i index
-     * @return vrátí spotřebu na indexu i
-     */
-    private Double getVT(int i) {
-        return VT.get(i);
-    }
-
-
-    /**
-     * Vrátí spotřebu NT
-     *
-     * @param i index
-     * @return vrátí spotřebu na indexu i
-     */
-    private Double getNT(int i) {
-        return NT.get(i);
     }
 
 
