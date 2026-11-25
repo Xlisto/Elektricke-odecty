@@ -1469,8 +1469,7 @@ public class NewDashBoardFragment extends Fragment implements OnPaddingChangeLis
                 TextView tvAmount = row.findViewById(R.id.tvInvoiceAmount);
 
                 String rawNumber = invItem.getNumberInvoice();
-                boolean isWithoutInvoiceNumber = invItem.getIdFak() == -1L
-                        || rawNumber == null
+                boolean isWithoutInvoiceNumber = rawNumber == null
                         || rawNumber.trim().isEmpty();
                 if (isWithoutInvoiceNumber) {
                     tvNumber.setText(R.string.dashboard_invoice_without_number);

@@ -13,30 +13,15 @@ import cz.xlisto.elektrodroid.models.PriceListModel;
 public class PriceListComparisonResult implements Serializable {
 
     private final PriceListModel priceList;
-    private final double vtKwh;
-    private final double ntKwh;
-    private final double totalKwh;
-    private final double months;
 
-    // Obchodní (neregulovaná) složka bez DPH
-    private final double merchantVtCost;
-    private final double merchantNtCost;
-    private final double merchantMonthlyCost;
     private final double merchantTotalCost;
 
-    // Regulovaná složka bez DPH
-    private final double distVtCost;
-    private final double distNtCost;
-    private final double breakerCost;
-    private final double systemServicesCost;
-    private final double oteCost;
     private final double pozeCost;
     private final double regulatedTotalCost;
 
     // Daně
     private final double electricityTax;
     private final double dphRate;
-    private final double dphAmount;
 
     // Součty
     private final double totalWithoutDph;
@@ -66,8 +51,6 @@ public class PriceListComparisonResult implements Serializable {
 
     public PriceListComparisonResult(
             PriceListModel priceList,
-            double vtKwh,
-            double ntKwh,
             double months,
             double merchantVtCost,
             double merchantNtCost,
@@ -80,7 +63,6 @@ public class PriceListComparisonResult implements Serializable {
             double pozeCost,
             double electricityTax,
             double dphRate,
-            double dphAmount,
             double totalWithoutDph,
             double totalWithDph,
             double fullVtPricePerMwhWithDph,
@@ -94,24 +76,13 @@ public class PriceListComparisonResult implements Serializable {
             String pozeTypeDescription
     ) {
         this.priceList = priceList;
-        this.vtKwh = vtKwh;
-        this.ntKwh = ntKwh;
-        this.totalKwh = vtKwh + ntKwh;
-        this.months = months;
-        this.merchantVtCost = merchantVtCost;
-        this.merchantNtCost = merchantNtCost;
-        this.merchantMonthlyCost = merchantMonthlyCost;
+        // Obchodní (neregulovaná) složka bez DPH
         this.merchantTotalCost = merchantVtCost + merchantNtCost + merchantMonthlyCost;
-        this.distVtCost = distVtCost;
-        this.distNtCost = distNtCost;
-        this.breakerCost = breakerCost;
-        this.systemServicesCost = systemServicesCost;
-        this.oteCost = oteCost;
+        // Regulovaná složka bez DPH
         this.pozeCost = pozeCost;
         this.regulatedTotalCost = distVtCost + distNtCost + breakerCost + systemServicesCost + oteCost + pozeCost;
         this.electricityTax = electricityTax;
         this.dphRate = dphRate;
-        this.dphAmount = dphAmount;
         this.totalWithoutDph = totalWithoutDph;
         this.totalWithDph = totalWithDph;
         this.averageMonthlyCostWithDph = months > 0 ? totalWithDph / months : totalWithDph;
@@ -132,68 +103,8 @@ public class PriceListComparisonResult implements Serializable {
     }
 
 
-    public double getVtKwh() {
-        return vtKwh;
-    }
-
-
-    public double getNtKwh() {
-        return ntKwh;
-    }
-
-
-    public double getTotalKwh() {
-        return totalKwh;
-    }
-
-
-    public double getMonths() {
-        return months;
-    }
-
-
-    public double getMerchantVtCost() {
-        return merchantVtCost;
-    }
-
-
-    public double getMerchantNtCost() {
-        return merchantNtCost;
-    }
-
-
-    public double getMerchantMonthlyCost() {
-        return merchantMonthlyCost;
-    }
-
-
     public double getMerchantTotalCost() {
         return merchantTotalCost;
-    }
-
-
-    public double getDistVtCost() {
-        return distVtCost;
-    }
-
-
-    public double getDistNtCost() {
-        return distNtCost;
-    }
-
-
-    public double getBreakerCost() {
-        return breakerCost;
-    }
-
-
-    public double getSystemServicesCost() {
-        return systemServicesCost;
-    }
-
-
-    public double getOteCost() {
-        return oteCost;
     }
 
 
@@ -209,16 +120,6 @@ public class PriceListComparisonResult implements Serializable {
 
     public double getElectricityTax() {
         return electricityTax;
-    }
-
-
-    public double getDphRate() {
-        return dphRate;
-    }
-
-
-    public double getDphAmount() {
-        return dphAmount;
     }
 
 
@@ -325,36 +226,6 @@ public class PriceListComparisonResult implements Serializable {
 
     public double getMerchantMonthlyWithDph() {
         return priceList.getMonthlyPayment() * (1.0 + dphRate / 100.0);
-    }
-
-
-    public double getWeightedAverageMerchantPricePerMwhWithDph() {
-        double totalMwh = totalKwh / 1000.0;
-        if (totalMwh <= 0) return 0.0;
-        return ((merchantVtCost + merchantNtCost) * (1.0 + dphRate / 100.0)) / totalMwh;
-    }
-
-
-    public double getDistVtWithDphOnly() {
-        return priceList.getDistVT() * (1.0 + dphRate / 100.0);
-    }
-
-
-    public double getDistNtWithDphOnly() {
-        return priceList.getDistNT() * (1.0 + dphRate / 100.0);
-    }
-
-
-    public double getBreakerMonthlyWithDphOnly() {
-        double monthly = months > 0 ? (breakerCost / months) : 0.0;
-        return monthly * (1.0 + dphRate / 100.0);
-    }
-
-
-    public double getRegulatedUnitAveragePerMwhWithDph() {
-        double totalMwh = totalKwh / 1000.0;
-        if (totalMwh <= 0) return 0.0;
-        return (regulatedTotalCost * (1.0 + dphRate / 100.0)) / totalMwh;
     }
 
 }

@@ -179,8 +179,6 @@ public class PriceListCalculationEngine {
 
         return new PriceListComparisonResult(
                 priceList,
-                vtKwh,
-                ntKwh,
                 months,
                 merchantVtCost,
                 merchantNtCost,
@@ -193,7 +191,6 @@ public class PriceListCalculationEngine {
                 pozeCost,
                 electricityTax,
                 dphRate,
-                dphAmount,
                 totalWithoutDph,
                 totalWithDph,
                 fullVtPricePerMwhWithDph,
