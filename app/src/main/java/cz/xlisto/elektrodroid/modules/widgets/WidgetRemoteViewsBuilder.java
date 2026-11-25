@@ -44,6 +44,7 @@ public final class WidgetRemoteViewsBuilder {
     private static final int CURRENT_PRICE_TALL_EXPIRED_THRESHOLD_DP = 116;
     private static final int CURRENT_PRICE_COMPACT_FULL_UNIT_WIDTH_DP = 270;
     private static final int CURRENT_PRICE_COMPACT_HEADER_WIDTH_DP = 260;
+    private static final int DEFAULT_WIDGET_HEIGHT_DP = 72;
 
     private static final int[] RELAY_STRIP_ROW_IDS = {
             R.id.layout_relay_strip_1,
@@ -171,7 +172,7 @@ public final class WidgetRemoteViewsBuilder {
         }
 
         int widthDp = resolveWidgetWidthDp(widgetOptions, 250);
-        int heightDp = resolveWidgetHeightDp(widgetOptions, 72);
+        int heightDp = resolveWidgetHeightDp(widgetOptions);
         float fontScale = Math.max(1.0f, context.getResources().getConfiguration().fontScale);
         float effectiveHeightDp = heightDp / fontScale;
 
@@ -415,7 +416,7 @@ public final class WidgetRemoteViewsBuilder {
         );
 
         int widthDp = resolveWidgetWidthDp(widgetOptions, 140);
-        int heightDp = resolveWidgetHeightDp(widgetOptions, 72);
+        int heightDp = resolveWidgetHeightDp(widgetOptions);
         boolean miniMode = widthDp < HDO_CLOCK_MINI_MAX_WIDTH_DP;
 
         if (resolution.status() != WidgetPointResolver.ResolutionStatus.RESOLVED
@@ -790,7 +791,7 @@ public final class WidgetRemoteViewsBuilder {
         float density = context.getResources().getDisplayMetrics().density;
         float fontScale = Math.max(1.0f, context.getResources().getConfiguration().fontScale);
         int widthDp = resolveWidgetWidthDp(widgetOptions, 250);
-        int heightDp = resolveWidgetHeightDp(widgetOptions, 72);
+        int heightDp = resolveWidgetHeightDp(widgetOptions);
         boolean compactMode = (heightDp / fontScale) < PERIOD_WIDGET_TALL_THRESHOLD_DP;
 
         String totalFormatted = WidgetFormatHelper.formatKwh(snapshot.totalKwh());
@@ -934,7 +935,7 @@ public final class WidgetRemoteViewsBuilder {
         float density = context.getResources().getDisplayMetrics().density;
         float fontScale = Math.max(1.0f, context.getResources().getConfiguration().fontScale);
         int widthDp = resolveWidgetWidthDp(widgetOptions, 250);
-        int heightDp = resolveWidgetHeightDp(widgetOptions, 72);
+        int heightDp = resolveWidgetHeightDp(widgetOptions);
         boolean compactMode = (heightDp / fontScale) < PERIOD_WIDGET_TALL_THRESHOLD_DP;
 
         String advancesFormatted = WidgetFormatHelper.formatCzk(snapshot.advancesKc());
@@ -1336,16 +1337,16 @@ public final class WidgetRemoteViewsBuilder {
     }
 
 
-    private static int resolveWidgetHeightDp(@Nullable Bundle options, int fallbackDp) {
+    private static int resolveWidgetHeightDp(@Nullable Bundle options) {
         if (options == null) {
-            return fallbackDp;
+            return DEFAULT_WIDGET_HEIGHT_DP;
         }
         int minH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0);
         int maxH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0);
         if (minH > 0) {
             return minH;
         }
-        return maxH > 0 ? maxH : fallbackDp;
+        return maxH > 0 ? maxH : DEFAULT_WIDGET_HEIGHT_DP;
     }
 
 }
