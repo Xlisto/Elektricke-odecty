@@ -306,10 +306,10 @@ Pokud v aplikaci není zadána žádná starší faktura, lze pro výpočet obdo
 Režim generování období bez faktury lze nastavit v menu. Dostupný je automatický a poloautomatický režim. Pokud jsou v poloautomatickém režimu provedeny ruční změny, přepnutím zpět do automatického režimu se tyto změny přepíší podle měsíčních odečtů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_5.png" alt="Faktura 5" style="width: 200px;" />
-  <img src="screenshots/fak_7.png" alt="Faktura 7" style="width: 200px;" />
-  <img src="screenshots/fak_8.png" alt="Faktura 8" style="width: 200px;" />
-  <img src="screenshots/fak_6.png" alt="Faktura 6" style="width: 200px;" />
+  <img src="screenshots/fak_1.jpg" alt="Faktura 1" style="width: 200px;" />
+  <img src="screenshots/fak_2.jpg" alt="Faktura 2" style="width: 200px;" />
+  <img src="screenshots/fak_3.jpg" alt="Faktura 3" style="width: 200px;" />
+  <img src="screenshots/fak_4.jpg" alt="Faktura 4" style="width: 200px;" />
 </p>
 
 ### Automatický režim
@@ -331,10 +331,15 @@ Rozdělení období na jednotlivé části je v tomto režimu plně na uživatel
 - **Spoj s předchozím** – sloučí záznam se záznamem, který je v seznamu pod ním. V dialogu je zobrazen náhled slučovaných záznamů i výsledku po sloučení.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_9.png" alt="Faktura 9" style="width: 200px;" />
-  <img src="screenshots/fak_10.png" alt="Faktura 10" style="width: 200px;" />
-  <img src="screenshots/fak_11.png" alt="Faktura 11" style="width: 200px;" />
-  <img src="screenshots/fak_12.png" alt="Faktura 12" style="width: 200px;" />
+  <img src="screenshots/fak_5.jpg" alt="Faktura 5" style="width: 200px;" />
+  <img src="screenshots/fak_6.jpg" alt="Faktura 6" style="width: 200px;" />
+  <img src="screenshots/fak_7.jpg" alt="Faktura 7" style="width: 200px;" />
+  <img src="screenshots/fak_8.jpg" alt="Faktura 8" style="width: 200px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/fak_9.jpg" alt="Faktura 9" style="width: 300px;" />
+  <img src="screenshots/fak_10.jpg" alt="Faktura 10" style="width: 300px;" />
 </p>
 
 ### Detail faktury
@@ -364,10 +369,10 @@ Druhá záložka **Detaily** zobrazuje dílčí výpočty faktury. Tuto část l
 Třetí záložka **Platby** slouží k evidenci zálohových plateb, doplatků a přeplatků. Tyto platby slouží výhradně k výpočtu bilance za celé fakturační období a nesouvisí se zálohami zadávanými u měsíčních odečtů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_1.png" alt="Faktura 1" style="width: 200px;" />
-  <img src="screenshots/fak_2.png" alt="Faktura 2" style="width: 200px;" />
-  <img src="screenshots/fak_3.png" alt="Faktura 3" style="width: 200px;" />
-  <img src="screenshots/fak_4.png" alt="Faktura 4" style="width: 200px;" />
+  <img src="screenshots/fak_11.jpg" alt="Faktura 11" style="width: 200px;" />
+  <img src="screenshots/fak_12.jpg" alt="Faktura 12" style="width: 200px;" />
+  <img src="screenshots/fak_13.jpg" alt="Faktura 13" style="width: 200px;" />
+  <img src="screenshots/fak_14.jpg" alt="Faktura 14" style="width: 200px;" />
 </p>
 
 ### Přidání a úprava uložených faktur
@@ -378,8 +383,8 @@ Nejprve se zadá číslo faktury nebo jiné označení pro lepší orientaci. Po
 
 Klepnutím na položku faktury se zobrazí její ovládací tlačítka. Lze změnit číslo faktury, přidat odečtové záznamy, přidat zálohové platby nebo celou fakturu smazat.
 <p style="text-align: center;">
-  <img src="screenshots/fak_18.png" alt="Faktura 18" style="width: 300px;" />
-  <img src="screenshots/fak_14.png" alt="Faktura 14" style="width: 300px;" />
+  <img src="screenshots/fak_15.jpg" alt="Faktura 15" style="width: 300px;" />
+  <img src="screenshots/fak_16.jpg" alt="Faktura 16" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava zálohové platby
@@ -391,9 +396,9 @@ U platby se zadává datum zaúčtování, výše platby a typ platby. Doplatek 
 Již zadané platby lze upravovat. Klepnutím na položku platby se zobrazí tlačítka pro úpravu, odstranění nebo přiřazení platby k jiné faktuře. Dialog pro úpravu je stejný jako dialog pro přidání, pouze jsou v něm předvyplněné původní hodnoty. Smazání platby se provede po potvrzení dialogu.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_15.png" alt="Faktura 15" style="width: 300px;" />
-  <img src="screenshots/fak_16.png" alt="Faktura 16" style="width: 300px;" />
-  <img src="screenshots/fak_17.png" alt="Faktura 17" style="width: 300px;" />
+  <img src="screenshots/fak_17.jpg" alt="Faktura 17" style="width: 300px;" />
+  <img src="screenshots/fak_18.jpg" alt="Faktura 18" style="width: 300px;" />
+  <img src="screenshots/fak_19.jpg" alt="Faktura 19" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava záznamů faktury
@@ -407,11 +412,10 @@ Tlačítkem **Uprav** lze záznam změnit, pokud některá položka nesouhlasí.
 Po návratu do seznamu faktur je nově přidaná faktura zobrazena na konci seznamu. Pokud jsou údaje zadány správně a záznamy na sebe navazují, nezobrazuje se u faktury varování o nekonzistenci údajů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_19.png" alt="Faktura 19" style="width: 200px;" />
-  <img src="screenshots/fak_20.png" alt="Faktura 20" style="width: 200px;" />
-  <img src="screenshots/fak_21.png" alt="Faktura 21" style="width: 200px;" />
-  <img src="screenshots/fak_22.png" alt="Faktura 22" style="width: 200px;" />
-  <img src="screenshots/fak_23.png" alt="Faktura 23" style="width: 200px;" />
+  <img src="screenshots/fak_20.jpg" alt="Faktura 20" style="width: 300px;" />
+  <img src="screenshots/fak_21.jpg" alt="Faktura 21" style="width: 300px;" />
+  <img src="screenshots/fak_22.jpg" alt="Faktura 22" style="width: 300px;" />
+  <img src="screenshots/fak_23.jpg" alt="Faktura 23" style="width: 300px;" />
 </p>
 
 <a id="filtrace-ceniku"></a>
@@ -442,8 +446,8 @@ Po použití filtru se ve spodní části seznamu zobrazí počet uložených a 
 Ceník se vybere označením příslušné položky v seznamu a potvrzením tlačítkem **Vybrat**. Po návratu do měsíčního záznamu se vybraný ceník zobrazí ve formuláři odečtu a použije se pro výpočet spotřeby.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_10.png" alt="Měsíční odečty 10" style="width: 200px;" />
-  <img src="screenshots/mes_11.png" alt="Měsíční odečty 11" style="width: 200px;" />
+  <img src="screenshots/fil_1.jpg" alt="Měsíční odečty 10" style="width: 200px;" />
+  <img src="screenshots/fil_2.jpg" alt="Měsíční odečty 11" style="width: 200px;" />
 </p>
 
 ## Porovnání ceníků
@@ -451,7 +455,24 @@ Ceník se vybere označením příslušné položky v seznamu a potvrzením tla�
 Výhodnost jednotlivých ceníků nemusí být vždy na první pohled zřejmá. Proto aplikace umožňuje porovnání dvou ceníků mezi sebou. Porovnání probíhá formou výpočtu, kdy se zpravidla zadává období 12 měsíců a přibližná roční spotřeba ve vysokém (VT) a nízkém tarifu (NT). V porovnání se zobrazují rozdíly v jednotlivých částech i v celkovém výpočtu.
 
 <p style="text-align: center;">
-  <img src="screenshots/por_1.png" alt="Porovnání ceníků 1" style="width: 300px;" />
+  <img src="screenshots/com_1.jpg" alt="Porovnání ceníků 1" style="width: 200px;" />
+  <img src="screenshots/com_2.jpg" alt="Porovnání ceníků 2" style="width: 200px;" />
+  <img src="screenshots/com_3.jpg" alt="Porovnání ceníků 3" style="width: 200px;" />
+  <img src="screenshots/com_4.jpg" alt="Porovnání ceníků 4" style="width: 200px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/com_5.jpg" alt="Porovnání ceníků 5" style="width: 200px;" />
+  <img src="screenshots/com_6.jpg" alt="Porovnání ceníků 6" style="width: 200px;" />
+  <img src="screenshots/com_7.jpg" alt="Porovnání ceníků 7" style="width: 200px;" />
+  <img src="screenshots/com_8.jpg" alt="Porovnání ceníků 8" style="width: 200px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/com_9.jpg" alt="Porovnání ceníků 9" style="width: 200px;" />
+  <img src="screenshots/com_10.jpg" alt="Porovnání ceníků 10" style="width: 200px;" />
+  <img src="screenshots/com_11.jpg" alt="Porovnání ceníků 11" style="width: 200px;" />
+  <img src="screenshots/com_12.jpg" alt="Porovnání ceníků 12" style="width: 200px;" />
 </p>
 
 ## Čas HDO
