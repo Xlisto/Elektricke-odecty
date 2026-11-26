@@ -58,7 +58,7 @@ Ceníky jsou ve společném seznamu a k záznamům je přiřazujete podle místa
   zobrazené karty.
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_6.jpg" alt="Dialog pro změnu aktivního odběrného místa v celé aplikaci" width="250" />
+  <img src="screenshots/odb_6.jpg" alt="Dialog pro změnu aktivního odběrného místa v celé aplikaci" style="width: 250px;" />
 </p>
 
 ### Správa odběrného místa
@@ -73,8 +73,8 @@ Akce **Smazat odběrné místo** odstraní také údaje vedené pro dané místo
 odečty a faktury.
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_1.jpg" alt="Formulář odběrného místa se jménem, parametry jističe a identifikačními čísly" width="250" />
-  <img src="screenshots/odb_2.jpg" alt="Správa odběrného místa Chata bez dat v ročním grafu" width="250" />
+  <img src="screenshots/odb_1.jpg" alt="Formulář odběrného místa se jménem, parametry jističe a identifikačními čísly" style="width: 250px;" />
+  <img src="screenshots/odb_2.jpg" alt="Správa odběrného místa Chata bez dat v ročním grafu" style="width: 250px;" />
 </p>
 
 ### Připomenutí zápisu odečtu
@@ -87,7 +87,7 @@ vedle údajů o místě zobrazuje pravý panel se záložkami. Pokud oznámení 
 zkontrolujte [oprávnění k oznámením a přesným alarmům](#nav-nastaveni).
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_4.jpg" alt="Nastavení měsíčního připomenutí odečtu s volbou času a dne v měsíci" width="250" />
+  <img src="screenshots/odb_4.jpg" alt="Nastavení měsíčního připomenutí odečtu s volbou času a dne v měsíci" style="width: 250px;" />
 </p>
 
 ### Graf roční spotřeby a průměrných cen
@@ -118,11 +118,11 @@ zůstávají svislé osy a legenda na místě. Graf se otevírá u aktuálního 
 výšku nabídne otočení zařízení na šířku.
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_3.jpg" alt="Čtyřletý graf spotřeby a průměrných cen odběrného místa Domov" width="250" />
+  <img src="screenshots/odb_3.jpg" alt="Čtyřletý graf spotřeby a průměrných cen odběrného místa Domov" style="width: 250px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/odb_5.jpg" alt="Celoobrazovkový graf roční historie spotřeby a cen na šířku" width="600" />
+  <img src="screenshots/odb_5.jpg" alt="Celoobrazovkový graf roční historie spotřeby a cen na šířku" style="width: 600px;" />
 </p>
 
 <a id="nav-cenik"></a>
@@ -157,7 +157,7 @@ platba za jistič a příslušná pevná regulovaná platba. Pokud je u ceníku 
 pro rok 2023, může seznam zobrazit i cenu se zastropováním.
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_1.jpg" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" width="300" />
+  <img src="screenshots/cena_1.jpg" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" style="width: 300px;" />
 </p>
 
 U jednotarifních sazeb, například D01d nebo D02d, se nízký tarif nepoužívá. Položku nízkého tarifu tedy není nutné vyplňovat podle samostatné ceny NT.
@@ -176,12 +176,12 @@ Datum platnosti je důležité pro správné přiřazení ceníku k měsíčním
 Tlačítkem **Uložit** se ceník uloží. Tlačítkem **Zpět** se provedené změny zahodí a zobrazí se seznam ceníků.
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_2.jpg" alt="Formulář ceníku s platností, dodavatelem, distribučním územím a sazbou" width="300" />
-  <img src="screenshots/cena_3.jpg" alt="Obchodní ceny, distribuční ceny a měsíční platby za jistič ve formuláři ceníku" width="300" />
+  <img src="screenshots/cena_2.jpg" alt="Formulář ceníku s platností, dodavatelem, distribučním územím a sazbou" style="width: 300px;" />
+  <img src="screenshots/cena_3.jpg" alt="Obchodní ceny, distribuční ceny a měsíční platby za jistič ve formuláři ceníku" style="width: 300px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/cena_5.jpg" alt="Dialog platnosti ceníku s rychlými předvolbami a výběrem rozsahu" width="300" />
+  <img src="screenshots/cena_5.jpg" alt="Dialog platnosti ceníku s rychlými předvolbami a výběrem rozsahu" style="width: 300px;" />
 </p>
 
 ### Úprava ceníků
@@ -231,9 +231,9 @@ Tlačítko **Přeskočit soubor** je dostupné u všech tří souborů. **Ukonč
 dvou, protože po nich ještě čeká další PDF.
 
 <p style="text-align: center;">
-  <img src="screenshots/pdf_import_prubeh_1.jpg" alt="Hotovo 0 z 3 souborů. První ceník má neaktivní tlačítko Uložit vybrané a nabízí přeskočení souboru nebo ukončení importu" width="250" />
-  <img src="screenshots/pdf_import_prubeh_2.jpg" alt="Hotovo 1 z 3 souborů. Druhý ceník lze uložit a upozornění uvádí platnost do konce roku 2026" width="250" />
-  <img src="screenshots/pdf_import_prubeh_3.jpg" alt="Hotovo 2 z 3 souborů. Poslední ceník nelze uložit kvůli chybějícím regulovaným cenám a lze ho přeskočit" width="250" />
+  <img src="screenshots/pdf_import_prubeh_1.jpg" alt="Hotovo 0 z 3 souborů. První ceník má neaktivní tlačítko Uložit vybrané a nabízí přeskočení souboru nebo ukončení importu" style="width: 250px;" />
+  <img src="screenshots/pdf_import_prubeh_2.jpg" alt="Hotovo 1 z 3 souborů. Druhý ceník lze uložit a upozornění uvádí platnost do konce roku 2026" style="width: 250px;" />
+  <img src="screenshots/pdf_import_prubeh_3.jpg" alt="Hotovo 2 z 3 souborů. Poslední ceník nelze uložit kvůli chybějícím regulovaným cenám a lze ho přeskočit" style="width: 250px;" />
 </p>
 
 #### Stažení ceníku a výběr z úložiště
@@ -246,7 +246,7 @@ dvou, protože po nich ještě čeká další PDF.
    jste PDF uložili, a vyberte stažený soubor.
 
 <p style="text-align: center;">
-  <img src="screenshots/pdf_rozcestnik.jpg" alt="Rozcestník Stáhnout ceníky se seznamem dodavatelů a tlačítky Otevřít stránku" width="300" />
+  <img src="screenshots/pdf_rozcestnik.jpg" alt="Rozcestník Stáhnout ceníky se seznamem dodavatelů a tlačítky Otevřít stránku" style="width: 300px;" />
 </p>
 
 Pro úspěšný automatický import je nutné použít **kompletní PDF ceník** obsahující jak obchodní ceny
@@ -299,9 +299,9 @@ Volba **Zohlednit zastropování cen v roce 2023** zapne přepočet podle histor
 se použije. Nastavení potvrďte tlačítkem **Použít**.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_1.jpg" alt="Podrobné zobrazení odečtů s ceníkem, spotřebou, zálohou a bilancí" width="250" />
-  <img src="screenshots/mes_2.jpg" alt="Stručné zobrazení odečtů se stavy počítadel, dílčími náklady a rozdílem" width="250" />
-  <img src="screenshots/mes_3.jpg" alt="Krátké zobrazení odečtů se souhrnnou spotřebou, cenou a rozdílem" width="250" />
+  <img src="screenshots/mes_1.jpg" alt="Podrobné zobrazení odečtů s ceníkem, spotřebou, zálohou a bilancí" style="width: 250px;" />
+  <img src="screenshots/mes_2.jpg" alt="Stručné zobrazení odečtů se stavy počítadel, dílčími náklady a rozdílem" style="width: 250px;" />
+  <img src="screenshots/mes_3.jpg" alt="Krátké zobrazení odečtů se souhrnnou spotřebou, cenou a rozdílem" style="width: 250px;" />
 </p>
 
 V kartě **Období** nastavte mezní data **Od** a **Do**, vyberte rozsah v kalendáři nebo použijte
@@ -311,9 +311,9 @@ Nad omezeným seznamem uvidíte zobrazené období, počet záznamů a souhrnnou
 odečtů. Předvolba **Všechny odečty** zruší časové omezení.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_4.jpg" alt="Možnosti zobrazení se třemi režimy, obdobím a přepínačem zastropování roku 2023" width="250" />
-  <img src="screenshots/mes_5.jpg" alt="Dialog období měsíčních odečtů s daty a rychlými předvolbami" width="250" />
-  <img src="screenshots/mes_6.jpg" alt="Filtrované odečty se souhrnnou bilancí a počtem záznamů" width="250" />
+  <img src="screenshots/mes_4.jpg" alt="Možnosti zobrazení se třemi režimy, obdobím a přepínačem zastropování roku 2023" style="width: 250px;" />
+  <img src="screenshots/mes_5.jpg" alt="Dialog období měsíčních odečtů s daty a rychlými předvolbami" style="width: 250px;" />
+  <img src="screenshots/mes_6.jpg" alt="Filtrované odečty se souhrnnou bilancí a počtem záznamů" style="width: 250px;" />
 </p>
 
 Příspěvek POZE je samostatná položka výpočtu. Ve výpočtu odečtů záleží na roku období a hodnotě z
@@ -337,8 +337,8 @@ Pokud se zobrazí upozornění na chybějící poslední fakturu, můžete pokra
 průběžnou bilanci od určitého data doplňte [výchozí hodnoty ve fakturaci](#nav-fakturace).
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_7.jpg" alt="Formulář nového odečtu se stavy počítadel, zálohou a rozbalenými dalšími údaji" width="250" />
-  <img src="screenshots/mes_8.jpg" alt="Kalendář pro výběr data odečtu" width="250" />
+  <img src="screenshots/mes_7.jpg" alt="Formulář nového odečtu se stavy počítadel, zálohou a rozbalenými dalšími údaji" style="width: 250px;" />
+  <img src="screenshots/mes_8.jpg" alt="Kalendář pro výběr data odečtu" style="width: 250px;" />
 </p>
 
 ### Další měsíční záznamy
@@ -369,9 +369,9 @@ zúžíte [filtrem pro měsíční odečty](#filtrace-ceniku). Šipkou zpět se 
 zkontrolujte název a platnost vybraného ceníku a uložte odečet.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_9.jpg" alt="Vyplněný odečet s tlačítkem přiřazeného ceníku a volbou přidání zálohy do Fakturace" width="250" />
-  <img src="screenshots/mes_10.jpg" alt="Výběr jednoho ceníku pro měsíční odečet s aktivním filtrem" width="250" />
-  <img src="screenshots/mes_11.jpg" alt="Filtr ceníků pro měsíční odečty s distribuční sazbou a rozsahem platnosti" width="250" />
+  <img src="screenshots/mes_9.jpg" alt="Vyplněný odečet s tlačítkem přiřazeného ceníku a volbou přidání zálohy do Fakturace" style="width: 250px;" />
+  <img src="screenshots/mes_10.jpg" alt="Výběr jednoho ceníku pro měsíční odečet s aktivním filtrem" style="width: 250px;" />
+  <img src="screenshots/mes_11.jpg" alt="Filtr ceníků pro měsíční odečty s distribuční sazbou a rozsahem platnosti" style="width: 250px;" />
 </p>
 
 <a id="nav-fakturace"></a>
@@ -393,10 +393,10 @@ režimu provedeny ruční změny, přepnutím zpět do automatického režimu se
 měsíčních odečtů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_1.jpg" alt="Fakturace s položkou Období bez faktury a seznamem uložených faktur" width="200" />
-  <img src="screenshots/fak_2.jpg" alt="Upozornění na chybějící poslední fakturu s tlačítkem Nastavení" width="200" />
-  <img src="screenshots/fak_3.jpg" alt="Dialog pro zadání výchozího data a počátečních stavů VT a NT" width="200" />
-  <img src="screenshots/fak_4.jpg" alt="Nastavení automatického generování období bez faktury" width="200" />
+  <img src="screenshots/fak_1.jpg" alt="Fakturace s položkou Období bez faktury a seznamem uložených faktur" style="width: 200px;" />
+  <img src="screenshots/fak_2.jpg" alt="Upozornění na chybějící poslední fakturu s tlačítkem Nastavení" style="width: 200px;" />
+  <img src="screenshots/fak_3.jpg" alt="Dialog pro zadání výchozího data a počátečních stavů VT a NT" style="width: 200px;" />
+  <img src="screenshots/fak_4.jpg" alt="Nastavení automatického generování období bez faktury" style="width: 200px;" />
 </p>
 
 ### Automatický režim
@@ -423,10 +423,10 @@ Rozdělení období na jednotlivé části je v tomto režimu plně na uživatel
   náhled obou úseků a výsledku sloučení. Po kontrole klepněte na **Spoj**.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_5.jpg" alt="Záznam období bez faktury s tlačítky Uprav, Rozděl a Spoj s předchozím" width="200" />
-  <img src="screenshots/fak_6.jpg" alt="Dialog rozdělení období s posuvníky a náhledem dvou úseků" width="200" />
-  <img src="screenshots/fak_7.jpg" alt="Dialog se dvěma sousedními úseky a výsledkem jejich sloučení" width="200" />
-  <img src="screenshots/fak_8.jpg" alt="Formulář ruční úpravy období a stavů počítadel" width="200" />
+  <img src="screenshots/fak_5.jpg" alt="Záznam období bez faktury s tlačítky Uprav, Rozděl a Spoj s předchozím" style="width: 200px;" />
+  <img src="screenshots/fak_6.jpg" alt="Dialog rozdělení období s posuvníky a náhledem dvou úseků" style="width: 200px;" />
+  <img src="screenshots/fak_7.jpg" alt="Dialog se dvěma sousedními úseky a výsledkem jejich sloučení" style="width: 200px;" />
+  <img src="screenshots/fak_8.jpg" alt="Formulář ruční úpravy období a stavů počítadel" style="width: 200px;" />
 </p>
 
 Pokud na sebe dva sousední záznamy nenavazují, aplikace zobrazí výstražnou ikonu a zvýrazní dotčené
@@ -435,8 +435,8 @@ mezera v datech. Starší záznam končí 9. 8. a novější začíná 11. 8., t
 **Uprav** zkontrolujte hraniční data a stavy počítadel podle skutečných odečtů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_9.jpg" alt="Dva sousední úseky s výstražnými ikonami a červeně označenými nenavazujícími stavy počítadla VT" width="300" />
-  <img src="screenshots/fak_10.jpg" alt="Fakturace s červeně zvýrazněnou mezerou mezi 9. a 11. srpnem a rozdílnými stavy počítadla VT" width="300" />
+  <img src="screenshots/fak_9.jpg" alt="Dva sousední úseky s výstražnými ikonami a červeně označenými nenavazujícími stavy počítadla VT" style="width: 300px;" />
+  <img src="screenshots/fak_10.jpg" alt="Fakturace s červeně zvýrazněnou mezerou mezi 9. a 11. srpnem a rozdílnými stavy počítadla VT" style="width: 300px;" />
 </p>
 
 ### Detail faktury
@@ -468,10 +468,10 @@ Záloha zapsaná u měsíčního odečtu se sem přenese, pokud při vytvoření
 zálohu do seznamu plateb Fakturace**.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_11.jpg" alt="Záložka Faktura s odečtovými úseky, celkovou cenou a bilancí" width="200" />
-  <img src="screenshots/fak_12.jpg" alt="Nabídka dílčích položek na záložce Detaily" width="200" />
-  <img src="screenshots/fak_13.jpg" alt="Rozpis stálého platu za jednotlivé úseky faktury" width="200" />
-  <img src="screenshots/fak_14.jpg" alt="Záložka Platby s evidovanými zálohami a jejich daty" width="200" />
+  <img src="screenshots/fak_11.jpg" alt="Záložka Faktura s odečtovými úseky, celkovou cenou a bilancí" style="width: 200px;" />
+  <img src="screenshots/fak_12.jpg" alt="Nabídka dílčích položek na záložce Detaily" style="width: 200px;" />
+  <img src="screenshots/fak_13.jpg" alt="Rozpis stálého platu za jednotlivé úseky faktury" style="width: 200px;" />
+  <img src="screenshots/fak_14.jpg" alt="Záložka Platby s evidovanými zálohami a jejich daty" style="width: 200px;" />
 </p>
 
 ### Přidání a úprava uložených faktur
@@ -485,8 +485,8 @@ zobrazit upozornění na nenavazující nebo neúplné záznamy.
 Klepnutím na položku faktury se zobrazí její ovládací tlačítka. Lze změnit číslo faktury, přidat odečtové záznamy, přidat zálohové platby nebo celou fakturu smazat.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_15.jpg" alt="Dialog pro zadání čísla nové faktury" width="300" />
-  <img src="screenshots/fak_16.jpg" alt="Nová faktura bez vyplněných odečtových záznamů" width="300" />
+  <img src="screenshots/fak_15.jpg" alt="Dialog pro zadání čísla nové faktury" style="width: 300px;" />
+  <img src="screenshots/fak_16.jpg" alt="Nová faktura bez vyplněných odečtových záznamů" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava zálohové platby
@@ -502,9 +502,9 @@ evidenci dříve přiznaného příspěvku.
 Již zadané platby lze upravovat. Klepnutím na položku platby se zobrazí tlačítka pro úpravu, odstranění nebo přiřazení platby k jiné faktuře. Dialog pro úpravu je stejný jako dialog pro přidání, pouze jsou v něm předvyplněné původní hodnoty. Smazání platby se provede po potvrzení dialogu.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_17.jpg" alt="Formulář platby s datem, částkou a typy plateb a slev" width="300" />
-  <img src="screenshots/fak_18.jpg" alt="Záložka Platby s nově zapsanou měsíční zálohou" width="300" />
-  <img src="screenshots/fak_19.jpg" alt="Potvrzení smazání platby a nabídka akcí vybrané položky" width="300" />
+  <img src="screenshots/fak_17.jpg" alt="Formulář platby s datem, částkou a typy plateb a slev" style="width: 300px;" />
+  <img src="screenshots/fak_18.jpg" alt="Záložka Platby s nově zapsanou měsíční zálohou" style="width: 300px;" />
+  <img src="screenshots/fak_19.jpg" alt="Potvrzení smazání platby a nabídka akcí vybrané položky" style="width: 300px;" />
 </p>
 
 ### Přidání a úprava záznamů faktury
@@ -522,10 +522,10 @@ V seznamu se faktura zařadí podle začátku zadaného období. Pokud se u ní 
 zkontrolujte úplnost údajů a návaznost období a stavů měřičů.
 
 <p style="text-align: center;">
-  <img src="screenshots/fak_20.jpg" alt="Formulář odečtového záznamu faktury s obdobím a stavy VT a NT" width="300" />
-  <img src="screenshots/fak_21.jpg" alt="Záznam faktury s tlačítky Uprav a Smaž a vypočteným nedoplatkem" width="300" />
-  <img src="screenshots/fak_22.jpg" alt="Potvrzení před smazáním záznamu z faktury" width="300" />
-  <img src="screenshots/fak_23.jpg" alt="Seznam faktur s rozbalenými akcemi vybrané faktury" width="300" />
+  <img src="screenshots/fak_20.jpg" alt="Formulář odečtového záznamu faktury s obdobím a stavy VT a NT" style="width: 300px;" />
+  <img src="screenshots/fak_21.jpg" alt="Záznam faktury s tlačítky Uprav a Smaž a vypočteným nedoplatkem" style="width: 300px;" />
+  <img src="screenshots/fak_22.jpg" alt="Potvrzení před smazáním záznamu z faktury" style="width: 300px;" />
+  <img src="screenshots/fak_23.jpg" alt="Seznam faktur s rozbalenými akcemi vybrané faktury" style="width: 300px;" />
 </p>
 
 <a id="filtrace-ceniku"></a>
@@ -644,14 +644,14 @@ dosavadní označení. Tlačítkem **Zobrazit vybrané** si zkontrolujete i ozna
 aktuálním filtrem. Podrobný postup najdete v kapitole [Porovnání ceníků](#nav-porovnani-ceniku).
 
 <p style="text-align: center;">
-  <img src="screenshots/fil_1.jpg" alt="Obecný filtr se zvoleným produktem Aku a vyplněným rozsahem platnosti" width="200" />
-  <img src="screenshots/cena_4.jpg" alt="Obecný filtr v seznamu uložených ceníků" width="300" />
-  <img src="screenshots/cena_1.jpg" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" width="200" />
+  <img src="screenshots/fil_1.jpg" alt="Obecný filtr se zvoleným produktem Aku a vyplněným rozsahem platnosti" style="width: 200px;" />
+  <img src="screenshots/cena_4.jpg" alt="Obecný filtr v seznamu uložených ceníků" style="width: 300px;" />
+  <img src="screenshots/cena_1.jpg" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" style="width: 200px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/fil_2.jpg" alt="Vícenásobný výběr distribučních sazeb D25d a D26d v dialogu Sazba dist." width="250" />
-  <img src="screenshots/fil_3.jpg" alt="Výsledky obecného filtru se dvěma zaškrtnutými ceníky a tlačítkem Zobrazit vybrané" width="250" />
+  <img src="screenshots/fil_2.jpg" alt="Vícenásobný výběr distribučních sazeb D25d a D26d v dialogu Sazba dist." style="width: 250px;" />
+  <img src="screenshots/fil_3.jpg" alt="Výsledky obecného filtru se dvěma zaškrtnutými ceníky a tlačítkem Zobrazit vybrané" style="width: 250px;" />
 </p>
 
 ### Filtr ceníků pro měsíční odečty
@@ -671,9 +671,9 @@ chová
 výběr ve fakturaci.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_9.jpg" alt="Formulář měsíčního odečtu s tlačítkem přiřazeného ceníku" width="200" />
-  <img src="screenshots/mes_10.jpg" alt="Výběr jednoho ceníku se štítkem Filtr pro měsíční odečty nad seznamem" width="200" />
-  <img src="screenshots/mes_11.jpg" alt="Dialog Filtr ceníků – Měsíční odečty se sazbou D26d a rozsahem platnosti" width="200" />
+  <img src="screenshots/mes_9.jpg" alt="Formulář měsíčního odečtu s tlačítkem přiřazeného ceníku" style="width: 200px;" />
+  <img src="screenshots/mes_10.jpg" alt="Výběr jednoho ceníku se štítkem Filtr pro měsíční odečty nad seznamem" style="width: 200px;" />
+  <img src="screenshots/mes_11.jpg" alt="Dialog Filtr ceníků – Měsíční odečty se sazbou D26d a rozsahem platnosti" style="width: 200px;" />
 </p>
 
 ### Filtr ceníků pro fakturaci
@@ -699,7 +699,7 @@ mění nabídku při ručním výběru, zatímco ceníky již uložené u jednot
 přiřazené.
 
 <p style="text-align: center;">
-  <img src="screenshots/fil_faktury.jpg" alt="Výběr ceníku ve Fakturaci se štítkem Filtr pro faktury (aktivní), počtem výsledků a volbou jednoho ceníku" width="300" />
+  <img src="screenshots/fil_faktury.jpg" alt="Výběr ceníku ve Fakturaci se štítkem Filtr pro faktury (aktivní), počtem výsledků a volbou jednoho ceníku" style="width: 300px;" />
 </p>
 
 <a id="nav-porovnani-ceniku"></a>
@@ -729,8 +729,8 @@ Porovnání můžete otevřít také ze seznamu **Ceníky**. V horní liště za
 položky a v nabídce se třemi tečkami zvolte **Porovnat vybrané ceníky**.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_1.jpg" alt="Úvodní obrazovka Porovnání se čtyřmi záložkami a ikonami pro výběr ceníků a vstupní hodnoty" width="200" />
-  <img src="screenshots/com_2.jpg" alt="Výběr tří ceníků s aktivním obecným filtrem a akcemi pro zobrazení či zrušení výběru" width="200" />
+  <img src="screenshots/com_1.jpg" alt="Úvodní obrazovka Porovnání se čtyřmi záložkami a ikonami pro výběr ceníků a vstupní hodnoty" style="width: 200px;" />
+  <img src="screenshots/com_2.jpg" alt="Výběr tří ceníků s aktivním obecným filtrem a akcemi pro zobrazení či zrušení výběru" style="width: 200px;" />
 </p>
 
 #### Použití filtrů při výběru
@@ -741,7 +741,7 @@ zaškrtnuté ceníky zůstanou vybrané, i když je nový filtr skryje. Zkontrol
 vybrané**.
 
 <p style="text-align: center;">
-  <img src="screenshots/fil_1.jpg" alt="Obecný filtr ceníků s výběrem produktu, sazby, dodavatele, původu a platnosti" width="200" />
+  <img src="screenshots/fil_1.jpg" alt="Obecný filtr ceníků s výběrem produktu, sazby, dodavatele, původu a platnosti" style="width: 200px;" />
 </p>
 
 ### Vstupní hodnoty a přepočet
@@ -777,7 +777,7 @@ místo. Aktuální spotřebu, jistič a délku období můžete zkontrolovat na 
 porovnání** v záložce **Přehled**.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_vstupni_hodnoty.jpg" alt="Dialog Nastavení parametrů pro porovnání s ručním zadáním spotřeby VT a NT v MWh, 12 měsíci a jističem 3 × 25 A" width="300" />
+  <img src="screenshots/com_vstupni_hodnoty.jpg" alt="Dialog Nastavení parametrů pro porovnání s ručním zadáním spotřeby VT a NT v MWh, 12 měsíci a jističem 3 × 25 A" style="width: 300px;" />
 </p>
 
 ### Přehled výsledků a žebříček
@@ -813,9 +813,9 @@ Některé popisky uvádějí „roční“ nebo „Kč/rok“. Zobrazené součt
 měsíců. Při změně na šest měsíců proto součet představuje zadaný půlrok.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_3.jpg" alt="Přehled vstupní spotřeby a jednotkových cen VT, NT a stálých plateb s DPH" width="200" />
-  <img src="screenshots/com_4.jpg" alt="Vodorovný graf celkových nákladů tří ceníků s označením nejlevnějšího" width="200" />
-  <img src="screenshots/com_5.jpg" alt="Žebříček s nejvýhodnější variantou a rozdíly ostatních nabídek v korunách a procentech" width="200" />
+  <img src="screenshots/com_3.jpg" alt="Přehled vstupní spotřeby a jednotkových cen VT, NT a stálých plateb s DPH" style="width: 200px;" />
+  <img src="screenshots/com_4.jpg" alt="Vodorovný graf celkových nákladů tří ceníků s označením nejlevnějšího" style="width: 200px;" />
+  <img src="screenshots/com_5.jpg" alt="Žebříček s nejvýhodnější variantou a rozdíly ostatních nabídek v korunách a procentech" style="width: 200px;" />
 </p>
 
 ### Grafy
@@ -841,9 +841,9 @@ Zvýraznění nejvýhodnějšího ceníku se řídí celkovými náklady v žeb�
 veličinu proto porovnávejte i samotné částky a délky pruhů.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_6.jpg" alt="Skládané pruhy obchodní a regulované složky a daně z elektřiny" width="200" />
-  <img src="screenshots/com_7.jpg" alt="Graf cenových rozdílů v korunách oproti nejlevnějšímu ceníku" width="200" />
-  <img src="screenshots/com_8.jpg" alt="Rozbalená nabídka devíti srovnávaných veličin" width="200" />
+  <img src="screenshots/com_6.jpg" alt="Skládané pruhy obchodní a regulované složky a daně z elektřiny" style="width: 200px;" />
+  <img src="screenshots/com_7.jpg" alt="Graf cenových rozdílů v korunách oproti nejlevnějšímu ceníku" style="width: 200px;" />
+  <img src="screenshots/com_8.jpg" alt="Rozbalená nabídka devíti srovnávaných veličin" style="width: 200px;" />
 </p>
 
 ### Výhodnost sazeb
@@ -880,8 +880,8 @@ podmínky distributora**. Před rozhodnutím podle ceny si v podmínkách ověř
 vaše odběrné místo dostupná.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_9.jpg" alt="Modelová spotřeba VT a NT na posuvnících a slovní výsledek analýzy bodu zvratu" width="200" />
-  <img src="screenshots/com_10.jpg" alt="Křivky nákladů s vyznačenou aktuální spotřebou a bodem zvratu nad kartou podmínek sazby" width="200" />
+  <img src="screenshots/com_9.jpg" alt="Modelová spotřeba VT a NT na posuvnících a slovní výsledek analýzy bodu zvratu" style="width: 200px;" />
+  <img src="screenshots/com_10.jpg" alt="Křivky nákladů s vyznačenou aktuální spotřebou a bodem zvratu nad kartou podmínek sazby" style="width: 200px;" />
 </p>
 
 ### Tabulka
@@ -911,7 +911,7 @@ ceníku se zadaným NT nebo při odlišném výpočtu POZE. Při porovnání jed
 celou spotřebu jako VT a NT ponechte na nule.
 
 <p style="text-align: center;">
-  <img src="screenshots/com_11.jpg" alt="Výběr levého a pravého ceníku a podrobná tabulka s jednotkami, DPH a sloupcem Rozdíl" width="200" />
+  <img src="screenshots/com_11.jpg" alt="Výběr levého a pravého ceníku a podrobná tabulka s jednotkami, DPH a sloupcem Rozdíl" style="width: 200px;" />
 </p>
 
 <a id="nav-hdo"></a>
@@ -938,9 +938,9 @@ určování aktuálního tarifu a dalších přepnutí.
   uloženými relé.
 
 <p style="text-align: center;">
-  <img src="screenshots/hdo_1.jpg" alt="Seznam časů HDO se dvěma intervaly a volbami upozornění na začátek a konec" width="250" />
-  <img src="screenshots/hdo_2.jpg" alt="Hodiny HDO s jediným rozvrhem pro celý týden" width="250" />
-  <img src="screenshots/hdo_3.jpg" alt="Hodiny s odlišnými rozvrhy pro všední dny a víkend a s více druhy relé" width="250" />
+  <img src="screenshots/hdo_1.jpg" alt="Seznam časů HDO se dvěma intervaly a volbami upozornění na začátek a konec" style="width: 250px;" />
+  <img src="screenshots/hdo_2.jpg" alt="Hodiny HDO s jediným rozvrhem pro celý týden" style="width: 250px;" />
+  <img src="screenshots/hdo_3.jpg" alt="Hodiny s odlišnými rozvrhy pro všední dny a víkend a s více druhy relé" style="width: 250px;" />
 </p>
 
 ### Přidání a načtení časů
@@ -956,9 +956,9 @@ určování aktuálního tarifu a dalších přepnutí.
    místo.
 
 <p style="text-align: center;">
-  <img src="screenshots/hdo_4.jpg" alt="Seznam HDO s výběrem relé a rozvrhem pro pracovní dny" width="250" />
-  <img src="screenshots/hdo_5.jpg" alt="Formulář pro načtení časů HDO s vybraným územím EG.D a zadaným kódem" width="250" />
-  <img src="screenshots/hdo_6.jpg" alt="Načtené časy HDO s rozsahem platnosti a volbami pro uložení" width="250" />
+  <img src="screenshots/hdo_4.jpg" alt="Seznam HDO s výběrem relé a rozvrhem pro pracovní dny" style="width: 250px;" />
+  <img src="screenshots/hdo_5.jpg" alt="Formulář pro načtení časů HDO s vybraným územím EG.D a zadaným kódem" style="width: 250px;" />
+  <img src="screenshots/hdo_6.jpg" alt="Načtené časy HDO s rozsahem platnosti a volbami pro uložení" style="width: 250px;" />
 </p>
 
 <a id="nav-graf-spotreby"></a>
@@ -977,13 +977,13 @@ sloupce. Barvy tarifů vycházejí z [nastavení barev grafů](#nav-barvy-grafu)
   přeskočí měsíce bez dat. Podržením tlačítka zobrazíte nápovědu k jeho funkci.
 
 <p style="text-align: center;">
-  <img src="screenshots/graf_1.jpg" alt="Čárový graf spotřeby ve vysokém a nízkém tarifu" width="500" />
-  <img src="screenshots/graf_2.jpg" alt="Sloupcový graf spotřeby s oddělenými sloupci VT a NT" width="500" />
+  <img src="screenshots/graf_1.jpg" alt="Čárový graf spotřeby ve vysokém a nízkém tarifu" style="width: 500px;" />
+  <img src="screenshots/graf_2.jpg" alt="Sloupcový graf spotřeby s oddělenými sloupci VT a NT" style="width: 500px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/graf_3.jpg" alt="Čárový graf roční spotřeby s ovládáním měřítka" width="500" />
-  <img src="screenshots/graf_4.jpg" alt="Srovnání spotřeby ve stejném kalendářním měsíci mezi roky a šipky pro změnu měsíce" width="500" />
+  <img src="screenshots/graf_3.jpg" alt="Čárový graf roční spotřeby s ovládáním měřítka" style="width: 500px;" />
+  <img src="screenshots/graf_4.jpg" alt="Srovnání spotřeby ve stejném kalendářním měsíci mezi roky a šipky pro změnu měsíce" style="width: 500px;" />
 </p>
 
 <a id="nav-zaloha-lokalni"></a>
@@ -1003,7 +1003,7 @@ a [uložené filtry ceníků](#filtrace-ceniku) jednotlivých odběrných míst.
 3. Soubor ZIP lze z vybrané složky zkopírovat do počítače nebo jiného úložiště.
 
 <p style="text-align: center;">
-  <img src="screenshots/zal_1.jpg" alt="Seznam místních záloh s ikonami vytvoření zálohy a výběru složky" width="250" />
+  <img src="screenshots/zal_1.jpg" alt="Seznam místních záloh s ikonami vytvoření zálohy a výběru složky" style="width: 250px;" />
 </p>
 
 ### Obnova, odeslání a odstranění záloh
@@ -1021,8 +1021,8 @@ zálohy uvidíte v části [Záloha Google](#nav-zaloha-google). Aplikace může
 podle [nastavení připojení](#nav-nastaveni). Pokud odeslání zařadíte do fronty, počká na Wi‑Fi.
 
 <p style="text-align: center;">
-  <img src="screenshots/zal_3.jpg" alt="Akce pro obnovení, odeslání na Google Drive a smazání jedné zálohy" width="250" />
-  <img src="screenshots/zal_2.jpg" alt="Vícenásobný výběr tří místních záloh" width="250" />
+  <img src="screenshots/zal_3.jpg" alt="Akce pro obnovení, odeslání na Google Drive a smazání jedné zálohy" style="width: 250px;" />
+  <img src="screenshots/zal_2.jpg" alt="Vícenásobný výběr tří místních záloh" style="width: 250px;" />
 </p>
 
 <a id="nav-zaloha-google"></a>
@@ -1041,9 +1041,9 @@ Drive. Běžné soubory z Disku se v seznamu nezobrazují.
 - Ikonou účtu v horní liště se můžete také odhlásit.
 
 <p style="text-align: center;">
-  <img src="screenshots/gog_1.jpg" alt="Google zálohy s nabídkou obnovit data, uložit do zařízení a smazat" width="250" />
-  <img src="screenshots/gog_2.jpg" alt="Režim výběru záloh Google se zaškrtávacími políčky" width="250" />
-  <img src="screenshots/gog_3.jpg" alt="Nabídka Uložit vybrané pro dvě označené zálohy Google" width="250" />
+  <img src="screenshots/gog_1.jpg" alt="Google zálohy s nabídkou obnovit data, uložit do zařízení a smazat" style="width: 250px;" />
+  <img src="screenshots/gog_2.jpg" alt="Režim výběru záloh Google se zaškrtávacími políčky" style="width: 250px;" />
+  <img src="screenshots/gog_3.jpg" alt="Nabídka Uložit vybrané pro dvě označené zálohy Google" style="width: 250px;" />
 </p>
 
 <a id="nav-export-ceniku"></a>
@@ -1058,7 +1058,7 @@ Ceníky se ukládají ve formátu JSON. Seznam obsahuje ceníky uložené v apli
 Kliknutím na položku ceníku a potvrzením dialogu se ceník uloží do vybrané složky. Takto uložený soubor lze přenést do jiné instalace aplikace na jiném zařízení.
 
 <p style="text-align: center;">
-  <img src="screenshots/exp_1.jpg" alt="Seznam skupin ceníků k exportu a tlačítko Vyber složku" width="300" />
+  <img src="screenshots/exp_1.jpg" alt="Seznam skupin ceníků k exportu a tlačítko Vyber složku" style="width: 300px;" />
 </p>
 
 <a id="nav-import-ceniku"></a>
@@ -1074,7 +1074,7 @@ Klepněte na soubor a zvolte **Přidat do aplikace**. V dialogu vyberte distribu
 **Smazat** u souboru slouží k odstranění souboru z vybrané složky.
 
 <p style="text-align: center;">
-  <img src="screenshots/imp_1.jpg" alt="Import souborů JSON s akcemi Přidat do aplikace a Smazat" width="300" />
+  <img src="screenshots/imp_1.jpg" alt="Import souborů JSON s akcemi Přidat do aplikace a Smazat" style="width: 300px;" />
 </p>
 
 <a id="nav-nastaveni"></a>
@@ -1137,8 +1137,8 @@ aplikace obnoví také umístěné widgety. Vypnutím se vrátíte k výchozí p
 a nízkého tarifu se vybírají samostatně.
 
 <p style="text-align: center;">
-  <img src="screenshots/nas_1.jpg" alt="Nastavení aplikace – upozornění, přidávání záznamů a navigace" width="300" />
-  <img src="screenshots/nas_2.jpg" alt="Nastavení aplikace – navigace, připojení a dynamické barvy" width="300" />
+  <img src="screenshots/nas_1.jpg" alt="Nastavení aplikace – upozornění, přidávání záznamů a navigace" style="width: 300px;" />
+  <img src="screenshots/nas_2.jpg" alt="Nastavení aplikace – navigace, připojení a dynamické barvy" style="width: 300px;" />
 </p>
 
 <a id="nav-barvy-grafu"></a>
@@ -1171,8 +1171,8 @@ kartě **Přehled spotřeby**. V původním přehledu se použije v grafech spot
 Barvy tarifů přebírají i widgety aktuální ceny a spotřeby na ploše Androidu.
 
 <p style="text-align: center;">
-  <img src="screenshots/barva_1.jpg" alt="Barva tarifu – vzorníky VT a NT a jemné doladění barev" width="300" />
-  <img src="screenshots/barva_2.jpg" alt="Barva tarifu – náhled grafu, doporučené dvojice a uložení" width="300" />
+  <img src="screenshots/barva_1.jpg" alt="Barva tarifu – vzorníky VT a NT a jemné doladění barev" style="width: 300px;" />
+  <img src="screenshots/barva_2.jpg" alt="Barva tarifu – náhled grafu, doporučené dvojice a uložení" style="width: 300px;" />
 </p>
 
 <a id="nav-widgety"></a>
@@ -1199,8 +1199,8 @@ Na prvním snímku je nastavení widgetu **Aktuální cena elektřiny** pro odb�
 snímek ukazuje všech pět widgetů na ploše pro stejné místo.
 
 <p style="text-align: center;">
-  <img src="screenshots/widget_nastaveni_ceny.jpg" alt="Nastavení widgetu Aktuální cena elektřiny s vybraným odběrným místem Domov, celkovou cenou a zahrnutou DPH" width="300" />
-  <img src="screenshots/widgets.jpg" alt="Pět widgetů na ploše Androidu pro odběrné místo Domov s cenou elektřiny, hodinami HDO, spotřebou, finanční bilancí a zkratkou pro nový odečet" width="300" />
+  <img src="screenshots/widget_nastaveni_ceny.jpg" alt="Nastavení widgetu Aktuální cena elektřiny s vybraným odběrným místem Domov, celkovou cenou a zahrnutou DPH" style="width: 300px;" />
+  <img src="screenshots/widgets.jpg" alt="Pět widgetů na ploše Androidu pro odběrné místo Domov s cenou elektřiny, hodinami HDO, spotřebou, finanční bilancí a zkratkou pro nový odečet" style="width: 300px;" />
 </p>
 
 <a id="nav-prehled"></a>
@@ -1213,7 +1213,7 @@ spotřeby a fakturám. Pokud máte zobrazenou původní podobu obrazovky, v nab�
 zvolte **Přepnout na nový přehled**. Položkou **Přepnout na původní přehled** se můžete vrátit.
 
 <p style="text-align: center;">
-  <img src="screenshots/prehled_1.jpg" alt="Horní část nového Přehledu s cenami VT a NT, hodinami HDO a podíly spotřeby" width="300" />
+  <img src="screenshots/prehled_1.jpg" alt="Horní část nového Přehledu s cenami VT a NT, hodinami HDO a podíly spotřeby" style="width: 300px;" />
 </p>
 
 ### Výběr odběrného místa
@@ -1364,7 +1364,7 @@ Tlačítko **Zobrazit všechny faktury** otevře seznam **Fakturace** pro zobraz
 ještě nemáte žádnou vyúčtovanou fakturu, karta zobrazí **Zatím žádné vyúčtované faktury**.
 
 <p style="text-align: center;">
-  <img src="screenshots/prehled_2.jpg" alt="Dolní část Přehledu s ročním odhadem, finanční bilancí a posledními fakturami" width="300" />
+  <img src="screenshots/prehled_2.jpg" alt="Dolní část Přehledu s ročním odhadem, finanční bilancí a posledními fakturami" style="width: 300px;" />
 </p>
 
 ### Původní přehled
