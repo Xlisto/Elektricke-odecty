@@ -225,8 +225,13 @@ V horní části obrazovky je možné přepínat režim **Zkrácený**. Ve zkrá
 Přepínač **Zastropované ceny v r. 2023** slouží pro přepočet záznamů podle pravidel platných pro rok 2023. U běžných novějších záznamů zůstává vypnutý.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_1.png" alt="Měsíční odečty 1" style="width: 300px;" />
-  <img src="screenshots/mes_2.png" alt="Měsíční odečty 2" style="width: 300px;" />
+  <img src="screenshots/mes_1.jpg" alt="Měsíční odečty 1" style="width: 300px;" />
+  <img src="screenshots/mes_2.jpg" alt="Měsíční odečty 2" style="width: 300px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/mes_3.jpg" alt="Měsíční odečty 3" style="width: 300px;" />
+  <img src="screenshots/mes_4.jpg" alt="Měsíční odečty 4" style="width: 300px;" />
 </p>
 
 Pravidelným používáním aplikace vzniká delší seznam odečtů. Pro lepší orientaci lze použít tlačítko **Filtr odečtů**. Filtr umožňuje zobrazit pouze záznamy v určitém období. Nastavuje se počáteční datum v části **Měsíční odečty OD** a koncové datum v části **Měsíční odečty DO**. Tlačítkem **Filtrovat** se filtr použije, tlačítkem **Vynulovat filtr** se omezení zruší a znovu se zobrazí všechny záznamy. Tlačítkem **Zrušit** se dialog zavře bez použití změn.
@@ -234,8 +239,8 @@ Pravidelným používáním aplikace vzniká delší seznam odečtů. Pro lepš�
 Pokud je aplikován filtr, v horní části obrazovky se zobrazí souhrnná informace o vybraném období a celkové bilanci. V měsíčních záznamech se vždy počítá s dražší variantou POZE, tedy s částkou 495 Kč/MWh bez DPH. Výjimkou je rok 2026, kdy je tato část ceny snížena na 0 Kč/MWh.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_3.png" alt="Měsíční odečty 3" style="width: 300px;" />
-  <img src="screenshots/mes_12.png" alt="Měsíční odečty 12" style="width: 300px;" />
+  <img src="screenshots/mes_5.jpg" alt="Měsíční odečty 5" style="width: 300px;" />
+  <img src="screenshots/mes_6.jpg" alt="Měsíční odečty 6" style="width: 300px;" />
 </p>
 
 ### Přidání měsíčního záznamu
@@ -260,9 +265,8 @@ Tlačítkem **Uložit** se záznam uloží. Tlačítkem **Zpět** se formulář 
 Při ukládání prvních měsíčních záznamů se může zobrazit upozornění na chybějící poslední fakturu. Toto upozornění souvisí s přesnějším navázáním měsíčních odečtů na fakturaci. Pokud aplikaci teprve začínáte používat a fakturu ještě nemáte zadanou, lze upozornění potvrdit a v zadávání pokračovat.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_4.png" alt="Měsíční odečty 4" style="width: 200px;" />
-  <img src="screenshots/mes_5.png" alt="Měsíční odečty 5" style="width: 200px;" />
-  <img src="screenshots/mes_6.png" alt="Měsíční odečty 6" style="width: 200px;" />
+  <img src="screenshots/mes_7.jpg" alt="Měsíční odečty 7" style="width: 300px;" />
+  <img src="screenshots/mes_8.jpg" alt="Měsíční odečty 8" style="width: 300px;" />
 </p>
 
 ### Další měsíční záznamy
@@ -286,9 +290,9 @@ Ceník lze změnit tlačítkem pro výběr ceníku. Po jeho stisknutí se zobraz
 Pokud je v aplikaci uloženo větší množství ceníků, je vhodné použít [filtraci ceníků](#filtrace-ceniku). Pomocí filtru lze rychle zobrazit pouze ceníky odpovídající požadované distribuční sazbě, dodavateli, distribučnímu území nebo datu platnosti.
 
 <p style="text-align: center;">
-  <img src="screenshots/mes_7.png" alt="Měsíční odečty 7" style="width: 200px;" />
-  <img src="screenshots/mes_8.png" alt="Měsíční odečty 8" style="width: 200px;" />
-  <img src="screenshots/mes_9.png" alt="Měsíční odečty 9" style="width: 200px;" />
+  <img src="screenshots/mes_9.jpg" alt="Měsíční odečty 9" style="width: 200px;" />
+  <img src="screenshots/mes_10.jpg" alt="Měsíční odečty 10" style="width: 200px;" />
+  <img src="screenshots/mes_11.jpg" alt="Měsíční odečty 11" style="width: 200px;" />
 </p>
 
 ## Záznam faktur
