@@ -716,6 +716,8 @@ public class HdoFragment extends Fragment implements OnPaddingChangeListener {
 
     /**
      * Nastaví LayoutManager a ItemDecoration pro RecyclerView podle režimu zobrazení (mřížka vs seznam).
+     * Dva ciferníky na řádek se použijí pouze u grafického režimu s jedním relé (bez legendy).
+     * U více relé (2 nebo 3 relé) je potřeba legenda, proto se zobrazí jedna položka na řádek.
      *
      * @param isGraphic true pokud je aktivní grafický režim
      */
@@ -728,7 +730,11 @@ public class HdoFragment extends Fragment implements OnPaddingChangeListener {
 
         int spacingPx = DensityUtils.dpToPx(requireContext(), 6);
 
-        if (isGraphic && hdoAdapter != null && hdoAdapter.getItemCount() > 1) {
+        boolean useTwoColumns = isGraphic && hdoAdapter != null
+                && hdoAdapter.getItemCount() > 1
+                && hdoAdapter.getActiveTypesCount() <= 1;
+
+        if (useTwoColumns) {
             rvHdo.setLayoutManager(new GridLayoutManager(requireActivity(), 2));
             rvHdo.addItemDecoration(new GridSpacingItemDecoration(2, spacingPx, false));
         } else {

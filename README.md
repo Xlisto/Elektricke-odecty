@@ -491,13 +491,13 @@ tak, aby odpovídal času nastavenému na elektroměru.
 Nalezené seznamy časů je možné uložit do paměti aplikace. Touto akcí se přepíší původně uložené časy. Seznam časů lze také zkopírovat v textové podobě do schránky.
 
 <p style="text-align: center;">
-  <img src="screenshots/hdo_1.png" alt="HDO 1" style="width: 200px;" />
-  <img src="screenshots/hdo_4.png" alt="HDO 4" style="width: 200px;" />
-  <img src="screenshots/hdo_3.png" alt="HDO 3" style="width: 200px;" />
+  <img src="screenshots/hdo_1.jpg" alt="HDO 1" style="width: 200px;" />
+  <img src="screenshots/hdo_2.jpg" alt="HDO 4" style="width: 200px;" />
+  <img src="screenshots/hdo_3.jpg" alt="HDO 3" style="width: 200px;" />
 </p>
 
 <p style="text-align: center;">
-  <img src="screenshots/hdo_2.png" alt="HDO 2" style="width: 200px;" />
+  <img src="screenshots/hdo_4.jpg" alt="HDO 2" style="width: 200px;" />
   <img src="screenshots/hdo_5.jpg" alt="HDO 5" style="width: 200px;" />
   <img src="screenshots/hdo_6.jpg" alt="HDO 6" style="width: 200px;" />
 </p>
