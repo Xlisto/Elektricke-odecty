@@ -4,12 +4,15 @@ package cz.xlisto.elektrodroid;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.ALPHA;
 import static cz.xlisto.elektrodroid.utils.FragmentChange.Transaction.MOVE;
 
+import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.graphics.drawable.GradientDrawable;
@@ -25,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.IntentCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -33,7 +37,9 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cz.xlisto.elektrodroid.modules.settings.SettingsFragment;
@@ -63,6 +69,7 @@ import cz.xlisto.elektrodroid.modules.pricelist.PriceListCompareBoxFragment;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.modules.subscriptionpoint.SubscriptionPointFragment;
 import cz.xlisto.elektrodroid.ownview.MyBottomNavigationView;
+import cz.xlisto.elektrodroid.permission.Permissions;
 import cz.xlisto.elektrodroid.services.HdoNotice;
 import cz.xlisto.elektrodroid.services.MonthlyReadingReminderNotice;
 import cz.xlisto.elektrodroid.shp.ShPDashBoard;
@@ -464,8 +471,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (handleMonthlyReadingReminderIntent(getIntent(), navigationView)) {
             return;
         }
-        boolean handledWidgetIntent = handleWidgetNavigationIntent(getIntent(), navigationView);
-        if (!handledWidgetIntent) {
+        boolean handledPdf = savedInstanceState == null && handlePriceListPdfIntent(getIntent(), navigationView);
+        boolean handledWidgetIntent = !handledPdf && handleWidgetNavigationIntent(getIntent(), navigationView);
+        if (!handledPdf && !handledWidgetIntent) {
             if (savedInstanceState != null) {
                 actualFragment = getSupportFragmentManager().getFragment(savedInstanceState, ACTUAL_FRAGMENT);
                 selectedItemIndex = savedInstanceState.getInt(ACTUAL_SELECTED_ITEM_INDEX);
@@ -539,6 +547,9 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         super.onNewIntent(intent);
         setIntent(intent);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        if (handlePriceListPdfIntent(intent, navigationView)) {
+            return;
+        }
         if (handleHdoNotificationIntent(intent, navigationView)) {
             return;
         }
@@ -546,6 +557,80 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return;
         }
         handleWidgetNavigationIntent(intent, navigationView);
+    }
+
+
+    /**
+     * Otevře import PDF ceníků předaných jinou aplikací.
+     */
+    private boolean handlePriceListPdfIntent(@Nullable Intent intent, @NonNull NavigationView navigationView) {
+        if (intent == null || (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
+            return false;
+        }
+
+        String action = intent.getAction();
+        String type = intent.getType();
+        boolean multiple = Intent.ACTION_SEND_MULTIPLE.equals(action);
+        if ((!"application/pdf".equals(type) && !(multiple && ("application/*".equals(type) || "*/*".equals(type))))
+                || !(multiple || Intent.ACTION_SEND.equals(action) || Intent.ACTION_VIEW.equals(action))) {
+            return false;
+        }
+
+        List<?> attachments;
+        try {
+            if (multiple) {
+                attachments = IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri.class);
+                if (attachments == null || attachments.isEmpty()) {
+                    ArrayList<Uri> clipUris = new ArrayList<>();
+                    ClipData clipData = intent.getClipData();
+                    if (clipData != null) {
+                        for (int index = 0; index < clipData.getItemCount(); index++) {
+                            clipUris.add(clipData.getItemAt(index).getUri());
+                        }
+                    }
+                    attachments = clipUris;
+                }
+            } else {
+                Uri uri = Intent.ACTION_VIEW.equals(action)
+                        ? intent.getData()
+                        : IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri.class);
+                attachments = Collections.singletonList(uri);
+            }
+        } catch (RuntimeException exception) {
+            Log.w("MainActivity", "Neplatná příloha sdíleného PDF", exception);
+            attachments = Collections.emptyList();
+        }
+
+        ArrayList<Uri> pdfUris = new ArrayList<>();
+        boolean skippedAttachment = false;
+        for (Object attachment : attachments) {
+            if (attachment instanceof Uri uri && ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())
+                    && Permissions.getInstance().isPermissionStorageRead(this, uri)) {
+                if (!pdfUris.contains(uri)) {
+                    pdfUris.add(uri);
+                }
+            } else {
+                skippedAttachment = true;
+            }
+        }
+        if (skippedAttachment || pdfUris.isEmpty()) {
+            Toast.makeText(this, R.string.pdf_import_error_detail_read_failed, Toast.LENGTH_LONG).show();
+        }
+        if (pdfUris.isEmpty()) {
+            return false;
+        }
+
+        navigationView.setCheckedItem(R.id.menu_price_list);
+        uncheckAllMenuItems(myNavigationView.getMenu());
+        myNavigationView.getMenu().findItem(R.id.meni_prices).setChecked(true);
+        myBottomNavigationView.getMenu().findItem(R.id.meni_prices).setChecked(true);
+        selectedItemIndex = 1;
+        shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
+        actualFragment = PriceListFragment.newInstanceForPdfImport(pdfUris);
+        FragmentChange.replace(this, actualFragment, ALPHA);
+        setToolbarTitle(getString(R.string.price_lists));
+        drawerLayout.closeDrawer(GravityCompat.START, true);
+        return true;
     }
 
 
@@ -651,10 +736,13 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             return true;
         }
         if (item.getItemId() == 1) {
+            if (isSettingsFragmentVisible()) {
+                return true;
+            }
             uncheckedBottomNavigation();
             actualFragment = SettingsFragment.newInstance();
             FragmentChange.replace(MainActivity.this, actualFragment, MOVE, true);
-            setToolbarTitle(getResources().getString(R.string.settings_app));
+            displayToolbarTitle(getResources().getString(R.string.settings_app));
             return true;
         }
         if (item.getItemId() == 2) {
@@ -1208,10 +1296,49 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
         if (isMultiSelect) {
             toolbarTitle.setText(String.valueOf(selectedCount));
         } else {
-            toolbarTitle.setText(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
+            syncToolbarTitle();
         }
 
         updateAppBarNavigationIcon();
+    }
+
+
+    /**
+     * Zobrazí text v titulku toolbaru bez přepsání uloženého titulku v preferencích.
+     *
+     * @param title titulek k zobrazení
+     */
+    private void displayToolbarTitle(String title) {
+        if (toolbarTitle != null) {
+            toolbarTitle.setText(title);
+        }
+    }
+
+
+    /**
+     * Ověří, zda je v hlavním kontejneru aktuálně zobrazen {@link SettingsFragment}.
+     *
+     * @return {@code true}, pokud je aktuálním fragmentem obrazovka nastavení
+     */
+    private boolean isSettingsFragmentVisible() {
+        return getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView) instanceof SettingsFragment;
+    }
+
+
+    /**
+     * Synchronizuje zobrazovaný titulek toolbaru s aktuálně zobrazeným fragmentem.
+     * Pro obrazovku nastavení zobrazí její titulek bez přepsání uloženého titulku předchozí obrazovky,
+     * při návratu z nastavení obnoví uložený titulek předchozí obrazovky.
+     */
+    private void syncToolbarTitle() {
+        if (toolbarTitle == null || selectionNavigationActive) {
+            return;
+        }
+        if (isSettingsFragmentVisible()) {
+            displayToolbarTitle(getResources().getString(R.string.settings_app));
+        } else {
+            displayToolbarTitle(shPMainActivity.get(ShPMainActivity.PRIMARY_TITLE, getResources().getString(R.string.month_reads)));
+        }
     }
 
 
@@ -1261,7 +1388,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
 
 
     /**
-     * Přepne ikonu v AppBar podle stavu backstacku.
+     * Přepne ikonu v AppBar podle stavu backstacku a synchronizuje titulek toolbaru.
      */
     private void updateAppBarNavigationIcon() {
         if (selectionNavigationActive && selectionNavigationAction != null) {
@@ -1299,6 +1426,7 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
                 ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
                 : DrawerLayout.LOCK_MODE_UNLOCKED);
         drawerToggle.syncState();
+        syncToolbarTitle();
     }
 
 

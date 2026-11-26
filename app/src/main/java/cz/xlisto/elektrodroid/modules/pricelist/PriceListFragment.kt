@@ -25,6 +25,8 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withResumed
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -55,7 +57,11 @@ import cz.xlisto.elektrodroid.utils.FragmentChange
 import cz.xlisto.elektrodroid.utils.SubscriptionPoint
 import cz.xlisto.elektrodroid.utils.UIHelper
 import java.util.Calendar
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import cz.xlisto.elektrodroid.MainActivity
 import cz.xlisto.elektrodroid.ui.FloatingNavScrollListener
 import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener
@@ -107,9 +113,19 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         private const val BTN_BACK_TEXT = "btnBackText"
         private const val KEY_SELECTED_IDS = "keySelectedIds"
         private const val KEY_SELECTION_MODE_ACTIVE = "keySelectionModeActive"
+        private const val KEY_PDF_URIS = "pdfUris"
+        private const val KEY_PDF_BATCH_TOTAL = "pdfBatchTotal"
 
         /** Uložená instance vybraného ceníku pro předání výsledkového balíčku. */
         private var selectedPrice: PriceListModel? = null
+
+        /** Otevře seznam ceníků a načte PDF předané z jiné aplikace. */
+        @JvmStatic
+        fun newInstanceForPdfImport(uris: ArrayList<Uri>): PriceListFragment {
+            val fragment = newInstance(false, -1L)
+            fragment.requireArguments().putParcelableArrayList(KEY_PDF_URIS, uris)
+            return fragment
+        }
 
         /**
          * Vytvoří novou instanci fragmentu pro výběr jednoho ceníku.
@@ -245,11 +261,17 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     private var isFilterOnlySelected = false
     private var isResultReturned = false
     private var shouldScrollToSelected = true
+    private val pendingPdfUris = ArrayList<Uri>()
+    private var pdfBatchTotal = 0
+    private var pdfImportJob: Job? = null
 
     /** Launcher pro výběr PDF souboru ceníku ze zařízení. */
     private val pdfPickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let { processSelectedPdf(it) }
+            if (uri != null) {
+                pendingPdfUris.add(uri)
+                processNextPdf()
+            }
         }
 
     /**
@@ -259,6 +281,12 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         selectedPrice = null
+        (savedInstanceState ?: arguments)?.let {
+            val uris = BundleCompat.getParcelableArrayList(it, KEY_PDF_URIS, Uri::class.java)
+            pendingPdfUris.addAll(uris.orEmpty())
+        }
+        pdfBatchTotal = savedInstanceState?.getInt(KEY_PDF_BATCH_TOTAL)
+            ?: pendingPdfUris.size.takeIf { it > 1 } ?: 0
 
         arguments?.let {
             showSelectItem = it.getBoolean(SHOW_SELECT_ITEM)
@@ -579,7 +607,17 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                 PdfImportErrorDialogFragment.ACTION_CHOOSE_ANOTHER -> {
                     pdfPickerLauncher.launch("application/pdf")
                 }
+
+                PdfImportErrorDialogFragment.ACTION_SKIP_FILE -> processNextPdf()
+                PdfImportErrorDialogFragment.ACTION_STOP_IMPORT -> stopPdfImportBatch()
             }
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            PdfImportSelectionFragment.REQUEST_KEY_STOP_BATCH,
+            viewLifecycleOwner
+        ) { _, _ ->
+            stopPdfImportBatch()
         }
 
         // Posluchač akce výběru PDF ze sekce Podporované ceníky
@@ -607,6 +645,9 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         UIHelper.showButtons(null, fab, addMenuItem, requireActivity(), false)
         btnShowBack()
         updateRecyclerViewPadding()
+        if (childFragmentManager.findFragmentByTag(PdfImportErrorDialogFragment.TAG) == null) {
+            processNextPdf()
+        }
     }
 
     fun updateRecyclerViewPadding() {
@@ -667,6 +708,8 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         outState.putSerializable(FLAG_SIDE, side)
         outState.putString(FLAG_FILTER_TYPE, filterType.name)
         outState.putLongArray(KEY_SELECTED_IDS, selectedIds.toLongArray())
+        outState.putParcelableArrayList(KEY_PDF_URIS, ArrayList(pendingPdfUris))
+        outState.putInt(KEY_PDF_BATCH_TOTAL, pdfBatchTotal)
         if (::btnBack.isInitialized) {
             outState.putString(BTN_BACK_TEXT, btnBack.text.toString())
         }
@@ -1186,7 +1229,16 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         if (!isAdded || !::overlayPdfProgress.isInitialized) return
         if (show) {
             overlayPdfProgress.visibility = View.VISIBLE
-            tvPdfProgressTask.text = taskText
+            tvPdfProgressTask.text = if (pdfBatchTotal > 1) {
+                val completed = pdfBatchTotal - pendingPdfUris.size
+                getString(
+                    R.string.pdf_import_batch_progress,
+                    completed,
+                    pdfBatchTotal
+                ) + "\n" + taskText
+            } else {
+                taskText
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val blurEffect = RenderEffect.createBlurEffect(15f, 15f, Shader.TileMode.CLAMP)
                 if (::rv.isInitialized) rv.setRenderEffect(blurEffect)
@@ -1201,69 +1253,81 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         }
     }
 
+    private fun stopPdfImportBatch() {
+        pendingPdfUris.clear()
+        pdfBatchTotal = 0
+    }
+
     /**
-     * Načte a rozparsuje vybraný PDF soubor na pozadí a při úspěchu otevře [PdfImportSelectionFragment].
-     * Při neúspěchu zobrazí [PdfImportErrorDialogFragment] s možností otevřít nápovědu podporovaných ceníků.
-     *
-     * @param uri URI vybraného PDF dokumentu
+     * Načte první čekající PDF. Po potvrzení nebo přeskočení jeho sazeb se seznam obnoví
+     * a pokračuje dalším souborem. Při obnově obrazovky zůstane rozpracované PDF ve frontě.
      */
-    private fun processSelectedPdf(uri: Uri) {
+    private fun processNextPdf() {
+        if (pdfImportJob?.isActive == true) return
+        val uri = pendingPdfUris.firstOrNull()
+        if (uri == null) {
+            if (pdfBatchTotal > 1) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.pdf_import_batch_progress, pdfBatchTotal, pdfBatchTotal),
+                    Toast.LENGTH_SHORT
+                ).show()
+                pdfBatchTotal = 0
+            }
+            return
+        }
+
         showProgressOverlay(true, getString(R.string.pdf_import_task_extracting))
-
-        Executors.newSingleThreadExecutor().execute {
-            try {
-                activity?.runOnUiThread {
-                    if (isAdded) {
-                        showProgressOverlay(true, getString(R.string.pdf_import_task_extracting))
-                    }
+        val owner = viewLifecycleOwner
+        val context = requireContext().applicationContext
+        pdfImportJob = owner.lifecycleScope.launch {
+            val parsed = try {
+                val pdfText = withContext(Dispatchers.IO) {
+                    PdfParserUtils.extractTextFromPdf(context, uri)
                 }
-                val pdfText = PdfParserUtils.extractTextFromPdf(requireContext(), uri)
-
-                activity?.runOnUiThread {
-                    if (isAdded) {
-                        showProgressOverlay(true, getString(R.string.pdf_import_task_parsing))
-                    }
-                }
-                val detectedSupplierId = PdfParserFactory.detectSupplierId(pdfText)
-                val priceLists = if (detectedSupplierId != null) {
-                    PdfParserFactory.parsePdf(requireContext(), pdfText)
-                } else {
-                    emptyList()
-                }
-
-                val hasValidPrices =
-                    priceLists.any { it.priceVT > 0 || it.priceNT > 0 || it.monthlyPayment > 0 }
-
-                activity?.runOnUiThread {
-                    if (!isAdded) return@runOnUiThread
-                    showProgressOverlay(false)
-                    if (priceLists.isNotEmpty() && hasValidPrices) {
-                        val selectionFragment = PdfImportSelectionFragment.newInstance(priceLists)
-                        FragmentChange.replace(
-                            requireActivity(),
-                            selectionFragment,
-                            FragmentChange.Transaction.MOVE,
-                            true
-                        )
+                showProgressOverlay(true, getString(R.string.pdf_import_task_parsing))
+                withContext(Dispatchers.IO) {
+                    val supplier = PdfParserFactory.detectSupplierId(pdfText)
+                    val prices = if (supplier != null) {
+                        PdfParserFactory.parsePdf(context, pdfText)
                     } else {
-                        val failureReason = if (detectedSupplierId == null) {
-                            PdfImportErrorDialogFragment.FailureReason.UNKNOWN_SUPPLIER
-                        } else {
-                            PdfImportErrorDialogFragment.FailureReason.KNOWN_SUPPLIER_PARSE_FAILED
-                        }
-                        PdfImportErrorDialogFragment.newInstance(failureReason, detectedSupplierId)
-                            .show(childFragmentManager, PdfImportErrorDialogFragment.TAG)
+                        emptyList()
                     }
+                    supplier to prices
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e(TAG, "Chyba při čtení PDF", e)
-                activity?.runOnUiThread {
-                    if (!isAdded) return@runOnUiThread
-                    showProgressOverlay(false)
+                null
+            }
+
+            owner.lifecycle.withResumed {
+                val completed = (pdfBatchTotal - pendingPdfUris.size).coerceAtLeast(0)
+                pendingPdfUris.removeAt(0)
+                showProgressOverlay(false)
+                val supplier = parsed?.first
+                val prices = parsed?.second.orEmpty()
+                if (prices.any { it.priceVT > 0 || it.priceNT > 0 || it.monthlyPayment > 0 }) {
+                    FragmentChange.replace(
+                        requireActivity(),
+                        PdfImportSelectionFragment.newInstance(prices, completed, pdfBatchTotal),
+                        FragmentChange.Transaction.MOVE,
+                        true
+                    )
+                } else {
+                    val failureReason = when {
+                        parsed == null -> PdfImportErrorDialogFragment.FailureReason.READ_FAILED
+                        supplier == null -> PdfImportErrorDialogFragment.FailureReason.UNKNOWN_SUPPLIER
+                        else -> PdfImportErrorDialogFragment.FailureReason.KNOWN_SUPPLIER_PARSE_FAILED
+                    }
                     PdfImportErrorDialogFragment.newInstance(
-                        PdfImportErrorDialogFragment.FailureReason.READ_FAILED,
-                        null
-                    ).show(childFragmentManager, PdfImportErrorDialogFragment.TAG)
+                        failureReason,
+                        supplier,
+                        completed,
+                        pdfBatchTotal
+                    )
+                        .show(childFragmentManager, PdfImportErrorDialogFragment.TAG)
                 }
             }
         }
@@ -1324,6 +1388,8 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
      * Pokud ano, zobrazí [PdfWarningDialogFragment]. Pokud ne, spustí výběr PDF.
      */
     private fun startPdfImport() {
+        if (pendingPdfUris.isNotEmpty() || pdfImportJob?.isActive == true) return
+
         val shp = ShPPriceList(requireContext())
         val deferredUntil = shp.get(ShPPriceList.PDF_WARNING_DEFERRED_UNTIL, 0L)
         val now = System.currentTimeMillis()

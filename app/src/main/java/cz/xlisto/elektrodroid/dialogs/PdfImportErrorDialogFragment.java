@@ -56,9 +56,13 @@ public class PdfImportErrorDialogFragment extends DialogFragment {
      * Akce pro opětovné spuštění výběru PDF souboru.
      */
     public static final String ACTION_CHOOSE_ANOTHER = "ACTION_CHOOSE_ANOTHER";
+    public static final String ACTION_SKIP_FILE = "ACTION_SKIP_FILE";
+    public static final String ACTION_STOP_IMPORT = "ACTION_STOP_IMPORT";
 
     private static final String ARG_FAILURE_REASON = "argFailureReason";
     private static final String ARG_DETECTED_SUPPLIER_ID = "argDetectedSupplierId";
+    private static final String ARG_COMPLETED_FILES = "completedFiles";
+    private static final String ARG_TOTAL_FILES = "totalFiles";
 
 
     /**
@@ -85,16 +89,22 @@ public class PdfImportErrorDialogFragment extends DialogFragment {
      *
      * @param reason             Příčina selhání rozlišená při zpracování PDF
      * @param detectedSupplierId Identifikátor rozpoznaného dodavatele, nebo {@code null}
+     * @param completedFiles     Počet již vyřízených souborů
+     * @param totalFiles         Počet souborů při hromadném importu
      * @return Nová instance {@link PdfImportErrorDialogFragment}
      */
     @NonNull
     public static PdfImportErrorDialogFragment newInstance(
             @NonNull FailureReason reason,
-            @Nullable String detectedSupplierId
+            @Nullable String detectedSupplierId,
+            int completedFiles,
+            int totalFiles
     ) {
         PdfImportErrorDialogFragment fragment = new PdfImportErrorDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FAILURE_REASON, reason.name());
+        args.putInt(ARG_COMPLETED_FILES, completedFiles);
+        args.putInt(ARG_TOTAL_FILES, totalFiles);
         if (detectedSupplierId != null && !detectedSupplierId.isEmpty()) {
             args.putString(ARG_DETECTED_SUPPLIER_ID, detectedSupplierId);
         }
@@ -125,30 +135,52 @@ public class PdfImportErrorDialogFragment extends DialogFragment {
             tvDetail.setVisibility(View.GONE);
         }
 
-        btnShowSupported.setOnClickListener(v -> {
-            Bundle result = new Bundle();
-            result.putString(RESULT_ACTION, ACTION_SHOW_SUPPORTED);
-            if (detectedSupplierId != null && !detectedSupplierId.isEmpty()) {
-                result.putString(RESULT_DETECTED_SUPPLIER_ID, detectedSupplierId);
-            }
-            getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
-            dismissAllowingStateLoss();
-        });
-
-        btnChooseAnother.setOnClickListener(v -> {
-            Bundle result = new Bundle();
-            result.putString(RESULT_ACTION, ACTION_CHOOSE_ANOTHER);
-            getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
-            dismissAllowingStateLoss();
-        });
-
-        btnClose.setOnClickListener(v -> dismissAllowingStateLoss());
+        int totalFiles = args != null ? args.getInt(ARG_TOTAL_FILES) : 0;
+        if (totalFiles > 1) {
+            setCancelable(false);
+            TextView tvMessage = view.findViewById(R.id.tvPdfImportErrorMessage);
+            int completedFiles = args.getInt(ARG_COMPLETED_FILES);
+            boolean hasNextFile = completedFiles + 1 < totalFiles;
+            String progress = getString(R.string.pdf_import_batch_progress, completedFiles, totalFiles);
+            tvMessage.setText(hasNextFile ? progress + "\n\n" + getString(R.string.pdf_import_error_message_batch) : progress);
+            btnShowSupported.setVisibility(View.GONE);
+            btnChooseAnother.setText(R.string.pdf_import_error_action_skip_file);
+            btnChooseAnother.setOnClickListener(v -> finishBatchDialog(ACTION_SKIP_FILE));
+            btnClose.setText(R.string.pdf_import_error_action_stop_import);
+            btnClose.setVisibility(hasNextFile ? View.VISIBLE : View.GONE);
+            btnClose.setOnClickListener(v -> finishBatchDialog(ACTION_STOP_IMPORT));
+        } else {
+            btnShowSupported.setOnClickListener(v -> {
+                Bundle result = new Bundle();
+                result.putString(RESULT_ACTION, ACTION_SHOW_SUPPORTED);
+                if (detectedSupplierId != null && !detectedSupplierId.isEmpty()) {
+                    result.putString(RESULT_DETECTED_SUPPLIER_ID, detectedSupplierId);
+                }
+                getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
+                dismissAllowingStateLoss();
+            });
+            btnChooseAnother.setOnClickListener(v -> {
+                Bundle result = new Bundle();
+                result.putString(RESULT_ACTION, ACTION_CHOOSE_ANOTHER);
+                getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
+                dismissAllowingStateLoss();
+            });
+            btnClose.setOnClickListener(v -> dismissAllowingStateLoss());
+        }
 
         return new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
                 .setTitle(R.string.pdf_import_error_title)
                 .setIcon(R.drawable.ic_warning_png)
                 .setView(view)
                 .create();
+    }
+
+
+    private void finishBatchDialog(String action) {
+        Bundle result = new Bundle();
+        result.putString(RESULT_ACTION, action);
+        dismiss();
+        getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
     }
 
 

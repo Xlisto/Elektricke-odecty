@@ -38,16 +38,22 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
  */
 public class PdfImportSelectionFragment extends Fragment implements OnPaddingChangeListener {
 
+    public static final String REQUEST_KEY_STOP_BATCH = "PdfImportSelectionFragment_STOP_BATCH";
+
     private static final String ARG_PARSED_PRICELISTS = "ARG_PARSED_PRICELISTS";
+    private static final String ARG_COMPLETED_FILES = "completedFiles";
+    private static final String ARG_TOTAL_FILES = "totalFiles";
 
     private List<PriceListModel> parsedPriceLists;
     private PdfRateSelectionAdapter adapter;
 
 
-    public static PdfImportSelectionFragment newInstance(List<PriceListModel> priceLists) {
+    public static PdfImportSelectionFragment newInstance(List<PriceListModel> priceLists, int completedFiles, int totalFiles) {
         PdfImportSelectionFragment fragment = new PdfImportSelectionFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARSED_PRICELISTS, (Serializable) priceLists);
+        args.putInt(ARG_COMPLETED_FILES, completedFiles);
+        args.putInt(ARG_TOTAL_FILES, totalFiles);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,6 +83,25 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Bundle args = requireArguments();
+        int totalFiles = args.getInt(ARG_TOTAL_FILES);
+        int completedFiles = args.getInt(ARG_COMPLETED_FILES);
+        Button btnBack = view.findViewById(R.id.btnBackPdfImport);
+        if (totalFiles > 1) {
+            TextView tvBatchProgress = view.findViewById(R.id.tvPdfBatchProgress);
+            tvBatchProgress.setText(getString(R.string.pdf_import_batch_progress, completedFiles, totalFiles));
+            tvBatchProgress.setVisibility(View.VISIBLE);
+            btnBack.setText(R.string.pdf_import_error_action_skip_file);
+            if (completedFiles + 1 < totalFiles) {
+                Button btnStop = view.findViewById(R.id.btnStopPdfImport);
+                btnStop.setVisibility(View.VISIBLE);
+                btnStop.setOnClickListener(v -> {
+                    getParentFragmentManager().setFragmentResult(REQUEST_KEY_STOP_BATCH, new Bundle());
+                    getParentFragmentManager().popBackStack();
+                });
+            }
+        }
+
         TextView tvProduct = view.findViewById(R.id.tvPdfProduct);
         TextView tvSupplier = view.findViewById(R.id.tvPdfSupplier);
         TextView tvArea = view.findViewById(R.id.tvPdfArea);
@@ -84,7 +109,6 @@ public class PdfImportSelectionFragment extends Fragment implements OnPaddingCha
         TextView tvValidityWarning = view.findViewById(R.id.tvPdfValidityWarning);
         Button btnSelectAll = view.findViewById(R.id.btnSelectAll);
         Button btnDeselectAll = view.findViewById(R.id.btnDeselectAll);
-        Button btnBack = view.findViewById(R.id.btnBackPdfImport);
         Button btnSave = view.findViewById(R.id.btnSaveSelectedPdfRates);
         RecyclerView rv = view.findViewById(R.id.rvPdfRates);
 

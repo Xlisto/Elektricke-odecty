@@ -660,6 +660,7 @@
     <string name="pdf_import_2025_split_checkbox">Vytvořit i ceníky pro 2. období roku 2025 (01. 09. 2025 – 31. 12. 2025) s novou cenou za provoz nesíťové infrastruktury (12,45 Kč bez DPH)</string>
     <string name="pdf_import_task_extracting">Extrahování textu z PDF dokumentu…</string>
     <string name="pdf_import_task_parsing">Parsování sazeb a regulovaných cen…</string>
+    <string name="pdf_import_batch_progress">Hotovo %1$d z %2$d souborů</string>
     <string name="pdf_import_warning_title">Upozornění při importu PDF</string>
     <string name="pdf_import_warning_message">Jedná se o strojové čtení ceníku, které je otestováno na vybraném vzorku ceníků z roku 2025 a 2026 a není vyloučena chyba při čtení.</string>
     <string name="pdf_import_warning_snooze_checkbox">Nezobrazovat tento dialog 1 měsíc</string>
@@ -1121,10 +1122,13 @@
     <!-- Dialog neúspěšného importu PDF ceníku -->
     <string name="pdf_import_error_title">Ceník se nepodařilo načíst</string>
     <string name="pdf_import_error_message">Vybraný PDF dokument se nepodařilo automaticky zpracovat. Dokument může obsahovat nepodporovanou strukturu, neúplné údaje nebo se může jednat o zkrácený ceník. Prohlédněte si ukázky podporovaných ceníků a porovnejte je se svým dokumentem.</string>
+    <string name="pdf_import_error_message_batch">Další soubory čekají na zpracování. Tento soubor můžete přeskočit nebo ukončit import.</string>
     <string name="pdf_import_error_detail_unknown_supplier">Dodavatel ve vybraném dokumentu nebyl rozpoznán mezi podporovanými dodavateli.</string>
     <string name="pdf_import_error_detail_known_supplier">Rozpoznaný dodavatel: %1$s. Z dokumentu se nepodařilo načíst potřebné cenové údaje.</string>
     <string name="pdf_import_error_detail_read_failed">PDF soubor se nepodařilo otevřít nebo z něj nebylo možné přečíst text.</string>
     <string name="pdf_import_error_action_show_supported">Zobrazit podporované ceníky</string>
     <string name="pdf_import_error_action_choose_another">Vybrat jiný soubor</string>
     <string name="pdf_import_error_action_close">Zavřít</string>
+    <string name="pdf_import_error_action_skip_file">Přeskočit soubor</string>
+    <string name="pdf_import_error_action_stop_import">Ukončit import</string>
 </resources>

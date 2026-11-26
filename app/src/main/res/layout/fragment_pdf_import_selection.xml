@@ -23,6 +23,17 @@
             android:padding="12dp">
 
             <TextView
+                android:id="@+id/tvPdfBatchProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone"
+                tools:text="Hotovo 0 z 2 souborů"
+                tools:visibility="visible" />
+
+            <TextView
                 android:id="@+id/tvPdfProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -166,6 +177,16 @@
         android:layout_weight="1"
         android:paddingBottom="8dp"
         android:clipToPadding="false" />
+
+    <Button
+        android:id="@+id/btnStopPdfImport"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
+        android:text="@string/pdf_import_error_action_stop_import"
+        android:visibility="gone" />
 
     <!-- Bottom Action Bar -->
     <LinearLayout

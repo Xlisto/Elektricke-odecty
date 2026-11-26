@@ -276,6 +276,17 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
             swRight.setVisibility(priceListRightRegulBuilder.isRegulPrice() ? View.VISIBLE : View.GONE);
         }
 
+        updateComparisonParameters(container);
+        showTvDescription();
+    }
+
+
+    /**
+     * Přepočítá tabulku podle nových vstupních parametrů se stávajícími ceníky a cenovými přepínači.
+     *
+     * @param container vstupní parametry porovnání
+     */
+    void updateComparisonParameters(@NonNull ConsuptionContainer container) {
         this.vt = container.vt();
         this.nt = container.nt();
         this.month = container.month();
@@ -284,7 +295,6 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
         this.servicesL = container.servicesL();
         this.servicesR = container.servicesR();
         updateTable();
-        showTvDescription();
     }
 
 

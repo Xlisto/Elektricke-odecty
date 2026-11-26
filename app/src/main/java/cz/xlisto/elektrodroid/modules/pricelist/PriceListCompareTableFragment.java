@@ -61,7 +61,7 @@ public class PriceListCompareTableFragment extends Fragment {
 
     /**
      * Inicializuje ovládací prvky uživatelského rozhraní, získá {@link PriceListsViewModel} z rodičovského fragmentu,
-     * zobrazí vnořený {@link PriceListCompareCompactFragment} a přihlásí se k odběru změn vybraných ceníků.
+     * zobrazí vnořený {@link PriceListCompareCompactFragment} a sleduje změny vybraných ceníků a vstupních parametrů.
      *
      * @param view               pohled fragmentu
      * @param savedInstanceState uložený stav fragmentu
@@ -81,6 +81,11 @@ public class PriceListCompareTableFragment extends Fragment {
                 .commit();
 
         viewModel.getSelectedPriceLists().observe(getViewLifecycleOwner(), this::updateSpinners);
+        viewModel.getConsuptionContainer().observe(getViewLifecycleOwner(), container -> {
+            if (container != null && spTableLeftPriceList.getCount() > 0 && compactFragment.getView() != null) {
+                compactFragment.updateComparisonParameters(container);
+            }
+        });
     }
 
 
