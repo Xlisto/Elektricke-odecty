@@ -511,7 +511,13 @@ Prvním tlačítkem se přepíná mezi sloupcovým a čárovým grafem. Ikona tl
 Tlačítky **+** a **-** lze měnit hustotu vodorovných os pro zobrazení spotřeby.
 
 <p style="text-align: center;">
-  <img src="screenshots/graf_1.jpg" alt="Graf spotřeby 1" style="width: 600px;" />
+  <img src="screenshots/graf_1.jpg" alt="Graf spotřeby 1" style="width: 500px;" />
+  <img src="screenshots/graf_2.jpg" alt="Graf spotřeby 2" style="width: 500px;" />
+</p>
+
+<p style="text-align: center;">
+  <img src="screenshots/graf_3.jpg" alt="Graf spotřeby 3" style="width: 500px;" />
+  <img src="screenshots/graf_4.jpg" alt="Graf spotřeby 4" style="width: 500px;" />
 </p>
 
 ## Záloha lokální
@@ -580,4 +586,5 @@ Pomocí šipek je možné přepínat mezi jednotlivými odběrnými místy. Doln
 
 <p style="text-align: center;">
   <img src="screenshots/prehled_1.jpg" alt="Přehled 1" style="width: 300px;" />
+  <img src="screenshots/prehled_2.jpg" alt="Přehled 1" style="width: 300px;" />
 </p>
