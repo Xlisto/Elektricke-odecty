@@ -37,6 +37,7 @@ import cz.xlisto.elektrodroid.dialogs.PdfImportErrorDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PdfWarningDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListDeleteBlockedDialogFragment
 import cz.xlisto.elektrodroid.dialogs.PriceListFilterDialogFragment
+import cz.xlisto.elektrodroid.dialogs.SubscriptionPointDialogFragment
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment
 import cz.xlisto.elektrodroid.models.PriceListModel
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel
@@ -328,8 +329,6 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             shouldScrollToSelected = false
         }
 
-        shpFilter = ShPFilter(requireContext(), filterType)
-
         if (idSelectedPriceList > 0 && isSelectionModeActive) {
             selectedIds.add(idSelectedPriceList)
         }
@@ -396,7 +395,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                     }
 
                     R.id.menu_filter_pricelist -> {
-                        PriceListFilterDialogFragment.newInstance(filterType)
+                        PriceListFilterDialogFragment.newInstance(filterType, filterPointMilins())
                             .show(requireActivity().supportFragmentManager, TAG)
                         true
                     }
@@ -484,7 +483,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
         updateRecyclerViewPadding()
 
         containerFilterBadge.setOnClickListener {
-            PriceListFilterDialogFragment.newInstance(filterType)
+            PriceListFilterDialogFragment.newInstance(filterType, filterPointMilins())
                 .show(requireActivity().supportFragmentManager, TAG)
         }
 
@@ -529,6 +528,23 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
                 setAdapter()
                 priceListAdapter?.setHideButtons()
                 showDetailPriceFragment(false)
+            }
+        }
+
+        parentFragmentManager.setFragmentResultListener(
+            SubscriptionPointDialogFragment.FLAG_UPDATE_SUBSCRIPTION_POINT,
+            viewLifecycleOwner
+        ) { _, _ ->
+            val activePoint = SubscriptionPoint.load(requireContext())
+            if (activePoint?.milins != subscriptionPoint?.milins) {
+                if (isFilterOnlySelected) {
+                    subscriptionPoint = activePoint
+                    loadFilter()
+                    loadOnlySelectedPriceLists()
+                } else {
+                    onLoadData()
+                    setAdapter()
+                }
             }
         }
 
@@ -731,6 +747,14 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     /**
      * Aktualizuje vizuální štítek informující o tom, který ze tří filtrů ceníků je právě používán.
      */
+    private fun filterPointMilins() =
+        subscriptionPoint?.idMilins ?: ShPFilter.WITHOUT_SUBSCRIPTION_POINT
+
+    private fun loadFilter() {
+        shpFilter = ShPFilter(requireContext(), filterType, filterPointMilins())
+        updateFilterTypeBadge()
+    }
+
     private fun updateFilterTypeBadge() {
         if (!::tvFilterTypeBadge.isInitialized || !::ivFilterTypeIcon.isInitialized) return
         val isActive = shpFilter.isFilterActive
@@ -769,7 +793,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
     fun onLoadData() {
         btnBack.text = getString(R.string.zpet)
         subscriptionPoint = SubscriptionPoint.load(requireActivity())
-        updateFilterTypeBadge()
+        loadFilter()
 
         val rada = shpFilter.get(ShPFilter.RADA, ShPFilter.DEFAULT)
         val produkt = shpFilter.get(ShPFilter.PRODUKT, ShPFilter.DEFAULT)
@@ -886,7 +910,7 @@ class PriceListFragment : Fragment(), OnPaddingChangeListener {
             },
             isCompareMode = isCompareMode,
             isSingleSelectionMode = isSingleSelectPicker,
-            filterType = filterType
+            shPFilter = shpFilter
         )
 
         // Sync selectedIds with adapter

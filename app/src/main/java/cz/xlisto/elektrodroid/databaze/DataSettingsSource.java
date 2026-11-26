@@ -6,11 +6,16 @@ import static cz.xlisto.elektrodroid.databaze.DbHelper.TABLE_NAME_SETTINGS;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import static cz.xlisto.elektrodroid.databaze.DbHelper.COLUMN_ID;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
@@ -50,6 +55,7 @@ public class DataSettingsSource extends DataSource {
     private static final String PREFIX_VALUE = "hodnota";
     private static final String PREFIX_HDO_WIDGETS = "hdoWidgets";
     private static final String PREFIX_PRICE_LIST_COMPARE_PARAMETERS = "priceListCompareParameters";
+    private static final String PREFIX_PRICE_LIST_FILTER = "priceListFilter:";
     private static final String PREFIX_CURRENT_SUBSCRIPTION_POINT = "aktualniOdberneMisto";
     private static final String PREFIX_READING_NOTIFICATION_ENABLED = "readingNotificationEnabled";
     private static final String PREFIX_READING_NOTIFICATION_FREQUENCY = "readingNotificationFrequency";
@@ -61,6 +67,7 @@ public class DataSettingsSource extends DataSource {
             PREFIX_FIRST_METER,
             PREFIX_HDO_WIDGETS,
             PREFIX_PRICE_LIST_COMPARE_PARAMETERS,
+            PREFIX_PRICE_LIST_FILTER,
             PREFIX_READING_NOTIFICATION_ENABLED,
             PREFIX_READING_NOTIFICATION_FREQUENCY,
             PREFIX_READING_NOTIFICATION_DAY_OF_MONTH,
@@ -367,6 +374,81 @@ public class DataSettingsSource extends DataSource {
         } else {
             insertByName(name, json);
         }
+    }
+
+
+    public JSONObject loadPriceListFilter(String pointMilins, String filterType) {
+        try (Cursor cursor = database.query(TABLE_NAME_SETTINGS, new String[]{PREFIX_VALUE},
+                PREFIX_NAME + "=?", new String[]{priceListFilterName(pointMilins, filterType)},
+                null, null, null)) {
+            if (cursor.moveToFirst() && !cursor.isNull(0)) {
+                return new JSONObject(cursor.getString(0));
+            }
+        } catch (JSONException e) {
+            Log.w("DataSettingsSource", "Neplatné nastavení filtru ceníků", e);
+        }
+        return new JSONObject();
+    }
+
+
+    public JSONObject savePriceListFilter(String pointMilins, String filterType, Map<String, String> changes) {
+        String name = priceListFilterName(pointMilins, filterType);
+        database.beginTransaction();
+        try {
+            JSONObject updated = loadPriceListFilter(pointMilins, filterType);
+            for (Map.Entry<String, String> change : changes.entrySet()) {
+                updated.put(change.getKey(), change.getValue());
+            }
+            String json = updated.toString();
+            ContentValues values = new ContentValues();
+            values.put(PREFIX_VALUE, json);
+            if (database.update(TABLE_NAME_SETTINGS, values, PREFIX_NAME + "=?", new String[]{name}) == 0) {
+                values.put(PREFIX_NAME, name);
+                database.insertOrThrow(TABLE_NAME_SETTINGS, null, values);
+            }
+            database.setTransactionSuccessful();
+            return updated;
+        } catch (JSONException e) {
+            throw new IllegalArgumentException("Nelze uložit nastavení filtru ceníků", e);
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+
+    /**
+     * Převede filtry do existujících míst v jedné transakci. Při opakování zachová dříve uložené hodnoty.
+     */
+    public void migrateLegacyPriceListFilters(Map<String, String> filters) {
+        database.beginTransaction();
+        try {
+            Set<Long> points = loadExistingSubscriptionPointMilins();
+            for (Map.Entry<String, String> filter : filters.entrySet()) {
+                saveLegacyPriceListFilterIfMissing("", filter);
+                for (long point : points) {
+                    saveLegacyPriceListFilterIfMissing(String.valueOf(point), filter);
+                }
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+    }
+
+
+    private void saveLegacyPriceListFilterIfMissing(String pointMilins, Map.Entry<String, String> filter) {
+        String name = priceListFilterName(pointMilins, filter.getKey());
+        if (!isExistsByName(name)) {
+            ContentValues values = new ContentValues();
+            values.put(PREFIX_NAME, name);
+            values.put(PREFIX_VALUE, filter.getValue());
+            database.insertOrThrow(TABLE_NAME_SETTINGS, null, values);
+        }
+    }
+
+
+    private static String priceListFilterName(String pointMilins, String filterType) {
+        return PREFIX_PRICE_LIST_FILTER + pointMilins + ":" + filterType;
     }
 
 
@@ -786,14 +868,11 @@ public class DataSettingsSource extends DataSource {
      */
     private Set<Long> loadExistingSubscriptionPointMilins() {
         Set<Long> milins = new HashSet<>();
-        DataSubscriptionPointSource dataSubscriptionPointSource = new DataSubscriptionPointSource(context);
-        dataSubscriptionPointSource.open();
-        try {
-            for (SubscriptionPointModel subscriptionPoint : dataSubscriptionPointSource.loadSubscriptionPoints()) {
-                milins.add(Long.parseLong(subscriptionPoint.getIdMilins()));
+        try (Cursor cursor = database.query(DbHelper.TABLE_NAME_SUBSCRIPTION_POINT,
+                new String[]{DbHelper.ODBER_ID}, null, null, null, null, null)) {
+            while (cursor.moveToNext()) {
+                milins.add(Long.parseLong(cursor.getString(0).replace("O", "")));
             }
-        } finally {
-            dataSubscriptionPointSource.close();
         }
         return milins;
     }
@@ -813,6 +892,9 @@ public class DataSettingsSource extends DataSource {
         for (String prefix : SUBSCRIPTION_POINT_SETTING_PREFIXES) {
             if (name.startsWith(prefix)) {
                 String suffix = name.substring(prefix.length());
+                if (prefix.equals(PREFIX_PRICE_LIST_FILTER)) {
+                    suffix = suffix.split(":", 2)[0];
+                }
                 if (suffix.isEmpty()) {
                     return null;
                 }

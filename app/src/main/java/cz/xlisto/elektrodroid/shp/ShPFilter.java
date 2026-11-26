@@ -1,13 +1,29 @@
 package cz.xlisto.elektrodroid.shp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.SQLException;
+import android.util.Log;
+
+import androidx.preference.PreferenceManager;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import cz.xlisto.elektrodroid.databaze.DataSettingsSource;
 
 
 /**
- * Třída pro ukládání a načítání filtrů ceníků do SharedPreferences.
- * Podporuje tři nezávislé kontexty filtrace: obecný filtr ceníků, filtr pro měsíční odečty a filtr pro faktury.
+ * Nastavení jednoho typu filtru ceníků pro odběrné místo. Databáze nastavení je součástí zálohy.
  */
-public class ShPFilter extends ShP {
+public class ShPFilter {
+
+    private static final String TAG = "ShPFilter";
+
     public static final String RADA = "filtrRada";
     public static final String PRODUKT = "filtrProdukt";
     public static final String SAZBA = "filtrSazba";
@@ -17,89 +33,121 @@ public class ShPFilter extends ShP {
     public static final String DATE_START = "filtrDateStart";
     public static final String DATE_END = "filtrDateEnd";
     public static final String DEFAULT = "%";
+    public static final String WITHOUT_SUBSCRIPTION_POINT = "";
 
+    private static final String[] FILTER_KEYS = {
+            RADA, PRODUKT, SAZBA, COMPANY, AREA, ORIGIN, DATE_START, DATE_END
+    };
 
-    /**
-     * Typ kontextu filtru ceníků.
-     */
     public enum FilterType {
-        /**
-         * Obecný filtr v sekci Ceníky a při porovnávání ceníků.
-         */
         GENERAL(""),
-        /**
-         * Filtr ceníků při výběru v Měsíčních odečtech.
-         */
         MONTHLY_READING("_monthly"),
-        /**
-         * Filtr ceníků při výběru ve Fakturách.
-         */
         INVOICE("_invoice");
 
-        private final String suffix;
+        private final String legacySuffix;
 
 
-        FilterType(String suffix) {
-            this.suffix = suffix;
-        }
-
-
-        public String getSuffix() {
-            return suffix;
+        FilterType(String legacySuffix) {
+            this.legacySuffix = legacySuffix;
         }
     }
 
 
+    private final Context context;
     private final FilterType filterType;
+    private final String pointMilins;
+    private JSONObject values;
 
 
-    public ShPFilter(Context context) {
-        this(context, FilterType.GENERAL);
+    public ShPFilter(Context context, FilterType filterType, String pointMilins) {
+        this.context = context.getApplicationContext();
+        this.filterType = filterType;
+        this.pointMilins = pointMilins;
+        DataSettingsSource settings = new DataSettingsSource(this.context);
+        settings.open();
+        try {
+            values = settings.loadPriceListFilter(pointMilins, filterType.name());
+        } finally {
+            settings.close();
+        }
     }
 
 
-    public ShPFilter(Context context, FilterType filterType) {
-        this.context = context;
-        this.filterType = filterType != null ? filterType : FilterType.GENERAL;
-    }
-
-
-    private String resolveKey(String baseKey) {
-        return baseKey + filterType.getSuffix();
-    }
-
-
-    @Override
-    public void set(String key, String value) {
-        super.set(resolveKey(key), value);
-    }
-
-
-    @Override
-    public String get(String key, String defValue) {
-        return super.get(resolveKey(key), defValue);
+    public String get(String key, String defaultValue) {
+        return values.optString(key, defaultValue);
     }
 
 
     /**
-     * Zjistí, zda je v aktuálním kontextu nastaven alespoň jeden aktivní filtr (odlišný od výchozího "%").
-     *
-     * @return {@code true}, pokud je některé kritérium filtru aktivní
+     * Uloží změny v jedné databázové operaci a zachová zbývající kritéria filtru.
      */
+    public void save(Map<String, String> changes) {
+        DataSettingsSource settings = new DataSettingsSource(context);
+        settings.open();
+        try {
+            values = settings.savePriceListFilter(pointMilins, filterType.name(), changes);
+        } finally {
+            settings.close();
+        }
+    }
+
+
     public boolean isFilterActive() {
-        return isValueFiltered(get(RADA, DEFAULT))
-                || isValueFiltered(get(PRODUKT, DEFAULT))
-                || isValueFiltered(get(SAZBA, DEFAULT))
-                || isValueFiltered(get(COMPANY, DEFAULT))
-                || isValueFiltered(get(AREA, DEFAULT))
-                || isValueFiltered(get(ORIGIN, DEFAULT))
-                || isValueFiltered(get(DATE_START, DEFAULT))
-                || isValueFiltered(get(DATE_END, DEFAULT));
+        for (String key : FILTER_KEYS) {
+            String value = get(key, DEFAULT);
+            if (!value.trim().isEmpty() && !value.equals(DEFAULT) && !value.equalsIgnoreCase("[VŠE]")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
-    private boolean isValueFiltered(String val) {
-        return val != null && !val.trim().isEmpty() && !val.equals(DEFAULT) && !val.equalsIgnoreCase("[VŠE]");
+    /**
+     * Jednorázově zkopíruje původní filtry ze SharedPreferences do existujících odběrných míst.
+     * Staré předvolby se odstraňují až po úspěšném zápisu do databáze.
+     */
+    public static void migrateLegacyFilters(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Map<String, ?> oldValues = preferences.getAll();
+        Map<String, String> filters = new HashMap<>();
+        List<String> migratedKeys = new ArrayList<>();
+        for (FilterType type : FilterType.values()) {
+            Map<String, String> filter = new HashMap<>();
+            for (String key : FILTER_KEYS) {
+                String legacyKey = key + type.legacySuffix;
+                if (oldValues.get(legacyKey) instanceof String value) {
+                    filter.put(key, value);
+                    migratedKeys.add(legacyKey);
+                }
+            }
+            if (!filter.isEmpty()) {
+                filters.put(type.name(), new JSONObject(filter).toString());
+            }
+        }
+        if (filters.isEmpty()) {
+            return;
+        }
+
+        DataSettingsSource settings = new DataSettingsSource(context);
+        settings.open();
+        if (settings.getDatabase() == null) {
+            return;
+        }
+        try {
+            settings.migrateLegacyPriceListFilters(filters);
+        } catch (SQLException | NumberFormatException e) {
+            Log.w(TAG, "Převod filtrů ceníků se zopakuje při dalším spuštění", e);
+            return;
+        } finally {
+            settings.close();
+        }
+
+        SharedPreferences.Editor editor = preferences.edit();
+        for (String key : migratedKeys) {
+            editor.remove(key);
+        }
+        editor.apply();
     }
+
 }
-

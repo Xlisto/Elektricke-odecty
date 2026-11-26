@@ -47,7 +47,7 @@ import cz.xlisto.elektrodroid.utils.Round
  * @property onSelectionChangedListener volitelný posluchač pro informování o změně vícenásobného výběru
  * @property isCompareMode příznak, zda jde o režim porovnávání více ceníků
  * @property isSingleSelectionMode příznak, zda jde o výběr pouze jednoho ceníku (pomocí RadioButtonu)
- * @property filterType typ kontextu filtru ceníků
+ * @property shPFilter nastavení filtru použité při načtení seznamu
  */
 class PriceListAdapter(
     private var items: ArrayList<PriceListModel>,
@@ -59,7 +59,7 @@ class PriceListAdapter(
     private val onSelectionChangedListener: OnSelectionChangedListener? = null,
     private val isCompareMode: Boolean = false,
     private val isSingleSelectionMode: Boolean = false,
-    private val filterType: ShPFilter.FilterType = ShPFilter.FilterType.GENERAL
+    private val shPFilter: ShPFilter
 ) : RecyclerView.Adapter<PriceListAdapter.MyViewHolder>() {
 
     companion object {
@@ -125,7 +125,6 @@ class PriceListAdapter(
 
     private val context: Context = recyclerView.context
     private val shPPriceList = ShPPriceList(context)
-    private val shPFilter = ShPFilter(context, filterType)
 
     /** Množina vybraných ID ceníků udržená napříč filtrací. */
     val selectedIds: MutableSet<Long> = HashSet()

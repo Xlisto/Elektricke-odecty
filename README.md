@@ -533,7 +533,7 @@ zkontrolujte úplnost údajů a návaznost období a stavů měřičů.
 ## Filtrace ceníků
 
 Filtrování zkrátí seznam uložených ceníků podle dodavatele, distribuční sazby, území, platnosti a
-dalších údajů. Aplikace si pamatuje tři samostatná nastavení. Díky tomu můžete mít pro pravidelné
+dalších údajů. Každé odběrné místo má tři vlastní filtry. Díky tomu můžete mít pro pravidelné
 odečty připravené aktuální ceníky a současně ve fakturaci hledat ceníky ze starších let.
 
 <table>
@@ -547,10 +547,13 @@ odečty připravené aktuální ceníky a současně ve fakturaci hledat ceníky
   </tbody>
 </table>
 
-Každý filtr se po potvrzení uloží pro příslušnou část aplikace a použije se při příštím otevření
-seznamu, i po opětovném spuštění aplikace. Nastavení je společné pro všechna odběrná místa. Změna
-ani reset jednoho filtru neovlivní zbývající dva. Seznam **Ceníky** a výběr v **Porovnání** sdílejí
-jedno nastavení obecného filtru.
+Každý filtr se po potvrzení uloží pro aktivní odběrné místo a příslušnou část aplikace. Změna nebo
+reset se týká pouze tohoto filtru. Seznam **Ceníky** a výběr v **Porovnání** sdílejí obecný filtr
+aktuálního odběrného místa. Aktivní místo vyberete v nabídce **Odběrné místo**.
+
+Při prvním spuštění po aktualizaci se dosavadní společné filtry zkopírují do všech existujících
+odběrných míst. Nově přidané místo začne bez omezení. Nastavení uložené pro jednotlivá místa je
+součástí [ZIP zálohy](#nav-zaloha-lokalni) a načte se spolu s daty při obnovení této zálohy.
 
 ### Jak nastavit a zrušit filtr
 
@@ -570,6 +573,15 @@ jedno nastavení obecného filtru.
 Chcete-li odstranit všechny podmínky, klepněte na **Resetovat všechny filtry** a potvrďte tlačítkem
 **Nastav filtr**. Reset vyčistí podmínky v právě otevřeném dialogu. Tlačítko **Zrušit** dialog zavře
 a ponechá poslední uložené nastavení.
+
+#### Příklad pro dvě odběrná místa
+
+1. V nabídce se třemi tečkami vyberte **Odběrné místo → Domov**. V seznamu **Ceníky** nastavte v
+   obecném filtru například sazbu D26d a potvrďte **Nastav filtr**.
+2. Stejnou nabídkou přepněte na místo **Chata**. V obecném filtru nastavte například sazbu D02d a
+   potvrďte **Nastav filtr**.
+3. Po návratu na **Domov** se opět použije D26d v seznamu **Ceníky** i při výběru v **Porovnání**.
+   Stejně můžete u každého místa samostatně nastavit filtr pro měsíční odečty a filtr pro faktury.
 
 #### Co znamenají jednotlivá pole
 
@@ -653,10 +665,10 @@ aktuálním filtrem. Podrobný postup najdete v kapitole [Porovnání ceníků](
 3. Po použití filtru označte jeden ceník a vraťte se šipkou zpět do formuláře. Vybraný ceník se
    použije při výpočtu ceny odečtu.
 
-Při změně odběrného místa zůstává filtr stejný. Pokud máte místa s různými sazbami, můžete vybrat
-několik sazeb nebo podmínky při přechodu změnit. U výběru pro jeden záznam může seznam ponechat již
-přiřazený ceník mezi položkami, i když už podmínkám filtru nevyhovuje. Stejně se chová výběr ve
-fakturaci.
+Při změně odběrného místa se použije jeho filtr pro měsíční odečty. U výběru pro jeden záznam může
+seznam ponechat již přiřazený ceník mezi položkami, i když podmínkám filtru nevyhovuje. Stejně se
+chová
+výběr ve fakturaci.
 
 <p style="text-align: center;">
   <img src="screenshots/mes_9.jpg" alt="Formulář měsíčního odečtu s tlačítkem přiřazeného ceníku" width="200" />
@@ -979,7 +991,8 @@ sloupce. Barvy tarifů vycházejí z [nastavení barev grafů](#nav-barvy-grafu)
 ## Záloha lokální
 
 V hlavní nabídce otevřete **Záloha místní**. Záloha v souboru ZIP zahrnuje obě databáze aplikace.
-Obsahuje například odběrná místa, měsíční odečty, faktury, platby, časy HDO a ceníky.
+Obsahuje například odběrná místa, měsíční odečty, faktury, platby, časy HDO, ceníky
+a [uložené filtry ceníků](#filtrace-ceniku) jednotlivých odběrných míst.
 
 ### Vytvoření zálohy
 
@@ -996,7 +1009,11 @@ Obsahuje například odběrná místa, měsíční odečty, faktury, platby, ča
 ### Obnova, odeslání a odstranění záloh
 
 Klepnutím na zálohu zobrazíte **Obnov data**, **Záloha Google** a **Smaž**. Obnovením se načtou data
-ze zvolené zálohy. Novější záznamy v databázích se tím mohou ztratit. Podržením položky zapnete
+ze zvolené zálohy. Novější záznamy v databázích se tím mohou ztratit. Filtry se vrátí do stavu při
+vytvoření vybrané zálohy. Po obnově zálohy z verze před zavedením filtrů podle odběrných míst se
+seznamy ceníků zobrazí bez omezení, dokud filtry znovu nenastavíte.
+
+Podržením položky zapnete
 režim výběru a můžete pracovat s více soubory, například je odstranit nebo odeslat na Google Drive.
 
 Odeslání na Google Drive vyžaduje přihlášení a udělení přístupu k aplikačnímu prostoru. Odeslané

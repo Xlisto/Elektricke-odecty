@@ -45,6 +45,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,6 +57,7 @@ import cz.xlisto.elektrodroid.ui.OnPaddingChangeListener;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
 import cz.xlisto.elektrodroid.dialogs.YesNoDialogFragment;
 import cz.xlisto.elektrodroid.models.PriceListModel;
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.backup.RecoverData;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListFragment;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
@@ -63,6 +66,7 @@ import cz.xlisto.elektrodroid.shp.ShPBackup;
 import cz.xlisto.elektrodroid.shp.ShPFilter;
 import cz.xlisto.elektrodroid.shp.ShPMainActivity;
 import cz.xlisto.elektrodroid.utils.FragmentChange;
+import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
@@ -290,13 +294,17 @@ public class ImportPriceListFragment extends Fragment implements OnPaddingChange
                         shPMainActivity.set(ACTUAL_FRAGMENT, R.id.meni_prices);
 
                         //nastavení filtru ceníku na hledaný ceník
-                        ShPFilter shpFilter = new ShPFilter(requireContext());
-                        shpFilter.set(RADA, doublePriceList.getSeries());
-                        shpFilter.set(PRODUKT, doublePriceList.getProduct());
-                        shpFilter.set(SAZBA, doublePriceList.getRate());
-                        shpFilter.set(COMPANY, doublePriceList.getCompany());
-                        shpFilter.set(AREA, doublePriceList.getDistribution());
-                        shpFilter.set(DATE_START, ViewHelper.convertLongToDate(doublePriceList.getValidFrom()));//tady je potřeba převádět long číslo na datum ve stringu, jinak při načítání následuje pád aplikace
+                        SubscriptionPointModel point = SubscriptionPoint.load(requireContext());
+                        String pointMilins = point == null ? ShPFilter.WITHOUT_SUBSCRIPTION_POINT : point.getIdMilins();
+                        ShPFilter shpFilter = new ShPFilter(requireContext(), ShPFilter.FilterType.GENERAL, pointMilins);
+                        Map<String, String> filters = new HashMap<>();
+                        filters.put(RADA, doublePriceList.getSeries());
+                        filters.put(PRODUKT, doublePriceList.getProduct());
+                        filters.put(SAZBA, doublePriceList.getRate());
+                        filters.put(COMPANY, doublePriceList.getCompany());
+                        filters.put(AREA, doublePriceList.getDistribution());
+                        filters.put(DATE_START, ViewHelper.convertLongToDate(doublePriceList.getValidFrom()));
+                        shpFilter.save(filters);
                         Fragment priceListFragment = PriceListFragment.newInstance(false, -1L);
                         FragmentChange.replace(requireActivity(), priceListFragment, ALPHA);
                     }

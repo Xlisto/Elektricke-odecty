@@ -10,6 +10,7 @@ import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 
 import cz.xlisto.elektrodroid.modules.widgets.WidgetUpdateManager;
+import cz.xlisto.elektrodroid.shp.ShPFilter;
 import cz.xlisto.elektrodroid.shp.ShPSettings;
 
 
@@ -25,6 +26,7 @@ public class ElektroDroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ShPFilter.migrateLegacyFilters(this);
         DynamicColorsOptions options = new DynamicColorsOptions.Builder()
                 .setPrecondition((activity, theme) -> new ShPSettings(activity).isUseDynamicColors())
                 .build();

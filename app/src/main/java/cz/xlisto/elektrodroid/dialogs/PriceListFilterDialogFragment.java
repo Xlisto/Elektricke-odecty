@@ -36,16 +36,20 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import cz.xlisto.elektrodroid.R;
 import cz.xlisto.elektrodroid.databaze.DBHelperPriceList;
 import cz.xlisto.elektrodroid.databaze.DataPriceListSource;
+import cz.xlisto.elektrodroid.models.SubscriptionPointModel;
 import cz.xlisto.elektrodroid.modules.pricelist.PriceListOriginHelper;
 import cz.xlisto.elektrodroid.ownview.ViewHelper;
 import cz.xlisto.elektrodroid.shp.ShPFilter;
+import cz.xlisto.elektrodroid.utils.SubscriptionPoint;
 
 
 /**
@@ -58,6 +62,7 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     public static final String FLAG_RESULT_FILTER_DIALOG_FRAGMENT = "flagPriceListFilterDialogFragment";
     public static final String RESULT = "result";
     private static final String ARG_FILTER_TYPE = "argFilterType";
+    private static final String ARG_POINT_MILINS = "argPointMilins";
 
     private TextInputLayout tilRada, tilProdukt, tilSazba, tilCompany, tilArea, tilOrigin;
     private TextInputEditText etRada, etProdukt, etSazba, etCompany, etArea, etOrigin;
@@ -88,15 +93,11 @@ public class PriceListFilterDialogFragment extends DialogFragment {
     private boolean isUserSelectingPreset = false;
 
 
-    public static PriceListFilterDialogFragment newInstance() {
-        return newInstance(ShPFilter.FilterType.GENERAL);
-    }
-
-
-    public static PriceListFilterDialogFragment newInstance(ShPFilter.FilterType filterType) {
+    public static PriceListFilterDialogFragment newInstance(ShPFilter.FilterType filterType, String pointMilins) {
         PriceListFilterDialogFragment fragment = new PriceListFilterDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_FILTER_TYPE, (filterType != null ? filterType : ShPFilter.FilterType.GENERAL).name());
+        args.putString(ARG_FILTER_TYPE, filterType.name());
+        args.putString(ARG_POINT_MILINS, pointMilins);
         fragment.setArguments(args);
         return fragment;
     }
@@ -113,7 +114,12 @@ public class PriceListFilterDialogFragment extends DialogFragment {
                 filterType = ShPFilter.FilterType.GENERAL;
             }
         }
-        shpFilter = new ShPFilter(getContext(), filterType);
+        String pointMilins = requireArguments().getString(ARG_POINT_MILINS);
+        if (pointMilins == null) {
+            SubscriptionPointModel point = SubscriptionPoint.load(requireContext());
+            pointMilins = point == null ? ShPFilter.WITHOUT_SUBSCRIPTION_POINT : point.getIdMilins();
+        }
+        shpFilter = new ShPFilter(requireContext(), filterType, pointMilins);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme);
         View dialogView = getLayoutInflater().inflate(R.layout.fragment_price_list_filter, null);
 
@@ -401,14 +407,16 @@ public class PriceListFilterDialogFragment extends DialogFragment {
 
 
     private void savePreferences() {
-        shpFilter.set(RADA, formatSetToPreference(selectedRada));
-        shpFilter.set(PRODUKT, formatSetToPreference(selectedProdukt));
-        shpFilter.set(SAZBA, formatSetToPreference(selectedSazba));
-        shpFilter.set(COMPANY, formatSetToPreference(selectedCompany));
-        shpFilter.set(AREA, formatSetToPreference(selectedArea));
-        shpFilter.set(ORIGIN, formatSetToPreference(selectedOrigin));
-        shpFilter.set(DATE_START, dateStart);
-        shpFilter.set(DATE_END, dateEnd);
+        Map<String, String> filters = new HashMap<>();
+        filters.put(RADA, formatSetToPreference(selectedRada));
+        filters.put(PRODUKT, formatSetToPreference(selectedProdukt));
+        filters.put(SAZBA, formatSetToPreference(selectedSazba));
+        filters.put(COMPANY, formatSetToPreference(selectedCompany));
+        filters.put(AREA, formatSetToPreference(selectedArea));
+        filters.put(ORIGIN, formatSetToPreference(selectedOrigin));
+        filters.put(DATE_START, dateStart);
+        filters.put(DATE_END, dateEnd);
+        shpFilter.save(filters);
     }
 
 
