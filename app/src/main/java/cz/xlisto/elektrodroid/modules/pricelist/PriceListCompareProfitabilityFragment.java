@@ -167,18 +167,13 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
      * a aktualizuje viditelnost odpovídajících posuvníků a scénář ve {@link PriceListsViewModel}.
      */
     private void onSourceModeChanged() {
-        PriceListComparisonScenario scenario = viewModel.getScenario().getValue();
-        PriceListComparisonScenario activeScenario = scenario != null ? scenario : new PriceListComparisonScenario();
-
         if (rbSourceHistory.isChecked()) {
             llModelSlidersContainer.setVisibility(View.GONE);
             llHistorySliderContainer.setVisibility(View.VISIBLE);
-            activeScenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.HISTORICAL_YEAR);
             updateHistoryFromSlider((int) sliderHistoryYears.getValue());
         } else {
             llModelSlidersContainer.setVisibility(View.VISIBLE);
             llHistorySliderContainer.setVisibility(View.GONE);
-            activeScenario.setConsumptionSource(PriceListComparisonScenario.ConsumptionSource.MANUAL);
             updateVtFromSlider(sliderVtMwh.getValue());
         }
     }

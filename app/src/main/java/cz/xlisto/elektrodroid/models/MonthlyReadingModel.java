@@ -27,10 +27,10 @@ import java.util.Calendar;
 public class MonthlyReadingModel {
 
     private long id;
-    private long date;
-    private double vt;
-    private double nt;
-    private double payment;
+    private final long date;
+    private final double vt;
+    private final double nt;
+    private final double payment;
     final private String description;
     final private double otherServices;
     final private boolean first;
@@ -60,11 +60,6 @@ public class MonthlyReadingModel {
     }
 
 
-    public void setPayment(double payment) {
-        this.payment = payment;
-    }
-
-
     public long getId() {
         return id;
     }
@@ -90,11 +85,6 @@ public class MonthlyReadingModel {
     }
 
 
-    public void setVt(double vt) {
-        this.vt = vt;
-    }
-
-
     public double getNt() {
         return nt;
     }
@@ -105,11 +95,6 @@ public class MonthlyReadingModel {
     }
 
 
-    public void setNt(double nt) {
-        this.nt = nt;
-    }
-
-
     public String getDescription() {
         return description;
     }
@@ -117,11 +102,6 @@ public class MonthlyReadingModel {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-
-    public void setDate(long date) {
-        this.date = date;
     }
 
 
