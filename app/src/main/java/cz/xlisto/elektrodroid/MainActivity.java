@@ -367,7 +367,6 @@ public class MainActivity extends AppCompatActivity implements MonthlyReadingFra
             }
             if (itemId == R.id.menu_compare_price_list) {
                 uncheckedBottomNavigation();
-                //actualFragment = PriceListCompareDetailFragment.newInstance();
                 actualFragment = PriceListCompareBoxFragment.newInstance();
                 setToolbarTitle(getResources().getString(R.string.compare_price_list));
                 selectedItemIndex = 2;

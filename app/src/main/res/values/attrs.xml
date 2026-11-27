@@ -29,12 +29,6 @@
         <attr name="item" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="OwnPriceListCompare">
-        <attr name="title" format="string"/>
-        <attr name="separator" format="boolean"/>
-        <attr name="visibleDifferent" format="boolean"/>
-    </declare-styleable>
-
     <declare-styleable name="GraphConsuptionInvoiceGraphView">
         <attr name="consuptionMax" format="float"/>
         <attr name="consuption" format="float"/>
