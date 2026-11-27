@@ -1,8 +1,6 @@
 package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -42,12 +40,11 @@ public class TedomPdfParser implements PdfPriceListParser {
     /**
      * Rozparsuje text PDF ceníku TEDOM a vrátí seznam ceníkových modelů pro jednotlivé distribuční sazby.
      *
-     * @param context Kontext aplikace
      * @param pdfText Extrahovaný text z PDF souboru
      * @return Seznam načtených objektů {@link PriceListModel}
      */
     @Override
-    public List<PriceListModel> parse(Context context, String pdfText) {
+    public List<PriceListModel> parse(String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
         if (pdfText == null || pdfText.isEmpty()) return result;
 

@@ -1,7 +1,5 @@
 package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -51,12 +49,11 @@ public class MndPdfParser implements PdfPriceListParser {
      * VT, NT a stálého měsíčního platu. Regulované složky ponechává nulové pro dynamické načtení
      * z interního JSON souboru.
      *
-     * @param context aplikační kontext vyžadovaný rozhraním {@link PdfPriceListParser} (v této implementaci se nepoužívá)
      * @param pdfText extrahovaný text PDF ceníku
      * @return seznam sestavených položek {@link PriceListModel}; při prázdném nebo {@code null} vstupu prázdný seznam
      */
     @Override
-    public List<PriceListModel> parse(Context context, String pdfText) {
+    public List<PriceListModel> parse(String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
         if (pdfText == null || pdfText.isEmpty()) return result;
 

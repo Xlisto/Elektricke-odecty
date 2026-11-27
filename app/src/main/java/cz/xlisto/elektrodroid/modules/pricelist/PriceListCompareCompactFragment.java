@@ -35,7 +35,7 @@ import cz.xlisto.elektrodroid.utils.DensityUtils;
  * Vytváří dynamický {@link TableLayout} s rozepsáním jednotlivých složek cen, vyčíslením rozdílů
  * a celkovým součtem bez DPH i s DPH s automatickým přizpůsobením velikosti písma.
  */
-public class PriceListCompareCompactFragment extends Fragment implements SelectedPriceListsInterface {
+public class PriceListCompareCompactFragment extends Fragment {
 
     private PriceListModel priceListLeft = new PriceListModel(""), priceListRight = new PriceListModel(""),
             priceListLeftRegul = new PriceListModel(""), priceListRightRegul = new PriceListModel("");
@@ -255,7 +255,6 @@ public class PriceListCompareCompactFragment extends Fragment implements Selecte
      * @param priceListRight ceník na pravé straně porovnání
      * @param container      vstupní parametry spotřeby a služeb
      */
-    @Override
     public void onPriceListsSelected(PriceListModel priceListLeft, PriceListModel priceListRight, ConsuptionContainer container) {
         if (priceListLeft != null) {
             this.priceListLeft = priceListLeft;

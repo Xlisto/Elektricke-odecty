@@ -283,7 +283,7 @@ public class PdfParserFactory {
         List<PriceListModel> result = null;
         for (ParserRegistration registration : REGISTRATIONS) {
             if (registration.parser().canParse(pdfText)) {
-                result = registration.parser().parse(context, pdfText);
+                result = registration.parser().parse(pdfText);
                 break;
             }
         }

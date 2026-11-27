@@ -70,7 +70,7 @@ public class PdfParserTest {
         CezPdfParser parser = new CezPdfParser();
         assertTrue("ČEZ parser by měl detekovat text", parser.canParse(CEZ_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, CEZ_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(CEZ_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("ČEZ ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -99,7 +99,7 @@ public class PdfParserTest {
         PrePdfParser parser = new PrePdfParser();
         assertTrue("PRE parser by měl detekovat text", parser.canParse(PRE_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, PRE_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(PRE_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("PRE ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -121,7 +121,7 @@ public class PdfParserTest {
         EonPdfParser parser = new EonPdfParser();
         assertTrue("E.ON parser by měl detekovat text", parser.canParse(EON_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, EON_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(EON_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("E.ON ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -146,7 +146,7 @@ public class PdfParserTest {
         CentropolPdfParser parser = new CentropolPdfParser();
         assertTrue("Centropol parser by měl detekovat text", parser.canParse(CENTROPOL_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, CENTROPOL_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(CENTROPOL_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("Centropol ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -168,7 +168,7 @@ public class PdfParserTest {
         MndPdfParser parser = new MndPdfParser();
         assertTrue("MND parser by měl detekovat text", parser.canParse(MND_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, MND_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(MND_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("MND ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -190,7 +190,7 @@ public class PdfParserTest {
         InnogyPdfParser parser = new InnogyPdfParser();
         assertTrue("innogy parser by měl detekovat text", parser.canParse(INNOGY_SAMPLE_TEXT));
 
-        List<PriceListModel> items = parser.parse(null, INNOGY_SAMPLE_TEXT);
+        List<PriceListModel> items = parser.parse(INNOGY_SAMPLE_TEXT);
         assertNotNull(items);
         assertEquals("innogy ceník by měl obsahovat 10 sazeb", 10, items.size());
 
@@ -242,7 +242,7 @@ public class PdfParserTest {
     public void test2025PreSeptemberSplit() {
         String eon2025Text = "E.ON Energie, a.s.\nEG.D, s.r.o.\nCeník Komplet elektřina MAX bez závazku\nObchodní cena za elektřinu platná od 1. 1. 2025\n";
         EonPdfParser parser = new EonPdfParser();
-        List<PriceListModel> items = parser.parse(null, eon2025Text);
+        List<PriceListModel> items = parser.parse(eon2025Text);
         assertNotNull(items);
         assertEquals("Ceník z počátku roku 2025 by měl generovat 20 položek (10 sazeb × 2 období)", 20, items.size());
 

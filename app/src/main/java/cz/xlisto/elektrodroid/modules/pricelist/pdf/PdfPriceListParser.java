@@ -1,8 +1,6 @@
 package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
 
-import android.content.Context;
-
 import java.util.List;
 
 import cz.xlisto.elektrodroid.models.PriceListModel;
@@ -24,10 +22,9 @@ public interface PdfPriceListParser {
     /**
      * Rozparsuje text z PDF a vrátí seznam ceníkových modelů pro jednotlivé distribuční sazby.
      *
-     * @param context Kontext aplikace
      * @param pdfText Extrahovaný text z PDF souboru
      * @return Seznam načtených ceníkových položek (PriceListModel)
      */
-    List<PriceListModel> parse(Context context, String pdfText);
+    List<PriceListModel> parse(String pdfText);
 
 }

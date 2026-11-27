@@ -1,8 +1,6 @@
 package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,12 +38,11 @@ public class EonPdfParser implements PdfPriceListParser {
     /**
      * Rozparsuje text PDF ceníku E.ON / EG.D a vrátí seznam ceníkových modelů pro jednotlivé distribuční sazby.
      *
-     * @param context Kontext aplikace
      * @param pdfText Extrahovaný text z PDF souboru
      * @return Seznam načtených objektů {@link PriceListModel} s obchodními cenami
      */
     @Override
-    public List<PriceListModel> parse(Context context, String pdfText) {
+    public List<PriceListModel> parse(String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
         if (pdfText == null || pdfText.isEmpty()) return result;
 

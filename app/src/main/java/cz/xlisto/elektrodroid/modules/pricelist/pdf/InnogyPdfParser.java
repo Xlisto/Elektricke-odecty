@@ -1,7 +1,5 @@
 package cz.xlisto.elektrodroid.modules.pricelist.pdf;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -29,7 +27,7 @@ public class InnogyPdfParser implements PdfPriceListParser {
     }
 
     @Override
-    public List<PriceListModel> parse(Context context, String pdfText) {
+    public List<PriceListModel> parse(String pdfText) {
         List<PriceListModel> result = new ArrayList<>();
         if (pdfText == null || pdfText.isEmpty()) return result;
 
