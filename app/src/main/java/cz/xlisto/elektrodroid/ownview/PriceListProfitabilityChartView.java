@@ -24,23 +24,11 @@ import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.Point
 import cz.xlisto.elektrodroid.modules.pricelist.engine.BreakEvenCalculator.ResultStatus;
 
 /**
- * Custom View pro závislost celkových ročních nákladů na spotřebě nebo podílu NT se zvýrazněným bodem zvratu.
+ * Custom View pro závislost celkových ročních nákladů na spotřebě se zvýrazněným bodem zvratu.
  * Automaticky zalamuje dlouhé názvy ceníků v legendě tak, aby se celý název vešel na obrazovku.
  * Dynamicky přizpůsobuje barvy textu a mřížky pro světlý i tmavý režim (Light/Dark mode).
  */
 public class PriceListProfitabilityChartView extends View {
-
-    /**
-     * Režim zobrazení grafu výhodnosti ceníku.
-     */
-    public enum Mode {
-        /**
-         * Závislost nákladů na roční spotřebě (v MWh).
-         */
-        COST_VS_CONSUMPTION,
-        /** Závislost nákladů na podílu nízkého tarifu (v %). */
-        COST_VS_NT_RATIO
-    }
 
 
     /**
@@ -60,10 +48,9 @@ public class PriceListProfitabilityChartView extends View {
 
     }
 
-    private Mode mode = Mode.COST_VS_CONSUMPTION;
     private List<SeriesData> seriesList = new ArrayList<>();
     private BreakEvenResult breakEvenResult;
-    private double currentReferenceValue = 3.0; // např. 3 MWh nebo 60% NT
+    private double currentReferenceValue = 3.0; // např. 3 MWh
 
     private Paint axisPaint;
     private Paint gridPaint;
@@ -124,13 +111,11 @@ public class PriceListProfitabilityChartView extends View {
     /**
      * Nastaví datové řady, výsledek výpočtu bodu zvratu a referenční hodnotu pro vykreslení grafu.
      *
-     * @param mode                  režim zobrazení (spotřeba vs. podíl NT)
      * @param seriesList            seznam datových řad pro jednotlivé ceníky
      * @param breakEvenResult       výsledek výpočtu bodu zvratu mezi ceníky
-     * @param currentReferenceValue svislá referenční hodnota (např. aktuální spotřeba v MWh nebo % NT)
+     * @param currentReferenceValue svislá referenční hodnota (aktuální spotřeba v MWh)
      */
-    public void setChartData(Mode mode, List<SeriesData> seriesList, BreakEvenResult breakEvenResult, double currentReferenceValue) {
-        this.mode = mode;
+    public void setChartData(List<SeriesData> seriesList, BreakEvenResult breakEvenResult, double currentReferenceValue) {
         this.seriesList = seriesList != null ? seriesList : new ArrayList<>();
         this.breakEvenResult = breakEvenResult;
         this.currentReferenceValue = currentReferenceValue;
@@ -291,7 +276,7 @@ public class PriceListProfitabilityChartView extends View {
             double xVal = (maxX / xTicks) * i;
 
             canvas.drawLine(x, paddingTop, x, paddingTop + chartH, gridPaint);
-            String xLabel = (mode == Mode.COST_VS_CONSUMPTION) ? DecimalFormatHelper.df1.format(xVal) + " MWh" : DecimalFormatHelper.df0.format(xVal) + " %";
+            String xLabel = DecimalFormatHelper.df1.format(xVal) + " MWh";
             canvas.drawText(xLabel, x - (12 * density), paddingTop + chartH + (18 * density), textPaint);
         }
 
@@ -326,7 +311,7 @@ public class PriceListProfitabilityChartView extends View {
             canvas.drawLine(refX, paddingTop, refX, paddingTop + chartH, referenceLinePaint);
 
             textPaint.setColor(0xFFD32F2F);
-            String refLabel = (mode == Mode.COST_VS_CONSUMPTION) ? "Aktuální: " + DecimalFormatHelper.df1.format(currentReferenceValue) + " MWh" : "Aktuální: " + DecimalFormatHelper.df0.format(currentReferenceValue) + " % NT";
+            String refLabel = "Aktuální: " + DecimalFormatHelper.df1.format(currentReferenceValue) + " MWh";
             canvas.drawText(refLabel, refX + (4 * density), paddingTop + (12 * density), textPaint);
         }
 
@@ -347,7 +332,7 @@ public class PriceListProfitabilityChartView extends View {
 
                     textPaint.setColor(0xFF2E7D32);
                     textPaint.setFakeBoldText(true);
-                    String beLabel = "Bod zvratu: " + DecimalFormatHelper.df1.format(breakEvenX) + (mode == Mode.COST_VS_CONSUMPTION ? " MWh" : " %");
+                    String beLabel = "Bod zvratu: " + DecimalFormatHelper.df1.format(breakEvenX) + " MWh";
                     canvas.drawText(beLabel, beX + (8 * density), beY - (6 * density), textPaint);
                     textPaint.setFakeBoldText(false);
                 }

@@ -331,7 +331,7 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
 
         if (scenario == null || selectedPriceLists == null || selectedPriceLists.isEmpty()) {
             tvBreakEvenSummaryText.setText(R.string.select_at_least_two_pricelists);
-            chartProfitability.setChartData(PriceListProfitabilityChartView.Mode.COST_VS_CONSUMPTION, new ArrayList<>(), null, 0);
+            chartProfitability.setChartData(new ArrayList<>(), null, 0);
             updateTechnicalConditionsUI(new ArrayList<>());
             return;
         }
@@ -362,7 +362,6 @@ public class PriceListCompareProfitabilityFragment extends Fragment {
         }
 
         chartProfitability.setChartData(
-                PriceListProfitabilityChartView.Mode.COST_VS_CONSUMPTION,
                 seriesList,
                 breakEvenResult,
                 currentTotalMwh
