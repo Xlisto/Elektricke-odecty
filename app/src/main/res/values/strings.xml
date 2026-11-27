@@ -251,8 +251,6 @@
     <string name="nastaveni_parametru">Nastavení parametrů pro porovnání</string>
     <string name="vstupni_hodnoty">Vstupní hodnoty</string>
     <string name="reset_all_forms">Vymaž všechna pole</string>
-    <string name="souhrn">Souhrn</string>
-    <string name="zobrazit_regulovan_ceny">Zobrazit regulované ceny</string>
     <string name="cislo">Číslo:</string>
     <string name="obdobi_label">Období:</string>
     <string name="btn_number_invoice">Číslo faktury</string>
@@ -442,7 +440,6 @@
     <string name="b">B</string>
     <string name="dp">DP</string>
     <string name="hint_hdo_code">Zadejte kód povelu</string>
-    <string name="total_dph">Celkem s DPH</string>
 
 
     <string name="how_date_pay">Jaký den bude zaplacena záloha?</string>
