@@ -1,5 +1,23 @@
 [
   {
+    "version": 165,
+    "date": "27.11.2026",
+    "changes": [
+      "<b>Nové funkce:</b>",
+      "Nový Přehled odběrného místa zobrazuje aktuální ceny elektřiny, časy HDO, odhad spotřeby a bilanci záloh a nákladů. V nabídce lze přepnout na původní přehled.",
+      "Pět widgetů na plochu Androidu: aktuální cena elektřiny, analogové hodiny HDO, spotřeba, finanční bilance a zkratka pro nový odečet. Odběrné místo lze nastavit pro každý widget zvlášť.",
+      "Import ceníků podporovaných dodavatelů přímo z PDF. Soubory lze otevřít nebo sdílet do aplikace a více ceníků zpracovat v jedné dávce s ukazatelem průběhu.",
+      "Porovnání více ceníků v grafech a tabulce podle modelové spotřeby nebo historie odečtů. Analýza výhodnosti ukáže, při jaké spotřebě se mění nejlevnější nabídka.",
+      "<b>Vylepšení:</b>",
+      "Filtry ceníků se ukládají zvlášť pro každé odběrné místo, samostatně pro seznam ceníků, měsíční odečty a fakturaci.",
+      "Měsíční odečty mají tři úrovně podrobnosti a předvolby období. Datum nového odečtu lze automaticky předvyplnit.",
+      "HDO automaticky vybírá období platné k dnešnímu dni a lépe přizpůsobuje grafické zobrazení počtu relé.",
+      "Modernizované formuláře a dialogy ve stylu Material 3. Na Androidu 12 a novějším lze sladit barvy aplikace a widgetů se systémem.",
+      "<b>Opravy:</b>",
+      "Opraven výpočet složky POZE v detailu měsíčního odečtu podle roku a vyhodnocení období HDO přes přelom roku."
+    ]
+  },
+  {
     "version": 164,
     "date": "27.10.2026",
     "changes": [
