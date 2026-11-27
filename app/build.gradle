@@ -53,8 +53,8 @@ android {
         applicationId "cz.xlisto.elektrodroid"
         minSdk 24
         targetSdk 36
-        versionCode 165
-        versionName '1.165'
+        versionCode 166
+        versionName '1.166'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -84,6 +84,9 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
         }
         releaseTest {
             initWith release
@@ -115,7 +118,7 @@ android {
     }
     buildToolsVersion = '36.0.0'
     namespace 'cz.xlisto.elektrodroid'
-    compileSdkVersion 37
+    compileSdk 37
 }
 
 tasks.withType(KotlinCompile).configureEach {
