@@ -644,9 +644,8 @@ dosavadní označení. Tlačítkem **Zobrazit vybrané** si zkontrolujete i ozna
 aktuálním filtrem. Podrobný postup najdete v kapitole [Porovnání ceníků](#nav-porovnani-ceniku).
 
 <p style="text-align: center;">
-  <img src="screenshots/fil_1.webp" alt="Obecný filtr se zvoleným produktem Aku a vyplněným rozsahem platnosti" style="width: 200px;" />
-  <img src="screenshots/cena_4.webp" alt="Obecný filtr v seznamu uložených ceníků" style="width: 300px;" />
-  <img src="screenshots/cena_1.webp" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" style="width: 200px;" />
+  <img src="screenshots/cena_4.webp" alt="Obecný filtr v seznamu uložených ceníků" style="width: 250px;" />
+  <img src="screenshots/cena_1.webp" alt="Seznam uložených ceníků s jednotkovými cenami a měsíčními platbami" style="width: 250px;" />
 </p>
 
 <p style="text-align: center;">
